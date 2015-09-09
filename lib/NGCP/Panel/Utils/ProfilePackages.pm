@@ -3,7 +3,8 @@ use strict;
 use warnings;
 
 #use TryCatch;
-use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::DateTime qw();
+use NGCP::Panel::Utils::Subscriber qw();
 
 use constant INITIAL_PROFILE_DISCRIMINATOR => 'initial';
 use constant UNDERRUN_PROFILE_DISCRIMINATOR => 'underrun';
@@ -37,15 +38,17 @@ use constant _DEFAULT_PROFILE_FREE_CASH => 0.0;
 
 #use constant _DEFAULT_NOTOPUP_DISCARD_INTERVALS => undef;
 use constant ENABLE_PROFILE_PACKAGES => 1;
+use constant _ENABLE_UNDERRUN_PROFILES => 1;
+use constant _ENABLE_UNDERRUN_LOCK => 1;
 
 sub get_contract_balance {
     my %params = @_;
     my($c,$contract,$now,$schema,$stime,$etime) = @params{qw/c contract now schema stime etime/};
     
-    $schema //= $c->model('DB');
+    #$schema //= $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
     
-    my $balance = catchup_contract_balances(schema => $schema, contract => $contract, now => $now);
+    my $balance = catchup_contract_balances(c => $c, contract => $contract, now => $now);
     
     if (defined $stime || defined $etime) { #supported for backward compat only
         $balance = $contract->contract_balances->search({
@@ -59,17 +62,20 @@ sub get_contract_balance {
 
 sub resize_actual_contract_balance {
     my %params = @_;
-    my($c,$contract,$old_package,$actual_balance,$is_topup,$now,$schema) = @params{qw/c contract old_package balance is_topup now schema/};
+    my($c,$contract,$old_package,$actual_balance,$is_topup,$topup_amount,$now,$schema,$profiles_added) = @params{qw/c contract old_package balance is_topup topup_amount now schema profiles_added/};
 
     $schema //= $c->model('DB');
-    $contract = $schema->resultset('contracts')->find({id => $contract->id},{for => 'update'}); #lock record
+    $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
     $is_topup //= 0;
+    $topup_amount //= 0.0;
+    $profiles_added //= 0;
 
     return $actual_balance unless defined $contract->contact->reseller_id;
     
     $now //= $contract->modify_timestamp;
     my $new_package = $contract->profile_package;
     my ($old_start_mode,$new_start_mode);
+    my ($underrun_profile_threshold,$underrun_lock_threshold);
     
     my $create_next_balance = 0;
     if (defined $old_package && !defined $new_package) {
@@ -80,6 +86,8 @@ sub resize_actual_contract_balance {
         $new_start_mode = $new_package->balance_interval_start_mode if $new_package->balance_interval_start_mode ne _DEFAULT_START_MODE;
         $create_next_balance = (_TOPUP_START_MODE eq $new_package->balance_interval_start_mode ||
             _TOPUP_INTERVAL_START_MODE eq $new_package->balance_interval_start_mode) && $is_topup;
+        $underrun_profile_threshold = $new_package->underrun_profile_threshold;
+        $underrun_lock_threshold = $new_package->underrun_lock_threshold;
     } elsif (defined $old_package && defined $new_package) {
         if ($old_package->balance_interval_start_mode ne $new_package->balance_interval_start_mode) {
             $old_start_mode = $old_package->balance_interval_start_mode;
@@ -96,50 +104,72 @@ sub resize_actual_contract_balance {
             $new_start_mode = _TOPUP_INTERVAL_START_MODE;
             $create_next_balance = 1;
         }
+        
+        if ((!defined $old_package->underrun_profile_threshold && defined $new_package->underrun_profile_threshold)
+            || (defined $old_package->underrun_profile_threshold && defined $new_package->underrun_profile_threshold
+                && ($new_package->underrun_profile_threshold > $old_package->underrun_profile_threshold || $profiles_added > 0))) {
+            $underrun_profile_threshold = $new_package->underrun_profile_threshold;
+        }
+        if ((!defined $old_package->underrun_lock_threshold && defined $new_package->underrun_lock_threshold)
+            || (defined $old_package->underrun_lock_threshold && defined $new_package->underrun_lock_threshold
+                && ($new_package->underrun_lock_threshold > $old_package->underrun_lock_threshold || $profiles_added > 0))) {
+            $underrun_lock_threshold = $new_package->underrun_lock_threshold;
+        }
     }
     
-    if ($old_start_mode && $new_start_mode && $actual_balance->start < $now) {
-        my $end_of_resized_interval = _get_resized_interval_end(ctime => $now,
-                                                                create_timestamp => $contract->create_timestamp // $contract->modify_timestamp,
-                                                                start_mode => $new_start_mode,
-                                                                is_topup => $is_topup);
-        my $resized_balance_values = _get_resized_balance_values(schema => $schema,
-                                                                balance => $actual_balance,
-                                                                #old_start_mode => $old_start_mode,
-                                                                #new_start_mode => $new_start_mode,
-                                                                etime => $end_of_resized_interval);
-        #try {
-        #    $schema->txn_do(sub {
+    if ($actual_balance->start < $now) {
+        if ($old_start_mode && $new_start_mode) {
+            my $end_of_resized_interval = _get_resized_interval_end(ctime => $now,
+                                                                    create_timestamp => $contract->create_timestamp // $contract->modify_timestamp,
+                                                                    start_mode => $new_start_mode,
+                                                                    is_topup => $is_topup);
+            my $resized_balance_values = _get_resized_balance_values(schema => $schema,
+                                                                    balance => $actual_balance,
+                                                                    #old_start_mode => $old_start_mode,
+                                                                    #new_start_mode => $new_start_mode,
+                                                                    etime => $end_of_resized_interval);
+    
+            $actual_balance->update({
+                end => $end_of_resized_interval,
+                @$resized_balance_values,                  
+            });
+            $actual_balance->discard_changes();
+            if ($create_next_balance) {
+                $actual_balance = catchup_contract_balances(c => $c,
+                        contract => $contract,
+                        old_package => $new_package, #$old_package,
+                        now => $end_of_resized_interval->clone->add(seconds => 1),
+                        #suppress_underrun => 1,
+                        topup_amount => $topup_amount,
+                        profiles_added => $profiles_added,
+                    );
+                return $actual_balance;
+            }
+        }
+
+        #underruns due to increased thresholds:
+        if (_ENABLE_UNDERRUN_LOCK && defined $underrun_lock_threshold && ($actual_balance->cash_balance + $topup_amount) < $underrun_lock_threshold) {
+            if (defined $new_package->underrun_lock_level) {
+                set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $new_package->underrun_lock_level);
                 $actual_balance->update({
-                    end => $end_of_resized_interval,
-                    @$resized_balance_values,                  
+                    underrun_lock => $now,
                 });
                 $actual_balance->discard_changes();
-                if ($create_next_balance) {
-                    $actual_balance = catchup_contract_balances(schema => $schema,
-                            contract => $contract,
-                            old_package => $new_package, #$old_package,
-                            now => $end_of_resized_interval->clone->add(seconds => 1),
-                        );
-                }
-                
-                #catchup_contract_balances(schema => $schema,
-                #                          contract => $contract,
-                #                          old_package => $new_package,
-                #                          now => $now) if _TOPUP_START_MODE eq $new_package->start_mode;
-        #    });
-        #} catch($e) {
-        #    if ($e =~ /Duplicate entry/) {
-        #        #libswrate or rat-o-mat are interferring?
-        #        $c->log->warn("Resizing contract balance failed: Duplicate entry. Ignoring!");
-        #    } else {
-        #        $c->log->error("Resizing contract balance failed: " . $e);
-        #        $e->rethrow;
-        #    }
-        #};
+            }
+        }        
+        if (_ENABLE_UNDERRUN_PROFILES && defined $underrun_profile_threshold && ($actual_balance->cash_balance + $topup_amount) < $underrun_profile_threshold) {
+            my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now); 
+            if (add_profile_mappings(contract => $contract, package => $new_package, bm_actual => $bm_actual, stime => $now, profiles => 'underrun_profiles') > 0) {
+                $actual_balance->update({
+                    underrun_profiles => $now,
+                });
+                $actual_balance->discard_changes();
+            }
+        }
+
+    } else {
+        die("Another action finished meantime, please try again.");
     }
-    
-    
     
     return $actual_balance;
     
@@ -147,16 +177,20 @@ sub resize_actual_contract_balance {
 
 sub catchup_contract_balances {
     my %params = @_;
-    my($c,$contract,$old_package,$now,$schema) = @params{qw/c contract old_package now schema/};
+    my($c,$contract,$old_package,$now,$suppress_underrun,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun topup_amount profiles_added/};
     
-    $schema //= $c->model('DB');
-    $contract = $schema->resultset('contracts')->find({id => $contract->id},{for => 'update'}); #lock record
+    my $schema = $c->model('DB');
+    $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
     $now //= $contract->modify_timestamp;
     $old_package = $contract->profile_package if !exists $params{old_package};
+    my $contract_create = $contract->create_timestamp // $contract->modify_timestamp;
+    $suppress_underrun //= 0;
+    $topup_amount //= 0.0;
+    $profiles_added //= 0;
 
     #$c->log->debug('catchup contract ' . $contract->id . ' contract_balances (now = ' . NGCP::Panel::Utils::DateTime::to_string($now) . ')') if $c;
     
-    my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_expiration);
+    my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_expiration,$underrun_profile_threshold,$underrun_lock_threshold);
     
     if (defined $contract->contact->reseller_id && $old_package) {
         $start_mode = $old_package->balance_interval_start_mode;
@@ -173,6 +207,8 @@ sub catchup_contract_balances {
             $last_balance_w_topup = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first unless $last_balance_w_topup;
             $notopup_expiration = _add_interval($last_balance_w_topup->start,$interval_unit,$notopup_discard_intervals + 1) if $last_balance_w_topup;
         }
+        $underrun_profile_threshold = $old_package->underrun_profile_threshold;
+        $underrun_lock_threshold = $old_package->underrun_lock_threshold;
         $has_package = 1;
     } else {
         $start_mode = _DEFAULT_START_MODE;
@@ -180,17 +216,20 @@ sub catchup_contract_balances {
         $has_package = 0;
     }
     
-    #my $first_balance = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first;
+    my ($underrun_lock_applied,$underrun_profiles_applied) = (0,0);
+
     my $last_balance = $contract->contract_balances->search(undef,{ order_by => { '-desc' => 'end'},})->first;
     my $last_profile;
     while ($last_balance && !NGCP::Panel::Utils::DateTime::is_infinite_future($last_balance->end) && $last_balance->end < $now) { #comparison takes 100++ sec if loaded lastbalance contains +inf
         my $start_of_next_interval = $last_balance->end->clone->add(seconds => 1);
-        
+
         my $bm_actual;
         unless ($last_profile) {
             $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $last_balance->start);
             $last_profile = $bm_actual->billing_mappings->first->billing_profile;
         }
+        my ($underrun_profiles_ts,$underrun_lock_ts) = (undef,undef);
+PREPARE_BALANCE_CATCHUP:
         $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $start_of_next_interval);
         my $profile = $bm_actual->billing_mappings->first->billing_profile;
         $interval_unit = $has_package ? $interval_unit : ($profile->interval_unit // _DEFAULT_PROFILE_INTERVAL_UNIT);
@@ -202,7 +241,7 @@ sub catchup_contract_balances {
                                                       #now => $start_of_next_interval,
                                                       interval_unit => $interval_unit,
                                                       interval_value => $interval_value,
-                                                      create => $contract->create_timestamp // $contract->modify_timestamp);
+                                                      create => $contract_create);
                     
         my $balance_values = _get_balance_values(schema => $schema,
             stime => $stime,
@@ -215,32 +254,33 @@ sub catchup_contract_balances {
             last_profile => $last_profile,
             notopup_expiration => $notopup_expiration,
         );
+
+        if (_ENABLE_UNDERRUN_LOCK && !$suppress_underrun && !$underrun_lock_applied && defined $underrun_lock_threshold && $last_balance->cash_balance >= $underrun_lock_threshold && ({ @$balance_values }->{cash_balance} + $topup_amount) < $underrun_lock_threshold) {
+            $underrun_lock_applied = 1;
+            if (defined $old_package->underrun_lock_level) {
+                set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $old_package->underrun_lock_level);
+                $underrun_lock_ts = $now;
+            }
+        }        
+        if (_ENABLE_UNDERRUN_PROFILES && !$suppress_underrun && !$underrun_profiles_applied && defined $underrun_profile_threshold && ($profiles_added > 0 || $last_balance->cash_balance >= $underrun_profile_threshold) && ({ @$balance_values }->{cash_balance} + $topup_amount) < $underrun_profile_threshold) {
+            $underrun_profiles_applied = 1;
+            if (add_profile_mappings(contract => $contract, package => $old_package, bm_actual => $bm_actual, stime => $start_of_next_interval, profiles => 'underrun_profiles') > 0) {
+                $underrun_profiles_ts = $now;
+                goto PREPARE_BALANCE_CATCHUP;
+            }
+        }
+
         $last_profile = $profile;
         
-        #try {
-        #    $schema->txn_do(sub {
-                $last_balance = $schema->resultset('contract_balances')->create({
-                    contract_id => $contract->id,
-                    start => $stime,
-                    end => $etime,
-                    @$balance_values,
-                });
-                $last_balance->discard_changes();
-        #    });
-        #} catch($e) {
-        #    if ($e =~ /Duplicate entry/) {
-        #        #libswrate or rat-o-mat are interferring?
-        #        $c->log->warn("Creating contract balance failed: Duplicate entry. Ignoring!");
-        #        $last_balance = $contract->contract_balances
-        #            ->find({
-        #                start => { '>=' => $stime },
-        #                end => { '<=' => $etime },
-        #            });
-        #    } else {
-        #        $c->log->error("Creating contract balance failed: " . $e);
-        #        $e->rethrow;
-        #    }
-        #};
+        $last_balance = $schema->resultset('contract_balances')->create({
+            contract_id => $contract->id,
+            start => $stime,
+            end => $etime,
+            underrun_profiles => $underrun_profiles_ts,
+            underrun_lock => $underrun_lock_ts,
+            @$balance_values,
+        });
+        $last_balance->discard_changes();
     }
     
     return $last_balance;
@@ -252,7 +292,7 @@ sub topup_contract_balance {
     my($c,$contract,$package,$voucher,$amount,$now,$schema) = @params{qw/c contract package voucher amount now schema/};
     
     $schema //= $c->model('DB');
-    $contract = $schema->resultset('contracts')->find({id => $contract->id},{for => 'update'}); #lock record
+    $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::current_local;
     
     my $voucher_package = ($voucher ? $voucher->profile_package : $package);
@@ -263,39 +303,26 @@ sub topup_contract_balance {
     $voucher_package = undef unless ENABLE_PROFILE_PACKAGES;
     $package = undef unless ENABLE_PROFILE_PACKAGES;
     
-    my $mappings_to_create = [];
+    my $profiles_added = 0;
     if ($package) { #always apply (old or new) topup profiles
         $topup_amount -= $package->service_charge;
         
         my $bm_actual = get_actual_billing_mapping(c => $c, contract => $contract, now => $now);
-        my $product_id = $bm_actual->billing_mappings->first->product->id;
-        foreach my $mapping ($package->topup_profiles->all) {
-            push(@$mappings_to_create,{ #assume not terminated, 
-                billing_profile_id => $mapping->profile_id,
-                network_id => $mapping->network_id,
-                product_id => $product_id,
-                start_date => $now,
-                end_date => undef,
-            });
-        }
+        $profiles_added = add_profile_mappings(contract => $contract, package => $package, bm_actual => $bm_actual, stime => $now, profiles => 'topup_profiles');
     }
                
     if ($voucher_package && (!$old_package || $voucher_package->id != $old_package->id)) {
         $contract->update({ profile_package_id => $voucher_package->id,
                             #modify_timestamp => $now,
         });
+        $contract->discard_changes();
     }
 
-    foreach my $mapping (@$mappings_to_create) {
-        $contract->billing_mappings->create($mapping); 
-    }
-    $contract->discard_changes();
-            
     my $balance = catchup_contract_balances(c => $c,
         contract => $contract,
         old_package => $old_package,
         now => $now);
-    
+
     my ($is_timely,$timely_duration_unit,$timely_duration_value) = (0,undef,undef);
     if ($old_package
         && ($timely_duration_unit = $old_package->timely_duration_unit)
@@ -323,37 +350,51 @@ sub topup_contract_balance {
         balance => $balance,
         now => $now,
         is_topup => 1,
+        topup_amount => $topup_amount,
+        profiles_added => $profiles_added,
     );            
 
-    $balance->update({ cash_balance => $balance->cash_balance + $topup_amount });
-    $balance->discard_changes();
+    $balance->update({ cash_balance => $balance->cash_balance + $topup_amount }); #add in new interval
+    $contract->discard_changes();
+    
+    if ($package) {
+        set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->topup_lock_level) if defined $package->topup_lock_level;
+    }
     
     return $balance;
 }
 
 sub create_initial_contract_balance {
     my %params = @_;
-    my($c,$contract,$profile,$now,$schema) = @params{qw/c contract profile now schema/};
+    my($c,$contract,$now) = @params{qw/c contract now/};
 
-    $schema //= $c->model('DB');
-    $contract = $schema->resultset('contracts')->find({id => $contract->id},{for => 'update'}); #lock record
+    my $schema = $c->model('DB');
+    $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
     $now //= $contract->create_timestamp // $contract->modify_timestamp;
     
-    my ($start_mode,$interval_unit,$interval_value,$initial_balance);
+    my ($start_mode,$interval_unit,$interval_value,$initial_balance,$underrun_profile_threshold,$underrun_lock_threshold);
     
     my $package = $contract->profile_package;
+
+    my ($underrun_lock_ts,$underrun_profiles_ts) = (undef,undef);
+    my ($underrun_lock_applied,$underrun_profiles_applied) = (0,0);
+PREPARE_BALANCE_INITIAL:
+    my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
+    my $profile = $bm_actual->billing_mappings->first->billing_profile;
     if (defined $contract->contact->reseller_id && $package) {
         $start_mode = $package->balance_interval_start_mode;
         $interval_unit = $package->balance_interval_unit;
         $interval_value = $package->balance_interval_value;
         $initial_balance = $package->initial_balance; #euro
+        $underrun_profile_threshold = $package->underrun_profile_threshold;
+        $underrun_lock_threshold = $package->underrun_lock_threshold;
     } else {
         $start_mode = _DEFAULT_START_MODE;
         $interval_unit = $profile->interval_unit // _DEFAULT_PROFILE_INTERVAL_UNIT; #'month';
         $interval_value = $profile->interval_count // _DEFAULT_PROFILE_INTERVAL_COUNT; #1;
         $initial_balance = _DEFAULT_INITIAL_BALANCE;
     }
-    
+
     my ($stime,$etime) = _get_balance_interval_start_end(
                                                       now => $now,
                                                       start_mode => $start_mode,
@@ -369,26 +410,37 @@ sub create_initial_contract_balance {
             profile => $profile,
             initial_balance => $initial_balance, # * 100.0,
         );    
-        
-    #my $balance;
-    #try {
-    #    $schema->txn_do(sub {
-            my $balance = $schema->resultset('contract_balances')->create({
-                contract_id => $contract->id,
-                start => $stime,
-                end => $etime,
-                @$balance_values,
-            });
-            $balance->discard_changes();
-    #    });
-    #} catch($e) {
-    #    if ($e =~ /Duplicate entry/) {
-    #        $c->log->warn("Creating contract balance failed: Duplicate entry. Ignoring!");
-    #    } else {
-    #        $c->log->error("Creating contract balance failed: " . $e);
-    #        $e->rethrow;
-    #    }
-    #};
+
+    if (_ENABLE_UNDERRUN_LOCK && !$underrun_lock_applied && defined $package && defined $underrun_lock_threshold && { @$balance_values }->{cash_balance} < $underrun_lock_threshold) {
+        $underrun_lock_applied = 1;
+        if (defined $package->underrun_lock_level) {
+            set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->underrun_lock_level);
+            $underrun_lock_ts = $now;
+        }
+    }
+    if (_ENABLE_UNDERRUN_PROFILES && !$underrun_profiles_applied && defined $package && defined $underrun_profile_threshold && { @$balance_values }->{cash_balance} < $underrun_profile_threshold) {
+        $underrun_profiles_applied = 1;
+        if (add_profile_mappings(contract => $contract, package => $package, bm_actual => $bm_actual, stime => $now, profiles => 'underrun_profiles') > 0) { #starting from now, not $stime, see prepare_billing_mappings
+            $underrun_profiles_ts = $now;
+            #$bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
+            goto PREPARE_BALANCE_INITIAL;
+        }
+    }
+
+    my $balance = $schema->resultset('contract_balances')->create({
+        contract_id => $contract->id,
+        start => $stime,
+        end => $etime,
+        underrun_profiles => $underrun_profiles_ts,
+        underrun_lock => $underrun_lock_ts,
+        @$balance_values,
+    });
+    $balance->discard_changes();
+    
+    if ('hour' eq $interval_unit) {
+        $balance = catchup_contract_balances(c => $c, contract => $contract, now => $now);
+    }
+
     return $balance;
     
 }
@@ -411,8 +463,10 @@ sub _get_resized_balance_values {
         my $new_ratio = _get_free_ratio($contract_create,$balance->start,$etime);
         my $new_free_cash = $new_ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
         my $new_free_time = $new_ratio * ($profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME);
-        $cash_balance = $new_free_cash - $old_free_cash;
+        $cash_balance += $new_free_cash - $old_free_cash;
+        #$cash_balance = 0.0 if $cash_balance < 0.0;
         $free_time_balance += $new_free_time - $old_free_time;
+        #$free_time_balance = 0.0 if $free_time_balance < 0.0;
     }
     
     return [cash_balance => sprintf("%.4f",$cash_balance), free_time_balance => sprintf("%.0f",$free_time_balance)];
@@ -574,6 +628,8 @@ sub _add_interval {
     my ($from,$interval_unit,$interval_value,$align_eom_dt) = @_;
     if ('day' eq $interval_unit) {
         return $from->clone->add(days => $interval_value);
+    } elsif ('hour' eq $interval_unit) {
+        return $from->clone->add(hours => $interval_value);        
     } elsif ('week' eq $interval_unit) {
         return $from->clone->add(weeks => $interval_value);
     } elsif ('month' eq $interval_unit) {
@@ -596,15 +652,155 @@ sub get_actual_billing_mapping {
     my ($c,$schema,$contract,$now) = @params{qw/c schema contract now/};
     $schema //= $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
+    my $contract_create = $contract->create_timestamp // $contract->modify_timestamp;
     my $dtf = $schema->storage->datetime_parser;
+    $now = $contract_create if $now < $contract_create; #if there is no mapping starting with or before $now, it would returns the mapping with max(id):
     return $schema->resultset('billing_mappings_actual')->search({ contract_id => $contract->id },{bind => [ ( $dtf->format_datetime($now) ) x 2],})->first;
 }
 
+sub set_subscriber_lock_level {
+    my %params = @_;
+    my ($c,$contract,$lock_level) = @params{qw/c contract lock_level/};
+    for my $subscriber ($contract->voip_subscribers->search_rs({ 'me.status' => { '!=' => 'terminated' } })->all) {
+        NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+            c => $c,
+            prov_subscriber => $subscriber->provisioning_voip_subscriber,
+            level => $lock_level // 0,
+        ) if ($subscriber->provisioning_voip_subscriber);
+    }
+}
 
+sub underrun_lock_subscriber {
+    my %params = @_;
+    my ($c,$subscriber,$contract) = @params{qw/c subscriber contract/};
+    $contract //= $subscriber->contract;
+    my $balance = get_contract_balance(c => $c,contract => $contract);
+    my $package = $contract->profile_package;
+    my ($underrun_lock_threshold,$underrun_lock_level);
+    if (defined $contract->contact->reseller_id && $package) {
+        $underrun_lock_threshold = $package->underrun_lock_threshold;
+        $underrun_lock_level = $package->underrun_lock_level;
+    }
+    if (defined $underrun_lock_threshold && defined $underrun_lock_level && $balance->cash_balance < $underrun_lock_threshold) {
+        NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+            c => $c,
+            prov_subscriber => $subscriber->provisioning_voip_subscriber,
+            level => $underrun_lock_level,
+        ) if ($subscriber->provisioning_voip_subscriber);
+    }
+}
 
+sub underrun_update_balance {
+    my %params = @_;
+    my ($c,$balance,$new_cash_balance,$now,$schema) = @params{qw/c balance new_cash_balance now schema/};
+    $schema //= $c->model('DB');
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
+    my $contract = $balance->contract;
+    my $package = $contract->profile_package;
+    my ($underrun_lock_threshold,$underrun_profile_threshold);
+    if (defined $contract->contact->reseller_id && $package) {
+        $underrun_lock_threshold = $package->underrun_lock_threshold;
+        $underrun_profile_threshold = $package->underrun_profile_threshold;
+    }
+    if (_ENABLE_UNDERRUN_LOCK && defined $underrun_lock_threshold && $balance->cash_balance >= $underrun_lock_threshold && $new_cash_balance < $underrun_lock_threshold) {
+        if (defined $package->underrun_lock_level) {
+            set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->underrun_lock_level);
+            $balance->update({
+                underrun_lock => $now,
+            });
+            $balance->discard_changes();
+        }
+    }
+    if (_ENABLE_UNDERRUN_PROFILES && defined $underrun_profile_threshold && $balance->cash_balance >= $underrun_profile_threshold && $new_cash_balance < $underrun_profile_threshold) {
+        my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now); 
+        if (add_profile_mappings(contract => $contract, package => $package, bm_actual => $bm_actual, stime => $now, profiles => 'underrun_profiles') > 0) {
+            $balance->update({
+                underrun_profiles => $now,
+            });
+            $balance->discard_changes();
+        }
+    }
+    return $balance;
+    
+}
 
+sub add_profile_mappings {
+    my %params = @_;
+    my ($contract,$bm_actual,$package,$stime,$profiles) = @params{qw/contract bm_actual package stime profiles/};
+    if ($contract->status ne 'terminated') {
+        my $product_id = $bm_actual->billing_mappings->first->product->id;
+        my @mappings_to_create = ();
+        foreach my $mapping ($package->$profiles->all) {
+            push(@mappings_to_create,{ #assume not terminated, 
+                billing_profile_id => $mapping->profile_id,
+                network_id => $mapping->network_id,
+                product_id => $product_id,
+                start_date => $stime,
+                end_date => undef,
+            });
+        }
+        foreach my $mapping (@mappings_to_create) {
+            $contract->billing_mappings->create($mapping); 
+        }
+        return scalar @mappings_to_create;
+    }
+    return 0;
+}
 
+sub lock_contracts {
+    my %params = @_;
+    my($c,$schema,$rs,$contract_id_field,$contract_ids,$contract_id) = @params{qw/c schema rs contract_id_field contract_ids contract_id/};
 
+    $schema //= $c->model('DB');
+    
+    my %contract_id_map = ();
+    my $rs_result = undef;
+    if (defined $rs and defined $contract_id_field) {
+        #$rs = $rs->search_rs({},{
+        #        columns => [ $contract_id_field ],
+        #        distinct => 1
+        #    }
+        #);
+        $rs_result = [ $rs->all ];
+        foreach my $item (@$rs_result) {
+            $contract_id_map{$item->$contract_id_field} = 1;
+        }
+    }
+    if (defined $contract_ids) {
+        foreach my $id (@$contract_ids) {
+            $contract_id_map{$id} = 1;
+        }
+    }
+    if (defined $contract_id) {
+        $contract_id_map{$contract_id} = 1;
+    }
+    my @contract_ids_to_lock = keys %contract_id_map;
+    my ($t1,$t2) = (time,undef);
+    if (defined $contract_id && !defined $rs_result && !defined $contract_ids) {
+        $c->log->debug('contract ID to be locked: ' . $contract_id) if $c;
+        my $contract = $schema->resultset('contracts')->find({
+                id => $contract_id
+                },{for => 'update'});
+        $t2 = time;
+        $c->log->debug('contract ID ' . $contract_id . ' locked (' . ($t2 - $t1) . ' secs)') if $c;
+        return $contract;
+    } elsif ((scalar @contract_ids_to_lock) > 0) {
+        my $contract_ids_label = join(', ',sort { $a <=> $b } @contract_ids_to_lock);
+        $c->log->debug('contract IDs to be locked: ' . $contract_ids_label) if $c;
+        my @contracts = $schema->resultset('contracts')->search({
+                id => { -in => [ @contract_ids_to_lock ] }
+                },{for => 'update'})->all;
+        $t2 = time;
+        $c->log->debug('contract IDs ' . $contract_ids_label . ' locked (' . ($t2 - $t1) . ' secs)') if $c;        
+        if (defined $contract_ids || defined $contract_id) {
+            return [ @contracts ];
+        } else {
+            return $rs_result;
+        }
+    }
+    $c->log->debug('no contract IDs to be locked!') if $c;
+    return [];
+}
 
 sub check_balance_interval {
     my (%params) = @_;
@@ -727,7 +923,7 @@ sub prepare_package_profile_set {
         $mappings_counts->{count_any_network} //= 0;
     }
     
-    my $prepaid = 0;
+    my ($prepaid,$interval_free_cash,$interval_free_time) = (undef,undef,undef);
     my $mappings = delete $resource->{$field};
     foreach my $mapping (@$mappings) {
         if (ref $mapping ne 'HASH') {
@@ -751,6 +947,22 @@ sub prepare_package_profile_set {
             } else {
                 $prepaid = $profile->prepaid;
             }
+            
+            if (defined $interval_free_cash) {
+                if ($profile->interval_free_cash != $interval_free_cash) {
+                    return 0 unless &{$err_code}("Profiles are supposed to have the same interval_free_cash value (" . $profile->name . ").",$field);
+                }
+            } else {
+                $interval_free_cash = $profile->interval_free_cash;
+            }
+            if (defined $interval_free_time) {
+                if ($profile->interval_free_time != $interval_free_time) {
+                    return 0 unless &{$err_code}("Profiles are supposed to have the same interval_free_time value (" . $profile->name . ").",$field);
+                }
+            } else {
+                $interval_free_time = $profile->interval_free_time;
+            }            
+           
             my $network;
             if (defined $mapping->{network_id}) {
                 $network = $schema->resultset('billing_networks')->find($mapping->{network_id});

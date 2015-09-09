@@ -112,14 +112,15 @@ sub GET :Allow {
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $contracts = $self->item_rs($c)->search_rs(undef,{
-                for => 'update',
-            });
-        (my $total_count, $contracts) = $self->paginate_order_collection($c, $contracts);
         my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $contracts_rs = $self->item_rs($c,0,$now);
+        (my $total_count, $contracts_rs) = $self->paginate_order_collection($c, $contracts_rs);
+        my $contracts = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
+            rs => $contracts_rs,
+            contract_id_field => 'id');
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $contract ($contracts->all) {
+        for my $contract (@$contracts) {
             my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $contract,
                 now => $now);

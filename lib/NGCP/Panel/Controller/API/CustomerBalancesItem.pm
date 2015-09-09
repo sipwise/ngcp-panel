@@ -108,14 +108,15 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $item = $self->item_by_id($c, $id);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $item = $self->item_by_id($c, $id, $now);
         last unless $self->resource_exists($c, customerbalance => $item);
         my $old_resource = { $item->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form, $now);
         last unless $item;
         
         my $hal = $self->hal_from_item($c, $item, $form);
@@ -148,7 +149,8 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $item = $self->item_by_id($c, $id);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $item = $self->item_by_id($c, $id, $now);
         last unless $self->resource_exists($c, customerbalance => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
@@ -159,7 +161,7 @@ sub PUT :Allow {
         my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form, $now);
         last unless $item;
 
         my $hal = $self->hal_from_item($c, $item, $form);
