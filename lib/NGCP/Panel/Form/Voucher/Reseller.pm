@@ -57,7 +57,7 @@ has_field 'package' => (
     #validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The profile package the customer will switch with the top-up.']
+        title => ['The profile package the customer will switch to.']
     },
 );
 

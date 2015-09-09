@@ -15,6 +15,7 @@ has_field 'value' => (
 has_field 'unit' => (
     type => 'Select',
     options => [
+        { value => 'hour', label => 'hour(s)' },
         { value => 'day', label => 'day(s)' },
         { value => 'week', label => 'week(s)' },
         { value => 'month', label => 'month(s)' },

@@ -98,61 +98,31 @@ sub POST :Allow {
             form => $form,
             exceptions => [qw/subscriber_id/],
         );
-        #my $reseller_id;
-        #if($c->user->roles eq "admin") {
-        #} elsif($c->user->roles eq "reseller") {
-        #    $reseller_id = $c->user->reseller_id;
-        #}
 
-        my $code = NGCP::Panel::Utils::Voucher::encrypt_code($c, $resource->{code});
+
         my $now = NGCP::Panel::Utils::DateTime::current_local;
-        my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($resource->{subscriber_id});
-        unless($subscriber) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Unknown subscriber_id.');
-            last;
-        }
-        my $customer = $subscriber->contract;
-        unless($customer->status eq 'active') {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Customer contract is not active.');
-            last;
-        }
-        unless($customer->contact->reseller) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Contract is not a customer contract.');
-            last;
-        }
-
-        my $voucher = $c->model('DB')->resultset('vouchers')->find({
-            code => $code,
-            used_by_subscriber_id => undef,
-            valid_until => { '<=' => $now },
-            reseller_id => $customer->contact->reseller_id,
-        },{
-            for => 'update',
-        });
-        unless($voucher) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid voucher code or already used.');
-            last;                
-        }
-        if($voucher->customer_id && $customer->id != $voucher->customer_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Voucher is reserved for a different customer.');
-            last;                 
-        }        
-        unless($voucher->reseller_id == $customer->contact->reseller_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Voucher belongs to another reseller.');
-            last;                 
-        }
-        # TODO: add and check billing.vouchers.active flag for internal/emergency use
-        
+        my $entities = {};
+        last unless NGCP::Panel::Utils::Voucher::check_topup(c => $c,
+                    now => $now,
+                    subscriber_id => $resource->{subscriber_id},
+                    plain_code => $resource->{code},
+                    entities => $entities,
+                    err_code => sub {
+                        my ($err) = @_;
+                        #$c->log->error($err);
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+                        },
+                    );
+       
         try {
             my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
-                contract => $customer,
-                #old_package => $customer->profile_package,
-                voucher => $voucher,
+                contract => $entities->{contract},
+                voucher => $entities->{voucher},
                 now => $now,
             );
 
-            $voucher->update({
-                used_by_subscriber_id => $subscriber->id,
+            $entities->{voucher}->update({
+                used_by_subscriber_id => $resource->{subscriber_id},
                 used_at => $now,
             });
         } catch($e) {
