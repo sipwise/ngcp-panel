@@ -167,6 +167,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 
                 my $mappings_to_create = [];
                 my $delete_mappings = 0;
+                my $set_package = ($form->values->{billing_profile_definition} // 'id') eq 'package';
                 NGCP::Panel::Utils::Contract::prepare_billing_mappings(
                     c => $c,
                     resource => $form->values,
@@ -188,7 +189,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     $contract->billing_mappings->create($mapping); 
                 }
                 $contract = $c->stash->{contract_rs}->first;
-                #$billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
                 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
@@ -199,8 +199,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     old_package => $old_package,
                     balance => $balance,
                     now => $now,
+                    profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
                     );
-
+                #$billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+                
                 if ($is_peering_reseller &&
                     defined $contract->contact->reseller_id) {
                     die( ["Cannot use this contact for peering or reseller contracts.", "showdetails"] );
@@ -371,9 +373,10 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                         '+as' => 'bmid',
                     })->first;                
                 
-                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
+                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(c => $c,
                     contract => $contract,
-                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);  
+                    #bm_actual => $contract->billing_mappings->find($contract->get_column('bmid')),
+                );
                 #NGCP::Panel::Utils::Contract::create_contract_balance(
                 #    c => $c,
                 #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
@@ -519,9 +522,10 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                         '+as' => 'bmid',
                     })->first;                 
                 
-                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
+                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(c => $c,
                     contract => $contract,
-                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);  
+                    #bm_actual => $contract->billing_mappings->find($contract->get_column('bmid')),
+                );
                 #NGCP::Panel::Utils::Contract::create_contract_balance(
                 #    c => $c,
                 #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
