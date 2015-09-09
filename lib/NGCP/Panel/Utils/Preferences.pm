@@ -877,6 +877,37 @@ sub is_peer_auth_active {
     return;
 }
 
+sub set_provisoning_voip_subscriber_first_int_attr_value {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $prov_subscriber= $params{prov_subscriber};
+    my $new_value = $params{value};
+    my $attribute = $params{attribute};
+
+    return unless $prov_subscriber;
+
+    my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, 
+        prov_subscriber => $prov_subscriber, 
+        attribute => $attribute,
+    );
+    try {
+        if($rs->first) {
+            if($new_value == 0) {
+                $rs->first->delete;
+            } else {
+                $rs->first->update({ value => $new_value });
+            }
+        } elsif($new_value > 0) {
+            $rs->create({ value => $new_value });
+        } # nothing to do for level 0, if no lock is set yet
+    } catch($e) {
+        $c->log->error("failed to set provisioning_voip_subscriber $attribute: $e");
+        $e->rethrow;
+    }
+}
+
 1;
 
 =head1 NAME

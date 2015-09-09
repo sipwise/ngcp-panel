@@ -19,6 +19,7 @@ use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::Hylafax;
 use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::CCMapEntries;
@@ -155,6 +156,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
     if($form->validated) {
         my $schema = $c->model('DB');
         try {
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 my $preferences = {};
                 my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
@@ -182,6 +184,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     admin_default => 0,
                     preferences => $preferences,
                 );
+                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
 
                 delete $c->session->{created_objects}->{reseller};
                 delete $c->session->{created_objects}->{contract};
@@ -1999,6 +2002,23 @@ sub load_preference_list :Private {
 
     my $reseller_id = $c->stash->{subscriber}->contract->contact->reseller_id;
 
+    try {
+        my $schema = $c->model('DB');
+        $schema->set_transaction_isolation('READ COMMITTED');
+        $schema->txn_do(sub {
+            NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $c->stash->{subscriber});
+        });
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            type  => 'internal',
+            desc  => $c->loc('Failed to check and apply underrun subscriber lock level'),
+        );
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+    
     my $usr_pref_values = $c->model('DB')
         ->resultset('voip_preferences')
         ->search({

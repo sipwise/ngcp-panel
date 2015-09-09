@@ -267,6 +267,12 @@ my @allprofiles = ();
     $res = $ua->request($req);
     is($res->code, 422, "check patched invalid reseller");
 
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/prepaid', value => 1 } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "check patched prepaid");
+    
     # TODO: invalid handle etc
     
     $req->content(JSON::to_json(

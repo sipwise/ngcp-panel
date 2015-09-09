@@ -15,6 +15,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Form::Contract::CustomerAPI qw();
 
 sub item_rs {
@@ -168,6 +169,7 @@ sub update_customer {
     
     my $mappings_to_create = [];
     my $delete_mappings = 0;
+    my $set_package = ($resource->{billing_profile_definition} // 'id') eq 'package';
     return unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
         c => $c,
         resource => $resource,
@@ -258,8 +260,6 @@ sub update_customer {
             $customer->billing_mappings->create($mapping); 
         }
         $customer = $self->customer_by_id($c, $customer->id, $now);
-        $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-        $billing_profile = $billing_mapping->billing_profile;
         
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $customer,
@@ -270,7 +270,11 @@ sub update_customer {
             old_package => $old_package,
             balance => $balance,
             now => $now,
+            profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
             );
+
+        $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+        $billing_profile = $billing_mapping->billing_profile;            
         
         if(($customer->external_id // '') ne $old_ext_id) {
             foreach my $sub($customer->voip_subscribers->all) {
@@ -294,32 +298,13 @@ sub update_customer {
                 contract => $customer,
             );
         }
-    
-        if($billing_profile) { # check prepaid change if billing profile changed
-            if($old_resource->{prepaid} && !$billing_profile->prepaid) {
-                foreach my $sub($customer->voip_subscribers->all) {
-                    my $prov_sub = $sub->provisioning_voip_subscriber;
-                    next unless($prov_sub);
-                    my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                        c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
-                    if($pref->first) {
-                        $pref->first->delete;
-                    }
-                }
-            } elsif(!$old_resource->{prepaid} && $billing_profile->prepaid) {
-                foreach my $sub($customer->voip_subscribers->all) {
-                    my $prov_sub = $sub->provisioning_voip_subscriber;
-                    next unless($prov_sub);
-                    my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                        c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
-                    if($pref->first) {
-                        $pref->first->update({ value => 1 });
-                    } else {
-                        $pref->create({ value => 1 });
-                    }
-                }
-            }
-        }
+        
+        NGCP::Panel::Utils::Subscriber::switch_prepaid(c => $c,
+            #old_prepaid => $old_resource->{prepaid},
+            #new_prepaid => $billing_profile->prepaid,
+            prepaid => $billing_profile->prepaid,
+            contract => $customer,
+        );        
     
         # TODO: what about changed product, do we allow it?
     } catch($e) {
