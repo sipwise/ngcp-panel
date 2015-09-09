@@ -10,6 +10,7 @@ use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use UUID;
@@ -289,6 +290,7 @@ sub POST :Allow {
     my ($self, $c) = @_;
 
     my $schema = $c->model('DB');
+    $schema->set_transaction_isolation('READ COMMITTED');
     my $guard = $schema->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
@@ -326,6 +328,8 @@ sub POST :Allow {
                     prov_subscriber => $subscriber->provisioning_voip_subscriber,
                     level => $resource->{lock} || 4,
                 );
+            } else {
+                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
             }
             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                 c              => $c,

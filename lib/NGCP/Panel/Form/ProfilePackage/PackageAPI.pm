@@ -68,6 +68,7 @@ has_field 'initial_profiles.network_id' => (
 has_field 'balance_interval_unit' => (
     type => 'Select',
     options => [
+        { value => 'hour', label => 'hour' },
         { value => 'day', label => 'day' },
         { value => 'week', label => 'week' },
         { value => 'month', label => 'month' },
@@ -117,6 +118,7 @@ has_field 'carry_over_mode' => (
 has_field 'timely_duration_unit' => (
     type => 'Select',
     options => [
+        { value => 'hour', label => 'hour' },
         { value => 'day', label => 'day' },
         { value => 'week', label => 'week' },
         { value => 'month', label => 'month' },
@@ -153,11 +155,21 @@ has_field 'underrun_lock_threshold' => (
 );
 
 has_field 'underrun_lock_level' => (
-    type => '+NGCP::Panel::Field::SubscriberLockSelect',
+    type => 'Select',
+    options => [
+        { value => '', label => 'don\'t change' },
+        { value => '0', label => 'no lock' },
+        { value => '1', label => 'foreign' },
+        { value => '2', label => 'outgoing' },
+        { value => '3', label => 'all calls' },
+        { value => '4', label => 'global' },
+    ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['The lock level to set the customer\'s subscribers to in case the balance underruns "underrun_lock_threshold".']
+        title => ['The lock level to set all customer\'s subscribers to in case the balance underruns "underrun_lock_threshold".']
     },
+    deflate_value_method => \&_deflate_lock_level,
+    inflate_default_method => \&_deflate_lock_level,    
 );
 
 has_field 'underrun_profile_threshold' => (
@@ -191,11 +203,21 @@ has_field 'underrun_profiles.network_id' => (
 
 
 has_field 'topup_lock_level' => (
-    type => '+NGCP::Panel::Field::SubscriberLockSelect',
+    type => 'Select',
+    options => [
+        { value => '', label => 'don\'t change' },
+        { value => '0', label => 'no lock (unlock)' },
+        { value => '1', label => 'foreign' },
+        { value => '2', label => 'outgoing' },
+        { value => '3', label => 'all calls' },
+        { value => '4', label => 'global' },
+    ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['The lock level to reset the customer\'s subscribers to after a successful top-up (usually null).']
+        title => ['The lock level to reset all customer\'s subscribers to after a successful top-up (usually 0).']
     },
+    deflate_value_method => \&_deflate_lock_level,
+    inflate_default_method => \&_deflate_lock_level,    
 );
 
 has_field 'service_charge' => (
@@ -226,5 +248,20 @@ has_field 'topup_profiles.network_id' => (
     required => 0,
     label => 'Optional billing network id',
 );
+
+sub _deflate_lock_level {
+    my ($self,$value) = @_;
+    if (defined $value and length($value) == 0) {
+        return undef;
+    }
+    return $value;
+}
+sub _inflate_lock_level {
+    my ($self,$value) = @_;
+    if (!defined $value) {
+        return '';
+    }
+    return $value;
+}
 
 1;

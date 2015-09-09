@@ -24,7 +24,7 @@ my $enable_journal_tests = 1;
 use Config::General;
 my $catalyst_config;
 if ($is_local_env) {
-    $catalyst_config = Config::General->new("../ngcp_panel.conf");
+    $catalyst_config = Config::General->new("../../ngcp_panel.conf");
 } else {
     #taken 1:1 from /lib/NGCP/Panel.pm
     my $panel_config;
