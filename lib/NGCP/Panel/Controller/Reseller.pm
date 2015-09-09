@@ -459,7 +459,8 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             });
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(c => $c,
                 contract => $r{contracts},
-                profile => $r{billing_mappings}->find($r{contracts}->get_column('bmid'))->billing_profile,); 			
+                #bm_actual => $r{billing_mappings}->find($r{contracts}->get_column('bmid')),
+            );
             #NGCP::Panel::Utils::Contract::create_contract_balance(
             #    c => $c,
             #    profile => $r{billing_mappings}->find($r{contracts}->get_column('bmid'))->billing_profile, #$r{billing_mappings}->billing_profile,

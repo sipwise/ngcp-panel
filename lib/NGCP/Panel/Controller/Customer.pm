@@ -17,6 +17,8 @@ use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
 use NGCP::Panel::Form::Contract::Customer;
 use NGCP::Panel::Form::Contract::ProductSelect;
+use NGCP::Panel::Form::Topup::Cash;
+use NGCP::Panel::Form::Topup::Voucher;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -25,6 +27,7 @@ use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::DeviceBootstrap;
+use NGCP::Panel::Utils::Voucher;
 use Template;
 
 =head1 NAME
@@ -206,9 +209,10 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                         '+as' => 'bmid',
                     })->first;
 
-                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
+                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(c => $c,
                     contract => $contract,
-                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);                    
+                    #bm_actual => $contract->billing_mappings->find($contract->get_column('bmid')),
+                );
                 #NGCP::Panel::Utils::Contract::create_contract_balance(
                 #    c => $c,
                 #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
@@ -306,26 +310,6 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         $c->response->redirect($c->uri_for());
         return;      
     }
-    #my $stime = $now->clone->truncate(to => 'month');
-    #my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);    
-    #my $balance;
-    #try {
-    #    $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
-    #                c => $c,
-    #                profile => $billing_mapping->billing_profile,
-    #                contract => $contract_rs->first,
-    #                stime => $stime,
-    #                etime => $etime
-    #    );
-    #} catch($e) {
-    #    NGCP::Panel::Utils::Message->error(
-    #        c => $c,
-    #        error => $e,
-    #        desc  => $c->loc('Failed to get contract balance.'),
-    #    );
-    #    $c->response->redirect($c->uri_for());
-    #    return;
-    #}
 
     my $product_id = $contract_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message->error(
@@ -487,6 +471,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 }
                 my $mappings_to_create = [];
                 my $delete_mappings = 0;
+                my $set_package = ($form->values->{billing_profile_definition} // 'id') eq 'package';
                 NGCP::Panel::Utils::Contract::prepare_billing_mappings(
                     c => $c,
                     resource => $form->values,
@@ -511,8 +496,6 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     $contract->billing_mappings->create($mapping); 
                 }
                 $contract = $c->stash->{contract_rs}->first;
-                $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-                $billing_profile = $billing_mapping->billing_profile;
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
@@ -523,7 +506,11 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     old_package => $old_package,
                     balance => $balance,
                     now => $now,
+                    profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
                     );
+
+                $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+                $billing_profile = $billing_mapping->billing_profile;
                 
                 my $new_ext_id = $contract->external_id // '';
 
@@ -547,32 +534,11 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     }
                 }
 
-                # TODO: remove this once the libswrate and rate-o-mat fetch the actual prepaid falg themselves
-                if($billing_profile) { # check prepaid change if billing profile changed
-                    if($old_prepaid && !$billing_profile->prepaid) {
-                        foreach my $sub($contract->voip_subscribers->all) {
-                            my $prov_sub = $sub->provisioning_voip_subscriber;
-                            next unless($prov_sub);
-                            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
-                            if($pref->first) {
-                                $pref->first->delete;
-                            }
-                        }
-                    } elsif(!$old_prepaid && $billing_profile->prepaid) {
-                        foreach my $sub($contract->voip_subscribers->all) {
-                            my $prov_sub = $sub->provisioning_voip_subscriber;
-                            next unless($prov_sub);
-                            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
-                            if($pref->first) {
-                                $pref->first->update({ value => 1 });
-                            } else {
-                                $pref->create({ value => 1 });
-                            }
-                        }
-                    }
-                }
+                NGCP::Panel::Utils::Subscriber::switch_prepaid(c => $c,
+                    old_prepaid => $old_prepaid,
+                    new_prepaid => $billing_profile->prepaid,
+                    contract => $contract,
+                );
                 
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{network};
@@ -741,6 +707,7 @@ sub subscriber_create :Chained('base_restricted') :PathPart('subscriber/create')
         my $billing_subscriber;
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 my $preferences = {};
                 my $pbx_group_ids = [];
@@ -801,6 +768,7 @@ sub subscriber_create :Chained('base_restricted') :PathPart('subscriber/create')
                     admin_default => 0,
                     preferences => $preferences,
                 );
+                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
 
                 if($pbx && !$pbxadmin && $form->value->{alias_select}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
@@ -963,6 +931,10 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
                 $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                             contract => $contract,
                             now => $now);
+                $balance = NGCP::Panel::Utils::ProfilePackages::underrun_update_balance(c => $c,
+                    balance =>$balance,
+                    now => $now,
+                    new_cash_balance => $form->values->{cash_balance} );                
                 $balance->update($form->values); 
             });
             NGCP::Panel::Utils::Message->info(
@@ -985,6 +957,149 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
 }
+
+sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $contract = $c->stash->{contract};
+    my $now = $c->stash->{now};
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Topup::Cash->new;
+    my $params = {};
+
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'package.create'  => $c->uri_for('/package/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
+            $schema->txn_do(sub {
+                
+                my $entities = {};
+                NGCP::Panel::Utils::Voucher::check_topup(c => $c,
+                    now => $now,
+                    contract => $contract,
+                    package_id => $form->values->{package}{id},
+                    entities => $entities,
+                    err_code => sub {
+                        my ($err) = @_;
+                        die($err);
+                        },
+                    );
+                
+                my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
+                    contract => $contract,
+                    package => $entities->{package},
+                    #old_package => $customer->profile_package,
+                    amount => $form->values->{amount},
+                    now => $now,
+                );
+                
+                delete $c->session->{created_objects}->{package};
+            });
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc => $c->loc('Top-up using cash performed successfully!'),
+            );
+        }
+        catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to top-up using cash!'),
+            );
+        }
+        $c->response->redirect($c->uri_for_action("/customer/details", [$contract->id]));
+        return;
+    }
+
+    $c->stash(close_target => $c->uri_for_action("/customer/details", [$contract->id]));
+    $c->stash(form => $form);
+    $c->stash(edit_flag => 1);
+}
+
+sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $contract = $c->stash->{contract};
+    my $now = $c->stash->{now};
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Topup::Voucher->new;
+    my $params = {};
+
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
+            $schema->txn_do(sub {
+                
+                my $entities = {};
+                NGCP::Panel::Utils::Voucher::check_topup(c => $c,
+                    now => $now,
+                    contract => $contract,
+                    voucher_id => $form->values->{voucher}{id},
+                    entities => $entities,
+                    err_code => sub {
+                        my ($err) = @_;
+                        die($err);
+                        },
+                    );
+                
+                my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
+                    contract => $contract,
+                    voucher => $entities->{voucher},
+                    now => $now,
+                );
+                
+                $entities->{voucher}->update({
+                    #used_by_subscriber_id => $resource->{subscriber_id},
+                    used_at => $now,
+                });                
+                
+            });
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc => $c->loc('Top-up using voucher performed successfully!'),
+            );
+        }
+        catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to top-up using voucher!'),
+            );
+        }
+        $c->response->redirect($c->uri_for_action("/customer/details", [$contract->id]));
+        return;
+    }
+
+    $c->stash(close_target => $c->uri_for_action("/customer/details", [$contract->id]));
+    $c->stash(form => $form);
+    $c->stash(edit_flag => 1);
+}
+
 sub subscriber_ajax :Chained('base') :PathPart('subscriber/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $res = $c->stash->{contract}->voip_subscribers->search({
@@ -1076,6 +1191,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do( sub {
                 my $preferences = {};
                 my $pilot = $c->stash->{pilot};
@@ -1107,6 +1223,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                     admin_default => 0,
                     preferences => $preferences,
                 );
+                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
                 NGCP::Panel::Utils::Events::insert(
                     c => $c, schema => $schema, type => 'start_huntgroup',
                     subscriber => $billing_subscriber, old_status => undef, 

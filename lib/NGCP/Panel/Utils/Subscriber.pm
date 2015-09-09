@@ -127,6 +127,47 @@ sub lock_provisoning_voip_subscriber {
     }
 }
 
+sub switch_prepaid {
+    my %params = @_;
+    my ($c,$old_prepaid,$new_prepaid,$contract) = @params{qw/c old_prepaid billing_profile contract/};
+
+    # TODO: remove this once the libswrate and rate-o-mat fetch the actual prepaid falg themselves
+    
+    my $changed = 0;
+
+    #if($billing_profile) { # check prepaid change if billing profile changed
+        if($old_prepaid && !$new_prepaid) {
+            foreach my $sub($contract->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($prov_sub);
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                if($pref->first) {
+                    $pref->first->delete;
+                    $changed++;
+                }
+            }
+        } elsif(!$old_prepaid && $new_prepaid) {
+            foreach my $sub($contract->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($prov_sub);
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                if($pref->first) {
+                    $pref->first->update({ value => 1 });
+                    $changed++;
+                } else {
+                    $pref->create({ value => 1 });
+                    $changed++;
+                }
+            }
+        }
+    #}
+    
+    return $changed;
+    
+}
+
 sub get_lock_string {
     my $level = shift;
     return $LOCK{$level};

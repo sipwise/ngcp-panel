@@ -5,7 +5,7 @@ use warnings;
 use Text::CSV_XS;
 use IO::String;
 use NGCP::Schema;
-
+use NGCP::Panel::Utils::Preferences qw();
 
 sub process_billing_fees{
     my(%params) = @_;
@@ -184,6 +184,62 @@ sub clone_billing_profile_tackles{
         my ($storage, $dbh) = @_;
         $dbh->do("call billing.fill_billing_fees(?)", undef, $profile_new->id );
     });
+}
+
+sub switch_prepaid {
+    my %params = @_;
+    my ($c,$profile_id,$old_prepaid,$new_prepaid,$contract_rs) = @params{qw/c profile_id old_prepaid new_prepaid contract_rs/};
+
+    my $changed = 0;
+    
+    my $schema //= $c->model('DB');
+    # if prepaid flag changed, update all subscribers for customers
+    # who currently have the billing profile active
+    my $rs = $schema->resultset('billing_mappings')->search({
+        billing_profile_id => $profile_id,
+    });    
+    
+    if($old_prepaid && !$new_prepaid) {
+        foreach my $mapping ($rs->all) {
+            my $contract = $mapping->contract;
+            next unless($contract->contact->reseller_id); # skip non-customers
+            my $chosen_contract = $contract_rs->find({id => $contract->id});
+            next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $mapping->id ); # is not current mapping
+            foreach my $sub($contract->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($sub->provisioning_voip_subscriber);
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                if($pref->first) {
+                    $pref->first->delete;
+                    $changed++;
+                }
+            }
+        }
+    } elsif(!$old_prepaid && $new_prepaid) {
+        foreach my $mapping ($rs->all) {
+            my $contract = $mapping->contract;
+            next unless($contract->contact->reseller_id); # skip non-customers
+            my $chosen_contract = $contract_rs->find({id => $contract->id});
+            next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $mapping->id ); # is not current mapping
+            foreach my $sub($contract->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($prov_sub);
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                if($pref->first) {
+                    $pref->first->update({ value => 1 });
+                    $changed++;
+                } else {
+                    $pref->create({ value => 1 });
+                    $changed++;
+                }
+            }
+        }
+    }
+    
+    return $changed;
+    
 }
 
 sub get_contract_count_stmt {

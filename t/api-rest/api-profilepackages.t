@@ -78,6 +78,57 @@ $res = $ua->request($req);
 is($res->code, 200, "fetch POSTed billing profile");
 my $billingprofile = JSON::from_json($res->decoded_content);
 
+$req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->header('Prefer' => 'return=representation');
+$req->content(JSON::to_json({
+    name => "test prepaid $t",
+    handle  => "testprepaid$t",
+    reseller_id => $default_reseller_id,
+    prepaid => 1,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test prepaid billing profile");
+$billingprofile_uri = $uri.'/'.$res->header('Location');
+$req = HTTP::Request->new('GET', $billingprofile_uri);
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed prepaid billing profile");
+my $prepaid_billingprofile = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->header('Prefer' => 'return=representation');
+$req->content(JSON::to_json({
+    name => "test free cash $t",
+    handle  => "testfreecash$t",
+    reseller_id => $default_reseller_id,
+    interval_free_cash => 100
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test free cash billing profile");
+$billingprofile_uri = $uri.'/'.$res->header('Location');
+$req = HTTP::Request->new('GET', $billingprofile_uri);
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed free cash billing profile");
+my $free_cash_billingprofile = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->header('Prefer' => 'return=representation');
+$req->content(JSON::to_json({
+    name => "test free time $t",
+    handle  => "testfreetime$t",
+    reseller_id => $default_reseller_id,
+    interval_free_time => 100
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test free time billing profile");
+$billingprofile_uri = $uri.'/'.$res->header('Location');
+$req = HTTP::Request->new('GET', $billingprofile_uri);
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed free time billing profile");
+my $free_time_billingprofile = JSON::from_json($res->decoded_content);
+
 $req = HTTP::Request->new('POST', $uri.'/api/billingnetworks/');
 $req->header('Content-Type' => 'application/json');
 $req->header('Prefer' => 'return=representation');
@@ -96,6 +147,8 @@ $req = HTTP::Request->new('GET', $billingnetwork_uri);
 $res = $ua->request($req);
 is($res->code, 200, "fetch POSTed billingnetwork");
 my $billingnetwork = JSON::from_json($res->decoded_content);
+
+my %package_map = ();
 
 if ($enable_profile_packages) {
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
@@ -159,7 +212,7 @@ if ($enable_profile_packages) {
     my @profile_packages = ();
     
     for (my $i = 1; $i <= 3; $i++) {
-        push(@profile_packages,_post_profile_package($i));
+        push(@profile_packages,_post_profile_package());
     }
     
     $req = HTTP::Request->new('GET', $uri.'/api/profilepackages/?page=1&rows=5&network_name='.URI::Escape::uri_escape('%')."network $t");
@@ -168,13 +221,63 @@ if ($enable_profile_packages) {
     my $collection = JSON::from_json($res->decoded_content);
     is_deeply($collection->{_embedded}->{'ngcp:profilepackages'},[ map { $_->{get}; } @profile_packages ],"compare filtered collection deeply");
 
+    ok(_post_profile_package(initial_profiles => [{ profile_id => $prepaid_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /mixing prepaid/i, "check if mixing prepaid initial profiles is prohibited");
+    ok(_post_profile_package(underrun_profiles => [{ profile_id => $prepaid_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /mixing prepaid/i, "check if mixing prepaid underrun profiles is prohibited");
+    ok(_post_profile_package(topup_profiles => [{ profile_id => $prepaid_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /mixing prepaid/i, "check if mixing prepaid topup profiles is prohibited");    
+
+    ok('HASH' eq ref _post_profile_package(topup_profiles => [{ profile_id => $billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],
+                             initial_profiles => [{ profile_id => $prepaid_billingprofile->{id}, network_id => undef },
+                             { profile_id => $prepaid_billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       , "check if creating a package with mixed prepaid profile sets was ok");
+
+    ok(_post_profile_package(initial_profiles => [{ profile_id => $free_cash_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /the same interval_free_cash/i, "check if mixing free cash initial profiles is prohibited");
+    ok(_post_profile_package(underrun_profiles => [{ profile_id => $free_cash_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /the same interval_free_cash/i, "check if mixing free cash underrun profiles is prohibited");
+    ok(_post_profile_package(topup_profiles => [{ profile_id => $free_cash_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /the same interval_free_cash/i, "check if mixing free cash topup profiles is prohibited");    
+
+    ok('HASH' eq ref _post_profile_package(topup_profiles => [{ profile_id => $billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],
+                             initial_profiles => [{ profile_id => $free_cash_billingprofile->{id}, network_id => undef },
+                             { profile_id => $free_cash_billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       , "check if creating a package with mixed free cash profile sets was ok");
+
+    ok(_post_profile_package(initial_profiles => [{ profile_id => $free_time_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /the same interval_free_time/i, "check if mixing free time initial profiles is prohibited");
+    ok(_post_profile_package(underrun_profiles => [{ profile_id => $free_time_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /the same interval_free_time/i, "check if mixing free time underrun profiles is prohibited");
+    ok(_post_profile_package(topup_profiles => [{ profile_id => $free_time_billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       =~ /the same interval_free_time/i, "check if mixing free time topup profiles is prohibited");    
+
+    ok('HASH' eq ref _post_profile_package(topup_profiles => [{ profile_id => $billingprofile->{id}, network_id => undef },
+                             { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],
+                             initial_profiles => [{ profile_id => $free_time_billingprofile->{id}, network_id => undef },
+                             { profile_id => $free_time_billingprofile->{id}, network_id => $billingnetwork->{id}}],)
+       , "check if creating a package with mixed free time profile sets was ok");
+    
 }
 
 done_testing;
 
 sub _post_profile_package {
 
-    my ($i) = @_;
+    my (@further_opts) = @_;
+    
+    my $i = 1 + scalar keys %package_map;
 
     my %test_data = (post => {
         name => "test profile package ".$i . ' ' . $t,
@@ -198,22 +301,29 @@ sub _post_profile_package {
         underrun_lock_level => 4,
         topup_profiles => [ { profile_id => $billingprofile->{id}, network_id => undef } ],
         topup_lock_level => undef,
+        @further_opts,
     });
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json($test_data{post}));
     $res = $ua->request($req);
-    is($res->code, 201, "create test profile package " . $i);
-    $test_data{uri} = $uri.'/'.$res->header('Location');
-    $req = HTTP::Request->new('GET', $test_data{uri});
-    $res = $ua->request($req);
-    is($res->code, 200, "fetch test profile package " . $i);
-    my $get = JSON::from_json($res->decoded_content);
-    $test_data{get} = Storable::dclone($get);
-    delete $get->{id};
-    delete $get->{_links};
-    is_deeply($get,$test_data{post}, "check created profile package $i deeply");
-    return \%test_data;
+    if ($res->code == 201) {
+        is($res->code, 201, "create test profile package " . $i);
+        $test_data{uri} = $uri.'/'.$res->header('Location');
+        $req = HTTP::Request->new('GET', $test_data{uri});
+        $res = $ua->request($req);
+        is($res->code, 200, "fetch test profile package " . $i);
+        my $get = JSON::from_json($res->decoded_content);
+        $package_map{$get->{id}} = $get;
+        $test_data{get} = Storable::dclone($get);
+        delete $get->{id};
+        delete $get->{_links};
+        is_deeply($get,$test_data{post}, "check created profile package $i deeply");
+        return \%test_data;
+    } else {
+        my $get = JSON::from_json($res->decoded_content);
+        return $get->{message};
+    }
 
 }
