@@ -2,6 +2,7 @@ package NGCP::Panel::Form::ProfilePackage::Reseller;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
+use Storable qw();
 extends 'HTML::FormHandler';
 
 with 'NGCP::Panel::Render::RepeatableJs';
@@ -161,12 +162,22 @@ has_field 'underrun_lock_threshold' => (
 );
 
 has_field 'underrun_lock_level' => (
-    type => '+NGCP::Panel::Field::SubscriberLockSelect',
+    type => 'Select',
+    options => [
+        { value => '', label => 'don\'t change' },
+        { value => '0', label => 'no lock' },
+        { value => '1', label => 'foreign' },
+        { value => '2', label => 'outgoing' },
+        { value => '3', label => 'all calls' },
+        { value => '4', label => 'global' },
+    ],
     label => 'Underrun lock level', 
     element_attr => {
         rel => ['tooltip'],
-        title => ['The lock level to set the customer\'s subscribers to in case the balance underruns "underrun_lock_threshold".']
+        title => ['The lock level to set all customer\'s subscribers to in case the balance underruns "underrun_lock_threshold".']
     },
+    deflate_value_method => \&_deflate_lock_level,
+    inflate_default_method => \&_deflate_lock_level,    
 );
 
 has_field 'underrun_profile_threshold' => (
@@ -220,12 +231,22 @@ has_field 'underrun_profiles_add' => (
 );
 
 has_field 'topup_lock_level' => (
-    type => '+NGCP::Panel::Field::SubscriberLockSelect',
+    type => 'Select',
+    options => [
+        { value => '', label => 'don\'t change' },
+        { value => '0', label => 'no lock (unlock)' },
+        { value => '1', label => 'foreign' },
+        { value => '2', label => 'outgoing' },
+        { value => '3', label => 'all calls' },
+        { value => '4', label => 'global' },
+    ],
     label => 'Top-up lock level',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The lock level to reset the customer\'s subscribers to after a successful top-up (usually \'none\').']
+        title => ['The lock level to reset all customer\'s subscribers to after a successful top-up (usually \'no lock (unlock)\').']
     },
+    deflate_value_method => \&_deflate_lock_level,
+    inflate_default_method => \&_deflate_lock_level,
 );
 
 has_field 'service_charge' => (
@@ -316,6 +337,21 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub _deflate_lock_level {
+    my ($self,$value) = @_;
+    if (defined $value and length($value) == 0) {
+        return undef;
+    }
+    return $value;
+}
+sub _inflate_lock_level {
+    my ($self,$value) = @_;
+    if (!defined $value) {
+        return '';
+    }
+    return $value;
+}
 
 sub _deflate_mappings {
     my ($self,$value) = @_;

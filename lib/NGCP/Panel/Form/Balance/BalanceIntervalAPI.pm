@@ -109,6 +109,24 @@ has_field 'timely_topup_count' => (
     },
 );
 
+has_field 'underrun_profiles' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) when the cash balance underran the profile package\'s underrun_profile_threshold and underrun profiles were applied.']
+    },
+);
+
+has_field 'underrun_lock' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) when the cash balance underran the profile package\'s underrun_lock_threshold and subscribers\' lock levels were set.']
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
