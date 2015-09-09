@@ -5,7 +5,7 @@ use warnings;
 use Text::CSV_XS;
 use IO::String;
 use NGCP::Schema;
-
+use NGCP::Panel::Utils::Preferences qw();
 
 sub process_billing_fees{
     my(%params) = @_;
@@ -184,6 +184,42 @@ sub clone_billing_profile_tackles{
         my ($storage, $dbh) = @_;
         $dbh->do("call billing.fill_billing_fees(?)", undef, $profile_new->id );
     });
+}
+
+sub switch_prepaid {
+    my %params = @_;
+    my ($c,$profile_id,$old_prepaid,$new_prepaid,$contract_rs) = @params{qw/c profile_id old_prepaid new_prepaid contract_rs/};
+
+    my $schema //= $c->model('DB');
+    # if prepaid flag changed, update all subscribers for customers
+    # who currently have the billing profile active
+    my $rs = $schema->resultset('billing_mappings')->search({
+        billing_profile_id => $profile_id,
+    });
+    
+    if($old_prepaid && !$new_prepaid ||
+       !$old_prepaid && $new_prepaid) {
+       
+        #this will taking too long, prohibit it: 
+        #die("changing the prepaid flag is not allowed");
+        
+        foreach my $mapping ($rs->all) {
+            my $contract = $mapping->contract;
+            next unless($contract->contact->reseller_id); # skip non-customers
+            my $chosen_contract = $contract_rs->find({id => $contract->id});
+            next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $mapping->id ); # is not current mapping
+            foreach my $sub($contract->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($sub->provisioning_voip_subscriber);
+                NGCP::Panel::Utils::Preferences::set_provisoning_voip_subscriber_first_int_attr_value(c => $c,
+                    prov_subscriber => $prov_sub,
+                    value => ($new_prepaid ? 1 : 0),
+                    attribute => 'prepaid'
+                );  
+            }
+        }
+    }
+    
 }
 
 sub get_contract_count_stmt {

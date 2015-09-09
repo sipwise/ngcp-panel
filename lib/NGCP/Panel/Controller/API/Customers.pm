@@ -148,14 +148,15 @@ sub GET :Allow {
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $customers = $self->item_rs($c)->search_rs(undef,{
-                for => 'update',
-            });
-        (my $total_count, $customers) = $self->paginate_order_collection($c, $customers);
+        my $customers_rs = $self->item_rs($c);
+        (my $total_count, $customers_rs) = $self->paginate_order_collection($c, $customers_rs);
+        my $customers = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
+            rs => $customers_rs,
+            contract_id_field => 'id');          
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $customer($customers->all) {
+        for my $customer (@$customers) {
             push @embedded, $self->hal_from_customer($c, $customer, $form, $now);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
@@ -293,9 +294,10 @@ sub POST :Allow {
                 $customer->billing_mappings->create($mapping); 
             }
             $customer = $self->customer_by_id($c, $customer->id,$now);
-            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
+            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(c => $c,
                 contract => $customer,
-                profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,);
+                #bm_actual => $customer->billing_mappings->find($customer->get_column('bmid')),
+            );
             #NGCP::Panel::Utils::Contract::create_contract_balance(
             #    c => $c,
             #    profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,

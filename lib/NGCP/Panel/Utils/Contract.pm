@@ -7,102 +7,6 @@ use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::Strptime qw();
 
-
-#sub get_contract_balance {
-#    my (%params) = @_;
-#    my $c = $params{c};
-#    my $contract = $params{contract};
-#    my $profile = $params{profile};
-#    my $stime = $params{stime};
-#    my $etime = $params{etime};
-#    my $schema = $params{schema} // $c->model('DB');
-#
-#    my $balance = $contract->contract_balances
-#        ->find({
-#            start => { '>=' => $stime },
-#            end => { '<=' => $etime },
-#        });
-#    unless($balance) {
-#            $balance = create_contract_balance(
-#                c => $c,
-#                profile => $profile,
-#                contract => $contract,
-#                stime => $stime,
-#                etime => $etime,
-#                schema => $schema,
-#            );
-#    }
-#    return $balance;
-#}
-#
-#sub create_contract_balance {
-#    my %params = @_;
-#
-#    my $c = $params{c};
-#    my $contract = $params{contract};
-#    my $profile = $params{profile};
-#    my $schema = $params{schema} // $c->model('DB');
-#
-#    # first, calculate start and end time of current billing profile
-#    # (we assume billing interval of 1 month)
-#    my $stime = $params{stime} || NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'month');
-#    my $etime = $params{etime} || $stime->clone->add(months => 1)->subtract(seconds => 1);
-#
-#    # calculate free_time/cash ratio
-#    my ($cash_balance, $cash_balance_interval,
-#        $free_time_balance, $free_time_balance_interval) = get_contract_balance_values(
-#        interval_free_time => ( $profile->interval_free_time || 0 ),
-#        interval_free_cash => ( $profile->interval_free_cash || 0 ),
-#        stime => $stime,
-#        etime => $etime,
-#    );
-#
-#    my $balance;
-#    try {
-#        $schema->txn_do(sub {
-#            $balance = $schema->resultset('contract_balances')->create({
-#                contract_id => $contract->id,
-#                cash_balance => $cash_balance,
-#                cash_balance_interval => $cash_balance_interval,
-#                free_time_balance => $free_time_balance,
-#                free_time_balance_interval => $free_time_balance_interval,
-#                start => $stime,
-#                end => $etime,
-#            });
-#        });
-#    } catch($e) {
-#        if ($e =~ /Duplicate entry/) {
-#            $c->log->warn("Creating contract balance failed: Duplicate entry. Ignoring!");
-#        } else {
-#            $c->log->error("Creating contract balance failed: " . $e);
-#            $e->rethrow;
-#        }
-#    };
-#    return $balance;
-#}
-#
-#sub get_contract_balance_values {
-#    my %params = @_;
-#    my($free_time, $free_cash, $stime, $etime) = @params{qw/interval_free_time interval_free_cash stime etime/};
-#    my ($cash_balance, $cash_balance_interval,
-#        $free_time_balance, $free_time_balance_interval) = (0,0,0,0);
-#    if($free_time or $free_cash) {
-#        $etime->add(seconds => 1);
-#        my $ctime = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day');
-#        if( ( $ctime->epoch >= $stime->epoch ) && ( $ctime->epoch <= $etime->epoch ) ){
-#            my $ratio = ($etime->epoch - $ctime->epoch) / ($etime->epoch - $stime->epoch);
-#            
-#            $cash_balance = sprintf("%.4f", $free_cash * $ratio);
-#            $cash_balance_interval = 0;
-#
-#            $free_time_balance = sprintf("%.0f", $free_time * $ratio);
-#            $free_time_balance_interval = 0;
-#        }
-#        $etime->subtract(seconds => 1);
-#    }
-#    return ($cash_balance, $cash_balance_interval, $free_time_balance, $free_time_balance_interval);
-#}
-
 sub recursively_lock_contract {
     my %params = @_;
 
@@ -544,7 +448,7 @@ sub prepare_billing_mappings {
             my ($profile,$network) = @$entities{qw/profile network/};            
             if (defined $prepaid) {
                 if ($profile->prepaid != $prepaid) {
-                    return 0 unless &{$err_code}("Switching between prepaid and post-paid billing profiles is not supported (" . $profile->name . ").",$billing_profiles_field);
+                    return 0 unless &{$err_code}("Future switching between prepaid and post-paid billing profiles is not supported (" . $profile->name . ").",$billing_profiles_field);
                 }
             } else {
                 $prepaid = $profile->prepaid;
