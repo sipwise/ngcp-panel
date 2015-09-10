@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_b41dfb75",
+        "filename": "lib/NGCP/Panel/Form/MaliciousCall/Reseller.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-09-10T20:23:20Z",
+      "side": 1,
+      "message": "If they are really ID - why they are text?",
+      "revId": "6eea3a0d1fedbf43044a278a37f8d77333654190",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
