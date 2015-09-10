@@ -27,6 +27,7 @@ sub mcid_list :Chained('/') :PathPart('maliciouscall') :CaptureArgs(0) {
             { name => 'callee', search => 1, title => $c->loc('Callee') },
             { name => 'start_time', search => 1, title => $c->loc('Called at') },
             { name => 'duration', search => 1, title => $c->loc('Duration') },
+            { name => 'source', search => 1, title => $c->loc('Source') },
             { name => 'reported_at', search => 1, title => $c->loc('Reported at') },
         ]);
         $c->stash->{mcid_rs} = $mcid_rs;
@@ -47,6 +48,7 @@ sub mcid_list :Chained('/') :PathPart('maliciouscall') :CaptureArgs(0) {
             { name => 'callee', search => 1, title => $c->loc('Callee') },
             { name => 'start_time', search => 1, title => $c->loc('Called at') },
             { name => 'duration', search => 1, title => $c->loc('Duration') },
+            { name => 'source', search => 1, title => $c->loc('Source') },
             { name => 'reported_at', search => 1, title => $c->loc('Reported at') },
         ]);
         $c->stash->{mcid_rs} = $mcid_rs;
