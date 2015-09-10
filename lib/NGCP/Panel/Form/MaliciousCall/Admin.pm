@@ -12,7 +12,7 @@ has_field 'reseller' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller call_id caller callee start_time duration reported_at/],
+    render_list => [qw/reseller call_id caller callee start_time duration caller_id callee_id reported_at/],
 );
 
 1;

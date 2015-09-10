@@ -49,6 +49,18 @@ has_field 'duration' => (
     required => 1,
 );
 
+has_field 'caller_id' => (
+    type => 'Text',
+    label => 'Caller ID',
+    required => 1,
+);
+
+has_field 'callee_id' => (
+    type => 'Text',
+    label => 'Callee ID',
+    required => 1,
+);
+
 has_field 'reported_at' => (
     type => 'Text',
     label => 'Reported at',
@@ -58,7 +70,7 @@ has_field 'reported_at' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id callee_uuid call_id caller callee start_time duration reported_at/],
+    render_list => [qw/id callee_uuid call_id caller callee start_time duration caller_id callee_id reported_at/],
 );
 
 1;
