@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_0f494ed0",
+        "filename": "lib/NGCP/Panel/Controller/MaliciousCall.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-09-11T14:01:19Z",
+      "side": 1,
+      "message": "Just curious:what is the difference between caller and source?",
+      "revId": "8a96c7a25269a29032845b64fbb8542c54b73752",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
