@@ -16,6 +16,24 @@
       "revId": "8a96c7a25269a29032845b64fbb8542c54b73752",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8f83fecb",
+        "filename": "lib/NGCP/Panel/Controller/MaliciousCall.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-09-11T15:00:27Z",
+      "side": 1,
+      "message": "caller: is the number / username\nsource: in this case is the \"source\" identifier where the call came from, it uses \"dom_preferences\" / \"peer_preference\" identifier. Also in the future it could be also as a logic of dom/peer identifier ? identifier : ip or something. So I think that \"source\" is a common description of the call source. \nCan also rename it into \"call_source\" if it sounds better. :)",
+      "parentUuid": "da6255ed_0f494ed0",
+      "revId": "8a96c7a25269a29032845b64fbb8542c54b73752",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
