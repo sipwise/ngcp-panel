@@ -1,8 +1,6 @@
-#use Sipwise::Base;
 use strict;
+use warnings;
 
-#use Moose;
-use Sipwise::Base;
 use Test::Collection;
 use Test::FakeData;
 use Test::More;

@@ -1,7 +1,6 @@
-#use Sipwise::Base;
 use strict;
-#use Moose;
-use Sipwise::Base;
+use warnings;
+
 use Net::Domain qw(hostfqdn);
 use LWP::UserAgent;
 use HTTP::Request::Common;

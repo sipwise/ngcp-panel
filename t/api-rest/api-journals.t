@@ -40,29 +40,18 @@ if ($is_local_env) {
 my %config = $catalyst_config->getall();
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
-
-my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
-    "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
-my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
-    $valid_ssl_client_cert;
-my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
+my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
 
 my ($ua, $req, $res);
 $ua = LWP::UserAgent->new;
 
-if ($is_local_env) {
-    $ua->ssl_opts(
+$ua->ssl_opts(
         verify_hostname => 0,
+        SSL_verify_mode => 0,
     );
-    $ua->credentials("127.0.0.1:4443", "api_admin_http", 'administrator', 'administrator');
-    #$ua->timeout(500); #useless, need to change the nginx timeout
-} else {
-    $ua->ssl_opts(
-        SSL_cert_file => $valid_ssl_client_cert,
-        SSL_key_file  => $valid_ssl_client_key,
-        SSL_ca_file   => $ssl_ca_cert,
-    );    
-}
+my $user = $ENV{API_USER} // 'administrator';
+my $pass = $ENV{API_PASS} // 'administrator';
+$ua->credentials($netloc, "api_admin_http", $user, $pass);
 
 my $t = time;
 my $default_reseller_id = 1;

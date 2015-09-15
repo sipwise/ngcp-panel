@@ -1,25 +1,24 @@
-use Sipwise::Base;
+use warnings;
+use strict;
+
 use Net::Domain qw(hostfqdn);
 use LWP::UserAgent;
 use JSON qw();
 use Test::More;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
-
-my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
-    "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
-my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
-    $valid_ssl_client_cert;
-my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
+my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
 
 my ($ua, $req, $res);
 $ua = LWP::UserAgent->new;
 
 $ua->ssl_opts(
-    SSL_cert_file => $valid_ssl_client_cert,
-    SSL_key_file  => $valid_ssl_client_key,
-    SSL_ca_file   => $ssl_ca_cert,
-);
+        verify_hostname => 0,
+        SSL_verify_mode => 0,
+    );
+my $user = $ENV{API_USER} // 'administrator';
+my $pass = $ENV{API_PASS} // 'administrator';
+$ua->credentials($netloc, "api_admin_http", $user, $pass);
 
 # OPTIONS tests
 {
@@ -269,8 +268,10 @@ my @allresellers = ();
     $res = $ua->request($req);
     is($res->code, 200, "fetch one item");
     my $reseller = JSON::from_json($res->decoded_content);
-    ok(exists $reseller->{id} && $reseller->{id}->is_int, "check existence of id");
-    ok(exists $reseller->{contract_id} && $reseller->{contract_id}->is_int, "check existence of contract_id");
+    ok(exists $reseller->{id}, "check existence of id");
+    like($reseller->{id}, qr/[0-9]+/, "check validity of id");
+    ok(exists $reseller->{contract_id}, "check existence of contract_id");
+    like($reseller->{contract_id}, qr/[0-9]+/, "check validity of contract_id");
     ok(exists $reseller->{name}, "check existence of name");
     ok(exists $reseller->{status}, "check existence of status");
     
