@@ -51,27 +51,6 @@ sub _test_preconditions {
     }
 }
 
-sub _download_certs {
-    my ($self) = @_;
-    my $uri = $ENV{CATALYST_SERVER};
-    use File::Temp qw/tempfile/;
-    my ($ua, $req, $res);
-    $ua = LWP::UserAgent->new(cookie_jar => {}, ssl_opts => {verify_hostname => 0});
-    $res = $ua->post($uri.'/login/admin', {username => 'administrator', password => 'administrator'}, 'Referer' => $uri.'/login/admin');
-    $res = $ua->get($uri.'/dashboard/');
-    $res = $ua->get($uri.'/administrator/1/api_key');
-    if ($res->decoded_content =~ m/gen\.generate/) { # key need to be generated first
-        $res = $ua->post($uri.'/administrator/1/api_key', {'gen.generate' => 'foo'}, 'Referer' => $uri.'/dashboard');
-    }
-    my (undef, $tmp_apiclient_filename) = tempfile;
-    my (undef, $tmp_apica_filename) = tempfile;
-    $res = $ua->post($uri.'/administrator/1/api_key', {'pem.download' => 'foo'}, 'Referer' => $uri.'/dashboard', ':content_file' => $tmp_apiclient_filename);
-    $res = $ua->post($uri.'/administrator/1/api_key', {'ca.download' => 'foo'}, 'Referer' => $uri.'/dashboard', ':content_file' => $tmp_apica_filename);
-    $ENV{API_SSL_CLIENT_CERT} = $tmp_apiclient_filename;
-    $ENV{API_SSL_CA_CERT} = $tmp_apica_filename;
-    print "Client cert: $tmp_apiclient_filename - CA cert: $tmp_apica_filename\n" if $self->verbose;
-}
-
 around('ACTION_test', sub {
     my $super = shift;
     my $self = shift;

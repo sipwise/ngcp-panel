@@ -1,5 +1,5 @@
-#use Sipwise::Base;
 use strict;
+use warnings;
 
 #use Moose;
 use Sipwise::Base;
