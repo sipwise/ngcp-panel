@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_251d52be",
+        "filename": "inc/Local/Module/Build.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-15T13:03:18Z",
+      "side": 1,
+      "message": "This refers to the deleted _download_certs and causes test runs to fail:\n\nCan\u0027t locate object method \"_download_certs\" via package \"Local::Module::Build\" at inc/Local/Module/Build.pm line 103.",
+      "revId": "f497eb6e973013883e7e5b2bc10a9cadd7f4b6dd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
