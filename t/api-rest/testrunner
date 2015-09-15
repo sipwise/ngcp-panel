@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if ! [ -f /.dockerinit ]; then
+  echo "Not running inside docker, exiting to avoid data damage." >&2
+  exit 1
+fi
+
+set -e
+set -u
+
+if [ -z "${1:-}" ] ; then
+  echo "Usage: $0 <testsystem>" >&2
+  echo
+  echo "Usage example: $0 192.168.88.162"
+  exit 1
+fi
+
+SERVER="${1}"
+
+echo "################################################################################"
+echo "Finished main setup, now running tests ..."
+RC=0
+CATALYST_SERVER="https://${SERVER}:1443/" prove -v --color -Pretty -l -It/lib t/api-rest/*.t | tee -a /code/api-rest.pretty || RC=$?
+#CATALYST_SERVER="https://${SERVER}:1443/" prove --formatter TAP::Formatter::JUnit -l -It/lib t/api-rest/*.t | tee -a /code/api-rest.xml || RC=$?
+echo "Finished test execution, test execution returned with exit code ${RC}."
+for file in /code/api-rest.pretty /code/api-rest.xml ; do
+  if [ -f "$file" ] ; then
+    echo "Test results available at ${file}"
+  fi
+done
+echo "################################################################################"
