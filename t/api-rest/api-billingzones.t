@@ -1,17 +1,9 @@
-#use Sipwise::Base;
 use strict;
+use warnings;
 
-#use Moose;
-use Sipwise::Base;
 use Test::Collection;
 use Test::FakeData;
-use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
-use HTTP::Request::Common;
-use JSON;
 use Test::More;
-use Data::Dumper;
-
 
 #init test_machine
 my $test_machine = Test::Collection->new(

@@ -5,21 +5,18 @@ use JSON qw();
 use Test::More;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
-
-my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
-    "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
-my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
-    $valid_ssl_client_cert;
-my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
+my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
 
 my ($ua, $req, $res);
 $ua = LWP::UserAgent->new;
 
 $ua->ssl_opts(
-    SSL_cert_file => $valid_ssl_client_cert,
-    SSL_key_file  => $valid_ssl_client_key,
-    SSL_ca_file   => $ssl_ca_cert,
-);
+        verify_hostname => 0,
+        SSL_verify_mode => 0,
+    );
+my $user = $ENV{API_USER} // 'administrator';
+my $pass = $ENV{API_PASS} // 'administrator';
+$ua->credentials($netloc, "api_admin_http", $user, $pass);
 
 # OPTIONS tests
 {

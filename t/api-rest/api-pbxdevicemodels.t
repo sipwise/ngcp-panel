@@ -1,8 +1,6 @@
-#use Sipwise::Base;
 use strict;
+use warnings;
 
-#use Moose;
-use Sipwise::Base;
 use Test::Collection;
 use Test::FakeData;
 use Net::Domain qw(hostfqdn);
@@ -144,7 +142,8 @@ foreach my $type(qw/extension phone/){
 
     {
         my (undef, $item_first_get) = $test_machine->check_item_get;
-        ok(exists $item_first_get->{reseller_id} && $item_first_get->{reseller_id}->is_int, "check existence of the reseller_id");
+        ok(exists $item_first_get->{reseller_id} , "check existence of the reseller_id");
+        cmp_ok($item_first_get->{reseller_id}, '>', 0, "check validity of the reseller_id");
         foreach(qw/vendor model/){
             ok(exists $item_first_get->{$_}, "check existence of $_");
         }

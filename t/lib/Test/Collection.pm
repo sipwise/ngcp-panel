@@ -184,28 +184,15 @@ sub get_catalyst_config{
 sub init_ua {
     my $self = shift;
     my $ua = LWP::UserAgent->new;
-    if($self->local_test){
-        my $uri = $self->base_uri;
-        $uri =~ s/^https?:\/\///;
-        my $user = $ENV{API_USER} // 'administrator';
-        my $pass = $ENV{API_PASS} // 'administrator';
-        $ua->credentials( $uri, 'api_admin_http', $user, $pass);
-        $ua->ssl_opts(
-            verify_hostname => 0,
-            SSL_verify_mode => 0x00,
-        );
-    }else{
-        my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} ||
-            "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
-        my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
-            $valid_ssl_client_cert;
-        my $ssl_ca_cert = $ENV{ API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
-        $ua->ssl_opts(
-            SSL_cert_file   => $valid_ssl_client_cert,
-            SSL_key_file    => $valid_ssl_client_key,
-            SSL_ca_file     => $ssl_ca_cert,
-        );
-    }
+    my $uri = $self->base_uri;
+    $uri =~ s/^https?:\/\///;
+    my $user = $ENV{API_USER} // 'administrator';
+    my $pass = $ENV{API_PASS} // 'administrator';
+    $ua->credentials( $uri, 'api_admin_http', $user, $pass);
+    $ua->ssl_opts(
+        verify_hostname => 0,
+        SSL_verify_mode => 0,
+    );
     return $ua;
 }
 sub clear_data_created{
