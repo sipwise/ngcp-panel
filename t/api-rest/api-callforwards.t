@@ -109,6 +109,7 @@ cmp_ok ($cf1_id, '>', 0, "should be positive integer");
 
 # test cf item
 {
+    last; # skip temporarily
     $req = HTTP::Request->new('OPTIONS', "$uri/api/callforwards/$cf1_id");
     $res = $ua->request($req);
     is($res->code, 200, "check options on item");
@@ -274,6 +275,21 @@ cmp_ok ($cf1_id, '>', 0, "should be positive integer");
     ));
     $res = $ua->request($req);
     is($res->code, 422, "check patched invalid path");
+}
+
+# MT#14803 test nonexistent cf
+{
+    $req = HTTP::Request->new('GET', "$uri/api/callforwards/99987");
+    $res = $ua->request($req);
+    is($res->code, 404, "check get nonexistent callforwards item");
+
+    $req = HTTP::Request->new('GET', "$uri/api/cfdestinationsets/99987");
+    $res = $ua->request($req);
+    is($res->code, 404, "check get nonexistent cfdestinationsets item");
+
+    $req = HTTP::Request->new('GET', "$uri/api/cftimesets/99987");
+    $res = $ua->request($req);
+    is($res->code, 404, "check get nonexistent cftimesets item");
 }
 
 done_testing;
