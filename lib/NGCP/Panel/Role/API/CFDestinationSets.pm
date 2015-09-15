@@ -82,6 +82,13 @@ sub item_rs {
     if($c->user->roles eq "admin") {
         $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets');
     } elsif ($c->user->roles eq "reseller") {
+        my $reseller_id = $c->user->reseller_id;
+        $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets')
+            ->search_rs({
+                    'reseller_id' => $reseller_id,
+                } , {
+                    join => {'subscriber' => {'contract' => 'contact'} },
+                });
     }
 
     return $item_rs;
