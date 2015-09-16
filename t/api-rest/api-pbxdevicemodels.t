@@ -3,9 +3,6 @@ use warnings;
 
 use Test::Collection;
 use Test::FakeData;
-use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
-use HTTP::Request::Common;
 use JSON;
 use Test::More;
 use Data::Dumper;
