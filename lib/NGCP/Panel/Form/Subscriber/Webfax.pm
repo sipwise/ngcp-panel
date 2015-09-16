@@ -29,6 +29,10 @@ has_field 'data' => (
     rows => 10,
     maxlength => '1048576', # 1MB
     element_class => [qw/ngcp-autoconf-area/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Content text']
+    },
 );
 
 has_field 'faxfile' => (
