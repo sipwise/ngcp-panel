@@ -548,8 +548,9 @@ sub check_item_get{
     $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('GET', $uri);
     my $res = $self->request($req);
+    #print Dumper $res;
+    $self->http_code_msg(200, "fetch uri: $uri", $res);
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
-    $self->http_code_msg(200, "fetch uri: $uri", $res, $content);
     return wantarray ? ($res, $content, $req) : $res;
 }
 
@@ -756,9 +757,15 @@ sub check_bundle{
     my $listed = $self->check_list_collection();
     $self->check_created_listed($listed);
     # test model item
-    $self->check_options_item;
-    $self->check_put_bundle;
-    $self->check_patch_bundle;
+    if(@$listed){
+        $self->check_options_item;
+        if(exists $self->methods->{'item'}->{allowed}->{'PUT'}){
+            $self->check_put_bundle;
+        }
+        if(exists $self->methods->{'item'}->{allowed}->{'PATCH'}){
+            $self->check_patch_bundle;
+        }
+    }
 }
 #utils
 sub hash2params{
@@ -766,14 +773,14 @@ sub hash2params{
     return join '&', map {$_.'='.uri_escape($hash->{$_})} keys %{ $hash };
 }
 sub http_code_msg{
-    my($self,$code,$message,$res,$err) = @_;
-    $err //= $res->decoded_content ? JSON::from_json($res->decoded_content) : undef;
+    my($self,$code,$message,$res,$content) = @_;
     my $message_res;
     if ( ($res->code < 300) || ( $code >= 300 ) ) {
         $message_res = $message;
     } else {
-        if (defined $err && defined $err->{message}) {
-            $message_res = $message . ' (' . $res->message . ': ' . $err->{message} . ')';
+        $content //= $res->decoded_content ? JSON::from_json($res->decoded_content) : undef;
+        if (defined $content && defined $content->{message}) {
+            $message_res = $message . ' (' . $res->message . ': ' . $content->{message} . ')';
         } else {
             $message_res = $message . ' (' . $res->message . ')';
         }
