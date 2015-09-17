@@ -1,3 +1,23 @@
+ngcp-panel (1.9.1.12+0~mr4.0.1.12) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [fde4616] MT#15057 Add Last-Modified and strip HTTP headers
+  * [aae86ac] MT#15247 Enforce https in autoprov config.
+
+  [ Irina Peshinskaya ]
+  * [a6bc5ae] MT#14767 Backporting Innovaphone from the 13919
+  * [a27baba] MT#13919 Bootstrap uses the same config template, configure TT plugin base.
+  * [2d0c693] MT#14739 Get newly created kamailio user location after flush
+
+  [ Gerhard Jungwirth ]
+  * [4cab66d] MT#12985 prevent ambiguity in rwr replace pattern
+  * [7bd339b] MT#14901 remove reseller login page
+  * [e2ee16b] MT#14803 option to access cfdestinationsets via reseller
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Sep 2015 17:11:22 +0200
+
 ngcp-panel (1.9.1.11+0~mr4.0.1.11) unstable; urgency=medium
 
   [ Rene Krenn ]
