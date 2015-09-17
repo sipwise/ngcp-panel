@@ -1,3 +1,15 @@
+ngcp-panel (1.8.3.7+0~mr3.8.3.7) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [a2e7845] MT#13931 Add link to field device config into customer interface
+
+  [ Andreas Granig ]
+  * [580271b] MT#15247 Enforce https in autoprov config.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Sep 2015 11:50:05 +0200
+
 ngcp-panel (1.8.3.6+0~mr3.8.3.6) unstable; urgency=medium
 
   [ Andreas Granig ]
