@@ -1,3 +1,16 @@
+ngcp-panel (1.8.3.8+0~mr3.8.3.8) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [e484ee8] MT#14739 Get newly created kamailio user location after flush
+
+  [ Gerhard Jungwirth ]
+  * [e137c7c] MT#12985 prevent ambiguity in rwr replace pattern
+  * [a3e80aa] MT#14803 option to access cfdestinationsets via reseller
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Sep 2015 17:10:42 +0200
+
 ngcp-panel (1.8.3.7+0~mr3.8.3.7) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
