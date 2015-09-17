@@ -54,6 +54,10 @@ RUN wget http://deb.sipwise.com/files/libtest-pretty-perl_0.31-1~bpo80+1_all.deb
 RUN dpkg --force-depends -i libtest-pretty-perl_0.31-1~bpo80+1_all.deb
 RUN apt-get --assume-yes -f install
 
+RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4" >/home/selenium/.bash_history
+RUN echo "su - selenium" >/root/.bash_history
+EXPOSE 5999
+
 WORKDIR /home/selenium
 
 ################################################################################
@@ -61,16 +65,16 @@ WORKDIR /home/selenium
 # ----------------------
 # When you want to build the base image from scratch (jump to the next section if you don't want to build yourself!):
 # % docker build --tag="ngcp-panel-tests-selenium-jessie" .
-# % docker run --rm -p 5999 -i -t -v $(pwd)/../..:/code:rw ngcp-panel-tests-selenium-jessie:latest bash
+# % docker run --rm -p 5999:5999 -i -t -v $(pwd)/../..:/code:rw ngcp-panel-tests-selenium-jessie:latest bash
 #
 # Use the existing docker image:
 # % docker pull docker1.mgm.sipwise.com/ngcp-panel-tests-selenium-jessie
-# % docker run --rm -p 5999 -i -t -v $(pwd)/../..:/code:rw docker1.mgm.sipwise.com/ngcp-panel-tests-selenium-jessie:latest bash
+# % docker run --rm -p 5999:5999 -i -t -v $(pwd)/../..:/code:rw docker1.mgm.sipwise.com/ngcp-panel-tests-selenium-jessie:latest bash
 #
 # Inside docker:
 #   su - selenium
 #   cd /code && ./t/selenium/testrunner $IP_OF_NGCP_SYSTEM # IP_OF_NGCP_SYSTEM can be e.g. IP of a `vagrant up ce-trunk` system (eth1)
 #
 # On host (where vncviewer can be e.g. from Debian package xvnc4viewer):
-# % vncviewer geometry=1280x1024x16 $(docker inspect $(docker ps -l -q) | jq -r '.[0].NetworkSettings.IPAddress'):5999
+# % vncviewer geometry=1280x1024x16 localhost:5999
 ################################################################################

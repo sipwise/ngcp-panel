@@ -22,6 +22,7 @@ SERVER="${1}"
 # vnc
 echo "Setting VNC password"
 printf '%s\n%s\n\n' "${PASSWORD}" "${PASSWORD}" | vncpasswd >/dev/null
+PASSWORD_ENCODED=$(hexdump -v -e '"\\""x" 1/1 "%02X"' <$HOME/.vnc/passwd)
 xvnc_process=$(pgrep -f 'Xvnc4 :99' || true)
 if [ -n "${xvnc_process:-}" ] ; then
   echo "Warning: existing VNC server found, not restarting Xvnc4 process (PID: $xvnc_process)."
@@ -38,11 +39,11 @@ DISPLAY=:99 /usr/bin/java -jar /home/selenium/selenium-server-standalone.jar -tr
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
 echo "Selenium server log file available at /home/selenium/selenium.log"
-echo "Watch at test runs by connecting via VNC (enter password '${PASSWORD}'):"
-echo "vncviewer geometry=1280x1024x16 \$(docker inspect \$(docker ps -l -q) | jq -r '.[0].NetworkSettings.IPAddress'):5999"
+echo "Watch at test runs by connecting via VNC (password: '${PASSWORD}'):"
+echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024x16 passwd=/tmp/vncpasswd localhost:5999"
 
 RC=0
-CATALYST_SERVER="https://${SERVER}:1443/" prove -v --color -Pretty -l -It/lib t/selenium/*.t | tee -a /code/selenium.pretty || RC=$?
+CATALYST_SERVER="https://${SERVER}:1443" prove -v --color -l -It/lib t/selenium/*.t | tee -a /code/selenium.pretty || RC=$?
 #CATALYST_SERVER=https://${SERVER}:1443/ prove --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t | tee -a /code/selenium.xml || RC=$?
 echo "Finished test execution, test execution returned with exit code ${RC}."
 for file in /code/selenium.pretty /code/selenium.xml ; do
