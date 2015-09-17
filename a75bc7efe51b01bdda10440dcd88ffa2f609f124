@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_ebd82955",
+        "filename": "t/api-rest/testrunner",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-17T10:43:26Z",
+      "side": 1,
+      "message": "the trailing \"/\" after 1443 is the reason for the 401 responses, just remove it",
+      "revId": "a75bc7efe51b01bdda10440dcd88ffa2f609f124",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
