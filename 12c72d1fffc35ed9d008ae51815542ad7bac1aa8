@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_eebf17cf",
+        "filename": "t/selenium/testrunner",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-17T15:11:44Z",
+      "side": 1,
+      "message": "I\u0027d keep the \"Watch at test runs by connecting via VNC:\" line though.",
+      "revId": "12c72d1fffc35ed9d008ae51815542ad7bac1aa8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
