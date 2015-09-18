@@ -31,11 +31,15 @@ has 'panel_config' => (
     is => 'rw',
     isa => 'HashRef',
 );
+has 'runas_role' => (
+    is => 'rw',
+    isa => 'Str',
+    default => 'default',
+);
 has 'ua' => (
     is => 'rw',
     lazy => 1,
     isa => 'LWP::UserAgent',
-    lazy => 1,
     builder => 'init_ua',
 );
 has 'base_uri' => (
@@ -186,14 +190,36 @@ sub init_ua {
     my $ua = LWP::UserAgent->new;
     my $uri = $self->base_uri;
     $uri =~ s/^https?:\/\///;
-    my $user = $ENV{API_USER} // 'administrator';
-    my $pass = $ENV{API_PASS} // 'administrator';
+    my($user,$pass) = $self->get_role_credentials();
     $ua->credentials( $uri, 'api_admin_http', $user, $pass);
     $ua->ssl_opts(
         verify_hostname => 0,
         SSL_verify_mode => 0,
     );
     return $ua;
+}
+sub runas {
+    my $self = shift;
+    my($role_in,$uri) = @_;
+    $uri //= $self->base_uri;
+    $uri =~ s/^https?:\/\///;
+    my($user,$pass,$role) = $self->get_role_credentials($role_in);
+    $self->runas_role($role);
+    $self->ua->credentials( $uri, 'api_admin_http', $user, $pass);
+}
+sub get_role_credentials{
+    my $self = shift;
+    my($role) = @_;
+    my($user,$pass);
+    $role //= $self->runas_role // 'default';
+    if($role eq 'default' || $role eq 'admin'){
+        $user //= $ENV{API_USER} // 'administrator';
+        $pass //= $ENV{API_PASS} // 'administrator';
+    }elsif($role eq 'reseller'){
+        $user //= $ENV{API_USER_RESELLER} // 'api_test';
+        $pass //= $ENV{API_PASS_RESELLER} // 'api_test';
+    }
+    return($user,$pass,$role);
 }
 sub clear_data_created{
     my($self) = @_;
@@ -365,8 +391,7 @@ sub request_post{
 sub request_options{
     my ($self,$uri) = @_;
     # OPTIONS tests
-    $uri ||= $self->get_uri_current;
-    my $req = HTTP::Request->new('OPTIONS', $uri);
+    my $req = HTTP::Request->new('OPTIONS', $self->normalize_uri($uri));
     my $res = $self->request($req);
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return($req,$res,$content);
@@ -376,20 +401,26 @@ sub request_delete{
     my ($self,$uri) = @_;
     # DELETE tests
     #no auto rows for deletion
-    my $req = HTTP::Request->new('DELETE', $uri);
+    my $req = HTTP::Request->new('DELETE', $self->normalize_uri($uri));
     my $res = $self->request($req);
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return($req,$res,$content);
 }
 sub request_get{
     my($self,$uri) = @_;
-    $uri ||= $self->get_uri_current;
-    my $req = HTTP::Request->new('GET', $uri);
+    my $req = HTTP::Request->new('GET', $self->normalize_uri($uri));
     my $res = $self->request($req);
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return wantarray ? ($res, $content, $req) : $res;
 }
-
+sub normalize_uri{
+    my($self,$uri) = @_;
+    $uri ||= $self->get_uri_current;
+    if($uri !~/^http/i){
+        $uri = $self->base_uri.$uri;
+    }
+    return $uri;
+}
 ############## end of test machine
 ############## start of test collection
 

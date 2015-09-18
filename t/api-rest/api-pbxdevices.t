@@ -1,13 +1,9 @@
 use strict;
 use warnings;
 
-use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
-use HTTP::Request::Common;
-use JSON;
+
 use Test::More;
 use Data::Dumper;
-use File::Basename;
 use bignum qw/hex/;
 
 use Test::Collection;
