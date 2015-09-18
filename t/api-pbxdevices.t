@@ -1,19 +1,10 @@
-#use Sipwise::Base;
 use strict;
-#use Moose;
-use Sipwise::Base;
-use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
-use HTTP::Request::Common;
-use JSON;
+use warnings;
+
 use Test::More;
 use Data::Dumper;
-use File::Basename;
 use bignum qw/hex/;
 
-BEGIN {
-    unshift(@INC,'../t/lib');
-}
 use Test::Collection;
 use Test::FakeData;
 
@@ -21,7 +12,6 @@ use Test::FakeData;
 my $test_machine = Test::Collection->new(
     name => 'pbxdevices',
     embedded => [qw/pbxdeviceprofiles customers/],
-    use_cert_login => 0,
 );
 $test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
 $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH DELETE)};
