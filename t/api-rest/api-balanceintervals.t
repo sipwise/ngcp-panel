@@ -941,7 +941,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         _set_time();
         
         my $t1 = time;
-        my $delay = 10; #15;
+        my $delay = 20; #15;
     
         my $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact3);
         my $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);
@@ -989,7 +989,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         _create_customers_threaded(3,2,$package,$custcontact4);
         
         my $t1 = time;
-        my $delay = 15.0; #15.0; #10.0; #2.0;
+        my $delay = 20.0; #15.0; #10.0; #2.0;
         my $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
         my $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
         my $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
@@ -1076,7 +1076,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         _create_customers_threaded(3,2,$package,$custcontact5);
         
         my $t1 = time;
-        my $delay = 15.0; #15.0; #10.0; #2.0;
+        my $delay = 20.0; #15.0; #10.0; #2.0;
         my $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
         my $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact5);
         my $t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);

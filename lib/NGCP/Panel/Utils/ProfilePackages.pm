@@ -196,23 +196,14 @@ sub catchup_contract_balances {
 
     #$c->log->debug('catchup contract ' . $contract->id . ' contract_balances (now = ' . NGCP::Panel::Utils::DateTime::to_string($now) . ')') if $c;
     
-    my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_expiration,$underrun_profile_threshold,$underrun_lock_threshold);
+    my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_discard_intervals,$underrun_profile_threshold,$underrun_lock_threshold);
     
     if (defined $contract->contact->reseller_id && $old_package) {
         $start_mode = $old_package->balance_interval_start_mode;
         $interval_unit = $old_package->balance_interval_unit;
         $interval_value = $old_package->balance_interval_value;
         $carry_over_mode = $old_package->carry_over_mode;
-        my $notopup_discard_intervals = $old_package->notopup_discard_intervals;
-        if ($notopup_discard_intervals) {
-            #take the start of the latest interval where a topup occured,
-            #add the allowed number+1 of the current package' intervals.
-            #the balance is discarded  if the start of the next package
-            #exceed this calculated expiration date.
-            my $last_balance_w_topup = $contract->contract_balances->search({ topup_count => { '>' => 0 } },{ order_by => { '-desc' => 'end'},})->first;
-            $last_balance_w_topup = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first unless $last_balance_w_topup;
-            $notopup_expiration = _add_interval($last_balance_w_topup->start,$interval_unit,$notopup_discard_intervals + 1) if $last_balance_w_topup;
-        }
+        $notopup_discard_intervals = $old_package->notopup_discard_intervals;
         $underrun_profile_threshold = $old_package->underrun_profile_threshold;
         $underrun_lock_threshold = $old_package->underrun_lock_threshold;
         $has_package = 1;
@@ -223,12 +214,21 @@ sub catchup_contract_balances {
     }
     
     my ($underrun_lock_applied,$underrun_profiles_applied) = (0,0);
+    my ($notopup_expiration,$is_notopup_expiration_calculated) = (undef,0);
 
     my $last_balance = $contract->contract_balances->search(undef,{ order_by => { '-desc' => 'end'},})->first;
     my $last_profile;
     while ($last_balance && !NGCP::Panel::Utils::DateTime::is_infinite_future($last_balance->end) && $last_balance->end < $now) { #comparison takes 100++ sec if loaded lastbalance contains +inf
         my $start_of_next_interval = $last_balance->end->clone->add(seconds => 1);
 
+        unless ($is_notopup_expiration_calculated) {
+            #we have two queries here, so do it only if really creating contract_balances
+            $notopup_expiration = _get_notopup_expiration(contract => $contract,
+                notopup_discard_intervals => $notopup_discard_intervals,
+                interval_unit => $interval_unit);
+            $is_notopup_expiration_calculated = 1;
+        }
+        
         my $bm_actual;
         unless ($last_profile) {
             $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $last_balance->start);
@@ -248,7 +248,7 @@ PREPARE_BALANCE_CATCHUP:
                                                       interval_unit => $interval_unit,
                                                       interval_value => $interval_value,
                                                       create => $contract_create);
-                    
+
         my $balance_values = _get_balance_values(schema => $schema,
             stime => $stime,
             etime => $etime,
@@ -669,6 +669,22 @@ sub _add_interval {
         return $to;
     }
     return undef;
+}
+
+sub _get_notopup_expiration {
+    my %params = @_;
+    my($contract,$notopup_discard_intervals,$interval_unit)= @params{qw/contract notopup_discard_intervals interval_unit/};
+    my $notopup_expiration = undef;
+    if ($notopup_discard_intervals) {
+        #take the start of the latest interval where a topup occured,
+        #add the allowed number+1 of the current package' intervals.
+        #the balance is discarded  if the start of the next package
+        #exceed this calculated expiration date.
+        my $last_balance_w_topup = $contract->contract_balances->search({ topup_count => { '>' => 0 } },{ order_by => { '-desc' => 'end'},})->first;
+        $last_balance_w_topup = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first unless $last_balance_w_topup;
+        $notopup_expiration = _add_interval($last_balance_w_topup->start,$interval_unit,$notopup_discard_intervals + 1) if $last_balance_w_topup;
+    }
+    return $notopup_expiration;
 }
 
 sub get_actual_billing_mapping {
