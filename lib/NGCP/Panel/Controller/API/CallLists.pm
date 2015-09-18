@@ -130,13 +130,18 @@ class_has 'query_params' => (
             query => {
                 first => sub {
                     my ($q, $c) = @_;
-                    if($q eq "out") {
-                        {
-                           source_user_id => $c->user->uuid,
+                    return unless ($q eq "out" || $q eq "in");
+                    my $schema = $c->model('DB');
+                    my $owner = get_owner_data($c, $schema);
+                    if ($owner->{subscriber}) {
+                        my $field = ($q eq "out") ? "source_user_id" : "destination_user_id";
+                        return {
+                            $field => $owner->{subscriber}->uuid,
                         };
-                    } elsif($q eq "in") {
-                        {
-                           destination_user_id => $c->user->uuid,
+                    } elsif ($owner->{customer}) {
+                        my $field = ($q eq "out") ? "source_account_id" : "destination_account_id";
+                        return {
+                            $field => $owner->{customer}->id, # TODO: implement exact same behaviour as in "process_cdr_item"
                         };
                     }
                 },
@@ -150,7 +155,7 @@ class_has 'query_params' => (
                 first => sub {
                     my $q = shift;
                     my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
-                    { start_time => { '>=' => $dt->epoch } },
+                    { start_time => { '>=' => $dt->epoch } };
                 },
                 second => sub {},
             },
@@ -163,7 +168,7 @@ class_has 'query_params' => (
                     my $q = shift;
                     $q .= ' 23:59:59' if($q =~ /^\d{4}\-\d{2}\-\d{2}$/);
                     my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
-                    { start_time => { '<=' => $dt->epoch } },
+                    { start_time => { '<=' => $dt->epoch } };
                 },
                 second => sub {},
             },
