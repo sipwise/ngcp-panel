@@ -437,7 +437,7 @@ sub apply_patch {
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                             }
                         } else {
-                            $pe->rethrow;
+                            die($pe); #->rethrow;
                         }
                     }
                 } elsif ('remove' eq $_) {
@@ -450,7 +450,7 @@ sub apply_patch {
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{path});
                             }
                         } else {
-                            $pe->rethrow;
+                            die($pe); #->rethrow;
                         }
                     }                    
                 } elsif ('move' eq $_ or 'copy' eq $_) {
@@ -463,7 +463,7 @@ sub apply_patch {
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
                             }
                         } else {
-                            $pe->rethrow;
+                            die($pe); #->rethrow;
                         }
                     }                      
                 } elsif ('test' eq $_) {
@@ -478,7 +478,7 @@ sub apply_patch {
                                     unless $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                             }
                         } else {
-                            $pe->rethrow;
+                            die($pe); #->rethrow;
                         }
                     }  
                 }

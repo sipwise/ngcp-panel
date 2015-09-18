@@ -152,6 +152,10 @@ sub item_rs {
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
         ->search({ 'me.status' => { '!=' => 'terminated' } });
     if($c->user->roles eq "admin") {
+        $item_rs = $item_rs->search(undef,
+        {
+            join => { 'contract' => 'contact' }, #for filters
+        });        
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,

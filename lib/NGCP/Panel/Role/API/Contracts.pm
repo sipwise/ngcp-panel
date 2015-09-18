@@ -102,6 +102,7 @@ sub hal_from_contract {
             Data::HAL::Link->new(relation => 'ngcp:systemcontacts', href => sprintf("/api/systemcontacts/%d", $contract->contact->id)),
             @profile_links,
             @network_links,
+            Data::HAL::Link->new(relation => 'ngcp:balanceintervals', href => sprintf("/api/balanceintervals/%d", $contract->id)),
             $self->get_journal_relation_link($contract->id),
         ],
         relation => 'ngcp:'.$self->resource_name,

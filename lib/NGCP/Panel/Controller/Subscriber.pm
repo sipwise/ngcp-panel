@@ -1997,16 +1997,13 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
 
-sub load_preference_list :Private {
+sub underrun_catchup :Private {
     my ($self, $c) = @_;
-
-    my $reseller_id = $c->stash->{subscriber}->contract->contact->reseller_id;
-
     try {
         my $schema = $c->model('DB');
         $schema->set_transaction_isolation('READ COMMITTED');
         $schema->txn_do(sub {
-            NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $c->stash->{subscriber});
+            NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c, contract => $c->stash->{subscriber}->contract);
         });
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
@@ -2016,8 +2013,16 @@ sub load_preference_list :Private {
             desc  => $c->loc('Failed to check and apply underrun subscriber lock level'),
         );
         $c->response->redirect($c->uri_for());
-        return;
-    }
+        #return;
+    }    
+}
+
+sub load_preference_list :Private {
+    my ($self, $c) = @_;
+
+    my $reseller_id = $c->stash->{subscriber}->contract->contact->reseller_id;
+
+    $self->underrun_catchup($c);
     
     my $usr_pref_values = $c->model('DB')
         ->resultset('voip_preferences')
@@ -2117,6 +2122,8 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         template => 'subscriber/master.tt',
     );
 
+    $self->underrun_catchup($c);
+    
     $c->stash->{prov_lock} = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c,
         attribute => 'lock',
@@ -2127,6 +2134,8 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
 sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole('subscriberadmin') {
     my ($self, $c) = @_;
 
+    $self->underrun_catchup($c);
+    
     $c->stash->{prov_lock} = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c,
         attribute => 'lock',
@@ -2284,6 +2293,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         }
         my $schema = $c->model('DB');
         try {
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
 
                 my $email = delete $form->params->{email};
@@ -2561,15 +2571,22 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
 
                 $form->values->{lock} ||= 0;
-                if($lock->first) {
-                    if ($form->values->{lock} == 0) {
-                        $lock->delete;
-                    } else {
-                        $lock->first->update({ value => $form->values->{lock} });
-                    }
-                } elsif($form->values->{lock} > 0) {
-                    $lock->create({ value => $form->values->{lock} });
-                }
+                NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c, contract => $subscriber->contract);
+                NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                    c => $c,
+                    prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                    level => $form->values->{lock},
+                ) if ($subscriber->provisioning_voip_subscriber);
+                
+                #if($lock->first) {
+                #    if ($form->values->{lock} == 0) {
+                #        $lock->delete;
+                #    } else {
+                #        $lock->first->update({ value => $form->values->{lock} });
+                #    }
+                #} elsif($form->values->{lock} > 0) {
+                #    $lock->create({ value => $form->values->{lock} });
+                #}
             });
             delete $c->session->{created_objects}->{group};
             NGCP::Panel::Utils::Message->info(
