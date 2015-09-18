@@ -16,8 +16,6 @@ use HTTP::Headers::Util qw(split_header_words);
 use NGCP::Panel::Utils::ValidateJSON qw();
 
 has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
-has('ctx', is => 'rw', isa => InstanceOf['NGCP::Panel']);
-
 
 sub get_valid_post_data {
     my ($self, %params) = @_;
@@ -113,7 +111,7 @@ sub validate_form {
 
     if($run) {
         # check keys/vals
-        $form->process(params => $resource, posted => 1, %$form_params );
+        $form->process(params => $resource, posted => 1, %{$form_params} );
         unless($form->validated) {
             my $e = join '; ', map { 
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', 
@@ -206,7 +204,7 @@ sub valid_media_type {
     my $type;
     if(ref $media_type eq "ARRAY") {
         $type = join ' or ', @{ $media_type };
-        return 1 if $ctype && grep { $ctype eq $_ } @$media_type;
+        return 1 if $ctype && grep { $ctype eq $_ } @{$media_type};
     } else {
         $type = $media_type;
         return 1 if($ctype && index($ctype, $media_type) == 0);
@@ -302,7 +300,7 @@ sub require_valid_patch {
     };
     for my $o(keys %{ $valid_ops }) {
         unless(grep { /^$o$/ } @{ $ops }) {
-            delete $valid_ops->{$o}
+            delete $valid_ops->{$o};
         }
     }
 
@@ -428,8 +426,6 @@ sub apply_patch {
 
 sub set_body {
     my ($self, $c) = @_;
-    #Ctx could be initialized in Root::get_collections - wouldn't it be better?
-    $self->ctx($c);
     $c->stash->{body} = $c->request->body ? (do { local $/; $c->request->body->getline }) : '';
 }
 
@@ -488,8 +484,7 @@ around 'item_rs' => sub {
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
         if(@p) {
-            #ctx config may be necessary
-            $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$self->ctx), $p[0]->{query}->{second}($q,$self->ctx));
+            $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$c), $p[0]->{query}->{second}($q,$c));
         }
     }
     return $item_rs;
@@ -501,7 +496,7 @@ sub is_true {
     if(ref $v eq "") {
         $val = $v;
     } else {
-        $val = $$v;
+        $val = ${$v};
     }
     return 1 if(defined $val && $val == 1);
     return;
@@ -513,7 +508,7 @@ sub is_false {
     if(ref $v eq "") {
         $val = $v;
     } else {
-        $val = $$v;
+        $val = ${$v};
     }
     return 1 unless(defined $val && $val == 1);
     return;
