@@ -209,7 +209,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                         '+as' => 'bmid',
                     })->first;
 
-                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(c => $c,
+                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,
                     #bm_actual => $contract->billing_mappings->find($contract->get_column('bmid')),
                 );

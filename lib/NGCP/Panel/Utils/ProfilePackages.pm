@@ -382,7 +382,7 @@ sub topup_contract_balance {
     return $balance;
 }
 
-sub create_initial_contract_balance {
+sub create_initial_contract_balances {
     my %params = @_;
     my($c,$contract,$now) = @params{qw/c contract now/};
 
@@ -461,7 +461,9 @@ PREPARE_BALANCE_INITIAL:
     });
     $balance->discard_changes();
     
-    if ('hour' eq $interval_unit) {
+    if ('hour' eq $interval_unit
+        || 'day' eq $interval_unit
+        || 'week' eq $interval_unit) {
         $balance = catchup_contract_balances(c => $c, contract => $contract, now => $now);
     }
 

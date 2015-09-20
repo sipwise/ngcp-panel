@@ -457,7 +457,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
                 %{ $defaults{admins} },
                 reseller_id => $r{resellers}->id,
             });
-            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(c => $c,
+            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                 contract => $r{contracts},
                 #bm_actual => $r{billing_mappings}->find($r{contracts}->get_column('bmid')),
             );
