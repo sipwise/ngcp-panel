@@ -10,6 +10,7 @@ use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
+use NGCP::Panel::Utils::API::Subscribers;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -19,8 +20,8 @@ require Catalyst::ActionRole::RequireSSL;
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
-    default => 
-        'Defines the meta information like duration, callerid etc for fax recordings. The actual recordings can be fetched via the <a href="#faxrecordings">FaxRecordings</a> relation.',
+    default =>
+        'Defines the meta information like duration, sender etc for fax recordings. The actual recordings can be fetched via the <a href="#faxrecordings">FaxRecordings</a> relation.',
 );
 
 class_has 'query_params' => (
@@ -35,18 +36,6 @@ class_has 'query_params' => (
                     my $q = shift;
                     # join is already done in get_item_rs
                     { 'voip_subscriber.id' => $q };
-                },
-                second => sub { },
-            },
-        },
-        {
-            param => 'folder',
-            description => 'Filter for faxes in a specific folder (one of INBOX, Old, Friends, Family, Cust1 to Cust4)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    # join is already done in get_item_rs
-                    { 'me.dir' => { like => '%/'.$q } };
                 },
                 second => sub { },
             },
@@ -119,7 +108,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -146,6 +135,51 @@ sub OPTIONS :Allow {
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
+
+sub POST :Allow {
+    my ($self, $c) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+
+        last unless $self->forbid_link_header($c);
+        last unless $self->valid_media_type($c, 'multipart/form-data');
+        last unless $self->require_wellformed_json($c, 'application/json', $c->req->param('json'));
+        my $resource = JSON::from_json($c->req->param('json'), { utf8 => 1 });
+        $resource->{faxfile} = $self->get_upload($c, 'faxfile');
+
+        my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});
+        return unless($billing_subscriber);
+        my $kamailio_subscriber = $billing_subscriber->provisioning_voip_subscriber->kamailio_subscriber;
+        return unless($kamailio_subscriber);
+
+        my $form = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+        );
+        try {
+            NGCP::Panel::Utils::Hylafax::send_fax(
+                c => $c,
+                subscriber => $kamailio_subscriber,
+                destination => $form->values->{destination},
+                (defined $form->values->{faxfile})
+                    ?
+                    ( upload => $form->values->{faxfile} ) :
+                    ( data => $form->values->{data} ),
+            );
+            $guard->commit;
+            $c->response->status(HTTP_CREATED);
+            $c->response->body(q());
+        } catch($e) {
+            $c->log->error("failed to send fax: $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            last;
+        };
+    }
+    return;
+}
+
 
 sub end : Private {
     my ($self, $c) = @_;

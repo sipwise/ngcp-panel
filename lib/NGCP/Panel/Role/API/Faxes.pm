@@ -1,4 +1,4 @@
-package NGCP::Panel::Role::API::Faxs;
+package NGCP::Panel::Role::API::Faxes;
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -11,24 +11,23 @@ use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Fax::Meta;
+use NGCP::Panel::Form::Subscriber::Webfax;
 use NGCP::Panel::Utils::Subscriber;
 
 sub item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('fax_spool')->search({
-        duration => { '!=' => '' },
+    my $item_rs = $c->model('DB')->resultset('fax_journal')->search({
         'voip_subscriber.id' => { '!=' => undef },
     },{
-            join => { mailboxuser => { provisioning_voip_subscriber => 'voip_subscriber' } }
+        join => { subscriber => { provisioning_voip_subscriber => 'voip_subscriber' } }
     });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id
         },{
-            join => { mailboxuser => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } } }
+            join => { subscriber => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } } }
         });
     }
     return $item_rs;
@@ -36,7 +35,7 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Fax::Meta->new;
+    return NGCP::Panel::Form::Subscriber::Webfax->new;
 }
 
 sub hal_from_item {
@@ -72,13 +71,11 @@ sub resource_from_item {
     my %resource = ();
     $resource{id} = int($item->id);
     $resource{duration} = $item->duration->is_int ? int($item->duration) : 0;
-    $resource{time} = "" . $item->origtime;
-    $resource{caller} = $item->callerid;
-    $resource{subscriber_id} = int($item->mailboxuser->provisioning_voip_subscriber->voip_subscriber->id);
-
-    # type is last item of path like /var/spool/asterisk/fax/default/uuid/INBOX
-    my @p = split '/', $item->dir;
-    $resource{folder} = pop @p;
+    $resource{direction} = $item->direction;
+    $resource{time} = "" . $item->the_timestamp;
+    $resource{peer_name} = $item->peer_name;
+    $resource{peer_number} = $item->peer_number;
+    $resource{subscriber_id} = int($item->subscriber->provisioning_voip_subscriber->voip_subscriber->id);
 
     return \%resource;
 }
@@ -87,31 +84,6 @@ sub item_by_id {
     my ($self, $c, $id) = @_;
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
-}
-
-sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
-
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-    );
-
-    my $f = $resource->{folder};
-    my $upresource = {};
-    $upresource->{dir} = $item->dir;
-    my $dir_old = $item->dir;
-    $upresource->{dir} =~ s/\/[^\/]+$/\/$f/;
-
-    $item->update($upresource);
-
-    if($dir_old =~/INBOX/ && $upresource->{dir} !~/INBOX/){
-        NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'fax' => $item );
-    }
-
-    return $item;
 }
 
 1;
