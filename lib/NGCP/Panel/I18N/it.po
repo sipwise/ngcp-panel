@@ -153,18 +153,18 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm:46
 #: lib/NGCP/Panel/Controller/Rewrite.pm:31
 #: lib/NGCP/Panel/Controller/Subscriber.pm:116
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2072
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2097
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2104
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2077
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2102
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2109
 #: lib/NGCP/Panel/Controller/Subscriber.pm:264
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2647
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2664
 #: lib/NGCP/Panel/Controller/Subscriber.pm:269
 #: lib/NGCP/Panel/Controller/Subscriber.pm:274
 #: lib/NGCP/Panel/Controller/Subscriber.pm:284
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:330
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:39
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1287
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1080
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1098
 #: lib/NGCP/Panel/Utils/Sounds.pm:65 lib/NGCP/Panel/Utils/Voucher.pm:146
 #: share/templates/customer/details.tt:60
 msgid "#"
@@ -712,7 +712,7 @@ msgid "An external id, e.g. provided by a 3rd party provisioning."
 msgstr ""
 "Un ID esterno, es. fornito da un sistema di provisioning di terze parti."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3074
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3091
 msgid "Anonymous"
 msgstr ""
 
@@ -797,7 +797,7 @@ msgstr ""
 msgid "Auto Attendant"
 msgstr "Risponditore Automatico"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3785
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3802
 msgid "Auto Attendant Slot"
 msgstr "Voce Risponditore Automatico"
 
@@ -1067,7 +1067,7 @@ msgstr ""
 msgid "Billing voucher successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2076
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2081
 msgid "Billing zone"
 msgstr ""
 
@@ -1380,8 +1380,8 @@ msgid "Call type"
 msgstr "Tipo Chiamata"
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:26
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2082
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2112
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2087
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2117
 msgid "Call-ID"
 msgstr "Call-ID"
 
@@ -1399,7 +1399,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm:27
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm:48
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2075
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2080
 #: lib/NGCP/Panel/Utils/DbStrings.pm:989
 msgid "Callee"
 msgstr "Chiamato"
@@ -1434,8 +1434,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm:26
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm:47
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2074
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2099
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2079
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2104
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1273
 msgid "Caller"
 msgstr "Chiamante"
@@ -1638,7 +1638,7 @@ msgstr "CloudPBX Timeout Chiamata in Serie"
 msgid "CloudPBX Subscriber"
 msgstr "Subscriber CloudPBX"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2538
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2548
 msgid "CloudPBX subscriber must have a primary number"
 msgstr ""
 
@@ -1694,7 +1694,7 @@ msgstr "Configurazione Preferenze"
 msgid "Connectable Models"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2107
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2112
 #: lib/NGCP/Panel/Utils/DbStrings.pm:957 share/templates/contact/list.tt:3
 #: share/templates/reseller/details.tt:95
 #: share/templates/widgets/reseller_customer_overview.tt:12
@@ -1714,7 +1714,7 @@ msgstr "Dettagli Contatto"
 #: lib/NGCP/Panel/Controller/Reseller.pm:48
 #: lib/NGCP/Panel/Controller/Subscriber.pm:118
 #: lib/NGCP/Panel/Utils/DbStrings.pm:557
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1083
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1101
 msgid "Contact Email"
 msgstr "Email Contatto"
 
@@ -1830,12 +1830,12 @@ msgstr "Contratto cambiato con successo!"
 msgid "Contract successfully terminated"
 msgstr "Contratto terminato con successo"
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1059
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1077
 #: share/templates/contract/list.tt:1
 msgid "Contracts"
 msgstr "Contratti"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2091
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2096
 msgid "Cost"
 msgstr ""
 
@@ -2795,8 +2795,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm:29
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm:50
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2079
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2101
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2084
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2106
 #: lib/NGCP/Panel/Controller/Subscriber.pm:277
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1152
 msgid "Duration"
@@ -3027,7 +3027,7 @@ msgstr ""
 msgid "Expand Groups"
 msgstr "Espandi Gruppi"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2108
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2113
 #: lib/NGCP/Panel/Utils/DbStrings.pm:528
 msgid "Expires"
 msgstr ""
@@ -3089,7 +3089,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm:156
 #: lib/NGCP/Panel/Controller/Reseller.pm:47
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1257
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1081
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1099
 #: share/templates/subscriber/master.tt:90
 msgid "External #"
 msgstr "Codice Esterno #"
@@ -3130,7 +3130,7 @@ msgstr ""
 msgid "Fail Count"
 msgstr "Conteggio Errori"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3307
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3324
 msgid "Failed to add registered device"
 msgstr ""
 
@@ -3138,7 +3138,7 @@ msgstr ""
 msgid "Failed to change account balance!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2016
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2013
 msgid "Failed to check and apply underrun subscriber lock level"
 msgstr ""
 
@@ -3302,7 +3302,7 @@ msgstr "Creazione set di suoni fallita."
 msgid "Failed to create special offpeak entry"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3544
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3561
 msgid "Failed to create speed dial slot"
 msgstr ""
 
@@ -3319,7 +3319,7 @@ msgstr ""
 msgid "Failed to create subscriber profile set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3356
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3373
 msgid "Failed to create trusted source"
 msgstr ""
 
@@ -3351,7 +3351,7 @@ msgstr "Eliminazione dispositivo PBX fallita."
 msgid "Failed to delete administrator"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3709
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3726
 msgid "Failed to delete auto attendant slot"
 msgstr ""
 
@@ -3363,7 +3363,7 @@ msgstr ""
 msgid "Failed to delete billing zone"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3836
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3853
 msgid "Failed to delete ccmapping"
 msgstr ""
 
@@ -3434,7 +3434,7 @@ msgstr ""
 msgid "Failed to delete profile package"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3261
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3278
 msgid "Failed to delete registered device"
 msgstr ""
 
@@ -3458,7 +3458,7 @@ msgstr "Eliminazione set di suoni fallita."
 msgid "Failed to delete special offpeak entry"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3594
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3611
 msgid "Failed to delete speed dial slot"
 msgstr ""
 
@@ -3474,19 +3474,19 @@ msgstr ""
 msgid "Failed to delete time set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3464
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3481
 msgid "Failed to delete trusted source."
 msgstr "Eliminazione sorgente sicura fallita."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3212
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3229
 msgid "Failed to delete voicemail message"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3238
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3255
 msgid "Failed to find registered device."
 msgstr "Ricerca dispositivo registrato fallita."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2732
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2749
 msgid "Failed to find voicemail user."
 msgstr "Ricerca utente casella vocale fallita."
 
@@ -3625,7 +3625,7 @@ msgstr ""
 msgid "Failed to update administrator"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3775
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3792
 msgid "Failed to update autoattendant slots"
 msgstr "Aggiornamento slot IVR fallito."
 
@@ -3641,7 +3641,7 @@ msgstr ""
 msgid "Failed to update billing voucher"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3895
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3912
 msgid "Failed to update ccmappings"
 msgstr ""
 
@@ -3685,7 +3685,7 @@ msgstr "Aggiornamento dominio fallito."
 msgid "Failed to update email template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2970
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2987
 msgid "Failed to update fax setting"
 msgstr ""
 
@@ -3721,7 +3721,7 @@ msgstr ""
 msgid "Failed to update profile package"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3038
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3055
 msgid "Failed to update reminder setting."
 msgstr "Aggiornamento configurazione promemoria fallito."
 
@@ -3753,15 +3753,15 @@ msgstr "Aggiornamento set di suoni fallito."
 msgid "Failed to update special offpeak entry"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3649
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3666
 msgid "Failed to update speed dial slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2583
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2600
 msgid "Failed to update subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2704
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2721
 msgid "Failed to update subscriber (webpassword)"
 msgstr ""
 
@@ -3773,7 +3773,7 @@ msgstr ""
 msgid "Failed to update subscriber profile set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2539
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2549
 msgid "Failed to update subscriber, CloudPBX must have a primary number"
 msgstr ""
 
@@ -3781,7 +3781,7 @@ msgstr ""
 msgid "Failed to update time set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3432
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3449
 msgid "Failed to update trusted source"
 msgstr ""
 
@@ -3789,7 +3789,7 @@ msgstr ""
 msgid "Failed to update uploaded sound handle"
 msgstr "Aggiornamento riferimento suono caricato fallito."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2816
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2833
 msgid "Failed to update voicemail setting"
 msgstr ""
 
@@ -4420,7 +4420,7 @@ msgstr ""
 msgid "Initial Billing Profiles/Networks"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1061
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1079
 msgid "Initial Profiles"
 msgstr ""
 
@@ -4590,7 +4590,7 @@ msgstr "Id profilo dispositivo non valido"
 msgid "Invalid domain id detected"
 msgstr "Id dominio non valido"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2951
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2968
 msgid "Invalid fax setting."
 msgstr "Configurazione fax non valida."
 
@@ -4692,7 +4692,7 @@ msgstr "Subscriber id non valido"
 msgid "Invalid subscriber profile id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2352
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2362
 msgid "Invalid subscriber profile set id"
 msgstr ""
 
@@ -4704,7 +4704,7 @@ msgstr ""
 msgid "Invalid username/password"
 msgstr "username/password non validi"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2797
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2814
 msgid "Invalid voicemail setting"
 msgstr ""
 
@@ -5210,7 +5210,7 @@ msgid "Media transport protocol"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:29
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2113
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2118
 msgid "Method"
 msgstr "Metodo"
 
@@ -5493,19 +5493,19 @@ msgstr ""
 msgid "No product for this customer contract found."
 msgstr "Nessun contratto trovato per questo cliente."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3684
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3701
 msgid "No such auto attendant id."
 msgstr "Nessuno id per IVR."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3810
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3827
 msgid "No such auto ccmapping id."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3569
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3586
 msgid "No such speed dial id."
 msgstr "Nessun id chiamata rapida."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3159
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3176
 msgid "No such voicemail file."
 msgstr "Nessun file casella vocale."
 
@@ -5539,7 +5539,7 @@ msgstr "Novembre"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:342
 #: lib/NGCP/Panel/Controller/Subscriber.pm:123
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2648
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2665
 #: lib/NGCP/Panel/Utils/DbStrings.pm:545
 msgid "Number"
 msgstr "Numero"
@@ -6224,7 +6224,7 @@ msgstr "Linea Privata"
 #: lib/NGCP/Panel/Controller/Customer.pm:108
 #: lib/NGCP/Panel/Controller/Customer.pm:60
 #: lib/NGCP/Panel/Controller/Reseller.pm:157
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1082
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1100
 msgid "Product"
 msgstr "Prodotto"
 
@@ -6350,7 +6350,7 @@ msgstr ""
 msgid "Rating status"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2098
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2103
 msgid "Read"
 msgstr ""
 
@@ -6391,7 +6391,7 @@ msgstr ""
 msgid "Recurrence"
 msgstr "Ricorrenza"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3316
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3333
 #: share/templates/widgets/subscriber_reg_overview.tt:8
 msgid "Registered Device"
 msgstr "Dispositivo Registrato"
@@ -7464,8 +7464,8 @@ msgstr ""
 msgid "Speed Dial"
 msgstr "Chiamata Rapida"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3555
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3660
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3572
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3677
 msgid "Speed Dial Slot"
 msgstr "Slot Chiamata Veloce"
 
@@ -7499,7 +7499,7 @@ msgstr "Data di Inizio"
 msgid "Start Date/Time"
 msgstr "Data/Orario di Inizio"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2078
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2083
 msgid "Start Time"
 msgstr "Orario di Inizio"
 
@@ -7521,10 +7521,10 @@ msgstr "Nome Stazione"
 #: lib/NGCP/Panel/Controller/Reseller.pm:41
 #: lib/NGCP/Panel/Controller/Reseller.pm:50
 #: lib/NGCP/Panel/Controller/Subscriber.pm:122
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2077
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2082
 #: lib/NGCP/Panel/Controller/Subscriber.pm:276
 #: lib/NGCP/Panel/Utils/DbStrings.pm:642
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1084
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1102
 #: share/templates/subscriber/master.tt:76
 msgid "Status"
 msgstr "Stato"
@@ -7550,7 +7550,7 @@ msgstr "Sottoscritta"
 msgid "Subnet Prefix Length"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2649
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2666
 #: lib/NGCP/Panel/Utils/DbStrings.pm:996
 #: share/templates/customer/details.tt:283
 #: share/templates/customer/details.tt:544
@@ -7580,7 +7580,7 @@ msgstr ""
 msgid "Subscriber ID"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2593
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2610
 msgid "Subscriber Master Data"
 msgstr "Dati Principali Subscriber"
 
@@ -7717,7 +7717,7 @@ msgstr "Subscriber creato con successo!"
 msgid "Subscribers"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3301
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3318
 msgid "Successfully added registered device"
 msgstr "Dispositivo registrato aggiunto con successo"
 
@@ -7753,11 +7753,11 @@ msgstr ""
 msgid "Successfully created new time set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3538
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3555
 msgid "Successfully created speed dial slot"
 msgstr "Slot chiamata rapida creato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3350
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3367
 msgid "Successfully created trusted source"
 msgstr "Sorgente fidata creata con successo"
 
@@ -7765,11 +7765,11 @@ msgstr "Sorgente fidata creata con successo"
 msgid "Successfully deleted Call Forward"
 msgstr "Deviazione di chiamata eliminata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3703
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3720
 msgid "Successfully deleted auto attendant slot"
 msgstr "Slot IVR eliminato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3830
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3847
 msgid "Successfully deleted ccmapping"
 msgstr ""
 
@@ -7777,11 +7777,11 @@ msgstr ""
 msgid "Successfully deleted destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3268
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3285
 msgid "Successfully deleted registered device"
 msgstr "Dispositivo registrato eliminato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3588
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3605
 msgid "Successfully deleted speed dial slot"
 msgstr "Slot chiamata rapida eliminato con successo"
 
@@ -7789,11 +7789,11 @@ msgstr "Slot chiamata rapida eliminato con successo"
 msgid "Successfully deleted time set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3458
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3475
 msgid "Successfully deleted trusted source"
 msgstr "Sorgente fidata eliminata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3206
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3223
 msgid "Successfully deleted voicemail"
 msgstr "Casella Vocale eliminata con successo"
 
@@ -7827,11 +7827,11 @@ msgstr "Subscriber terminato con successo"
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3769
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3786
 msgid "Successfully updated auto attendant slots"
 msgstr "Slot IVR aggiornati con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3889
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3906
 msgid "Successfully updated ccmappings"
 msgstr ""
 
@@ -7855,23 +7855,23 @@ msgstr ""
 msgid "Successfully updated device profile"
 msgstr "Profilo dispositivo aggiornato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2960
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2977
 msgid "Successfully updated fax setting"
 msgstr "Configurazione fax aggiornata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2698
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2715
 msgid "Successfully updated password"
 msgstr "Password aggiornata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3032
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3049
 msgid "Successfully updated reminder setting"
 msgstr "Configurazione promemoria aggiornata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3643
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3660
 msgid "Successfully updated speed dial slot"
 msgstr "Slot chiamata rapida aggiornato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2577
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2594
 msgid "Successfully updated subscriber"
 msgstr "Subscriber aggiornato con successo"
 
@@ -7879,11 +7879,11 @@ msgstr "Subscriber aggiornato con successo"
 msgid "Successfully updated time set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3426
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3443
 msgid "Successfully updated trusted source"
 msgstr "Sorgente fidata aggiornata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2806
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2823
 msgid "Successfully updated voicemail setting"
 msgstr "Configurazione casella vocale aggiornata con successo"
 
@@ -9401,7 +9401,7 @@ msgstr ""
 msgid "Thursday"
 msgstr "Giovedì"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2100
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2105
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1510
 #: share/templates/subscriber/preferences.tt:457
 msgid "Time"
@@ -9454,7 +9454,7 @@ msgid "Timeset \"%1\" Details"
 msgstr "Settaggi temporali \"%1\" Dettagli"
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:25
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2111
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2116
 #: lib/NGCP/Panel/Controller/Subscriber.pm:275
 msgid "Timestamp"
 msgstr "Orario"
@@ -9475,7 +9475,7 @@ msgstr ""
 msgid "Top-up Cash"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1065
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1083
 msgid "Top-up Profiles"
 msgstr ""
 
@@ -9537,7 +9537,7 @@ msgstr "Numero massimo delle chiamate contemporanee uscenti"
 msgid "Total max number of overall concurrent calls"
 msgstr "Numero massimo delle chiamate contemporanee complessive"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3181
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3198
 msgid "Transcode of audio file failed"
 msgstr ""
 
@@ -9545,8 +9545,8 @@ msgstr ""
 msgid "Transcoding audio file failed"
 msgstr "Transcodifica file audio fallita"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3366
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3442
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3383
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3459
 msgid "Trusted Source"
 msgstr "Sorgente Fidata"
 
@@ -9554,7 +9554,7 @@ msgstr "Sorgente Fidata"
 msgid "Trusted Sources"
 msgstr "IP Sorgenti Fidati"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3381
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3398
 msgid "Trusted source entry not found"
 msgstr ""
 
@@ -9604,7 +9604,7 @@ msgstr ""
 msgid "Underrun Billing Profiles/Networks"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1063
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1081
 msgid "Underrun Profiles"
 msgstr ""
 
@@ -9715,7 +9715,7 @@ msgstr ""
 msgid "User"
 msgstr "Utente"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2106
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2111
 msgid "User Agent"
 msgstr ""
 
@@ -9901,7 +9901,7 @@ msgstr "Caselle Vocali"
 msgid "Voucher"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1060
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1078
 #: share/templates/package/details.tt:124
 #: share/templates/widgets/admin_topmenu_settings.tt:47
 #: share/templates/widgets/reseller_topmenu_settings.tt:21
