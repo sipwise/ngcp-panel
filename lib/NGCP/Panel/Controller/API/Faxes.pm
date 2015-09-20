@@ -140,7 +140,6 @@ sub POST :Allow {
     my ($self, $c) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-
         last unless $self->forbid_link_header($c);
         last unless $self->valid_media_type($c, 'multipart/form-data');
         last unless $self->require_wellformed_json($c, 'application/json', $c->req->param('json'));
@@ -148,9 +147,6 @@ sub POST :Allow {
         $resource->{faxfile} = $self->get_upload($c, 'faxfile');
 
         my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});
-        return unless($billing_subscriber);
-        my $kamailio_subscriber = $billing_subscriber->provisioning_voip_subscriber->kamailio_subscriber;
-        return unless($kamailio_subscriber);
 
         my $form = $self->get_form($c);
         last unless $self->validate_form(
@@ -159,15 +155,17 @@ sub POST :Allow {
             form => $form,
         );
         try {
-            NGCP::Panel::Utils::Hylafax::send_fax(
+            my $output = NGCP::Panel::Utils::Hylafax::send_fax(
                 c => $c,
-                subscriber => $kamailio_subscriber,
+                subscriber => $billing_subscriber,
                 destination => $form->values->{destination},
                 (defined $form->values->{faxfile})
                     ?
                     ( upload => $form->values->{faxfile} ) :
                     ( data => $form->values->{data} ),
             );
+            $c->log->debug("faxserver output:\n");
+            $c->log->debug($output);
             $guard->commit;
             $c->response->status(HTTP_CREATED);
             $c->response->body(q());

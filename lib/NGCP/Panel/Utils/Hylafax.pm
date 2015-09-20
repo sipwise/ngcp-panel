@@ -82,8 +82,10 @@ sub send_fax {
     my $sa = join(' ', @sendfax_args);
     my ($exit,$output);
     for my $host (@hosts) {
-        $output = `$sendfax $sa -h $host $filename 2>&1`;
+        my $cmd = "$sendfax $sa -h $host $filename";
+        $output = `$cmd 2>&1`;
         $exit = $?;
+        $c->log->debug("faxserver command: $cmd; output=$output; exit=$exit;");
         last if $exit eq '0';
     }
 

@@ -5,7 +5,7 @@ use warnings;
 use HTTP::Status qw(:constants);
 
 sub get_active_subscriber{
-    my($api, $c, $id, $params);
+    my($api, $c, $id, $params) = @_;
 
     my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
         'me.id' => $id,
