@@ -110,6 +110,24 @@
       "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_910e7b33",
+        "filename": "t/api-rest/api-calllists.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-23T10:17:03Z",
+      "side": 1,
+      "message": "what if putting this test-related setting in ngcp-panel.conf, in the\n\n\u003capi_debug_opts\u003e\n\n\u003c/api_debug_opts\u003e\n\nsection?",
+      "parentUuid": "da6255ed_d104f316",
+      "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
