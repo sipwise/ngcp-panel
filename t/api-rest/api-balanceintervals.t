@@ -17,6 +17,7 @@ use Storable;
 use Text::Table;
 use Text::Wrap;
 $Text::Wrap::columns = 58;
+#use Sys::CpuAffinity;
 
 use JSON::PP;
 use LWP::Debug;
@@ -232,6 +233,7 @@ my $gantt_events;
 
 if (_get_allow_fake_client_time() && $enable_profile_packages) {
     
+    #goto SKIP;
     #goto THREADED;
     {
         my $package = _create_profile_package('create','hour',1);
@@ -851,6 +853,81 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         
         _set_time();
     }
+    
+    {
+
+        my $profile_underrun = _create_billing_profile('UNDERRUN_NOTOPUP_INF');
+        my $profile_initial = _create_billing_profile('INITIAL_NOTOPUP_INF');
+        my $package = _create_profile_package('topup_interval','month',1, notopup_discard_intervals => 3,
+            initial_balance => 1, carry_over_mode => 'carry_over',
+            initial_profiles => [{ profile_id => $profile_initial->{id}, }, ],
+            underrun_lock_threshold => 1,
+            underrun_lock_level => 4,
+            underrun_profile_threshold => 1, underrun_profiles => [{ profile_id => $profile_underrun->{id}, }, ],);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
+        my $customer = _create_customer($package);
+        my $subscriber = _create_subscriber($customer);
+        #my $v_notopup = _create_voucher(10,'notopup'.$t);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
+        
+        #_perform_topup_voucher($subscriber,$v_notopup);
+       _check_interval_history($customer,[
+            { start => '~2015-01-30 13:00:00', stop => $infinite_future, cash => 0.01, profile => $profile_initial->{id} },
+        ]);
+        is(_get_customer($customer)->{billing_profile_id},$profile_initial->{id},'check customer actual billing profile id');
+        is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-01 13:00:00'));
+        
+       _check_interval_history($customer,[
+            { start => '~2015-01-30 13:00:00', stop => $infinite_future, cash => 0.00, profile => $profile_initial->{id} },
+        ]);
+       is(_get_customer($customer)->{billing_profile_id},$profile_underrun->{id},'check customer actual billing profile id');
+       is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time();
+    }
+    
+    #SKIP:
+    {
+
+        my $profile_underrun = _create_billing_profile('UNDERRUN_NOTOPUP_TIM');
+        my $profile_initial = _create_billing_profile('INITIAL_NOTOPUP_TIM');
+        my $package = _create_profile_package('topup_interval','month',1, 
+            initial_balance => 1, carry_over_mode => 'carry_over_timely',
+            initial_profiles => [{ profile_id => $profile_initial->{id}, }, ],
+            timely_duration_unit => 'month',
+            timely_duration_value => 1,
+            underrun_lock_threshold => 1,
+            underrun_lock_level => 4,
+            underrun_profile_threshold => 1, underrun_profiles => [{ profile_id => $profile_underrun->{id}, }, ],);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
+        my $customer = _create_customer($package);
+        my $subscriber = _create_subscriber($customer);
+        #my $v_notopup = _create_voucher(10,'notopup'.$t);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
+        
+        #_perform_topup_voucher($subscriber,$v_notopup);
+       _check_interval_history($customer,[
+            { start => '~2015-01-30 13:00:00', stop => $infinite_future, cash => 0.01, profile => $profile_initial->{id} },
+        ]);
+        is(_get_customer($customer)->{billing_profile_id},$profile_initial->{id},'check customer actual billing profile id');
+        is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-03-01 13:00:00'));
+        
+       _check_interval_history($customer,[
+            { start => '~2015-01-30 13:00:00', stop => $infinite_future, cash => 0.00, profile => $profile_initial->{id} },
+        ]);
+       is(_get_customer($customer)->{billing_profile_id},$profile_underrun->{id},'check customer actual billing profile id');
+       is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time();
+    }    
 
     THREADED:
     {
@@ -898,42 +975,42 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     
         my $t_a = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
         my $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact2);
-        my $t_c = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact9);
+        #my $t_c = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact9);
         my $intervals_a = $t_a->join();
         my $intervals_b = $t_b->join();
-        my $intervals_c = $t_c->join();
+        #my $intervals_c = $t_c->join();
         my $t2 = time;
         #my $got_a = [ sort { $a->{id} <=> $b->{id} } @{ $intervals_b->{_embedded}->{'ngcp:balanceintervals'} } ]; #$a->{contract_id}
         is($intervals_a->{total_count},3,"check total count of thread a results");
         is($intervals_b->{total_count},3,"check total count of thread b results");
-        is($intervals_c->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread c results");
+        #is($intervals_c->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread c results");
         my $got_asc = $intervals_a->{_embedded}->{'ngcp:customerbalances'};
         my $got_desc = $intervals_b->{_embedded}->{'ngcp:customerbalances'};
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare customerbalances collection results of threaded requests deeply')) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
         ok($t2 - $t1 > 2*$delay,'expected delay to assume customerbalances requests were processed after another');
-        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+        #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
 
         $t1 = time;
         $t_a = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
-        $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact2);
-        $t_c = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
+        $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact9);
+        #$t_c = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
         $intervals_a = $t_a->join();
         $intervals_b = $t_b->join();
-        $intervals_c = $t_c->join();
+        #$intervals_c = $t_c->join();
         $t2 = time;
         
         is($intervals_a->{total_count},3,"check total count of thread a results");
-        is($intervals_b->{total_count},3,"check total count of thread b results");
-        is($intervals_c->{total_count},3,"check total count of thread c results");        
+        is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
+        #is($intervals_c->{total_count},3,"check total count of thread c results");        
         
-        ok($t2 - $t1 > 3*$delay,'expected delay to assume customerbalances requests were processed after another');        
+        ok($t2 - $t1 < 2*$delay,'expected delay to assume only required contracts were locked');        
         
     } else {
         diag('allow_delay_commit not set, skipping ...');
     }
-    
+
     if (_get_allow_delay_commit()) {
         _set_time(NGCP::Panel::Utils::DateTime::current_local->subtract(months => 3));
         _create_customers_threaded(3,undef,undef,$custcontact9);
@@ -941,18 +1018,18 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         _set_time();
         
         my $t1 = time;
-        my $delay = 20; #15;
+        my $delay = 10; #15;
     
         my $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact3);
         my $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);
-        my $t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact9);        
+        #my $t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact9);        
         my $intervals_a = $t_a->join();
         my $intervals_b = $t_b->join();
-        my $intervals_c = $t_c->join();
+        #my $intervals_c = $t_c->join();
         my $t2 = time;
         is($intervals_a->{total_count},3,"check total count of thread a results");
         is($intervals_b->{total_count},3,"check total count of thread b results");
-        is($intervals_c->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread c results");
+        #is($intervals_c->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread c results");
         #my $got_a = [ sort { $a->{id} <=> $b->{id} } @{ $intervals_b->{_embedded}->{'ngcp:balanceintervals'} } ]; #$a->{contract_id}
         my $got_asc = $intervals_a->{_embedded}->{'ngcp:balanceintervals'};
         my $got_desc = $intervals_b->{_embedded}->{'ngcp:balanceintervals'};
@@ -960,28 +1037,28 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
         ok($t2 - $t1 > 2*$delay,'expected delay to assume balanceintervals requests were processed after another');
-        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+        #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
 
         $t1 = time;
         $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact3);
-        $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);
-        $t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);                
+        $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact9);
+        #$t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);                
         $intervals_a = $t_a->join();
         $intervals_b = $t_b->join();
-        $intervals_c = $t_c->join();
+        #$intervals_c = $t_c->join();
         $t2 = time;
         
         is($intervals_a->{total_count},3,"check total count of thread a results");
-        is($intervals_b->{total_count},3,"check total count of thread b results");
-        is($intervals_c->{total_count},3,"check total count of thread c results");        
+        is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
+        #is($intervals_c->{total_count},3,"check total count of thread c results");        
         
-        ok($t2 - $t1 > 3*$delay,'expected delay to assume balanceintervals requests were processed after another');        
+        ok($t2 - $t1 < 2*$delay,'expected delay to assume only required contracts were locked');        
         
         
     } else {
         diag('allow_delay_commit not set, skipping ...');
     }
-    
+
     if (_get_allow_delay_commit()) {
         my $package = _create_profile_package('create','month',1,initial_balance => 1, carry_over_mode => 'discard', underrun_lock_threshold => 1, underrun_lock_level => 4);
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-05-17 13:00:00'));
@@ -989,66 +1066,71 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         _create_customers_threaded(3,2,$package,$custcontact4);
         
         my $t1 = time;
-        my $delay = 20.0; #15.0; #10.0; #2.0;
+        my $delay = 10.0; #15.0; #10.0; #2.0;
         my $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
         my $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
-        my $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
+        #my $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
         my $prefs_a = $t_a->join();
         my $prefs_b = $t_b->join();
-        my $prefs_c = $t_c->join();
+        #my $prefs_c = $t_c->join();
         my $t2 = time;
         is($prefs_a->{total_count},2*3,"check total count of thread a results");
         is($prefs_b->{total_count},2*3,"check total count of thread b results");
-        is($prefs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");        
+        #is($prefs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");        
         my $got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
         my $got_desc = $prefs_b->{_embedded}->{'ngcp:subscriberpreferences'};
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber preference collection results of threaded requests deeply')) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
         ok($t2 - $t1 > 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
-        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+        #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_desc->[$i]->{lock},undef,"check if subscriber is unlocked initially");
         }
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-18 13:00:00'));
         
-        $t1 = time;
+        #$t1 = time;
     
-        $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
-        $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
-        $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
-        $prefs_a = $t_a->join();
-        $prefs_b = $t_b->join();
-        $prefs_c = $t_c->join();
-        $t2 = time;
-        is($prefs_a->{total_count},2*3,"check total count of thread a results");
-        is($prefs_b->{total_count},2*3,"check total count of thread b results");
-        is($prefs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");                
-        $got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
-        $got_desc = $prefs_b->{_embedded}->{'ngcp:subscriberpreferences'};
-        if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber preference collection results of threaded requests deeply')) {
-             diag(Dumper({asc => $got_asc, desc => $got_desc}));
-        }
-        ok($t2 - $t1 > 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
-        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
-        for (my $i = 0; $i < 2*3; $i++) {
-            is($got_desc->[$i]->{lock},4,"check if subscriber is locked now");
-        }
+        #$t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
+        #$t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
+        ##$t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
+        #$prefs_a = $t_a->join();
+        #$prefs_b = $t_b->join();
+        ##$prefs_c = $t_c->join();
+        #$t2 = time;
+        #is($prefs_a->{total_count},2*3,"check total count of thread a results");
+        ##is($prefs_b->{total_count},2*3,"check total count of thread b results");
+        #is($prefs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");                
+        #$got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
+        #$got_desc = $prefs_b->{_embedded}->{'ngcp:subscriberpreferences'};
+        #if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber preference collection results of threaded requests deeply')) {
+        #     diag(Dumper({asc => $got_asc, desc => $got_desc}));
+        #}
+        #ok($t2 - $t1 > 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
+        #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+        #for (my $i = 0; $i < 2*3; $i++) {
+        #    is($got_desc->[$i]->{lock},4,"check if subscriber is locked now");
+        #}
         
         $t1 = time;
         $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
-        $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
-        $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
+        $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
+        #$t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
         $prefs_a = $t_a->join();
         $prefs_b = $t_b->join();
-        $prefs_c = $t_c->join();
+        #$prefs_c = $t_c->join();
         $t2 = time;
         
         is($prefs_a->{total_count},2*3,"check total count of thread a results");
-        is($prefs_b->{total_count},2*3,"check total count of thread b results");
-        is($prefs_c->{total_count},2*3,"check total count of thread c results");
-        ok($t2 - $t1 > 3*$delay,'expected delay to assume subscriberpreferences requests were processed after another');        
+        is($prefs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");                
+        #is($prefs_c->{total_count},2*3,"check total count of thread c results");
+        $got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
+        for (my $i = 0; $i < 2*3; $i++) {
+            is($got_asc->[$i]->{lock},4,"check if subscriber is locked now");
+        }
+        
+        ok($t2 - $t1 < 2*$delay,'expected delay to assume only required contracts were locked');        
 
         $t1 = time;
         $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
@@ -1068,7 +1150,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     } else {
         diag('allow_delay_commit not set, skipping ...');
     }
-    
+
     if (_get_allow_delay_commit()) {
         my $package = _create_profile_package('create','month',1,initial_balance => 1, carry_over_mode => 'discard', underrun_lock_threshold => 1, underrun_lock_level => 4);
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-05-17 13:00:00'));
@@ -1076,66 +1158,70 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         _create_customers_threaded(3,2,$package,$custcontact5);
         
         my $t1 = time;
-        my $delay = 20.0; #15.0; #10.0; #2.0;
+        my $delay = 10.0; #15.0; #10.0; #2.0;
         my $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
         my $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact5);
-        my $t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);
+        #my $t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);
         my $subs_a = $t_a->join();
         my $subs_b = $t_b->join();
-        my $subs_c = $t_c->join();
+        #my $subs_c = $t_c->join();
         my $t2 = time;
         is($subs_a->{total_count},2*3,"check total count of thread a results");
         is($subs_b->{total_count},2*3,"check total count of thread b results");
-        is($subs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");        
+        #is($subs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");        
         my $got_asc = $subs_a->{_embedded}->{'ngcp:subscribers'};
         my $got_desc = $subs_b->{_embedded}->{'ngcp:subscribers'};
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber collection results of threaded requests deeply')) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
         ok($t2 - $t1 > 2*$delay,'expected delay to assume subscribers requests were processed after another');
-        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+        #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_desc->[$i]->{lock},undef,"check if subscriber is unlocked initially");
         }
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-18 13:00:00'));
         
+        #$t1 = time;
+        #
+        #$t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
+        #$t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);
+        ##$t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);
+        #$subs_a = $t_a->join();
+        #$subs_b = $t_b->join();
+        ##$subs_c = $t_c->join();
+        #$t2 = time;
+        #is($subs_a->{total_count},2*3,"check total count of thread a results");
+        #is($subs_b->{total_count},2*3,"check total count of thread b results");
+        #is($subs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");                
+        #$got_asc = $subs_a->{_embedded}->{'ngcp:subscribers'};
+        #$got_desc = $subs_b->{_embedded}->{'ngcp:subscribers'};
+        #if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber collection results of threaded requests deeply')) {
+        #     diag(Dumper({asc => $got_asc, desc => $got_desc}));
+        #}
+        #ok($t2 - $t1 > 2*$delay,'expected delay to assume subscribers requests were processed after another');
+        #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+        #for (my $i = 0; $i < 2*3; $i++) {
+        #    is($got_desc->[$i]->{lock},4,"check if subscriber is locked now");
+        #}
+        
         $t1 = time;
-    
         $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
-        $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact5);
-        $t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);
+        $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);
+        #$t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact5);
         $subs_a = $t_a->join();
         $subs_b = $t_b->join();
-        $subs_c = $t_c->join();
+        #$subs_c = $t_c->join();
         $t2 = time;
+        
         is($subs_a->{total_count},2*3,"check total count of thread a results");
-        is($subs_b->{total_count},2*3,"check total count of thread b results");
-        is($subs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");                
+        is($subs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");
+        #is($subs_c->{total_count},2*3,"check total count of thread c results");
         $got_asc = $subs_a->{_embedded}->{'ngcp:subscribers'};
-        $got_desc = $subs_b->{_embedded}->{'ngcp:subscribers'};
-        if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber collection results of threaded requests deeply')) {
-             diag(Dumper({asc => $got_asc, desc => $got_desc}));
-        }
-        ok($t2 - $t1 > 2*$delay,'expected delay to assume subscribers requests were processed after another');
-        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
         for (my $i = 0; $i < 2*3; $i++) {
-            is($got_desc->[$i]->{lock},4,"check if subscriber is locked now");
-        }
-        
-        $t1 = time;
-        $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
-        $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact5);
-        $t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact5);
-        $subs_a = $t_a->join();
-        $subs_b = $t_b->join();
-        $subs_c = $t_c->join();
-        $t2 = time;
-        
-        is($subs_a->{total_count},2*3,"check total count of thread a results");
-        is($subs_b->{total_count},2*3,"check total count of thread b results");
-        is($subs_c->{total_count},2*3,"check total count of thread c results");
-        ok($t2 - $t1 > 3*$delay,'expected delay to assume subscribers requests were processed after another');        
+            is($got_asc->[$i]->{lock},4,"check if subscriber is locked now");
+        }        
+        ok($t2 - $t1 < 2*$delay,'expected delay to assume only required contracts were locked');        
 
         $t1 = time;
         $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
@@ -1463,6 +1549,18 @@ sub _create_customer {
     _record_request("create customer" . ($record_label ? ' ' . $record_label : ''),$request,$req_data,$customer);
     return $customer;
     
+}
+
+sub _get_customer {
+    my $customer = shift;
+    $req = HTTP::Request->new('GET', $uri.'/api/customers/'.$customer->{id});
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch customer id " . $customer->{id});
+    $customer = JSON::from_json($res->decoded_content);
+    $customer_map{$customer->{id}} = threads::shared::shared_clone($customer);
+    return $customer;
 }
 
 sub _switch_package {

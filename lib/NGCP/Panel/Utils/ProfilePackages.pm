@@ -148,13 +148,11 @@ sub resize_actual_contract_balance {
         }
 
         #underruns due to increased thresholds:
+        my $update = {};
         if (_ENABLE_UNDERRUN_LOCK && defined $underrun_lock_threshold && ($actual_balance->cash_balance + $topup_amount) < $underrun_lock_threshold) {
             if (defined $new_package->underrun_lock_level) {
                 set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $new_package->underrun_lock_level);
-                $actual_balance->update({
-                    underrun_lock => $now,
-                });
-                $actual_balance->discard_changes();
+                $update->{underrun_lock} = $now;
             }
         }        
         if (_ENABLE_UNDERRUN_PROFILES && defined $underrun_profile_threshold && ($actual_balance->cash_balance + $topup_amount) < $underrun_profile_threshold) {
@@ -166,11 +164,12 @@ sub resize_actual_contract_balance {
                     stime => $now,
                     profiles => 'underrun_profiles',
                     now => $now) > 0) {
-                $actual_balance->update({
-                    underrun_profiles => $now,
-                });
-                $actual_balance->discard_changes();
+                $update->{underrun_profiles} = $now;
             }
+        }
+        if ((scalar keys %$update) > 0) {
+            $actual_balance->update($update);
+            $actual_balance->discard_changes();
         }
 
     } else {
@@ -221,11 +220,12 @@ sub catchup_contract_balances {
     while ($last_balance && !NGCP::Panel::Utils::DateTime::is_infinite_future($last_balance->end) && $last_balance->end < $now) { #comparison takes 100++ sec if loaded lastbalance contains +inf
         my $start_of_next_interval = $last_balance->end->clone->add(seconds => 1);
 
-        unless ($is_notopup_expiration_calculated) {
+        if ($has_package && !$is_notopup_expiration_calculated) {
             #we have two queries here, so do it only if really creating contract_balances
             $notopup_expiration = _get_notopup_expiration(contract => $contract,
                 notopup_discard_intervals => $notopup_discard_intervals,
-                interval_unit => $interval_unit);
+                interval_unit => $interval_unit,
+                start_mode => $start_mode);
             $is_notopup_expiration_calculated = 1;
         }
         
@@ -294,6 +294,51 @@ PREPARE_BALANCE_CATCHUP:
         });
         $last_balance->discard_changes();
     }
+
+	# in case of "topup" or "topup_interval" start modes, the current interval end can be
+	# infinite and no new contract balances are created. for this infinite end interval,
+	# the interval start represents the time the last topup happened in case of "topup".
+	# in case of "topup_interval", the interval start represents the contract creation.
+	# the cash balance should be discarded when
+	#  1. the current/call time is later than than $notopup_discard_intervals periods
+	#  after the interval start, or
+	#  2. we have the "carry_over_timely" mode, and the current/call time is beyond
+	#  the timely end already
+    if ($has_package && $last_balance && NGCP::Panel::Utils::DateTime::is_infinite_future($last_balance->end)) {
+        $notopup_expiration = _get_notopup_expiration(contract => $contract,
+            notopup_discard_intervals => $notopup_discard_intervals,
+            interval_unit => $interval_unit,
+            last_balance => $last_balance,
+            start_mode => $start_mode);
+        my $timely_end = (_CARRY_OVER_TIMELY_MODE eq $carry_over_mode ? _add_interval($last_balance->start,$interval_unit,$interval_value,undef)->subtract(seconds => 1) : undef);
+        if ((defined $notopup_expiration && $now >= $notopup_expiration)
+            || (defined $timely_end && $now > $timely_end)) {
+            my $update = {
+                cash_balance => 0
+            };
+            if (_ENABLE_UNDERRUN_LOCK && !$suppress_underrun && !$underrun_lock_applied && defined $underrun_lock_threshold && $last_balance->cash_balance >= $underrun_lock_threshold && ($update->{cash_balance} + $topup_amount) < $underrun_lock_threshold) {
+                $underrun_lock_applied = 1;
+                if (defined $old_package->underrun_lock_level) {
+                    set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $old_package->underrun_lock_level);
+                    $update->{underrun_lock} = $now;
+                }
+            }        
+            if (_ENABLE_UNDERRUN_PROFILES && !$suppress_underrun && !$underrun_profiles_applied && defined $underrun_profile_threshold && ($profiles_added > 0 || $last_balance->cash_balance >= $underrun_profile_threshold) && ($update->{cash_balance} + $topup_amount) < $underrun_profile_threshold) {
+                $underrun_profiles_applied = 1;
+                if (add_profile_mappings(c=> $c,
+                        contract => $contract,
+                        package => $old_package,
+                        #bm_actual => $bm_actual,
+                        stime => $now,
+                        profiles => 'underrun_profiles',
+                        now => $now) > 0) {
+                    $update->{underrun_profiles} = $now;
+                }
+            }            
+            $last_balance->update($update);
+            $last_balance->discard_changes();
+        }
+    }
     
     return $last_balance;
     
@@ -351,7 +396,7 @@ sub topup_contract_balance {
             $timely_end = $balance->end;
         } else {
             $timely_end = _add_interval($balance->start,$old_package->balance_interval_unit,$old_package->balance_interval_value,
-                        _START_MODE_PRESERVE_EOM->{$old_package->balance_interval_start_mode} ? $contract->create_timestamp : undef)->subtract(seconds => 1);
+                        _START_MODE_PRESERVE_EOM->{$old_package->balance_interval_start_mode} ? $contract->create_timestamp // $contract->modify_timestamp : undef)->subtract(seconds => 1);
         }
         my $timely_start = _add_interval($timely_end,$timely_duration_unit,-1 * $timely_duration_value)->add(seconds => 1);
         $timely_start = $balance->start if $timely_start < $balance->start;
@@ -675,16 +720,23 @@ sub _add_interval {
 
 sub _get_notopup_expiration {
     my %params = @_;
-    my($contract,$notopup_discard_intervals,$interval_unit)= @params{qw/contract notopup_discard_intervals interval_unit/};
+    my($contract,$start_mode,$notopup_discard_intervals,$interval_unit,$last_balance)= @params{qw/contract $start_mode notopup_discard_intervals interval_unit last_balance/};
     my $notopup_expiration = undef;
     if ($notopup_discard_intervals) {
         #take the start of the latest interval where a topup occured,
         #add the allowed number+1 of the current package' intervals.
         #the balance is discarded  if the start of the next package
         #exceed this calculated expiration date.
-        my $last_balance_w_topup = $contract->contract_balances->search({ topup_count => { '>' => 0 } },{ order_by => { '-desc' => 'end'},})->first;
-        $last_balance_w_topup = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first unless $last_balance_w_topup;
-        $notopup_expiration = _add_interval($last_balance_w_topup->start,$interval_unit,$notopup_discard_intervals + 1) if $last_balance_w_topup;
+        my $last_balance_w_topup;
+        if ($last_balance) {
+            $last_balance_w_topup = $last_balance;
+        } else {
+            $last_balance_w_topup = $contract->contract_balances->search({ topup_count => { '>' => 0 } },{ order_by => { '-desc' => 'end'},})->first;
+            $last_balance_w_topup = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first unless $last_balance_w_topup;
+            $notopup_discard_intervals += 1;
+        }
+        $notopup_expiration = _add_interval($last_balance_w_topup->start,$interval_unit,$notopup_discard_intervals,
+            _START_MODE_PRESERVE_EOM->{$start_mode} ? $contract->create_timestamp // $contract->modify_timestamp : undef) if $last_balance_w_topup;
     }
     return $notopup_expiration;
 }
@@ -744,13 +796,11 @@ sub underrun_update_balance {
         $underrun_lock_threshold = $package->underrun_lock_threshold;
         $underrun_profile_threshold = $package->underrun_profile_threshold;
     }
+    my $update = {};
     if (_ENABLE_UNDERRUN_LOCK && defined $underrun_lock_threshold && $balance->cash_balance >= $underrun_lock_threshold && $new_cash_balance < $underrun_lock_threshold) {
         if (defined $package->underrun_lock_level) {
             set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->underrun_lock_level);
-            $balance->update({
-                underrun_lock => $now,
-            });
-            $balance->discard_changes();
+            $update->{underrun_lock} = $now;
         }
     }
     if (_ENABLE_UNDERRUN_PROFILES && defined $underrun_profile_threshold && $balance->cash_balance >= $underrun_profile_threshold && $new_cash_balance < $underrun_profile_threshold) {
@@ -762,12 +812,14 @@ sub underrun_update_balance {
                 stime => $now,
                 profiles => 'underrun_profiles',
                 now => $now) > 0) {
-            $balance->update({
-                underrun_profiles => $now,
-            });
-            $balance->discard_changes();
+            $update->{underrun_profiles} = $now;
         }
     }
+    if ((scalar keys %$update) > 0) {
+        $balance->update($update);
+        $balance->discard_changes();
+    }
+    
     return $balance;
     
 }
