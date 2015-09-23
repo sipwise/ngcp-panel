@@ -163,7 +163,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:330
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:39
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1287
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1098
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1150
 #: lib/NGCP/Panel/Utils/Sounds.pm:65 lib/NGCP/Panel/Utils/Voucher.pm:146
 #: share/templates/customer/details.tt:60
 msgid "#"
@@ -1698,7 +1698,7 @@ msgstr "Детали контакта"
 #: lib/NGCP/Panel/Controller/Reseller.pm:48
 #: lib/NGCP/Panel/Controller/Subscriber.pm:118
 #: lib/NGCP/Panel/Utils/DbStrings.pm:557
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1101
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1153
 msgid "Contact Email"
 msgstr "Email контакта"
 
@@ -1814,7 +1814,7 @@ msgstr "Контракт успешно изменен!"
 msgid "Contract successfully terminated"
 msgstr "Контракт успешно удален"
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1077
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1129
 #: share/templates/contract/list.tt:1
 msgid "Contracts"
 msgstr "Контракты"
@@ -3075,7 +3075,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm:156
 #: lib/NGCP/Panel/Controller/Reseller.pm:47
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1257
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1099
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1151
 #: share/templates/subscriber/master.tt:90
 msgid "External #"
 msgstr "Внешний #"
@@ -4408,7 +4408,7 @@ msgstr ""
 msgid "Initial Billing Profiles/Networks"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1079
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1131
 msgid "Initial Profiles"
 msgstr ""
 
@@ -6218,7 +6218,7 @@ msgstr "Приватная линия"
 #: lib/NGCP/Panel/Controller/Customer.pm:108
 #: lib/NGCP/Panel/Controller/Customer.pm:60
 #: lib/NGCP/Panel/Controller/Reseller.pm:157
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1100
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1152
 msgid "Product"
 msgstr "Продукт"
 
@@ -7528,7 +7528,7 @@ msgstr "Имя станции"
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2082
 #: lib/NGCP/Panel/Controller/Subscriber.pm:276
 #: lib/NGCP/Panel/Utils/DbStrings.pm:642
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1102
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1154
 #: share/templates/subscriber/master.tt:76
 msgid "Status"
 msgstr "Статус"
@@ -9494,7 +9494,7 @@ msgstr ""
 msgid "Top-up Cash"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1083
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1135
 msgid "Top-up Profiles"
 msgstr ""
 
@@ -9623,7 +9623,7 @@ msgstr ""
 msgid "Underrun Billing Profiles/Networks"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1081
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1133
 msgid "Underrun Profiles"
 msgstr ""
 
@@ -9920,7 +9920,7 @@ msgstr "Голосовые сообщения"
 msgid "Voucher"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1078
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1130
 #: share/templates/package/details.tt:124
 #: share/templates/widgets/admin_topmenu_settings.tt:47
 #: share/templates/widgets/reseller_topmenu_settings.tt:21

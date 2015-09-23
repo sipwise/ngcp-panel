@@ -59,7 +59,7 @@ msgstr ""
 msgid "\"Voice Mail\" - An internal flag for the voice_mail pseudo-preference feature to be able to map it do subscriber profiles. Not directly used."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:106 lib/NGCP/Panel/Controller/Billing.pm:345 lib/NGCP/Panel/Controller/Billing.pm:35 lib/NGCP/Panel/Controller/Billing.pm:688 lib/NGCP/Panel/Controller/Contact.pm:32 lib/NGCP/Panel/Controller/Contract.pm:25 lib/NGCP/Panel/Controller/Contract.pm:457 lib/NGCP/Panel/Controller/Customer.pm:106 lib/NGCP/Panel/Controller/Customer.pm:333 lib/NGCP/Panel/Controller/Customer.pm:339 lib/NGCP/Panel/Controller/Customer.pm:348 lib/NGCP/Panel/Controller/Customer.pm:385 lib/NGCP/Panel/Controller/Customer.pm:56 lib/NGCP/Panel/Controller/Device.pm:107 lib/NGCP/Panel/Controller/Device.pm:120 lib/NGCP/Panel/Controller/Device.pm:46 lib/NGCP/Panel/Controller/Device.pm:61 lib/NGCP/Panel/Controller/Device.pm:77 lib/NGCP/Panel/Controller/Device.pm:91 lib/NGCP/Panel/Controller/Domain.pm:29 lib/NGCP/Panel/Controller/EmailTemplate.pm:33 lib/NGCP/Panel/Controller/Invoice.pm:39 lib/NGCP/Panel/Controller/Invoice.pm:52 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32 lib/NGCP/Panel/Controller/MaliciousCall.pm:23 lib/NGCP/Panel/Controller/MaliciousCall.pm:45 lib/NGCP/Panel/Controller/NCOS.pm:237 lib/NGCP/Panel/Controller/NCOS.pm:29 lib/NGCP/Panel/Controller/Network.pm:26 lib/NGCP/Panel/Controller/NumberBlock.pm:39 lib/NGCP/Panel/Controller/Package.pm:27 lib/NGCP/Panel/Controller/Package.pm:323 lib/NGCP/Panel/Controller/Peering.pm:27 lib/NGCP/Panel/Controller/Peering.pm:80 lib/NGCP/Panel/Controller/Peering.pm:91 lib/NGCP/Panel/Controller/Product.pm:22 lib/NGCP/Panel/Controller/Reseller.pm:133 lib/NGCP/Panel/Controller/Reseller.pm:140 lib/NGCP/Panel/Controller/Reseller.pm:145 lib/NGCP/Panel/Controller/Reseller.pm:155 lib/NGCP/Panel/Controller/Reseller.pm:162 lib/NGCP/Panel/Controller/Reseller.pm:167 lib/NGCP/Panel/Controller/Reseller.pm:173 lib/NGCP/Panel/Controller/Reseller.pm:181 lib/NGCP/Panel/Controller/Reseller.pm:188 lib/NGCP/Panel/Controller/Reseller.pm:38 lib/NGCP/Panel/Controller/Reseller.pm:46 lib/NGCP/Panel/Controller/Rewrite.pm:31 lib/NGCP/Panel/Controller/Subscriber.pm:116 lib/NGCP/Panel/Controller/Subscriber.pm:2077 lib/NGCP/Panel/Controller/Subscriber.pm:2102 lib/NGCP/Panel/Controller/Subscriber.pm:2109 lib/NGCP/Panel/Controller/Subscriber.pm:264 lib/NGCP/Panel/Controller/Subscriber.pm:2664 lib/NGCP/Panel/Controller/Subscriber.pm:269 lib/NGCP/Panel/Controller/Subscriber.pm:274 lib/NGCP/Panel/Controller/Subscriber.pm:284 lib/NGCP/Panel/Controller/SubscriberProfile.pm:330 lib/NGCP/Panel/Controller/SubscriberProfile.pm:39 lib/NGCP/Panel/Utils/DbStrings.pm:1287 lib/NGCP/Panel/Utils/ProfilePackages.pm:1098 lib/NGCP/Panel/Utils/Sounds.pm:65 lib/NGCP/Panel/Utils/Voucher.pm:146 share/templates/customer/details.tt:60
+#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:106 lib/NGCP/Panel/Controller/Billing.pm:345 lib/NGCP/Panel/Controller/Billing.pm:35 lib/NGCP/Panel/Controller/Billing.pm:688 lib/NGCP/Panel/Controller/Contact.pm:32 lib/NGCP/Panel/Controller/Contract.pm:25 lib/NGCP/Panel/Controller/Contract.pm:457 lib/NGCP/Panel/Controller/Customer.pm:106 lib/NGCP/Panel/Controller/Customer.pm:333 lib/NGCP/Panel/Controller/Customer.pm:339 lib/NGCP/Panel/Controller/Customer.pm:348 lib/NGCP/Panel/Controller/Customer.pm:385 lib/NGCP/Panel/Controller/Customer.pm:56 lib/NGCP/Panel/Controller/Device.pm:107 lib/NGCP/Panel/Controller/Device.pm:120 lib/NGCP/Panel/Controller/Device.pm:46 lib/NGCP/Panel/Controller/Device.pm:61 lib/NGCP/Panel/Controller/Device.pm:77 lib/NGCP/Panel/Controller/Device.pm:91 lib/NGCP/Panel/Controller/Domain.pm:29 lib/NGCP/Panel/Controller/EmailTemplate.pm:33 lib/NGCP/Panel/Controller/Invoice.pm:39 lib/NGCP/Panel/Controller/Invoice.pm:52 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32 lib/NGCP/Panel/Controller/MaliciousCall.pm:23 lib/NGCP/Panel/Controller/MaliciousCall.pm:45 lib/NGCP/Panel/Controller/NCOS.pm:237 lib/NGCP/Panel/Controller/NCOS.pm:29 lib/NGCP/Panel/Controller/Network.pm:26 lib/NGCP/Panel/Controller/NumberBlock.pm:39 lib/NGCP/Panel/Controller/Package.pm:27 lib/NGCP/Panel/Controller/Package.pm:323 lib/NGCP/Panel/Controller/Peering.pm:27 lib/NGCP/Panel/Controller/Peering.pm:80 lib/NGCP/Panel/Controller/Peering.pm:91 lib/NGCP/Panel/Controller/Product.pm:22 lib/NGCP/Panel/Controller/Reseller.pm:133 lib/NGCP/Panel/Controller/Reseller.pm:140 lib/NGCP/Panel/Controller/Reseller.pm:145 lib/NGCP/Panel/Controller/Reseller.pm:155 lib/NGCP/Panel/Controller/Reseller.pm:162 lib/NGCP/Panel/Controller/Reseller.pm:167 lib/NGCP/Panel/Controller/Reseller.pm:173 lib/NGCP/Panel/Controller/Reseller.pm:181 lib/NGCP/Panel/Controller/Reseller.pm:188 lib/NGCP/Panel/Controller/Reseller.pm:38 lib/NGCP/Panel/Controller/Reseller.pm:46 lib/NGCP/Panel/Controller/Rewrite.pm:31 lib/NGCP/Panel/Controller/Subscriber.pm:116 lib/NGCP/Panel/Controller/Subscriber.pm:2077 lib/NGCP/Panel/Controller/Subscriber.pm:2102 lib/NGCP/Panel/Controller/Subscriber.pm:2109 lib/NGCP/Panel/Controller/Subscriber.pm:264 lib/NGCP/Panel/Controller/Subscriber.pm:2664 lib/NGCP/Panel/Controller/Subscriber.pm:269 lib/NGCP/Panel/Controller/Subscriber.pm:274 lib/NGCP/Panel/Controller/Subscriber.pm:284 lib/NGCP/Panel/Controller/SubscriberProfile.pm:330 lib/NGCP/Panel/Controller/SubscriberProfile.pm:39 lib/NGCP/Panel/Utils/DbStrings.pm:1287 lib/NGCP/Panel/Utils/ProfilePackages.pm:1150 lib/NGCP/Panel/Utils/Sounds.pm:65 lib/NGCP/Panel/Utils/Voucher.pm:146 share/templates/customer/details.tt:60
 msgid "#"
 msgstr ""
 
@@ -1309,7 +1309,7 @@ msgstr ""
 msgid "Contact Details"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:27 lib/NGCP/Panel/Controller/Contract.pm:459 lib/NGCP/Panel/Controller/Customer.pm:109 lib/NGCP/Panel/Controller/Customer.pm:59 lib/NGCP/Panel/Controller/Peering.pm:28 lib/NGCP/Panel/Controller/Reseller.pm:158 lib/NGCP/Panel/Controller/Reseller.pm:48 lib/NGCP/Panel/Controller/Subscriber.pm:118 lib/NGCP/Panel/Utils/DbStrings.pm:557 lib/NGCP/Panel/Utils/ProfilePackages.pm:1101
+#: lib/NGCP/Panel/Controller/Contract.pm:27 lib/NGCP/Panel/Controller/Contract.pm:459 lib/NGCP/Panel/Controller/Customer.pm:109 lib/NGCP/Panel/Controller/Customer.pm:59 lib/NGCP/Panel/Controller/Peering.pm:28 lib/NGCP/Panel/Controller/Reseller.pm:158 lib/NGCP/Panel/Controller/Reseller.pm:48 lib/NGCP/Panel/Controller/Subscriber.pm:118 lib/NGCP/Panel/Utils/DbStrings.pm:557 lib/NGCP/Panel/Utils/ProfilePackages.pm:1153
 msgid "Contact Email"
 msgstr ""
 
@@ -1399,7 +1399,7 @@ msgstr ""
 msgid "Contract successfully terminated"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1077 share/templates/contract/list.tt:1
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1129 share/templates/contract/list.tt:1
 msgid "Contracts"
 msgstr ""
 
@@ -2425,7 +2425,7 @@ msgstr ""
 msgid "Extension unit"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:26 lib/NGCP/Panel/Controller/Contract.pm:458 lib/NGCP/Panel/Controller/Customer.pm:107 lib/NGCP/Panel/Controller/Customer.pm:57 lib/NGCP/Panel/Controller/Reseller.pm:156 lib/NGCP/Panel/Controller/Reseller.pm:47 lib/NGCP/Panel/Utils/DbStrings.pm:1257 lib/NGCP/Panel/Utils/ProfilePackages.pm:1099 share/templates/subscriber/master.tt:90
+#: lib/NGCP/Panel/Controller/Contract.pm:26 lib/NGCP/Panel/Controller/Contract.pm:458 lib/NGCP/Panel/Controller/Customer.pm:107 lib/NGCP/Panel/Controller/Customer.pm:57 lib/NGCP/Panel/Controller/Reseller.pm:156 lib/NGCP/Panel/Controller/Reseller.pm:47 lib/NGCP/Panel/Utils/DbStrings.pm:1257 lib/NGCP/Panel/Utils/ProfilePackages.pm:1151 share/templates/subscriber/master.tt:90
 msgid "External #"
 msgstr ""
 
@@ -3679,7 +3679,7 @@ msgstr ""
 msgid "Initial Billing Profiles/Networks"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1079
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1131
 msgid "Initial Profiles"
 msgstr ""
 
@@ -5315,7 +5315,7 @@ msgstr ""
 msgid "Private Line"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:28 lib/NGCP/Panel/Controller/Customer.pm:108 lib/NGCP/Panel/Controller/Customer.pm:60 lib/NGCP/Panel/Controller/Reseller.pm:157 lib/NGCP/Panel/Utils/ProfilePackages.pm:1100
+#: lib/NGCP/Panel/Controller/Contract.pm:28 lib/NGCP/Panel/Controller/Customer.pm:108 lib/NGCP/Panel/Controller/Customer.pm:60 lib/NGCP/Panel/Controller/Reseller.pm:157 lib/NGCP/Panel/Utils/ProfilePackages.pm:1152
 msgid "Product"
 msgstr ""
 
@@ -6356,7 +6356,7 @@ msgstr ""
 msgid "Station Name"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:30 lib/NGCP/Panel/Controller/Contract.pm:461 lib/NGCP/Panel/Controller/Customer.pm:110 lib/NGCP/Panel/Controller/Customer.pm:62 lib/NGCP/Panel/Controller/Reseller.pm:142 lib/NGCP/Panel/Controller/Reseller.pm:159 lib/NGCP/Panel/Controller/Reseller.pm:41 lib/NGCP/Panel/Controller/Reseller.pm:50 lib/NGCP/Panel/Controller/Subscriber.pm:122 lib/NGCP/Panel/Controller/Subscriber.pm:2082 lib/NGCP/Panel/Controller/Subscriber.pm:276 lib/NGCP/Panel/Utils/DbStrings.pm:642 lib/NGCP/Panel/Utils/ProfilePackages.pm:1102 share/templates/subscriber/master.tt:76
+#: lib/NGCP/Panel/Controller/Contract.pm:30 lib/NGCP/Panel/Controller/Contract.pm:461 lib/NGCP/Panel/Controller/Customer.pm:110 lib/NGCP/Panel/Controller/Customer.pm:62 lib/NGCP/Panel/Controller/Reseller.pm:142 lib/NGCP/Panel/Controller/Reseller.pm:159 lib/NGCP/Panel/Controller/Reseller.pm:41 lib/NGCP/Panel/Controller/Reseller.pm:50 lib/NGCP/Panel/Controller/Subscriber.pm:122 lib/NGCP/Panel/Controller/Subscriber.pm:2082 lib/NGCP/Panel/Controller/Subscriber.pm:276 lib/NGCP/Panel/Utils/DbStrings.pm:642 lib/NGCP/Panel/Utils/ProfilePackages.pm:1154 share/templates/subscriber/master.tt:76
 msgid "Status"
 msgstr ""
 
@@ -8028,7 +8028,7 @@ msgstr ""
 msgid "Top-up Cash"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1083
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1135
 msgid "Top-up Profiles"
 msgstr ""
 
@@ -8148,7 +8148,7 @@ msgstr ""
 msgid "Underrun Billing Profiles/Networks"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1081
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1133
 msgid "Underrun Profiles"
 msgstr ""
 
@@ -8414,7 +8414,7 @@ msgstr ""
 msgid "Voucher"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1078 share/templates/package/details.tt:124 share/templates/widgets/admin_topmenu_settings.tt:47 share/templates/widgets/reseller_topmenu_settings.tt:21
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm:1130 share/templates/package/details.tt:124 share/templates/widgets/admin_topmenu_settings.tt:47 share/templates/widgets/reseller_topmenu_settings.tt:21
 msgid "Vouchers"
 msgstr ""
 
