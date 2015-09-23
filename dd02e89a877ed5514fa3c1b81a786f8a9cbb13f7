@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_0e038610",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-23T09:27:17Z",
+      "side": 1,
+      "message": "as far as i can see only NGCP::Panel::Controller::API::SubscriberRegistrations\n\nwhy? it was there before, shouldn\u0027t actually change anything here.",
+      "parentUuid": "da6255ed_9af8d57d",
+      "range": {
+        "startLine": 132,
+        "startChar": 28,
+        "endLine": 132,
+        "endChar": 30
+      },
+      "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_3fd8bb1c",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 5
