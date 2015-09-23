@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_ae3b5aea",
+        "filename": "lib/NGCP/Panel/Role/API/Faxes.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-23T08:22:55Z",
+      "side": 1,
+      "message": "WebfaxAPI ?",
+      "revId": "f4159ef8081113184549494b3ad964a5bc96531e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
