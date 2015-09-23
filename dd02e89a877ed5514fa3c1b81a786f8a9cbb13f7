@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_5110034e",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-23T10:21:10Z",
+      "side": 1,
+      "message": "well not this one, but to check other resources\u0027 filters that use $c. iirc the $c parameter was here before, but not properly set without this change. so it seems it actually wasn\u0027t used anywhere before?",
+      "parentUuid": "da6255ed_0e038610",
+      "range": {
+        "startLine": 132,
+        "startChar": 28,
+        "endLine": 132,
+        "endChar": 30
+      },
+      "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_3fd8bb1c",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 5
