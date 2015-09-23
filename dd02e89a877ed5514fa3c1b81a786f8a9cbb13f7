@@ -93,6 +93,23 @@
       "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_d104f316",
+        "filename": "t/api-rest/api-calllists.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-23T10:10:41Z",
+      "side": 1,
+      "message": "reviewers: have a look at this. is the format ok?\n\nthis can be used, if you have a specific subscriber which has calls to be shown. tests are written in a way that it works with any subscriber, so they won\u0027t fail when this env is not set, but they make more sense in a prepared env. does that sound good?",
+      "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
