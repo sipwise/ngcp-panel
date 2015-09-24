@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_512243ba",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-24T08:49:15Z",
+      "side": 1,
+      "message": "it was properly set. I just simplified the code.",
+      "parentUuid": "da6255ed_5110034e",
+      "range": {
+        "startLine": 132,
+        "startChar": 28,
+        "endLine": 132,
+        "endChar": 30
+      },
+      "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_3fd8bb1c",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 5
@@ -120,6 +144,23 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_312fcfa3",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-24T08:49:15Z",
+      "side": 1,
+      "message": "I guess you\u0027re talking about this. $self-\u003ectx was the same $c but it can be simplified to this, because we have it available as an argument.",
+      "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_d104f316",
         "filename": "t/api-rest/api-calllists.t",
         "patchSetId": 5
@@ -149,6 +190,24 @@
       "side": 1,
       "message": "what if putting this test-related setting in ngcp-panel.conf, in the\n\n\u003capi_debug_opts\u003e\n\n\u003c/api_debug_opts\u003e\n\nsection?",
       "parentUuid": "da6255ed_d104f316",
+      "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_9140bb57",
+        "filename": "t/api-rest/api-calllists.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-24T08:49:15Z",
+      "side": 1,
+      "message": "in my view, ngcp_panel.conf stores the runtime options. the testhosts don\u0027t even have access to the same config file that is actually installed at the test-target.\n\nin conclusion, i don\u0027t really favor that approach ...",
+      "parentUuid": "da6255ed_910e7b33",
       "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
