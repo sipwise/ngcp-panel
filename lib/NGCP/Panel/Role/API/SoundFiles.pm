@@ -150,14 +150,14 @@ sub update_item {
     my $handle;
     if($set->contract_id) {
         $handle_rs = $handle_rs->search({
-            'group.name' => { 'in' => ['pbx', 'music_on_hold'] },
+            'group.name' => { 'in' => ['pbx', 'music_on_hold', 'digits'] },
         },{
             join => 'group',
         });
         $handle = $handle_rs->first;
         unless($handle) {
-            $c->log->error("invalid handle '$$resource{handle}', must be in group pbx or music_on_hold for a customer sound set");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle must be in group pbx or music_on_hold for a customer sound set");
+            $c->log->error("invalid handle '$$resource{handle}', must be in group pbx, music_on_hold or digits for a customer sound set");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle must be in group pbx, music_on_hold or digits for a customer sound set");
             last;
         }
     } else {
@@ -196,7 +196,11 @@ sub update_item {
     last unless($resource);
     delete $resource->{handle};
 
-    $item->update($resource);
+    if ($item) {
+        $item->update($resource);
+    } else {
+        $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
+    }
 
     return $item;
 }
