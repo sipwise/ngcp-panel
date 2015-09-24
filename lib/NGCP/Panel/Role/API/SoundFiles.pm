@@ -20,13 +20,16 @@ sub transcode_data {
     my ($self, $c, $from_codec, $resource) = @_;
 
     my ($fh, $filename) = tempfile();
+    my $output = "<none>";
     print $fh $resource->{data};
     try {
-        $resource->{data} = NGCP::Panel::Utils::Sounds::transcode_file(
+        $output = NGCP::Panel::Utils::Sounds::transcode_file(
             $filename, $from_codec, $resource->{codec},
         );
+        $resource->{data} = $output;
     } catch($e) {
         $c->log->error("failed to transcode file: $e");
+        $c->log->error("output: $output");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to transcode file");
         return;
     }
