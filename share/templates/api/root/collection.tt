@@ -242,10 +242,12 @@ Content-Type: application/json
 
 {
 ' _ props _ '}';
-    response =
-'HTTP/1.1 201 Created
-Location: /api/' _ id _ '/2';
+    response = 'HTTP/1.1 201 Created';
 
+    IF !col.properties.asynchronous ; 
+        response = response _ '
+Location: /api/' _ id _ '/2' ; 
+    END ;
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 %]
 </p>

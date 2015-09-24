@@ -160,6 +160,7 @@ sub GET : Allow {
             item_actions => $item_actions,
             sorting_cols => $sorting_cols,
             uri => $uri,
+            properties => ( $full_mod->can('properties') ?  $full_mod->properties : {} ),#
             sample => $full_mod->can('documentation_sample') # generate pretty json, but without outer brackets (this is tricky though)
                 ? to_json($full_mod->documentation_sample, {pretty => 1}) =~ s/(^\s*{\s*)|(\s*}\s*$)//rg =~ s/\n   /\n/rg
                 : undef,
