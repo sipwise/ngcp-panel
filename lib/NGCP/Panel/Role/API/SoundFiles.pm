@@ -196,7 +196,11 @@ sub update_item {
     last unless($resource);
     delete $resource->{handle};
 
-    $item->update($resource);
+    if ($item) {
+        $item->update($resource);
+    } else {
+        $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
+    }
 
     return $item;
 }
