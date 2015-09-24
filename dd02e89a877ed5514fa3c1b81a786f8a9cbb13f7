@@ -211,6 +211,24 @@
       "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_044b67b1",
+        "filename": "t/api-rest/api-calllists.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-24T14:26:40Z",
+      "side": 1,
+      "message": "ok, i was presuming the panel/api code uses that FORCE_SUBS.. flag and its very same value too. alex suggested to use the config in those cases, which he explicitly ngcpcfg-applies from jenkins temporarily.\n\nif the flag is really used by the .T script only, the ENV thing is ok, i think.",
+      "parentUuid": "da6255ed_9140bb57",
+      "revId": "dd02e89a877ed5514fa3c1b81a786f8a9cbb13f7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
