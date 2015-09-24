@@ -46,6 +46,30 @@
       "revId": "4debbe93a728dfdd51baa251c73c00e106547e17",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_241d4b67",
+        "filename": "lib/NGCP/Panel/Controller/API/Faxes.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-09-24T09:21:28Z",
+      "side": 1,
+      "message": "SubscriberRegistrations now has solution which looks like a dirty hack, which hides really asynchronous actions (Kamailio RPC call to create subscriber registration on the kamailio side)\n\nSo it was second case and I decided to make collections documentation more controllable from collection modules.",
+      "parentUuid": "da6255ed_d11d1375",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 2
+      },
+      "revId": "4debbe93a728dfdd51baa251c73c00e106547e17",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
