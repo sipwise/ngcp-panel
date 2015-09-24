@@ -23,6 +23,13 @@ class_has 'api_description' => (
     default =>
         'Defines the meta information like duration, sender etc for fax recordings. The actual recordings can be fetched via the <a href="#faxrecordings">FaxRecordings</a> relation. NOTE: There is no Location header in the POST method response, as creation is asynchronous.',
 );
+class_has 'properties' => (
+    is => 'ro',
+    isa => 'HashRef',
+    default => sub { {
+        asynchronous => 1,
+    }; },
+);
 
 class_has 'query_params' => (
     is => 'ro',
