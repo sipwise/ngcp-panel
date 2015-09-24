@@ -148,86 +148,15 @@ sub POST :Allow {
         );
         last unless $recording;
         my $resource = $c->req->query_params;
-
-        my $form = $self->get_form($c);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-            exceptions => [ "set_id" ],
-        );
-        $resource->{loopplay} = ($resource->{loopplay} eq "true" || $resource->{loopplay}->is_int && $resource->{loopplay}) ? 1 : 0;
-
-
-        my $set_rs = $c->model('DB')->resultset('voip_sound_sets')->search({ 
-            id => $resource->{set_id},
-        });
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $set_rs = $set_rs->search({
-                reseller_id => $c->user->reseller_id,
-            });
-        }
-        my $set = $set_rs->first;
-        unless($set) {
-            $c->log->error("invalid set_id '$$resource{set_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Sound set does not exist");
-            last;
-        }
-
-        my $handle_rs = $c->model('DB')->resultset('voip_sound_handles')->search({
-            'me.name' => $resource->{handle},   
-        });
-        my $handle;
-        if($set->contract_id) {
-            $handle_rs = $handle_rs->search({
-                'group.name' => { 'in' => [qw/pbx music_on_hold digits/] },
-            },{
-                join => 'group',
-            });
-            $handle = $handle_rs->first;
-            unless($handle) {
-                $c->log->error("invalid handle '$$resource{handle}', must be in group pbx or music_on_hold for a customer sound set");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle must be in group pbx or music_on_hold for a customer sound set");
-                last;
-            }
-        } else {
-            $handle_rs = $handle_rs->search({
-                'group.name' => { 'not in' => ['pbx'] },
-            },{
-                join => 'group',
-            });
-            $handle = $handle_rs->first;
-            unless($handle) {
-                $c->log->error("invalid handle '$$resource{handle}', must not be in group pbx for a system sound set");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle must not be in group pbx for a system sound set");
-                last;
-            }
-        }
-        $resource->{handle_id} = $handle->id;
-
         $resource->{data} = $recording;
-        if($resource->{handle} eq 'music_on_hold' && !$set->contract_id) {
-            $resource->{codec} = 'PCMA';
-            $resource->{filename} =~ s/\.[^.]+$/.pcma/;
-        } else {
-            $resource->{codec} = 'WAV';
-        }
-        $resource = $self->transcode_data($c, 'WAV', $resource);
-        last unless($resource);
-        delete $resource->{handle};
+        my $form = $self->get_form($c);
 
-        my $item;
         try {
-            $item = $c->model('DB')->resultset('voip_sound_files')->search_rs({
+            my $item = $c->model('DB')->resultset('voip_sound_files')->search_rs({
                     set_id => $resource->{set_id},
                     handle_id => $resource->{handle_id},
                 })->first;
-            if ($item) {
-                $item->update($resource);
-            } else {
-                $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
-            }
+            $self->update_item($c, $item, undef, $resource, $form);
         } catch($e) {
             $c->log->error("failed to create soundfile: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundfile.");
