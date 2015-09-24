@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_11f96b4d",
+        "filename": "lib/NGCP/Panel/Controller/API/Faxes.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-24T08:00:17Z",
+      "side": 1,
+      "message": "phew, okay...\n\nare there other async api resourses as well? e.g. gerhard\u0027s dialogic stuff?",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 2
+      },
+      "revId": "4debbe93a728dfdd51baa251c73c00e106547e17",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
