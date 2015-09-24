@@ -2,7 +2,6 @@ package NGCP::Panel::Utils::Sounds;
 use strict;
 use warnings;
 
-use Sipwise::Base;
 use IPC::System::Simple qw/capturex/;
 use File::Temp qw/tempfile/;
 
