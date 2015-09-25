@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_67f8e57c",
+        "filename": "t/api-rest/api-calllists.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-25T11:26:38Z",
+      "side": 1,
+      "message": "This might fail, because it may rely on recent test changes, I\u0027ll test that",
+      "revId": "4b06bb85cfde71e2633a80078f6e9bceafc04299",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
