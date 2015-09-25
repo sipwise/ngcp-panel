@@ -196,10 +196,16 @@ sub update_item {
     last unless($resource);
     delete $resource->{handle};
 
-    if ($item) {
-        $item->update($resource);
-    } else {
-        $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
+    try {
+        if ($item) {
+            $item->update($resource);
+        } else {
+            $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
+        }
+    } catch($e) {
+        $c->log->error("failed to create soundfile: $e"); # TODO: user, message, trace, ...
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundfile.");
+        last;
     }
 
     return $item;
