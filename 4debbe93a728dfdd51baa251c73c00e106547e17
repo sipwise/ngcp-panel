@@ -70,6 +70,30 @@
       "revId": "4debbe93a728dfdd51baa251c73c00e106547e17",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_02611739",
+        "filename": "lib/NGCP/Panel/Controller/API/Faxes.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-25T18:42:46Z",
+      "side": 1,
+      "message": "just for clarification: by asynchronous, you mean there is something like send_fax involved, which invokes another component/process/service or writes a file etc. and can cause delays?\n\nif so, e.g. the (sems, dialogic, ..) requests should be marked asynchronous as well? i think its a good idea to mark such api resources, maybe even on per method basis.\n\notherwise the word \u0027asynchronous\u0027 could be misleading, eg. POST xx means to enqueue something, and the api user has to check completion by himself, e.g. by filter the GET collection for some completed flag. i\u0027m not aware if we use this pattern somewhere at the  moment?\n\nok, forget about this - the api/faxes seems to behave exactly like this.",
+      "parentUuid": "da6255ed_241d4b67",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 2
+      },
+      "revId": "4debbe93a728dfdd51baa251c73c00e106547e17",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
