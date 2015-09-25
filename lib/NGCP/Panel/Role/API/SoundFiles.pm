@@ -158,7 +158,7 @@ sub update_item {
         unless($handle) {
             $c->log->error("invalid handle '$$resource{handle}', must be in group pbx, music_on_hold or digits for a customer sound set");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle must be in group pbx, music_on_hold or digits for a customer sound set");
-            last;
+            return;
         }
     } else {
         $handle_rs = $handle_rs->search({
@@ -170,7 +170,7 @@ sub update_item {
         unless($handle) {
             $c->log->error("invalid handle '$$resource{handle}', must not be in group pbx for a system sound set");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle must not be in group pbx for a system sound set");
-            last;
+            return;
         }
     }
     $resource->{handle_id} = $handle->id;
@@ -196,10 +196,16 @@ sub update_item {
     last unless($resource);
     delete $resource->{handle};
 
-    if ($item) {
-        $item->update($resource);
-    } else {
-        $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
+    try {
+        if ($item) {
+            $item->update($resource);
+        } else {
+            $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
+        }
+    } catch($e) {
+        $c->log->error("failed to create soundfile: $e"); # TODO: user, message, trace, ...
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundfile.");
+        return;
     }
 
     return $item;

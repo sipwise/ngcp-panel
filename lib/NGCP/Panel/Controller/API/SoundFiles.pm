@@ -152,17 +152,14 @@ sub POST :Allow {
         my $form = $self->get_form($c);
         my $item;
 
-        try {
-            my $tmp_item = $c->model('DB')->resultset('voip_sound_files')->search_rs({
-                    set_id => $resource->{set_id},
-                    handle_id => $resource->{handle_id},
-                })->first;
-            $item = $self->update_item($c, $tmp_item, undef, $resource, $form);
-        } catch($e) {
-            $c->log->error("failed to create soundfile: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundfile.");
-            last;
-        }
+        my $tmp_item = $self->item_rs($c)->search_rs({
+                set_id => $resource->{set_id},
+                'handle.name' => $resource->{handle},
+            },{
+                join => 'handle',
+            })->first;
+        $item = $self->update_item($c, $tmp_item, undef, $resource, $form);
+        last unless $item;
 
         $guard->commit;
 
