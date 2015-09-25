@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_02deb711",
+        "filename": "lib/NGCP/Panel/Role/API/SoundFiles.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-25T15:06:38Z",
+      "side": 1,
+      "message": "ok the former \"last;\" was a typo, wasn\u0027t it? since there\u0027s no enclosing block",
+      "range": {
+        "startLine": 161,
+        "startChar": 12,
+        "endLine": 161,
+        "endChar": 19
+      },
+      "revId": "e8f19f7339c477adef4f53053db490d6f48132da",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
