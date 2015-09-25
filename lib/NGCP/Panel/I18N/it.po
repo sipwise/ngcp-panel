@@ -165,7 +165,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:39
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1287
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm:1150
-#: lib/NGCP/Panel/Utils/Sounds.pm:65 lib/NGCP/Panel/Utils/Voucher.pm:146
+#: lib/NGCP/Panel/Utils/Sounds.pm:64 lib/NGCP/Panel/Utils/Voucher.pm:146
 #: share/templates/customer/details.tt:60
 msgid "#"
 msgstr "#"
@@ -2060,8 +2060,8 @@ msgstr "Pers6"
 msgid "Custom provisioning server URI."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1447 lib/NGCP/Panel/Utils/Sounds.pm:74
-#: lib/NGCP/Panel/Utils/Sounds.pm:77 share/templates/customer/list.tt:103
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1447 lib/NGCP/Panel/Utils/Sounds.pm:73
+#: lib/NGCP/Panel/Utils/Sounds.pm:76 share/templates/customer/list.tt:103
 #: share/templates/customer/preferences.tt:4
 #: share/templates/device/list.tt:270 share/templates/device/list.tt:274
 #: share/templates/reseller/details.tt:291
@@ -2317,7 +2317,7 @@ msgstr "Dispositivi Installati"
 #: lib/NGCP/Panel/Controller/Rewrite.pm:34
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:333
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:42
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1263 lib/NGCP/Panel/Utils/Sounds.pm:67
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1263 lib/NGCP/Panel/Utils/Sounds.pm:66
 #: share/templates/rewrite/rules_list.tt:31
 msgid "Description"
 msgstr "Descrizione"
@@ -5392,7 +5392,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Rewrite.pm:33
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:332
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:41
-#: lib/NGCP/Panel/Utils/DbStrings.pm:836 lib/NGCP/Panel/Utils/Sounds.pm:66
+#: lib/NGCP/Panel/Utils/DbStrings.pm:836 lib/NGCP/Panel/Utils/Sounds.pm:65
 #: share/templates/customer/details.tt:102
 #: share/templates/customer/details.tt:54
 #: share/templates/customer/details.tt:64
@@ -6492,7 +6492,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm:189
 #: lib/NGCP/Panel/Controller/Rewrite.pm:32
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:40
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1180 lib/NGCP/Panel/Utils/Sounds.pm:72
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1180 lib/NGCP/Panel/Utils/Sounds.pm:71
 #: lib/NGCP/Panel/Utils/Voucher.pm:149 share/templates/customer/details.tt:47
 #: share/templates/reseller/details.tt:31
 #: share/templates/widgets/admin_reseller_overview.tt:7
