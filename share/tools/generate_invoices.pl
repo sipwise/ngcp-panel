@@ -301,7 +301,7 @@ sub get_invoice_data_raw{
     if(!$opt_local->{count_contract_balance}){
         $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,from_unixtime(cdr.start_time) as start_time,bzh.zone, bzh.detail as zone_detail 
     from accounting.cdr 
-    LEFT JOIN billing.billing_zones_history bzh ON bzh.bz_id = cdr.source_customer_billing_zone_id
+    LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id
     where
     cdr.source_user_id != "0"
     and cdr.call_status="ok" 
@@ -318,7 +318,7 @@ sub get_invoice_data_raw{
     .(!$opt_local->{count_contract_balance}?', bzh.zone':'')
     .'
     from accounting.cdr '
-    .(!$opt_local->{count_contract_balance}?'LEFT JOIN billing.billing_zones_history bzh ON bzh.bz_id = cdr.source_customer_billing_zone_id ':'')
+    .(!$opt_local->{count_contract_balance}?'LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id ':'')
     .' where
     cdr.source_user_id != "0"
     and cdr.call_status="ok" 
