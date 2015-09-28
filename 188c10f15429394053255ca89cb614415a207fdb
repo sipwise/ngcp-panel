@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_dd040217",
+        "filename": "t/api-cfdestinationsets.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-28T10:10:10Z",
+      "side": 1,
+      "message": "fails decoding JSON (the HTTP code is 401)",
+      "revId": "188c10f15429394053255ca89cb614415a207fdb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
