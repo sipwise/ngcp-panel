@@ -2,8 +2,6 @@ package Test::Collection;
 #later package should be split into 2: apiclient and testcollection
 #testcollection will keep object of the apiclient
 
-#export LOCAL_TEST=https://192.168.x.x:yyyy; perl -I {PATH}/ngcp-panel/t/lib/ {PATH}/ngcp-panel/t/api-xxx.t
-
 use strict;
 use Test::More;
 use Moose;
@@ -38,8 +36,8 @@ has 'runas_role' => (
 );
 has 'ua' => (
     is => 'rw',
-    lazy => 1,
     isa => 'LWP::UserAgent',
+    lazy => 1,
     builder => 'init_ua',
 );
 has 'base_uri' => (
@@ -312,7 +310,7 @@ sub request{
     #if($res->code >= 400){
     #    print Dumper $req;
     #    print Dumper $res;
-    #    print Dumper $res->decoded_content ? JSON::from_json($res->decoded_content) : '';;
+    #    print Dumper $self->get_response_content($res);
     #    die;
     #}
     return $res;
@@ -322,7 +320,7 @@ sub request_process{
     my($self,$req) = @_;
     #print $req->as_string;
     my $res = $self->ua->request($req);
-    my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    my $rescontent = $self->get_response_content($res);
     return ($res,$rescontent,$req);
 }
 sub get_request_put{
@@ -350,7 +348,7 @@ sub request_put{
     $uri ||= $self->get_uri_current;
     my $req = $self->get_request_put( $content, $uri );
     my $res = $self->request($req);
-    my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    my $rescontent = $self->get_response_content($res);
     return wantarray ? ($res,$rescontent,$req) : $res;
 }
 sub request_patch{
@@ -361,7 +359,7 @@ sub request_patch{
     $content = $self->encode_content($content, $self->content_type->{PATCH});
     $content and $req->content($content);
     my $res = $self->request($req);
-    my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    my $rescontent = $self->get_response_content($res);
     #print Dumper [$res,$rescontent,$req];
     return wantarray ? ($res,$rescontent,$req) : $res;
 }
@@ -384,7 +382,7 @@ sub request_post{
         Content_Type => $self->content_type->{POST},
         Content => $content;
     my $res = $self->request($req);
-    my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    my $rescontent = $self->get_response_content($res);
     return wantarray ? ($res,$rescontent,$req,$content) : $res;
 };
 
@@ -393,7 +391,7 @@ sub request_options{
     # OPTIONS tests
     my $req = HTTP::Request->new('OPTIONS', $self->normalize_uri($uri));
     my $res = $self->request($req);
-    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    my $content = $self->get_response_content($res);
     return($req,$res,$content);
 }
 
@@ -403,15 +401,23 @@ sub request_delete{
     #no auto rows for deletion
     my $req = HTTP::Request->new('DELETE', $self->normalize_uri($uri));
     my $res = $self->request($req);
-    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    my $content = $self->get_response_content($res);
     return($req,$res,$content);
 }
 sub request_get{
     my($self,$uri) = @_;
     my $req = HTTP::Request->new('GET', $self->normalize_uri($uri));
     my $res = $self->request($req);
-    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    my $content = $self->get_response_content($res);
     return wantarray ? ($res, $content, $req) : $res;
+}
+sub get_response_content{
+    my($self,$res) = @_;
+    my $content = '';
+    if($res->decoded_content){
+        eval { $content = JSON::from_json($res->decoded_content); };
+    }
+    return $content;
 }
 sub normalize_uri{
     my($self,$uri) = @_;
@@ -443,7 +449,7 @@ sub check_options_item{
 }
 sub check_methods{
     my($self, $res, $area) = @_;
-    my $opts = $res->decoded_content ? JSON::from_json($res->decoded_content) : undef;
+    my $opts = $self->get_response_content($res);
     $self->http_code_msg(200, "check $area options request", $res,$opts);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -576,7 +582,7 @@ sub check_item_get{
     my $res = $self->request($req);
     #print Dumper $res;
     $self->http_code_msg(200, "fetch uri: $uri", $res);
-    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    my $content = $self->get_response_content($res);
     return wantarray ? ($res, $content, $req) : $res;
 }
 
@@ -804,8 +810,8 @@ sub http_code_msg{
     if ( ($res->code < 300) || ( $code >= 300 ) ) {
         $message_res = $message;
     } else {
-        $content //= $res->decoded_content ? JSON::from_json($res->decoded_content) : undef;
-        if (defined $content && defined $content->{message}) {
+        $content //= $self->get_response_content($res);
+        if (defined $content && $content && defined $content->{message}) {
             $message_res = $message . ' (' . $res->message . ': ' . $content->{message} . ')';
         } else {
             $message_res = $message . ' (' . $res->message . ')';
