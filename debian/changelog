@@ -1,3 +1,13 @@
+ngcp-panel (1.8.3.9+0~mr3.8.3.9) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [0e29001] MT#15361 fix soundcache reload on api post
+  * [7f74818] MT#15361 fix post soundfiles creating duplicate entry
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 28 Sep 2015 09:54:42 +0200
+
 ngcp-panel (1.8.3.8+0~mr3.8.3.8) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
