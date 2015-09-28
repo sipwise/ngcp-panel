@@ -77,14 +77,17 @@ Some collections define query paramters to filter the output. Typical use cases 
 Query parameters are appended to the URL like in the following example:
 
 <code>
-curl -X GET 'https://example.org:1443/api/somecollection/?param_one=1&amp;param2=something
+curl -X GET 'https://example.org:1443/api/somecollection/?param_one=1&amp;param2=something'
 </code>
 
 Some query parameters allow wildcard/pattern matching, which is expressed by a '*' like this:
 
 <code>
-curl -X GET 'https://example.org:1443/api/somecollection/?param=*something*
+curl -X GET 'https://example.org:1443/api/somecollection/?param=*something*'
 </code>
+
+<em>Note:</em> this examples do not yet contain authentication and will therefore not work on a standard installation. To read more
+about that go to the Chapter <a href="#auth">Authentication</a>.
 
 <h[% level + 1%]>HTTP Response Codes</h[% level + 1%]>
 

@@ -24,7 +24,9 @@ With cURL, use <span>--user 'username:password'</span> option to specify your ac
 curl -i -X GET --user 'myuser:mypassword' https://example.org:1443/api/
 </code>
 
-Additionally use the <span>--insecure</span> option if you are testing against a self-signed server certificate.
+Additionally use the <span>--insecure</span> option if you are testing against a self-signed server certificate.<br/>
+Read the Part <em>SSL Certificates</em> under the Chapter <em>Security and Maintenance</em> in the SPCE documentation
+for more information about SSL Certificates.
 </p>
 
 <h5>Using Perl LWP::UserAgent</h5>

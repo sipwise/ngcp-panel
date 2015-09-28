@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title>Sipwise NGCP HTTP API documentation</title>
         <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"></link>
