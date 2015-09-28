@@ -112,7 +112,7 @@ Accept-Post: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/#re
 
 [% IF col.actions.grep('^GET$').size -%]
 <h[% level + 2 %]>Request the entire <i>[% id %]</i> collection</h[% level + 2 %]>
-<p>
+<p></p>
 <p>
     You cannot request the entire collection at once, but instead you can simply page through the results. The response provides <i>prev</i> and <i>next</i> links you can follow to get the next page.
 
@@ -179,7 +179,7 @@ Content-Type: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/"
 
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
-</p>
+<p></p>
 [% END -%]
 
 [% IF col.item_actions.grep('^GET$').size -%]
@@ -279,7 +279,7 @@ Preference-Applied: return=minimal';
 
 [% IF col.item_actions.grep('^PATCH$').size -%]
 <h[% level + 2 %]>Update specific fields of an existing <i>[% id %]</i> item</h[% level + 2 %]>
-<p>
+<p></p>
 [%
     props = ''; rem = 0; rep = 0;
     FOREACH p IN col.fields;
@@ -396,7 +396,7 @@ Preference-Applied: return=minimal';
 
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
-</p>
+<p></p>
 [% END -%]
 
 [% IF col.item_actions.grep('^DELETE$').size -%]
