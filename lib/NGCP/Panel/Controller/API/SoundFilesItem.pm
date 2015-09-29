@@ -135,6 +135,14 @@ sub DELETE :Allow {
 
         $guard->commit;
 
+        # clear audio caches
+        my $group_name = $item->handle->group->name;
+        try {
+            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $item->set_id, $item->handle->name, $group_name);
+        } catch ($e) {
+            $c->log->warn("Failed to clear audio cache for group " . $group_name);
+        }
+
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
     }

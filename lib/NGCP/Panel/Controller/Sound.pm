@@ -670,6 +670,16 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
             desc  => $c->loc('Failed to delete sound handle'),
         );
     };
+
+    # clear audio caches
+    my $handle = $c->stash->{file_result}->handle;
+    my $group_name = $handle->group->name;
+    try {
+        NGCP::Panel::Utils::Sems::clear_audio_cache($c, $c->stash->{file_result}->set_id, $handle->name, $group_name);
+    } catch ($e) {
+        $c->log->warn("Failed to clear audio cache for group " . $group_name);
+    }
+
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     return;
 }
