@@ -22,6 +22,21 @@ has_field 'destination' => (
     },
 );
 
+has_field 'resolution' => (
+    type => 'Select',
+    label => 'Resolution',
+    options => [
+        { label => 'Low', value => 'low' },
+        { label => 'Medium', value => 'medium' },
+        { label => 'Extended', value => 'extended' },
+    ],
+    default => 'low',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Fax resolution'],
+    },
+);
+
 has_field 'data' => (
     type => 'TextArea',
     label => 'Content',
