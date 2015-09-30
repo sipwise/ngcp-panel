@@ -1154,5 +1154,28 @@ sub get_customer_datatable_cols {
         { name => "status", search => 1, title => $c->loc("Status") },
     );
 }
+
+sub get_balanceinterval_datatable_cols {
+    
+    my ($c) = @_;
+    #my $parser_date = DateTime::Format::Strptime->new(
+    #    pattern => '%Y-%m-%d',
+    #);
+    #my $parser_datetime = DateTime::Format::Strptime->new(
+    #    pattern => '%Y-%m-%d %H:%M',
+    #);
+    return ( #{ name => "id", search => 1, title => $c->loc("#") },
+        { name => "start", search => 1, search_lower_column => 'interval', title => $c->loc("From"), },
+          #convert_code => sub { my $s = shift; return $s if ($parser_date->parse_datetime($s) or $parser_datetime->parse_datetime($s)); } },
+        { name => "end", search => 1, search_upper_column => 'interval', title => $c->loc('To'), },
+          #convert_code => sub { my $s = shift; return $s if ($parser_date->parse_datetime($s) or $parser_datetime->parse_datetime($s)); } },
+        { name => "balance", search => 0, title => $c->loc('Cash'), literal_sql => "FORMAT(cash_balance / 100,2)" },
+        { name => "debit", search => 0, title => $c->loc('Debit'), literal_sql => "FORMAT(cash_balance_interval / 100,2)" },
+        { name => "topup_count", search => 0, title => $c->loc('#Top-ups') },
+        { name => "timely_topup_count", search => 0, title => $c->loc('#Timely Top-ups') }, 
+        { name => "underrun_profiles", search => 0, title => $c->loc('Underrun (Profiles)') }, 
+        { name => "underrun_lock", search => 0, title => $c->loc('Underrun (Lock)') }, 
+    );
+}
         
 1;

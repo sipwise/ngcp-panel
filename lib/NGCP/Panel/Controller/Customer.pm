@@ -311,6 +311,10 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         return;      
     }
 
+    $c->stash->{balanceinterval_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        NGCP::Panel::Utils::ProfilePackages::get_balanceinterval_datatable_cols($c),
+    ]);    
+
     my $product_id = $contract_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message->error(
         c => $c,
@@ -1099,6 +1103,13 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
     $c->stash(close_target => $c->uri_for_action("/customer/details", [$contract->id]));
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
+}
+
+sub balanceinterval_ajax :Chained('base') :PathPart('balanceinterval/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $res = $c->stash->{contract}->contract_balances;
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{balanceinterval_dt_columns});
+    $c->detach( $c->view("JSON") );
 }
 
 sub subscriber_ajax :Chained('base') :PathPart('subscriber/ajax') :Args(0) {

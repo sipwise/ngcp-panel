@@ -423,6 +423,30 @@
             </div>
         </div>
     </div>
+    
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_balanceintervals">[% c.loc('Balance Intervals') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_balanceintervals">
+
+            <div class="accordion-inner">
+            
+[% 
+    helper.name = c.loc('Balance Interval');
+    helper.identifier = 'balance_intervals';
+    helper.dt_columns = balanceinterval_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/customer/balanceinterval_ajax', [ c.req.captures.0 ]);
+
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>    
 
    
     [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
