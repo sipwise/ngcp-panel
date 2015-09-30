@@ -8,7 +8,16 @@ use Data::Dumper;
 
 sub send_fax {
     my (%args) = @_;
-
+    #%args =>{
+    #    c => $c,
+    #    subscriber => $subscriber,
+    #    [notify => 1,]
+    #    [coverpage => 1,]
+    #    [resolution => ['low'|'medium'|'extended'],]
+    #    [destination => '',]
+    #    [data => '',]
+    #    [upload => '',]
+    #};
     my $c = $args{c};
     my $subscriber = $args{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
