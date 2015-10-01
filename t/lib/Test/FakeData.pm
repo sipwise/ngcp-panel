@@ -229,32 +229,6 @@ sub build_data{
             'no_delete_available' => 1,
             'dependency_requires_recreation' => ['resellers'],
         },
-        'subscribers' => {
-            'data' => {
-                administrative       => 0,
-                customer_id          => sub { return shift->get_id('customers',@_); },
-                primary_number       => { ac => 111, cc=> 111, sn => 111 },
-                alias_numbers        => [ { ac => 11, cc=> 11, sn => 11 } ],
-                username             => 'api_test_username',
-                password             => 'api_test_password',
-                webusername          => 'api_test_webusername',
-                webpassword          => undef,
-                domain_id            => sub { return shift->get_id('domains',@_); },,
-                #domain_id            =>
-                email                => undef,
-                external_id          => undef,
-                is_pbx_group         => 1,
-                is_pbx_pilot         => 1,
-                pbx_extension        => '111',
-                pbx_group_ids        => [],
-                pbx_groupmember_ids  => [],
-                profile_id           => sub { return shift->get_id('subscriberprofiles',@_); },
-                status               => 'active',
-                pbx_hunt_policy      => 'parallel',
-                pbx_hunt_timeout     => '15',
-            },
-            'query' => ['username'],
-        },
         'domains' => {
             'data' => {
                 domain => 'api_test_domain.api_test_domain',
@@ -482,7 +456,12 @@ sub get_id{
     }
     return $self->create(@_);
 }
-
+sub get_existent_item{
+    my($self, $collection_name)  = @_;
+    my $item = $self->created->{$collection_name}->[0]
+        || $self->loaded->{$collection_name}->[0];
+    return $item
+}
 sub get_existent_id{
     my($self, $collection_name)  = @_;
     my $id = $self->test_machine->get_id_from_created($self->created->{$collection_name}->[0])

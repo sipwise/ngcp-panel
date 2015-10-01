@@ -1,8 +1,6 @@
-#use Sipwise::Base;
 use strict;
 
 #use Moose;
-use Sipwise::Base;
 use Test::Collection;
 use Test::FakeData;
 use Test::More;
@@ -73,7 +71,7 @@ $test_machine->check_create_correct( 1, sub{ $_[0]->{contact} .= time().'_'.$_[1
 #api doesn't deny extra fields
 #{
 #    my($res, $content) = $test_machine->request_post(sub{$_[0]->{user_agent} = 'Test User Agent';$_[0]->{contact} .= time().'_MT14789' ;});
-#    $test_machine->http_code_msg(422, "check creation of the subscriber registration without required expires. MT#14789.",$res,$content);
+#    $test_machine->http_code_msg(422, "check creation of the subscriber registration with already removed "user_agent". MT#14789.",$res,$content);
 #}
 
 
