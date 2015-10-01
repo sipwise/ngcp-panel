@@ -1,3 +1,17 @@
+ngcp-panel (1.8.3.10+0~mr3.8.3.10) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [da14924] MT#15425 audio_cache reload on soundfile delete
+  * [e26064e] MT#14979 filter calllists by direction properly
+  * [bade9d3] MT#15459 fix html-encoding subscriber details
+
+  [ Irina Peshinskaya ]
+  * [eaded5f] MT#12347 Simple tests for cfdestinations
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 01 Oct 2015 12:01:59 +0200
+
 ngcp-panel (1.8.3.9+0~mr3.8.3.9) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
