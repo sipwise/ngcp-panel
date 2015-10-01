@@ -265,12 +265,13 @@ sub get_uri{
     $name //= $self->name;
     return $self->base_uri."/api/".$name.'/'.$add;
 }
-sub get_uri_firstitem{
+sub get_uri_item{
     my($self,$name) = @_;
     if(!$self->DATA_CREATED->{FIRST}){
-        my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection."?page=1&rows=1");
+        my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection($name)."?page=1&rows=1");
         my $hal_name = $self->get_hal_name($name);
         if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
+        #TODO: don'tfill first if created are empty.Intriduce loaded for caching
             $self->DATA_CREATED->{FIRST} = $list_collection->{_links}->{$hal_name}->{href};
         } else {
             $self->DATA_CREATED->{FIRST} = $list_collection->{_embedded}->{$hal_name}->[0]->{_links}->{self}->{href};
@@ -279,11 +280,35 @@ sub get_uri_firstitem{
     $self->DATA_CREATED->{FIRST} //= '';
     return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
 }
-
+sub get_item_hal{
+    my($self,$name) = @_;
+    my ($reshal, $resitem, $location);
+    #???????
+    if($self->DATA_CREATED->{FIRST}){
+        $resitem = $self->get_created_first;
+    }
+    if(( $name && $name ne $self->name) || !$resitem){
+        my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection($name)."?page=1&rows=1");
+        my $hal_name = $self->get_hal_name($name);
+        if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
+            $reshal = $list_collection;
+            $location = $reshal->{_links}->{$hal_name}->{href};
+        } else {
+            $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
+            $location = $reshal->{_links}->{self}->{href};
+        }
+        $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location };
+    }
+    return $resitem;
+}
+sub get_created_first{
+    my($self) = @_;
+    return $self->DATA_CREATED->{ALL}->{$self->DATA_CREATED->{FIRST}};
+}
 sub get_uri_current{
     my($self) = @_;
     $self->URI_CUSTOM and return $self->URI_CUSTOM;
-    return $self->get_uri_firstitem;
+    return $self->get_uri_item;
 }
 sub encode_content{
     my($self,$content, $type) = @_;
@@ -346,7 +371,7 @@ sub get_request_patch{
 sub request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
-    my $req = $self->get_request_put( $content, $uri );
+    my $req = $self->get_request_put( $content, $self->normalize_uri($uri) );
     my $res = $self->request($req);
     my $rescontent = $self->get_response_content($res);
     return wantarray ? ($res,$rescontent,$req) : $res;
@@ -578,7 +603,7 @@ sub check_created_listed{
 sub check_item_get{
     my($self,$uri) = @_;
     $uri ||= $self->get_uri_current;
-    my $req = HTTP::Request->new('GET', $uri);
+    my $req = HTTP::Request->new('GET', $self->normalize_uri($uri));
     my $res = $self->request($req);
     #print Dumper $res;
     $self->http_code_msg(200, "fetch uri: $uri", $res);
