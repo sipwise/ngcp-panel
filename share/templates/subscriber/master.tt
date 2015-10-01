@@ -96,7 +96,7 @@
                         [% FOR elem IN elements -%]
                             <tr>
                                 <td>[% elem.desc %]</td>
-                                <td>[% elem.value %]</td>
+                                <td>[% elem.value | html %]</td>
                             </tr>
                         [% END -%]
                         <tr>
