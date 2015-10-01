@@ -1,3 +1,12 @@
+ngcp-panel (1.9.1.15+0~mr4.0.1.15) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [8d5d217] MT#15441 Don't synchronize cli and primary number if they already differ
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 01 Oct 2015 18:33:44 +0200
+
 ngcp-panel (1.9.1.14+0~mr4.0.1.14) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
