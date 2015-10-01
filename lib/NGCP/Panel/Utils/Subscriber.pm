@@ -559,6 +559,9 @@ sub update_subscriber_numbers {
         });
     my $prov_subs = $billing_subs->provisioning_voip_subscriber;
     my @nums = ();
+
+    my $primary_number_old = defined $billing_subs->primary_number ? { $billing_subs->primary_number->get_inflated_columns } : undef;
+
     my $acli_pref;
     $acli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => 'allowed_clis', prov_subscriber => $prov_subs)
@@ -575,7 +578,9 @@ sub update_subscriber_numbers {
         my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
         if(defined $cli_pref) {
-            $cli_pref->delete;
+            if($cli_pref->first && defined $primary_number_old && ( $cli_pref->first->value eq number_as_string($primary_number_old) ) ){
+                $cli_pref->delete;
+            }
         }
         for my $cfset($prov_subs->voip_cf_destination_sets->all) {
             for my $cf($cfset->voip_cf_destinations->all) {
@@ -636,12 +641,16 @@ sub update_subscriber_numbers {
             my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
             if($cli_pref->first) {
-                $cli_pref->first->update({ value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} });
+                if(defined $primary_number_old && ( number_as_string($primary_number_old) eq $cli_pref->first->value ) ){
+                    $cli_pref->first->update({ value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} });
+                }
             } else {
-                $cli_pref->create({ 
-                    subscriber_id => $prov_subs->id,
-                    value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} 
-                });
+                if( ! defined $primary_number_old ){
+                    $cli_pref->create({
+                        subscriber_id => $prov_subs->id,
+                        value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} 
+                    });
+                }
             }
         }
 
@@ -1385,6 +1394,13 @@ sub mark_voicemail_read{
     $dir =~s/INBOX$/Old/;
     $voicemail->update({ dir => $dir });
     return;
+}
+
+sub number_as_string{
+    my ($number_row, %params) = @_;
+    return 'HASH' eq ref $number_row 
+        ? $number_row->{cc} . ($number_row->{ac} // '') . $number_row->{sn}
+        : $number_row->cc . ($number_row->ac // '') . $number_row->sn;
 }
 1;
 
