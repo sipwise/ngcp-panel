@@ -1,3 +1,18 @@
+ngcp-panel (1.9.1.14+0~mr4.0.1.14) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [3192f8f] MT#14477 Fax API (list, send fax, get meta, get content)
+  * [796b364] MT#12347 Simple tests for cfdestinations
+
+  [ Gerhard Jungwirth ]
+  * [fbb10c4] MT#15425 audio_cache reload on soundfile delete
+  * [6961d33] MT#14979 filter calllists by direction properly
+  * [46980f0] MT#15459 fix html-encoding subscriber details
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 01 Oct 2015 11:59:52 +0200
+
 ngcp-panel (1.9.1.13+0~mr4.0.1.13) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
