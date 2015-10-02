@@ -16,7 +16,7 @@ BEGIN {
 }
 use NGCP::Panel::Utils::ProfilePackages qw();
 
-my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+#my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
@@ -139,7 +139,7 @@ my $billingnetwork = JSON::from_json($res->decoded_content);
 
 my %package_map = ();
 
-if ($enable_profile_packages) {
+{ #if ($enable_profile_packages) {
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');

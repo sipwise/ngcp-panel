@@ -62,8 +62,9 @@ sub check_topup {
     if (defined $subscriber_id) {
         my $subscriber = $schema->resultset('voip_subscribers')->find($subscriber_id);
         unless($subscriber) {
-            return 0 unless &{$err_code}('Unknown subscriber_id.');
+            return 0 unless &{$err_code}("Unknown subscriber ID $subscriber_id.");
         }
+        $entities->{subscriber} = $subscriber if defined $entities;
         $contract //= $subscriber->contract;
     }
     
@@ -95,7 +96,7 @@ sub check_topup {
                 for => 'update',
             });
             unless($voucher) {
-                return 0 unless &{$err_code}('Invalid voucher code or already used.');
+                return 0 unless &{$err_code}("Invalid voucher code '$plain_code' or already used.");
             }
         } else {
             $voucher = $schema->resultset('vouchers')->find({
@@ -107,9 +108,11 @@ sub check_topup {
                 for => 'update',
             });
             unless($voucher) {
-                return 0 unless &{$err_code}('Invalid voucher ID or already used.');
+                return 0 unless &{$err_code}("Invalid voucher ID $voucher_id or already used.");
             }            
         }
+        
+        $entities->{voucher} = $voucher if defined $entities;
 
         if($voucher->customer_id && $contract->id != $voucher->customer_id) {
             return 0 unless &{$err_code}('Voucher is reserved for a different customer.');
@@ -124,12 +127,12 @@ sub check_topup {
         if (defined $package_id) {
             $package = $schema->resultset('profile_packages')->find($package_id);
             unless($package) {
-                return 0 unless &{$err_code}('Unknown profile package ID.');
+                return 0 unless &{$err_code}("Unknown profile package ID $package_id.");
             }
+            $entities->{package} = $package if defined $entities;
             if(defined $reseller_id && $reseller_id != $package->reseller_id) {
                 return 0 unless &{$err_code}('Profile package belongs to another reseller.');
             }
-            $entities->{package} = $package if defined $entities;
         }
     }
     
