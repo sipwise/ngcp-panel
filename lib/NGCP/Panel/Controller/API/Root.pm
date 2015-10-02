@@ -246,16 +246,25 @@ sub invalid_user : Private {
 }
 
 sub field_to_json : Private {
-    my ($self, $name) = @_;
+    my ($self, $field) = @_;
+    
+    if ($field->$_isa('HTML::FormHandler::Field::Select')) {
+        return $self->field_to_select_options($field);            
+    } # elsif { ... }
+    
 
-    SWITCH: for ($name) {
+    SWITCH: for ($field->type) {
         /Float|Integer|Money|PosInteger|Minute|Hour|MonthDay|Year/ &&
             return "Number";
         /Boolean/ &&
             return "Boolean";
         /Repeatable/ &&
             return "Array";
+        /\+NGCP::Panel::Field::Select/ &&
+             return $self->field_to_select_options($field);            
         /\+NGCP::Panel::Field::Regex/ &&
+             return "String";
+        /\+NGCP::Panel::Field::DateTime/ &&
              return "String";
         /\+NGCP::Panel::Field::Country/ &&
              return "String";
@@ -263,10 +272,10 @@ sub field_to_json : Private {
              return "String";
         /\+NGCP::Panel::Field::Identifier/ &&
             return "String";
-        /\+NGCP::Panel::Field::SubscriberStatusSelect/ &&
+        /\+NGCP::Panel::Field::URI/ &&
             return "String";
-        /\+NGCP::Panel::Field::SubscriberLockSelect/ &&
-            return "Number";
+        /\+NGCP::Panel::Field::IPAddress/ &&
+            return "String";                    
         /\+NGCP::Panel::Field::E164/ &&
             return "Object";
         /Compound/ &&
@@ -277,6 +286,8 @@ sub field_to_json : Private {
             return "Array";
         /\+NGCP::Panel::Field::PbxGroupMemberAPI/ &&
             return "Array";
+        /\+NGCP::Panel::Field::Interval/ &&
+            return "Object";            
         # usually {xxx}{id}
         /\+NGCP::Panel::Field::/ &&
             return "Number";
@@ -303,6 +314,7 @@ sub field_to_select_options : Private {
 sub get_field_poperties :Private{
     my ($self, $field) = @_;
     my $name = $field->name;
+    
     return () if (
         $field->type eq "Hidden" ||
         $field->type eq "Button" ||
@@ -312,7 +324,7 @@ sub get_field_poperties :Private{
     push @types, 'null' unless ($field->required || $field->validate_when_empty);
     my $type;
     if($field->type =~ /^\+NGCP::Panel::Field::/) {
-        if($field->type =~ /E164/) {
+        if($field->type =~ /E164$/) {
             $name = 'primary_number';
         } elsif($field->type =~ /AliasNumber/) {
             $name = 'alias_numbers';
@@ -320,24 +332,21 @@ sub get_field_poperties :Private{
             $name = 'pbx_group_ids';
         } elsif($field->type =~ /Country$/) {
             $name = 'country';
-        #} elsif($field->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier|PosInteger/) {
-        #    $name .= '_id';
-        #}
-        } elsif($field->type =~ /Select$/) {
-            $type = $self->field_to_select_options($field);
-        } elsif($field->type !~ /Regex|EmailList|Identifier|PosInteger|DateTime/) { #Interval, IPAddress, ...?
+        } elsif($field->type !~ /Regex|EmailList|Identifier|PosInteger|Interval|Select|DateTime|URI|IPAddress|DatePicker|ProfileNetwork/) { # ...?
             $name .= '_id';
         }
-    } elsif ($field->$_isa('HTML::FormHandler::Field::Select')) {
-        $type = $self->field_to_select_options($field);
-    } 
-    push(@types, defined $type ? $type : $self->field_to_json($field->type));
-    my $desc;
+    }
+    push(@types, $self->field_to_json($field));
+    my $desc = undef;
     if($field->element_attr) {
         $desc = $field->element_attr->{title}->[0];
-    } else {
-        $desc = $name;
     }
+    unless (defined $desc && length($desc) > 0) {
+        $desc = $field->label;
+    }
+    unless (defined $desc && length($desc) > 0) {
+        $desc = 'to be described ...';
+    }    
     return { name => $name, description => $desc, types => \@types };
 }
 sub get_collection_properties {

@@ -193,6 +193,7 @@ sub error {
     $c->response->content_type('application/json');
     $c->response->status($code);
     $c->response->body(JSON::to_json({ code => $code, message => $message })."\n");
+    $c->stash(api_error_message => $message);
     return;
 }
 
