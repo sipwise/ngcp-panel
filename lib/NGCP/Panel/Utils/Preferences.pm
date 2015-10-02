@@ -903,7 +903,29 @@ sub set_provisoning_voip_subscriber_first_int_attr_value {
             $rs->create({ value => $new_value });
         } # nothing to do for level 0, if no lock is set yet
     } catch($e) {
-        $c->log->error("failed to set provisioning_voip_subscriber $attribute: $e");
+        $c->log->error("failed to set provisioning_voip_subscriber attribute '$attribute': $e");
+        $e->rethrow;
+    }
+}
+
+sub get_provisoning_voip_subscriber_first_int_attr_value {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $prov_subscriber= $params{prov_subscriber};
+    my $attribute = $params{attribute};
+
+    return undef unless $prov_subscriber;
+
+    my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, 
+        prov_subscriber => $prov_subscriber, 
+        attribute => $attribute,
+    );
+    try {
+        return $rs->first;
+    } catch($e) {
+        $c->log->error("failed to get provisioning_voip_subscriber attribute '$attribute': $e");
         $e->rethrow;
     }
 }

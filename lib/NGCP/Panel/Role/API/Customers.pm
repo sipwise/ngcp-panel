@@ -164,7 +164,7 @@ sub update_customer {
         resource => $resource,
         exceptions => [ "contact_id", "billing_profile_id", "profile_package_id" ],
     );
-    $resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+    #$resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
     #my $now = NGCP::Panel::Utils::DateTime::current_local;
     

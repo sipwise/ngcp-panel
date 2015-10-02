@@ -76,16 +76,21 @@ sub OPTIONS :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
-    unless($c->user->billing_data) {
-        $c->log->error("user does not have billing data rights");
-        $self->error($c, HTTP_FORBIDDEN, "Unsufficient rights to create voucher");
-        return;
-    }
-
+    my $success = 0;
+    my $entities = {};
+    my $log_vals = {};
+    my $resource = undef;
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $resource = $self->get_valid_post_data(
+        unless($c->user->billing_data) {
+            $c->log->error("user does not have billing data rights");
+            $self->error($c, HTTP_FORBIDDEN, "Unsufficient rights to create voucher");
+            last;
+        }
+    
+        $resource = $self->get_valid_post_data(
             c => $c, 
             media_type => 'application/json',
         );
@@ -99,9 +104,6 @@ sub POST :Allow {
             exceptions => [qw/subscriber_id/],
         );
 
-
-        my $now = NGCP::Panel::Utils::DateTime::current_local;
-        my $entities = {};
         last unless NGCP::Panel::Utils::Voucher::check_topup(c => $c,
                     now => $now,
                     subscriber_id => $resource->{subscriber_id},
@@ -118,7 +120,10 @@ sub POST :Allow {
             my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
                 contract => $entities->{contract},
                 voucher => $entities->{voucher},
+                log_vals => $log_vals,
                 now => $now,
+                request_token => $resource->{request_token},
+                subscriber => $entities->{subscriber},
             );
 
             $entities->{voucher}->update({
@@ -132,9 +137,29 @@ sub POST :Allow {
         }
 
         $guard->commit;
+        $success = 1;
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
+    }
+    undef $guard;
+    $guard = $c->model('DB')->txn_scope_guard;
+    {
+        try {
+            my $topup_log = NGCP::Panel::Utils::ProfilePackages::create_topup_log_record(
+                c => $c,
+                is_cash => 0,
+                now => $now,
+                entities => $entities,
+                log_vals => $log_vals,
+                resource => $resource,
+                is_success => $success
+            );
+        } catch($e) {
+            $c->log->error("failed to create topup log record: $e");
+            last;
+        }
+        $guard->commit;
     }
     return;
 }
