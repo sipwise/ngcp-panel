@@ -34,5 +34,15 @@ has_field 'code' => (
     },
 );
 
+has_field 'request_token' => (
+    type => 'Text',
+    maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An external ID to identify the top-up request in the top-up log.']
+    },    
+    required => 0,
+);
+
 1;
 # vim: set tabstop=4 expandtab:

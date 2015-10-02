@@ -179,7 +179,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
-                $form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+                #$form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
                 $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 $form->values->{external_id} = $form->field('external_id')->value;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
@@ -467,7 +467,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
-                $form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+                #$form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
                 $form->values->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
                 $form->values->{external_id} = $form->field('external_id')->value;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
@@ -996,6 +996,7 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                     now => $now,
                     contract => $contract,
                     package_id => $form->values->{package}{id},
+                    resource => $form->values, 
                     entities => $entities,
                     err_code => sub {
                         my ($err) = @_;
@@ -1065,6 +1066,7 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                     now => $now,
                     contract => $contract,
                     voucher_id => $form->values->{voucher}{id},
+                    resource => $form->values, 
                     entities => $entities,
                     err_code => sub {
                         my ($err) = @_;

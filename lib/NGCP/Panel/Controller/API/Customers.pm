@@ -230,7 +230,7 @@ sub POST :Allow {
             form => $form,
             exceptions => [ "contact_id", "billing_profile_id", "profile_package_id" ],
         );
-        $resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+        #$resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
         my $mappings_to_create = [];
         last unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
