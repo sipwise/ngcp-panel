@@ -51,28 +51,28 @@ $test_machine->check_bundle();
 
 # try to create fee without billing_profile_id
 {
-    my ($res, $err) = $test_machine->request_post(sub{delete $_[0]->{billing_profile_id};});
+    my ($res, $err) = $test_machine->check_item_post(sub{delete $_[0]->{billing_profile_id};});
     is($res->code, 422, "create billing zone without billing_profile_id");
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Missing parameter 'billing_profile_id'/, "check error message in body");
 }
 # try to create fee with invalid billing_profile_id
 {
-    my ($res, $err) = $test_machine->request_post(sub{$_[0]->{billing_profile_id} = 99999;});
+    my ($res, $err) = $test_machine->check_item_post(sub{$_[0]->{billing_profile_id} = 99999;});
     is($res->code, 422, "create billing zone with invalid billing_profile_id");
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
 }
 # try to create fee without billing_zone_id
 {
-    my ($res, $err) = $test_machine->request_post(sub{delete $_[0]->{billing_zone_id};});
+    my ($res, $err) = $test_machine->check_item_post(sub{delete $_[0]->{billing_zone_id};});
     is($res->code, 422, "create billing zone without billing_zone_id");
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_zone_id'/, "check error message in body");
 }
 # try to create fee with invalid billing_zone_id
 {
-    my ($res, $err) = $test_machine->request_post(sub{$_[0]->{billing_zone_id} = 99999;});
+    my ($res, $err) = $test_machine->check_item_post(sub{$_[0]->{billing_zone_id} = 99999;});
     is($res->code, 422, "create billing zone with invalid billing_zone_id");
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_zone_id'/, "check error message in body");
@@ -80,7 +80,7 @@ $test_machine->check_bundle();
 # try to create fee with implicit zone which already exists
 {
     my $t = time;
-    my ($res, $err) = $test_machine->request_post(sub{
+    my ($res, $err) = $test_machine->check_item_post(sub{
         delete $_[0]->{billing_zone_id};
         $_[0]->{billing_zone_zone} = 'apitestzone';
         $_[0]->{billing_zone_detail} = 'api_test zone';
@@ -95,7 +95,7 @@ $test_machine->check_bundle();
 # try to create fee with implicit zone which doesn't exist yet
 {
     my $t = 1 + time();
-    my ($res, $err) = $test_machine->request_post(sub{
+    my ($res, $err) = $test_machine->check_item_post(sub{
         delete $_[0]->{billing_zone_id};
         $_[0]->{billing_zone_zone} = 'apitestzone'.$t;
         $_[0]->{billing_zone_detail} = 'api_test zone'.$t;

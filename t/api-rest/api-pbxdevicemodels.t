@@ -69,11 +69,11 @@ $fake_data->set_data_from_script({
         },
         'query' => [ ['model','json','model'] ],
         'create_special'=> sub {
-            my ($self,$name) = @_;
-            my $prev_params = $self->test_machine->get_cloned('content_type');
-            @{$self->test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
-            $self->test_machine->check_create_correct(1);
-            $self->test_machine->set(%$prev_params);
+            my ($self,$collection_name,$test_machine) = @_;
+            my $prev_params = $test_machine->get_cloned('content_type');
+            @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
+            $test_machine->check_create_correct(1);
+            $test_machine->set(%$prev_params);
         },
         'no_delete_available' => 1,
     },
@@ -117,21 +117,21 @@ foreach my $type(qw/extension phone/){
 
     # try to create model without reseller_id
     {
-        my ($res, $err) = $test_machine->request_post(sub{delete $_[0]->{json}->{reseller_id};});
+        my ($res, $err) = $test_machine->check_item_post(sub{delete $_[0]->{json}->{reseller_id};});
         is($res->code, 422, "create model without reseller_id");
         is($err->{code}, "422", "check error code in body");
         ok($err->{message} =~ /field='reseller_id'/, "check error message in body");
     }
     # try to create model with empty reseller_id
     {
-        my ($res, $err) = $test_machine->request_post(sub{$_[0]->{json}->{reseller_id} = undef;});
+        my ($res, $err) = $test_machine->check_item_post(sub{$_[0]->{json}->{reseller_id} = undef;});
         is($res->code, 422, "create model with empty reseller_id");
         is($err->{code}, "422", "check error code in body");
         ok($err->{message} =~ /field='reseller_id'/, "check error message in body");
     }
     # try to create model with invalid reseller_id
     {
-        my ($res, $err) = $test_machine->request_post(sub{$_[0]->{json}->{reseller_id} = 99999;});
+        my ($res, $err) = $test_machine->check_item_post(sub{$_[0]->{json}->{reseller_id} = 99999;});
         is($res->code, 422, "create model with invalid reseller_id");
         is($err->{code}, "422", "check error code in body");
         ok($err->{message} =~ /Invalid reseller_id/, "check error message in body");

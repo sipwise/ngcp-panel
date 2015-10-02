@@ -107,6 +107,11 @@ has 'KEEP_CREATED' =>(
     isa => 'Bool',
     default => 1,
 );
+has 'DATA_LOADED' => (
+    is => 'rw',
+    isa => 'HashRef',
+    default => sub{{}},
+);
 has 'URI_CUSTOM' =>(
     is => 'rw',
     isa => 'Str',
@@ -267,27 +272,22 @@ sub get_uri{
 }
 sub get_uri_item{
     my($self,$name) = @_;
-    if(!$self->DATA_CREATED->{FIRST}){
-        my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection($name)."?page=1&rows=1");
-        my $hal_name = $self->get_hal_name($name);
-        if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
-        #TODO: don'tfill first if created are empty.Intriduce loaded for caching
-            $self->DATA_CREATED->{FIRST} = $list_collection->{_links}->{$hal_name}->{href};
-        } else {
-            $self->DATA_CREATED->{FIRST} = $list_collection->{_embedded}->{$hal_name}->[0]->{_links}->{self}->{href};
-        }
-    }
-    $self->DATA_CREATED->{FIRST} //= '';
-    return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
+    my $resuri;
+    my $item = $self->get_item_hal($name);
+    return $self->base_uri.'/'.$item->{location};
 }
 sub get_item_hal{
     my($self,$name) = @_;
-    my ($reshal, $resitem, $location);
-    #???????
-    if($self->DATA_CREATED->{FIRST}){
+    $name ||= $self->name;
+    my $resitem ;
+    if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
         $resitem = $self->get_created_first;
     }
-    if(( $name && $name ne $self->name) || !$resitem){
+    if(@{$self->DATA_LOADED->{$name}}){
+        $resitem = $self->DATA_LOADED->{$name}->[0];
+    }
+    if(!$resitem){
+        my ($reshal, $location);
         my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection($name)."?page=1&rows=1");
         my $hal_name = $self->get_hal_name($name);
         if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
@@ -298,6 +298,8 @@ sub get_item_hal{
             $location = $reshal->{_links}->{self}->{href};
         }
         $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location };
+        $self->DATA_LOADED->{$name} ||= [];
+        push @{$self->DATA_LOADED->{$name}}, $resitem;
     }
     return $resitem;
 }
@@ -351,6 +353,7 @@ sub request_process{
 sub get_request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
+    $uri = $self->normalize_uri($uri);
     #This is for multipart/form-data cases
     $content = $self->encode_content($content, $self->content_type->{PUT});
     my $req = POST $uri,
@@ -363,6 +366,7 @@ sub get_request_put{
 sub get_request_patch{
     my($self,$uri) = @_;
     $uri ||= $self->get_uri_current;
+    $uri = $self->normalize_uri($uri);
     my $req = HTTP::Request->new('PATCH', $uri);
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => $self->content_type->{PATCH} );
@@ -371,7 +375,8 @@ sub get_request_patch{
 sub request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
-    my $req = $self->get_request_put( $content, $self->normalize_uri($uri) );
+    $uri = $self->normalize_uri($uri);
+    my $req = $self->get_request_put( $content, $uri );
     my $res = $self->request($req);
     my $rescontent = $self->get_response_content($res);
     return wantarray ? ($res,$rescontent,$req) : $res;
@@ -388,28 +393,26 @@ sub request_patch{
     #print Dumper [$res,$rescontent,$req];
     return wantarray ? ($res,$rescontent,$req) : $res;
 }
-sub process_data{
-    my($self, $data_cb, $data_in, $data_cb_data) = @_;
-    my $data = $data_in || clone($self->DATA_ITEM);
-    defined $data_cb and $data_cb->($data, $data_cb_data);
-    return $data;
-}
+
 sub request_post{
-    my($self, $data_cb, $data_in, $data_cb_data) = @_;
-    my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
-    my $content = {
-        $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
-        %$data,
-    };
+    my($self, $content, $uri, $req) = @_;
+    $uri ||= $self->get_uri_collection;
+    $uri = $self->normalize_uri($uri);
     $content = $self->encode_content($content, $self->content_type->{POST} );
     #form-data is set automatically, despite on $self->content_type->{POST}
-    my $req = POST $self->get_uri_collection,
+    $req ||= POST $uri,
         Content_Type => $self->content_type->{POST},
         Content => $content;
     my $res = $self->request($req);
     my $rescontent = $self->get_response_content($res);
     return wantarray ? ($res,$rescontent,$req,$content) : $res;
 };
+sub process_data{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $data = $data_in || clone($self->DATA_ITEM);
+    defined $data_cb and $data_cb->($data, $data_cb_data);
+    return $data;
+}
 
 sub request_options{
     my ($self,$uri) = @_;
@@ -417,7 +420,7 @@ sub request_options{
     my $req = HTTP::Request->new('OPTIONS', $self->normalize_uri($uri));
     my $res = $self->request($req);
     my $content = $self->get_response_content($res);
-    return($req,$res,$content);
+    return($res,$content,$req);
 }
 
 sub request_delete{
@@ -495,7 +498,7 @@ sub check_create_correct{
     }
     $self->DATA_CREATED->{ALL} //= {};
     for(my $i = 1; $i <= $number; ++$i) {
-        my ($res, $content, $req) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
+        my ($res, $content, $req) = $self->check_item_post( $uniquizer_cb , undef, { i => $i} );
         $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
         my $location = $res->header('Location');
         if($location){
@@ -603,13 +606,25 @@ sub check_created_listed{
 sub check_item_get{
     my($self,$uri) = @_;
     $uri ||= $self->get_uri_current;
-    my $req = HTTP::Request->new('GET', $self->normalize_uri($uri));
-    my $res = $self->request($req);
-    #print Dumper $res;
+    my ($res, $content, $req) = $self->request_get($uri);
     $self->http_code_msg(200, "fetch uri: $uri", $res);
-    my $content = $self->get_response_content($res);
-    return wantarray ? ($res, $content, $req) : $res;
+    return wantarray ? ($res, $content, $req) : $res;    
 }
+sub get_item_post_content{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
+    my $content = {
+        $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
+        %$data,
+    };
+    return $content;
+}
+sub check_item_post{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $content = $self->get_item_post_content($data_cb, $data_in, $data_cb_data);
+    my ($res,$rescontent,$req) = $self->request_post($content);#,$uri,$req
+    return wantarray ? ($res,$rescontent,$req,$content) : $res;
+};
 
 sub check_put_content_type_empty{
     my($self) = @_;
@@ -688,7 +703,7 @@ sub check_put2get{
 sub check_post2get{
     my($self, $post_data_in, $post_data_cb) = @_;
     
-    my ($res_post, $result_item_post, $req_post, $item_post_data ) = $self->request_post( $post_data_cb, $post_data_in );
+    my ($res_post, $result_item_post, $req_post, $item_post_data ) = $self->check_item_post( $post_data_cb, $post_data_in );
     $self->http_code_msg(201, "check_post2get: POST item '".$self->name."' for check_post2get", $res_post, $result_item_post);
     my $location_post = $self->base_uri.($res_post->header('Location') // '');
     

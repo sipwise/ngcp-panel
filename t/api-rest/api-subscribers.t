@@ -1,11 +1,11 @@
-#use Sipwise::Base;
 use strict;
 
-#use Moose;
 use Test::Collection;
 use Test::FakeData;
 use Test::More;
 use Data::Dumper;
+
+#use NGCP::Panel::Utils::Subscriber;
 
 my $test_machine = Test::Collection->new(
     name => 'subscribers',
@@ -61,10 +61,12 @@ $test_machine->form_data_item( );
     my $subscriber_id = $test_machine->get_id_from_created($subscriber);
     my $preferences_uri = '/api/subscriberpreferences/'.$subscriber_id;
     ($res, $preferences) = $test_machine->check_item_get($preferences_uri);
+    
     my $intentional_cli = '111'.time();
     $preferences->{cli} = $intentional_cli;
     ($res, $preferences_from_put) = $test_machine->request_put($preferences,$preferences_uri);
     is($preferences_from_put->{cli}, $intentional_cli, "check that cli was updated on subscriberpreferences put: $preferences_from_put->{cli} == $intentional_cli");
+    
     my $intentional_primary_number = {
         'cc' => '111',
         'ac' => '222',
@@ -74,11 +76,62 @@ $test_machine->form_data_item( );
     ($res, $subscriber_from_put) = $test_machine->request_put($subscriber->{content},$subscriber->{location});
     ($res, $subscriber2) = $test_machine->check_item_get($subscriber->{location});
     is_deeply($subscriber2->{primary_number}, $intentional_primary_number, "check that primary_number was updated on subscribes put");
+    
     ($res, $preferences2) = $test_machine->check_item_get($preferences_uri);
     is($preferences2->{cli}, $intentional_cli, "check that cli was preserved on subscriber phones update: $preferences2->{cli} == $intentional_cli");
+
+    delete $subscriber->{content}->{primary_number};
+    ($res, $subscriber_from_put) = $test_machine->request_put($subscriber->{content},$subscriber->{location});
+    ($res, $subscriber2) = $test_machine->check_item_get($subscriber->{location});
+    is($subscriber2->{primary_number}, undef, "check that primary_number was updated on subscribes put");
+    
+    ($res, $preferences2) = $test_machine->check_item_get($preferences_uri);
+    is($preferences2->{cli}, $intentional_cli, "check that cli was preserved on subscriber phones update: $preferences2->{cli} == $intentional_cli");
+
+    delete $preferences->{cli};
+    ($res, $preferences_from_put) = $test_machine->request_put($preferences,$preferences_uri);
+    is($preferences_from_put->{cli}, undef, "check that cli was deleted on subscriberpreferences put with empty cli");
+    
+    $subscriber->{content}->{primary_number} = $intentional_primary_number;
+    ($res, $subscriber_from_put) = $test_machine->request_put($subscriber->{content},$subscriber->{location});
+    ($res, $subscriber2) = $test_machine->check_item_get($subscriber->{location});
+    is_deeply($subscriber2->{primary_number}, $intentional_primary_number, "check that primary_number was updated on subscribes put");
+    
+    ($res, $preferences2) = $test_machine->check_item_get($preferences_uri);
+    is($preferences2->{cli}, number_as_string($intentional_primary_number), "check that cli was created on subscriber phones update: $preferences2->{cli} == ".number_as_string($intentional_primary_number) );
+    
+    $intentional_primary_number = {
+        'cc' => '222',
+        'ac' => '333',
+        'sn' => '444'.time(),
+    };
+    $subscriber->{content}->{primary_number} = $intentional_primary_number;
+    ($res, $subscriber_from_put) = $test_machine->request_put($subscriber->{content},$subscriber->{location});
+    ($res, $subscriber2) = $test_machine->check_item_get($subscriber->{location});
+    is_deeply($subscriber2->{primary_number}, $intentional_primary_number, "check that primary_number was updated on subscribes put");
+    
+    ($res, $preferences2) = $test_machine->check_item_get($preferences_uri);
+    is($preferences2->{cli}, number_as_string($intentional_primary_number), "check that cli was updated on subscriber phones update: $preferences2->{cli} == ".number_as_string($intentional_primary_number) );
+    
+    delete $subscriber->{content}->{primary_number};
+    ($res, $subscriber_from_put) = $test_machine->request_put($subscriber->{content},$subscriber->{location});
+    ($res, $subscriber2) = $test_machine->check_item_get($subscriber->{location});
+    is($subscriber2->{primary_number}, undef, "check that primary_number was updated on subscribes put");
+    
+    ($res, $preferences2) = $test_machine->check_item_get($preferences_uri);
+    is($preferences2->{cli}, undef, "check that cli was deleted on subscriber phones update");
+
 }
 
 $test_machine->clear_test_data_all();
 done_testing;
+
+
+sub number_as_string{
+    my ($number_row, %params) = @_;
+    return 'HASH' eq ref $number_row 
+        ? $number_row->{cc} . ($number_row->{ac} // '') . $number_row->{sn}
+        : $number_row->cc . ($number_row->ac // '') . $number_row->sn;
+}
 
 # vim: set tabstop=4 expandtab:

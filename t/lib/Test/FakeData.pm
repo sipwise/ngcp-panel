@@ -260,12 +260,12 @@ sub build_data{
             },
             'query' => ['version'],
             'create_special'=> sub {
-                my ($self,$collection_name) = @_;
-                my $prev_params = $self->test_machine->get_cloned('content_type','QUERY_PARAMS');
-                $self->test_machine->content_type->{POST} = $self->data->{$collection_name}->{data}->{content_type};
-                $self->test_machine->QUERY_PARAMS($self->test_machine->hash2params($self->data->{$collection_name}->{data}));
-                $self->test_machine->check_create_correct(1, sub {return 'test_api_empty_config';} );
-                $self->test_machine->set(%$prev_params);
+                my ($self,$collection_name,$test_machine) = @_;
+                my $prev_params = $test_machine->get_cloned('content_type','QUERY_PARAMS');
+                $test_machine->content_type->{POST} = $self->data->{$collection_name}->{data}->{content_type};
+                $test_machine->QUERY_PARAMS($test_machine->hash2params($self->data->{$collection_name}->{data}));
+                $test_machine->check_create_correct(1, sub {return 'test_api_empty_config';} );
+                $test_machine->set(%$prev_params);
             },
             'no_delete_available' => 1,
         },
@@ -373,10 +373,7 @@ sub search_item{
             $field_name.'='.uri_escape($search_value);
         } @{$item->{query}}
     );
-    my $name_prev = $self->test_machine->{name};
-    $self->test_machine->name($collection_name);
-    my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string));
-    $name_prev and $self->test_machine->name($name_prev);
+    my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string,$collection_name));
     #time for memoize?
     $self->searched->{$collection_name} = [$res, $content, $req];
     return ($res, $content, $req);
@@ -484,18 +481,24 @@ sub create{
     $self->process($collection_name, $parents_in);
     #create itself
     my $data = clone($self->data->{$collection_name}->{data});
-    $self->test_machine->set(
+    my $test_machine = clone $self->test_machine;
+    $test_machine->set(
         name            => $collection_name,
         DATA_ITEM       => $data,
     );
     if(exists $self->data->{$collection_name}->{create_special} && 'CODE' eq ref $self->data->{$collection_name}->{create_special}){
-        $self->data->{$collection_name}->{create_special}->($self,$collection_name);
+        $self->data->{$collection_name}->{create_special}->($self,$collection_name,$test_machine);
     }else{
-        $self->test_machine->check_create_correct(1);
+        $test_machine->check_create_correct(1);
     }
-    $self->created->{$collection_name} = [values %{$self->test_machine->DATA_CREATED->{ALL}}];
+    $self->created->{$collection_name} = [values %{$test_machine->DATA_CREATED->{ALL}}];
 
     if($self->data->{$collection_name}->{process_cycled}){
+        undef $test_machine;
+        #parents is a flat description of the dependency hierarchy
+        #parent is just a collection which requires  id of the current collection in its data
+        #parents = { $parent_collection_name => [ $number_of_parents_levels_before, [ @nested_keys in collection to set this collection value]] }
+        #so, last_parent is just a collection, which directly requires current collection item id
         my $parents_cycled = $self->data->{$collection_name}->{process_cycled}->{parents};
         my $last_parent = ( sort { $parents_cycled->{$b}->[0] <=> $parents_cycled->{$a}->[0] } keys %{$parents_cycled} )[0];
         if(grep {$collection_name} @{$self->data->{$last_parent}->{dependency_requires_recreation}} ){
@@ -507,8 +510,8 @@ sub create{
             #so all we need - update "created" field for further get_existent_id, which will be aclled on exit from this "create" function 
             $self->create($last_parent,{%parents_temp} );
         }else{
-            my $uri = $self->test_machine->get_uri_collection($last_parent).$self->get_existent_id($last_parent);
-            $self->test_machine->request_patch([ {
+            my $uri = $test_machine->get_uri_collection($last_parent).$self->get_existent_id($last_parent);
+            $test_machine->request_patch([ {
                 op   => 'replace',
                 path => join('/',('',@{$parents_cycled->{$last_parent}->[1]})),
                 value => $self->get_existent_id($collection_name) } ],
