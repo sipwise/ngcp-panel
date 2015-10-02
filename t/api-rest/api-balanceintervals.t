@@ -30,7 +30,7 @@ use NGCP::Panel::Utils::DateTime qw();
 
 my $is_local_env = 0;
 #my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
-my $enable_profile_packages = 1;
+#my $enable_profile_packages = 1;
 
 use Config::General;
 my $catalyst_config;
@@ -231,7 +231,7 @@ my $tb;
 my $tb_cnt;
 my $gantt_events;
 
-if (_get_allow_fake_client_time() && $enable_profile_packages) {
+if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
     
     #goto SKIP;
     #goto THREADED;
