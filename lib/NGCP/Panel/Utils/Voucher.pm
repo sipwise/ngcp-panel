@@ -44,7 +44,7 @@ sub decrypt_code {
 
 sub check_topup {
     my %params = @_;
-    my ($c,$plain_code,$voucher_id,$now,$subscriber_id,$contract,$package_id,$schema,$err_code,$entities) = @params{qw/c plain_code voucher_id now subscriber_id contract package_id schema err_code entities/};
+    my ($c,$plain_code,$voucher_id,$now,$subscriber_id,$contract,$package_id,$schema,$err_code,$entities,$resource) = @params{qw/c plain_code voucher_id now subscriber_id contract package_id schema err_code entities resource/};
     
     $schema //= $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
@@ -62,8 +62,13 @@ sub check_topup {
     if (defined $subscriber_id) {
         my $subscriber = $schema->resultset('voip_subscribers')->find($subscriber_id);
         unless($subscriber) {
-            return 0 unless &{$err_code}('Unknown subscriber_id.');
+            if (defined $resource) {
+                $resource->{subscriber_id} = undef if exists $resource->{subscriber_id};
+                $resource->{subscriber}->{id} = undef if (exists $resource->{subscriber} && exists $resource->{subscriber}->{id});
+            }
+            return 0 unless &{$err_code}("Unknown subscriber ID $subscriber_id.");
         }
+        $entities->{subscriber} = $subscriber if defined $entities;
         $contract //= $subscriber->contract;
     }
     
@@ -86,30 +91,40 @@ sub check_topup {
         my $voucher;
         
         if (defined $plain_code) {
-            $voucher = $schema->resultset('vouchers')->find({
+            $voucher = $schema->resultset('vouchers')->search_rs({
                 code => encrypt_code($c, $plain_code),
-                used_at => undef, #used_by_subscriber_id => undef,
-                valid_until => { '<=' => $now },
+                used_at => { '=' => \"'0000-00-00 00:00:00'" } , #used_by_subscriber_id => undef,
+                valid_until => { '>=' => $now },
                 reseller_id => $contract->contact->reseller_id,
             },{
                 for => 'update',
-            });
+            })->first;
             unless($voucher) {
-                return 0 unless &{$err_code}('Invalid voucher code or already used.');
+                if (defined $resource) {
+                    $resource->{voucher_id} = undef if exists $resource->{voucher_id};
+                    $resource->{voucher}->{id} = undef if (exists $resource->{voucher} && exists $resource->{voucher}->{id});
+                }
+                return 0 unless &{$err_code}("Invalid voucher code '$plain_code', already used or expired.");
             }
         } else {
-            $voucher = $schema->resultset('vouchers')->find({
+            $voucher = $schema->resultset('vouchers')->search_rs({
                 id => $voucher_id,
-                used_at => undef, #used_by_subscriber_id => undef,
-                valid_until => { '<=' => $now },
+                used_at => { '=' => \"'0000-00-00 00:00:00'" }, #used_by_subscriber_id => undef,
+                valid_until => { '>=' => $now },
                 reseller_id => $contract->contact->reseller_id,
             },{
                 for => 'update',
-            });
+            })->first;
             unless($voucher) {
-                return 0 unless &{$err_code}('Invalid voucher ID or already used.');
+                if (defined $resource) {
+                    $resource->{voucher_id} = undef if exists $resource->{voucher_id};
+                    $resource->{voucher}->{id} = undef if (exists $resource->{voucher} && exists $resource->{voucher}->{id});
+                }                
+                return 0 unless &{$err_code}("Invalid voucher ID $voucher_id, already used or expired.");
             }            
         }
+        
+        $entities->{voucher} = $voucher if defined $entities;
 
         if($voucher->customer_id && $contract->id != $voucher->customer_id) {
             return 0 unless &{$err_code}('Voucher is reserved for a different customer.');
@@ -124,12 +139,16 @@ sub check_topup {
         if (defined $package_id) {
             $package = $schema->resultset('profile_packages')->find($package_id);
             unless($package) {
-                return 0 unless &{$err_code}('Unknown profile package ID.');
+                if (defined $resource) {
+                    $resource->{package_id} = undef if exists $resource->{package_id};
+                    $resource->{package}->{id} = undef if (exists $resource->{package} && exists $resource->{package}->{id});
+                }                     
+                return 0 unless &{$err_code}("Unknown profile package ID $package_id.");
             }
+            $entities->{package} = $package if defined $entities;
             if(defined $reseller_id && $reseller_id != $package->reseller_id) {
                 return 0 unless &{$err_code}('Profile package belongs to another reseller.');
             }
-            $entities->{package} = $package if defined $entities;
         }
     }
     

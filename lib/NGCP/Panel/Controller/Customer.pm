@@ -179,7 +179,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
-                $form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+                #$form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
                 $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 $form->values->{external_id} = $form->field('external_id')->value;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
@@ -313,7 +313,11 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     $c->stash->{balanceinterval_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         NGCP::Panel::Utils::ProfilePackages::get_balanceinterval_datatable_cols($c),
-    ]);    
+    ]);
+    
+    $c->stash->{topuplog_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        NGCP::Panel::Utils::ProfilePackages::get_topuplog_datatable_cols($c),
+    ]);        
 
     my $product_id = $contract_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message->error(
@@ -467,7 +471,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
-                $form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+                #$form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
                 $form->values->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
                 $form->values->{external_id} = $form->field('external_id')->value;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
@@ -987,16 +991,19 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+        my $success = 0;
+        my $entities = {};
+        my $log_vals = {};
         try {
             my $schema = $c->model('DB');
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 
-                my $entities = {};
                 NGCP::Panel::Utils::Voucher::check_topup(c => $c,
                     now => $now,
                     contract => $contract,
                     package_id => $form->values->{package}{id},
+                    resource => $form->values, 
                     entities => $entities,
                     err_code => sub {
                         my ($err) = @_;
@@ -1007,13 +1014,16 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                 my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
                     contract => $contract,
                     package => $entities->{package},
+                    log_vals => $log_vals,
                     #old_package => $customer->profile_package,
                     amount => $form->values->{amount},
                     now => $now,
+                    request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
                 );
                 
                 delete $c->session->{created_objects}->{package};
             });
+            $success = 1;
             NGCP::Panel::Utils::Message->info(
                 c => $c,
                 desc => $c->loc('Top-up using cash performed successfully!'),
@@ -1026,6 +1036,25 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                 desc => $c->loc('Failed to top-up using cash!'),
             );
         }
+        
+        try {
+            $c->model('DB')->txn_do(sub {
+                my $topup_log = NGCP::Panel::Utils::ProfilePackages::create_topup_log_record(
+                    c => $c,
+                    is_cash => 1,
+                    now => $now,
+                    entities => $entities,
+                    log_vals => $log_vals,
+                    resource => $form->values,
+                    is_success => $success,
+                    request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
+                );                
+            });
+        }
+        catch($e) {
+            $c->log->error("failed to create topup log record: $e");
+        }
+        
         $c->response->redirect($c->uri_for_action("/customer/details", [$contract->id]));
         return;
     }
@@ -1056,16 +1085,19 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+        my $success = 0;
+        my $entities = {};
+        my $log_vals = {};        
         try {
             my $schema = $c->model('DB');
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 
-                my $entities = {};
                 NGCP::Panel::Utils::Voucher::check_topup(c => $c,
                     now => $now,
                     contract => $contract,
                     voucher_id => $form->values->{voucher}{id},
+                    resource => $form->values, 
                     entities => $entities,
                     err_code => sub {
                         my ($err) = @_;
@@ -1076,7 +1108,9 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
                     contract => $contract,
                     voucher => $entities->{voucher},
+                    log_vals => $log_vals,
                     now => $now,
+                    request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
                 );
                 
                 $entities->{voucher}->update({
@@ -1085,6 +1119,7 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                 });                
                 
             });
+            $success = 1;
             NGCP::Panel::Utils::Message->info(
                 c => $c,
                 desc => $c->loc('Top-up using voucher performed successfully!'),
@@ -1097,6 +1132,25 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                 desc => $c->loc('Failed to top-up using voucher!'),
             );
         }
+        
+        try {
+            $c->model('DB')->txn_do(sub {
+                my $topup_log = NGCP::Panel::Utils::ProfilePackages::create_topup_log_record(
+                    c => $c,
+                    is_cash => 0,
+                    now => $now,
+                    entities => $entities,
+                    log_vals => $log_vals,
+                    resource => $form->values,
+                    is_success => $success,
+                    request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
+                );                
+            });
+        }
+        catch($e) {
+            $c->log->error("failed to create topup log record: $e");
+        }        
+        
         $c->response->redirect($c->uri_for_action("/customer/details", [$contract->id]));
         return;
     }
@@ -1110,6 +1164,13 @@ sub balanceinterval_ajax :Chained('base') :PathPart('balanceinterval/ajax') :Arg
     my ($self, $c) = @_;
     my $res = $c->stash->{contract}->contract_balances;
     NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{balanceinterval_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub topuplog_ajax :Chained('base') :PathPart('topuplog/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $res = $c->stash->{contract}->topup_log;
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{topuplog_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 

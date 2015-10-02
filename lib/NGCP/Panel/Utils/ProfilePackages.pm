@@ -1,10 +1,12 @@
 package NGCP::Panel::Utils::ProfilePackages;
 use strict;
 use warnings;
+use Scalar::Util qw(looks_like_number);
 
 #use TryCatch;
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Subscriber qw();
+use Data::Dumper;
 
 use constant INITIAL_PROFILE_DISCRIMINATOR => 'initial';
 use constant UNDERRUN_PROFILE_DISCRIMINATOR => 'underrun';
@@ -37,9 +39,11 @@ use constant _DEFAULT_PROFILE_FREE_TIME => 0;
 use constant _DEFAULT_PROFILE_FREE_CASH => 0.0;
 
 #use constant _DEFAULT_NOTOPUP_DISCARD_INTERVALS => undef;
-use constant ENABLE_PROFILE_PACKAGES => 1;
+#use constant ENABLE_PROFILE_PACKAGES => 1;
 use constant _ENABLE_UNDERRUN_PROFILES => 1;
 use constant _ENABLE_UNDERRUN_LOCK => 1;
+
+use constant PANEL_TOPUP_REQUEST_TOKEN => 'panel';
 
 sub get_contract_balance {
     my %params = @_;
@@ -134,6 +138,7 @@ sub resize_actual_contract_balance {
                 @$resized_balance_values,                  
             });
             $actual_balance->discard_changes();
+            $c->log->debug('contract ' . $contract->id . ' contract_balance row resized: ' . Dumper({ $actual_balance->get_inflated_columns }));
             if ($create_next_balance) {
                 $actual_balance = catchup_contract_balances(c => $c,
                         contract => $contract,
@@ -150,13 +155,15 @@ sub resize_actual_contract_balance {
         #underruns due to increased thresholds:
         my $update = {};
         if (_ENABLE_UNDERRUN_LOCK && defined $underrun_lock_threshold && ($actual_balance->cash_balance + $topup_amount) < $underrun_lock_threshold) {
+            $c->log->debug('contract ' . $contract->id . ' cash balance is ' . ($actual_balance->cash_balance + $topup_amount) . ' and drops below underrun lock threshold ' . $underrun_lock_threshold) if $c;
             if (defined $new_package->underrun_lock_level) {
                 set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $new_package->underrun_lock_level);
                 $update->{underrun_lock} = $now;
             }
         }        
         if (_ENABLE_UNDERRUN_PROFILES && defined $underrun_profile_threshold && ($actual_balance->cash_balance + $topup_amount) < $underrun_profile_threshold) {
-            #my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now); 
+            #my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
+            $c->log->debug('contract ' . $contract->id . ' cash balance is ' . ($actual_balance->cash_balance + $topup_amount) . ' and drops below underrun profile threshold ' . $underrun_profile_threshold) if $c;
             if (add_profile_mappings(c => $c,
                     contract => $contract,
                     package => $new_package,
@@ -173,7 +180,8 @@ sub resize_actual_contract_balance {
         }
 
     } else {
-        die("Another action finished meanwhile, please try again.");
+        $c->log->debug('attempt to resize contract ' . $contract->id . ' contract_balance row starting in the future') if $c;
+        die("Future balance interval detected. Please retry, if another top-up action finished meanwhile.");
     }
     
     return $actual_balance;
@@ -193,7 +201,7 @@ sub catchup_contract_balances {
     $topup_amount //= 0.0;
     $profiles_added //= 0;
 
-    #$c->log->debug('catchup contract ' . $contract->id . ' contract_balances (now = ' . NGCP::Panel::Utils::DateTime::to_string($now) . ')') if $c;
+    $c->log->debug('catchup contract ' . $contract->id . ' contract_balances (now = ' . NGCP::Panel::Utils::DateTime::to_string($now) . ')');
     
     my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_discard_intervals,$underrun_profile_threshold,$underrun_lock_threshold);
     
@@ -249,7 +257,7 @@ PREPARE_BALANCE_CATCHUP:
                                                       interval_value => $interval_value,
                                                       create => $contract_create);
 
-        my $balance_values = _get_balance_values(schema => $schema,
+        my $balance_values = _get_balance_values(schema => $schema,c => $c,
             stime => $stime,
             etime => $etime,
             #start_mode => $start_mode,
@@ -263,6 +271,7 @@ PREPARE_BALANCE_CATCHUP:
 
         if (_ENABLE_UNDERRUN_LOCK && !$suppress_underrun && !$underrun_lock_applied && defined $underrun_lock_threshold && $last_balance->cash_balance >= $underrun_lock_threshold && ({ @$balance_values }->{cash_balance} + $topup_amount) < $underrun_lock_threshold) {
             $underrun_lock_applied = 1;
+            $c->log->debug('contract ' . $contract->id . ' cash balance was decreased from ' . $last_balance->cash_balance . ' to ' . ({ @$balance_values }->{cash_balance} + $topup_amount) . ' and dropped below underrun lock threshold ' . $underrun_lock_threshold);
             if (defined $old_package->underrun_lock_level) {
                 set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $old_package->underrun_lock_level);
                 $underrun_lock_ts = $now;
@@ -270,6 +279,7 @@ PREPARE_BALANCE_CATCHUP:
         }        
         if (_ENABLE_UNDERRUN_PROFILES && !$suppress_underrun && !$underrun_profiles_applied && defined $underrun_profile_threshold && ($profiles_added > 0 || $last_balance->cash_balance >= $underrun_profile_threshold) && ({ @$balance_values }->{cash_balance} + $topup_amount) < $underrun_profile_threshold) {
             $underrun_profiles_applied = 1;
+            $c->log->debug('contract ' . $contract->id . ' cash balance was decreased from ' . $last_balance->cash_balance . ' to ' . ({ @$balance_values }->{cash_balance} + $topup_amount) . ' and dropped below underrun profile threshold ' . $underrun_profile_threshold);
             if (add_profile_mappings(c=> $c,
                     contract => $contract,
                     package => $old_package,
@@ -293,6 +303,8 @@ PREPARE_BALANCE_CATCHUP:
             @$balance_values,
         });
         $last_balance->discard_changes();
+        
+        $c->log->debug('contract ' . $contract->id . ' contract_balance row created: ' . Dumper({ $last_balance->get_inflated_columns }));
     }
 
 	# in case of "topup" or "topup_interval" start modes, the current interval end can be
@@ -313,11 +325,15 @@ PREPARE_BALANCE_CATCHUP:
         my $timely_end = (_CARRY_OVER_TIMELY_MODE eq $carry_over_mode ? _add_interval($last_balance->start,$interval_unit,$interval_value,undef)->subtract(seconds => 1) : undef);
         if ((defined $notopup_expiration && $now >= $notopup_expiration)
             || (defined $timely_end && $now > $timely_end)) {
+            $c->log->debug('discarding contract ' . $contract->id . " cash balance (mode '$carry_over_mode'" .
+                (defined $timely_end ? ', timely end ' . NGCP::Panel::Utils::DateTime::to_string($timely_end) : '') .
+                (defined $notopup_expiration ? ', notopup expiration ' . NGCP::Panel::Utils::DateTime::to_string($notopup_expiration) : '') . ')');
             my $update = {
                 cash_balance => 0
             };
             if (_ENABLE_UNDERRUN_LOCK && !$suppress_underrun && !$underrun_lock_applied && defined $underrun_lock_threshold && $last_balance->cash_balance >= $underrun_lock_threshold && ($update->{cash_balance} + $topup_amount) < $underrun_lock_threshold) {
                 $underrun_lock_applied = 1;
+                $c->log->debug('contract ' . $contract->id . ' cash balance was decreased from ' . $last_balance->cash_balance . ' to ' . ($update->{cash_balance} + $topup_amount) . ' and dropped below underrun lock threshold ' . $underrun_lock_threshold);
                 if (defined $old_package->underrun_lock_level) {
                     set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $old_package->underrun_lock_level);
                     $update->{underrun_lock} = $now;
@@ -325,6 +341,7 @@ PREPARE_BALANCE_CATCHUP:
             }        
             if (_ENABLE_UNDERRUN_PROFILES && !$suppress_underrun && !$underrun_profiles_applied && defined $underrun_profile_threshold && ($profiles_added > 0 || $last_balance->cash_balance >= $underrun_profile_threshold) && ($update->{cash_balance} + $topup_amount) < $underrun_profile_threshold) {
                 $underrun_profiles_applied = 1;
+                $c->log->debug('contract ' . $contract->id . ' cash balance was decreased from ' . $last_balance->cash_balance . ' to ' . ($update->{cash_balance} + $topup_amount) . ' and dropped below underrun profile threshold ' . $underrun_profile_threshold);
                 if (add_profile_mappings(c=> $c,
                         contract => $contract,
                         package => $old_package,
@@ -346,19 +363,42 @@ PREPARE_BALANCE_CATCHUP:
 
 sub topup_contract_balance {
     my %params = @_;
-    my($c,$contract,$package,$voucher,$amount,$now,$schema) = @params{qw/c contract package voucher amount now schema/};
+    my($c,$contract,$package,$voucher,$amount,$now,$request_token,$schema,$log_vals,$subscriber) = @params{qw/c contract package voucher amount now request_token schema log_vals subscriber/};
     
-    $schema //= $c->model('DB');
+    $schema = $c->model('DB');
     $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::current_local;
     
     my $voucher_package = ($voucher ? $voucher->profile_package : $package);
     my $old_package = $contract->profile_package;
+    $log_vals->{old_package} = ( $old_package ? { $old_package->get_inflated_columns } : undef) if $log_vals;
     $package = $voucher_package // $old_package;
+    $log_vals->{new_package} = ( $package ? { $package->get_inflated_columns } : undef) if $log_vals;
     my $topup_amount = ($voucher ? $voucher->amount : $amount) // 0.0;
     
-    $voucher_package = undef unless ENABLE_PROFILE_PACKAGES;
-    $package = undef unless ENABLE_PROFILE_PACKAGES;
+    #$voucher_package = undef unless ENABLE_PROFILE_PACKAGES;
+    #$package = undef unless ENABLE_PROFILE_PACKAGES;
+    
+    $c->log->debug('topup' . ($request_token ? ' (request token ' . $request_token . ') ' : ' ') . 'contract ' . $contract->id . ' using ' . ($voucher ? 'voucher ' . $voucher->id : 'cash'));
+
+
+    my $balance = catchup_contract_balances(c => $c,
+        contract => $contract,
+        old_package => $old_package,
+        now => $now);
+    if ($log_vals) {
+        $log_vals->{old_balance} = { $balance->get_inflated_columns };
+        my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
+        my $profile = $bm_actual->billing_mappings->first->billing_profile;
+        $log_vals->{old_profile} = { $profile->get_inflated_columns };
+        if ($subscriber) {
+            $log_vals->{old_lock_level} = NGCP::Panel::Utils::Subscriber::get_provisoning_voip_subscriber_lock_level(
+                c => $c,
+                prov_subscriber => $subscriber->provisioning_voip_subscriber,
+            ) if ($subscriber->provisioning_voip_subscriber);
+            $log_vals->{new_lock_level} = $log_vals->{old_lock_level};
+        }
+    }
     
     my $profiles_added = 0;
     if ($package) { #always apply (old or new) topup profiles
@@ -373,6 +413,7 @@ sub topup_contract_balance {
             profiles => 'topup_profiles',
             now => $now);
     }
+    $log_vals->{amount} = $topup_amount if $log_vals;
                
     if ($voucher_package && (!$old_package || $voucher_package->id != $old_package->id)) {
         $contract->update({ profile_package_id => $voucher_package->id,
@@ -380,11 +421,6 @@ sub topup_contract_balance {
         });
         $contract->discard_changes();
     }
-
-    my $balance = catchup_contract_balances(c => $c,
-        contract => $contract,
-        old_package => $old_package,
-        now => $now);
 
     my ($is_timely,$timely_duration_unit,$timely_duration_value) = (0,undef,undef);
     if ($old_package
@@ -419,12 +455,69 @@ sub topup_contract_balance {
 
     $balance->update({ cash_balance => $balance->cash_balance + $topup_amount }); #add in new interval
     $contract->discard_changes();
+    if ($log_vals) {
+        $log_vals->{new_balance} = { $balance->get_inflated_columns };
+        my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
+        my $profile = $bm_actual->billing_mappings->first->billing_profile;
+        $log_vals->{new_profile} = { $profile->get_inflated_columns };
+    }    
     
-    if ($package) {
-        set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->topup_lock_level) if defined $package->topup_lock_level;
+    if ($package && defined $package->topup_lock_level) {
+        set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->topup_lock_level);
+        $log_vals->{new_lock_level} = $package->topup_lock_level;
     }
     
     return $balance;
+}
+
+sub create_topup_log_record {
+    my %params = @_;
+    my($c,$is_cash,$now,$entities,$log_vals,$resource,$message,$is_success,$request_token) = @params{qw/c is_cash now entities log_vals resource message is_success request_token/};
+    
+    $resource //= {};
+    $resource->{contract_id} = $resource->{contract}{id} if (exists $resource->{contract} && 'HASH' eq ref $resource->{contract});
+    $resource->{subscriber_id} = $resource->{subscriber}{id} if (exists $resource->{subscriber} && 'HASH' eq ref $resource->{subscriber});
+    $resource->{voucher_id} = $resource->{voucher}{id} if (exists $resource->{voucher} && 'HASH' eq ref $resource->{voucher});
+    $resource->{package_id} = $resource->{package}{id} if (exists $resource->{package} && 'HASH' eq ref $resource->{package});
+    
+    $resource->{contract_id} = undef if (exists $resource->{contract_id} && !looks_like_number($resource->{contract_id}));
+    $resource->{subscriber_id} = undef if (exists $resource->{subscriber_id} && !looks_like_number($resource->{subscriber_id}));
+    $resource->{voucher_id} = undef if (exists $resource->{voucher_id} && !looks_like_number($resource->{voucher_id}));
+    $resource->{package_id} = undef if (exists $resource->{package_id} && !looks_like_number($resource->{package_id}));
+    
+    $resource->{amount} = undef if (exists $resource->{amount} && !looks_like_number($resource->{amount}));
+    
+    my $username;
+    if($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') {
+        $username = $c->user->login;
+    } elsif($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        $username = $c->user->webusername . '@' . $c->user->domain->domain;
+    }
+    $message //= $c->stash->{api_error_message} // $c->stash->{panel_error_message};
+    
+    return $c->model('DB')->resultset('topup_logs')->create({
+        username => $username,
+        timestamp => $now->hires_epoch,
+        type => ($is_cash ? 'cash' : 'voucher'),
+        outcome => ($is_success ? 'ok' : 'failed'),
+        message => (defined $message ? substr($message,0,255) : undef),
+        subscriber_id => ($entities->{subscriber} ? $entities->{subscriber}->id : $resource->{subscriber_id}),
+        contract_id => ($entities->{contract} ? $entities->{contract}->id : $resource->{contract_id}),
+        amount => (exists $log_vals->{amount} ? $log_vals->{amount} : (exists $resource->{amount} ? $resource->{amount} : undef)),
+        voucher_id => ($entities->{voucher} ? $entities->{voucher}->id : $resource->{voucher_id}),
+        cash_balance_before => (exists $log_vals->{old_balance} ? $log_vals->{old_balance}->{cash_balance} : undef),
+        cash_balance_after => (exists $log_vals->{new_balance} ? $log_vals->{new_balance}->{cash_balance} : undef),
+        package_before_id => (exists $log_vals->{old_package} && defined $log_vals->{old_package} ? $log_vals->{old_package}->{id} : undef),
+        package_after_id => (exists $log_vals->{new_package} && defined $log_vals->{new_package} ? $log_vals->{new_package}->{id} : ($entities->{package} ? $entities->{package}->id : $resource->{package_id})),
+        profile_before_id => (exists $log_vals->{old_profile} ? $log_vals->{old_profile}->{id} : undef),
+        profile_after_id => (exists $log_vals->{new_profile} ? $log_vals->{new_profile}->{id} : undef),
+        lock_level_before => (exists $log_vals->{old_lock_level} ? $log_vals->{old_lock_level} : undef),
+        lock_level_after => (exists $log_vals->{new_lock_level} ? $log_vals->{new_lock_level} : undef),
+        contract_balance_before_id => (exists $log_vals->{old_balance} ? $log_vals->{old_balance}->{id} : undef),
+        contract_balance_after_id => (exists $log_vals->{new_balance} ? $log_vals->{new_balance}->{id} : undef),
+        request_token => substr((defined $request_token ? $request_token : $resource->{request_token}),0,255),
+    });
+    
 }
 
 sub create_initial_contract_balances {
@@ -476,6 +569,7 @@ PREPARE_BALANCE_INITIAL:
 
     if (_ENABLE_UNDERRUN_LOCK && !$underrun_lock_applied && defined $package && defined $underrun_lock_threshold && { @$balance_values }->{cash_balance} < $underrun_lock_threshold) {
         $underrun_lock_applied = 1;
+        $c->log->debug('contract ' . $contract->id . ' cash balance of ' . { @$balance_values }->{cash_balance} . ' is below underrun lock threshold ' . $underrun_lock_threshold);
         if (defined $package->underrun_lock_level) {
             set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->underrun_lock_level);
             $underrun_lock_ts = $now;
@@ -483,6 +577,7 @@ PREPARE_BALANCE_INITIAL:
     }
     if (_ENABLE_UNDERRUN_PROFILES && !$underrun_profiles_applied && defined $package && defined $underrun_profile_threshold && { @$balance_values }->{cash_balance} < $underrun_profile_threshold) {
         $underrun_profiles_applied = 1;
+        $c->log->debug('contract ' . $contract->id . ' cash balance of ' . { @$balance_values }->{cash_balance} . ' is below underrun profile threshold ' . $underrun_profile_threshold);
         if (add_profile_mappings(c => $c,
                 contract => $contract,
                 package => $package,
@@ -556,7 +651,7 @@ sub _get_balance_values {
     if ($last_balance) {
         if ((_CARRY_OVER_MODE eq $carry_over_mode
              || (_CARRY_OVER_TIMELY_MODE eq $carry_over_mode && $last_balance->timely_topup_count > 0)
-            ) && (!$notopup_expiration || $stime < $notopup_expiration)) {
+            ) && (!defined $notopup_expiration || $stime < $notopup_expiration)) {
             #if (!defined $last_profile) {
             #    my $bm_last = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $last_balance->start); #end); !?
             #    $last_profile = $bm_last->billing_mappings->first->billing_profile;
@@ -572,6 +667,8 @@ sub _get_balance_values {
                 $cash_balance += $last_balance->cash_balance_interval - $old_free_cash;
             }
             #$ratio * $last_profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME
+        } else {
+            $c->log->debug('discarding contract ' . $contract->id . " cash balance (mode '$carry_over_mode'" . (defined $notopup_expiration ? ', notopup expiration ' . NGCP::Panel::Utils::DateTime::to_string($notopup_expiration) : '') . ')') if $c;
         }
         $ratio = 1.0;
     } else {
@@ -776,6 +873,7 @@ sub underrun_lock_subscriber {
         $underrun_lock_level = $package->underrun_lock_level;
     }
     if (defined $underrun_lock_threshold && defined $underrun_lock_level && $balance->cash_balance < $underrun_lock_threshold) {
+        $c->log->debug('contract ' . $contract->id . ' cash balance of ' . $balance->cash_balance . ' is below underrun lock threshold ' . $underrun_lock_threshold);
         NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
             c => $c,
             prov_subscriber => $subscriber->provisioning_voip_subscriber,
@@ -787,7 +885,7 @@ sub underrun_lock_subscriber {
 sub underrun_update_balance {
     my %params = @_;
     my ($c,$balance,$new_cash_balance,$now,$schema) = @params{qw/c balance new_cash_balance now schema/};
-    $schema //= $c->model('DB');
+    $schema = $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
     my $contract = $balance->contract;
     my $package = $contract->profile_package;
@@ -798,12 +896,14 @@ sub underrun_update_balance {
     }
     my $update = {};
     if (_ENABLE_UNDERRUN_LOCK && defined $underrun_lock_threshold && $balance->cash_balance >= $underrun_lock_threshold && $new_cash_balance < $underrun_lock_threshold) {
+        $c->log->debug('contract ' . $contract->id . ' cash balance was set from ' . $balance->cash_balance . ' to ' . $new_cash_balance . ' and is now below underrun lock threshold ' . $underrun_lock_threshold);
         if (defined $package->underrun_lock_level) {
             set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->underrun_lock_level);
             $update->{underrun_lock} = $now;
         }
     }
     if (_ENABLE_UNDERRUN_PROFILES && defined $underrun_profile_threshold && $balance->cash_balance >= $underrun_profile_threshold && $new_cash_balance < $underrun_profile_threshold) {
+        $c->log->debug('contract ' . $contract->id . ' cash balance was set from ' . $balance->cash_balance . ' to ' . $new_cash_balance . ' and is now below underrun profile threshold ' . $underrun_profile_threshold);
         #my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now); 
         if (add_profile_mappings(c => $c,
                 contract => $contract,
@@ -1175,6 +1275,36 @@ sub get_balanceinterval_datatable_cols {
         { name => "timely_topup_count", search => 0, title => $c->loc('#Timely Top-ups') }, 
         { name => "underrun_profiles", search => 0, title => $c->loc('Underrun (Profiles)') }, 
         { name => "underrun_lock", search => 0, title => $c->loc('Underrun (Lock)') }, 
+    );
+}
+
+sub get_topuplog_datatable_cols {
+    
+    my ($c) = @_;
+    return ( #{ name => "id", search => 1, title => $c->loc("#") },
+        { name => "timestamp", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Timestamp') },
+        #{ name => "username", search => 1, title => $c->loc('User') },
+        
+        
+        { name => "subscriber.username", search => 1, title => $c->loc('Subscriber') },
+
+        { name => "type", search => 1, title => $c->loc('Type') },        
+        { name => "outcome", search => 1, title => $c->loc('Outcome') },
+        { name => "message", search => 1, title => $c->loc('Message'),
+           literal_sql => "if(length(message) > 30, concat(left(message, 30), '...'), message)" },
+
+        { name => "voucher_id", search => 1, title => $c->loc('Voucher ID') },
+        { name => "amount", search => 0, title => $c->loc('Amount'), literal_sql => "FORMAT(amount / 100,2)" },
+        
+        { name => "cash_balance_before", search => 0, title => $c->loc('Balance before'), literal_sql => "FORMAT(cash_balance_before / 100,2)" },
+        { name => "cash_balance_after", search => 0, title => $c->loc('Balance after'), literal_sql => "FORMAT(cash_balance_after / 100,2)" },        
+        
+        { name => "old_package.name", search => 1, title => $c->loc('Package before') },
+        { name => "new_package.name", search => 1, title => $c->loc('Package after') },
+
+        #{ name => "old_profile.name", search => 1, title => $c->loc('Profile before') },
+        #{ name => "new_profile.name", search => 1, title => $c->loc('Profile after') },
+
     );
 }
         

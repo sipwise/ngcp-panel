@@ -450,6 +450,28 @@
         </div>
     </div>    
 
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_topuplog">[% c.loc('Top-up Log') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_topuplog">
+
+            <div class="accordion-inner">
+            
+[% 
+    helper.name = c.loc('Topuplog');
+    helper.identifier = 'topup_logs';
+    helper.dt_columns = topuplog_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/customer/topuplog_ajax', [ c.req.captures.0 ]);
+
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>   
    
     [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
     <div class="accordion-group">

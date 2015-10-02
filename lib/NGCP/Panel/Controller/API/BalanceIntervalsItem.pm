@@ -28,7 +28,7 @@ class_has 'query_params' => (
     default => sub {[
         {
             param => 'start',
-            description => 'Filter balance intervals starting after or with the specified time stamp.',
+            description => 'Filter balance intervals starting after or at the specified time stamp.',
             query => {
                 first => sub {
                     my $q = shift;

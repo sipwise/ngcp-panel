@@ -169,6 +169,7 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
                                             $usr_text,
                                             $log_params->{tx_id},
                                 }]);
+        $c->stash(panel_error_message => $msg);
     }
     return $rc;
 }

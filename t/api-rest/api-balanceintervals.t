@@ -30,7 +30,7 @@ use NGCP::Panel::Utils::DateTime qw();
 
 my $is_local_env = 0;
 #my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
-my $enable_profile_packages = 1;
+#my $enable_profile_packages = 1;
 
 use Config::General;
 my $catalyst_config;
@@ -114,95 +114,7 @@ my $infinite_future;
 my $t = time;
 my $default_reseller_id = 1;
 
-$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
-$req->header('Content-Type' => 'application/json');
-$req->content(JSON::to_json({
-    firstname => "cust_contact_1_first",
-    lastname  => "cust_contact_1_last",
-    email     => "cust_contact1\@custcontact.invalid",
-    reseller_id => $default_reseller_id,
-}));
-$res = $ua->request($req);
-is($res->code, 201, "create customer contact 1");
-$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-$res = $ua->request($req);
-is($res->code, 200, "fetch customer contact 1");
-my $custcontact1 = JSON::from_json($res->decoded_content);
-
-$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
-$req->header('Content-Type' => 'application/json');
-$req->content(JSON::to_json({
-    firstname => "cust_contact_2_first",
-    lastname  => "cust_contact_2_last",
-    email     => "cust_contact2\@custcontact.invalid",
-    reseller_id => $default_reseller_id,
-}));
-$res = $ua->request($req);
-is($res->code, 201, "create customer contact 2");
-$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-$res = $ua->request($req);
-is($res->code, 200, "fetch customer contact 2");
-my $custcontact2 = JSON::from_json($res->decoded_content);
-
-$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
-$req->header('Content-Type' => 'application/json');
-$req->content(JSON::to_json({
-    firstname => "cust_contact_3_first",
-    lastname  => "cust_contact_3_last",
-    email     => "cust_contact3\@custcontact.invalid",
-    reseller_id => $default_reseller_id,
-}));
-$res = $ua->request($req);
-is($res->code, 201, "create customer contact 3");
-$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-$res = $ua->request($req);
-is($res->code, 200, "fetch customer contact 3");
-my $custcontact3 = JSON::from_json($res->decoded_content);
-
-$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
-$req->header('Content-Type' => 'application/json');
-$req->content(JSON::to_json({
-    firstname => "cust_contact_4_first",
-    lastname  => "cust_contact_4_last",
-    email     => "cust_contact4\@custcontact.invalid",
-    reseller_id => $default_reseller_id,
-}));
-$res = $ua->request($req);
-is($res->code, 201, "create customer contact 4");
-$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-$res = $ua->request($req);
-is($res->code, 200, "fetch customer contact 4");
-my $custcontact4 = JSON::from_json($res->decoded_content);
-
-$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
-$req->header('Content-Type' => 'application/json');
-$req->content(JSON::to_json({
-    firstname => "cust_contact_5_first",
-    lastname  => "cust_contact_5_last",
-    email     => "cust_contact5\@custcontact.invalid",
-    reseller_id => $default_reseller_id,
-}));
-$res = $ua->request($req);
-is($res->code, 201, "create customer contact 5");
-$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-$res = $ua->request($req);
-is($res->code, 200, "fetch customer contact 5");
-my $custcontact5 = JSON::from_json($res->decoded_content);
-
-$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
-$req->header('Content-Type' => 'application/json');
-$req->content(JSON::to_json({
-    firstname => "cust_contact_9_first",
-    lastname  => "cust_contact_9_last",
-    email     => "cust_contact9\@custcontact.invalid",
-    reseller_id => $default_reseller_id,
-}));
-$res = $ua->request($req);
-is($res->code, 201, "create customer contact 9");
-$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-$res = $ua->request($req);
-is($res->code, 200, "fetch customer contact 9");
-my $custcontact9 = JSON::from_json($res->decoded_content);
+my $default_custcontact = _create_customer_contact();
 
 $req = HTTP::Request->new('POST', $uri.'/api/domains/');
 $req->header('Content-Type' => 'application/json');
@@ -221,6 +133,7 @@ my $domain = JSON::from_json($res->decoded_content);
 my %customer_map :shared = ();
 my %subscriber_map :shared = ();
 
+my $customer_contact_map = {};
 my $package_map = {};
 my $voucher_map = {};
 my $profile_map = {};
@@ -231,10 +144,49 @@ my $tb;
 my $tb_cnt;
 my $gantt_events;
 
-if (_get_allow_fake_client_time() && $enable_profile_packages) {
+if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
     
     #goto SKIP;
     #goto THREADED;
+    if ('Europe/Vienna' eq NGCP::Panel::Utils::DateTime::current_local()->time_zone->name) {
+        my $package = _create_profile_package('create','hour',1);
+       
+        my $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 01:27:00');
+        ok($dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is in daylight saving time (summer)");
+        _set_time($dt);
+        my $customer = _create_customer($package,'hourly_interval_dst_at');
+        
+        _check_interval_history($customer,[
+            { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+            { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+        ]);
+        
+        $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 02:27:00');
+        ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
+        _set_time($dt);
+        
+        _check_interval_history($customer,[
+            { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+            { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+            { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
+        ]);        
+        
+        $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 03:27:00');
+        ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
+        _set_time($dt);
+       
+        _check_interval_history($customer,[
+            { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+            { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+            { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
+            { start => '2015-10-25 03:00:00', stop => '2015-10-25 03:59:59' },
+        ]);
+        
+        _set_time();
+    } else {
+        diag("time zone '" . NGCP::Panel::Utils::DateTime::current_local()->time_zone->name . "', skipping DST test");
+    }
+    
     {
         my $package = _create_profile_package('create','hour',1);
        
@@ -703,8 +655,8 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_topup->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_topup);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        diag("wait a second here");
-        sleep(1); #sigh
+        #diag("wait a second here");
+        #sleep(1); #sigh
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00', package_id => undef },
@@ -965,13 +917,15 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     }
     
     if (_get_allow_delay_commit()) {
+        my $custcontact1 = _create_customer_contact();
+        my $custcontact2 = _create_customer_contact();
         _set_time(NGCP::Panel::Utils::DateTime::current_local->subtract(months => 3));
-        _create_customers_threaded(3,undef,undef,$custcontact9);
+        _create_customers_threaded(3,undef,undef,$custcontact1);
         _create_customers_threaded(3,undef,undef,$custcontact2);
         _set_time();
 
         my $t1 = time;
-        my $delay = 10; #15;
+        my $delay = 5; #15;
     
         my $t_a = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
         my $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact2);
@@ -989,12 +943,13 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare customerbalances collection results of threaded requests deeply')) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
-        ok($t2 - $t1 > 2*$delay,'expected delay to assume customerbalances requests were processed after another');
+        my $delta_serialized = $t2 - $t1;
+        ok($delta_serialized > 2*$delay,'expected delay to assume customerbalances requests were processed after another');
         #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
 
         $t1 = time;
-        $t_a = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
-        $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact9);
+        $t_a = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact1);
+        $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact2);
         #$t_c = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
         $intervals_a = $t_a->join();
         $intervals_b = $t_b->join();
@@ -1002,26 +957,29 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $t2 = time;
         
         is($intervals_a->{total_count},3,"check total count of thread a results");
-        is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
+        is($intervals_b->{total_count},3,"check total count of thread b results");
+        #is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
         #is($intervals_c->{total_count},3,"check total count of thread c results");        
         
-        ok($t2 - $t1 < 2*$delay,'expected delay to assume only required contracts were locked');        
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel');        
         
     } else {
         diag('allow_delay_commit not set, skipping ...');
     }
 
     if (_get_allow_delay_commit()) {
+        my $custcontact1 = _create_customer_contact();
+        my $custcontact2 = _create_customer_contact();        
         _set_time(NGCP::Panel::Utils::DateTime::current_local->subtract(months => 3));
-        _create_customers_threaded(3,undef,undef,$custcontact9);
-        _create_customers_threaded(3,undef,undef,$custcontact3);
+        _create_customers_threaded(3,undef,undef,$custcontact1);
+        _create_customers_threaded(3,undef,undef,$custcontact2);
         _set_time();
         
         my $t1 = time;
-        my $delay = 10; #15;
+        my $delay = 5; #15;
     
-        my $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact3);
-        my $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);
+        my $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact2);
+        my $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact2);
         #my $t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact9);        
         my $intervals_a = $t_a->join();
         my $intervals_b = $t_b->join();
@@ -1036,12 +994,13 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare interval collection results of threaded requests deeply')) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
-        ok($t2 - $t1 > 2*$delay,'expected delay to assume balanceintervals requests were processed after another');
+        my $delta_serialized = $t2 - $t1;
+        ok($delta_serialized > 2*$delay,'expected delay to assume balanceintervals requests were processed after another');
         #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
 
         $t1 = time;
-        $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact3);
-        $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact9);
+        $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact1);
+        $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact2);
         #$t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);                
         $intervals_a = $t_a->join();
         $intervals_b = $t_b->join();
@@ -1049,10 +1008,11 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $t2 = time;
         
         is($intervals_a->{total_count},3,"check total count of thread a results");
-        is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
+        is($intervals_b->{total_count},3,"check total count of thread b results");
+        #is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
         #is($intervals_c->{total_count},3,"check total count of thread c results");        
         
-        ok($t2 - $t1 < 2*$delay,'expected delay to assume only required contracts were locked');        
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were perfomed in parallel');        
         
         
     } else {
@@ -1060,15 +1020,17 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     }
 
     if (_get_allow_delay_commit()) {
+        my $custcontact1 = _create_customer_contact();
+        my $custcontact2 = _create_customer_contact();               
         my $package = _create_profile_package('create','month',1,initial_balance => 1, carry_over_mode => 'discard', underrun_lock_threshold => 1, underrun_lock_level => 4);
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-05-17 13:00:00'));
-        _create_customers_threaded(3,2,$package,$custcontact9);
-        _create_customers_threaded(3,2,$package,$custcontact4);
+        _create_customers_threaded(3,2,$package,$custcontact1);
+        _create_customers_threaded(3,2,$package,$custcontact2);
         
         my $t1 = time;
-        my $delay = 10.0; #15.0; #10.0; #2.0;
-        my $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
-        my $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
+        my $delay = 5.0; #15.0; #10.0; #2.0;
+        my $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact2);
+        my $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact2);
         #my $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
         my $prefs_a = $t_a->join();
         my $prefs_b = $t_b->join();
@@ -1082,7 +1044,8 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber preference collection results of threaded requests deeply')) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
-        ok($t2 - $t1 > 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
+        my $delta_serialized = $t2 - $t1;
+        ok($delta_serialized > 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
         #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_desc->[$i]->{lock},undef,"check if subscriber is unlocked initially");
@@ -1114,8 +1077,8 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         #}
         
         $t1 = time;
-        $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
-        $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
+        $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact1);
+        $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact2);
         #$t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
         $prefs_a = $t_a->join();
         $prefs_b = $t_b->join();
@@ -1123,17 +1086,18 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $t2 = time;
         
         is($prefs_a->{total_count},2*3,"check total count of thread a results");
-        is($prefs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");                
+        is($prefs_b->{total_count},2*3,"check total count of thread b results");
+        #is($prefs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");                
         #is($prefs_c->{total_count},2*3,"check total count of thread c results");
         $got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_asc->[$i]->{lock},4,"check if subscriber is locked now");
         }
         
-        ok($t2 - $t1 < 2*$delay,'expected delay to assume only required contracts were locked');        
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel');        
 
         $t1 = time;
-        $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
+        $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact2);
         sleep($delay/2.0);
         my $last_customer_id = shift(@{[sort {$b <=> $a} keys %customer_map]});
         _check_interval_history($customer_map{$last_customer_id},[
@@ -1152,15 +1116,17 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     }
 
     if (_get_allow_delay_commit()) {
+        my $custcontact1 = _create_customer_contact();
+        my $custcontact2 = _create_customer_contact();        
         my $package = _create_profile_package('create','month',1,initial_balance => 1, carry_over_mode => 'discard', underrun_lock_threshold => 1, underrun_lock_level => 4);
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-05-17 13:00:00'));
-        _create_customers_threaded(3,2,$package,$custcontact9);
-        _create_customers_threaded(3,2,$package,$custcontact5);
+        _create_customers_threaded(3,2,$package,$custcontact1);
+        _create_customers_threaded(3,2,$package,$custcontact2);
         
         my $t1 = time;
-        my $delay = 10.0; #15.0; #10.0; #2.0;
-        my $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
-        my $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact5);
+        my $delay = 5.0; #15.0; #10.0; #2.0;
+        my $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact2);
+        my $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact2);
         #my $t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);
         my $subs_a = $t_a->join();
         my $subs_b = $t_b->join();
@@ -1174,7 +1140,8 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber collection results of threaded requests deeply')) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
-        ok($t2 - $t1 > 2*$delay,'expected delay to assume subscribers requests were processed after another');
+        my $delta_serialized = $t2 - $t1;
+        ok($delta_serialized > 2*$delay,'expected delay to assume subscribers requests were processed after another');
         #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_desc->[$i]->{lock},undef,"check if subscriber is unlocked initially");
@@ -1206,8 +1173,8 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         #}
         
         $t1 = time;
-        $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
-        $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact9);
+        $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact1);
+        $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact2);
         #$t_c = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact5);
         $subs_a = $t_a->join();
         $subs_b = $t_b->join();
@@ -1215,16 +1182,17 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $t2 = time;
         
         is($subs_a->{total_count},2*3,"check total count of thread a results");
-        is($subs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");
+        is($subs_b->{total_count},2*3,"check total count of thread b results");
+        #is($subs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");
         #is($subs_c->{total_count},2*3,"check total count of thread c results");
         $got_asc = $subs_a->{_embedded}->{'ngcp:subscribers'};
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_asc->[$i]->{lock},4,"check if subscriber is locked now");
         }        
-        ok($t2 - $t1 < 2*$delay,'expected delay to assume only required contracts were locked');        
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel');        
 
         $t1 = time;
-        $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
+        $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact2);
         sleep($delay/2.0);
         my $last_customer_id = shift(@{[sort {$b <=> $a} keys %customer_map]});
         _check_interval_history($customer_map{$last_customer_id},[
@@ -1246,7 +1214,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     diag('allow_fake_client_time not set, skipping ...');
 }
 
-for my $custcontact ($custcontact1,$custcontact2,$custcontact3,$custcontact4,$custcontact9) {
+for my $custcontact (values %$customer_contact_map) { #$default_custcontact,$custcontact2,$custcontact3,$custcontact4,$custcontact9) {
     { #test balanceintervals root collection and item
         _create_customers_threaded(3,undef,undef,$custcontact); # unless _get_allow_fake_client_time() && $enable_profile_packages;
         
@@ -1517,6 +1485,29 @@ sub _create_customers_threaded {
     diag('average time to create a customer: ' . ($t1 - $t0)/$number_of_customers);
 }
 
+sub _create_customer_contact {
+
+    my $n = (scalar keys %$customer_contact_map);
+    $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;    
+    $req->content(JSON::to_json({
+        firstname => "cust_contact_".$n."_first",
+        lastname  => "cust_contact_".$n."_last",
+        email     => "cust_contact".$n."\@custcontact.invalid",
+        reseller_id => $default_reseller_id,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "create customer contact $n");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch customer contact $n");
+    my $custcontact = JSON::from_json($res->decoded_content);
+    $customer_contact_map->{$custcontact->{id}} = $custcontact;
+    return $custcontact;
+    
+}
+
 sub _create_customer {
     
     my ($package,$record_label,$custcontact) = @_;
@@ -1526,7 +1517,7 @@ sub _create_customer {
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     my $req_data = {
         status => "active",
-        contact_id => (defined $custcontact ? $custcontact->{id} : $custcontact1->{id}),
+        contact_id => (defined $custcontact ? $custcontact->{id} : $default_custcontact->{id}),
         type => "sipaccount",
         ($package ? (billing_profile_definition => 'package',
                      profile_package_id => $package->{id}) :
