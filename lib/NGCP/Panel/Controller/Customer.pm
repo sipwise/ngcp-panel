@@ -1173,10 +1173,10 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     }
 
     my $posted = ($c->request->method eq 'POST');
-    $c->stash->{pilot} = $c->stash->{subscribers}->search({
+    my $pilot = $c->stash->{subscribers}->search({
         'provisioning_voip_subscriber.is_pbx_pilot' => 1,
     })->first;
-    unless($c->stash->{pilot}) {
+    unless($pilot) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => 'cannot create pbx group without having a pilot subscriber',
@@ -1207,7 +1207,6 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do( sub {
                 my $preferences = {};
-                my $pilot = $c->stash->{pilot};
 
                 my $base_number = $pilot->primary_number;
                 if($base_number) {
@@ -1299,6 +1298,15 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
     $form = NGCP::Panel::Form::Customer::PbxGroupEdit->new;
     my $params = { $c->stash->{pbx_group}->provisioning_voip_subscriber->get_inflated_columns };
     $params = $params->merge($c->session->{created_objects});
+
+    unless ($posted) {
+        NGCP::Panel::Utils::Subscriber::prepare_alias_select(
+            c => $c,
+            subscriber => $c->stash->{pbx_group},
+            params => $params,
+        );
+    }
+
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -1324,23 +1332,36 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                         cloud_pbx_hunt_timeout => $form->values->{pbx_hunt_timeout},
                     }
                 );
+                my $e164;
+                my $sub = $c->stash->{pbx_group};
                 if(defined $form->values->{pbx_extension} &&
                         $form->values->{pbx_extension} ne $old_extension) {
-                    my $sub = $c->stash->{pbx_group};
                     my $base_number = $c->stash->{pilot}->primary_number;
-                    my $e164 = {
+                    $e164 = {
                         cc => $sub->primary_number->cc,
                         ac => $sub->primary_number->ac,
                         sn => $base_number->sn . $form->values->{pbx_extension},
                     };
-                    NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                }
+                NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                    c => $c,
+                    schema => $schema,
+                    subscriber_id => $sub->id,
+                    reseller_id => $sub->contract->contact->reseller_id,
+                    $e164 ? (primary_number => $e164) : (),
+                    $c->user->roles eq 'subscriberadmin' ? () : (alias_numbers  => $form->values->{alias_number}),
+                );
+                if(exists $form->values->{alias_select} && $c->stash->{pilot}) {
+                    NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
                         c => $c,
                         schema => $schema,
-                        subscriber_id => $sub->id,
-                        reseller_id => $sub->contract->contact->reseller_id,
-                        primary_number => $e164,
+                        subscriber => $sub,
+                        contract_id => $sub->contract_id,
+                        alias_selected => decode_json($form->values->{alias_select}),
+                        sadmin => $c->stash->{pilot},
                     );
                 }
+
             });
             NGCP::Panel::Utils::Message->info(
                 c => $c,
