@@ -319,6 +319,7 @@ sub load_db{
 
 sub clear_db{
     my($self,$data,$order_array,$collections_slice) = @_;
+    $data ||= $self->data;
     $order_array //= [qw/contracts systemcontacts customercontacts/];
     my $order_hash = {};
     $collections_slice //= [keys %$data];
@@ -334,17 +335,20 @@ sub clear_db{
             $values = ('HASH' eq ref $values) ? [$values] : $values;
             my @locations = map {$_->{href}} @$values;
             if($data->{$collection_name}->{no_delete_available}){
-                @{$self->undeletable->{@locations}} = ($collection_name) x @locations;
+                @{$self->undeletable}{@locations} = ($collection_name) x @locations;
             }else{
                 if($data->{$collection_name}->{delete_potentially_dependent}){
                     #no checking of deletion success will be done for items which may depend on not deletable ones
                     foreach( @locations ){
                         if(!$self->test_machine->clear_test_data_dependent($_)){
                             $self->undeletable->{$_}  = $collection_name;
+                        }else{
+                            delete $self->loaded->{$collection_name};
                         }
                     }
                 }else{
                     $self->test_machine->clear_test_data_all([ @locations ]);
+                    delete @{$self->loaded}{@locations};
                 }
             }
         }

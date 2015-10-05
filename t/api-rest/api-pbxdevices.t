@@ -24,7 +24,7 @@ $fake_data->set_data_from_script({
             profile_id   => sub { return shift->get_id('pbxdeviceprofiles',@_); },
             customer_id  => sub { return shift->get_id('customers',@_); },
             identifier   => 'aaaabbbbcccc',
-            station_name => 'api_test_vun',
+            station_name => 'api_test_run',
             lines=>[{
                 linerange      => 'Phone Ports api_test',
                 type           => 'private',

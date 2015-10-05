@@ -283,7 +283,7 @@ sub get_item_hal{
     if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
         $resitem = $self->get_created_first;
     }
-    if(@{$self->DATA_LOADED->{$name}}){
+    if($self->DATA_LOADED->{$name} && @{$self->DATA_LOADED->{$name}}){
         $resitem = $self->DATA_LOADED->{$name}->[0];
     }
     if(!$resitem){
@@ -312,6 +312,7 @@ sub get_uri_current{
     $self->URI_CUSTOM and return $self->URI_CUSTOM;
     return $self->get_uri_item;
 }
+
 sub encode_content{
     my($self,$content, $type) = @_;
     $type //= $self->ENCODE_CONTENT;
@@ -407,13 +408,6 @@ sub request_post{
     my $rescontent = $self->get_response_content($res);
     return wantarray ? ($res,$rescontent,$req,$content) : $res;
 };
-sub process_data{
-    my($self, $data_cb, $data_in, $data_cb_data) = @_;
-    my $data = $data_in || clone($self->DATA_ITEM);
-    defined $data_cb and $data_cb->($data, $data_cb_data);
-    return $data;
-}
-
 sub request_options{
     my ($self,$uri) = @_;
     # OPTIONS tests
@@ -458,6 +452,8 @@ sub normalize_uri{
 ############## end of test machine
 ############## start of test collection
 
+#---------------- options, methods, hal format
+
 sub check_options_collection{
     my ($self, $uri) = @_;
     # OPTIONS tests
@@ -489,43 +485,6 @@ sub check_methods{
             ok(!grep(/^$opt$/, @hopts), "check for absence of '$opt' in Allow header");
             ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for absence of '$opt' in body");
         }
-    }
-}
-sub check_create_correct{
-    my($self, $number, $uniquizer_cb) = @_;
-    if(!$self->KEEP_CREATED){
-        $self->clear_data_created;
-    }
-    $self->DATA_CREATED->{ALL} //= {};
-    for(my $i = 1; $i <= $number; ++$i) {
-        my ($res, $content, $req) = $self->check_item_post( $uniquizer_cb , undef, { i => $i} );
-        $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
-        my $location = $res->header('Location');
-        if($location){
-            $self->DATA_CREATED->{ALL}->{$location} = { num => $i, content => $content, res => $res, req => $req, location => $location};
-            $self->DATA_CREATED->{FIRST} = $location unless $self->DATA_CREATED->{FIRST};
-        }
-    }
-}
-sub clear_test_data_all{
-    my($self,$uri) = @_;
-    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys %{ $self->DATA_CREATED->{ALL} };
-    foreach my $del_uri(@uris){
-        my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
-        $self->http_code_msg(204, "check delete item $del_uri",$res,$content);
-    }
-    $self->clear_data_created();
-}
-sub clear_test_data_dependent{
-    my($self,$uri) = @_;
-    my($req,$res,$content) = $self->request_delete($self->base_uri.$uri);
-    return ('204' eq $res->code);
-}
-sub check_embedded {
-    my($self, $embedded, $check_embedded_cb) = @_;
-    defined $check_embedded_cb and $check_embedded_cb->($embedded);
-    foreach my $embedded_name(@{$self->embedded_resources}){
-        ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "check presence of ngcp:$embedded_name relation");
     }
 }
 
@@ -603,28 +562,15 @@ sub check_created_listed{
     }
 }
 
-sub check_item_get{
-    my($self,$uri) = @_;
-    $uri ||= $self->get_uri_current;
-    my ($res, $content, $req) = $self->request_get($uri);
-    $self->http_code_msg(200, "fetch uri: $uri", $res);
-    return wantarray ? ($res, $content, $req) : $res;    
+sub check_embedded {
+    my($self, $embedded, $check_embedded_cb) = @_;
+    defined $check_embedded_cb and $check_embedded_cb->($embedded);
+    foreach my $embedded_name(@{$self->embedded_resources}){
+        ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "check presence of ngcp:$embedded_name relation");
+    }
 }
-sub get_item_post_content{
-    my($self, $data_cb, $data_in, $data_cb_data) = @_;
-    my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
-    my $content = {
-        $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
-        %$data,
-    };
-    return $content;
-}
-sub check_item_post{
-    my($self, $data_cb, $data_in, $data_cb_data) = @_;
-    my $content = $self->get_item_post_content($data_cb, $data_in, $data_cb_data);
-    my ($res,$rescontent,$req) = $self->request_post($content);#,$uri,$req
-    return wantarray ? ($res,$rescontent,$req,$content) : $res;
-};
+
+#------------------- put bundle -----------
 
 sub check_put_content_type_empty{
     my($self) = @_;
@@ -665,58 +611,6 @@ sub check_put_body_empty{
     $self->http_code_msg(400, "check put no body", $res, $content);
 }
 
-sub check_get2put{
-    my($self, $put_data_cb, $uri) = @_;
-    #$req->remove_header('Prefer');
-    #$req->header('Prefer' => "return=representation");
-    # PUT same result again
-    my ($res_get, $result_item_get, $req_get) = $self->check_item_get($uri);
-    my $item_put_data = clone($result_item_get);
-    delete $item_put_data->{_links};
-    delete $item_put_data->{_embedded};
-    # check if put is ok
-    (defined $put_data_cb) and $put_data_cb->($item_put_data);
-    my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
-    $self->http_code_msg(200, "check_get2put: check put successful",$res_put, $result_item_put);
-    is_deeply($result_item_get, $result_item_put, "check_get2put: check put if unmodified put returns the same");
-    return ($res_put,$result_item_put,$req_put,$item_put_data);
-}
-
-sub check_put2get{
-    my($self, $put_data_in, $put_data_cb, $uri) = @_;
-    
-    my $item_put_data = $self->process_data($put_data_cb, $put_data_in);
-    $item_put_data = JSON::to_json($item_put_data);
-    my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
-    $self->http_code_msg(200, "check_put2get: check put successful",$res_put, $result_item_put);
-    
-    my ($res_get, $result_item_get, $req_get) = $self->check_item_get($uri);
-    delete $result_item_get->{_links};
-    delete $result_item_get->{_embedded};
-    my $item_id = delete $result_item_get->{id};
-    $item_put_data = JSON::from_json($item_put_data);
-    is_deeply($item_put_data, $result_item_get, "check_put2get: check PUTed item against POSTed item");
-    $result_item_get->{id} = $item_id;
-    return ($res_put,$result_item_put,$req_put,$item_put_data,$res_get, $result_item_get, $req_get);
-}
-
-sub check_post2get{
-    my($self, $post_data_in, $post_data_cb) = @_;
-    
-    my ($res_post, $result_item_post, $req_post, $item_post_data ) = $self->check_item_post( $post_data_cb, $post_data_in );
-    $self->http_code_msg(201, "check_post2get: POST item '".$self->name."' for check_post2get", $res_post, $result_item_post);
-    my $location_post = $self->base_uri.($res_post->header('Location') // '');
-    
-    my ($res_get, $result_item_get, $req_get) = $self->request_get( $location_post );
-    $self->http_code_msg(200, "check_post2get: fetch POSTed test '".$self->name."'", $res_get, $result_item_get);
-    delete $result_item_get->{_links};
-    my $item_id = delete $result_item_get->{id};
-    $item_post_data = JSON::from_json($item_post_data);
-    is_deeply($item_post_data, $result_item_get, "check_post2get: check POSTed '".$self->name."' against fetched");
-    $result_item_get->{id} = $item_id;
-    return ($res_post,$result_item_post,$req_post,$item_post_data, $location_post, $result_item_get);
-}
-
 sub check_put_bundle{
     my($self) = @_;
     $self->check_put_content_type_empty;
@@ -724,6 +618,8 @@ sub check_put_bundle{
     $self->check_put_prefer_wrong;
     $self->check_put_body_empty;
 }
+
+#-------------------- patch bundle -------
 sub check_patch_correct{
     my($self,$content) = @_;
     my ($res,$rescontent,$req) = $self->request_patch( $content );
@@ -839,6 +735,121 @@ sub check_bundle{
         }
     }
 }
+
+sub check_item_get{
+    my($self,$uri) = @_;
+    $uri ||= $self->get_uri_current;
+    my ($res, $content, $req) = $self->request_get($uri);
+    $self->http_code_msg(200, "fetch uri: $uri", $res);
+    return wantarray ? ($res, $content, $req) : $res;    
+}
+sub process_data{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $data = $data_in || clone($self->DATA_ITEM);
+    defined $data_cb and $data_cb->($data, $data_cb_data);
+    return $data;
+}
+sub get_item_post_content{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
+    print Dumper $data;
+    my $content = {
+        $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
+        %$data,
+    };
+    return $content;
+}
+sub check_item_post{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $content = $self->get_item_post_content($data_cb, $data_in, $data_cb_data);
+    my ($res,$rescontent,$req) = $self->request_post($content);#,$uri,$req
+    return wantarray ? ($res,$rescontent,$req,$content) : $res;
+};
+sub check_create_correct{
+    my($self, $number, $uniquizer_cb) = @_;
+    if(!$self->KEEP_CREATED){
+        $self->clear_data_created;
+    }
+    $self->DATA_CREATED->{ALL} //= {};
+    for(my $i = 1; $i <= $number; ++$i) {
+        my ($res, $content, $req) = $self->check_item_post( $uniquizer_cb , undef, { i => $i } );
+        $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
+        my $location = $res->header('Location');
+        if($location){
+            $self->DATA_CREATED->{ALL}->{$location} = { num => $i, content => $content, res => $res, req => $req, location => $location};
+            $self->DATA_CREATED->{FIRST} = $location unless $self->DATA_CREATED->{FIRST};
+        }
+    }
+}
+
+sub clear_test_data_all{
+    my($self,$uri) = @_;
+    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys %{ $self->DATA_CREATED->{ALL} };
+    foreach my $del_uri(@uris){
+        my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
+        $self->http_code_msg(204, "check delete item $del_uri",$res,$content);
+    }
+    $self->clear_data_created();
+}
+sub clear_test_data_dependent{
+    my($self,$uri) = @_;
+    my($req,$res,$content) = $self->request_delete($self->base_uri.$uri);
+    return ('204' eq $res->code);
+}
+
+sub check_get2put{
+    my($self, $put_data_cb, $uri) = @_;
+    #$req->remove_header('Prefer');
+    #$req->header('Prefer' => "return=representation");
+    # PUT same result again
+    my ($res_get, $result_item_get, $req_get) = $self->check_item_get($uri);
+    my $item_put_data = clone($result_item_get);
+    delete $item_put_data->{_links};
+    delete $item_put_data->{_embedded};
+    # check if put is ok
+    (defined $put_data_cb) and $put_data_cb->($item_put_data);
+    my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
+    $self->http_code_msg(200, "check_get2put: check put successful",$res_put, $result_item_put);
+    is_deeply($result_item_get, $result_item_put, "check_get2put: check put if unmodified put returns the same");
+    return ($res_put,$result_item_put,$req_put,$item_put_data);
+}
+
+sub check_put2get{
+    my($self, $put_data_in, $put_data_cb, $uri) = @_;
+    
+    my $item_put_data = $self->process_data($put_data_cb, $put_data_in);
+    $item_put_data = JSON::to_json($item_put_data);
+    my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
+    $self->http_code_msg(200, "check_put2get: check put successful",$res_put, $result_item_put);
+    
+    my ($res_get, $result_item_get, $req_get) = $self->check_item_get($uri);
+    delete $result_item_get->{_links};
+    delete $result_item_get->{_embedded};
+    my $item_id = delete $result_item_get->{id};
+    $item_put_data = JSON::from_json($item_put_data);
+    is_deeply($item_put_data, $result_item_get, "check_put2get: check PUTed item against POSTed item");
+    $result_item_get->{id} = $item_id;
+    return ($res_put,$result_item_put,$req_put,$item_put_data,$res_get, $result_item_get, $req_get);
+}
+
+sub check_post2get{
+    my($self, $post_data_in, $post_data_cb) = @_;
+    
+    my ($res_post, $result_item_post, $req_post, $item_post_data ) = $self->check_item_post( $post_data_cb, $post_data_in );
+    $self->http_code_msg(201, "check_post2get: POST item '".$self->name."' for check_post2get", $res_post, $result_item_post);
+    my $location_post = $self->base_uri.($res_post->header('Location') // '');
+    
+    my ($res_get, $result_item_get, $req_get) = $self->request_get( $location_post );
+    $self->http_code_msg(200, "check_post2get: fetch POSTed test '".$self->name."'", $res_get, $result_item_get);
+    delete $result_item_get->{_links};
+    my $item_id = delete $result_item_get->{id};
+    $item_post_data = JSON::from_json($item_post_data);
+    is_deeply($item_post_data, $result_item_get, "check_post2get: check POSTed '".$self->name."' against fetched");
+    $result_item_get->{id} = $item_id;
+    return ($res_post,$result_item_post,$req_post,$item_post_data, $location_post, $result_item_get);
+}
+
+
 #utils
 sub hash2params{
     my($self,$hash) = @_;
