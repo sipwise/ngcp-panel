@@ -6,8 +6,6 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
-use NGCP::Panel::Field::PbxGroup;
-
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
