@@ -204,8 +204,8 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
     }
 
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form)
+    $c->stash(create_flag => 1,
+              form => $form);
 }
 
 sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
