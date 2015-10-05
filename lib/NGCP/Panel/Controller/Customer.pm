@@ -617,7 +617,7 @@ sub terminate :Chained('base_restricted') :PathPart('terminate') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer')); #/contract?
 }
 
-sub details :Chained('base_restricted') :PathPart('details') :Args(0) {
+sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
 
     NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
@@ -629,7 +629,7 @@ sub details :Chained('base_restricted') :PathPart('details') :Args(0) {
     }
 }
 
-sub subscriber_create :Chained('base_restricted') :PathPart('subscriber/create') :Args(0) {
+sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my ($self, $c) = @_;
 
     if(defined $c->stash->{contract}->max_subscribers &&
@@ -813,7 +813,8 @@ sub subscriber_create :Chained('base_restricted') :PathPart('subscriber/create')
     }
 
     $c->stash(create_flag => 1);
-    $c->stash(form => $form)
+    $c->stash(form => $form);
+    return;
 }
 
 sub edit_fraud :Chained('base_restricted') :PathPart('fraud/edit') :Args(1) {
