@@ -617,7 +617,7 @@ sub terminate :Chained('base_restricted') :PathPart('terminate') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer')); #/contract?
 }
 
-sub details :Chained('base_restricted') :PathPart('details') :Args(0) {
+sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
 
     NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
