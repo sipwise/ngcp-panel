@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API::Subscribers;
+use Encode qw( encode_utf8 );
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -148,8 +149,9 @@ sub POST :Allow {
     {
         last unless $self->forbid_link_header($c);
         last unless $self->valid_media_type($c, 'multipart/form-data');
-        last unless $self->require_wellformed_json($c, 'application/json', $c->req->param('json'));
-        my $resource = JSON::from_json($c->req->param('json'), { utf8 => 1 });
+        my $json_utf8 = encode_utf8($c->req->param('json'));
+        last unless $self->require_wellformed_json($c, 'application/json', $json_utf8 );
+        my $resource = JSON::from_json($json_utf8, { utf8 => 0 });
         $resource->{faxfile} = $self->get_upload($c, 'faxfile');
 
         my $form = $self->get_form($c);
