@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_2853d118",
+        "filename": "lib/NGCP/Panel/Controller/API/Faxes.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-10-08T07:56:40Z",
+      "side": 1,
+      "message": "this is not needed IMO. it\u0027s purpose is to tell perl, that the source code is utf8, which we don\u0027t do anywhere else. everything else lgtm.",
+      "revId": "2ad9ac02ea32185276c1f06841b6f6c189cc50a7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
