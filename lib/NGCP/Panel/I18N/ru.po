@@ -442,7 +442,7 @@ msgstr "Принять"
 msgid "Access Restrictions"
 msgstr "Ограничения доступа"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:947
+#: lib/NGCP/Panel/Controller/Customer.pm:948
 msgid "Account balance successfully changed!"
 msgstr "Баланс счета успешно изменен!"
 
@@ -862,7 +862,7 @@ msgid "Back to Dashboard"
 msgstr "Назад на Главную"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1451
-#: share/templates/customer/details.tt:437
+#: share/templates/customer/details.tt:439
 msgid "Balance Interval"
 msgstr ""
 
@@ -870,7 +870,7 @@ msgstr ""
 msgid "Balance Interval Start"
 msgstr ""
 
-#: share/templates/customer/details.tt:430
+#: share/templates/customer/details.tt:432
 msgid "Balance Intervals"
 msgstr ""
 
@@ -1462,7 +1462,7 @@ msgstr "Звоню"
 msgid "Callthrough CLIs"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1182
+#: lib/NGCP/Panel/Controller/Customer.pm:1183
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr "Не могу создать PBX группу без основного абонента."
 
@@ -2183,7 +2183,7 @@ msgstr "Клиенты"
 msgid "Daily Fraud Limit"
 msgstr "Дневной Лимит Мошенничества"
 
-#: share/templates/customer/details.tt:500
+#: share/templates/customer/details.tt:502
 msgid "Daily Settings"
 msgstr "Дневные Настройки"
 
@@ -2244,8 +2244,8 @@ msgstr ""
 #: share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18
 #: share/templates/contact/list.tt:19 share/templates/customer/details.tt:308
 #: share/templates/customer/details.tt:353
-#: share/templates/customer/details.tt:494
-#: share/templates/customer/details.tt:523 share/templates/device/list.tt:123
+#: share/templates/customer/details.tt:496
+#: share/templates/customer/details.tt:525 share/templates/device/list.tt:123
 #: share/templates/device/list.tt:161 share/templates/device/list.tt:200
 #: share/templates/device/list.tt:239 share/templates/device/list.tt:269
 #: share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18
@@ -2307,7 +2307,7 @@ msgstr "Доставить входящие факсы"
 msgid "Deliver Outgoing Faxes"
 msgstr "Доставить исходящие факсы"
 
-#: share/templates/customer/details.tt:589 share/templates/device/list.tt:257
+#: share/templates/customer/details.tt:591 share/templates/device/list.tt:257
 msgid "Deployed Device"
 msgstr "Предоставленное устройство"
 
@@ -2753,7 +2753,7 @@ msgid "Don't have an account?"
 msgstr "Еще не зарегистрировались?"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:617
-#: share/templates/customer/details.tt:550 share/templates/device/list.tt:163
+#: share/templates/customer/details.tt:552 share/templates/device/list.tt:163
 #: share/templates/device/list.tt:202
 #: share/templates/invoice/invoice_list.tt:18
 #: share/templates/invoice/invoice_list.tt:26
@@ -2833,9 +2833,9 @@ msgstr "добавить E164 диапазон"
 #: share/templates/contract/list.tt:70 share/templates/customer/details.tt:25
 #: share/templates/customer/details.tt:311
 #: share/templates/customer/details.tt:352
-#: share/templates/customer/details.tt:410
-#: share/templates/customer/details.tt:490
-#: share/templates/customer/details.tt:519
+#: share/templates/customer/details.tt:411
+#: share/templates/customer/details.tt:492
+#: share/templates/customer/details.tt:521
 #: share/templates/customer/list.tt:118 share/templates/device/list.tt:124
 #: share/templates/device/list.tt:162 share/templates/device/list.tt:201
 #: share/templates/device/list.tt:240 share/templates/emailtemplate/list.tt:17
@@ -3143,7 +3143,7 @@ msgstr "Неудачных попыток"
 msgid "Failed to add registered device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:954
+#: lib/NGCP/Panel/Controller/Customer.pm:955
 msgid "Failed to change account balance!"
 msgstr ""
 
@@ -3155,7 +3155,7 @@ msgstr ""
 msgid "Failed to clear audio cache."
 msgstr "Не удалось очистить аудио кэш."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:892
+#: lib/NGCP/Panel/Controller/Customer.pm:893
 msgid "Failed to clear fraud interval"
 msgstr ""
 
@@ -3176,11 +3176,11 @@ msgstr ""
 msgid "Failed to create NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1434
+#: lib/NGCP/Panel/Controller/Customer.pm:1435
 msgid "Failed to create PBX device"
 msgstr "Не удалось создать PBX устройства"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1254
+#: lib/NGCP/Panel/Controller/Customer.pm:1255
 msgid "Failed to create PBX group"
 msgstr ""
 
@@ -3352,7 +3352,7 @@ msgstr ""
 msgid "Failed to delete NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1627
+#: lib/NGCP/Panel/Controller/Customer.pm:1628
 msgid "Failed to delete PBX device"
 msgstr "Не удалось удалить PBX устройство"
 
@@ -3593,11 +3593,11 @@ msgstr ""
 msgid "Failed to terminate subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1025
+#: lib/NGCP/Panel/Controller/Customer.pm:1026
 msgid "Failed to top-up using cash!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1096
+#: lib/NGCP/Panel/Controller/Customer.pm:1097
 msgid "Failed to top-up using voucher!"
 msgstr ""
 
@@ -3605,8 +3605,8 @@ msgstr ""
 msgid "Failed to transcode audio file"
 msgstr "Не удалось перекодировать звуковой файл"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1668
-#: lib/NGCP/Panel/Controller/Customer.pm:1685
+#: lib/NGCP/Panel/Controller/Customer.pm:1669
+#: lib/NGCP/Panel/Controller/Customer.pm:1686
 msgid "Failed to trigger config reload via SIP"
 msgstr ""
 
@@ -3622,11 +3622,11 @@ msgstr ""
 msgid "Failed to update NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1557
+#: lib/NGCP/Panel/Controller/Customer.pm:1558
 msgid "Failed to update PBX device"
 msgstr "Не удалось обновить PBX устройство"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1352
+#: lib/NGCP/Panel/Controller/Customer.pm:1353
 msgid "Failed to update PBX group"
 msgstr ""
 
@@ -3940,7 +3940,7 @@ msgstr "Отправлять исходящие звонки от пользов
 msgid "Forgot your password?"
 msgstr "Забыли Ваш пароль?"
 
-#: share/templates/customer/details.tt:455
+#: share/templates/customer/details.tt:457
 msgid "Fraud Limits"
 msgstr "Лимит Мошенничества"
 
@@ -3968,7 +3968,7 @@ msgstr "Блокировать при достижении дневного ли
 msgid "Fraud daily notify"
 msgstr "Информировать при достижении дневного лимита"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:851
+#: lib/NGCP/Panel/Controller/Customer.pm:852
 msgid "Fraud settings successfully changed!"
 msgstr "Настройки информирования о мошенничестве успешно изменены!"
 
@@ -4615,8 +4615,8 @@ msgid "Invalid file type detected, only WAV supported"
 msgstr "Обнаружен некорректный тип файла, поддерживается только WAV"
 
 #. ($type)
-#: lib/NGCP/Panel/Controller/Customer.pm:832
-#: lib/NGCP/Panel/Controller/Customer.pm:873
+#: lib/NGCP/Panel/Controller/Customer.pm:833
+#: lib/NGCP/Panel/Controller/Customer.pm:874
 msgid "Invalid fraud interval '%1'!"
 msgstr "Некорректный интервал мошенничества '%1'!"
 
@@ -4669,7 +4669,7 @@ msgstr "Обнаружен некорректный id профиля!"
 msgid "Invalid profile package id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1588
+#: lib/NGCP/Panel/Controller/Customer.pm:1589
 msgid "Invalid provisioning subscriber id detected."
 msgstr "Обнаружен некорректный id автоконфигурации абонента."
 
@@ -4728,7 +4728,7 @@ msgstr ""
 msgid "Invalid voucher id detected!"
 msgstr ""
 
-#: share/templates/customer/details.tt:543
+#: share/templates/customer/details.tt:545
 #: share/templates/invoice/invoice_list.tt:3
 msgid "Invoice"
 msgstr "Счёт-фактура"
@@ -4812,7 +4812,7 @@ msgstr "Шаблон счёт-фактуры успешно сохранен"
 msgid "Invoice template successfully updated"
 msgstr "Шаблон счёт-фактуры успешно обновлен"
 
-#: share/templates/customer/details.tt:537
+#: share/templates/customer/details.tt:539
 #: share/templates/widgets/admin_topmenu_settings.tt:45
 #: share/templates/widgets/reseller_topmenu_settings.tt:19
 msgid "Invoices"
@@ -4904,7 +4904,7 @@ msgstr "Имя Списка"
 msgid "Liid"
 msgstr ""
 
-#: share/templates/customer/details.tt:463
+#: share/templates/customer/details.tt:465
 msgid "Limit"
 msgstr "Лимит"
 
@@ -4980,7 +4980,7 @@ msgid "Loading..."
 msgstr "Загрузка..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:650 lib/NGCP/Panel/Utils/DbStrings.pm:8
-#: share/templates/customer/details.tt:464
+#: share/templates/customer/details.tt:466
 msgid "Lock Level"
 msgstr "Уровень блокировки"
 
@@ -5199,7 +5199,7 @@ msgid ""
 "to the application server and intra-PBX calls."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1167
+#: lib/NGCP/Panel/Controller/Customer.pm:1168
 #: lib/NGCP/Panel/Controller/Customer.pm:643
 msgid "Maximum number of subscribers for this customer reached"
 msgstr "Достигнуто максимальное количество абонентов для этого клиента"
@@ -5280,7 +5280,7 @@ msgstr "Месяц"
 msgid "Monthly Fraud Limit"
 msgstr "Ежемесячный лимит мошенничества"
 
-#: share/templates/customer/details.tt:471
+#: share/templates/customer/details.tt:473
 msgid "Monthly Settings"
 msgstr "Ежемесячные настройки"
 
@@ -5526,7 +5526,7 @@ msgstr "Данный id быстрого набора не найден."
 msgid "No such voicemail file."
 msgstr "Нету такого файла голосовой почты."
 
-#: share/templates/customer/details.tt:758
+#: share/templates/customer/details.tt:760
 msgid "None"
 msgstr ""
 
@@ -5538,7 +5538,7 @@ msgstr "CLI в нормальном виде (обычно E164) звоняще�
 msgid "Not logged in"
 msgstr "Вы не вошли"
 
-#: share/templates/customer/details.tt:465
+#: share/templates/customer/details.tt:467
 msgid "Notify"
 msgstr "Уведомление"
 
@@ -5762,12 +5762,12 @@ msgstr ""
 msgid "PBX Call Queue"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1447
-#: lib/NGCP/Panel/Controller/Customer.pm:1571
+#: lib/NGCP/Panel/Controller/Customer.pm:1448
+#: lib/NGCP/Panel/Controller/Customer.pm:1572
 msgid "PBX Device"
 msgstr "Устройство PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1620
+#: lib/NGCP/Panel/Controller/Customer.pm:1621
 msgid "PBX Device successfully deleted"
 msgstr "Устройство PBX успешно удалено"
 
@@ -5779,7 +5779,7 @@ msgstr "Устройства PBX"
 msgid "PBX Extension"
 msgstr "PBX добавочный номер"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1266
+#: lib/NGCP/Panel/Controller/Customer.pm:1267
 msgid "PBX Group"
 msgstr "Группа PBX"
 
@@ -5798,34 +5798,34 @@ msgstr "Настройки PBX Группы %1@%2"
 msgid "PBX Groups"
 msgstr "Группы PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1425
+#: lib/NGCP/Panel/Controller/Customer.pm:1426
 msgid "PBX device successfully created"
 msgstr "Устройство PBX успешно создано"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1548
+#: lib/NGCP/Panel/Controller/Customer.pm:1549
 msgid "PBX device successfully updated"
 msgstr "Устройство PBX успешно обновлено"
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1469
+#: lib/NGCP/Panel/Controller/Customer.pm:1470
 msgid "PBX device with id %1 does not exist for this customer."
 msgstr "Не существует устройства PBX с id %1 для данного клиента."
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1459
+#: lib/NGCP/Panel/Controller/Customer.pm:1460
 msgid "PBX device with id %1 does not exist."
 msgstr "Не существует устройства PBX с id %1."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1248
+#: lib/NGCP/Panel/Controller/Customer.pm:1249
 msgid "PBX group successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1346
+#: lib/NGCP/Panel/Controller/Customer.pm:1347
 msgid "PBX group successfully updated"
 msgstr ""
 
 #. ($group_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1278
+#: lib/NGCP/Panel/Controller/Customer.pm:1279
 msgid "PBX group with id %1 does not exist."
 msgstr "Не существует группа PBX с id %1"
 
@@ -7099,7 +7099,7 @@ msgstr "Установить лимит для принимаемых Min-SE з�
 msgid "Setting"
 msgstr "Настройка"
 
-#: share/templates/customer/details.tt:580
+#: share/templates/customer/details.tt:582
 #: share/templates/widgets/admin_topmenu_settings.tt:29
 #: share/templates/widgets/reseller_topmenu_settings.tt:4
 #: share/templates/widgets/subscriber_topmenu_settings.tt:4
@@ -7505,7 +7505,7 @@ msgstr "Быстрый набор"
 msgid "Speeddials"
 msgstr "Быстрый набор"
 
-#: share/templates/customer/details.tt:416
+#: share/templates/customer/details.tt:418
 msgid "Spent this interval"
 msgstr "Использовано на этом интервале"
 
@@ -7581,8 +7581,8 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2666
 #: lib/NGCP/Panel/Utils/DbStrings.pm:998
 #: share/templates/customer/details.tt:283
-#: share/templates/customer/details.tt:568
-#: share/templates/customer/details.tt:758
+#: share/templates/customer/details.tt:570
+#: share/templates/customer/details.tt:760
 #: share/templates/subscriber/list.tt:3
 #: share/templates/subscriber/pbx_group_items.tt:32
 #: share/templates/subscriber/preferences.tt:10
@@ -7752,7 +7752,7 @@ msgstr "Зарегистрированное устройство успешно
 msgid "Successfully cleared Call Forward"
 msgstr "Перенаправление звонков успешно очищено"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:901
+#: lib/NGCP/Panel/Controller/Customer.pm:902
 msgid "Successfully cleared fraud interval!"
 msgstr "Интервал мошенничества успешно очищен!"
 
@@ -7824,7 +7824,7 @@ msgstr "IP авторизация успешно удалена"
 msgid "Successfully deleted voicemail"
 msgstr "Голосовое сообщение успешно удалено"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1713
+#: lib/NGCP/Panel/Controller/Customer.pm:1714
 msgid "Successfully redirected request to device"
 msgstr "Запрос к устройству успешно перенаправлен"
 
@@ -7850,7 +7850,7 @@ msgstr "Реселлер успешно удален"
 msgid "Successfully terminated subscriber"
 msgstr "Абонент успешно удален"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1691
+#: lib/NGCP/Panel/Controller/Customer.pm:1692
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
@@ -9538,11 +9538,11 @@ msgstr ""
 msgid "Top-up lock level"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1018
+#: lib/NGCP/Panel/Controller/Customer.pm:1019
 msgid "Top-up using cash performed successfully!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1089
+#: lib/NGCP/Panel/Controller/Customer.pm:1090
 msgid "Top-up using voucher performed successfully!"
 msgstr ""
 
@@ -10197,8 +10197,8 @@ msgstr "Все права защищены"
 msgid "allowed_ip_grp successfully created"
 msgstr ""
 
-#: share/templates/customer/details.tt:472
-#: share/templates/customer/details.tt:501
+#: share/templates/customer/details.tt:474
+#: share/templates/customer/details.tt:503
 msgid "billing profile default"
 msgstr "По-умолчанию из тарифа"
 

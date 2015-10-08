@@ -427,7 +427,7 @@ msgstr "Aceptar"
 msgid "Access Restrictions"
 msgstr "Restricciones de Acceso"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:947
+#: lib/NGCP/Panel/Controller/Customer.pm:948
 msgid "Account balance successfully changed!"
 msgstr "¡Saldo modificado con éxito!"
 
@@ -855,7 +855,7 @@ msgid "Back to Dashboard"
 msgstr "Atrás al panel"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1451
-#: share/templates/customer/details.tt:437
+#: share/templates/customer/details.tt:439
 msgid "Balance Interval"
 msgstr ""
 
@@ -863,7 +863,7 @@ msgstr ""
 msgid "Balance Interval Start"
 msgstr ""
 
-#: share/templates/customer/details.tt:430
+#: share/templates/customer/details.tt:432
 msgid "Balance Intervals"
 msgstr ""
 
@@ -1432,7 +1432,7 @@ msgstr "Llamando"
 msgid "Callthrough CLIs"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1182
+#: lib/NGCP/Panel/Controller/Customer.pm:1183
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr ""
 
@@ -2156,7 +2156,7 @@ msgstr "Clientes"
 msgid "Daily Fraud Limit"
 msgstr "Límite de gasto diario"
 
-#: share/templates/customer/details.tt:500
+#: share/templates/customer/details.tt:502
 msgid "Daily Settings"
 msgstr "Preferencias diarias"
 
@@ -2217,8 +2217,8 @@ msgstr ""
 #: share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18
 #: share/templates/contact/list.tt:19 share/templates/customer/details.tt:308
 #: share/templates/customer/details.tt:353
-#: share/templates/customer/details.tt:494
-#: share/templates/customer/details.tt:523 share/templates/device/list.tt:123
+#: share/templates/customer/details.tt:496
+#: share/templates/customer/details.tt:525 share/templates/device/list.tt:123
 #: share/templates/device/list.tt:161 share/templates/device/list.tt:200
 #: share/templates/device/list.tt:239 share/templates/device/list.tt:269
 #: share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18
@@ -2280,7 +2280,7 @@ msgstr "Enviar Faxes entrantes"
 msgid "Deliver Outgoing Faxes"
 msgstr "Enviar Faxes salientes"
 
-#: share/templates/customer/details.tt:589 share/templates/device/list.tt:257
+#: share/templates/customer/details.tt:591 share/templates/device/list.tt:257
 msgid "Deployed Device"
 msgstr "Dispositivo desplegado"
 
@@ -2722,7 +2722,7 @@ msgid "Don't have an account?"
 msgstr "¿No tiene cuenta?"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:617
-#: share/templates/customer/details.tt:550 share/templates/device/list.tt:163
+#: share/templates/customer/details.tt:552 share/templates/device/list.tt:163
 #: share/templates/device/list.tt:202
 #: share/templates/invoice/invoice_list.tt:18
 #: share/templates/invoice/invoice_list.tt:26
@@ -2802,9 +2802,9 @@ msgstr ""
 #: share/templates/contract/list.tt:70 share/templates/customer/details.tt:25
 #: share/templates/customer/details.tt:311
 #: share/templates/customer/details.tt:352
-#: share/templates/customer/details.tt:410
-#: share/templates/customer/details.tt:490
-#: share/templates/customer/details.tt:519
+#: share/templates/customer/details.tt:411
+#: share/templates/customer/details.tt:492
+#: share/templates/customer/details.tt:521
 #: share/templates/customer/list.tt:118 share/templates/device/list.tt:124
 #: share/templates/device/list.tt:162 share/templates/device/list.tt:201
 #: share/templates/device/list.tt:240 share/templates/emailtemplate/list.tt:17
@@ -3115,7 +3115,7 @@ msgstr "Cuenta de fallos"
 msgid "Failed to add registered device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:954
+#: lib/NGCP/Panel/Controller/Customer.pm:955
 msgid "Failed to change account balance!"
 msgstr ""
 
@@ -3127,7 +3127,7 @@ msgstr ""
 msgid "Failed to clear audio cache."
 msgstr "Fallo al limpiar el cache de audio."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:892
+#: lib/NGCP/Panel/Controller/Customer.pm:893
 msgid "Failed to clear fraud interval"
 msgstr ""
 
@@ -3148,11 +3148,11 @@ msgstr ""
 msgid "Failed to create NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1434
+#: lib/NGCP/Panel/Controller/Customer.pm:1435
 msgid "Failed to create PBX device"
 msgstr "Fallo al crear dispositivo PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1254
+#: lib/NGCP/Panel/Controller/Customer.pm:1255
 msgid "Failed to create PBX group"
 msgstr ""
 
@@ -3324,7 +3324,7 @@ msgstr ""
 msgid "Failed to delete NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1627
+#: lib/NGCP/Panel/Controller/Customer.pm:1628
 msgid "Failed to delete PBX device"
 msgstr "Fallo al borrar dispositivo PBX"
 
@@ -3565,11 +3565,11 @@ msgstr ""
 msgid "Failed to terminate subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1025
+#: lib/NGCP/Panel/Controller/Customer.pm:1026
 msgid "Failed to top-up using cash!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1096
+#: lib/NGCP/Panel/Controller/Customer.pm:1097
 msgid "Failed to top-up using voucher!"
 msgstr ""
 
@@ -3577,8 +3577,8 @@ msgstr ""
 msgid "Failed to transcode audio file"
 msgstr "Fallo al convertir fichero de audio"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1668
-#: lib/NGCP/Panel/Controller/Customer.pm:1685
+#: lib/NGCP/Panel/Controller/Customer.pm:1669
+#: lib/NGCP/Panel/Controller/Customer.pm:1686
 msgid "Failed to trigger config reload via SIP"
 msgstr ""
 
@@ -3594,11 +3594,11 @@ msgstr ""
 msgid "Failed to update NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1557
+#: lib/NGCP/Panel/Controller/Customer.pm:1558
 msgid "Failed to update PBX device"
 msgstr "Fallo al actualizar dispositivo PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1352
+#: lib/NGCP/Panel/Controller/Customer.pm:1353
 msgid "Failed to update PBX group"
 msgstr ""
 
@@ -3914,7 +3914,7 @@ msgstr ""
 msgid "Forgot your password?"
 msgstr ""
 
-#: share/templates/customer/details.tt:455
+#: share/templates/customer/details.tt:457
 msgid "Fraud Limits"
 msgstr "Límites antifraude"
 
@@ -3942,7 +3942,7 @@ msgstr "Antifraude diario: Bloqueo"
 msgid "Fraud daily notify"
 msgstr "Antifraude diario: Notificación"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:851
+#: lib/NGCP/Panel/Controller/Customer.pm:852
 msgid "Fraud settings successfully changed!"
 msgstr "¡Preferencias antifraude modificadas con éxito!"
 
@@ -4588,8 +4588,8 @@ msgid "Invalid file type detected, only WAV supported"
 msgstr "Tipo de fichero inválido detectado. Sólo WAV está soportado."
 
 #. ($type)
-#: lib/NGCP/Panel/Controller/Customer.pm:832
-#: lib/NGCP/Panel/Controller/Customer.pm:873
+#: lib/NGCP/Panel/Controller/Customer.pm:833
+#: lib/NGCP/Panel/Controller/Customer.pm:874
 msgid "Invalid fraud interval '%1'!"
 msgstr "Intervalo antifraude '%1' inválido"
 
@@ -4642,7 +4642,7 @@ msgstr "Id de perfil inválido detectado"
 msgid "Invalid profile package id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1588
+#: lib/NGCP/Panel/Controller/Customer.pm:1589
 msgid "Invalid provisioning subscriber id detected."
 msgstr "Detectado id provisioning subscriber inválido."
 
@@ -4701,7 +4701,7 @@ msgstr ""
 msgid "Invalid voucher id detected!"
 msgstr ""
 
-#: share/templates/customer/details.tt:543
+#: share/templates/customer/details.tt:545
 #: share/templates/invoice/invoice_list.tt:3
 msgid "Invoice"
 msgstr ""
@@ -4785,7 +4785,7 @@ msgstr ""
 msgid "Invoice template successfully updated"
 msgstr ""
 
-#: share/templates/customer/details.tt:537
+#: share/templates/customer/details.tt:539
 #: share/templates/widgets/admin_topmenu_settings.tt:45
 #: share/templates/widgets/reseller_topmenu_settings.tt:19
 msgid "Invoices"
@@ -4877,7 +4877,7 @@ msgstr "Nombre de etiqueta"
 msgid "Liid"
 msgstr ""
 
-#: share/templates/customer/details.tt:463
+#: share/templates/customer/details.tt:465
 msgid "Limit"
 msgstr "Limitar"
 
@@ -4952,7 +4952,7 @@ msgid "Loading..."
 msgstr "Cargando..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:650 lib/NGCP/Panel/Utils/DbStrings.pm:8
-#: share/templates/customer/details.tt:464
+#: share/templates/customer/details.tt:466
 msgid "Lock Level"
 msgstr "Nivel de bloqueo"
 
@@ -5169,7 +5169,7 @@ msgid ""
 "to the application server and intra-PBX calls."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1167
+#: lib/NGCP/Panel/Controller/Customer.pm:1168
 #: lib/NGCP/Panel/Controller/Customer.pm:643
 msgid "Maximum number of subscribers for this customer reached"
 msgstr "Alcanzado límite de suscriptores para este cliente"
@@ -5250,7 +5250,7 @@ msgstr "Mes"
 msgid "Monthly Fraud Limit"
 msgstr "Límite antifraude mensual"
 
-#: share/templates/customer/details.tt:471
+#: share/templates/customer/details.tt:473
 msgid "Monthly Settings"
 msgstr "Preferencias mensuales"
 
@@ -5496,7 +5496,7 @@ msgstr "No existe el id de marcado rápido"
 msgid "No such voicemail file."
 msgstr "No existe el fichero de mensaje de buzón"
 
-#: share/templates/customer/details.tt:758
+#: share/templates/customer/details.tt:760
 msgid "None"
 msgstr ""
 
@@ -5508,7 +5508,7 @@ msgstr ""
 msgid "Not logged in"
 msgstr ""
 
-#: share/templates/customer/details.tt:465
+#: share/templates/customer/details.tt:467
 msgid "Notify"
 msgstr "Notificar"
 
@@ -5740,12 +5740,12 @@ msgstr ""
 msgid "PBX Call Queue"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1447
-#: lib/NGCP/Panel/Controller/Customer.pm:1571
+#: lib/NGCP/Panel/Controller/Customer.pm:1448
+#: lib/NGCP/Panel/Controller/Customer.pm:1572
 msgid "PBX Device"
 msgstr "Dispositivo PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1620
+#: lib/NGCP/Panel/Controller/Customer.pm:1621
 msgid "PBX Device successfully deleted"
 msgstr "Dispositivo PBX eliminado con éxito"
 
@@ -5757,7 +5757,7 @@ msgstr "Dispositivos PBX"
 msgid "PBX Extension"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1266
+#: lib/NGCP/Panel/Controller/Customer.pm:1267
 msgid "PBX Group"
 msgstr "Grupo PBX"
 
@@ -5776,34 +5776,34 @@ msgstr ""
 msgid "PBX Groups"
 msgstr "Grupos PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1425
+#: lib/NGCP/Panel/Controller/Customer.pm:1426
 msgid "PBX device successfully created"
 msgstr "Dispositivo PBX creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1548
+#: lib/NGCP/Panel/Controller/Customer.pm:1549
 msgid "PBX device successfully updated"
 msgstr "Dispositivo PBX modificado con éxito"
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1469
+#: lib/NGCP/Panel/Controller/Customer.pm:1470
 msgid "PBX device with id %1 does not exist for this customer."
 msgstr "Dispositivo PBX  con id %1 no existe para este cliente"
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1459
+#: lib/NGCP/Panel/Controller/Customer.pm:1460
 msgid "PBX device with id %1 does not exist."
 msgstr "Dispositivo PBX con id % no existe"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1248
+#: lib/NGCP/Panel/Controller/Customer.pm:1249
 msgid "PBX group successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1346
+#: lib/NGCP/Panel/Controller/Customer.pm:1347
 msgid "PBX group successfully updated"
 msgstr ""
 
 #. ($group_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1278
+#: lib/NGCP/Panel/Controller/Customer.pm:1279
 msgid "PBX group with id %1 does not exist."
 msgstr "Grupo PBX con id %1 no existe"
 
@@ -7079,7 +7079,7 @@ msgstr "Valor máximo aceptado del MIN_SE del SBC."
 msgid "Setting"
 msgstr "Preferencia"
 
-#: share/templates/customer/details.tt:580
+#: share/templates/customer/details.tt:582
 #: share/templates/widgets/admin_topmenu_settings.tt:29
 #: share/templates/widgets/reseller_topmenu_settings.tt:4
 #: share/templates/widgets/subscriber_topmenu_settings.tt:4
@@ -7484,7 +7484,7 @@ msgstr "Marcado rápido"
 msgid "Speeddials"
 msgstr ""
 
-#: share/templates/customer/details.tt:416
+#: share/templates/customer/details.tt:418
 msgid "Spent this interval"
 msgstr "Gastado este intervalo"
 
@@ -7560,8 +7560,8 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2666
 #: lib/NGCP/Panel/Utils/DbStrings.pm:998
 #: share/templates/customer/details.tt:283
-#: share/templates/customer/details.tt:568
-#: share/templates/customer/details.tt:758
+#: share/templates/customer/details.tt:570
+#: share/templates/customer/details.tt:760
 #: share/templates/subscriber/list.tt:3
 #: share/templates/subscriber/pbx_group_items.tt:32
 #: share/templates/subscriber/preferences.tt:10
@@ -7731,7 +7731,7 @@ msgstr "Dispositivo registrado añadido con éxito"
 msgid "Successfully cleared Call Forward"
 msgstr "Desvío de llamada eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:901
+#: lib/NGCP/Panel/Controller/Customer.pm:902
 msgid "Successfully cleared fraud interval!"
 msgstr "Intervalo antifraude eliminado con éxito"
 
@@ -7803,7 +7803,7 @@ msgstr "Origen de confianza eliminado con éxito"
 msgid "Successfully deleted voicemail"
 msgstr "Buzón eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1713
+#: lib/NGCP/Panel/Controller/Customer.pm:1714
 msgid "Successfully redirected request to device"
 msgstr "Petición redireccionada al dispositivo"
 
@@ -7829,7 +7829,7 @@ msgstr "Reseller eliminado con éxito"
 msgid "Successfully terminated subscriber"
 msgstr "Suscriptor eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1691
+#: lib/NGCP/Panel/Controller/Customer.pm:1692
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
@@ -9502,11 +9502,11 @@ msgstr ""
 msgid "Top-up lock level"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1018
+#: lib/NGCP/Panel/Controller/Customer.pm:1019
 msgid "Top-up using cash performed successfully!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1089
+#: lib/NGCP/Panel/Controller/Customer.pm:1090
 msgid "Top-up using voucher performed successfully!"
 msgstr ""
 
@@ -10165,8 +10165,8 @@ msgstr "todos los derechos reservados"
 msgid "allowed_ip_grp successfully created"
 msgstr ""
 
-#: share/templates/customer/details.tt:472
-#: share/templates/customer/details.tt:501
+#: share/templates/customer/details.tt:474
+#: share/templates/customer/details.tt:503
 msgid "billing profile default"
 msgstr "perfil de facturación por defecto"
 
