@@ -69,6 +69,8 @@ $ua->ssl_opts(
                  domainpreferences => 1,
                  domains => 1,
                  emailtemplates => 1,
+                 faxses => 1,
+                 faxrecordings => 1,
                  faxserversettings => 1,
                  interceptions => 1,
                  invoices => 1,
