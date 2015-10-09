@@ -145,7 +145,7 @@ sub item_by_id {
 sub sip_domain_reload {
     my ($self, $c) = @_;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+    my ($res) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>domain.reload</methodName>
@@ -153,7 +153,7 @@ sub sip_domain_reload {
 </methodCall>
 EOF
 
-    return 1;
+    return ref $res ? @{ $res } : ();
 }
 
 sub xmpp_domain_reload {

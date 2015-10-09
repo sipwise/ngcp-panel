@@ -206,17 +206,6 @@ sub POST :Allow {
             last;
         }
 
-        try {
-            unless($c->config->{features}->{debug}) {
-                $self->xmpp_domain_reload($c, $resource->{domain});
-                $self->sip_domain_reload($c);
-            }
-        } catch($e) {
-            $c->log->error("failed to activate domain: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain.");
-            last;
-        }
-        
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
@@ -224,6 +213,21 @@ sub POST :Allow {
             return $self->hal_from_item($c,$_domain); });
 
         $guard->commit;
+
+        try {
+            unless($c->config->{features}->{debug}) {
+                $self->xmpp_domain_reload($c, $resource->{domain});
+                my (undef, $xmlrpc_res) = $self->sip_domain_reload($c);
+                if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+                    die "XMLRPC failed";
+                }
+            }
+        } catch($e) {
+            $c->log->error("failed to activate domain: $e. Domain created"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain. Domain was created");
+            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));
+            last;
+        }
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));
