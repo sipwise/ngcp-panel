@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_df3aac35",
+        "filename": "lib/NGCP/Panel/Utils/XMLDispatcher.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2015-10-09T12:41:47Z",
+      "side": 1,
+      "message": "remove this change!!",
+      "revId": "c343792018de38d348cc0ac3949e39c85cfb76fe",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
