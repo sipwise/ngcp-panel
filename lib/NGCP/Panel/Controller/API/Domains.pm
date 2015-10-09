@@ -206,18 +206,22 @@ sub POST :Allow {
             last;
         }
 
+        $guard->commit;
+
         try {
             unless($c->config->{features}->{debug}) {
                 $self->xmpp_domain_reload($c, $resource->{domain});
-                $self->sip_domain_reload($c);
+                my (undef, $xmlrpc_res) = $self->sip_domain_reload($c);
+                if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+                    die "XMLRPC failed";
+                }
             }
         } catch($e) {
-            $c->log->error("failed to activate domain: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain.");
+            $c->log->error("failed to activate domain: $e. Domain created"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain. Domain was created");
+            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));
             last;
         }
-
-        $guard->commit;
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));

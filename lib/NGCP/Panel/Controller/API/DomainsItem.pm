@@ -109,6 +109,8 @@ sub DELETE :Allow {
         }
         $domain->delete;
 
+        $guard->commit;
+
         try {
             unless($c->config->{features}->{debug}) {
                 $self->xmpp_domain_disable($c, $domain);
@@ -119,8 +121,6 @@ sub DELETE :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to deactivate domain.");
             last;
         }
-
-        $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
