@@ -392,7 +392,7 @@ sub load_preference_list :Private {
 sub _sip_domain_reload {
     my ($self, $c) = @_;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+    my ($res) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>domain.reload</methodName>
@@ -400,7 +400,9 @@ sub _sip_domain_reload {
 </methodCall>
 EOF
 
-    return 1;
+    my $ret = ('ARRAY' eq ref $res) ? $res->[1] : 0;
+
+    return $ret; # 0 means failure, 1 means success
 }
 
 __PACKAGE__->meta->make_immutable;
