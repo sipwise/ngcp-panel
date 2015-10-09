@@ -64,7 +64,7 @@ sub dispatch {
 
 			# successful request
 
-			return [$hostid, 1, $body];	# return from eval only
+			return [$hostid, 1, $body];  # return from eval only
 		};
 
 		if ($ret) {
