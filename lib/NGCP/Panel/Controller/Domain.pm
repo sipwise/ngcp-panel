@@ -144,7 +144,15 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
         }
 
-        $self->_sip_domain_reload($c);
+        my (undef, $xmlrpc_res) = $self->_sip_domain_reload($c);
+        if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                desc  => $c->loc('Failed to activate domain. Domain was created.'),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
+        }
+
         NGCP::Panel::Utils::Message->info(
             c => $c,
             desc => $c->loc('Domain successfully created'),
@@ -392,7 +400,7 @@ sub load_preference_list :Private {
 sub _sip_domain_reload {
     my ($self, $c) = @_;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+    my ($res) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>domain.reload</methodName>
@@ -400,7 +408,7 @@ sub _sip_domain_reload {
 </methodCall>
 EOF
 
-    return 1;
+    return ref $res ? @{ $res } : ();
 }
 
 __PACKAGE__->meta->make_immutable;
