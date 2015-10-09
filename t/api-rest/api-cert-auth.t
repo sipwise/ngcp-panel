@@ -68,6 +68,7 @@ SKIP: {
 # successful auth
 $ua->ssl_opts(
     SSL_cert_file => $valid_ssl_client_cert,
+    SSL_key_file => $valid_ssl_client_key,
     SSL_verify_mode => 0,
     verify_hostname => 0,
 );
