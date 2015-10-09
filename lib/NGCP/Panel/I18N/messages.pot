@@ -2155,7 +2155,7 @@ msgstr ""
 msgid "Domain \"%1\" - Preferences"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:181
+#: lib/NGCP/Panel/Controller/Domain.pm:189
 msgid "Domain does not exist"
 msgstr ""
 
@@ -2167,15 +2167,15 @@ msgstr ""
 msgid "Domain of calling party."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:241
+#: lib/NGCP/Panel/Controller/Domain.pm:158 lib/NGCP/Panel/Utils/Message.pm:241
 msgid "Domain successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:270
+#: lib/NGCP/Panel/Controller/Domain.pm:278
 msgid "Domain successfully deleted!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:230
+#: lib/NGCP/Panel/Controller/Domain.pm:238
 msgid "Domain successfully updated"
 msgstr ""
 
@@ -2485,6 +2485,10 @@ msgstr ""
 msgid "Fail Count"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Domain.pm:151
+msgid "Failed to activate domain. Domain was created."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3324
 msgid "Failed to add registered device"
 msgstr ""
@@ -2742,7 +2746,7 @@ msgstr ""
 msgid "Failed to delete device profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:260
+#: lib/NGCP/Panel/Controller/Domain.pm:268
 msgid "Failed to delete domain."
 msgstr ""
 
@@ -3021,7 +3025,7 @@ msgstr ""
 msgid "Failed to update device profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:221
+#: lib/NGCP/Panel/Controller/Domain.pm:229
 msgid "Failed to update domain."
 msgstr ""
 
@@ -3860,7 +3864,7 @@ msgstr ""
 msgid "Invalid device profile id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:170
+#: lib/NGCP/Panel/Controller/Domain.pm:178
 msgid "Invalid domain id detected"
 msgstr ""
 

@@ -2676,7 +2676,7 @@ msgstr "Dominio"
 msgid "Domain \"%1\" - Preferences"
 msgstr "Preferencias de Dominio \"%1\""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:181
+#: lib/NGCP/Panel/Controller/Domain.pm:189
 msgid "Domain does not exist"
 msgstr "El Dominio no existe"
 
@@ -2688,15 +2688,15 @@ msgstr ""
 msgid "Domain of calling party."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:241
+#: lib/NGCP/Panel/Controller/Domain.pm:158 lib/NGCP/Panel/Utils/Message.pm:241
 msgid "Domain successfully created"
 msgstr "Dominio creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:270
+#: lib/NGCP/Panel/Controller/Domain.pm:278
 msgid "Domain successfully deleted!"
 msgstr "Dominio eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:230
+#: lib/NGCP/Panel/Controller/Domain.pm:238
 msgid "Domain successfully updated"
 msgstr "Dominio modificado con éxito"
 
@@ -3111,6 +3111,10 @@ msgstr ""
 msgid "Fail Count"
 msgstr "Cuenta de fallos"
 
+#: lib/NGCP/Panel/Controller/Domain.pm:151
+msgid "Failed to activate domain. Domain was created."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3324
 msgid "Failed to add registered device"
 msgstr ""
@@ -3372,7 +3376,7 @@ msgstr "Fallo al borrar modelo de dispositivo"
 msgid "Failed to delete device profile"
 msgstr "Fallo al borrar perfil de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:260
+#: lib/NGCP/Panel/Controller/Domain.pm:268
 msgid "Failed to delete domain."
 msgstr "Fallo al borrar dominio."
 
@@ -3658,7 +3662,7 @@ msgstr "Fallo al actualizar modelo de dispositivo"
 msgid "Failed to update device profile"
 msgstr "Fallo al actualizar perfil de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:221
+#: lib/NGCP/Panel/Controller/Domain.pm:229
 msgid "Failed to update domain."
 msgstr "Fallo al actualizar dominio"
 
@@ -4575,7 +4579,7 @@ msgstr "Id de modelo de dispositivo inválido"
 msgid "Invalid device profile id"
 msgstr "Id de perfil de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:170
+#: lib/NGCP/Panel/Controller/Domain.pm:178
 msgid "Invalid domain id detected"
 msgstr "Id de dominio inválido detectado"
 

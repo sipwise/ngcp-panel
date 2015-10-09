@@ -2709,7 +2709,7 @@ msgstr "Domain"
 msgid "Domain \"%1\" - Preferences"
 msgstr "Domain \"%1\" - Präferenzen"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:181
+#: lib/NGCP/Panel/Controller/Domain.pm:189
 msgid "Domain does not exist"
 msgstr "Domain existiert nicht"
 
@@ -2721,15 +2721,15 @@ msgstr "Domain des Anrufempfängers."
 msgid "Domain of calling party."
 msgstr "Domain des Anrufers."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:241
+#: lib/NGCP/Panel/Controller/Domain.pm:158 lib/NGCP/Panel/Utils/Message.pm:241
 msgid "Domain successfully created"
 msgstr "Domain erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:270
+#: lib/NGCP/Panel/Controller/Domain.pm:278
 msgid "Domain successfully deleted!"
 msgstr "Domain erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:230
+#: lib/NGCP/Panel/Controller/Domain.pm:238
 msgid "Domain successfully updated"
 msgstr "Domain erfolgreich aktualisiert"
 
@@ -3142,6 +3142,10 @@ msgstr "Externe ID des angerufenen Subscribers, wenn lokal."
 msgid "Fail Count"
 msgstr "Fehler-Anzahl"
 
+#: lib/NGCP/Panel/Controller/Domain.pm:151
+msgid "Failed to activate domain. Domain was created."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3324
 msgid "Failed to add registered device"
 msgstr ""
@@ -3403,7 +3407,7 @@ msgstr "Geräte-Modell löschen fehlgeschlagen."
 msgid "Failed to delete device profile"
 msgstr "Geräte-Profil löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:260
+#: lib/NGCP/Panel/Controller/Domain.pm:268
 msgid "Failed to delete domain."
 msgstr "Domain löschen fehlgeschlagen."
 
@@ -3689,7 +3693,7 @@ msgstr "Geräte-Modell aktualisieren fehlgeschlagen."
 msgid "Failed to update device profile"
 msgstr "Geräte-Profil aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:221
+#: lib/NGCP/Panel/Controller/Domain.pm:229
 msgid "Failed to update domain."
 msgstr "Domain aktualisieren fehlgeschlagen."
 
@@ -4601,7 +4605,7 @@ msgstr "Ungültige Geräte-Modell ID"
 msgid "Invalid device profile id"
 msgstr "Ungültige Geräte-Profil ID"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:170
+#: lib/NGCP/Panel/Controller/Domain.pm:178
 msgid "Invalid domain id detected"
 msgstr "Ungültige Domain ID"
 

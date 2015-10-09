@@ -2706,7 +2706,7 @@ msgstr "Домен"
 msgid "Domain \"%1\" - Preferences"
 msgstr "Настройки Домена \"%1\""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:181
+#: lib/NGCP/Panel/Controller/Domain.pm:189
 msgid "Domain does not exist"
 msgstr "Домен не существует"
 
@@ -2718,15 +2718,15 @@ msgstr "Домен вызываемой стороны."
 msgid "Domain of calling party."
 msgstr "Домен вызывающей стороны."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:241
+#: lib/NGCP/Panel/Controller/Domain.pm:158 lib/NGCP/Panel/Utils/Message.pm:241
 msgid "Domain successfully created"
 msgstr "Домен успешно создан"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:270
+#: lib/NGCP/Panel/Controller/Domain.pm:278
 msgid "Domain successfully deleted!"
 msgstr "Домен успешно удален!"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:230
+#: lib/NGCP/Panel/Controller/Domain.pm:238
 msgid "Domain successfully updated"
 msgstr "Домен успешно обновлен"
 
@@ -3139,6 +3139,10 @@ msgstr "Внешний ID вызываемого абонента, при лок
 msgid "Fail Count"
 msgstr "Неудачных попыток"
 
+#: lib/NGCP/Panel/Controller/Domain.pm:151
+msgid "Failed to activate domain. Domain was created."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3324
 msgid "Failed to add registered device"
 msgstr ""
@@ -3400,7 +3404,7 @@ msgstr "Не удалось удалить модель устройства"
 msgid "Failed to delete device profile"
 msgstr "Не удалось удалить профиль устройства"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:260
+#: lib/NGCP/Panel/Controller/Domain.pm:268
 msgid "Failed to delete domain."
 msgstr "Не удалось удалить домен."
 
@@ -3686,7 +3690,7 @@ msgstr "Не удалось обновить модель устройства"
 msgid "Failed to update device profile"
 msgstr "Не удалось обновить профиль устройства"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:221
+#: lib/NGCP/Panel/Controller/Domain.pm:229
 msgid "Failed to update domain."
 msgstr "Не удалось обновить домен."
 
@@ -4602,7 +4606,7 @@ msgstr "Обнаружен некорректный id модели устрой
 msgid "Invalid device profile id"
 msgstr "Обнаружен некорректный id профиля устройства"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:170
+#: lib/NGCP/Panel/Controller/Domain.pm:178
 msgid "Invalid domain id detected"
 msgstr "Обнаружен некорректный id домена"
 
