@@ -158,5 +158,27 @@ sub _inflate_blocks {
     return (scalar @blocks == 0 ? undef : \@blocks);
 }
 
+sub validate {
+    my ($self) = @_;
+    my $c = $self->ctx;
+    return unless $c;
+    
+    my $resource = Storable::dclone($self->values);
+    if (defined $resource->{reseller}) {
+        $resource->{reseller_id} = $resource->{reseller}{id};
+        delete $resource->{reseller};
+    } else {
+        $resource->{reseller_id} = ($c->user->is_superuser ? undef : $c->user->reseller_id);
+    }
+    
+    NGCP::Panel::Utils::BillingNetworks::check_network_update_item($c,$resource,$c->stash->{network_result},sub {
+                my ($err,@fields) = @_;
+                foreach my $field (@fields) {
+                    $self->field($field)->add_error($err);
+                }
+            });    
+    
+}
+
 1;
 # vim: set tabstop=4 expandtab:
