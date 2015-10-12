@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_6bc41e40",
+        "filename": "lib/NGCP/Panel/Controller/Billing.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-10-12T17:39:33Z",
+      "side": 1,
+      "message": "probably for no specific reason. If this question is solved, it would actually be nice, to take that code out completely and probably simplify Form structure.\n\none thing to note here, I think this sub is also used to duplicate a profile, where again, we probably _should_ allow to change the reseller.",
+      "parentUuid": "da6255ed_eb992e6f",
+      "range": {
+        "startLine": 140,
+        "startChar": 0,
+        "endLine": 145,
+        "endChar": 16
+      },
+      "revId": "45b6742d9daf4e7bac78738ebc1f57b92babc459",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_4b739a4d",
         "filename": "lib/NGCP/Panel/Form/BillingProfile/Reseller.pm",
         "patchSetId": 1
