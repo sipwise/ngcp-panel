@@ -298,10 +298,8 @@ sub load_db{
     $data //= $self->data;
     $collections_slice //= [keys %$data];
     foreach my $collection_name( @$collections_slice ){
-        #print "load_db: collection_name=$collection_name;\n";
         if((!exists $self->loaded->{$collection_name}) && $data->{$collection_name}->{query}){
             my(undef,$content) = $self->search_item($collection_name,$data);
-            #print Dumper $content;
             if($content->{total_count}){
                 my $values = $content->{_embedded}->{$self->test_machine->get_hal_name($collection_name)};
                 $values = ('HASH' eq ref $values) ? [$values] : $values;
@@ -325,9 +323,6 @@ sub clear_db{
     $collections_slice //= [keys %$data];
     @$order_hash{(keys %$data)} = (0) x @$collections_slice;
     @$order_hash{@$order_array} = (1..$#$order_array+1);
-    #print "clear_db;\n";
-    #print Dumper $collections_slice;
-    #print Dumper [caller];
     foreach my $collection_name (sort {$order_hash->{$a} <=> $order_hash->{$b}} @$collections_slice ){
         if(!$data->{$collection_name}->{query}){
             next;
@@ -385,7 +380,6 @@ sub search_item{
 }
 sub clear_cached_data{
     my($self, @collections)  = @_;
-    #print Dumper [@collections];
     delete @{$self->loaded}{@collections};
     delete @{$self->created}{@collections};
     delete @{$self->searched}{@collections};
@@ -430,14 +424,11 @@ sub load_data_from_script{
 
 sub load_collection_data{
     my($self, $collection_name)  = @_;
-    #print "load_collection_data: $collection_name;\n";
-    #print Dumper [caller];
     if(!$self->data->{$collection_name}){
         $self->load_data_from_script($collection_name);
     }
     if(! ( $self->collection_id_exists($collection_name) ) ){
         $self->clear_db(undef,undef,[$collection_name]);
-        #print "load_collection_data: $collection_name: collection_id_exists=".$self->collection_id_exists($collection_name)."; loaded:".($self->loaded->{$collection_name}?$self->loaded->{$collection_name}:"undef")."; created: ".($self->created->{$collection_name}?$self->created->{$collection_name}:"undef")." searched: ".($self->searched->{$collection_name}?$self->searched->{$collection_name}:"undef")." ;\n";
         $self->load_db(undef,[$collection_name]);
     }
 }
@@ -445,20 +436,13 @@ sub get_id{
     my $self = shift;
     #my( $collection_name, $parents_in, $params)  = @_;
     my( $collection_name )  = @_;
-    #print "get_id: $collection_name;\n";
-    #print Dumper [caller];
     $self->load_collection_data($collection_name);
     my $res_id;
     if( $self->collection_id_exists($collection_name) ){
         $res_id = $self->get_existent_id($collection_name);
-        #print "get_id: $collection_name: id exists: $res_id ;\n";
     }else{
         $res_id = $self->create(@_);
-        #print "get_id: $collection_name: create: $res_id ;\n";
     }
-    #print "get_id end: $collection_name:$res_id ;\n";
-    #print Dumper $collection_name;
-    #print Dumper [caller];
     return $res_id;
 }
 sub get_existent_item{
@@ -489,8 +473,6 @@ sub get_collection_data_fields{
 }
 sub process{
     my($self, $collection_name, $parents_in)  = @_;
-    #print "process: $collection_name;\n";
-    #print Dumper [caller];
     $self->load_collection_data($collection_name);
     $parents_in //= {};
     my $parents = {%{$parents_in}};#copy
@@ -510,7 +492,6 @@ sub process{
 sub create{
     my($self, $collection_name, $parents_in, $params)  = @_;
     $parents_in //= {};
-    #print "collection_name=$collection_name;\n";
     if($parents_in->{$collection_name}){
         if($self->data->{$collection_name}->{default}){
             $self->data->{$collection_name}->{process_cycled} = {'parents'=>$parents_in};
