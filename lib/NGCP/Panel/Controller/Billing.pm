@@ -136,11 +136,13 @@ sub process_edit :Private {
     $params = $params->merge($c->session->{created_objects});
     if( $duplicate ) {
         NGCP::Panel::Utils::Billing::get_billing_profile_uniq_params( params => $params );
-    }
-    if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+        if($c->user->is_superuser) {
+            $form = NGCP::Panel::Form::BillingProfile::Admin->new(ctx => $c);
+        } else {
+            $form = NGCP::Panel::Form::BillingProfile::Reseller->new(ctx => $c);
+        }
     } else {
-        $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
+        $form = NGCP::Panel::Form::BillingProfile::Reseller->new(ctx => $c);
     }
     $form->process(
         posted => $posted,
@@ -168,13 +170,6 @@ sub process_edit :Private {
 
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-
-                unless($c->stash->{profile_result}->get_column('contract_cnt') == 0) {
-                    die('Cannnot modify billing profile that is still used in profile mappings');
-                }
-                unless($c->stash->{profile_result}->get_column('package_cnt') == 0) {
-                    die('Cannnot modify billing profile that is still used in profile packages');
-                }
 
                 $c->stash->{profile_result}->update($form->values);
 

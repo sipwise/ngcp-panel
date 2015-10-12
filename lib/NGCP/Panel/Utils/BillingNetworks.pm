@@ -11,6 +11,26 @@ use NGCP::Panel::Utils::IntervalTree::Simple;
 
 use constant _CHECK_BLOCK_OVERLAPS => 1;
 
+sub check_network_update_item {
+    my ($c,$new_resource,$old_item,$err_code) = @_;
+
+    return 1 unless $old_item;
+    
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+    
+    if ($old_item->status eq 'terminated') {
+        return 0 unless &{$err_code}("Billing network is already terminated and cannot be changed.",'status');
+    }
+    
+    #my $contract_cnt = $old_item->get_column('contract_cnt');
+    #my $package_cnt = $old_item->get_column('package_cnt');
+    
+    return 1;
+
+}
+
 sub set_blocks_from_to {
     my ($blocks,$err_code) = @_;
     my $intersecter = (_CHECK_BLOCK_OVERLAPS ? NGCP::Panel::Utils::IntervalTree::Simple->new() : undef);

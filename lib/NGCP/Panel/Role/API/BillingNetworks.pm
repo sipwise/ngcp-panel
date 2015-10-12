@@ -96,11 +96,6 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-    if ($item->status eq 'terminated') {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Billing network is already terminated and cannot be changed.');
-        return;
-    }
-    
     delete $resource->{id};
     my $schema = $c->model('DB');
     
@@ -119,18 +114,10 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
     
-    #if(exists $resource->{status} && $resource->{status} eq 'terminated') {
-        unless($item->get_column('contract_cnt') == 0) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot modify or terminate billing_network that is still used in profile mappings of contracts)");
-            return;
-        }
-        unless($item->get_column('package_cnt') == 0) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot modify or terminate billing_network that is still used in profile sets of profile packages)");
-            return;
-        }        
-    #}
+    return unless NGCP::Panel::Utils::BillingNetworks::check_network_update_item($c,$resource,$item,sub {
+        my ($err) = @_;
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+    });
    
     return unless $self->prepare_blocks_resource($c,$resource);
     my $blocks = delete $resource->{blocks};

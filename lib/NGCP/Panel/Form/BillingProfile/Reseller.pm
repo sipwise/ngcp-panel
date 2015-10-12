@@ -6,6 +6,9 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
+use Storable qw();
+use NGCP::Panel::Utils::Billing qw();
+
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
@@ -198,6 +201,28 @@ sub validate_handle {
         my $err_msg = 'Only lower-case, upper-case, digits and _ allowed';
         $field->add_error($err_msg);
     }
+}
+
+sub validate {
+    my ($self) = @_;
+    my $c = $self->ctx;
+    return unless $c;
+    
+    my $resource = Storable::dclone($self->values);
+    if (defined $resource->{reseller}) {
+        $resource->{reseller_id} = $resource->{reseller}{id};
+        delete $resource->{reseller};
+    } else {
+        $resource->{reseller_id} = ($c->user->is_superuser ? undef : $c->user->reseller_id);
+    }
+    
+    NGCP::Panel::Utils::Billing::check_profile_update_item($c,$resource,$c->stash->{profile_result},sub {
+                my ($err,@fields) = @_;
+                foreach my $field (@fields) {
+                    $self->field($field)->add_error($err);
+                }
+            });    
+    
 }
 
 1

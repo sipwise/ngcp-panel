@@ -3,6 +3,7 @@ use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
 use Storable qw();
+use NGCP::Panel::Utils::ProfilePackages qw();
 extends 'HTML::FormHandler';
 
 with 'NGCP::Panel::Render::RepeatableJs';
@@ -405,6 +406,13 @@ sub validate {
                 }
             });
 
+    NGCP::Panel::Utils::ProfilePackages::check_package_update_item($c,$resource,$c->stash->{'package_result'},sub {
+                my ($err,@fields) = @_;
+                foreach my $field (@fields) {
+                    $self->field($field)->add_error($err);
+                }
+            });            
+            
     my $mappings_to_create = [];
     NGCP::Panel::Utils::ProfilePackages::prepare_profile_package(
             c => $c,
