@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_10cdd331",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3021,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-10-12T12:31:58Z",
+      "side": 1,
+      "message": "i don\u0027t know the subscriber controller in detail, but why not using an txnguard beginning here? since it seems there are  multiple INSERTs follwoing.",
+      "range": {
+        "startLine": 3021,
+        "startChar": 19,
+        "endLine": 3021,
+        "endChar": 44
+      },
+      "revId": "4698c2e80ac9be83e3a30a029475619ea0a48baf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
