@@ -117,6 +117,30 @@
       "revId": "45b6742d9daf4e7bac78738ebc1f57b92babc459",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2bde2612",
+        "filename": "lib/NGCP/Panel/Form/BillingProfile/Reseller.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-10-12T17:48:50Z",
+      "side": 1,
+      "message": "Support utils usage for now. \nAs correct way from my POV true Model layer should be introduced, I had draft in the early invoice implementation, but untill we don\u0027t have working solution accepted by everybody, it is better to separate business logic at least into Utils.",
+      "parentUuid": "da6255ed_0b95a232",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 37
+      },
+      "revId": "45b6742d9daf4e7bac78738ebc1f57b92babc459",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
