@@ -1,17 +1,10 @@
 use strict;
 use warnings;
 
-#use Moose;
-use Sipwise::Base;
 use Test::Collection;
 use Test::FakeData;
-use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
-use HTTP::Request::Common;
-use JSON;
 use Test::More;
 use Data::Dumper;
-
 
 #init test_machine
 my $fake_data = Test::FakeData->new;
@@ -44,35 +37,35 @@ $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPT
 $test_machine->form_data_item( );
 # create 3 new field billing fees from DATA_ITEM
 $test_machine->check_create_correct( 3, sub{ $_[0]->{destination} .= $_[1]->{i} ; } );
-$test_machine->check_get2put(  );
+$test_machine->check_get2put();
 $test_machine->check_bundle();
 
 # specific tests
 
 # try to create fee without billing_profile_id
 {
-    my ($res, $err) = $test_machine->request_post(sub{delete $_[0]->{billing_profile_id};});
+    my ($res, $err) = $test_machine->check_item_post(sub{delete $_[0]->{billing_profile_id};});
     is($res->code, 422, "create billing zone without billing_profile_id");
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Missing parameter 'billing_profile_id'/, "check error message in body");
 }
 # try to create fee with invalid billing_profile_id
 {
-    my ($res, $err) = $test_machine->request_post(sub{$_[0]->{billing_profile_id} = 99999;});
+    my ($res, $err) = $test_machine->check_item_post(sub{$_[0]->{billing_profile_id} = 99999;});
     is($res->code, 422, "create billing zone with invalid billing_profile_id");
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
 }
 # try to create fee without billing_zone_id
 {
-    my ($res, $err) = $test_machine->request_post(sub{delete $_[0]->{billing_zone_id};});
+    my ($res, $err) = $test_machine->check_item_post(sub{delete $_[0]->{billing_zone_id};});
     is($res->code, 422, "create billing zone without billing_zone_id");
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_zone_id'/, "check error message in body");
 }
 # try to create fee with invalid billing_zone_id
 {
-    my ($res, $err) = $test_machine->request_post(sub{$_[0]->{billing_zone_id} = 99999;});
+    my ($res, $err) = $test_machine->check_item_post(sub{$_[0]->{billing_zone_id} = 99999;});
     is($res->code, 422, "create billing zone with invalid billing_zone_id");
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_zone_id'/, "check error message in body");
@@ -80,7 +73,7 @@ $test_machine->check_bundle();
 # try to create fee with implicit zone which already exists
 {
     my $t = time;
-    my ($res, $err) = $test_machine->request_post(sub{
+    my ($res, $err) = $test_machine->check_item_post(sub{
         delete $_[0]->{billing_zone_id};
         $_[0]->{billing_zone_zone} = 'apitestzone';
         $_[0]->{billing_zone_detail} = 'api_test zone';
@@ -88,14 +81,13 @@ $test_machine->check_bundle();
     });
     is($res->code, 201, "create profile fee with existing implicit zone");
     my($z_fee,$req);
-    ($res, $z_fee, $req) = $test_machine->request_get($test_machine->base_uri.$res->header('Location'));
-    is($res->code, 200, "fetch profile fee with existing implicit zone");
+    ($res, $z_fee, $req) = $test_machine->check_item_get($test_machine->normalize_uri($res->header('Location')),"fetch profile fee with existing implicit zone");
     ok(exists $z_fee->{billing_zone_id} && $z_fee->{billing_zone_id} == $test_machine->DATA_ITEM->{billing_zone_id}, "check if implicit zone returns the correct zone id");
 }
 # try to create fee with implicit zone which doesn't exist yet
 {
     my $t = 1 + time();
-    my ($res, $err) = $test_machine->request_post(sub{
+    my ($res, $err) = $test_machine->check_item_post(sub{
         delete $_[0]->{billing_zone_id};
         $_[0]->{billing_zone_zone} = 'apitestzone'.$t;
         $_[0]->{billing_zone_detail} = 'api_test zone'.$t;
@@ -103,14 +95,13 @@ $test_machine->check_bundle();
     });
     is($res->code, 201, "create profile fee with new implicit zone");
     my($z_fee, $req, $content);
-    ($res, $z_fee, $req) = $test_machine->request_get($test_machine->base_uri.$res->header('Location'));
-    is($res->code, 200, "fetch profile fee with new implicit zone");
+    ($res, $z_fee, $req) = $test_machine->check_item_get($test_machine->normalize_uri($res->header('Location')),"fetch profile fee with new implicit zone");
     ok(exists $z_fee->{billing_zone_id} && $z_fee->{billing_zone_id} > $test_machine->DATA_ITEM->{billing_zone_id}, "check if implicit zone returns a new zone id");
 
-    ($req,$res,$content) = $test_machine->request_delete($test_machine->base_uri.$z_fee->{_links}->{'ngcp:billingzones'}->{href});
+    ($req,$res,$content) = $test_machine->request_delete($test_machine->normalize_uri($z_fee->{_links}->{'ngcp:billingzones'}->{href}));
     is($res->code, 204, "delete new implicit zone");
 
-    ($res) = $test_machine->request_get($test_machine->base_uri.$z_fee->{_links}->{'self'}->{href});
+    ($res) = $test_machine->request_get($test_machine->normalize_uri($z_fee->{_links}->{'self'}->{href}));
     is($res->code, 404, "check if fee is deleted when zone is deleted");    
 }
 
@@ -150,7 +141,7 @@ $test_machine->check_bundle();
 $test_machine->clear_test_data_all();
 
 {
-    my $uri = $test_machine->base_uri.'/api/billingzones/'.$test_machine->DATA_ITEM->{billing_zone_id};
+    my $uri = $test_machine->normalize_uri('/api/billingzones/'.$test_machine->DATA_ITEM->{billing_zone_id});
     my($req,$res,$content) = $test_machine->request_delete($uri);
     is($res->code, 204, "check delete of zone");
     ($res, $content, $req) = $test_machine->request_get($uri);
