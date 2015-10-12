@@ -7,6 +7,39 @@ use IO::String;
 use NGCP::Schema;
 use NGCP::Panel::Utils::Preferences qw();
 
+sub check_profile_update_item {
+    my ($c,$new_resource,$old_item,$err_code) = @_;
+
+    return 1 unless $old_item;
+    
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+    
+    if ($old_item->status eq 'terminated') {
+        return 0 unless &{$err_code}("Billing profile is already terminated and cannot be changed.",'status');
+    }
+    
+    my $contract_cnt = $old_item->get_column('contract_cnt');
+    #my $package_cnt = $old_item->get_column('package_cnt');
+    
+    if (($contract_cnt > 0)
+        && defined $new_resource->{interval_charge} && $old_item->interval_charge != $new_resource->{interval_charge}) {
+        return 0 unless &{$err_code}("Interval charge cannot be changed (profile linked to $contract_cnt contracts).",'interval_charge');
+    }
+    if (($contract_cnt > 0)
+        && defined $new_resource->{interval_free_time} && $old_item->interval_free_time != $new_resource->{interval_free_time}) {
+        return 0 unless &{$err_code}("Interval free time cannot be changed (profile linked to $contract_cnt contracts).",'interval_free_time');
+    }
+    if (($contract_cnt > 0)
+        && defined $new_resource->{interval_free_cash} && $old_item->interval_free_cash != $new_resource->{interval_free_cash}) {
+        return 0 unless &{$err_code}("Interval free cash cannot be changed (profile linked to $contract_cnt contracts).",'interval_free_cash');
+    }
+
+    return 1;
+
+}
+
 sub process_billing_fees{
     my(%params) = @_;
     my ($c,$data,$profile,$schema) = @params{qw/c data profile schema/};

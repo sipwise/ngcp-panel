@@ -140,11 +140,10 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
     
-    unless($item->get_column('contract_cnt') == 0) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                     "Cannnot modify or terminate profile_package that is still assigned to contracts");
-        return;
-    }
+    return unless NGCP::Panel::Utils::ProfilePackages::check_package_update_item($c,$resource,$item,sub {
+        my ($err) = @_;
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+    });
     
     my $mappings_to_create = [];
     return unless NGCP::Panel::Utils::ProfilePackages::prepare_profile_package(

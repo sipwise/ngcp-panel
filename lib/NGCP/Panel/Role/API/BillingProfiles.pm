@@ -95,10 +95,10 @@ sub profile_by_id {
 sub update_profile {
     my ($self, $c, $profile, $old_resource, $resource, $form) = @_;
 
-    if ($profile->status eq 'terminated') {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Billing profile is already terminated and cannot be changed.');
-        return;
-    }
+    #if ($profile->status eq 'terminated') {
+    #    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Billing profile is already terminated and cannot be changed.');
+    #    return;
+    #}
 
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller slip thru
@@ -114,18 +114,10 @@ sub update_profile {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
 
-    #if(exists $resource->{status} && $resource->{status} eq 'terminated') {
-        unless($profile->get_column('contract_cnt') == 0) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot modify or terminate billing_profile that is still used in profile mappings of contracts");
-            return;
-        }
-        unless($profile->get_column('package_cnt') == 0) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot modify or terminate billing_profile that is still used in profile sets of profile packages");
-            return;
-        }
-    #}
+    return unless NGCP::Panel::Utils::Billing::check_profile_update_item($c,$resource,$profile,sub {
+        my ($err) = @_;
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+    });
 
     my $old_prepaid = $profile->prepaid;
     
