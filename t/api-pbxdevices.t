@@ -23,7 +23,7 @@ $fake_data->set_data_from_script({
             profile_id   => sub { return shift->get_id('pbxdeviceprofiles',@_); },
             customer_id  => sub { return shift->get_id('customers',@_); },
             identifier   => 'aaaabbbbcccc',
-            station_name => 'api_test_vun',
+            station_name => 'api_test_run',
             lines=>[{
                 linerange      => 'Phone Ports api_test',
                 type           => 'private',
@@ -50,7 +50,7 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('pbxdevices'));
 $test_machine->form_data_item( );
 # create 3 new field pbx devices from DATA_ITEM
 $test_machine->check_create_correct( 3, sub{ $_[0]->{identifier} = sprintf('%x', (hex('0x'.$_[0]->{identifier}) + $_[1]->{i}) ); } );
-$test_machine->check_get2put(  );
+$test_machine->check_get2put();
 $test_machine->check_bundle();
 $test_machine->clear_test_data_all();
 

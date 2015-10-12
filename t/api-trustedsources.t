@@ -1,18 +1,10 @@
-#use Sipwise::Base;
 use strict;
-#use Moose;
-use Sipwise::Base;
-use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
-use HTTP::Request::Common;
-use JSON;
-use Test::More;
-use Data::Dumper;
-use File::Basename;
-use bignum qw/hex/;
+use warnings;
 
 use Test::Collection;
 use Test::FakeData;
+use Test::More;
+use Data::Dumper;
 
 #init test_machine
 my $test_machine = Test::Collection->new(
@@ -38,14 +30,12 @@ $fake_data->set_data_from_script({
 #for item creation test purposes /post request data/
 $test_machine->DATA_ITEM_STORE($fake_data->process('trustedsources'));
 
-
 $test_machine->form_data_item( );
 # create 3 new field pbx devices from DATA_ITEM
 $test_machine->check_create_correct( 3, sub{ $_[0]->{src_ip} = sprintf('1.2.3.%d', $_[1]->{i}); } );
-$test_machine->check_get2put(  );
+$test_machine->check_get2put();
 $test_machine->check_bundle();
 $test_machine->clear_test_data_all();
-
 
 done_testing;
 
