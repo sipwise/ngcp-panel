@@ -244,13 +244,14 @@
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller"
     ) -%]
-    <div class="accordion-group">
+    <div class="accordion-group" id="fax_features">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_fax">[% c.loc('Fax2Mail and Sendfax') %]</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_fax">[% c.loc('Fax Features') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_fax">
             <div class="accordion-inner">
-
+                <!-- fax2mail and sendfax -->
+                <h4>[% c.loc('Fax2Mail and Sendfax') %]</h4>
                 <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_fax">
                     <thead>
                         <tr>
@@ -363,7 +364,115 @@
                         </tr>
                     </tbody>
                 </table>
+                <!-- mail2fax -->
+                <h4>[% c.loc('Mail2Fax') %]</h4>
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_mail_to_fax">
+                    <thead>
+                        <tr>
+                            <th>[% c.loc('Name') %]</th>
+                            <th>[% c.loc('Value') %]</th>
+                            [% # one for actions -%]
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% 
+                            mtf_pref = subscriber.provisioning_voip_subscriber.voip_mail_to_fax_preference;
+                            mtf_secret_renew_notify = subscriber.provisioning_voip_subscriber.voip_mail_to_fax_secret_renew_notify.all;
+                            mtf_acl = subscriber.provisioning_voip_subscriber.voip_mail_to_fax_acl.all; 
+                        -%]
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('Active') %]</td>
+                            <td>
+                                [% mtf_pref.active ? c.loc('yes') : c.loc('no') %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_mail_to_fax", [c.req.captures.0], 'active') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                    [% END -%]
+                                </div>
 
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('Secret Key (empty=disabled)') %]</td>
+                            <td>
+                                [% mtf_pref.secret_key %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_mail_to_fax", [c.req.captures.0], 'secret_key') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('Secret Key Renew') %]</td>
+                            <td>
+                                [% c.loc("[_1]", mtf_pref.secret_key_renew) %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_mail_to_fax", [c.req.captures.0], 'secret_key_renew') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('Last Secret Key Modify Time') %]</td>
+                            <td>
+                                [% mtf_pref.last_secret_key_modify %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('Secret Key Renew Notify') %]</td>
+                            <td>
+                                [% FOR notify_email IN mtf_secret_renew_notify -%]
+                                    [% notify_email.destination %]<br/>
+                                [% END -%]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_mail_to_fax", [c.req.captures.0], 'secret_renew_notify') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('ACL') %]</td>
+                            <td>
+                                [% FOR acl IN mtf_acl -%]
+                                    [% acl.use_regex ? 'regex: ' : '' %]"[% c.loc('from') %]" <u>[% acl.from_email ? acl.from_email : c.loc('any') %]</u> [% c.loc('and') %] "[% c.loc('received_from') %]" <u>[% acl.received_from ? acl.received_from : c.loc('any') %]</u> [% c.loc('to') %] <u>[% acl.destination ? acl.destination : c.loc('any destination') %]</u><br/>
+                                [% END -%]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_mail_to_fax", [c.req.captures.0], 'acl') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

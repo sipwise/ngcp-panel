@@ -48,6 +48,11 @@ use NGCP::Panel::Form::Faxserver::Active;
 use NGCP::Panel::Form::Faxserver::SendStatus;
 use NGCP::Panel::Form::Faxserver::SendCopy;
 use NGCP::Panel::Form::Faxserver::Destination;
+use NGCP::Panel::Form::MailToFax::Active;
+use NGCP::Panel::Form::MailToFax::SecretKey;
+use NGCP::Panel::Form::MailToFax::SecretKeyRenew;
+use NGCP::Panel::Form::MailToFax::SecretRenewNotify;
+use NGCP::Panel::Form::MailToFax::ACL;
 use NGCP::Panel::Form::Subscriber::Webfax;
 use NGCP::Panel::Form::Subscriber::ResetPassword;
 use NGCP::Panel::Form::Subscriber::RecoverPassword;
@@ -2987,6 +2992,164 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
             desc  => $c->loc('Failed to update fax setting'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => $attribute,
+        cf_form => $form,
+    );
+}
+
+sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') :Args(1) {
+    my ($self, $c, $attribute) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    my $form;
+    my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $mtf_pref = $prov_subscriber->voip_mail_to_fax_preference;
+    my $params = {};
+    my $mtf_pref_rs = $c->model('DB')->resultset('voip_mail_to_fax_preferences')->search({
+                            subscriber_id => $prov_subscriber->id
+                        });
+    if(!$mtf_pref) {
+        $mtf_pref = $mtf_pref_rs->create({});
+    }
+
+    try {
+        SWITCH: for ($attribute) {
+            /^active$/ && do {
+                $form = NGCP::Panel::Form::MailToFax::Active->new;
+                $params = { 'active' => $mtf_pref->active };
+                $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
+                if($posted && $form->validated) {
+                    $mtf_pref->update({ active => $form->field('active')->value });
+                }
+                last SWITCH;
+            };
+            /^secret_key$/ && do {
+                $form = NGCP::Panel::Form::MailToFax::SecretKey->new;
+                $params = { secret_key => $mtf_pref->secret_key };
+                $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
+                if($posted && $form->validated) {
+                    $mtf_pref->update({
+                        secret_key => $form->field('secret_key')->value,
+                        last_secret_key_modify => NGCP::Panel::Utils::DateTime::current_local,
+                    });
+                }
+                last SWITCH;
+            };
+            /^secret_key_renew$/ && do {
+                $form = NGCP::Panel::Form::MailToFax::SecretKeyRenew->new;
+                $params = { secret_key_renew => $mtf_pref->secret_key_renew, };
+                $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
+                if($posted && $form->validated) {
+                    $mtf_pref->update({
+                        secret_key_renew => $form->field('secret_key_renew')->value,
+                    });
+                }
+                last SWITCH;
+            };
+            /^secret_renew_notify$/ && do {
+                $form = NGCP::Panel::Form::MailToFax::SecretRenewNotify->new;
+                unless($posted) {
+                    my @notify_list = ();
+                    for my $notify($prov_subscriber->voip_mail_to_fax_secret_renew_notify->all) {
+                        push @notify_list, {
+                            destination => $notify->destination,
+                        }
+                    }
+                    $params->{notify} = \@notify_list;
+                }
+                $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
+                if($posted && $form->validated) {
+                    for my $notify($prov_subscriber->voip_mail_to_fax_secret_renew_notify->all) {
+                        $notify->delete;
+                    }
+                    for my $notify($form->field('notify')->fields) {
+                        $prov_subscriber->voip_mail_to_fax_secret_renew_notify->create({
+                            destination => $notify->field('destination')->value,
+                        });
+                    }
+                }
+                last SWITCH;
+            };
+            /^acl$/ && do {
+                $form = NGCP::Panel::Form::MailToFax::ACL->new;
+                unless($posted) {
+                    my @acl_list = ();
+                    for my $acl($prov_subscriber->voip_mail_to_fax_acl->all) {
+                        push @acl_list, {
+                            from_email => $acl->from_email,
+                            received_from => $acl->received_from,
+                            destination => $acl->destination,
+                            use_regex => $acl->use_regex,
+                        }
+                    }
+                    $params->{acl} = \@acl_list;
+                }
+                $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
+                if($posted && $form->validated) {
+                    for my $acl($prov_subscriber->voip_mail_to_fax_acl->all) {
+                        $acl->delete;
+                    }
+                    for my $acl($form->field('acl')->fields) {
+                        $prov_subscriber->voip_mail_to_fax_acl->create({
+                            from_email => $acl->field('from_email')->value,
+                            received_from => $acl->field('received_from')->value,
+                            destination => $acl->field('destination')->value,
+                            use_regex => $acl->field('use_regex')->value,
+                        });
+                    }
+                }
+                last SWITCH;
+            };
+            # default
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
+                desc  => $c->loc('Invalid mailtofax setting.'),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c,
+                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+            return;
+        } # SWITCH
+        if($posted && $form->validated) {
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Successfully updated mailtofax setting'),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c,
+                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+            return;
+        }
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => $c->loc('Failed to update mailtofax setting'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
