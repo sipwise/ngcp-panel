@@ -1,3 +1,169 @@
+ngcp-panel (1.10.1.0+0~mr4.1.1.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [ee29f28] MT#13717 Avoid duplicated implicit billing zone name
+  * [3310c45] MT#11147 Allow "Vendor ModelName" refer to connectable models
+  * [35b10e0] MT#11147 Rewrite map to foreach for models names => ids map
+  * [19e6f03] MT#9721 Described simple_destination from callforwards
+  * [96ce60b] MT#13931 Add link to field device config into customer interface
+  * [4562fbf] MT#12825 Export billing fees to csv file
+  * [8bd4a9a] MT#12347 Some local configs example
+  * [5ecf84a] MT#14267 Make possible documentation for api fields of the DataTable type
+  * [49ac6ab] MT#14253 Disable invoice generation by default
+  * [250498e] MT#8457 Billing profiles duplication.
+  * [f02b2cc] MT#14597 Fix access to undefined stash value for non pbx product subscribers
+  * [0e1d80c] MT#14559 Trigger db_reg_agent.removeRegistration on subscriber termination
+  * [45db3c9] MT#14629 Add single quot around user:password for curl examples
+  * [0512e76] MT#14653 Add required field billing_profile_id to billing zone api
+  * [4ff9e34] MT#14653 Don't delete billing_profile_id from API form for HTML::Formhandler
+  * [faabf6b] MT#14653 Fix the tests
+  * [1af9a99] MT#12707 Add "maliciouscalls" to root tests
+  * [f458443] MT#13919 Bootstrap uses the same config template, configure TT plugin base.
+  * [dd9365f] MT#14739 Get newly created kamailio user location after flush
+  * [a529ec7] MT#12347 Simple tests for cfdestinations
+  * [1a3e7dd] MT#14477 Fax API (list, send fax, get meta, get content)
+  * [1ff49c1] MT#14477 Documentation enchancement for asynchronous API collections
+  * [91a6aeb] MT#12347 Safe decode json content
+  * [a8c7990] MT#15441 Don't synchronize cli and primary number if they already differ
+  * [026aed8] MT#15489 Work with utf8 in json input
+  * [33652db] MT#14477 Add new fax collections into common tests
+  * [4a21626] MT#14477 Fix faxes collection name in tests
+  * [c1393b8] MT#15367 Fix invoice generation
+  * [57edaa4] MT#14461 Adjust subscriber for faxes after subscriber creation
+  * [33066cc] MT#12347 Remove unnecessary debug from FakeData
+
+  [ Andreas Granig ]
+  * [b2e74c4] MT#13919 Properly strip in-between dashes from mac
+  * [c8da9d8] MT#13919 Use checksum of field config.
+  * [b0456e4] MT#11027 Use proper bootstrap path.
+  * [c689ab9] MT#13919 Strip dashes in mac during bootstrap
+  * [4360160] MT#11147 Show subscribers if just one available
+  * [9a9d577] MT#13903 Add voucher/cash topup forms for API
+  * [0cc70a0] MT#13903 Add package_id to voucher API.
+  * [fcd92c6] MT#13919 Use proper var in bootstrap
+  * [fbbed24] MT#14715 Return uuid in /api/subscribers/
+  * [21764a5] MT#14741 Fix reseller ops for /api/trustedsources/
+  * [602f0a6] MT#14747 Pass fw query as url path.
+  * [16923c4] MT#14865 Set display_name for pbx groups
+  * [372dfa6] MT#15057 Add Last-Modified and strip HTTP headers
+  * [227a4c4] MT#15247 Enforce https in autoprov config.
+
+  [ Kirill Solomko ]
+  * [a175120] MT#13847 - CallLists: preserve cli if no rewrite rules are found
+  * [680b734] MT#13573 - Calllists: use specified alias field for own_cli
+  * [cdad39d] MT#13471 - CallLists: do not anonymise intra calls with source_clir
+  * [4f11639] MT#14445 - fix billing fees csv upload. set default encoding for csv to "utf8"
+  * [1db8dac] MT#12707 - add "malicious calls" feature
+  * [91de0e8] MT#12707 - malicious_calls: add source field
+  * [aa2d53e] MT#15113 - apply_rewrite: use billing domain for terminated susbcribers
+
+  [ Jenkins Git User ]
+  * [79dd3dc] I18N dump: snapshot 2015-07-15 01:14:12 +0200
+  * [5dcb154] I18N dump: snapshot 2015-07-21 01:12:23 +0200
+  * [a723b21] I18N dump: snapshot 2015-07-22 01:12:26 +0200
+  * [0316e08] I18N dump: snapshot 2015-07-23 01:15:57 +0200
+  * [427d060] I18N dump: snapshot 2015-07-24 01:12:38 +0200
+  * [f17bafe] I18N dump: snapshot 2015-07-28 01:12:20 +0200
+  * [5b44417] I18N dump: snapshot 2015-07-31 01:12:50 +0200
+  * [7299ed6] I18N dump: snapshot 2015-08-01 01:12:37 +0200
+  * [0c41567] I18N dump: snapshot 2015-08-05 01:12:28 +0200
+  * [4822328] I18N dump: snapshot 2015-08-06 01:15:08 +0200
+  * [aee4e48] I18N dump: snapshot 2015-08-07 01:16:46 +0200
+  * [5a38227] I18N dump: snapshot 2015-08-10 01:12:52 +0200
+  * [2a00fb5] I18N dump: snapshot 2015-08-11 01:12:34 +0200
+  * [6dc62ac] I18N dump: snapshot 2015-08-20 01:12:44 +0200
+  * [e3bc636] I18N dump: snapshot 2015-08-21 01:15:44 +0200
+  * [7ab3a55] I18N dump: snapshot 2015-08-26 01:13:21 +0200
+  * [eb22009] I18N dump: snapshot 2015-08-28 01:12:36 +0200
+  * [d7a84f8] I18N dump: snapshot 2015-09-02 01:13:10 +0200
+  * [a78dd06] I18N dump: snapshot 2015-09-03 01:12:53 +0200
+  * [08bc843] I18N dump: snapshot 2015-09-08 01:15:38 +0200
+  * [e33340a] I18N dump: snapshot 2015-09-14 01:19:01 +0200
+  * [03343ad] I18N dump: snapshot 2015-09-15 01:16:28 +0200
+  * [b41ac27] I18N dump: snapshot 2015-09-21 01:47:19 +0200
+  * [1500fc7] I18N dump: snapshot 2015-09-24 01:22:31 +0200
+  * [5b0851f] I18N dump: snapshot 2015-09-26 01:20:21 +0200
+  * [d0fdbff] I18N dump: snapshot 2015-10-01 17:13:30 +0200
+  * [1a6974f] I18N dump: snapshot 2015-10-03 01:12:24 +0200
+  * [f1725ca] I18N dump: snapshot 2015-10-09 01:25:47 +0200
+  * [59dcde8] I18N dump: snapshot 2015-10-10 01:19:14 +0200
+
+  [ Gerhard Jungwirth ]
+  * [84e1942] MT#13611 use common logic for cdr display
+  * [95eb263] MT#14107 provide option to force language
+  * [4fecd3d] MT#14391 Correctly select alias nums on subscriber edit
+  * [3d5a06e] MT#14365 only dispatch to sems-pbx when pbx is enabled
+  * [0681a6b] MT#14383 show suppressed number as Anonymous
+  * [e837311] MT#14391 Fix editing aliases without primary number
+  * [b19079d] MT#12757 regard VAT in calllists
+  * [c9380e6] MT#12985 prevent ambiguity in rwr replace pattern
+  * [3f21160] MT#14901 remove reseller login page
+  * [753adad] MT#14923 sendfax allow trying multiple ips
+  * [1d95a93] MT#14513 order destinationsets by name, in select
+  * [3b8651a] MT#14585 improve selenium test quality
+  * [10faab2] MT#14585 make api tests compatible with recent perls
+  * [c044e24] MT#15033 clean Build.PL server startup
+  * [36f0930] MT#15033 unify api test authentication
+  * [f3cfa0e] MT#14803 option to access cfdestinationsets via reseller
+  * [7f2076e] MT#15071 some docker conveniences
+  * [e214d31] MT#15361 fix soundcache reload on api post
+  * [a356152] MT#14979 filter calllists by direction properly
+  * [e8f19f7] MT#15361 fix post soundfiles creating duplicate entry
+  * [fdfac50] MT#15425 audio_cache reload on soundfile delete
+  * [cfd2f78] MT#15393 improve API documentation
+  * [6660d3d] MT#15459 fix html-encoding subscriber details
+  * [69e8679] MT#15583 allow subscriberadmin to access customer details
+  * [a53ee3c] MT#15709 api-cert-auth workaround for wheezy
+
+  [ Rene Krenn ]
+  * [c378681] MT#13903 balance interval catchup and resize WIP
+  * [bd9f670] MT#13903 topupvoucher and topupcash
+  * [ec95a6f] MT#13903 fixes for nightly tests
+  * [0ebe33a] MT#13903 add package_id in api-vouchers.t test
+  * [293cf27] MT#13903 fix balanceintervals test #1
+  * [f7d5dc5] MT#13903 fix balanceintervals test #2
+  * [d54bd5d] MT#13903 "topup_interval" start mode impl
+  * [b9271ec] MT#13903 generate melita user story transcript
+  * [f3b711a] MT#13903 disable applying profile package
+  * [ca90840] MT#13903 enable applying profile package
+  * [6489a0d] MT#13903 more detailled debugging info
+  * [bef06dc] MT#14301 deleting prof packages instead of terminating
+  * [5a182d0] MT#14631 topupcash didn't process package id
+  * [ff75e75] MT#14317 add debug info of panel interval catchups
+  * [c7b3d74] MT#14317 passing now() to interval catchup and resize
+  * [07c9d19] MT#14255 add cash_balance underrun logic
+  * [7dfc5fd] MT#14255 panel UI problem setting subscriber 'lock' detail
+  * [25f5460] MT#14255 notopup_expiry calculation only when required
+  * [33e5f4e] MT#14255 initial balance_intervals catchup when starting at 1st of month
+  * [8494b5a] MT#14255 consider balance discard with infinite-end intervals
+  * [4272b25] MT#15477 balance intervals UI
+  * [7f7e333] MT#15477 topup log
+  * [98ac54d] MT#16277 disable parallel catchup locking tests
+
+  [ Alexander Lutay ]
+  * [8dd5da8] MT#13903 Disable test api-balanceintervals.t for Jenkins environment
+  * [bd9a184] MT#14585 Move ngcp-panel-selenium tests to folder 't/selenium/'
+  * [5879cfe] MT#14585 Move selenium tests on Selenium::Remote::Driver(::Extensions)
+  * [7fd0ec6] MT#14585 Removing Build-Depends from perl package
+  * [9cdaf04] MT#14585 Move REST API tests to t/api-rest/ folder
+
+  [ Andrew Pogrebennyk ]
+  * [f336bea] MT#13007 MT#13251 fix MoH reload
+
+  [ Michael Prokop ]
+  * [b9ef451] MT#5599 Get rid of unused Catalyst::Plugin::EnableMiddleware
+  * [b17bc4d] MT#14585 Docker setup for selenium tests
+  * [15d3d48] MT#15033 Build.PL: clean up unused configure_requires, requires, test_requires + recommends
+  * [968ed76] MT#15071 Docker setup for api-rest tests
+
+  [ Victor Seva ]
+  * [c280f6e] MT#14767 add missing dependence libcrypt-rc4-perl
+  * [39cb08b] MT#15701 API: delete/create domain after changes to DB
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 12 Oct 2015 15:38:29 +0200
+
 ngcp-panel (1.10.0.0+0~mr4.1.0.0) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
