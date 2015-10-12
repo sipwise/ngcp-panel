@@ -164,7 +164,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::BillingNetwork::Reseller->new;
+    my $form = NGCP::Panel::Form::BillingNetwork::Reseller->new(ctx => $c);
     my $params = $c->stash->{network};
     $params->{blocks} = $c->stash->{network_blocks};
     $params->{reseller}{id} = delete $params->{reseller_id};
@@ -178,13 +178,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
         try {
             $c->model('DB')->schema->txn_do( sub {
-                
-                unless($c->stash->{network_result}->get_column('contract_cnt') == 0) {
-                    die('Cannnot modify billing network that is still used in profile mappings');
-                }
-                unless($c->stash->{network_result}->get_column('package_cnt') == 0) {
-                    die('Cannnot modify billing network that is still used in profile packages');
-                }                 
                 
                 $c->stash->{'network_result'}->update({
                     name => $form->values->{name},

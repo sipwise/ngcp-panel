@@ -1097,6 +1097,35 @@ sub check_profiles {
     return 1;
 }
 
+sub check_package_update_item {
+    my ($c,$new_resource,$old_item,$err_code) = @_;
+
+    return 1 unless $old_item;
+    
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+    
+    my $contract_cnt = $old_item->get_column('contract_cnt');
+    #my $voucher_cnt = $old_item->get_column('voucher_cnt');
+    
+    if (($contract_cnt > 0)
+        && defined $new_resource->{balance_interval_unit} && $old_item->balance_interval_unit ne $new_resource->{balance_interval_unit}) {
+        return 0 unless &{$err_code}("Balance interval unit cannot be changed (package linked to $contract_cnt contracts).",'balance_interval');
+    }
+    if (($contract_cnt > 0)
+        && defined $new_resource->{balance_interval_value} && $old_item->balance_interval_value != $new_resource->{balance_interval_value}) {
+        return 0 unless &{$err_code}("Balance interval value cannot be changed (package linked to $contract_cnt contracts).",'balance_interval');
+    }
+    if (($contract_cnt > 0)
+        && defined $new_resource->{balance_interval_start_mode} && $old_item->balance_interval_start_mode ne $new_resource->{balance_interval_start_mode}) {
+        return 0 unless &{$err_code}("Balance interval start mode cannot be changed (package linked to $contract_cnt contracts).",'balance_interval_start_mode');
+    }
+
+    return 1;
+
+}
+
 sub prepare_profile_package {
     my (%params) = @_;
     

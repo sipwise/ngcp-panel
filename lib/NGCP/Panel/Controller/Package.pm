@@ -209,9 +209,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             push(@mappings_to_create,@{delete $form->values->{underrun_profiles}});
             push(@mappings_to_create,@{delete $form->values->{topup_profiles}});            
             $c->model('DB')->schema->txn_do( sub {
-                unless($c->stash->{'package_result'}->get_column('contract_cnt') == 0) {
-                    die('Cannnot modify profile package that is still assigned to contracts');
-                }
+
                 my $profile_package = $c->stash->{'package_result'}->update($form->values);
                 $profile_package->profiles->delete;        
                 foreach my $mapping (@mappings_to_create) {
