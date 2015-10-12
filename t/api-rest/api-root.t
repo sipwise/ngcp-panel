@@ -114,6 +114,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         topupvouchers => 1,
         topupcash => 1,
         vouchers => 1,
+        topuplogs => 1,
     };
     foreach my $link(@links) {
         my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash)"$!;

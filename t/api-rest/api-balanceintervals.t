@@ -29,6 +29,7 @@ use NGCP::Panel::Utils::DateTime qw();
 #use NGCP::Panel::Utils::ProfilePackages qw(); #since it depends on Utils::Subscribers and thus Sipwise::Base, importin it causes segfault when creating threads.. 
 
 my $is_local_env = 0;
+my $disable_parallel_catchup = 1;
 #my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 #my $enable_profile_packages = 1;
 
@@ -944,7 +945,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
         my $delta_serialized = $t2 - $t1;
-        ok($delta_serialized > 2*$delay,'expected delay to assume customerbalances requests were processed after another');
+        ok($delta_serialized >= 2*$delay,'expected delay to assume customerbalances requests were processed after another');
         #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
 
         $t1 = time;
@@ -961,7 +962,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         #is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
         #is($intervals_c->{total_count},3,"check total count of thread c results");        
         
-        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel');        
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;
         
     } else {
         diag('allow_delay_commit not set, skipping ...');
@@ -995,7 +996,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
         my $delta_serialized = $t2 - $t1;
-        ok($delta_serialized > 2*$delay,'expected delay to assume balanceintervals requests were processed after another');
+        ok($delta_serialized >= 2*$delay,'expected delay to assume balanceintervals requests were processed after another');
         #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
 
         $t1 = time;
@@ -1012,7 +1013,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         #is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
         #is($intervals_c->{total_count},3,"check total count of thread c results");        
         
-        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were perfomed in parallel');        
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were perfomed in parallel') if !$disable_parallel_catchup;      
         
         
     } else {
@@ -1045,7 +1046,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
         my $delta_serialized = $t2 - $t1;
-        ok($delta_serialized > 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
+        ok($delta_serialized >= 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
         #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_desc->[$i]->{lock},undef,"check if subscriber is unlocked initially");
@@ -1094,7 +1095,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             is($got_asc->[$i]->{lock},4,"check if subscriber is locked now");
         }
         
-        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel');        
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;        
 
         $t1 = time;
         $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact2);
@@ -1107,7 +1108,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $t2 = time;
         $t_a->join();
 
-        ok($t2 - $t1 > $delay,'expected delay to assume subscriberpreferences request locks contracts and an simultaneous access to contract id ' . $last_customer_id . ' is serialized');
+        ok($t2 - $t1 >= $delay,'expected delay to assume subscriberpreferences request locks contracts and an simultaneous access to contract id ' . $last_customer_id . ' is serialized');
         
         _set_time();
         
@@ -1141,7 +1142,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
         my $delta_serialized = $t2 - $t1;
-        ok($delta_serialized > 2*$delay,'expected delay to assume subscribers requests were processed after another');
+        ok($delta_serialized >= 2*$delay,'expected delay to assume subscribers requests were processed after another');
         #ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_desc->[$i]->{lock},undef,"check if subscriber is unlocked initially");
@@ -1189,7 +1190,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_asc->[$i]->{lock},4,"check if subscriber is locked now");
         }        
-        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel');        
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;      
 
         $t1 = time;
         $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact2);
@@ -1202,7 +1203,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $t2 = time;
         $t_a->join();
 
-        ok($t2 - $t1 > $delay,'expected delay to assume subscribers request locks contracts and an simultaneous access to contract id ' . $last_customer_id . ' is serialized');
+        ok($t2 - $t1 >= $delay,'expected delay to assume subscribers request locks contracts and an simultaneous access to contract id ' . $last_customer_id . ' is serialized');
         
         _set_time();
         

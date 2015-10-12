@@ -196,7 +196,7 @@ my %package_map = ();
     
 }
 
-if ($enable_profile_packages) {
+{ #if ($enable_profile_packages) {
     
     my @profile_packages = ();
     
