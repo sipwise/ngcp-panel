@@ -516,7 +516,6 @@ sub create{
     $self->created->{$collection_name} = [values %{$test_machine->DATA_CREATED->{ALL}}];
 
     if($self->data->{$collection_name}->{process_cycled}){
-        undef $test_machine;
         #parents is a flat description of the dependency hierarchy
         #parent is just a collection which requires  id of the current collection in its data
         #parents = { $parent_collection_name => [ $number_of_parents_levels_before, [ @nested_keys in collection to set this collection value]] }
@@ -524,6 +523,7 @@ sub create{
         my $parents_cycled = $self->data->{$collection_name}->{process_cycled}->{parents};
         my $last_parent = ( sort { $parents_cycled->{$b}->[0] <=> $parents_cycled->{$a}->[0] } keys %{$parents_cycled} )[0];
         if(grep {$collection_name} @{$self->data->{$last_parent}->{dependency_requires_recreation}} ){
+            undef $test_machine;
             nest( $self->data->{$last_parent}->{data}, @{$parents_cycled->{$last_parent}->[1]}, $self->get_existent_id($collection_name) );
             my %parents_temp = %{$parents_cycled};
             delete $parents_temp{$last_parent};
@@ -540,6 +540,7 @@ sub create{
                 ],
                 $uri
             );
+            undef $test_machine;
         }
         delete $self->data->{$collection_name}->{process_cycled};
     }
