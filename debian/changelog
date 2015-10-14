@@ -1,3 +1,20 @@
+ngcp-panel (1.10.1.1+0~mr4.1.1.1) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [40bf3dd] MT#12347 Test environment requires perl package String::ShellQuote.
+  * [87815d0] MT#12347 Fix too early distruction of the local test_machine
+
+  [ Alexander Lutay ]
+  * [a7af265] MT#12347 fix b15fa6b44: libstring-shellquote-perl required for api-test only
+
+  [ Rene Krenn ]
+  * [609eeb6] MT#15399 allow editing profiles, networks, packages
+  * [0cc54ba] MT#15759 fix contract balance catchup DST problem
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 14 Oct 2015 23:35:45 +0200
+
 ngcp-panel (1.10.1.0+0~mr4.1.1.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
