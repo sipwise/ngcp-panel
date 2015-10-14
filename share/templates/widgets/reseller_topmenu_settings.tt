@@ -27,6 +27,9 @@
         [% IF c.config.features.cloudpbx -%]
         <li><a href="[% c.uri_for('/device') %]">[% c.loc('Device Management') %]</a></li>
         [% END -%]
+        [% IF c.config.features.malicious_call -%]
+        <li><a href="[% c.uri_for('/maliciouscall') %]">[% c.loc('Malicious Calls') %]</a></li>
+        [% END -%]
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
