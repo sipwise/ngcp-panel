@@ -151,39 +151,65 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
     #goto THREADED;
     if ('Europe/Vienna' eq NGCP::Panel::Utils::DateTime::current_local()->time_zone->name) {
         my $package = _create_profile_package('create','hour',1);
-       
-        my $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 01:27:00');
-        ok($dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is in daylight saving time (summer)");
-        _set_time($dt);
-        my $customer = _create_customer($package,'hourly_interval_dst_at');
-        
-        _check_interval_history($customer,[
-            { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
-            { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
-        ]);
-        
-        $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 02:27:00');
-        ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
-        _set_time($dt);
-        
-        _check_interval_history($customer,[
-            { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
-            { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
-            { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
-        ]);        
-        
-        $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 03:27:00');
-        ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
-        _set_time($dt);
-       
-        _check_interval_history($customer,[
-            { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
-            { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
-            { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
-            { start => '2015-10-25 03:00:00', stop => '2015-10-25 03:59:59' },
-        ]);
-        
-        _set_time();
+
+        {
+            my $dt = NGCP::Panel::Utils::DateTime::from_string('2015-03-29 01:27:00');
+            ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
+            _set_time($dt);
+            my $customer = _create_customer($package,'hourly_interval_dst_at');
+            
+            _check_interval_history($customer,[
+                { start => '2015-03-29 00:00:00', stop => '2015-03-29 00:59:59' },
+                { start => '2015-03-29 01:00:00', stop => '2015-03-29 01:59:59' },
+            ]);
+            
+            $dt = NGCP::Panel::Utils::DateTime::from_string('2015-03-29 03:27:00');
+            ok($dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is in daylight saving time (summer)");
+            _set_time($dt);
+            
+            _check_interval_history($customer,[
+                { start => '2015-03-29 00:00:00', stop => '2015-03-29 00:59:59' },
+                { start => '2015-03-29 01:00:00', stop => '2015-03-29 01:59:59' },
+                #{ start => '2015-03-29 02:00:00', stop => '2015-03-29 02:59:59' }, #a dead one
+                { start => '2015-03-29 03:00:00', stop => '2015-03-29 03:59:59' },
+            ]);        
+            
+            _set_time();
+        }
+        {
+            my $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 01:27:00');
+            ok($dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is in daylight saving time (summer)");
+            _set_time($dt);
+            my $customer = _create_customer($package,'hourly_interval_dst_at');
+            
+            _check_interval_history($customer,[
+                { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+                { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+            ]);
+            
+            #$dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 02:27:00');
+            #ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
+            #_set_time($dt);
+            #
+            #_check_interval_history($customer,[
+            #    { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+            #    { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+            #    { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
+            #]);        
+            
+            $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 03:27:00');
+            ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
+            _set_time($dt);
+           
+            _check_interval_history($customer,[
+                { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+                { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+                { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
+                { start => '2015-10-25 03:00:00', stop => '2015-10-25 03:59:59' },
+            ]);
+            
+            _set_time();
+        }
     } else {
         diag("time zone '" . NGCP::Panel::Utils::DateTime::current_local()->time_zone->name . "', skipping DST test");
     }
@@ -896,11 +922,11 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         my $subscriber_3 = _create_subscriber($customer,'of customer multi_topup');
         
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-08-22 13:00:00'));
-        
+        my $delay = 5; #try 0 to provoke the concurrent action error
         my $t_a = threads->create(sub { _perform_topup_cash($subscriber_1,2); });
-        sleep(1);
+        sleep($delay);
         my $t_b = threads->create(sub { _perform_topup_cash($subscriber_2,2); });
-        sleep(1);
+        sleep($delay);
         my $t_c = threads->create(sub { _perform_topup_cash($subscriber_3,2); });
         $t_a->join();
         $t_b->join();

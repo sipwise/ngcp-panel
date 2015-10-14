@@ -76,7 +76,7 @@ sub resize_actual_contract_balance {
 
     return $actual_balance unless defined $contract->contact->reseller_id;
     
-    $now //= $contract->modify_timestamp;
+    $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->modify_timestamp);
     my $new_package = $contract->profile_package;
     my ($old_start_mode,$new_start_mode);
     my ($underrun_profile_threshold,$underrun_lock_threshold);
@@ -121,10 +121,10 @@ sub resize_actual_contract_balance {
         }
     }
     
-    if ($actual_balance->start < $now) {
+    if (NGCP::Panel::Utils::DateTime::set_local_tz($actual_balance->start) < $now) {
         if ($old_start_mode && $new_start_mode) {
             my $end_of_resized_interval = _get_resized_interval_end(ctime => $now,
-                                                                    create_timestamp => $contract->create_timestamp // $contract->modify_timestamp,
+                                                                    create_timestamp => NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp),
                                                                     start_mode => $new_start_mode,
                                                                     is_topup => $is_topup);
             my $resized_balance_values = _get_resized_balance_values(schema => $schema,
@@ -194,9 +194,9 @@ sub catchup_contract_balances {
     
     my $schema = $c->model('DB');
     $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
-    $now //= $contract->modify_timestamp;
+    $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->modify_timestamp);
     $old_package = $contract->profile_package if !exists $params{old_package};
-    my $contract_create = $contract->create_timestamp // $contract->modify_timestamp;
+    my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     $suppress_underrun //= 0;
     $topup_amount //= 0.0;
     $profiles_added //= 0;
@@ -225,8 +225,8 @@ sub catchup_contract_balances {
 
     my $last_balance = $contract->contract_balances->search(undef,{ order_by => { '-desc' => 'end'},})->first;
     my $last_profile;
-    while ($last_balance && !NGCP::Panel::Utils::DateTime::is_infinite_future($last_balance->end) && $last_balance->end < $now) { #comparison takes 100++ sec if loaded lastbalance contains +inf
-        my $start_of_next_interval = $last_balance->end->clone->add(seconds => 1);
+    while ($last_balance && !NGCP::Panel::Utils::DateTime::is_infinite_future($last_balance->end) && NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end) < $now) { #comparison takes 100++ sec if loaded lastbalance contains +inf
+        my $start_of_next_interval = NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end)->clone->add(seconds => 1);
 
         if ($has_package && !$is_notopup_expiration_calculated) {
             #we have two queries here, so do it only if really creating contract_balances
@@ -239,7 +239,7 @@ sub catchup_contract_balances {
         
         my $bm_actual;
         unless ($last_profile) {
-            $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $last_balance->start);
+            $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start));
             $last_profile = $bm_actual->billing_mappings->first->billing_profile;
         }
         my ($underrun_profiles_ts,$underrun_lock_ts) = (undef,undef);
@@ -250,7 +250,7 @@ PREPARE_BALANCE_CATCHUP:
         $interval_value = $has_package ? $interval_value : ($profile->interval_count // _DEFAULT_PROFILE_INTERVAL_COUNT);
         
         my ($stime,$etime) = _get_balance_interval_start_end(
-                                                      last_etime => $last_balance->end,
+                                                      last_etime => NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end),
                                                       start_mode => $start_mode,
                                                       #now => $start_of_next_interval,
                                                       interval_unit => $interval_unit,
@@ -322,7 +322,7 @@ PREPARE_BALANCE_CATCHUP:
             interval_unit => $interval_unit,
             last_balance => $last_balance,
             start_mode => $start_mode);
-        my $timely_end = (_CARRY_OVER_TIMELY_MODE eq $carry_over_mode ? _add_interval($last_balance->start,$interval_unit,$interval_value,undef)->subtract(seconds => 1) : undef);
+        my $timely_end = (_CARRY_OVER_TIMELY_MODE eq $carry_over_mode ? _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start),$interval_unit,$interval_value,undef)->subtract(seconds => 1) : undef);
         if ((defined $notopup_expiration && $now >= $notopup_expiration)
             || (defined $timely_end && $now > $timely_end)) {
             $c->log->debug('discarding contract ' . $contract->id . " cash balance (mode '$carry_over_mode'" .
@@ -429,13 +429,13 @@ sub topup_contract_balance {
         my $timely_end;
         #if (_TOPUP_START_MODE ne $old_package->balance_interval_start_mode) {
         if (!NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end)) {
-            $timely_end = $balance->end;
+            $timely_end = NGCP::Panel::Utils::DateTime::set_local_tz($balance->end);
         } else {
-            $timely_end = _add_interval($balance->start,$old_package->balance_interval_unit,$old_package->balance_interval_value,
-                        _START_MODE_PRESERVE_EOM->{$old_package->balance_interval_start_mode} ? $contract->create_timestamp // $contract->modify_timestamp : undef)->subtract(seconds => 1);
+            $timely_end = _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),$old_package->balance_interval_unit,$old_package->balance_interval_value,
+                        _START_MODE_PRESERVE_EOM->{$old_package->balance_interval_start_mode} ? NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp) : undef)->subtract(seconds => 1);
         }
         my $timely_start = _add_interval($timely_end,$timely_duration_unit,-1 * $timely_duration_value)->add(seconds => 1);
-        $timely_start = $balance->start if $timely_start < $balance->start;
+        $timely_start = NGCP::Panel::Utils::DateTime::set_local_tz($balance->start) if $timely_start < NGCP::Panel::Utils::DateTime::set_local_tz($balance->start);
         
         $is_timely = ($now >= $timely_start && $now <= $timely_end ? 1 : 0);
     }
@@ -526,7 +526,7 @@ sub create_initial_contract_balances {
 
     my $schema = $c->model('DB');
     $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
-    $now //= $contract->create_timestamp // $contract->modify_timestamp;
+    $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     
     my ($start_mode,$interval_unit,$interval_value,$initial_balance,$underrun_profile_threshold,$underrun_lock_threshold);
     
@@ -556,7 +556,7 @@ PREPARE_BALANCE_INITIAL:
                                                       start_mode => $start_mode,
                                                       interval_unit => $interval_unit,
                                                       interval_value => $interval_value,
-                                                      create => $contract->create_timestamp // $contract->modify_timestamp);
+                                                      create => NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp),);
         
     my $balance_values = _get_balance_values(schema => $schema,
             stime => $stime,
@@ -619,14 +619,14 @@ sub _get_resized_balance_values {
     my ($cash_balance, $free_time_balance) = ($balance->cash_balance,$balance->free_time_balance);
     
     my $contract = $balance->contract;
-    my $contract_create = $contract->create_timestamp // $contract->modify_timestamp;
-    if ($balance->start <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end) || $balance->end >= $contract_create)) {
+    my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
+    if (NGCP::Panel::Utils::DateTime::set_local_tz($balance->start) <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end) || NGCP::Panel::Utils::DateTime::set_local_tz($balance->end) >= $contract_create)) {
         my $bm = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $contract_create); #now => $balance->start); #end); !?
         my $profile = $bm->billing_mappings->first->billing_profile;
-        my $old_ratio = _get_free_ratio($contract_create,$balance->start,$balance->end);
+        my $old_ratio = _get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),NGCP::Panel::Utils::DateTime::set_local_tz($balance->end));
         my $old_free_cash = $old_ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
         my $old_free_time = $old_ratio * ($profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME);
-        my $new_ratio = _get_free_ratio($contract_create,$balance->start,$etime);
+        my $new_ratio = _get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),$etime);
         my $new_free_cash = $new_ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
         my $new_free_time = $new_ratio * ($profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME);
         $cash_balance += $new_free_cash - $old_free_cash;
@@ -644,7 +644,7 @@ sub _get_balance_values {
     my($c, $profile, $last_profile, $contract, $last_balance, $stime, $etime, $initial_balance, $carry_over_mode, $now, $notopup_expiration, $schema) = @params{qw/c profile last_profile contract last_balance stime etime initial_balance carry_over_mode now notopup_expiration schema/};    
     
     $schema //= $c->model('DB');
-    $now //= $contract->create_timestamp // $contract->modify_timestamp;
+    $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     my ($cash_balance,$cash_balance_interval, $free_time_balance, $free_time_balance_interval) = (0.0,0.0,0,0);
     
     my $ratio;
@@ -656,10 +656,10 @@ sub _get_balance_values {
             #    my $bm_last = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $last_balance->start); #end); !?
             #    $last_profile = $bm_last->billing_mappings->first->billing_profile;
             #}
-            my $contract_create = $contract->create_timestamp // $contract->modify_timestamp;
+            my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
             $ratio = 1.0;
-            if ($last_balance->start <= $contract_create && $last_balance->end >= $contract_create) { #$last_balance->end is never +inf here
-                $ratio = _get_free_ratio($contract_create,$last_balance->start,$last_balance->end);
+            if (NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start) <= $contract_create && NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end) >= $contract_create) { #$last_balance->end is never +inf here
+                $ratio = _get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start),NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end));
             }
             my $old_free_cash = $ratio * ($last_profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
             $cash_balance = $last_balance->cash_balance;
@@ -832,8 +832,8 @@ sub _get_notopup_expiration {
             $last_balance_w_topup = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first unless $last_balance_w_topup;
             $notopup_discard_intervals += 1;
         }
-        $notopup_expiration = _add_interval($last_balance_w_topup->start,$interval_unit,$notopup_discard_intervals,
-            _START_MODE_PRESERVE_EOM->{$start_mode} ? $contract->create_timestamp // $contract->modify_timestamp : undef) if $last_balance_w_topup;
+        $notopup_expiration = _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($last_balance_w_topup->start),$interval_unit,$notopup_discard_intervals,
+            _START_MODE_PRESERVE_EOM->{$start_mode} ? NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp) : undef) if $last_balance_w_topup;
     }
     return $notopup_expiration;
 }
@@ -843,7 +843,7 @@ sub get_actual_billing_mapping {
     my ($c,$schema,$contract,$now) = @params{qw/c schema contract now/};
     $schema //= $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
-    my $contract_create = $contract->create_timestamp // $contract->modify_timestamp;
+    my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     my $dtf = $schema->storage->datetime_parser;
     $now = $contract_create if $now < $contract_create; #if there is no mapping starting with or before $now, it would returns the mapping with max(id):
     return $schema->resultset('billing_mappings_actual')->search({ contract_id => $contract->id },{bind => [ ( $dtf->format_datetime($now) ) x 2],})->first;

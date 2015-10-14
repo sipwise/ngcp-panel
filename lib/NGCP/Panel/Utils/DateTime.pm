@@ -26,6 +26,14 @@ sub current_local {
     }
 }
 
+sub set_local_tz {
+    my $dt = shift;
+    if (defined $dt && ref $dt eq 'DateTime' && !is_infinite($dt)) {
+        $dt->set_time_zone('local');
+    }
+    return $dt;
+}
+
 sub infinite_past {
     #mysql 5.5: The supported range is '1000-01-01 00:00:00' ...
     return DateTime->new(year => 1000, month => 1, day => 1, hour => 0, minute => 0, second => 0,
@@ -58,7 +66,7 @@ sub is_infinite_future {
 
 sub is_infinite {
     my $dt = shift;
-    return is_infinite_past($dt) || is_infinite_future($dt);
+    return is_infinite_future($dt) || is_infinite_past($dt);
 }
 
 sub set_fake_time {
