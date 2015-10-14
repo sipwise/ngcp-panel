@@ -1,0 +1,2 @@
+t/api-rest/*    usr/share/ngcp-panel-rest-api-rests/
+t/lib/Test/*    usr/share/perl5/NGCP/Test/
