@@ -215,7 +215,12 @@ sub POST :Allow {
         $guard->commit;
 
         try {
-            unless($c->config->{features}->{debug}) {
+            my $skip_reload;
+            if ($c->config->{features}->{debug} || $c->req->headers->header('X-Sipwise-Skip-Reload')) {
+                $skip_reload = 1;
+                $c->log->debug("skipping xmlrpc reload");
+            }
+            unless($skip_reload) {
                 $self->xmpp_domain_reload($c, $resource->{domain});
                 my (undef, $xmlrpc_res) = $self->sip_domain_reload($c);
                 if (!defined $xmlrpc_res || $xmlrpc_res < 1) {

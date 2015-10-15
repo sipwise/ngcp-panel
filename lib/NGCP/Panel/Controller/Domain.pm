@@ -130,8 +130,13 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
                 $new_dom->create_related('domain_resellers', {
                     reseller_id => $reseller_id
                     });
+                my $skip_reload;
+                if ($c->config->{features}->{debug} || $c->req->headers->header('X-Sipwise-Skip-Reload')) {
+                    $skip_reload = 1;
+                    $c->log->debug("skipping xmlrpc reload");
+                }
                 NGCP::Panel::Utils::Prosody::activate_domain($c, $form->value->{domain})
-                    unless($c->config->{features}->{debug});
+                    unless($skip_reload);
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{domain} = { id => $new_dom->id };
             });
@@ -258,8 +263,13 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
             $prov_domain->voip_dom_preferences->delete;
             $prov_domain->provisioning_voip_subscribers->delete;
             $prov_domain->delete;
+            my $skip_reload;
+            if ($c->config->{features}->{debug} || $c->req->headers->header('X-Sipwise-Skip-Reload')) {
+                $skip_reload = 1;
+                $c->log->debug("skipping xmlrpc reload");
+            }
             NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain)
-                unless($c->config->{features}->{debug});
+                unless($skip_reload);
         });
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
