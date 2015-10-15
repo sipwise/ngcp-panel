@@ -33,7 +33,15 @@ my $test_machine = Test::Collection->new(
     name => 'faxes',
     embedded => [qw/subscribers/]
 );
+@{$test_machine->content_type}{qw/POST PUT/}    = (('multipart/form-data') x 2);
+$test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
+$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS)};
 
+if(!$test_machine->{catalyst_config}->{features}->{faxserver}){
+    diag("Faxes feature is not enabled.");
+    done_testing;
+    exit;
+}
 $test_machine->DATA_ITEM_STORE($fake_data->process('faxes'));
 {
     my $uri = $test_machine->normalize_uri('/api/faxserversettings/'.$test_machine->DATA_ITEM->{json}->{subscriber_id});
@@ -42,10 +50,6 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('faxes'));
     $faxserversettings->{password} = 'aaa111';
     $test_machine->request_put($faxserversettings,$uri);
 }
-@{$test_machine->content_type}{qw/POST PUT/}    = (('multipart/form-data') x 2);
-$test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
-$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS)};
-
 
 $test_machine->form_data_item();
 
