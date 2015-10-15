@@ -69,7 +69,7 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -79,6 +79,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -160,6 +161,7 @@ sub POST :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
+        my ($sip_reload, $xmpp_reload) = $self->check_reload($c, $resource);
 
         my $form = $self->get_form($c);
         last unless $self->validate_form(
@@ -215,8 +217,8 @@ sub POST :Allow {
         $guard->commit;
 
         try {
-            unless($c->config->{features}->{debug}) {
-                $self->xmpp_domain_reload($c, $resource->{domain});
+            $self->xmpp_domain_reload($c, $resource->{domain}) if $xmpp_reload;
+            if ($sip_reload) {
                 my (undef, $xmlrpc_res) = $self->sip_domain_reload($c);
                 if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
                     die "XMLRPC failed";
@@ -240,6 +242,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 # vim: set tabstop=4 expandtab:
