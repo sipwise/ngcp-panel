@@ -146,7 +146,7 @@ sub check_topup {
                 return 0 unless &{$err_code}("Unknown profile package ID $package_id.");
             }
             $entities->{package} = $package if defined $entities;
-            if(defined $reseller_id && $reseller_id != $package->reseller_id) {
+            if ($package->reseller_id && $package->reseller_id != $contract->contact->reseller_id) {
                 return 0 unless &{$err_code}('Profile package belongs to another reseller.');
             }
         }

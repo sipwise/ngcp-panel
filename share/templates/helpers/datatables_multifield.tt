@@ -49,7 +49,12 @@ $(document).ready(function() {
                            "mRender": function ( data, type, full ) {
                                 if(data == null)
                                     return '';
-                                return String(data).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                                [% IF custom_renderers.${f} -%]
+                                    var renderCustom = [% custom_renderers.${f} -%];
+                                [% ELSE -%]
+                                    var renderCustom = function(data, type, full) { return data; };
+                                [% END -%]                                   
+                                return String(renderCustom(data, type, full)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                             }
                         },
                         [% END -%]
