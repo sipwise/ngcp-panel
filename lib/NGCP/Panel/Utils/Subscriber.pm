@@ -587,7 +587,11 @@ sub update_subscriber_numbers {
         my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
         if(defined $cli_pref) {
-            if($cli_pref->first && defined $primary_number_old && ( $cli_pref->first->value eq number_as_string($primary_number_old) ) ){
+            if($cli_pref->first 
+                && defined $primary_number_old 
+                && ( $cli_pref->first->value eq number_as_string($primary_number_old) )
+                && $c->config->{numbermanagement}->{auto_sync_cli}){
+                
                 $cli_pref->delete;
             }
         }
@@ -650,11 +654,14 @@ sub update_subscriber_numbers {
             my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
             if($cli_pref->first) {
-                if(defined $primary_number_old && ( number_as_string($primary_number_old) eq $cli_pref->first->value ) ){
+                if(defined $primary_number_old 
+                    && ( number_as_string($primary_number_old) eq $cli_pref->first->value ) 
+                    && $c->config->{numbermanagement}->{auto_sync_cli} ){
+                    
                     $cli_pref->first->update({ value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} });
                 }
             } else {
-                if( ! defined $primary_number_old ){
+                if( ! defined $primary_number_old && $c->config->{numbermanagement}->{auto_sync_cli} ){
                     $cli_pref->create({
                         subscriber_id => $prov_subs->id,
                         value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} 
