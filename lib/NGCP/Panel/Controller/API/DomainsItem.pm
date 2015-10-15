@@ -38,7 +38,7 @@ __PACKAGE__->config(
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller/],
             Does => [qw(ACL RequireSSL)],
-        }) }         
+        }) },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -48,6 +48,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -61,9 +62,8 @@ sub GET :Allow {
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
-                s/rel=self/rel="item self"/;
-                $_
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r =~
+                s/rel=self/rel="item self"/r;
             } $hal->http_headers),
         ), $hal->as_json);
         $c->response->headers($response->headers);
@@ -99,6 +99,8 @@ sub DELETE :Allow {
         my $domain = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, domain => $domain);
 
+        my ($sip_reload, $xmpp_reload) = $self->check_reload($c, $c->req->params);
+
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
             unless($domain->domain_resellers->reseller_id == $c->user->reseller_id) {
@@ -125,10 +127,8 @@ sub DELETE :Allow {
         $guard->commit;
 
         try {
-            unless($c->config->{features}->{debug}) {
-                $self->xmpp_domain_disable($c, $domain);
-                $self->sip_domain_reload($c);
-            }
+            $self->xmpp_domain_disable($c, $domain) if $xmpp_reload;
+            $self->sip_domain_reload($c) if $sip_reload;
         } catch($e) {
             $c->log->error("failed to deactivate domain: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to deactivate domain.");
@@ -180,6 +180,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 # vim: set tabstop=4 expandtab:
