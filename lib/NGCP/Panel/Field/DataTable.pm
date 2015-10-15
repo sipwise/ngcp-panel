@@ -13,6 +13,7 @@ has 'template' => ( isa => 'Str',
 has 'ajax_src' => ( isa => 'Str', is => 'rw', default => '/emptyajax' );
 has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
 has 'table_titles' => ( isa => 'ArrayRef', is => 'rw' );
+has 'custom_renderers' => ( isa => 'HashRef', is => 'rw' );
 has 'no_ordering' => ( isa => 'Bool', is => 'rw' );
 has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );
 
@@ -37,6 +38,7 @@ sub render_element {
         ajax_src => $self->ajax_src,
         table_fields => $self->table_fields,
         table_titles => $self->table_titles,
+        custom_renderers => $self->custom_renderers,
         no_ordering => $self->no_ordering,
         errors => $self->errors,
         language_file => $self->language_file,

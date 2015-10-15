@@ -159,13 +159,15 @@ sub process_edit :Private {
     );
     if($posted && $form->validated) {
         try {
-            if($c->user->is_superuser) {
-                $form->values->{reseller_id} = $form->values->{reseller}{id};
-            } else {
-                $form->values->{reseller_id} = $c->user->reseller_id;
+            if (exists $form->values->{reseller}) {
+                if($c->user->is_superuser) {
+                    $form->values->{reseller_id} = $form->values->{reseller}{id};
+                } else {
+                    $form->values->{reseller_id} = $c->user->reseller_id;
+                }
+                delete $form->values->{reseller};
             }
             $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
-            delete $form->values->{reseller};
             my $old_prepaid = $c->stash->{profile_result}->prepaid;
 
             my $schema = $c->model('DB');

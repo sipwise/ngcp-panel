@@ -49,6 +49,7 @@ has_field 'initial_balance' => (
         title => ['The initial balance (in cents) that will be set for the very first balance interval.']
     },
     default => 0,
+    required => 1,
 );
 
 has_field 'initial_profiles' => (
