@@ -1,3 +1,15 @@
+ngcp-panel (1.10.1.2+0~mr4.1.1.2) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [a0f776f] MT#12347 Disable faxes tests if fax feature is not active
+
+  [ Rene Krenn ]
+  * [3cb25c2] MT#15821 datatable custom mRender js functions
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 16 Oct 2015 11:06:41 +0200
+
 ngcp-panel (1.10.1.1+0~mr4.1.1.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
