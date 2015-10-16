@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba57610f_7cc78113",
+        "filename": "lib/NGCP/Panel/Field/ProfileNetwork.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-10-16T07:05:47Z",
+      "side": 1,
+      "message": "why doing something like this on the client side? reduce server work?",
+      "revId": "ec4c42224ac63bba66806611c7663ec47fd4c705",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
