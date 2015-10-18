@@ -7,11 +7,13 @@ use Test::More;
 use Moose;
 use JSON;
 use LWP::UserAgent;
+use Config::General;
 use HTTP::Request::Common;
 use Net::Domain qw(hostfqdn);
 use URI;
 use URI::Escape;
 use Clone qw/clone/;
+use File::Basename;
 use Test::HTTPRequestAsCurl;
 use Data::Dumper;
 
@@ -30,6 +32,8 @@ has 'DEBUG' => (
 has 'catalyst_config' => (
     is => 'rw',
     isa => 'HashRef',
+    lazy => 1,
+    builder => 'init_catalyst_config',
 );
 has 'panel_config' => (
     is => 'rw',
@@ -165,7 +169,7 @@ sub get_cloned{
     }
     return $state;
 }
-sub get_catalyst_config{
+sub init_catalyst_config{
     my $self = shift;
     my $catalyst_config;
     my $panel_config;
@@ -176,8 +180,7 @@ sub get_catalyst_config{
                 last;
             }
         }
-        $panel_config //= '../ngcp_panel.conf';
-        $catalyst_config = Config::General->new($panel_config);   
+        $panel_config //= dirname($0).'/../../ngcp_panel.conf';
     } else {
         #taken 1:1 from /lib/NGCP/Panel.pm
         for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
@@ -186,9 +189,9 @@ sub get_catalyst_config{
                 last;
             }
         }
-        $panel_config //= 'ngcp_panel.conf';
-        $catalyst_config = Config::General->new($panel_config);   
+        $panel_config //= dirname($0).'/ngcp_panel.conf';
     }
+    $catalyst_config = Config::General->new($panel_config);   
     my %config = $catalyst_config->getall();
     $self->{catalyst_config} = \%config;
     $self->{panel_config} = $panel_config;
@@ -376,7 +379,7 @@ sub get_request_put{
     #This is for multipart/form-data cases
     $content = $self->encode_content($content, $self->content_type->{PUT});
     my $req = POST $uri,
-        Content_Type => $self->content_type->{POST},
+        Content_Type => $self->content_type->{PUT},
         $content ? ( Content => $content ) : ();
     $req->method('PUT');
     $req->header('Prefer' => 'return=representation');
