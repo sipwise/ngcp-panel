@@ -2775,7 +2775,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                     c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
                 );
                 if($posted && $form->validated) {
-                    $vm_user->update({ email => $form->field('email')->value });
+                    $vm_user->update({ email => $form->values->{email} // '' });
                 }
                 last SWITCH;
             };
