@@ -48,7 +48,7 @@ echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024
 
 RC=0
 if [ -n "${3:-}" ] && [ "${3:-}" = "junit" ] ; then
-  CATALYST_SERVER=https://${SERVER}:1443/ prove --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t | \
+  CATALYST_SERVER=https://${SERVER}:1443/ prove --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t 2>&1 | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml" || RC=$?
 else
   CATALYST_SERVER="https://${SERVER}:1443" prove -v --color -l -It/lib t/selenium/*.t | \
