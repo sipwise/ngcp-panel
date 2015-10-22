@@ -1,0 +1,4 @@
+#!/bin/bash
+# This script is used for running the tests with proper arguments
+# from within Jenkins
+su - selenium -c "cd /code && ./t/selenium/testrunner $* /results/ junit"

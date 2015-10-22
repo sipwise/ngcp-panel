@@ -58,6 +58,8 @@ RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4" >/home/selenium/.bash_his
 RUN echo "su - selenium" >/root/.bash_history
 EXPOSE 5999
 
+COPY jenkins_docker_run /home/selenium/
+
 WORKDIR /home/selenium
 
 ################################################################################
