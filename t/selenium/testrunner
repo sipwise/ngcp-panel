@@ -11,18 +11,22 @@ set -u
 PASSWORD="selenium"
 
 if [ -z "${1:-}" ] ; then
-  echo "Usage: $0 <testsystem>" >&2
+  echo "Usage: $0 <testsystem> [<output_directory>] [junit]" >&2
   echo
-  echo "Usage example: $0 192.168.88.162"
+  echo "Usage examples:
+
+  $0 192.168.88.162
+  $0 192.168.88.162 /results/ junit"
   exit 1
 fi
 
 SERVER="${1}"
+OUTPUT_DIRECTORY="${2:-/code/}"
 
 # vnc
 echo "Setting VNC password"
 printf '%s\n%s\n\n' "${PASSWORD}" "${PASSWORD}" | vncpasswd >/dev/null
-PASSWORD_ENCODED=$(hexdump -v -e '"\\""x" 1/1 "%02X"' <$HOME/.vnc/passwd)
+PASSWORD_ENCODED=$(hexdump -v -e '"\\""x" 1/1 "%02X"' < "${HOME}/.vnc/passwd")
 xvnc_process=$(pgrep -f 'Xvnc4 :99' || true)
 if [ -n "${xvnc_process:-}" ] ; then
   echo "Warning: existing VNC server found, not restarting Xvnc4 process (PID: $xvnc_process)."
@@ -43,10 +47,16 @@ echo "Watch at test runs by connecting via VNC (password: '${PASSWORD}'):"
 echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024x16 passwd=/tmp/vncpasswd localhost:5999"
 
 RC=0
-CATALYST_SERVER="https://${SERVER}:1443" prove -v --color -l -It/lib t/selenium/*.t | tee -a /code/selenium.pretty || RC=$?
-#CATALYST_SERVER=https://${SERVER}:1443/ prove --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t | tee -a /code/selenium.xml || RC=$?
+if [ -n "${3:-}" ] && [ "${3:-}" = "junit" ] ; then
+  CATALYST_SERVER=https://${SERVER}:1443/ prove --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t | \
+    tee -a "${OUTPUT_DIRECTORY}/selenium.xml" || RC=$?
+else
+  CATALYST_SERVER="https://${SERVER}:1443" prove -v --color -l -It/lib t/selenium/*.t | \
+    tee -a "${OUTPUT_DIRECTORY}/selenium.pretty" || RC=$?
+fi
+
 echo "Finished test execution, test execution returned with exit code ${RC}."
-for file in /code/selenium.pretty /code/selenium.xml ; do
+for file in "${OUTPUT_DIRECTORY}/selenium.pretty" "${OUTPUT_DIRECTORY}/selenium.xml" ; do
   if [ -f "$file" ] ; then
     echo "Test results available at ${file}"
   fi
