@@ -147,6 +147,11 @@ sub OPTIONS :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
     {
+        if(!$c->config->{features}->{faxserver}){
+            $c->log->error("faxserver feature is not active.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Faxserver feature is not active.");
+            return;
+        }
         last unless $self->forbid_link_header($c);
         last unless $self->valid_media_type($c, 'multipart/form-data');
         my $json_utf8 = encode_utf8($c->req->param('json'));
