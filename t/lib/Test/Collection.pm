@@ -920,6 +920,17 @@ sub hash2params{
     my($self,$hash) = @_;
     return join '&', map {$_.'='.uri_escape($hash->{$_})} keys %{ $hash };
 }
+sub resource_fill_file{
+    #$_[0]->{faxfile}->[0]
+    my $cmd = "echo 'aaa' > $_[1]";
+    print "cmd=$cmd;\n";
+    `$cmd`;
+}
+sub resource_clear_file{
+    my $cmd = "echo -n '' > $_[1]";
+    print "cmd=$cmd;\n";
+    `$cmd`;
+}
 sub http_code_msg{
     my($self,$code,$message,$res,$content) = @_;
     my $message_res;
