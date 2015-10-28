@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_077396b2",
+        "filename": "lib/NGCP/Panel/Controller/API/Interceptions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-10-28T10:11:25Z",
+      "side": 1,
+      "message": "See http://lists.scsys.co.uk/pipermail/dbix-class/2013-May/011318.html, looks like our DBIx::Class is too old for the simplified syntax.",
+      "revId": "060df7c19dd2ec06621894f3fbebc7abed27a372",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
