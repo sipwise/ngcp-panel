@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "9a5c5d37_c73b3e37",
+        "filename": "lib/NGCP/Panel/Controller/API/Interceptions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-10-28T12:22:31Z",
+      "side": 1,
+      "message": "search_literal() is just a wrapper around search() where I like it more for the visual simplicity (internally it expands it into search() and the whole method is 6 lines long).\nI also agree that in complex constructions it is better to use search() to make sure about the output.",
+      "parentUuid": "9a5c5d37_8772e647",
+      "revId": "060df7c19dd2ec06621894f3fbebc7abed27a372",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a5c5d37_27ca1aa2",
         "filename": "lib/NGCP/Panel/Role/API/Interceptions.pm",
         "patchSetId": 1
