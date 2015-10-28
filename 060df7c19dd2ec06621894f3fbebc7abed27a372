@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a5c5d37_e7c3e288",
+        "filename": "lib/NGCP/Panel/Controller/API/Interceptions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-10-28T11:05:51Z",
+      "side": 1,
+      "message": "-- imo better represent literal sql additions as:\nmy $num_rs \u003d $c-\u003emodel(\u0027DB\u0027)-\u003eresultset(\u0027voip_numbers\u0027)-\u003esearch_literal(\n      \u0027concat(cc,ac,sn) \u003d ?\u0027, ($resource-\u003e{number})\n);\n-- works in our trunk",
+      "parentUuid": "9a5c5d37_077396b2",
+      "revId": "060df7c19dd2ec06621894f3fbebc7abed27a372",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a5c5d37_27ca1aa2",
         "filename": "lib/NGCP/Panel/Role/API/Interceptions.pm",
         "patchSetId": 1
