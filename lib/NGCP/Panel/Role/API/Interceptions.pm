@@ -129,7 +129,7 @@ sub update_item {
     );
 
     my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
-        \[ 'concat(cc,ac,sn) = ?', $resource->{number}]
+        \[ 'concat(cc,ac,sn) = ?', [ {} => $resource->{number} ]]
     );
     unless($num_rs->first) {
         $c->log->error("invalid number '$$resource{number}'");
