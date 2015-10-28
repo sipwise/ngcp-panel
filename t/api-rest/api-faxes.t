@@ -33,18 +33,34 @@ my $test_machine = Test::Collection->new(
     name => 'faxes',
     embedded => [qw/subscribers/]
 );
+
+
+
+{
+    my ($res, $content, $req) = $test_machine->check_item_post();
+    if(422 == $res->code){
+        $test_machine->http_code_msg(422, "check faxserver feature state: disabled", $res, $content);
+        my $inactive_feature_msg = "Faxserver feature is not active";
+        if( $content->{message} =~ /$inactive_feature_msg/ ){
+        #some weird construction of the tests, but in case of inactive faxes feature and inactive faxes for the  userboth response code will be 422.
+        #if feature is inactive on the application level - there is nothing to test more
+        #so added this pseudo test just to place it here. Really don't like it.
+            ok($content->{message} =~ /$inactive_feature_msg/, "check error message in body: $inactive_feature_msg");
+            exit();
+        }
+    }
+}
+
+
+
 @{$test_machine->content_type}{qw/POST PUT/}    = (('multipart/form-data') x 2);
 $test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
 $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS)};
 
-if(!$test_machine->catalyst_config->{features}->{faxserver}){
-    $test_machine->catalyst_config->{features}->{faxserver} //= 0;
-    is($test_machine->catalyst_config->{features}->{faxserver}, 0, "Faxes feature is not enabled.");
-    done_testing;
-    exit;
-}
-
 $test_machine->DATA_ITEM_STORE($fake_data->process('faxes'));
+$test_machine->form_data_item();
+
+$test_machine->resource_fill_file($test_machine->DATA_ITEM->{faxfile}->[0]);
 
 {
     my $test_machine_aux = Test::Collection->new(name => 'faxserversettings');
@@ -55,12 +71,12 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('faxes'));
     $test_machine_aux->request_put($faxserversettings,$uri);
 }
 
-$test_machine->form_data_item();
 
-$test_machine->check_create_correct( 1, sub{ my $cmd = "echo 'aaa' > $_[0]->{faxfile}->[0]";`$cmd`; } );
+$test_machine->check_create_correct( 1 );
 #$test_machine->check_bundle();
 #$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'faxfile' =>  $test_machine->DATA_ITEM_STORE->{faxfile} }; } );
 
 done_testing;
+$test_machine->resource_clear_file($test_machine->DATA_ITEM->{faxfile}->[0]);
 
 # vim: set tabstop=4 expandtab:
