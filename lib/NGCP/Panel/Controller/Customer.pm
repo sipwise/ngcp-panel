@@ -1384,7 +1384,11 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 my $old_extension = $c->stash->{pbx_group}->provisioning_voip_subscriber->pbx_extension;
-                $c->stash->{pbx_group}->provisioning_voip_subscriber->update($form->values);
+                $c->stash->{pbx_group}->provisioning_voip_subscriber->update({
+                        pbx_extension => $form->values->{pbx_extension},
+                        pbx_hunt_policy => $form->values->{pbx_hunt_policy},
+                        pbx_hunt_timeout => $form->values->{pbx_hunt_timeout},
+                    });
                 NGCP::Panel::Utils::Subscriber::update_preferences(
                     c => $c, 
                     prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
@@ -1395,12 +1399,13 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                 );
                 my $e164;
                 my $sub = $c->stash->{pbx_group};
+                my $base_number = $c->stash->{pilot}->primary_number;
                 if(defined $form->values->{pbx_extension} &&
-                        $form->values->{pbx_extension} ne $old_extension) {
-                    my $base_number = $c->stash->{pilot}->primary_number;
+                        $form->values->{pbx_extension} ne $old_extension &&
+                        $base_number) {
                     $e164 = {
-                        cc => $sub->primary_number->cc,
-                        ac => $sub->primary_number->ac,
+                        cc => $base_number->cc,
+                        ac => $base_number->ac,
                         sn => $base_number->sn . $form->values->{pbx_extension},
                     };
                 }
