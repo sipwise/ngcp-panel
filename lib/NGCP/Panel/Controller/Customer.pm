@@ -1384,7 +1384,11 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 my $old_extension = $c->stash->{pbx_group}->provisioning_voip_subscriber->pbx_extension;
-                $c->stash->{pbx_group}->provisioning_voip_subscriber->update($form->values);
+                $c->stash->{pbx_group}->provisioning_voip_subscriber->update(
+                    pbx_extension => $form->values->{pbx_extension},
+                    pbx_hunt_policy => $form->values->{pbx_hunt_policy},
+                    pbx_hunt_timeout => $form->values->{pbx_hunt_timeout},
+                    );
                 NGCP::Panel::Utils::Subscriber::update_preferences(
                     c => $c, 
                     prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
