@@ -1,3 +1,24 @@
+ngcp-panel (1.9.1.16+0~mr4.0.1.16) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [5201d61] MT#15583 allow subscriberadmin to access customer details
+  * [b33be66] MT#15757 fix deleting voicebox email setting
+
+  [ Irina Peshinskaya ]
+  * [1e7c1f9] MT#15489 Work with utf8 in json input
+  * [959a0f9] MT#14477 Add new fax collections into common tests
+  * [aa022ae] MT#14477 Fix faxes collection name in tests
+  * [f1c1be5] MT#14461 Adjust subscriber for faxes after subscriber creation
+  * [fc0be35] MT#12347 Remove unnecessary debug from FakeData
+  * [c9f37b9] MT#12347 Test environment requires perl package String::ShellQuote.
+  * [cde5f96] MT#12347 Fix too early distruction of the local test_machine
+  * [0f5a20a] MT#12347 Replace test script to the old place in 4.0
+  * [6820059] MT#12347 Fix catalyst config getting for tests
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 29 Oct 2015 15:45:06 +0100
+
 ngcp-panel (1.9.1.15+0~mr4.0.1.15) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
