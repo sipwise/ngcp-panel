@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_81952ee6",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 2766,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-11-02T05:18:32Z",
+      "side": 1,
+      "message": "Seems like here is the same way - is it correct in this place?",
+      "revId": "ebc569a41b45ee5eb3f73822f97807efdf4498c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
