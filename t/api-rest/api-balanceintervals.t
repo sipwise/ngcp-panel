@@ -147,7 +147,7 @@ my $gantt_events;
 
 if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
     
-    goto SKIP;
+    #goto SKIP;
     #goto THREADED;
     if ('Europe/Vienna' eq NGCP::Panel::Utils::DateTime::current_local()->time_zone->name) {
         my $package = _create_profile_package('create','hour',1);
@@ -237,7 +237,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time();
     }
     
-    SKIP:
+    #SKIP:
     {
         my $profile_initial = _create_billing_profile('UNDERRUN1_INITIAL',prepaid => 0);
         my $profile_topup = _create_billing_profile('UNDERRUN1_TOPUP',prepaid => 0);

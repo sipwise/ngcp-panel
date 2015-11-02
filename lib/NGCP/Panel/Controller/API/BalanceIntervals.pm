@@ -125,7 +125,7 @@ sub GET :Allow {
                 contract => $contract,
                 now => $now);
             #sleep(5);
-            my $hal = $self->hal_from_balance($c, $balance, $form, 0); #we prefer item collection links pointing to the contract's collection instead of this root collection
+            my $hal = $self->hal_from_balance($c, $balance, $form, $now, 0); #we prefer item collection links pointing to the contract's collection instead of this root collection
             $hal->_forcearray(1);
             push @embedded, $hal;
             my $link = Data::HAL::Link->new(relation => 'ngcp:'.$self->resource_name, href     => sprintf('/%s%d/%d', $c->request->path, $contract->id, $balance->id));
