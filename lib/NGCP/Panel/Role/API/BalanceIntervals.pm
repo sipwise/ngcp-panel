@@ -61,14 +61,25 @@ sub get_form {
 }
 
 sub hal_from_balance {
-    my ($self, $c, $item, $form, $use_root_collection_link) = @_;
+    my ($self, $c, $item, $form, $now, $use_root_collection_link) = @_;
     
     my $contract = $item->contract;
     my $is_customer = (defined $contract->contact->reseller_id ? 1 : 0);
     my $bm_start = NGCP::Panel::Utils::ProfilePackages::get_actual_billing_mapping(c => $c, contract => $contract, now => $item->start);
     my $profile_at_start = $bm_start->billing_mappings->first->billing_profile;
+    my $is_actual = NGCP::Panel::Utils::DateTime::is_infinite_future($item->end) || NGCP::Panel::Utils::DateTime::set_local_tz($item->end) >= $now;
+    my ($is_timely,$timely_start,$timely_end) = NGCP::Panel::Utils::ProfilePackages::get_timely_range(
+        package => $contract->profile_package,
+        contract => $contract,
+        balance => $item,
+        now => $now);
+    my $notopup_expiration = undef;
+    $notopup_expiration = NGCP::Panel::Utils::ProfilePackages::get_notopup_expiration(
+        package => $contract->profile_package,
+        contract => $contract,
+        balance => $item) if $is_actual;          
     #my $invoice = $item->invoice;
-
+    
     my %resource = $item->get_inflated_columns;
     $resource{cash_balance} /= 100.0;
     $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
@@ -82,6 +93,13 @@ sub hal_from_balance {
     $resource{stop} = $datetime_fmt->format_datetime($resource{stop}) if defined $resource{stop};
     
     $resource{billing_profile_id} = $profile_at_start->id;
+
+    $resource{timely_topup_start} = (defined $timely_start ? $datetime_fmt->format_datetime($timely_start) : undef);
+    $resource{timely_topup_stop} = (defined $timely_end ? $datetime_fmt->format_datetime($timely_end) : undef);
+    
+    $resource{notopup_discard_expiry} = (defined $notopup_expiration ? $datetime_fmt->format_datetime($notopup_expiration) : undef);
+    
+    $resource{is_actual} = $is_actual;
     
     my $hal = Data::HAL->new(
         links => [
@@ -126,22 +144,24 @@ sub contract_by_id {
 }
 
 sub balances_rs {
-    my ($self, $c,$contract) = @_;
+    my ($self, $c, $contract, $now) = @_;
     
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
     NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
         contract => $contract,
-        now => NGCP::Panel::Utils::DateTime::current_local);
+        now => $now);
     
     return $self->apply_query_params($c,$self->can('query_params') ? $self->query_params : {},$contract->contract_balances);
     
 }
 
 sub balance_by_id {
-    my ($self, $c, $contract, $id) = @_;
+    my ($self, $c, $contract, $id, $now) = @_;
 
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
     my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
         contract => $contract,
-        now => NGCP::Panel::Utils::DateTime::current_local);
+        now => $now);
     
     if (defined $id) {
         $balance = $contract->contract_balances->find($id);
@@ -151,4 +171,3 @@ sub balance_by_id {
 }
 
 1;
-# vim: set tabstop=4 expandtab:

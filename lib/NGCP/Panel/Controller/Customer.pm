@@ -398,13 +398,26 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         { name => "amount_vat", search => 1, title => $c->loc("VAT Amount") },
         { name => "amount_total", search => 1, title => $c->loc("Total Amount") },
     ]);
-
+    
+    my ($is_timely,$timely_start,$timely_end) = NGCP::Panel::Utils::ProfilePackages::get_timely_range(
+        package => $contract_first->profile_package,
+        contract => $contract_first,
+        balance => $balance,
+        now => $now);
+    my $notopup_expiration = NGCP::Panel::Utils::ProfilePackages::get_notopup_expiration(
+        package => $contract_first->profile_package,
+        contract => $contract_first,
+        balance => $balance);       
 
     $c->stash(pbx_devices => $field_devs);
 
     $c->stash(product => $product);
     $c->stash(balance => $balance);
-    $c->stash(fraud => $contract_rs->first->contract_fraud_preference);
+    $c->stash(package => $contract_first->profile_package);
+    $c->stash(timely_topup_start => $timely_start);
+    $c->stash(timely_topup_end => $timely_end);
+    $c->stash(notopup_expiration => $notopup_expiration);
+    $c->stash(fraud => $contract_first->contract_fraud_preference);
     $c->stash(template => 'customer/details.tt'); 
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
