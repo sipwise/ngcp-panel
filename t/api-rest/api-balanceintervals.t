@@ -147,7 +147,7 @@ my $gantt_events;
 
 if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
     
-    #goto SKIP;
+    goto SKIP;
     #goto THREADED;
     if ('Europe/Vienna' eq NGCP::Panel::Utils::DateTime::current_local()->time_zone->name) {
         my $package = _create_profile_package('create','hour',1);
@@ -237,10 +237,11 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time();
     }
     
+    SKIP:
     {
-        my $profile_initial = _create_billing_profile('UNDERRUN1_INITIAL');
-        my $profile_topup = _create_billing_profile('UNDERRUN1_TOPUP');
-        my $profile_underrun = _create_billing_profile('UNDERRUN1_UNDERRUN');
+        my $profile_initial = _create_billing_profile('UNDERRUN1_INITIAL',prepaid => 0);
+        my $profile_topup = _create_billing_profile('UNDERRUN1_TOPUP',prepaid => 0);
+        my $profile_underrun = _create_billing_profile('UNDERRUN1_UNDERRUN',prepaid => 1);
 
         my $package = _create_profile_package('1st','month',1, initial_balance => 100,
                 carry_over_mode => 'discard', underrun_lock_threshold => 50, underrun_lock_level => 4, underrun_profile_threshold => 50,
@@ -1960,7 +1961,7 @@ sub _perform_topup_cash {
 }
 
 sub _create_billing_profile {
-    my ($name) = @_;
+    my ($name,@further_opts) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
@@ -1968,6 +1969,7 @@ sub _create_billing_profile {
         name => $name." $t",
         handle  => $name."_$t",
         reseller_id => $default_reseller_id,
+        @further_opts,
     };
     $req->content(JSON::to_json($req_data));
     $res = $ua->request($req);

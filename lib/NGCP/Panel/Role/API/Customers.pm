@@ -300,7 +300,7 @@ sub update_customer {
             );
         }
         
-        NGCP::Panel::Utils::Subscriber::switch_prepaid(c => $c,
+        NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
             #old_prepaid => $old_resource->{prepaid},
             #new_prepaid => $billing_profile->prepaid,
             prepaid => $billing_profile->prepaid,

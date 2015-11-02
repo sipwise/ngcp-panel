@@ -950,7 +950,7 @@ sub add_profile_mappings {
         $bm_actual = get_actual_billing_mapping(c => $c,
             contract => $contract,
             now => $now);
-        NGCP::Panel::Utils::Subscriber::switch_prepaid(c => $c,
+        NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
             #old_prepaid => $old_prepaid,
             #new_prepaid => $bm_actual->billing_mappings->first->billing_profile->prepaid,
             prepaid => $bm_actual->billing_mappings->first->billing_profile->prepaid,

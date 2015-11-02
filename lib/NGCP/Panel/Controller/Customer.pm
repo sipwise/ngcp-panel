@@ -542,7 +542,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     }
                 }
 
-                NGCP::Panel::Utils::Subscriber::switch_prepaid(c => $c,
+                NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
                     #old_prepaid => $old_prepaid,
                     #new_prepaid => $billing_profile->prepaid,
                     prepaid => $billing_profile->prepaid,
