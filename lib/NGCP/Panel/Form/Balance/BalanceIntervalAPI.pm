@@ -8,6 +8,15 @@ has_field 'id' => (
     type => 'Hidden',
 );
 
+has_field 'is_actual' => (
+    type => 'Boolean',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Is this balance interval the actual one?']
+    },
+);
+
 has_field 'start' => (
     type => '+NGCP::Panel::Field::DateTime',
     required => 0,
@@ -23,6 +32,32 @@ has_field 'stop' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The datetime (YYYY-MM-DD HH:mm:ss) pointing the last second belonging to the balance interval.']
+    },
+);
+
+has_field 'timely_topup_start' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) pointing the begin of the time range when top-ups will be considered \'timely\'.']
+    },
+);
+has_field 'timely_topup_stop' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) pointing the end of the time range until top-ups will be considered \'timely\'.']
+    },
+);
+
+has_field 'notopup_discard_expiry' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) pointing the deadline, when the cash balance will be discarded if no top-up was performed.']
     },
 );
 

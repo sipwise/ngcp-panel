@@ -138,7 +138,7 @@ sub resize_actual_contract_balance {
                 @$resized_balance_values,                  
             });
             $actual_balance->discard_changes();
-            $c->log->debug('contract ' . $contract->id . ' contract_balance row resized: ' . Dumper({ $actual_balance->get_inflated_columns }));
+            $c->log->debug('contract ' . $contract->id . ' contract_balance row resized: ' . _dump_contract_balance($actual_balance));
             if ($create_next_balance) {
                 $actual_balance = catchup_contract_balances(c => $c,
                         contract => $contract,
@@ -304,7 +304,7 @@ PREPARE_BALANCE_CATCHUP:
         });
         $last_balance->discard_changes();
         
-        $c->log->debug('contract ' . $contract->id . ' contract_balance row created: ' . Dumper({ $last_balance->get_inflated_columns }));
+        $c->log->debug('contract ' . $contract->id . ' contract_balance row created: ' . _dump_contract_balance($last_balance));
     }
 
 	# in case of "topup" or "topup_interval" start modes, the current interval end can be
@@ -422,23 +422,12 @@ sub topup_contract_balance {
         $contract->discard_changes();
     }
 
-    my ($is_timely,$timely_duration_unit,$timely_duration_value) = (0,undef,undef);
-    if ($old_package
-        && ($timely_duration_unit = $old_package->timely_duration_unit)
-        && ($timely_duration_value = $old_package->timely_duration_value)) {
-        my $timely_end;
-        #if (_TOPUP_START_MODE ne $old_package->balance_interval_start_mode) {
-        if (!NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end)) {
-            $timely_end = NGCP::Panel::Utils::DateTime::set_local_tz($balance->end);
-        } else {
-            $timely_end = _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),$old_package->balance_interval_unit,$old_package->balance_interval_value,
-                        _START_MODE_PRESERVE_EOM->{$old_package->balance_interval_start_mode} ? NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp) : undef)->subtract(seconds => 1);
-        }
-        my $timely_start = _add_interval($timely_end,$timely_duration_unit,-1 * $timely_duration_value)->add(seconds => 1);
-        $timely_start = NGCP::Panel::Utils::DateTime::set_local_tz($balance->start) if $timely_start < NGCP::Panel::Utils::DateTime::set_local_tz($balance->start);
-        
-        $is_timely = ($now >= $timely_start && $now <= $timely_end ? 1 : 0);
-    }
+    my ($is_timely,$timely_start,$timely_end) = get_timely_range(package => $old_package,
+        balance => $balance,
+        contract => $contract,
+        now => $now);
+    
+    $c->log->debug('timely topup (' . NGCP::Panel::Utils::DateTime::to_string($timely_start) . ' - ' . NGCP::Panel::Utils::DateTime::to_string($timely_end) . ')') if $is_timely;
     
     $balance->update({ topup_count => $balance->topup_count + 1,
                        timely_topup_count => $balance->timely_topup_count + $is_timely});    
@@ -838,6 +827,56 @@ sub _get_notopup_expiration {
     return $notopup_expiration;
 }
 
+sub get_notopup_expiration {
+    my %params = @_;
+    my ($package,$balance,$contract) = @params{qw/package balance contract/};
+    $contract //= $balance->contract;
+    my $notopup_expiration = undef;
+    if ($package) {
+        my $start_mode = $package->balance_interval_start_mode;
+        my $interval_unit = $package->balance_interval_unit;
+        my $notopup_discard_intervals = $package->notopup_discard_intervals;        
+        if (NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end)) {
+            $notopup_expiration = _get_notopup_expiration(contract => $contract,
+                notopup_discard_intervals => $notopup_discard_intervals,
+                interval_unit => $interval_unit,
+                last_balance => $balance,
+                start_mode => $start_mode);
+        } else {
+            $notopup_expiration = _get_notopup_expiration(contract => $contract,
+                notopup_discard_intervals => $notopup_discard_intervals,
+                interval_unit => $interval_unit,
+                start_mode => $start_mode);
+        }
+    }
+    return $notopup_expiration;
+}
+
+sub get_timely_range {
+    my %params = @_;
+    my ($package,$balance,$contract,$now) = @params{qw/package balance contract now/};
+    $contract //= $balance->contract;
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
+    my ($is_timely,$timely_start,$timely_end,$timely_duration_unit,$timely_duration_value) = (0,undef,undef,undef,undef);
+    if ($package
+        && ($timely_duration_unit = $package->timely_duration_unit)
+        && ($timely_duration_value = $package->timely_duration_value)) {
+
+        #if (_TOPUP_START_MODE ne $old_package->balance_interval_start_mode) {
+        if (!NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end)) {
+            $timely_end = NGCP::Panel::Utils::DateTime::set_local_tz($balance->end);
+        } else {
+            $timely_end = _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),$package->balance_interval_unit,$package->balance_interval_value,
+                        _START_MODE_PRESERVE_EOM->{$package->balance_interval_start_mode} ? NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp) : undef)->subtract(seconds => 1);
+        }
+        $timely_start = _add_interval($timely_end,$timely_duration_unit,-1 * $timely_duration_value)->add(seconds => 1);
+        $timely_start = NGCP::Panel::Utils::DateTime::set_local_tz($balance->start) if $timely_start < NGCP::Panel::Utils::DateTime::set_local_tz($balance->start);
+        
+        $is_timely = ($now >= $timely_start && $now <= $timely_end ? 1 : 0);
+    }
+    return ($is_timely,$timely_start,$timely_end);
+}
+
 sub get_actual_billing_mapping {
     my %params = @_;
     my ($c,$schema,$contract,$now) = @params{qw/c schema contract now/};
@@ -1015,6 +1054,20 @@ sub lock_contracts {
     }
     $c->log->debug('no contract IDs to be locked!') if $c;
     return [];
+}
+
+sub _dump_contract_balance {
+    my $balance = shift;
+    my $row = { $balance->get_inflated_columns };
+    my %dump = ();
+    foreach my $col (keys %$row) {
+        if ('DateTime' eq ref $row->{$col}) {
+            $dump{$col} = NGCP::Panel::Utils::DateTime::to_string($row->{$col});
+        } else {
+            $dump{$col} = $row->{$col};
+        }
+    }
+    return Dumper(\%dump);
 }
 
 sub check_balance_interval {
@@ -1302,8 +1355,8 @@ sub get_balanceinterval_datatable_cols {
         { name => "debit", search => 0, title => $c->loc('Debit'), literal_sql => "FORMAT(cash_balance_interval / 100,2)" },
         { name => "topup_count", search => 0, title => $c->loc('#Top-ups') },
         { name => "timely_topup_count", search => 0, title => $c->loc('#Timely Top-ups') }, 
-        { name => "underrun_profiles", search => 0, title => $c->loc('Underrun (Profiles)') }, 
-        { name => "underrun_lock", search => 0, title => $c->loc('Underrun (Lock)') }, 
+        { name => "underrun_profiles", search => 0, title => $c->loc('Underrun detected (Profiles)') }, 
+        { name => "underrun_lock", search => 0, title => $c->loc('Underrun detected (Lock)') }, 
     );
 }
 

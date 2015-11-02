@@ -104,15 +104,16 @@ sub GET :Allow {
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         last unless $self->valid_id($c, $id);
         my $contract = $self->contract_by_id($c, $id);
         last unless $self->resource_exists($c, contract => $contract);
-        my $balances = $self->balances_rs($c,$contract);
+        my $balances = $self->balances_rs($c,$contract,$now);
         (my $total_count, $balances) = $self->paginate_order_collection($c, $balances);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $balance ($balances->all) {
-            my $hal = $self->hal_from_balance($c, $balance, $form);
+            my $hal = $self->hal_from_balance($c, $balance, $form, $now);
             $hal->_forcearray(1);
             push @embedded, $hal;
             my $link = Data::HAL::Link->new(
@@ -169,20 +170,6 @@ sub OPTIONS :Allow {
     return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 sub item_base {
     my ($self,$c,$id) = @_;
     $c->stash->{contract_id} = $id;
@@ -194,32 +181,25 @@ sub item_get {
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $contract_id = $c->stash->{contract_id};
         last unless $self->valid_id($c, $contract_id);
         my $contract = $self->contract_by_id($c, $contract_id);
         last unless $self->resource_exists($c, contract => $contract);        
         my $balance = undef;
-        #if (API_JOURNALITEMTOP_RESOURCE_NAME and $id eq API_JOURNALITEMTOP_RESOURCE_NAME) {
-        #    $balance = $self->balance_by_id($c,$contract_id);
-        #} els
+
         if ($self->valid_id($c, $id)) {
-            $balance = $self->balance_by_id($c,$contract,$id);
+            $balance = $self->balance_by_id($c,$contract,$id,$now);
         } else {
             last;
         }
         
         last unless $self->resource_exists($c, balanceinterval => $balance);
 
-        my $hal = $self->hal_from_balance($c,$balance);
+        my $form = $self->get_form($c);
+        my $hal = $self->hal_from_balance($c,$balance,$form,$now);
         $guard->commit;
 
-        #my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-        #    (map { # XXX Data::HAL must be able to generate links with multiple relations
-        #        s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
-        #        s/rel=self/rel="item self"/;
-        #        $_
-        #    } $hal->http_headers),
-        #), $hal->as_json);
         $c->response->headers(HTTP::Headers->new($hal->http_headers));
         $c->response->body($hal->as_json);
         return;
@@ -249,8 +229,5 @@ sub item_head {
 sub end : Private {
     my ($self, $c) = @_;
 
-    #$self->reset_fake_time($c);
     $self->log_response($c);
 }
-
-# vim: set tabstop=4 expandtab:
