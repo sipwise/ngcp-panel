@@ -1604,6 +1604,26 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
         $pass = $sub->password;
     }
 
+    my $jitsi_prov = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c,
+        prov_subscriber => $sub,
+        attribute => 'softphone_autoprov',
+    );
+    if($jitsi_prov->first) {
+        $jitsi_prov = $jitsi_prov->first->value;
+    } else {
+        $jitsi_prov = 0;
+    }
+    unless($jitsi_prov) {
+        if($c->config->{features}->{debug}) {
+            $c->response->body("403 - softphone auto provisioning disabled via softphone_autoprov preference");
+        } else {
+            $c->response->body("403 - autoprov disabled");
+        }
+        $c->response->status(403);
+        return;
+    }
+
     my $sipacc = 'accsipngcp'.$user.$domain;
     my $xmppacc = 'accxmppngcp'.$user.$domain;
     $sipacc =~ s/[^a-zA-Z0-9]//g;
