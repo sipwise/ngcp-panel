@@ -1604,6 +1604,41 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
         $pass = $sub->password;
     }
 
+    my $jitsi_prov;
+    my $jitsi_prov_usr = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c,
+        prov_subscriber => $sub,
+        attribute => 'softphone_autoprov',
+    );
+    my $jitsi_prov_dom = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+        c => $c,
+        prov_domain => $sub->domain,
+        attribute => 'softphone_autoprov',
+    );
+    my $jitsi_prov_prof = NGCP::Panel::Utils::Preferences::get_prof_preference_rs(
+        c => $c,
+        profile => $sub->voip_subscriber_profile,
+        attribute => 'softphone_autoprov',
+    );
+    if($jitsi_prov_usr->first && $jitsi_prov_usr->first->value) {
+        $jitsi_prov = 1;
+    } elsif($jitsi_prov_prof->first && $jitsi_prov_prof->first->value) {
+        $jitsi_prov = 1;
+    } elsif($jitsi_prov_dom->first && $jitsi_prov_dom->first->value) {
+        $jitsi_prov = 1;
+    } else {
+        $jitsi_prov = 0;
+    }
+    unless($jitsi_prov) {
+        if($c->config->{features}->{debug}) {
+            $c->response->body("403 - softphone auto provisioning disabled via softphone_autoprov preference");
+        } else {
+            $c->response->body("403 - autoprov disabled");
+        }
+        $c->response->status(403);
+        return;
+    }
+
     my $sipacc = 'accsipngcp'.$user.$domain;
     my $xmppacc = 'accxmppngcp'.$user.$domain;
     $sipacc =~ s/[^a-zA-Z0-9]//g;
