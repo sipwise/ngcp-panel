@@ -1,3 +1,14 @@
+ngcp-panel (1.10.1.4+0~mr4.1.1.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [149f000] MT#14487 rest-api data dumper tool
+  * [13cc053] MT#16109 update "prepaid" pref correctly
+  * [82a4ab0] MT#16045 notopup expiry for balance intervals output
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Nov 2015 11:16:14 +0100
+
 ngcp-panel (1.10.1.3+0~mr4.1.1.3) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
