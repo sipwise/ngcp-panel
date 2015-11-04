@@ -16,6 +16,24 @@
       "revId": "ebc569a41b45ee5eb3f73822f97807efdf4498c2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_7c6d3304",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 2766,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-11-04T18:29:17Z",
+      "side": 1,
+      "message": "I saw that and didn\u0027t change it, because IMO it doesn\u0027t make sense to delete the pin. The sql default on a new row is 0 by the way.\n\nThanks for bringing it up anyway :)",
+      "parentUuid": "9a5c5d37_81952ee6",
+      "revId": "ebc569a41b45ee5eb3f73822f97807efdf4498c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
