@@ -38,13 +38,10 @@ sub item_rs {
             ],
         });
     } else {
-        $item_rs = $item_rs->search({ 
-            -or => [
-                { 'source_subscriber.id' => $c->user->voip_subscriber->id },
-                { 'destination_subscriber.id' => $c->user->voip_subscriber->id },
-            ],
+        $item_rs = $item_rs->search({
+            'source_subscriber.id' => $c->user->voip_subscriber->id,
         },{
-            join => ['source_subscriber', 'destination_subscriber'],
+            join => 'subscriber',
         });
     }
     $item_rs = $item_rs->search({
