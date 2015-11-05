@@ -33,16 +33,13 @@ class_has 'query_params' => (
             query => {
                 first => sub {
                     my $q = shift;
-                    return {
-                        -or => [
-                            'source_subscriber.id' => $q,
-                            'destination_subscriber.id' => $q, 
-                        ],
+                    return { 
+                        'subscriber.id' => $q,
                     };
                 },
                 second => sub {
                     return {
-                        join => ['source_subscriber', 'destination_subscriber'],
+                        join => 'subscriber',
                     };
                 },
             },
@@ -169,7 +166,6 @@ class_has 'query_params' => (
                         } else {
                             return {
                                 'destination_account_id' => $owner->{customer}->id,
-                                'source_account_id' => {'!=' => $owner->{customer}->id},
                             };
                         }
                     }
