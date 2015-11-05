@@ -2047,31 +2047,6 @@ sub load_preference_list :Private {
 sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $call_cols = [
-        { name => "id", title => $c->loc('#')  },
-        { name => "direction", search => 1, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")' },
-        { name => "source_user", search => 1, title => $c->loc('Caller') },
-        { name => "destination_user", search => 1, title => $c->loc('Callee') },
-        { name => "source_customer_billing_zones_history.detail", search => 1, title => $c->loc('Billing zone') },
-        { name => "call_status", search => 1, title => $c->loc('Status') },
-        { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
-        { name => "duration", search => 1, title => $c->loc('Duration'), show_total => 'sum' },
-    ];
-    push @{ $call_cols }, (
-        { name => "call_id", search => 1, title => $c->loc('Call-ID') },
-    ) if($c->user->roles eq "admin" || $c->user->roles eq "reseller");
-
-    my $vat_factor = $c->config->{appearance}{cdr_apply_vat} && $c->stash->{subscriber}->contract->add_vat
-        ? "* " . (1 + $c->stash->{subscriber}->contract->vat_rate / 100)
-        : "";
-    $c->log->debug("using vat_factor '$vat_factor'");
-
-    push @{ $call_cols }, (
-        { name => "total_customer_cost", search => 1, title => $c->loc('Cost'), show_total => 'sum',
-            literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", source_customer_cost, destination_customer_cost)'.$vat_factor },
-    ) ;
-    $c->stash->{calls_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $call_cols);
-
     $c->stash->{vm_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
         { name => "read", search => 1, title => $c->loc('Read'), literal_sql => 'if(dir like "%/INBOX", "new", "read")' },
@@ -2123,7 +2098,38 @@ sub voicemails :Chained('master') :PathPart('voicemails') :Args(0) {
     );
 }
 
-sub calllist :Chained('master') :PathPart('calls') :Args(0) {
+
+sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+
+    my $call_cols = [
+        { name => "id", title => $c->loc('#')  },
+        { name => "direction", search => 1, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")' },
+        { name => "source_user", search => 1, title => $c->loc('Caller') },
+        { name => "destination_user", search => 1, title => $c->loc('Callee') },
+        { name => "source_customer_billing_zones_history.detail", search => 1, title => $c->loc('Billing zone') },
+        { name => "call_status", search => 1, title => $c->loc('Status') },
+        { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
+        { name => "duration", search => 1, title => $c->loc('Duration'), show_total => 'sum' },
+    ];
+    push @{ $call_cols }, (
+        { name => "call_id", search => 1, title => $c->loc('Call-ID') },
+    ) if($c->user->roles eq "admin" || $c->user->roles eq "reseller");
+
+    my $vat_factor = $c->config->{appearance}{cdr_apply_vat} && $c->stash->{subscriber}->contract->add_vat
+        ? "* " . (1 + $c->stash->{subscriber}->contract->vat_rate / 100)
+        : "";
+    $c->log->debug("using vat_factor '$vat_factor'");
+
+    push @{ $call_cols }, (
+        { name => "total_customer_cost", search => 1, title => $c->loc('Cost'), show_total => 'sum',
+            literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", source_customer_cost, destination_customer_cost)'.$vat_factor },
+    ) ;
+    $c->stash->{calls_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $call_cols);
+}
+
+
+sub calllist :Chained('calllist_master') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 
     $c->stash(
@@ -3029,7 +3035,7 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
     );
 }
 
-sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
+sub ajax_calls :Chained('calllist_master') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
 
     # CDRs
