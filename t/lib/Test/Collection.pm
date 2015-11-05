@@ -63,6 +63,14 @@ has 'name' => (
     is => 'rw',
     isa => 'Str',
 );
+#has 'subscriber_user' => (
+#    is => 'rw',
+#    isa => 'Str',
+#);
+#has 'subscriber_pass' => (
+#    is => 'rw',
+#    isa => 'Str',
+#);
 has 'embedded_resources' => (
     is => 'rw',
     isa => 'ArrayRef',
@@ -224,14 +232,20 @@ sub get_role_credentials{
     my($role) = @_;
     my($user,$pass);
     $role //= $self->runas_role // 'default';
+    my $realm;
     if($role eq 'default' || $role eq 'admin'){
         $user //= $ENV{API_USER} // 'administrator';
         $pass //= $ENV{API_PASS} // 'administrator';
+        $realm = 'api_admin_http';
     }elsif($role eq 'reseller'){
         $user //= $ENV{API_USER_RESELLER} // 'api_test';
         $pass //= $ENV{API_PASS_RESELLER} // 'api_test';
+        $realm = 'api_admin_http';
+    #}elsif($role eq 'subscriber'){
+    #    $user //= $self->subscriber_user;
+    #    $pass //= $self->subscriber_pass;
+    #    $realm = 'subscriber';
     }
-    my $realm = 'api_admin_http';
     return($user,$pass,$role,$realm);
 }
 sub clear_data_created{
