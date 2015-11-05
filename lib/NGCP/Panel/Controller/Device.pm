@@ -1258,6 +1258,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $schema = 'https';
     my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
     my $port = $c->config->{deviceprovisioning}->{port} // 1444;
+    my $boot_port = $c->config->{deviceprovisioning}->{bootstrap_port} // 1445;
 
     my $vars = {
         opt => $opt,
@@ -1291,6 +1292,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     };
 
     $vars->{firmware}->{baseurl} = "$schema://$host:$port/device/autoprov/firmware";
+    $vars->{firmware}->{booturl} = "http://$host:$boot_port/device/autoprov/firmware";
     my $latest_fw = $c->model('DB')->resultset('autoprov_firmwares')->search({
         device_id => $model->id,
     }, {
