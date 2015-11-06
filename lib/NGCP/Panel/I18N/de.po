@@ -1570,11 +1570,11 @@ msgstr "Guthaben-Saldo"
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1140
 #: share/templates/customer/details.tt:404
 msgid "Cash balance"
-msgstr ""
+msgstr "Guthaben"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:934
 msgid "Cash debit"
-msgstr ""
+msgstr "Belastung"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:589
 msgid "Cash top-up"
@@ -2258,7 +2258,7 @@ msgstr "Tag"
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm:1355
 #: share/templates/customer/details.tt:406
 msgid "Debit"
-msgstr ""
+msgstr "Belastung"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:917
 msgid "December"
