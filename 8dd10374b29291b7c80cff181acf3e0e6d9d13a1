@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_73cafea2",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-11-06T13:27:15Z",
+      "side": 1,
+      "message": "\u0027subscriber.id\u0027 \u003d\u003e $c-\u003euser-\u003evoip_subscriber-\u003eid,",
+      "range": {
+        "startLine": 42,
+        "startChar": 12,
+        "endLine": 42,
+        "endChar": 30
+      },
+      "revId": "8dd10374b29291b7c80cff181acf3e0e6d9d13a1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
