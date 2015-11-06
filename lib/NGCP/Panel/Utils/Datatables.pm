@@ -13,8 +13,9 @@ sub process {
 
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
+    my $totalRecords = 0;
     my $displayRecords = 0;
-    my $aggregate_cols = {};
+    my $aggregate_cols = [];
     my $aggregations = {};
 
 
@@ -24,7 +25,7 @@ sub process {
     unless ($use_rs_cb) {
         for my $col(@{ $cols }) {
             if ($col->{show_total}) {
-                $aggregate_cols->{$col->{accessor}} = [$col->{show_total}, ($col->{literal_sql}) || $col->{accessor}];
+                push @$aggregate_cols, $col;
             }
             my @parts = split /\./, $col->{name};
             if($col->{literal_sql}) {
@@ -48,107 +49,174 @@ sub process {
             }
         }
     }
-    #all joins already implemented, and filters aren't applied
-    my $totalRecords = $use_rs_cb ? 0 : $rs->count;
-
+    #all joins already implemented, and filters aren't applied. But count we will take only if there are search and no other aggregations
+    my $totalRecords_rs = $rs;
+    #= $use_rs_cb ? 0 : $rs->count;
+    
+    ### Search processing section
+    
     # generic searching
-    my %conjunctSearchColumns = ();
     my @searchColumns = ();
+    #processing single search input - group1 from groups to be joined by 'AND'
     my $searchString = $c->request->params->{sSearch} // "";
-    foreach my $col(@{ $cols }) {
-        my ($name,$search_value,$op,$convert);
-        # avoid amigious column names if we have the same column in different joined tables
-        if($col->{search}){
-            $op = (defined $col->{comparison_op} ? $col->{comparison_op} : 'like');
-            $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return '%'.shift.'%'; });
-            $name = _get_joined_column_name_($col->{name});
-            $search_value = &$convert($searchString);
-            my $stmt;
-            if (defined $search_value) {
-                if($col->{literal_sql}){
-                    if(!ref $col->{literal_sql}){
-                        #we can't use just accessor because of the count query
-                        $stmt = \[$col->{literal_sql} . " $op ?", [ {} => $search_value] ];
+    if($searchString && ! $use_rs_cb) {
+    #for search string from one search input we need to check all columns which contain the 'search' spec (now: qw/search search_lower_column search_upper_column/). so, for example user entered into search input ip address - we don't know that it is ip address, so we check that name like search OR id like search OR search is between network_lower_value and network upper value 
+        foreach my $col(@{ $cols }) {
+            my ($name,$search_value,$op,$convert);
+            # avoid amigious column names if we have the same column in different joined tables
+            if($col->{search}){
+                $op = (defined $col->{comparison_op} ? $col->{comparison_op} : 'like');
+                $name = _get_joined_column_name_($col->{name});
+                $search_value = (ref $col->{convert_code} eq 'CODE') ? $col->{convert_code}->($searchString) : '%'.$searchString.'%';
+                my $stmt;
+                if (defined $search_value) {
+                    if($col->{literal_sql}){
+                        if(!ref $col->{literal_sql}){
+                            #we can't use just accessor because of the count query
+                            $stmt = \[$col->{literal_sql} . " $op ?", [ {} => $search_value] ];
+                        }else{
+                            if($col->{literal_sql}->{format}){
+                                $stmt = \[sprintf($col->{literal_sql}->{format}, " $op ?"), [ {} => $search_value] ];
+                            }
+                        }
                     }else{
-                        if($col->{literal_sql}->{format}){
-                            $stmt = \[sprintf($col->{literal_sql}->{format}, " $op ?"), [ {} => $search_value] ];
+                        $stmt = { $name => { $op => $search_value } };
+                    }
+                }
+                if($stmt){
+                    push @{$searchColumns[0]}, $stmt;
+                }
+            } elsif( $col->{search_lower_column} || $col->{search_upper_column} ) {
+                my %conjunctSearchColumns = ();
+                # searching lower and upper limit columns
+                foreach my $search_spec (qw/search_lower_column search_upper_column/){
+                    if ($col->{$search_spec}) {
+                        $op = (defined $col->{comparison_op} ? $col->{comparison_op} : ( $search_spec eq 'search_lower_column' ? '<=' : '>=') );
+                        $name = _get_joined_column_name_($col->{name});
+                        $search_value = (ref $col->{convert_code} eq 'CODE') ? $col->{convert_code}->($searchString) : $searchString ;
+                        if (defined $search_value) {
+                            $conjunctSearchColumns{$col->{$search_spec}} = [] unless exists $conjunctSearchColumns{$col->{$search_spec}};
+                            push(@{$conjunctSearchColumns{$col->{$search_spec}}},{$name => { $op => $search_value }});
                         }
                     }
-                }else{
-                    $stmt = { $name => { $op => $search_value } };
                 }
-            }
-            if($stmt){
-                push @searchColumns, $stmt;
-            }
-        } else {
-            # searching lower and upper limit columns
-            if ($col->{search_lower_column}) {
-                $op = (defined $col->{comparison_op} ? $col->{comparison_op} : '<=');
-                $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return shift; });
-                $name = _get_joined_column_name_($col->{name});
-                $search_value = &$convert($searchString);
-                if (defined $search_value) {
-                    $conjunctSearchColumns{$col->{search_lower_column}} = [] unless exists $conjunctSearchColumns{$col->{search_lower_column}};
-                    push(@{$conjunctSearchColumns{$col->{search_lower_column}}},{$name => { $op => $search_value }});
-                }
-            }
-            if($col->{search_upper_column}) {
-                $op = (defined $col->{comparison_op} ? $col->{comparison_op} : '>=');
-                $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return shift; });
-                $name = _get_joined_column_name_($col->{name});
-                $search_value = &$convert($searchString);
-                if (defined $search_value) {
-                    $conjunctSearchColumns{$col->{search_upper_column}} = [] unless exists $conjunctSearchColumns{$col->{search_upper_column}};
-                    push(@{$conjunctSearchColumns{$col->{search_upper_column}}},{$name => { $op => $search_value }});
+                foreach my $conjunct_column (keys %conjunctSearchColumns) {
+                    #...things in arrays are OR'ed, and things in hashes are AND'ed
+
+                    #input: 
+#{ name => "billing_network_blocks._ipv4_net_from", search_lower_column => 'ipv4', convert_code => sub {
+#    return _prepare_query_param_value(shift,4); # <================= this form of call, the same as all below, will return us bytes or undef
+#    } },
+#{ name => "billing_network_blocks._ipv4_net_to", search_upper_column => 'ipv4', convert_code => sub {
+#    return _prepare_query_param_value(shift,4);
+#    } },
+#{ name => "billing_network_blocks._ipv6_net_from", search_lower_column => 'ipv6', convert_code => sub {
+#    return _prepare_query_param_value(shift,6);
+#    } },
+#{ name => "billing_network_blocks._ipv6_net_to", search_upper_column => 'ipv6', convert_code => sub {
+#    return _prepare_query_param_value(shift,6);
+#    } },
+                    #output: 
+                    #1. conjunctSearchColumns = {
+                        #'ipv4' => [
+                            #{ "billing_network_blocks__ipv4_net_to"   => {"<=" => $bytes}}, 
+                            #{ "billing_network_blocks__ipv4_net_from" => {"=>" => $bytes}}
+                        #],
+                        #'ipv6' => [
+                            #{ "billing_network_blocks__ipv6_net_to"   => {"<=" => $bytes}}, 
+                            #{ "billing_network_blocks__ipv6_net_from" => {"=>" => $bytes}}
+                        #]
+                    #}
+                    #2. addition into @searchColumns = (
+                        #{
+                            #"billing_network_blocks__ipv4_net_to"   => {"<=" => $bytes},
+                            #"billing_network_blocks__ipv4_net_from" => {"=>" => $bytes},
+                        #},
+                        #{
+                            #"billing_network_blocks__ipv6_net_to"   => {"<=" => $bytes},
+                            #"billing_network_blocks__ipv6_net_from" => {"=>" => $bytes},
+                        #{
+                    #)
+
+                    push @{$searchColumns[0]}, { map { %{$_} } @{$conjunctSearchColumns{$conjunct_column}} };
                 }
             }
         }
     }
-    if($searchString && ! $use_rs_cb) {
-        foreach my $conjunct_column (keys %conjunctSearchColumns) {
-            push(@searchColumns,{ map { %{$_} } @{$conjunctSearchColumns{$conjunct_column}} });
+    #/processing single search input
+    #processing dates search input - group2 from groups to be joined by 'AND'
+    {
+        my @dateSearchColumns = ();
+        # date-range searching
+        my $from_date_in = $c->request->params->{sSearch_0} // "";
+        my $to_date_in = $c->request->params->{sSearch_1} // "";
+        my($from_date,$to_date);
+        my $parser = DateTime::Format::Strptime->new(
+            #pattern => '%Y-%m-%d %H:%M',
+            pattern => '%Y-%m-%d',
+        );
+        if($from_date_in) {
+            $from_date = $parser->parse_datetime($from_date_in);
         }
+        if($to_date_in) {
+            $to_date = $parser->parse_datetime($to_date_in);
+        }
+        foreach my $col(@{ $cols }) {
+            # avoid amigious column names if we have the same column in different joined tables
+            my $name = _get_joined_column_name_($col->{name});
+            if($col->{search_from_epoch} && $from_date) {
+                push @searchColumns, { $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch } };
+            }
+            if($col->{search_to_epoch} && $to_date) {
+                push @searchColumns, { $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch } };
+            }
+        }
+    }
+    #/processing dates search input
+    if(@searchColumns){
         $rs = $rs->search([@searchColumns]);
     }
+    ### /Search processing section
 
-    # date-range searching
-    my $from_date_in = $c->request->params->{sSearch_0} // "";
-    my $to_date_in = $c->request->params->{sSearch_1} // "";
-    my($from_date,$to_date);
-    my $parser = DateTime::Format::Strptime->new(
-        #pattern => '%Y-%m-%d %H:%M',
-        pattern => '%Y-%m-%d',
-    );
-    if($from_date_in) {
-        $from_date = $parser->parse_datetime($from_date_in);
-    }
-    if($to_date_in) {
-        $to_date = $parser->parse_datetime($to_date_in);
-    }
-    @searchColumns = ();
-    foreach my $col(@{ $cols }) {
-        # avoid amigious column names if we have the same column in different joined tables
-        my $name = _get_joined_column_name_($col->{name});
-
-        if($col->{search_from_epoch} && $from_date) {
-            $rs = $rs->search({
-                $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch },
-            });
+    if(@$aggregate_cols){
+        my(@select, @as);
+        if(!$use_rs_cb){
+            push @select, { 'count' => '*', '-as' => 'count' };
+            push @as, 'count';
         }
-        if($col->{search_to_epoch} && $to_date) {
-            $rs = $rs->search({
-                $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch },
-            });
+        foreach my $col (@$aggregate_cols){
+            my $col_accessor = $col->{literal_sql} ? \[ $col->{literal_sql} ] : $col->{accessor} ;#_get_joined_column_name_($col->{name});
+            push @select, { $col->{show_total} => $col_accessor, '-as' => $col->{accessor} };
+            push @as, $col->{accessor};
+        }
+        my $aggregate_rs = $rs->search_rs(undef,{
+            'select' => \@select,
+            'as' => \@as,
+        });
+        if(my $row = $aggregate_rs->first){
+            if(!$use_rs_cb){
+                $displayRecords = $row->get_column('count');
+            }
+            foreach my $col (@$aggregate_cols){
+                $aggregations->{$col->{accessor}} = $row->get_column($col->{accessor});
+            }
         }
     }
-
-    $displayRecords = $use_rs_cb ? 0 : $rs->count;
-    for my $sum_col (keys %{ $aggregate_cols }) {
-        my ($aggregation_method, $accessor) = @{ $aggregate_cols->{$sum_col} };
-        $aggregations->{$sum_col} = $rs->get_column(\[$accessor])->$aggregation_method;
+    if(!$use_rs_cb){
+        if(@searchColumns){
+            $totalRecords = $totalRecords_rs->count;
+            if(!@$aggregate_cols){
+                $displayRecords = $rs->count;
+            }
+        }else{
+            if(@$aggregate_cols){
+                $totalRecords = $displayRecords;
+            }elsif(!@$aggregate_cols){
+                $totalRecords = $displayRecords = $totalRecords_rs->count;
+            }
+        }
     }
-
+    
     # show specific row on top (e.g. if we come back from a newly created entry)
     my $topId = $c->request->params->{iIdOnTop};
     if(defined $topId) {
@@ -187,6 +255,7 @@ sub process {
             }
         });
     }
+    #/ sorting
 
     # pagination
     my $pageStart = $c->request->params->{iDisplayStart};
