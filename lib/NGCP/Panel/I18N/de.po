@@ -1464,7 +1464,7 @@ msgstr ""
 
 #: share/templates/customer/details.tt:379
 msgid "Cash"
-msgstr "Guthaben"
+msgstr "Saldo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:651
 msgid "Cash Balance"
