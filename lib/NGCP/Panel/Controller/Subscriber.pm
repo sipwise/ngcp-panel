@@ -3107,13 +3107,14 @@ sub _process_calls_rows {
             $data{total_customer_cost} = (defined $result->get_column('total_customer_cost') ? sprintf("%.2f", $result->get_column('total_customer_cost') / 100.0) : "");
             return %data;
         },
-        sub {
-            my ($result) = @_;
-            my %data = ();
-            $data{duration} = (defined $result->{duration} ? sprintf("%.2f s", $result->{duration}) : "");
-            $data{total_customer_cost} = (defined $result->{total_customer_cost} ? sprintf("%.2f", $result->{total_customer_cost} / 100.0) : "");
-            return %data;
-        },
+        { 'total_row_func' => sub {
+                my ($result) = @_;
+                my %data = ();
+                $data{duration} = (defined $result->{duration} ? sprintf("%.2f s", $result->{duration}) : "");
+                $data{total_customer_cost} = (defined $result->{total_customer_cost} ? sprintf("%.2f", $result->{total_customer_cost} / 100.0) : "");
+                return %data;
+            },
+        }
     );
 }
 
