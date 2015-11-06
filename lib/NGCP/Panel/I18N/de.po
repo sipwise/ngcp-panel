@@ -1293,7 +1293,7 @@ msgstr "Aufgezeichnete Dialoge"
 
 #: share/templates/customer/details.tt:375
 msgid "Cash"
-msgstr "Guthaben"
+msgstr "Saldo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:766
 msgid "Cash Balance"
