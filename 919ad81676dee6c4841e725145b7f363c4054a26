@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_28a3f59f",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1294,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-11-06T10:19:24Z",
+      "side": 1,
+      "message": "do we specifically force \"http\" only here and not our $schema variable ?",
+      "range": {
+        "startLine": 1294,
+        "startChar": 36,
+        "endLine": 1294,
+        "endChar": 40
+      },
+      "revId": "919ad81676dee6c4841e725145b7f363c4054a26",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
