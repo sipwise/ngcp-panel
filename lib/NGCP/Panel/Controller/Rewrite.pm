@@ -416,8 +416,8 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
     }
 
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
+    $c->stash(form => $form,
+              edit_flag => 1);
 }
 
 sub rules_delete :Chained('rules_base') :PathPart('delete') {
