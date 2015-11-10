@@ -145,6 +145,7 @@ sub resize_actual_contract_balance {
                         old_package => $new_package, #$old_package,
                         now => $end_of_resized_interval->clone->add(seconds => 1),
                         #suppress_underrun => 1,
+                        suppress_notopup_discard => 1,
                         topup_amount => $topup_amount,
                         profiles_added => $profiles_added,
                     );
@@ -190,7 +191,7 @@ sub resize_actual_contract_balance {
 
 sub catchup_contract_balances {
     my %params = @_;
-    my($c,$contract,$old_package,$now,$suppress_underrun,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun topup_amount profiles_added/};
+    my($c,$contract,$old_package,$now,$suppress_underrun,$suppress_notopup_discard,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun suppress_notopup_discard topup_amount profiles_added/};
     
     my $schema = $c->model('DB');
     $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
@@ -198,6 +199,7 @@ sub catchup_contract_balances {
     $old_package = $contract->profile_package if !exists $params{old_package};
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     $suppress_underrun //= 0;
+    $suppress_notopup_discard //= 0;
     $topup_amount //= 0.0;
     $profiles_added //= 0;
 
@@ -210,7 +212,7 @@ sub catchup_contract_balances {
         $interval_unit = $old_package->balance_interval_unit;
         $interval_value = $old_package->balance_interval_value;
         $carry_over_mode = $old_package->carry_over_mode;
-        $notopup_discard_intervals = $old_package->notopup_discard_intervals;
+        $notopup_discard_intervals = ($suppress_notopup_discard ? undef : $old_package->notopup_discard_intervals);
         $underrun_profile_threshold = $old_package->underrun_profile_threshold;
         $underrun_lock_threshold = $old_package->underrun_lock_threshold;
         $has_package = 1;
@@ -379,7 +381,7 @@ sub topup_contract_balance {
     #$voucher_package = undef unless ENABLE_PROFILE_PACKAGES;
     #$package = undef unless ENABLE_PROFILE_PACKAGES;
     
-    $c->log->debug('topup' . ($request_token ? ' (request token ' . $request_token . ') ' : ' ') . 'contract ' . $contract->id . ' using ' . ($voucher ? 'voucher ' . $voucher->id : 'cash'));
+    $c->log->debug('topup' . ($request_token ? ' (request token ' . $request_token . ') ' : ' ') . 'contract ' . $contract->id . ' using ' . ($voucher ? 'voucher ' . $voucher->id : 'cash') . ($voucher_package ? ' to package ' . $voucher_package->name : ''));
 
 
     my $balance = catchup_contract_balances(c => $c,
