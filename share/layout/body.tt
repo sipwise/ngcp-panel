@@ -158,9 +158,9 @@ var mainWrapperInit = function () {
     -%]
     $('a').each(function() {
         var _text = $(this).text().trim();
-        var href = $(this).attr('href');
+        var _href = $(this).attr('href');
         var javascriptLink = 0;
-        if(href && ( href.search(/^javascript:/i) > -1 ) ){
+        if(_href && ( _href.search(/^javascript:/i) > -1 ) ){
             javascriptLink = 1;
         }
         if(_text == "Back" ||
@@ -173,7 +173,6 @@ var mainWrapperInit = function () {
 
             return true;
         }
-        var _href = $(this).attr('href');
         var backuri = $(this).data('backuri') ? $(this).data('backuri') : '[%- backuri | uri -%]';
         var _back = 'back='+backuri;
         if(_href == null || _href.match(/[&\?]back=/)) {
