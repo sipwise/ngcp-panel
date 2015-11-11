@@ -1,3 +1,12 @@
+ngcp-panel (1.10.1.5+0~mr4.1.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [effc815] MT#16309 supress notopup balance discard when switching packages
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Nov 2015 01:53:39 +0100
+
 ngcp-panel (1.10.1.4+0~mr4.1.1.4) unstable; urgency=medium
 
   [ Rene Krenn ]
