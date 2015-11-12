@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a51691d_0c729be5",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1623,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-11-12T16:26:39Z",
+      "side": 1,
+      "message": "do we need to duplicate code there where the only difference is \"webusername/webpassword\" vs \"username/password\" ?\n\nimho better with defining the user/pass keys early and avoid unnecessary duplicates there by using them as (e.g. $user_key \u003d\u003e $user, $pass_key \u003d\u003e $pass)",
+      "range": {
+        "startLine": 1586,
+        "startChar": 0,
+        "endLine": 1623,
+        "endChar": 5
+      },
+      "revId": "669c0eb42073a3e082e7215519b7d4a824641b16",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
