@@ -1583,8 +1583,9 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
         return;
     }
 
+    my $sub;
     if($c->config->{deviceprovisioning}->{softphone_webauth}) {
-        my $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
+        $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
            webusername => $user,
            'domain.domain' => $domain,
            webpassword => $pass,
@@ -1602,6 +1603,23 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
         }
         $user = $sub->username;
         $pass = $sub->password;
+    } else {
+        $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
+           username => $user,
+           'domain.domain' => $domain,
+           password => $pass,
+        },{
+            join => 'domain',
+        });
+        unless($sub) {
+            if($c->config->{features}->{debug}) {
+                $c->response->body("404 - sipuser authentication failed");
+            } else {
+                $c->response->body("404 - invalid user config parameters");
+            }
+            $c->response->status(404);
+            return;
+        }
     }
 
     my $jitsi_prov;
