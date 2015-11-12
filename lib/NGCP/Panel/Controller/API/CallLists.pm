@@ -76,7 +76,7 @@ class_has 'query_params' => (
                 first => sub {
                     my $q = shift;
                     {
-                       call_status => $q,
+                       'me.call_status' => $q,
                     };
                 },
                 second => sub {},
@@ -89,8 +89,32 @@ class_has 'query_params' => (
                 first => sub {
                     my $q = shift;
                     {
-                       call_status => { '!=' => $q },
+                       'me.call_status' => { '!=' => $q },
                     };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'rating_status',
+            description => 'Filter for calls having a specific rating status. Comma separated list of "ok", "unrated", "failed".',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    my @l = split /,/, $q;
+                    { 'me.rating_status' => { -in => \@l }};
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'rating_status_ne',
+            description => 'Filter for calls not having a specific rating status. Comma separated list of "ok", "unrated", "failed".',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    my @l = split /,/, $q;
+                    { 'me.rating_status' => { -not_in => \@l }};
                 },
                 second => sub {},
             },
@@ -156,7 +180,7 @@ class_has 'query_params' => (
                 first => sub {
                     my $q = shift;
                     my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
-                    { start_time => { '>=' => $dt->epoch } };
+                    { 'me.start_time' => { '>=' => $dt->epoch } };
                 },
                 second => sub {},
             },
