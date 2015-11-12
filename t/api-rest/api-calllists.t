@@ -3,6 +3,7 @@ use warnings;
 
 use Test::More;
 use Test::Collection;
+use Data::Dumper;
 
 my $test_machine = Test::Collection->new(
     name => 'calllists',
@@ -13,7 +14,7 @@ diag('Note that the next tests require at least one subscriber to be present');
 # test with a subscriber
 SKIP:
 {
-    my ($res,$sub1,$sub1_id,$cl_collection, $cl_collection_in, $cl_collection_out);
+    my ($res,$sub1,$sub1_id,$cl_collection);
 
     if($ENV{API_FORCE_SUBSCRIBER_ID}) {
         $sub1_id = $ENV{API_FORCE_SUBSCRIBER_ID};
@@ -25,7 +26,9 @@ SKIP:
         ($sub1_id) = $sub1->{_embedded}->{'ngcp:subscribers'}->{_links}{self}{href} =~ m!subscribers/([0-9]*)$!;
     }
     cmp_ok ($sub1_id, '>', 0, "should be positive integer");
-    
+#----    
+    my ($cl_collection_in, $cl_collection_out);
+
     ($res, $cl_collection) = $test_machine->check_item_get('/api/calllists/?page=1&rows=10&subscriber_id='.$sub1_id,"fetch calllists collection of subscriber ($sub1_id)");
 
     ($res, $cl_collection_in) = $test_machine->check_item_get('/api/calllists/?page=1&rows=10&direction=in&subscriber_id='.$sub1_id,"fetch calllists collection of subscriber ($sub1_id) with direction filter in");
@@ -34,6 +37,20 @@ SKIP:
 
     ok($cl_collection_in->{total_count} + $cl_collection_out->{total_count} >= $cl_collection->{total_count},
         "Incoming and outgoing calls should be greater than or equal to total number of calls");
+#/---
+#----16323
+    my ($cl_collection_ok, $cl_collection_nok);
+    ($res, $cl_collection_ok) = $test_machine->check_item_get('/api/calllists/?page=1&rows=10&rating_status=ok&subscriber_id='.$sub1_id,"fetch calllists collection of subscriber ($sub1_id) with rating_status filter ok");
+
+    ($res, $cl_collection_nok) = $test_machine->check_item_get('/api/calllists/?page=1&rows=10&rating_status=unrated,failed&subscriber_id='.$sub1_id, "fetch calllists collection of subscriber ($sub1_id) with rating_status filter unrated,failed");
+
+    ok( ($cl_collection_ok->{total_count} + $cl_collection_nok->{total_count} ) == $cl_collection->{total_count},
+        "Rated and not rated calls should be equal to total number of calls");
+    my($call_hal) = $test_machine->get_hal_from_collection($cl_collection);
+    ok(exists $call_hal->{rating_status},
+        "Check existence of rating_status field");
+
+#/---
 
     diag("Total number of calls: " . $cl_collection->{total_count});
 }
@@ -100,5 +117,6 @@ SKIP:
 }
 
 done_testing;
+
 
 # vim: set tabstop=4 expandtab:
