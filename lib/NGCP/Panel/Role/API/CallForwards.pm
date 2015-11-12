@@ -61,11 +61,13 @@ sub hal_from_item {
             $resource{$cf_type} = {};
         }
     }
+    @resource{qw/cfu cfb cft cfna/} = ({}) x 4;
+    for my $item_cf ($item->provisioning_voip_subscriber->first->voip_cf_mappings->all){
+        $resource{$item_cf->type} = $self->_contents_from_cfm($c, $item_cf, $item);
+    }
     if(keys %{$resource{cft}}){
-        my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subs)->first;
-        $ringtimeout_preference = $ringtimeout_preference ? $ringtimeout_preference->value : undef;
-        $resource{cft}{ringtimeout} = $ringtimeout_preference;
+        #check that join is left
+        $resource{cft}{ringtimeout} = $item->provisioning_voip_subscriber->first->voip_usr_preferences->value;
     }
 
     $form //= $self->get_form($c);
@@ -84,11 +86,13 @@ sub item_rs {
     my ($self, $c, $type) = @_;
     my $item_rs;
 
-    $item_rs = $c->model('DB')->resultset('voip_subscribers')
-        ->search(
-            { 'me.status' => { '!=' => 'terminated' } },
-            { prefetch => 'provisioning_voip_subscriber',},
-        );
+    $item_rs = $c->model('DB')->resultset('voip_subscribers')->search( {
+            'me.status' => { '!=' => 'terminated' },
+            'attribute.attribute' => 'ringtimeout', 
+        },{ 
+            prefetch => { 'provisioning_voip_subscriber' => [ 'voip_cf_mappings', { 'voip_usr_preferences' => 'attribute' } ] },
+        },
+    );
     if($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
