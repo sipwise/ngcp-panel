@@ -142,6 +142,7 @@ class_has 'query_params' => (
                         } else {
                             return {
                                 'destination_account_id' => $owner->{customer}->id,
+                                'source_account_id' => {'!=' => $owner->{customer}->id},
                             };
                         }
                     }
