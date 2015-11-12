@@ -57,13 +57,7 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::CallList::Subscriber->new;
-    } elsif($c->user->roles eq "reseller") {
-        return NGCP::Panel::Form::CallList::Subscriber->new;
-    } else {
-        return NGCP::Panel::Form::CallList::Subscriber->new;
-    }
+    return NGCP::Panel::Form::CallList::Subscriber->new;
 }
 
 sub hal_from_item {
