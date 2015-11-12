@@ -40,7 +40,7 @@ class_has 'query_params' => (
     default => sub {[
         {
             param => 'status',
-            description => 'Filter for customers with a specific status (comma-separated list of stati to include possible)',
+            description => 'Filter for customers with a specific status (comma-separated list of statuses to include possible)',
             query => {
                 first => sub {
                     my $q = shift;
@@ -52,7 +52,7 @@ class_has 'query_params' => (
         },
         {
             param => 'not_status',
-            description => 'Filter for customers not having a specific status (comma-separated list of stati to exclude possible)',
+            description => 'Filter for customers not having a specific status (comma-separated list of statuses to exclude possible)',
             query => {
                 first => sub {
                     my $q = shift;
