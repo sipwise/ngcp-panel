@@ -179,6 +179,7 @@ sub process_cdr_item {
         $resource->{own_cli} .= " (terminated)";
     }
     $resource->{status} = $item->call_status;
+    $resource->{rating_status} = $item->rating_status;
     $resource->{type} = $item->call_type;
 
     $resource->{start_time} = $item->start_time;

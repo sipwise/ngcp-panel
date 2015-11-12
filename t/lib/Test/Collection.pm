@@ -236,6 +236,7 @@ sub get_role_credentials{
     }elsif($role eq 'reseller'){
         $user //= $ENV{API_USER_RESELLER} // 'api_test';
         $pass //= $ENV{API_PASS_RESELLER} // 'api_test';
+    ##   I suggest here the same way as for admin and reseller - trough ENV variables
     }
     my $realm = 'api_admin_http';
     return($user,$pass,$role,$realm);
@@ -294,7 +295,7 @@ sub get_uri_item{
     return $resuri;
 }
 sub get_item_hal{
-    my($self,$name) = @_;
+    my($self,$name,$uri) = @_;
     $name ||= $self->name;
     my $resitem ;
     if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
@@ -305,20 +306,28 @@ sub get_item_hal{
     }
     if(!$resitem){
         my ($reshal, $location);
-        my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection($name)."?page=1&rows=1");
-        my $hal_name = $self->get_hal_name($name);
-        if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
-            $reshal = $list_collection;
-            $location = $reshal->{_links}->{$hal_name}->{href};
-        } else {
-            $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
-            $location = $reshal->{_links}->{self}->{href};
-        }
+        $uri //= $self->get_uri_collection($name)."?page=1&rows=1";
+        my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
+        ($reshal,$location) = $self->get_hal_from_collection($list_collection,$name);
         $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location };
         $self->DATA_LOADED->{$name} ||= [];
         push @{$self->DATA_LOADED->{$name}}, $resitem;
     }
     return $resitem;
+}
+sub get_hal_from_collection{
+    my($self,$list_collection,$name) = @_;
+    $name ||= $self->name;
+    my $hal_name = $self->get_hal_name($name);
+    my($reshal,$location);
+    if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
+        $reshal = $list_collection;
+        $location = $reshal->{_links}->{$hal_name}->{href};
+    } else {
+        $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
+        $location = $reshal->{_links}->{self}->{href};
+    }
+    return ($reshal,$location);
 }
 sub get_created_first{
     my($self) = @_;
