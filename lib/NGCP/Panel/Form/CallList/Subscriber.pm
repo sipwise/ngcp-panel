@@ -59,7 +59,19 @@ has_field 'status' => (
         title => ['The status of the call, one of ok, busy, noanswer, cancel, offline, timeout, other.']
     },
 );
-
+has_field 'rating_status' => (
+    type => 'Select',
+    required => 1,
+    options => [
+        { label => 'ok', value => 'ok' },
+        { label => 'unrated', value => 'unrated' },
+        { label => 'failed', value => 'failed' },
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The status of the call rating, one of ok, unrated, failed.']
+    },
+);
 has_field 'type' => (
     type => 'Select',
     required => 1,
