@@ -1,3 +1,67 @@
+ngcp-panel (1.8.4.1+0~mr3.8.4.1) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [a33678d] MT#14715 Return uuid in /api/subscribers/
+  * [4e5cf58] MT#14741 Fix reseller ops for /api/trustedsources/
+  * [90326cc] MT#14747 Pass fw query as url path.
+  * [e5252a0] MT#15057 Add Last-Modified and strip HTTP headers
+  * [ff06828] MT#15247 Enforce https in autoprov config.
+  * [6598fbd] MT#16057 Fix dbix syntax fetching concat numbers
+  * [6b18abe] MT#13367 enable jitsi autoprov via preference
+
+  [ Irina Peshinskaya ]
+  * [53879d3] MT#12347 Make necessary changes to keep data in the test scripts
+  * [1db2834] MT#13717 Consider necessity of recreation items with cycled dependency
+  * [1772dec] MT#13717 Avoid duplicate names for billing profiles
+  * [b60f45e] MT#13717 Use correct directory for data load from the test scripts
+  * [512db20] MT#14741 Add test fixes from the 14653
+  * [f933e33] MT#14653 Fix the tests
+  * [e837e93] MT#14767 Backporting Innovaphone from the 13919
+  * [8f233de] MT#13919 Bootstrap uses the same config template, configure TT plugin base.
+  * [928faf3] MT#11147 Rewrite map to foreach for models names => ids map
+  * [f677b53] MT#13931 Add link to field device config into customer interface
+  * [1972be8] MT#14739 Get newly created kamailio user location after flush
+  * [bed2a8f] MT#14477 Fax API (list, send fax, get meta, get content)
+  * [b45547e] MT#12347 Simple tests for cfdestinations
+  * [668ea12] MT#15441 Don't synchronize cli and primary number if they already differ
+  * [2e9a94a] MT#15489 Work with utf8 in json input
+  * [d267f8d] MT#14477 Add new fax collections into common tests
+  * [bfcbb34] MT#14477 Fix faxes collection name in tests
+  * [b05d011] MT#16323 Add rating_status field into item response and filter for collection
+
+  [ Gerhard Jungwirth ]
+  * [0e0a3db] MT#14391 Fix editing aliases without primary number
+  * [d51bde7] MT#14107 provide option to force language
+  * [ff4562b] MT#12985 prevent ambiguity in rwr replace pattern
+  * [d7c802a] MT#14803 option to access cfdestinationsets via reseller
+  * [982d318] MT#15361 fix soundcache reload on api post
+  * [30340c4] MT#14979 filter calllists by direction properly
+  * [8ee4325] MT#15361 fix post soundfiles creating duplicate entry
+  * [359be6c] MT#15425 audio_cache reload on soundfile delete
+  * [bbdbb24] MT#15459 fix html-encoding subscriber details
+  * [1cb43df] MT#14923 sendfax allow trying multiple ips
+  * [30d9f92] MT#15757 fix deleting voicebox email setting
+  * [e14432e] MT#15203 Allow adding alias numbers to pbx group
+  * [c023168] MT#15203 fix pbx group create form
+  * [ce371d4] MT#15685 suppress output for correct backuritmp
+  * [322a9e9] MT#16113 de translation cash OLD interface
+
+  [ Andrew Pogrebennyk ]
+  * [21a5f77] MT#13007 MT#13251 fix MoH reload
+  * [36aeab4] MT#13367 fix commit 0858ef
+
+  [ Victor Seva ]
+  * [fcd2673] MT#14767 add missing dependence libcrypt-rc4-perl
+  * [9cab79b] MT#15701 API: delete/create domain after changes to DB
+
+  [ Rene Krenn ]
+  * [e81ab98] MT#16171 useless joins for source_subs = OR dest_subs =
+  * [735cb9d] MT#16171 revert to prior callist direction filter behaviour
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Nov 2015 17:23:14 +0100
+
 ngcp-panel (1.8.4.0+0~mr3.8.4.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
