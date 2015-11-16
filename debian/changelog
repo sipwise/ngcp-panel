@@ -1,3 +1,100 @@
+ngcp-panel (1.9.3.0+0~mr4.0.3.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b02ed4d] MT#13903 balance interval catchup and resize WIP
+  * [0a5108a] MT#13903 topupvoucher and topupcash
+  * [8cf4fb1] MT#13903 fixes for nightly tests
+  * [5c87f9a] MT#13903 add package_id in api-vouchers.t test
+  * [d1c8fc1] MT#13903 fix balanceintervals test #1
+  * [7164c12] MT#13903 fix balanceintervals test #2
+  * [586fe53] MT#13903 "topup_interval" start mode impl
+  * [7be8afe] MT#13903 generate melita user story transcript
+  * [015a393] MT#13903 disable applying profile package
+  * [186ab87] MT#13903 enable applying profile package
+  * [b31f164] MT#14301 deleting prof packages instead of terminating
+  * [0e06afe] MT#14317 passing now() to interval catchup and resize
+
+  [ Andreas Granig ]
+  * [c48e40d] MT#13903 Add voucher/cash topup forms for API
+  * [aad9187] MT#13903 Add package_id to voucher API.
+  * [c1542aa] MT#14715 Return uuid in /api/subscribers/
+  * [9748ead] MT#14741 Fix reseller ops for /api/trustedsources/
+  * [e7401af] MT#14747 Pass fw query as url path.
+  * [9ab8484] MT#15057 Add Last-Modified and strip HTTP headers
+  * [ef13caf] MT#15247 Enforce https in autoprov config.
+  * [612a63a] MT#16057 Fix dbix syntax fetching concat numbers
+  * [1a5976d] MT#13367 enable jitsi autoprov via preference
+
+  [ Alexander Lutay ]
+  * [8322170] MT#13903 Disable test api-balanceintervals.t for Jenkins environment
+
+  [ Gerhard Jungwirth ]
+  * [b0eaa0c] MT#14391 Correctly select alias nums on subscriber edit
+  * [623ebec] MT#14365 only dispatch to sems-pbx when pbx is enabled
+  * [324ab6f] MT#13611 use common logic for cdr display
+  * [bfa8317] MT#14383 show suppressed number as Anonymous
+  * [7f63636] MT#14391 Fix editing aliases without primary number
+  * [6e1f377] MT#14107 provide option to force language
+  * [5533251] MT#12985 prevent ambiguity in rwr replace pattern
+  * [83ddf48] MT#14901 remove reseller login page
+  * [4b62f1f] MT#14803 option to access cfdestinationsets via reseller
+  * [195ceee] MT#14979 filter calllists by direction properly
+  * [9fd7944] MT#15361 fix soundcache reload on api post
+  * [c5e5e1a] MT#15361 fix post soundfiles creating duplicate entry
+  * [29f3864] MT#15425 audio_cache reload on soundfile delete
+  * [87374a5] MT#15459 fix html-encoding subscriber details
+  * [4690b39] MT#14923 sendfax allow trying multiple ips
+  * [dc768f7] MT#15583 allow subscriberadmin to access customer details
+  * [88815f6] MT#15757 fix deleting voicebox email setting
+  * [b6004d5] MT#15203 Allow adding alias numbers to pbx group
+  * [efc7b64] MT#15203 fix pbx group create form
+  * [a9f0659] MT#16113 de translation cash OLD interface
+  * [2923bb6] MT#15685 suppress output for correct backuritmp
+
+  [ Irina Peshinskaya ]
+  * [2ee2269] MT#14597 Fix access to undefined stash value for non pbx product subscribers
+  * [be8dc39] MT#14267 Make possible documentation for api fields of the DataTable type
+  * [c922d08] MT#14559 Trigger db_reg_agent.removeRegistration on subscriber termination
+  * [46acfa5] MT#12825 Export billing fees to csv file
+  * [04f4753] MT#8457 Billing profiles duplication.
+  * [9a5d1c1] MT#14653 Add required field billing_profile_id to billing zone api
+  * [f6934fa] MT#14653 Don't delete billing_profile_id from API form for HTML::Formhandler
+  * [2e269c6] MT#14653 Fix the tests
+  * [2c6f953] MT#14767 Backporting Innovaphone from the 13919
+  * [e38a124] MT#13919 Bootstrap uses the same config template, configure TT plugin base.
+  * [87565b3] MT#14739 Get newly created kamailio user location after flush
+  * [b921dba] MT#14477 Fax API (list, send fax, get meta, get content)
+  * [7928bed] MT#12347 Simple tests for cfdestinations
+  * [5557a7b] MT#15441 Don't synchronize cli and primary number if they already differ
+  * [91899db] MT#15489 Work with utf8 in json input
+  * [5fafd6f] MT#14477 Add new fax collections into common tests
+  * [01954bd] MT#15489 Work with utf8 in json input
+  * [8b9450f] MT#14477 Fix faxes collection name in tests
+  * [04921e5] MT#14461 Adjust subscriber for faxes after subscriber creation
+  * [68759f0] MT#12347 Remove unnecessary debug from FakeData
+  * [2866249] MT#12347 Test environment requires perl package String::ShellQuote.
+  * [5c2a415] MT#12347 Fix too early distruction of the local test_machine
+  * [b872eaa] MT#12347 Replace test script to the old place in 4.0
+  * [a2f353f] MT#12347 Fix catalyst config getting for tests
+  * [a03ff11] MT#14477 Response about faxserver feature unavailability from API
+  * [1ecb171] MT#12347 Faxes feature state check as pseudo test
+  * [9591d58] MT#16323 Add rating_status field into item response and filter for collection
+
+  [ Kirill Solomko ]
+  * [3bf3425] MT#14445 - fix billing fees csv upload. set default encoding for csv to "utf8"
+
+  [ Andrew Pogrebennyk ]
+  * [7f14be2] MT#13007 MT#13251 fix MoH reload
+  * [2c23c57] MT#13367 fix commit 0858ef
+
+  [ Victor Seva ]
+  * [cbd8720] MT#14767 add missing dependence libcrypt-rc4-perl
+  * [4759ed6] MT#15701 API: delete/create domain after changes to DB
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Nov 2015 14:32:47 +0100
+
 ngcp-panel (1.9.2.0+0~mr4.0.2.0) unstable; urgency=medium
 
   [ Andreas Granig ]
