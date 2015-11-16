@@ -378,15 +378,24 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
 sub webfax_ajax :Chained('base') :PathPart('webfax/ajax') :Args(0) {
     my ($self, $c) = @_;
 
-    my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
-    my $kam_subscriber = $c->model('DB')->resultset('subscriber')->find({
-        uuid => $s->uuid
-    });
+    my $subscriber = $c->stash->{subscriber};
     my $fax_rs = $c->model('DB')->resultset('fax_journal')->search({
-        subscriber_id => $kam_subscriber->id,
+        'subscriber.uuid' => $subscriber->uuid,
+    },{
+        join => 'subscriber',#kamailio.subscriber is meant here
     });
 
-    NGCP::Panel::Utils::Datatables::process($c, $fax_rs, $c->stash->{fax_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $fax_rs, $c->stash->{fax_dt_columns}, 
+        sub {
+            my ($result) = @_;
+            NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                c => $c, 
+                subscriber => $subscriber, 
+                number => $result->peer_number, 
+                direction => ('in' eq $result->direction) ? 'caller_in' : 'callee_out',
+            );
+        },
+    );
 
     $c->detach( $c->view("JSON") );
 }
