@@ -58,7 +58,7 @@ sub period_as_string {
 }
 
 sub destination_as_string {
-    my ($c, $destination) = @_;
+    my ($c, $destination, $subscriber, $direction) = @_;
     my $dest = $destination->{destination};
 
     if($dest =~ /\@voicebox\.local$/) {
@@ -80,12 +80,13 @@ sub destination_as_string {
     } else {
         my $d = $dest;
         $d =~ s/^sips?://;
-        my $sub = $c->stash->{subscriber};
+        $sub = $subscriber // $c->stash->{subscriber};
+        $direction //= 'caller_out';
         if($sub && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
             my ($user, $domain) = split(/\@/, $d);
             $domain //= $sub->domain->domain;
             $user = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                c => $c, subscriber => $sub, number => $user, direction => 'caller_out'
+                c => $c, subscriber => $sub, number => $user, direction => $direction
             );
             if($domain eq $sub->domain->domain) {
                 $d = $user;
