@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::MaliciousCall;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::MaliciousCall::Reseller;
 use NGCP::Panel::Form::MaliciousCall::Admin;

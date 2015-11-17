@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::NCOS;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::NCOS::ResellerLevel;
 use NGCP::Panel::Form::NCOS::AdminLevel;

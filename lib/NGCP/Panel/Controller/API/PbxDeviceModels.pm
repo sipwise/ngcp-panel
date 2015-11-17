@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::PbxDeviceModels;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -10,7 +11,7 @@ use Data::Dumper;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { use parent 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;

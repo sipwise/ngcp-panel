@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Contract;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Contract::Contract;
 use NGCP::Panel::Form::Contract::PeeringReseller;
 use NGCP::Panel::Utils::Message;

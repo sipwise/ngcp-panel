@@ -2,7 +2,7 @@ package NGCP::Panel::Field::EmailList;
 use HTML::FormHandler::Moose;
 use Email::Valid;
 use Sipwise::Base;
-extends 'HTML::FormHandler::Field::Text';
+use parent 'HTML::FormHandler::Field::Text';
 
 sub validate {
     my ( $self ) = @_;

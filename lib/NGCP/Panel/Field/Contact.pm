@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::Contact;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Compound';
+use parent 'HTML::FormHandler::Field::Compound';
 
 has_field 'id' => (
     type => '+NGCP::Panel::Field::DataTable',

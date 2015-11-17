@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Customer;
 use Sipwise::Base;
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 use JSON qw(decode_json encode_json);
 use IPC::System::Simple qw/capturex EXIT_ANY $EXITVAL/;
 use NGCP::Panel::Form::CustomerMonthlyFraud;

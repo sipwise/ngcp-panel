@@ -1,7 +1,7 @@
 package NGCP::Panel::Field::PbxGroupMemberAPI;
 use HTML::FormHandler::Moose;
 
-extends 'HTML::FormHandler::Field';
+use parent 'HTML::FormHandler::Field';
 
 has_field 'dummy' => (
     type => 'Text',

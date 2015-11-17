@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::CallControls;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -12,7 +13,7 @@ use Safe::Isa qw($_isa);
 
 use NGCP::Panel::Utils::Sems;
 
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { use parent 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;

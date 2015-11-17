@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::Identifier;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Text';
+use parent 'HTML::FormHandler::Field::Text';
 
 sub validate {
     my ( $self ) = @_;

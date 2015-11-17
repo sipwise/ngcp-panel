@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::BillingProfile::Admin;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::BillingProfile::Reseller';
+use parent 'NGCP::Panel::Form::BillingProfile::Reseller';
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',

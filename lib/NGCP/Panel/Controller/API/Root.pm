@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::Root;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();
@@ -9,7 +10,7 @@ use MooseX::ClassAttribute qw(class_has);
 use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;

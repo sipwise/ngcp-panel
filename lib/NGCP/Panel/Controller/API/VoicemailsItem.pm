@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::VoicemailsItem;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
@@ -8,7 +9,7 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Subscriber;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { use parent 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;

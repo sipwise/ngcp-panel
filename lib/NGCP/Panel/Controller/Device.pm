@@ -16,7 +16,7 @@ use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
 use NGCP::Panel::Utils::DateTime;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 sub auto :Private {
     my ($self, $c) = @_;

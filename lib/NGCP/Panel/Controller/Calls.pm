@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Calls;
 use Sipwise::Base;
 use DateTime::Format::Strptime;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Navigation;
 use Number::Phone;

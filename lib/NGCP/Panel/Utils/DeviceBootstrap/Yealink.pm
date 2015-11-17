@@ -3,7 +3,7 @@ package NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 use strict;
 use Moose;
 use Digest::MD5 qw/md5_hex/;
-extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
+use parent 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'register_model_content' => (
     is => 'rw',

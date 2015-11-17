@@ -1,6 +1,6 @@
 package NGCP::Panel::AuthenticationStore::RoleFromRealm;
 use Sipwise::Base;
-extends 'Catalyst::Authentication::Store::DBIx::Class::User';
+use parent 'Catalyst::Authentication::Store::DBIx::Class::User';
 
 sub roles {
     my ($self) = @_;
@@ -21,4 +21,5 @@ sub roles {
     }
     return "invalid";
 }
+1;
 # vim: set tabstop=4 expandtab:

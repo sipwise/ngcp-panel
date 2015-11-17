@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::EmailTemplate;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::EmailTemplate::Reseller;
 use NGCP::Panel::Form::EmailTemplate::Admin;

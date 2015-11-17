@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::Subscribers;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -13,7 +14,7 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use UUID;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { use parent 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;

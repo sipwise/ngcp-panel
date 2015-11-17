@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Reseller;
 use Sipwise::Base;
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 use DateTime qw();
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use File::Type;

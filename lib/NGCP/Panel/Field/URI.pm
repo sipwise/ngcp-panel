@@ -2,7 +2,7 @@ package NGCP::Panel::Field::URI;
 
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Text';
+use parent 'HTML::FormHandler::Field::Text';
 use NGCP::Panel::Utils::Subscriber;
 
 our $class_messages = {

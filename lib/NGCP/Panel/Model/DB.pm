@@ -4,7 +4,7 @@ use strict;
 use File::ShareDir 'dist_file';
 use Moose;
 use MooseX::Types::Moose;
-extends 'Catalyst::Model::DBIC::Schema';
+use parent 'Catalyst::Model::DBIC::Schema';
 
 use Module::Runtime qw(use_module);
 

@@ -4,7 +4,7 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
 use NGCP::Panel::Field::PosInteger;
 use NGCP::Panel::Field::URI;
-extends 'HTML::FormHandler';
+use parent 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
 has_field 'submitid' => ( type => 'Hidden' );

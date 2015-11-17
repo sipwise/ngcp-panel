@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::MaliciousCall::Admin;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::MaliciousCall::Reseller';
+use parent 'NGCP::Panel::Form::MaliciousCall::Reseller';
 use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (

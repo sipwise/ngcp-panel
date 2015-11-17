@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::Interval;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Compound';
+use parent 'HTML::FormHandler::Field::Compound';
 
 has_field 'value' => (
     type => 'PosInteger',

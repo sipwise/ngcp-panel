@@ -3,7 +3,7 @@ use warnings;
 {
     package My::Serializer::Custom;
     use Moo;
-    extends 'Role::REST::Client::Serializer';
+    use parent 'Role::REST::Client::Serializer';
 
     sub _set_serializer {
         my $s = Data::Serializer::Raw->new(
@@ -25,7 +25,7 @@ use warnings;
     use Moo;
     use HTTP::Request;
     use HTTP::Headers;
-    extends 'LWP::UserAgent';
+    use parent 'LWP::UserAgent';
 
     around request => sub {
             my ($next, $self, $method, $uri, $opts) = @_;

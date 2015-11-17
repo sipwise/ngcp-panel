@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Customer::PbxGroupEditSubadmin;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Customer::PbxGroupBase';
+use parent 'NGCP::Panel::Form::Customer::PbxGroupBase';
 
 has_field 'alias_select' => (
     type => '+NGCP::Panel::Field::DataTable',

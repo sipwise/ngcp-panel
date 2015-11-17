@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::SubscriberProfile::SetAdmin;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::SubscriberProfile::SetReseller';
+use parent 'NGCP::Panel::Form::SubscriberProfile::SetReseller';
 use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (

@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::AliasNumber;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Repeatable';
+use parent 'HTML::FormHandler::Field::Repeatable';
 
 
 #has 'label' => ( default => 'E164 Number');

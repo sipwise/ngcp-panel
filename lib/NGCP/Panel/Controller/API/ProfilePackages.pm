@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::ProfilePackages;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -9,7 +10,7 @@ use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { use parent 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;

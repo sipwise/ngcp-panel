@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::FaxRecordingsItem;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
@@ -9,7 +10,7 @@ use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use File::Type;
 use File::Slurp;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { use parent 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;

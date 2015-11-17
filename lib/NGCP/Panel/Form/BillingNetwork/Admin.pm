@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::BillingNetwork::Admin;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::BillingNetwork::Reseller';
+use parent 'NGCP::Panel::Form::BillingNetwork::Reseller';
 use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (
