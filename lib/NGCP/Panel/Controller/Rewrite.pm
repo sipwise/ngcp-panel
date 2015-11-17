@@ -1,7 +1,8 @@
 package NGCP::Panel::Controller::Rewrite;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use base 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::RewriteRule::AdminSet;
 use NGCP::Panel::Form::RewriteRule::ResellerSet;
@@ -51,8 +52,8 @@ sub set_ajax :Chained('set_list') :PathPart('ajax') :Args(0) {
 sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
-    unless($set_id && $set_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($set_id && is_int($set_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid rewrite rule set id detected',
             desc  => $c->loc('Invalid rewrite rule set id detected'),
@@ -62,7 +63,7 @@ sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{sets_rs}->find($set_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Rewrite rule set does not exist',
             desc  => $c->loc('Rewrite rule set does not exist'),
@@ -78,7 +79,7 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{set_result}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::RewriteRule::AdminSet->new;
@@ -106,12 +107,12 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
             }
             $c->stash->{set_result}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update rewrite rule set'),
@@ -129,13 +130,13 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
     
     try {
         $c->stash->{set_result}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{set_result}->get_inflated_columns },
             desc => $c->loc('Rewrite rule set successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete rewrite rule set'),
@@ -149,7 +150,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{set_result}->get_inflated_columns };
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::RewriteRule::CloneSet->new;
     $form->process(
         posted => $posted,
@@ -183,12 +184,12 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                     });
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully cloned'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to clone rewrite rule set.'),
@@ -207,7 +208,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::RewriteRule::AdminSet->new;
@@ -237,12 +238,12 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
             }
             $c->stash->{sets_rs}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create rewrite rule set'),
@@ -274,7 +275,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
     my $param_where = $c->req->params->{where};
     
     my $elem = $rules_rs->find($param_move)
-        if ($param_move && $param_move->is_integer && $param_where);
+        if ($param_move && is_int($param_move) && $param_where);
     if($elem) {
         my $use_next = ($param_where eq "down") ? 1 : 0;
         my $swap_elem = $rules_rs->search({
@@ -302,7 +303,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
             }
             $self->_sip_dialplan_reload($c);
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to move rewrite rule.'),
@@ -360,8 +361,8 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
 sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $rule_id) = @_;
 
-    unless($rule_id && $rule_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($rule_id && is_int($rule_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid rewrite rule id detected',
             desc  => $c->loc('Invalid rewrite rule id detected'),
@@ -371,7 +372,7 @@ sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{rules_rs}->find($rule_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Rewrite rule does not exist',
             desc  => $c->loc('Rewrite rule does not exist'),
@@ -402,12 +403,12 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
         try {
             $c->stash->{rule_result}->update($form->values);
             $self->_sip_dialplan_reload($c);
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update rewrite rule'),
@@ -426,13 +427,13 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') {
     try {
         $c->stash->{rule_result}->delete;
         $self->_sip_dialplan_reload($c);
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{rule_result}->get_inflated_columns },
             desc => $c->loc('Rewrite rule successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete rewrite rule'),
@@ -462,12 +463,12 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
             $form->values->{priority} = int($last_priority) + 1;
             $c->stash->{rules_rs}->create($form->values);
             $self->_sip_dialplan_reload($c);
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create rewrite rule'),

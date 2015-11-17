@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Subscriber::TrustedSourceAPI;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Subscriber::TrustedSource';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 has_field 'subscriber_id' => (
     type => 'PosInteger',
