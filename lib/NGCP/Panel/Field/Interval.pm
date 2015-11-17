@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Interval;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -28,6 +29,7 @@ has_field 'unit' => (
     do_wrapper => 0,  
 );
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

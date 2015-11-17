@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API::CFDestinationSets;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -122,7 +123,7 @@ sub update_item {
         return;
     }
     for my $d (@{ $resource->{destinations} }) {
-        if (exists $d->{timeout} && ! $d->{timeout}->is_integer) {
+        if (exists $d->{timeout} && ! is_int($d->{timeout})) {
             $c->log->error("Invalid field 'timeout'.");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'timeout'.");
             return;

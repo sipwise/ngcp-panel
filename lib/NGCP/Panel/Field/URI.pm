@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::URI;
+use Moose;
 
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
@@ -97,6 +98,7 @@ sub uri_deflate {
     return $v;    
 }
 
+no Moose;
 1;
 __PACKAGE__->meta->make_immutable;
 use namespace::autoclean

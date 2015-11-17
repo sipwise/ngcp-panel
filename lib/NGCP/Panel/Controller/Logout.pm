@@ -1,4 +1,5 @@
 package NGCP::Panel::Controller::Logout;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose;
 
 BEGIN { extends 'Catalyst::Controller'; }

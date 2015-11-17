@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API::InvoiceTemplates;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {

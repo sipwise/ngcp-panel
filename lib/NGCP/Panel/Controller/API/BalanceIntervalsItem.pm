@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::BalanceIntervalsItem;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use namespace::sweep;
+use Moose;
+#use namespace::sweep;
 use boolean qw(true);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
@@ -231,3 +233,6 @@ sub end : Private {
 
     $self->log_response($c);
 }
+
+no Moose;
+1;

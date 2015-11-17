@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::DateTime;
+use Moose;
 use HTML::FormHandler::Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Text';
@@ -14,6 +15,7 @@ sub datetime_deflate {
                 }
 }
 
+no Moose;
 1;
 
 =head1 NAME

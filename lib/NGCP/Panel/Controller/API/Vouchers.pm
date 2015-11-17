@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::Vouchers;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use namespace::sweep;
+use Moose;
+#use namespace::sweep;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -211,5 +213,8 @@ sub end : Private {
 
     $self->log_response($c);
 }
+
+no Moose;
+1;
 
 # vim: set tabstop=4 expandtab:

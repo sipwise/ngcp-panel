@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API::SoundFiles;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -125,7 +126,7 @@ sub update_item {
         exceptions => [ "set_id" ],
     );
 
-    $resource->{loopplay} = ($resource->{loopplay} eq "true" || $resource->{loopplay}->is_int && $resource->{loopplay}) ? 1 : 0;
+    $resource->{loopplay} = ($resource->{loopplay} eq "true" || is_int($resource->{loopplay}) && $resource->{loopplay}) ? 1 : 0;
 
 
     my $set_rs = $c->model('DB')->resultset('voip_sound_sets')->search({ 

@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::Root;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use namespace::sweep;
+#use namespace::sweep;
+use Moose;
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();
@@ -378,5 +380,7 @@ sub end : Private {
     #$self->log_response($c);
     return 1;
 }
+
+no Moose;
 
 # vim: set tabstop=4 expandtab:

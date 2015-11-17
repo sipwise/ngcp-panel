@@ -2,7 +2,7 @@ package NGCP::Panel::Form::SubscriberProfile::Profile;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
