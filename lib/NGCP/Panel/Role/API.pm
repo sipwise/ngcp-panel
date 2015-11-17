@@ -177,7 +177,7 @@ sub validate_fields {
                $fields->{$k}->$_isa('HTML::FormHandler::Field::Integer') ||
                $fields->{$k}->$_isa('HTML::FormHandler::Field::Money') ||
                $fields->{$k}->$_isa('HTML::FormHandler::Field::Float')) &&
-               ($resource->{$k}->is_int || $resource->{$k}->is_decimal));
+               (is_int($resource->{$k}) || $resource->{$k}->is_decimal));
 
         if (defined $resource->{$k} &&
                 $fields->{$k}->$_isa('HTML::FormHandler::Field::Repeatable') &&
@@ -542,7 +542,7 @@ sub set_body {
 sub log_request {
     my ($self, $c) = @_;
 
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_request',
         log  => $c->stash->{'body'},
@@ -560,7 +560,7 @@ sub log_response {
     my $rc = '';
     if (@{ $c->error }) {
         my $msg = join ', ', @{ $c->error };
-        $rc = NGCP::Panel::Utils::Message->error(
+        $rc = NGCP::Panel::Utils::Message::error(
             c    => $c,
             type => 'api_response',
             log  => $msg,
@@ -568,7 +568,7 @@ sub log_response {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
         log  => $c->response->body,

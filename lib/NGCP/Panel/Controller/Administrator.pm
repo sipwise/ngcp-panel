@@ -1,5 +1,4 @@
 package NGCP::Panel::Controller::Administrator;
-#use namespace::sweep;
 use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller'; }
 use HTTP::Headers qw();
@@ -109,12 +108,12 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             }
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Administrator successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create administrator'),
@@ -136,7 +135,7 @@ sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
     	unless($c->user->is_master);
 
     unless ($administrator_id && is_int($administrator_id)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $administrator_id },
             desc  => $c->loc('Invalid administrator id detected'),
@@ -145,7 +144,7 @@ sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
     }
     $c->stash(administrator => $c->stash->{admins}->find($administrator_id));
     unless($c->stash->{administrator}) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc  => $c->loc('Administrator not found'),
         );
@@ -195,13 +194,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form->values->{md5pass} unless length $form->values->{md5pass};
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 data => { $c->stash->{administrator}->get_inflated_columns },
                 desc => $c->loc('Administrator successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 data => { $c->stash->{administrator}->get_inflated_columns },
@@ -221,7 +220,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     if($c->stash->{administrator}->id == $c->user->id) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { $c->stash->{administrator}->get_inflated_columns },
             desc => $c->loc('Cannot delete myself'),
@@ -230,13 +229,13 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     }
     try {
         $c->stash->{administrator}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => { $c->stash->{administrator}->get_inflated_columns },
             desc => $c->loc('Administrator successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data => { $c->stash->{administrator}->get_inflated_columns },
@@ -255,7 +254,7 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
         try {
             $cert = $c->model('CA')->make_client($c, $serial);
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 data => { $c->stash->{administrator}->get_inflated_columns },

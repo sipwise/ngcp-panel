@@ -76,7 +76,7 @@ sub resource_from_item {
         $resource{$_} = $item->$_;
     }
     foreach(qw/duration pages signal_rate/){
-        $resource{$_} = $item->$_->is_int ? $item->$_ : 0;
+        $resource{$_} = is_int($item->$_) ? $item->$_ : 0;
     }
     return \%resource;
 }

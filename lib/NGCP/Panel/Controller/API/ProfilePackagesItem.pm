@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::API::ProfilePackagesItem;
 use Sipwise::Base;
-use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);

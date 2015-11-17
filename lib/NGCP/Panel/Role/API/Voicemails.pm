@@ -71,7 +71,7 @@ sub resource_from_item {
 
     my %resource = ();
     $resource{id} = int($item->id);
-    $resource{duration} = $item->duration->is_int ? int($item->duration) : 0;
+    $resource{duration} = is_int($item->duration) ? int($item->duration) : 0;
     $resource{time} = "" . $item->origtime;
     $resource{caller} = $item->callerid;
     $resource{subscriber_id} = int($item->mailboxuser->provisioning_voip_subscriber->voip_subscriber->id);

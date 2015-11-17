@@ -262,9 +262,9 @@ my @allcontracts = ();
     my $contract = JSON::from_json($res->decoded_content);
     ok(exists $contract->{status}, "check existence of status");
     ok(exists $contract->{type}, "check existence of type");
-    ok(exists $contract->{billing_profile_id} && $contract->{billing_profile_id}->is_int, "check existence of billing_profile_id");
-    ok(exists $contract->{contact_id} && $contract->{contact_id}->is_int, "check existence of contact_id");
-    ok(exists $contract->{id} && $contract->{id}->is_int, "check existence of id");
+    ok(exists $contract->{billing_profile_id} && is_int($contract->{billing_profile_id}), "check existence of billing_profile_id");
+    ok(exists $contract->{contact_id} && is_int($contract->{contact_id}), "check existence of contact_id");
+    ok(exists $contract->{id} && is_int($contract->{id}), "check existence of id");
     ok(exists $contract->{all_billing_profiles}, "check existence of billing_profiles");
     is_deeply($contract->{all_billing_profiles},[ { profile_id => $billing_profile_id, start => undef, stop => undef} ],"check billing_profiles deeply");
 

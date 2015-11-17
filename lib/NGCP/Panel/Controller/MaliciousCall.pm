@@ -73,7 +73,7 @@ sub base :Chained('mcid_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $mcid_id) = @_;
 
     unless($mcid_id && is_int($mcid_id)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             log => 'Invalid malicious call id detected',
             desc => $c->log('Invalid malicious call id detected'),
@@ -85,7 +85,7 @@ sub base :Chained('mcid_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{mcid_rs}->find($mcid_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             log => 'Malicious call does not exist',
             desc => $c->log('Malicious call does not exist'),
@@ -106,12 +106,12 @@ sub delete :Chained('base') :PathPart('delete') {
 
     try {
         $c->stash->{mcid_res}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             desc  => $c->loc('Malicious call successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $$c->stash->{mcid_res}->id },
             desc  => $c->loc('Failed to delete Malicious call'),

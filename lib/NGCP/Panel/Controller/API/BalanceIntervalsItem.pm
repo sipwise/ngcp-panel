@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::API::BalanceIntervalsItem;
 use Sipwise::Base;
-use namespace::sweep;
 use boolean qw(true);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);

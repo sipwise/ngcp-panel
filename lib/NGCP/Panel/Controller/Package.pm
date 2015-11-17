@@ -115,12 +115,12 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{package} = { id => $profile_package->id };
             });
             
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $c->loc('Profile package successfully created'),
             );
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create profile package.'),
@@ -141,7 +141,7 @@ sub base :Chained('/package/package_list') :PathPart('') :CaptureArgs(1) {
 
     unless($package_id && is_int($package_id)) {
         $package_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $package_id },
             desc => $c->loc('Invalid package id detected'),
@@ -153,7 +153,7 @@ sub base :Chained('/package/package_list') :PathPart('') :CaptureArgs(1) {
     
     my $res = $c->stash->{package_rs}->find($package_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Profile package does not exist'),
         );
@@ -216,12 +216,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     $profile_package->profiles->create($mapping); 
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Profile package successfully updated'),
             );            
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update profile package'),
@@ -253,13 +253,13 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         }
         
         $package->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => $c->stash->{package},
             desc => $c->loc('Profile package successfully deleted'),
         );
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data  => $c->stash->{package},
@@ -296,7 +296,7 @@ sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
     
     unless($package_id && is_int($package_id)) {
         $package_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $package_id },
             desc => $c->loc('Invalid package id detected'),
@@ -308,7 +308,7 @@ sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
     
     my $res = $package_rs->find($package_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Profile package does not exist'),
         );

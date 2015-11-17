@@ -108,12 +108,12 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{network} = { id => $bn->id };
             });
             
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $c->loc('Billing Network successfully created'),
             );
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create billing network.'),
@@ -134,7 +134,7 @@ sub base :Chained('/network/network_list') :PathPart('') :CaptureArgs(1) {
 
     unless($network_id && is_int($network_id)) {
         $network_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $network_id },
             desc => $c->loc('Invalid billing network id detected'),
@@ -146,7 +146,7 @@ sub base :Chained('/network/network_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{network_rs}->find($network_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Billing network does not exist'),
         );
@@ -188,12 +188,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     $c->stash->{'network_result'}->create_related("billing_network_blocks", $block);
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Billing network successfully updated'),
             );            
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update billing network'),
@@ -227,13 +227,13 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             status => 'terminated',
             #terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => $c->stash->{network},
             desc => $c->loc('Billing network successfully terminated'),
         );
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data  => $c->stash->{network},

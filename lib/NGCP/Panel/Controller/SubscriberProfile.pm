@@ -70,7 +70,7 @@ sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
     unless($set_id && is_int($set_id)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid subscriber profile set id detected',
             desc  => $c->loc('Invalid subscriber profile set id detected'),
@@ -80,7 +80,7 @@ sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{set_rs}->find($set_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Subscriber profile set does not exist',
             desc  => $c->loc('Subscriber profile set does not exist'),
@@ -133,12 +133,12 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) :Does(ACL) :ACL
               
                 delete $c->session->{created_objects}->{reseller};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Subscriber profile set successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create subscriber profile set'),
@@ -196,12 +196,12 @@ sub set_edit :Chained('set_base') :PathPart('edit') :Does(ACL) :ACLDetachTo('/de
               
                 delete $c->session->{created_objects}->{reseller};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Subscriber profile set successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update subscriber profile set'),
@@ -232,13 +232,13 @@ sub set_delete :Chained('set_base') :PathPart('delete') :Does(ACL) :ACLDetachTo(
             $c->stash->{set}->voip_subscriber_profiles->delete;
             $c->stash->{set}->delete;
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{set}->get_inflated_columns },
             desc => $c->loc('Subscriber profile set successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete subscriber profile set'),
@@ -303,12 +303,12 @@ sub set_clone :Chained('set_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/
                     }
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully cloned'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to clone subscriber profile'),
@@ -352,7 +352,7 @@ sub profile_base :Chained('profile_list') :PathPart('') :CaptureArgs(1) :Does(AC
     my ($self, $c, $profile_id) = @_;
 
     unless($profile_id && is_int($profile_id)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid subscriber profile id detected',
             desc  => $c->loc('Invalid subscriber profile id detected'),
@@ -362,7 +362,7 @@ sub profile_base :Chained('profile_list') :PathPart('') :CaptureArgs(1) :Does(AC
 
     my $res = $c->stash->{set}->voip_subscriber_profiles->find($profile_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Subscriber profile does not exist',
             desc  => $c->loc('Subscriber profile does not exist'),
@@ -425,12 +425,12 @@ sub profile_create :Chained('profile_list') :PathPart('create') :Args(0) :Does(A
                     });
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create subscriber profile'),
@@ -558,12 +558,12 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
                 }
 
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update subscriber profile'),
@@ -602,13 +602,13 @@ sub profile_delete :Chained('profile_base') :PathPart('delete') :Does(ACL) :ACLD
             $profile->voip_prof_preferences->delete;
             $profile->delete;
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{profile}->get_inflated_columns },
             desc => $c->loc('Subscriber profile successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete subscriber profile'),
@@ -652,12 +652,12 @@ sub profile_clone :Chained('profile_base') :PathPart('clone') :Does(ACL) :ACLDet
                     });
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully cloned'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to clone subscriber profile'),

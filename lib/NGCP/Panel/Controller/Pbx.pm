@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::Pbx;
 use Sipwise::Base;
-use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Message;

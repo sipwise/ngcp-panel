@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::API::Root;
 use Sipwise::Base;
-use namespace::sweep;
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();

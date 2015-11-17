@@ -180,7 +180,7 @@ my @allprofiles = ();
     $res = $ua->request($req);
     is($res->code, 200, "fetch one contract item");
     my $profile = JSON::from_json($res->decoded_content);
-    ok(exists $profile->{reseller_id} && $profile->{reseller_id}->is_int, "check existence of reseller_id");
+    ok(exists $profile->{reseller_id} && is_int($profile->{reseller_id}), "check existence of reseller_id");
     ok(exists $profile->{handle}, "check existence of handle");
     ok(exists $profile->{name}, "check existence of name");
     

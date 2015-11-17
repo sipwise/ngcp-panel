@@ -181,8 +181,8 @@ my @allcontacts = ();
     ok(exists $contact->{firstname}, "check existence of firstname");
     ok(exists $contact->{lastname}, "check existence of lastname");
     ok(exists $contact->{email}, "check existence of email");
-    ok(exists $contact->{id} && $contact->{id}->is_int, "check existence of id");
-    ok(exists $contact->{reseller_id} && $contact->{reseller_id}->is_int, "check existence of reseller_id");
+    ok(exists $contact->{id} && is_int($contact->{id}), "check existence of id");
+    ok(exists $contact->{reseller_id} && is_int($contact->{reseller_id}), "check existence of reseller_id");
     
     # PUT same result again
     my $old_contact = { %$contact };
