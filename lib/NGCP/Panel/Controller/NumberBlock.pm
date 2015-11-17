@@ -1,7 +1,8 @@
 package NGCP::Panel::Controller::NumberBlock;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use base 'Catalyst::Controller'; }
 
 use JSON qw(decode_json encode_json);
 use NGCP::Panel::Form::NumberBlock::BlockAdmin;
@@ -61,8 +62,8 @@ sub block_ajax :Chained('block_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACL
 sub block_base :Chained('block_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $block_id) = @_;
 
-    unless($block_id && $block_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($block_id && is_int($block_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid number block id detected',
             desc  => $c->loc('Invalid number block id detected'),
@@ -72,7 +73,7 @@ sub block_base :Chained('block_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{block_rs}->find($block_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Number block does not exist',
             desc  => $c->loc('Number block does not exist'),
@@ -87,7 +88,7 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $params->{reseller_list} = encode_json([]);;
 
     my $form;
@@ -122,7 +123,7 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
                 $num->{sn_prefix} = delete $num->{snbase};
                 $num->{sn_length} = delete $num->{snlength};
                 $num->{ac} //= '';
-                $values = $values->merge($num);
+                $values = merge($values, $num);
 
                 my $block = $c->stash->{block_rs}->create($values);
                 foreach my $r(@{ $reseller_list }) {
@@ -133,12 +134,12 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
               
                 delete $c->session->{created_objects}->{reseller};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Number block successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create number block'),
@@ -161,7 +162,7 @@ sub block_edit :Chained('block_base') :PathPart('edit') :Does(ACL) :ACLDetachTo(
     $params->{e164}{ac} = delete $params->{cc};
     $params->{e164}{snbase} = delete $params->{sn_prefix};
     $params->{e164}{snlength} = delete $params->{sn_length};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my @resellers = $block->search_related('voip_number_block_resellers')->get_column('reseller_id')->all;
     $params->{reseller_list} = encode_json(\@resellers);
 
@@ -195,7 +196,7 @@ sub block_edit :Chained('block_base') :PathPart('edit') :Does(ACL) :ACLDetachTo(
                 $num->{sn_prefix} = delete $num->{snbase};
                 $num->{sn_length} = delete $num->{snlength};
                 $num->{ac} //= '';
-                $values = $values->merge($num);
+                $values = merge($values, $num);
 
                 $block->update($values);
                 $block->search_related('voip_number_block_resellers')->delete;
@@ -207,12 +208,12 @@ sub block_edit :Chained('block_base') :PathPart('edit') :Does(ACL) :ACLDetachTo(
               
                 delete $c->session->{created_objects}->{reseller};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Number block successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update number block'),
@@ -235,13 +236,13 @@ sub block_delete :Chained('block_base') :PathPart('delete') :Does(ACL) :ACLDetac
             $c->stash->{block}->search_related('voip_number_block_resellers')->delete;
             $c->stash->{block}->delete;
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => { $c->stash->{block}->get_inflated_columns },
             desc  => $c->loc('Number block successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete number block'),

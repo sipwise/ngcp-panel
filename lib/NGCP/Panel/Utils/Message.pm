@@ -7,8 +7,11 @@ use DateTime qw();
 use DateTime::Format::RFC3339 qw();
 use Time::HiRes qw();
 
-method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
-    # get log_tx_id, caller method, remote user, formatted passed parameters
+sub get_log_params {
+    my %params = @_;
+    my $c = $params{c};
+    my $type = $params{type};
+    my $data = $params{data};
 
     # tx_id
     my $log_tx = DateTime->from_epoch(epoch => Time::HiRes::time);
@@ -95,16 +98,21 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
            };
 }
 
-method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel', :$data?, :$cname?) {
-# we explicitly declare the invocant to skip the validation for Object
-# because we want a class method instead of an object method
-
-    # undef checks
+sub error {
+    my %params = @_;
+    my $c = $params{c};
+    my $type = $params{type};
+    my $data = $params{data};
+    my $desc = $params{desc};
+    my $cname = $params{cname};
+    my $log = $params{log};
+    my $error = $params{error};
+    $type //= 'panel';
     $desc //= '';
 
-    my $log_params = $self->get_log_params(c => $c,
-                                           type => $type,
-                                           data => $data, );
+    my $log_params = get_log_params(c => $c,
+                                    type => $type,
+                                    data => $data, );
 
     defined $cname and $log_params->{called} =~ s/__ANON__/$cname/;
 
@@ -174,16 +182,20 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
     return $rc;
 }
 
-method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?, :$cname?) {
-# we explicitly declare the invocant to skip the validation for Object
-# because we want a class method instead of an object method
-
-    # undef checks
+sub info {
+    my %params = @_;
+    my $c = $params{c};
+    my $type = $params{type};
+    my $data = $params{data};
+    my $desc = $params{desc};
+    my $cname = $params{cname};
+    my $log = $params{log};
+    $type //= 'panel';
     $desc //= '';
 
-    my $log_params = $self->get_log_params(c => $c,
-                                           type => $type,
-                                           data => $data, );
+    my $log_params = get_log_params(c => $c,
+                                    type => $type,
+                                    data => $data, );
 
     defined $cname and $log_params->{called} =~ s/__ANON__/$cname/;
 
@@ -215,6 +227,8 @@ method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?,
     return $rc;
 }
 
+1;
+
 __END__
 
 =encoding UTF-8
@@ -230,14 +244,14 @@ Parse messages for log and Web display.
 Usage in the code:
 
 Error:
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to create domain.'),
         );
 
 Info:
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             desc => $c->loc('Domain successfully created'),
         );

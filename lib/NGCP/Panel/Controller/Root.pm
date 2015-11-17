@@ -1,4 +1,5 @@
 package NGCP::Panel::Controller::Root;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -18,6 +19,7 @@ __PACKAGE__->config(namespace => '');
 
 sub auto :Private {
     my($self, $c) = @_;
+    #exit(0); # just for profiling
 
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");

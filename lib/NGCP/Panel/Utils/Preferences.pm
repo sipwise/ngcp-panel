@@ -11,13 +11,13 @@ sub validate_ipnet {
     my ($ip, $net) = split /\//, $field->value;
     if(is_ipv4($ip)) {
         return 1 unless(defined $net);
-        unless($net->is_int && $net >= 0 && $net <= 32) {
+        unless(is_int($net) && $net >= 0 && $net <= 32) {
             $field->add_error("Invalid IPv4 network portion, must be 0 <= net <= 32");
             return;
         }
     } elsif(is_ipv6($ip)) {
         return 1 unless(defined $net);
-        unless($net->is_int && $net >= 0 && $net <= 128) {
+        unless(is_int($net) && $net >= 0 && $net <= 128) {
             $field->add_error("Invalid IPv6 network portion, must be 0 <= net <= 128");
             return;
         }
@@ -394,14 +394,14 @@ sub create_preference_form {
                     $c->model('DB')->resultset('voip_aig_sequence')->search_rs({
                             id => { '<' => $new_group->id },
                         })->delete_all;
-                    NGCP::Panel::Utils::Message->info(
+                    NGCP::Panel::Utils::Message::info(
                         c => $c,
                         type => 'internal',
                         data => \%log_data,
                         desc => $c->loc('ip group sequence successfully generated'),
                     );
                 } catch($e) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
                         data => \%log_data,
@@ -416,14 +416,14 @@ sub create_preference_form {
                     group_id => $aip_group_id,
                     ipnet => $form->field($attribute)->value,
                 });
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c => $c,
                     type => 'internal',
                     data => \%log_data,
                     desc => $c->loc('allowed_ip_grp successfully created'),
                 );
             } catch($e) {
-                NGCP::Panel::Utils::Message->error(
+                NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
                     data  => \%log_data,
@@ -454,14 +454,14 @@ sub create_preference_form {
                     $c->model('DB')->resultset('voip_aig_sequence')->search_rs({
                             id => { '<' => $new_group->id },
                         })->delete_all;
-                    NGCP::Panel::Utils::Message->info(
+                    NGCP::Panel::Utils::Message::info(
                         c => $c,
                         type => 'internal',
                         data => \%log_data,
                         desc => $c->loc('Manual ip group sequence successfully generated'),
                     );
                 } catch($e) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
                         data  => \%log_data,
@@ -476,14 +476,14 @@ sub create_preference_form {
                     group_id => $man_aip_group_id,
                     ipnet => $form->field($attribute)->value,
                 });
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c => $c,
                     type => 'internal',
                     data => \%log_data,
                     desc => $c->loc('man_allowed_ip_grp successfully created'),
                 );
             } catch($e) {
-                NGCP::Panel::Utils::Message->error(
+                NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
                     data  => \%log_data,
@@ -522,13 +522,13 @@ sub create_preference_form {
                     attribute_id => $c->stash->{preference_meta}->id,
                     value => $form->values->{$c->stash->{preference_meta}->attribute},
                 });
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c => $c,
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully created', $attribute),
                 );
             } catch($e) {
-                NGCP::Panel::Utils::Message->error(
+                NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
                     data  => \%log_data,
@@ -546,7 +546,7 @@ sub create_preference_form {
                 rwrs_result   => $selected_rwrs,
                 pref_rs       => $pref_rs,
             );
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 data => \%log_data,
                 desc => $c->loc('Preference [_1] successfully updated', $attribute),
@@ -569,13 +569,13 @@ sub create_preference_form {
                 } else {
                     $preference->create({ value => $selected_level->id });
                 }
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c => $c,
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
             } catch($e) {
-                NGCP::Panel::Utils::Message->error(
+                NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
                     data  => \%log_data,
@@ -601,13 +601,13 @@ sub create_preference_form {
                 } else {
                     $preference->create({ value => $selected_set->id });
                 }
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c => $c,
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
             } catch($e) {
-                NGCP::Panel::Utils::Message->error(
+                NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
                     data  => \%log_data,
@@ -633,13 +633,13 @@ sub create_preference_form {
                 } else {
                     $preference->create({ value => $selected_set->id });
                 }
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c => $c,
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
             } catch($e) {
-                NGCP::Panel::Utils::Message->error(
+                NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
                     data  => \%log_data,
@@ -659,13 +659,13 @@ sub create_preference_form {
                 try {
                     my $preference = $pref_rs->find($preference_id);
                     $preference->delete if $preference;
-                    NGCP::Panel::Utils::Message->info(
+                    NGCP::Panel::Utils::Message::info(
                         c => $c,
                         data => \%log_data,
                         desc => $c->loc('Preference [_1] successfully deleted', $attribute),
                     );
                 } catch($e) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
                         data  => \%log_data,
@@ -679,13 +679,13 @@ sub create_preference_form {
                 try {
                     my $preference = $pref_rs->find($preference_id);
                     $preference->delete if $preference;
-                    NGCP::Panel::Utils::Message->info(
+                    NGCP::Panel::Utils::Message::info(
                         c => $c,
                         data => \%log_data,
                         desc => $c->loc('Preference [_1] successfully deleted', $attribute),
                     );
                 } catch($e) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
                         data  => \%log_data,
@@ -701,13 +701,13 @@ sub create_preference_form {
                         attribute_id => $c->stash->{preference_meta}->id,
                         value => $form->field($attribute)->value,
                     });
-                    NGCP::Panel::Utils::Message->info(
+                    NGCP::Panel::Utils::Message::info(
                         c => $c,
                         data  => \%log_data,
                         desc  => $c->loc('Preference [_1] successfully updated', $attribute),
                     );
                 } catch($e) {
-                   NGCP::Panel::Utils::Message->error(
+                   NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
                         data  => \%log_data,

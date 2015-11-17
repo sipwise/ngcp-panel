@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::AliasNumber;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Repeatable';
 
@@ -27,6 +28,7 @@ has_field 'rm' => (
 );
 
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

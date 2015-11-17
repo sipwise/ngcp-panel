@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::SubscriberLockSelect;
+use Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Select';
 
@@ -14,6 +15,7 @@ sub build_options {
     ];
 }
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

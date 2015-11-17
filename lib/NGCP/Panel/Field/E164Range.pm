@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::E164Range;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -87,6 +88,7 @@ sub validate {
     }
 }
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

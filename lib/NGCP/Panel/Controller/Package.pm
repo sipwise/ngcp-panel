@@ -1,7 +1,8 @@
 package NGCP::Panel::Controller::Package;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use base 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::ProfilePackage::Admin;
 use NGCP::Panel::Form::ProfilePackage::Reseller;
@@ -79,7 +80,7 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
         $form = NGCP::Panel::Form::ProfilePackage::Reseller->new(ctx => $c);
     }
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -115,12 +116,12 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{package} = { id => $profile_package->id };
             });
             
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $c->loc('Profile package successfully created'),
             );
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create profile package.'),
@@ -139,9 +140,9 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
 sub base :Chained('/package/package_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $package_id) = @_;
 
-    unless($package_id && $package_id->is_integer) {
+    unless($package_id && is_int($package_id)) {
         $package_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $package_id },
             desc => $c->loc('Invalid package id detected'),
@@ -153,7 +154,7 @@ sub base :Chained('/package/package_list') :PathPart('') :CaptureArgs(1) {
     
     my $res = $c->stash->{package_rs}->find($package_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Profile package does not exist'),
         );
@@ -182,7 +183,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     foreach(qw/balance_interval timely_duration/){
         $params->{$_} = { unit => delete $params->{$_.'_unit'}, value => delete $params->{$_.'_value'} };
     }    
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -216,12 +217,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     $profile_package->profiles->create($mapping); 
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Profile package successfully updated'),
             );            
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update profile package'),
@@ -253,13 +254,13 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         }
         
         $package->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => $c->stash->{package},
             desc => $c->loc('Profile package successfully deleted'),
         );
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data  => $c->stash->{package},
@@ -294,9 +295,9 @@ sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
     my $dispatch_to = '_package_resultset_' . $c->user->roles;
     my $package_rs = $self->$dispatch_to($c);
     
-    unless($package_id && $package_id->is_integer) {
+    unless($package_id && is_int($package_id)) {
         $package_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $package_id },
             desc => $c->loc('Invalid package id detected'),
@@ -308,7 +309,7 @@ sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
     
     my $res = $package_rs->find($package_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Profile package does not exist'),
         );
