@@ -1,8 +1,9 @@
 package NGCP::Panel::Controller::Calls;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use DateTime::Format::Strptime;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use base 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Navigation;
 use Number::Phone;

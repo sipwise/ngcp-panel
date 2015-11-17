@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::IPAddress;
+use Moose;
 use HTML::FormHandler::Moose;
 use Data::Validate::IP qw(is_ipv4 is_ipv6);
 extends 'HTML::FormHandler::Field::Text';
@@ -9,6 +10,7 @@ sub validate {
         unless( is_ipv4($self->value) or is_ipv6($self->value) );
     return 1;
 }
+
 
 1;
 

@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::SubscriberStatusSelect;
+use Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Select';
 
@@ -11,6 +12,7 @@ sub build_options {
         { label => 'terminated', value => 'terminated' },
     ];
 }
+
 
 1;
 

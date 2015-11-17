@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Device::ModelAPI;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Device::ModelAdmin';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 has_block 'fields' => (
     tag => 'div',

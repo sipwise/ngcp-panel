@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::Root;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use namespace::sweep;
+#use namespace::sweep;
+use Moose;
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();
@@ -190,7 +192,7 @@ sub OPTIONS : Allow {
     my ($self, $c) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
     $c->response->headers(HTTP::Headers->new(
-        Allow => $allowed_methods->join(', '),
+        Allow => join(', ', @{ $allowed_methods }),
         $self->collections_link_headers,
     ));
     $c->response->content_type('application/json');
@@ -378,5 +380,7 @@ sub end : Private {
     #$self->log_response($c);
     return 1;
 }
+
+
 
 # vim: set tabstop=4 expandtab:

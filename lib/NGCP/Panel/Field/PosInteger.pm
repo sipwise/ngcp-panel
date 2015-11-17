@@ -1,6 +1,7 @@
 package NGCP::Panel::Field::PosInteger;
+use Moose;
 use Sipwise::Base;
-extends 'HTML::FormHandler::Field::Integer';
+use base 'HTML::FormHandler::Field::Integer';
 
 sub validate {
     my ( $self ) = @_;
@@ -8,6 +9,7 @@ sub validate {
     $self->add_error('Value must be a positive integer')
         if(!$self->has_errors && $value < 0);
 }
+
 
 1;
 

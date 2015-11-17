@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::CustomerContract;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -20,6 +21,7 @@ has_field 'create' => (
     value => 'Create Contract',
     element_class => [qw/btn btn-tertiary pull-right/],
 );
+
 
 1;
 

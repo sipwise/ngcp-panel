@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::E164RangeRepeat;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Repeatable';
 
@@ -22,6 +23,7 @@ has_field 'rm' => (
     order => 100,
     element_class => [qw/btn btn-primary pull-right/],
 );
+
 
 
 1;

@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Regexp;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Text';
 
@@ -10,6 +11,7 @@ sub validate {
     } or return $self->add_error($self->label . " is no valid regexp");
     return 1;
 }
+
 
 1;
 

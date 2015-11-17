@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::ContactNoReseller;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -20,6 +21,7 @@ has_field 'create' => (
     value => 'Create Contact',
     element_class => [qw/btn btn-tertiary pull-right/],
 );
+
 
 1;
 

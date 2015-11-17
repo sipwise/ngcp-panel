@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API::Faxes;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -76,7 +77,7 @@ sub resource_from_item {
         $resource{$_} = $item->$_;
     }
     foreach(qw/duration pages signal_rate/){
-        $resource{$_} = $item->$_->is_int ? $item->$_ : 0;
+        $resource{$_} = is_int($item->$_) ? $item->$_ : 0;
     }
     return \%resource;
 }

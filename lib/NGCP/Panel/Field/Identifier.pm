@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Identifier;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Text';
 
@@ -14,6 +15,7 @@ sub validate {
         unless ( $self->value =~ m/^[[:lower:][:upper:][:digit:]=+,;_.~'()-]+$/ );
     return 0;
 }
+
 
 1;
 

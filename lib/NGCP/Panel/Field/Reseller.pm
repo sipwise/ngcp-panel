@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Reseller;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -20,5 +21,6 @@ has_field 'create' => (
     value => 'Create Reseller',
     element_class => [qw/btn btn-tertiary pull-right/],
 );
+
 
 1;

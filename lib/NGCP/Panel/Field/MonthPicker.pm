@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::MonthPicker;
+use Moose;
 use HTML::FormHandler::Moose;
 use Template;
 extends 'HTML::FormHandler::Field';
@@ -55,6 +56,7 @@ sub validate {
         ));
     return 1;
 }
+
 
 1;
 

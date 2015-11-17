@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Product;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -13,6 +14,7 @@ has_field 'id' => (
     table_titles => ['#', 'Name'],
     table_fields => ['id', 'name'],
 );
+
 
 1;
 

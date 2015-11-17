@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::ContractBalance;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -13,6 +14,7 @@ has_field 'id' => (
     table_titles => ['#', 'bla', 'blah'],
     table_fields => ['id', 'x', 'y'],
 );
+
 
 1;
 

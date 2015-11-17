@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::SubscriberProfileSetsItem;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use namespace::sweep;
+use Moose;
+#use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
@@ -81,7 +83,7 @@ sub OPTIONS :Allow {
     my ($self, $c, $id) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
     $c->response->headers(HTTP::Headers->new(
-        Allow => $allowed_methods->join(', '),
+        Allow => join(', ', @{ $allowed_methods }),
         Accept_Patch => 'application/json-patch+json',
     ));
     $c->response->content_type('application/json');
@@ -271,5 +273,8 @@ sub end : Private {
 
     $self->log_response($c);
 }
+
+
+1;
 
 # vim: set tabstop=4 expandtab:

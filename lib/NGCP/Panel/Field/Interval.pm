@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Interval;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -27,6 +28,7 @@ has_field 'unit' => (
     do_label => 0,
     do_wrapper => 0,  
 );
+
 
 1;
 

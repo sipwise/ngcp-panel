@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Voucher;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -13,6 +14,7 @@ has_field 'id' => (
     table_titles => ['#', 'Code', 'Amount','Reseller','Package','Used At'],
     table_fields => ['id', 'code', 'amount','reseller.name','profile_package_name','used_at'],
 );
+
 
 1;
 

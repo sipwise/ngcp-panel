@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::PbxGroupAPI;
+use Moose;
 use HTML::FormHandler::Moose;
 
 extends 'HTML::FormHandler::Field';
@@ -9,6 +10,7 @@ has_field 'dummy' => (
     label => 'PBX Group IDs',
     do_label => 1,
 );
+
 
 1;
 

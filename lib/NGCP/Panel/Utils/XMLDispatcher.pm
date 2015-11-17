@@ -5,6 +5,8 @@ use NGCP::Schema;
 use Net::HTTP;
 use Errno;
 
+use Moose;
+
 has 'schema' => (
     is => 'rw',
     isa => 'DBIx::Class::Schema',
@@ -147,6 +149,8 @@ sub _unqueue {
 
     $self->schema->resultset('xmlqueue')->find($id)->delete;
 }
+
+
 
 1;
 

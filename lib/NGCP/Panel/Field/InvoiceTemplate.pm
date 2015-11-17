@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::InvoiceTemplate;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -13,5 +14,6 @@ has_field 'id' => (
     table_titles => ['#', 'Reseller', 'Name'],
     table_fields => ['id', 'reseller_name', 'name'],
 );
+
 
 1;

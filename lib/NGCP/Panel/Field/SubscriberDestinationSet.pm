@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::SubscriberDestinationSet;
+use Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Select';
 
@@ -21,6 +22,7 @@ sub build_options {
     }
     return \@all;
 }
+
 
 1;
 

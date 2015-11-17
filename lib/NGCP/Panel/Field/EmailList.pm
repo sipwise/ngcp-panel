@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::EmailList;
+use Moose;
 use HTML::FormHandler::Moose;
 use Email::Valid;
 use Sipwise::Base;
@@ -6,7 +7,7 @@ extends 'HTML::FormHandler::Field::Text';
 
 sub validate {
     my ( $self ) = @_;
-    my @emails = $self->value->split(',');
+    my @emails = split(/\s*,\s*/, $self->value);
     for my $mail (@emails) {
         unless( Email::Valid->address(
             -address  => $mail,
@@ -20,6 +21,7 @@ sub validate {
     }
     return 1;
 }
+
 
 1;
 

@@ -1,4 +1,5 @@
 package NGCP::Panel::Controller::Login;
+use NGCP::Panel::Utils::Generic qw(:all);
 
 use Moose;
 

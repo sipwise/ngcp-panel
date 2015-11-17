@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API::Subscribers;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -33,7 +34,7 @@ sub resource_from_item {
     my $customer = $self->get_customer($c, $item->contract_id);
     delete $prov_resource->{domain_id};
     delete $prov_resource->{account_id};
-    my %resource = %{ $bill_resource->merge($prov_resource) };
+    my %resource = %{ merge($bill_resource, $prov_resource) };
     $resource{administrative} = delete $resource{admin};
 
     unless($customer->get_column('product_class') eq 'pbxaccount') {

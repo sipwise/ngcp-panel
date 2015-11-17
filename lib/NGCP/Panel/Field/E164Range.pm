@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::E164Range;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -86,6 +87,7 @@ sub validate {
         $self->add_error($err_msg);
     }
 }
+
 
 1;
 

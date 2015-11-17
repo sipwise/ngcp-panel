@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::SubscriberProfileSet;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -22,5 +23,6 @@ has_field 'create' => (
     element_class => [qw/btn btn-tertiary pull-right/],
 );
 =cut
+
 
 1;

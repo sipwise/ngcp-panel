@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::BillingNetwork;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -21,6 +22,7 @@ has_field 'create' => (
     element_class => [qw/btn btn-tertiary pull-right/],
     element_attr => { onclick => 'this.form.submit();return false;' }, #without this, only the first create button works
 );
+
 
 1;
 
