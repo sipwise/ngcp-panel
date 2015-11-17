@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Reminder::API;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Reminder';
+use parent 'NGCP::Panel::Form::Reminder';
 use Moose::Util::TypeConstraints;
 
 has_field 'subscriber_id' => (

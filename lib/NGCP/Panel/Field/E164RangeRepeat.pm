@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::E164RangeRepeat;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Repeatable';
+use parent 'HTML::FormHandler::Field::Repeatable';
 
 has_field 'id' => (
     type => 'Hidden',

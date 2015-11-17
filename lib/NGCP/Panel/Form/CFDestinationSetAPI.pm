@@ -2,7 +2,7 @@ package NGCP::Panel::Form::CFDestinationSetAPI;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
-extends 'HTML::FormHandler';
+use parent 'HTML::FormHandler';
 
 has_field 'id' => (
     type => 'Hidden',

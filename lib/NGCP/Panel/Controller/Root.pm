@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Root;
 use Moose;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { use parent 'Catalyst::Controller' }
 
 use Scalar::Util qw(blessed);
 use NGCP::Panel::Utils::DateTime qw();

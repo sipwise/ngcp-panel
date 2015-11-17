@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin;
 
 use HTML::FormHandler::Moose;
 use NGCP::Panel::Field::PosInteger;
-extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
+use parent 'NGCP::Panel::Form::Customer::PbxSubscriber';
 
 has_field 'pbx_extension' => (
     type => '+NGCP::Panel::Field::PosInteger',

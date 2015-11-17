@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Contract::Contract;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Contract::Base';
+use parent 'NGCP::Panel::Form::Contract::Base';
 
 has_field 'contact' => (
     type => '+NGCP::Panel::Field::Contact',

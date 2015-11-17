@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Invoice;
 use Sipwise::Base;
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;

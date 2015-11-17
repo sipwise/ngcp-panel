@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::SubscriberPbxGroup;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Compound';
+use parent 'HTML::FormHandler::Field::Compound';
 
 # agranig: this is just a dummy for the API, do not use in panel!
 

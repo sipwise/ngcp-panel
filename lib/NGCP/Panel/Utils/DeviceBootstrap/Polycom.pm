@@ -6,7 +6,7 @@ use XML::Mini::Document;;
 use Data::Dumper;
 use Moose;
 
-extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
+use parent 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'register_subscriber_content' => (
     is => 'rw',

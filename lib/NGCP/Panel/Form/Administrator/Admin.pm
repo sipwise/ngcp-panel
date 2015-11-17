@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Administrator::Admin;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
-extends 'NGCP::Panel::Form::Administrator::Reseller';
+use parent 'NGCP::Panel::Form::Administrator::Reseller';
 
 for (qw(is_superuser lawful_intercept)) {
     has_field $_ => (type => 'Boolean',);

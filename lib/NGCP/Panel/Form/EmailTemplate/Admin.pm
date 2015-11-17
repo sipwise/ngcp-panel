@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::EmailTemplate::Admin;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::EmailTemplate::Reseller';
+use parent 'NGCP::Panel::Form::EmailTemplate::Reseller';
 use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (

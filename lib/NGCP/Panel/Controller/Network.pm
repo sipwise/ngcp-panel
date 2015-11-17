@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Network;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::BillingNetwork::Admin;
 use NGCP::Panel::Form::BillingNetwork::Reseller;

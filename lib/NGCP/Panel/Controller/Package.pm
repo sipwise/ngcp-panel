@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Package;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::ProfilePackage::Admin;
 use NGCP::Panel::Form::ProfilePackage::Reseller;

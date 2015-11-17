@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Voucher::AdminAPI;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Voucher::ResellerAPI';
+use parent 'NGCP::Panel::Form::Voucher::ResellerAPI';
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',

@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::ProfilePackage::Admin;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::ProfilePackage::Reseller';
+use parent 'NGCP::Panel::Form::ProfilePackage::Reseller';
 use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (

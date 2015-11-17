@@ -4,7 +4,7 @@ use MIME::Base64 qw(decode_base64);
 use Time::HiRes qw();
 use Path::Tiny qw();
 use Sys::Hostname qw(hostname);
-extends 'Catalyst::Component';
+use parent 'Catalyst::Component';
 
 sub client_signing_template {
     my ($self, $serial) = @_;
@@ -119,6 +119,6 @@ sub get_provisioning_root_ca_cert {
     $content =~ s/^.*?BEGIN CERTIFICATE\-+(.*?)\-+END CERTIFICATE.*$/$1/;
     return $content;
 }
-
+1;
 
 # vim: set tabstop=4 expandtab

@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Faxserver::API;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler';
+use parent 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 

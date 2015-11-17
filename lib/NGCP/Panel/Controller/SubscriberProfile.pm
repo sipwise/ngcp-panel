@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::SubscriberProfile;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::SubscriberProfile::SetAdmin;
 use NGCP::Panel::Form::SubscriberProfile::SetReseller;

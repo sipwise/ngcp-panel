@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Billing;
 use Sipwise::Base;
 use DateTime::Format::ISO8601;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::BillingProfile::Admin;
 use NGCP::Panel::Form::BillingProfile::Reseller;

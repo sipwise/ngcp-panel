@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Sound;
 use Sipwise::Base;
 
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Sound::AdminSet;
 use NGCP::Panel::Form::Sound::ResellerSet;

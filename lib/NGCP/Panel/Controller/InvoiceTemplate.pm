@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::InvoiceTemplate;
 use Sipwise::Base;
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use File::Type;
 use MIME::Base64 qw(encode_base64);

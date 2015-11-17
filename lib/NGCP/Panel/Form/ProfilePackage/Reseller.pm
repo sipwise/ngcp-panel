@@ -4,7 +4,7 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
 use Storable qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
-extends 'HTML::FormHandler';
+use parent 'HTML::FormHandler';
 
 with 'NGCP::Panel::Render::RepeatableJs';
 

@@ -1,5 +1,6 @@
 package NGCP::Panel::Widget;
 use Sipwise::Base;
+use Moose qw(with);
 with 'MooseX::Object::Pluggable';
 
 sub handle {
@@ -26,9 +27,6 @@ sub instantiate_plugins {
     }
     return sort {$a->priority > $b->priority} @instances;
 }
-
-no Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;
 # vim: set tabstop=4 expandtab:

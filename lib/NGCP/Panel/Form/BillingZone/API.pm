@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::BillingZone::API;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::BillingZone';
+use parent 'NGCP::Panel::Form::BillingZone';
 use Moose::Util::TypeConstraints;
 
 has_field 'billing_profile_id' => (

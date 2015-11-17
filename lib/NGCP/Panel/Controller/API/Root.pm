@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::Root;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();

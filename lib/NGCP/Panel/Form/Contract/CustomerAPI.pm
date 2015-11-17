@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Contract::CustomerAPI;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Contract::BaseAPI';
+use parent 'NGCP::Panel::Form::Contract::BaseAPI';
 
 has_field 'billing_profile_definition' => (
     type => 'Select',

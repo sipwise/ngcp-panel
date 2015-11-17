@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin;
 
 use HTML::FormHandler::Moose;
 use NGCP::Panel::Field::PosInteger;
-extends 'NGCP::Panel::Form::Customer::PbxExtensionSubscriber';
+use parent 'NGCP::Panel::Form::Customer::PbxExtensionSubscriber';
 
 has_block 'fields' => (
     tag => 'div',
