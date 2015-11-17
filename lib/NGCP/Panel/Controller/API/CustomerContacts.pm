@@ -185,6 +185,7 @@ sub POST :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
+        $resource->{reseller_id} = $reseller_id;
         my $contact;
         try {
             $contact = $c->model('DB')->resultset('contacts')->create($resource);
