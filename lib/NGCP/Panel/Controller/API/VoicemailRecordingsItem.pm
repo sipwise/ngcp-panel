@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::VoicemailRecordingsItem;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use namespace::sweep;
+use Moose;
+#use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
@@ -79,5 +81,7 @@ sub end : Private {
 
     #$self->log_response($c);
 }
+
+no Moose;
 
 # vim: set tabstop=4 expandtab:

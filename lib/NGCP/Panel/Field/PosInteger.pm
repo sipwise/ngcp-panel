@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::PosInteger;
 use Sipwise::Base;
-extends 'HTML::FormHandler::Field::Integer';
+use base 'HTML::FormHandler::Field::Integer';
 
 sub validate {
     my ( $self ) = @_;

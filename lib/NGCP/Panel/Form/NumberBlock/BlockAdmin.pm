@@ -2,7 +2,7 @@ package NGCP::Panel::Form::NumberBlock::BlockAdmin;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::NumberBlock::BlockReseller';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 has_field 'reseller_list' => (
     type => '+NGCP::Panel::Field::DataTable',
