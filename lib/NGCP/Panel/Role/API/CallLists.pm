@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API::CallLists;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {

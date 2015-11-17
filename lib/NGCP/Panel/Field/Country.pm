@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Country;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -14,4 +15,5 @@ has_field 'id' => (
     table_fields => ['id', 'name'],
 );
 
+no Moose;
 1;

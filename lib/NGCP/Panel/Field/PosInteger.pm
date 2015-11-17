@@ -1,6 +1,7 @@
 package NGCP::Panel::Field::PosInteger;
+use Moose;
 use Sipwise::Base;
-extends 'HTML::FormHandler::Field::Integer';
+use base 'HTML::FormHandler::Field::Integer';
 
 sub validate {
     my ( $self ) = @_;
@@ -9,6 +10,7 @@ sub validate {
         if(!$self->has_errors && $value < 0);
 }
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

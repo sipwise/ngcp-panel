@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Identifier;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Text';
 
@@ -15,6 +16,7 @@ sub validate {
     return 0;
 }
 
+no Moose;
 1;
 
 =head1 NAME

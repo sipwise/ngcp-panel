@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::SubscriberProfileSet;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -23,4 +24,5 @@ has_field 'create' => (
 );
 =cut
 
+no Moose;
 1;

@@ -2,7 +2,7 @@ package NGCP::Panel::Form::CustomerDailyFraud;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Model::DBIC';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 

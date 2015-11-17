@@ -2,7 +2,7 @@ package NGCP::Panel::Form::BillingPeaktimeSpecial;
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Field::BillingZone;

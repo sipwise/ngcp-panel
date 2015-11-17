@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 
@@ -140,7 +141,7 @@ sub validate_form {
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', 
                     ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
                     $_->input // '',
-                    $_->errors->join(q())
+                    join('', @{ $_->errors })
             } $form->error_fields;
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Validation failed. $e");
             return;
@@ -177,7 +178,7 @@ sub validate_fields {
                $fields->{$k}->$_isa('HTML::FormHandler::Field::Integer') ||
                $fields->{$k}->$_isa('HTML::FormHandler::Field::Money') ||
                $fields->{$k}->$_isa('HTML::FormHandler::Field::Float')) &&
-               ($resource->{$k}->is_int || $resource->{$k}->is_decimal));
+               (is_int($resource->{$k}) || is_decimal($resource->{$k})));
 
         if (defined $resource->{$k} &&
                 $fields->{$k}->$_isa('HTML::FormHandler::Field::Repeatable') &&
@@ -319,7 +320,7 @@ sub attributed_methods {
 
 sub valid_id {
     my ($self, $c, $id) = @_;
-    return 1 if $id->is_integer;
+    return 1 if is_int($id);
     $self->error($c, HTTP_BAD_REQUEST, "Invalid id in request URI");
     return;
 }
@@ -542,7 +543,7 @@ sub set_body {
 sub log_request {
     my ($self, $c) = @_;
 
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_request',
         log  => $c->stash->{'body'},
@@ -560,7 +561,7 @@ sub log_response {
     my $rc = '';
     if (@{ $c->error }) {
         my $msg = join ', ', @{ $c->error };
-        $rc = NGCP::Panel::Utils::Message->error(
+        $rc = NGCP::Panel::Utils::Message::error(
             c    => $c,
             type => 'api_response',
             log  => $msg,
@@ -568,7 +569,7 @@ sub log_response {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
         log  => $c->response->body,
