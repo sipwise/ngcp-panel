@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Invoice::InvoiceAPI;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 has_field 'customer_id' => (
     type => 'PosInteger',

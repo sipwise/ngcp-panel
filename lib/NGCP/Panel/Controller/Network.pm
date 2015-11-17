@@ -1,7 +1,8 @@
 package NGCP::Panel::Controller::Network;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use base 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::BillingNetwork::Admin;
 use NGCP::Panel::Form::BillingNetwork::Reseller;
@@ -78,7 +79,7 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
         $form = NGCP::Panel::Form::BillingNetwork::Reseller->new;
     }
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -108,12 +109,12 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{network} = { id => $bn->id };
             });
             
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $c->loc('Billing Network successfully created'),
             );
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create billing network.'),
@@ -132,9 +133,9 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
 sub base :Chained('/network/network_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $network_id) = @_;
 
-    unless($network_id && $network_id->is_integer) {
+    unless($network_id && is_int($network_id)) {
         $network_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $network_id },
             desc => $c->loc('Invalid billing network id detected'),
@@ -146,7 +147,7 @@ sub base :Chained('/network/network_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{network_rs}->find($network_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Billing network does not exist'),
         );
@@ -168,7 +169,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = $c->stash->{network};
     $params->{blocks} = $c->stash->{network_blocks};
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -188,12 +189,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     $c->stash->{'network_result'}->create_related("billing_network_blocks", $block);
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Billing network successfully updated'),
             );            
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update billing network'),
@@ -227,13 +228,13 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             status => 'terminated',
             #terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => $c->stash->{network},
             desc => $c->loc('Billing network successfully terminated'),
         );
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data  => $c->stash->{network},

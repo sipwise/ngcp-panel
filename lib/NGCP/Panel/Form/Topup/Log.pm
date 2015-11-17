@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Topup::Log;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 has_field 'id' => (
     type => 'Hidden'

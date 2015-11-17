@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::NumRangeAPI;
+use Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Text';
 
@@ -28,6 +29,7 @@ sub validate {
     return;
 }
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

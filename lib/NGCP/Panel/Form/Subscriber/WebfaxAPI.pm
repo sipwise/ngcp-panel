@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Subscriber::WebfaxAPI;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Subscriber::Webfax';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 has_field 'subscriber_id' => (
     type => 'PosInteger',
