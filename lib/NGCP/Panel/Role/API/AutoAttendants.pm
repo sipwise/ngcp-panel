@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API::AutoAttendants;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 with 'NGCP::Panel::Role::API' => {
     -alias       =>{ item_rs  => '_item_rs', },

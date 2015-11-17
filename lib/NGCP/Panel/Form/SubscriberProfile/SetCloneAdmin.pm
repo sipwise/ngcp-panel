@@ -2,7 +2,7 @@ package NGCP::Panel::Form::SubscriberProfile::SetCloneAdmin;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::SubscriberProfile::SetCloneReseller';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',

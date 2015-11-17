@@ -2,7 +2,7 @@ package NGCP::Panel::Form::BillingNetwork::Reseller;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 use NGCP::Panel::Utils::BillingNetworks qw();
 use Storable qw();

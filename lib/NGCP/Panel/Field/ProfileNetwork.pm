@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::ProfileNetwork;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -28,6 +29,7 @@ has_field 'network_id' => (
     custom_renderers => { name => 'function ( data, type, full ) { if(data.length > 13) data = data.substring(0,10) + \'...\'; return data; }'}
 );
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:
