@@ -1,8 +1,9 @@
 package NGCP::Panel::Controller::Product;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use base 'Catalyst::Controller'; }
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;

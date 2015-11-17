@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::EmailList;
+use Moose;
 use HTML::FormHandler::Moose;
 use Email::Valid;
 use Sipwise::Base;
@@ -21,6 +22,7 @@ sub validate {
     return 1;
 }
 
+no Moose;
 1;
 
 =head1 NAME
