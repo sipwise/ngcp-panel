@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::SubscriberDestinationSet;
+use Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Select';
 
@@ -22,6 +23,7 @@ sub build_options {
     return \@all;
 }
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

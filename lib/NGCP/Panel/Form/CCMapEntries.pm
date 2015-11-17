@@ -2,7 +2,7 @@ package NGCP::Panel::Form::CCMapEntries;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 
 with 'NGCP::Panel::Render::RepeatableJs';

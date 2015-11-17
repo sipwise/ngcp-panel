@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::ContractBalance;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -14,6 +15,7 @@ has_field 'id' => (
     table_fields => ['id', 'x', 'y'],
 );
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

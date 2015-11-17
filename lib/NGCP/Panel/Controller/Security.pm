@@ -1,7 +1,8 @@
 package NGCP::Panel::Controller::Security;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use base 'Catalyst::Controller'; }
 
 use XML::LibXML;
 use URI::Encode;
@@ -116,7 +117,7 @@ sub ip_unban :Chained('ip_base') :PathPart('unban') :Args(0) {
 EOF
 
     $dispatcher->dispatch($c, "loadbalancer", 1, 1, $xml);
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         data => { ip => $ip },
         desc => $c->loc('IP successfully unbanned'),
@@ -150,7 +151,7 @@ EOF
 
         $dispatcher->dispatch($c, "loadbalancer", 1, 1, $xml);
     }
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         data => { user => $user },
         desc => $c->loc('User successfully unbanned'),

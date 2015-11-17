@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::API::Preferences;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -177,7 +178,7 @@ sub get_resource {
 
         SWITCH: for ($pref->attribute->data_type) {
             /^int$/ && do {
-                $value = int($pref->value) if($pref->value->is_int);
+                $value = int($pref->value) if(is_int($pref->value));
                 last SWITCH;
             };
             /^boolean$/ && do {
@@ -664,7 +665,7 @@ sub check_pref_value {
 
     SWITCH: for ($meta->data_type) {
         /^int$/ && do {
-            $err = 1 unless $value->is_int;
+            $err = 1 unless is_int($value);
             last SWITCH;
         };
         /^boolean$/ && do {
@@ -700,13 +701,13 @@ sub validate_ipnet {
     my ($ip, $net) = split /\//, $ipnet;
     if(is_ipv4($ip)) {
         return 1 unless(defined $net);
-        unless($net->is_int && $net >= 0 && $net <= 32) {
+        unless(is_int($net) && $net >= 0 && $net <= 32) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid IPv4 network portion in $pref entry '$ipnet', must be 0 <= net <= 32");
             return;
         }
     } elsif(is_ipv6($ip)) {
         return 1 unless(defined $net);
-        unless($net->is_int && $net >= 0 && $net <= 128) {
+        unless(is_int($net) && $net >= 0 && $net <= 128) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid IPv6 network portion in $pref entry '$ipnet', must be 0 <= net <= 128");
             return;
         }

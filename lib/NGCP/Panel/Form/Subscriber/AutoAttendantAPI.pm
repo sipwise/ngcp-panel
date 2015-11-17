@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Subscriber::AutoAttendantAPI;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-use Moose::Util::TypeConstraints;
+#use Moose::Util::TypeConstraints;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {return [qw/submitid fields actions/]}

@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::PbxDeviceConfigFiles;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use namespace::sweep;
+use Moose;
+#use namespace::sweep;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -62,7 +64,7 @@ sub OPTIONS :Allow {
     my ($self, $c) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
     $c->response->headers(HTTP::Headers->new(
-        Allow => $allowed_methods->join(', '),
+        Allow => join(', ', @{ $allowed_methods }),
         Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
     ));
     $c->response->content_type('application/json');
@@ -76,5 +78,8 @@ sub end : Private {
     $self->log_response($c);
     return;
 }
+
+no Moose;
+1;
 
 # vim: set tabstop=4 expandtab:

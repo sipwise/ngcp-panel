@@ -1,7 +1,8 @@
 package NGCP::Panel::Controller::Pbx;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use namespace::sweep;
-BEGIN { extends 'Catalyst::Controller'; }
+#use namespace::sweep;
+BEGIN { use base 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;

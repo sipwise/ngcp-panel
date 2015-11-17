@@ -1,4 +1,5 @@
 package NGCP::Panel::Field::Domain;
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
@@ -21,6 +22,7 @@ has_field 'create' => (
     element_class => [qw/btn btn-tertiary pull-right/],
 );
 
+no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:
