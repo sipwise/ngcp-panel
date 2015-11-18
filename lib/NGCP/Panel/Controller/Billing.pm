@@ -189,7 +189,7 @@ sub process_edit :Private {
                 c => $c,
                 desc  => $c->loc('Billing profile successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -276,7 +276,7 @@ sub process_create :Private {
                 c => $c,
                 desc  => $c->loc('Billing profile successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -325,7 +325,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             data => $c->stash->{profile},
             desc => $c->loc('Billing profile successfully terminated'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -474,7 +474,7 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
                 c    => $c,
                 desc => $$text_success,
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -605,7 +605,7 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
                 c => $c,
                 desc => $c->loc('Billing Zone successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -661,7 +661,7 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
             data => $zone_info,
             desc => $c->loc('Billing zone successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -864,7 +864,7 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
                           billing_profile_id => $c->stash->{profile}{id}, },
                 desc => $c->loc('Special offpeak entry successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -890,7 +890,7 @@ sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delet
             data => $special_result_info,
             desc => $c->loc('Special offpeak entry successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -929,7 +929,7 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
                           billing_profile_id => $c->stash->{profile}{id}, },
                 desc => $c->loc('Special offpeak entry successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,

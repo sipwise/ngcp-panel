@@ -208,7 +208,7 @@ sub POST :Allow {
         $resource = $self->resnames_to_dbnames($resource);
         try {
             $item = $c->model('DB')->resultset('voip_intercept')->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create interception: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create interception.");
             last;

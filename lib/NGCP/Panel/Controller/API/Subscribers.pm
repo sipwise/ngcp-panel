@@ -390,7 +390,7 @@ sub POST :Allow {
             $c->log->error("failed to create subscriber, number $1 already exists"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '$1' already exists.");
             last;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create subscriber: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber.");
             last;

@@ -25,7 +25,7 @@ sub transcode_data {
         $resource->{data} = NGCP::Panel::Utils::Sounds::transcode_file(
             $filename, $from_codec, $resource->{codec},
         );
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("failed to transcode file: $e");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to transcode file");
         return;
@@ -179,7 +179,7 @@ sub update_item {
     my $group_name = $handle->group->name;
     try {
         NGCP::Panel::Utils::Sems::clear_audio_cache($c, $set->id, $handle->name, $group_name);
-    } catch ($e) {
+    } catch { my $e= $@;
         $c->log->error("Failed to clear audio cache for " . $group_name . " at appserver",);
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to clear audio cache.');
         last;
@@ -202,7 +202,7 @@ sub update_item {
         } else {
             $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
         }
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("failed to create soundfile: $e"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundfile.");
         return;

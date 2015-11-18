@@ -207,7 +207,7 @@ sub POST :Allow {
 
         try {
             $ruleset = $schema->resultset('voip_rewrite_rule_sets')->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create rewriteruleset: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriteruleset.");
             last;
@@ -230,7 +230,7 @@ sub POST :Allow {
                         %{ $rule },
                         priority => $i++,
                     });
-                } catch($e) {
+                } catch { my $e= $@;
                     $c->log->error("failed to create rewriterules: $e"); # TODO: user, message, trace, ...
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewrite rules.");
                     last;

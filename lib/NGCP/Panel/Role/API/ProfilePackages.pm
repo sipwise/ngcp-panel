@@ -163,7 +163,7 @@ sub update_item {
             $item->profiles->create($mapping); 
         }
         $item->discard_changes;
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("failed to create profilepackage: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create profilepackage.");
         return;

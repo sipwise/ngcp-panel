@@ -110,7 +110,7 @@ sub delete :Chained('base') :PathPart('delete') {
             c => $c,
             desc  => $c->loc('Malicious call successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $$c->stash->{mcid_res}->id },

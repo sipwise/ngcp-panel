@@ -177,7 +177,7 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, rule => $rule);
         try {
             $rule->delete;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Failed to delete rewriterule with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;

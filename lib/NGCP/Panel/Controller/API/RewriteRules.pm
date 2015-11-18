@@ -190,7 +190,7 @@ sub POST :Allow {
         $resource->{set_id} = $ruleset->id;
         try {
             $rule = $schema->resultset('voip_rewrite_rules')->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create rewriterule: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriterule.");
             last;

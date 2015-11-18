@@ -304,7 +304,7 @@ sub POST :Allow {
                     $r->annotations->create($label);
                 }
             }
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create device model: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create device model.");
             last;

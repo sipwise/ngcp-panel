@@ -129,7 +129,7 @@ sub update_profile {
                         new_prepaid => $profile->prepaid,
                         contract_rs => NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB')),
                     );
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("Failed to update billing profile '".$profile->id."': $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
         return;

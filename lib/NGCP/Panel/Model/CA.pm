@@ -59,7 +59,7 @@ sub make_client {
     ($stdout, $stderr) = capture {
         try {
             system $command;
-        } catch ($e) {
+        } catch { my $e= $@;
             $exep = $e;
         };
     };

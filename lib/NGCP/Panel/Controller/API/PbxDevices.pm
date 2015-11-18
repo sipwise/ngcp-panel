@@ -261,7 +261,7 @@ sub POST :Allow {
             for my $line ( @{$resource->{lines}} ) {
                 $device->autoprov_field_device_lines->create($line);
             }
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create pbxdevice: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdevice.");
             last;

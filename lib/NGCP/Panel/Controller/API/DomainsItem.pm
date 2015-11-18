@@ -129,7 +129,7 @@ sub DELETE :Allow {
         try {
             $self->xmpp_domain_disable($c, $domain) if $xmpp_reload;
             $self->sip_domain_reload($c) if $sip_reload;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to deactivate domain: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to deactivate domain.");
             last;

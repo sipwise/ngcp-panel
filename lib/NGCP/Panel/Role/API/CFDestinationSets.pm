@@ -177,7 +177,7 @@ sub update_item {
                 new_aa => $new_aa,
             );
         }
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("failed to create cfdestinationset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfdestinationset.");
         return;

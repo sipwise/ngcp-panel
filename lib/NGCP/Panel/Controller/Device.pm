@@ -240,7 +240,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 c    => $c,
                 desc => $c->loc('Successfully created device model'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -305,7 +305,7 @@ sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) :Does(ACL
                       vendor => $c->stash->{devmod}->vendor },
             desc => $c->loc('Device model successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete device model with id '".$c->stash->{devmod}->id."': $e",
@@ -477,7 +477,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                           vendor => $c->stash->{devmod}->vendor },
                 desc => $c->loc('Successfully updated device model'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -581,7 +581,7 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
                 c    => $c,
                 desc => $c->loc('Successfully created device firmware'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -630,7 +630,7 @@ sub devfw_delete :Chained('devfw_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{devfw}->get_inflated_columns },
             desc => $c->loc('Device firmware successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete device firmware with id '".$c->stash->{devfw}->id."': $e",
@@ -685,7 +685,7 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Successfully updated device firmware'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -754,7 +754,7 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
                 c    => $c,
                 desc => $c->loc('Successfully created device configuration'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -803,7 +803,7 @@ sub devconf_delete :Chained('devconf_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{devconf}->get_inflated_columns },
             desc => $c->loc('Device configuration successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete device configuration with id '".$c->stash->{devconf}->id."': $e",
@@ -853,7 +853,7 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Successfully updated device configuration'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -923,7 +923,7 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
                 c    => $c,
                 desc => $c->loc('Successfully created device profile'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1079,7 +1079,7 @@ sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) :Does(A
             data => { $c->stash->{devprof}->get_inflated_columns },
             desc => $c->loc('Device profile successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete device profile with id '".$c->stash->{devprof}->id."': $e",
@@ -1130,7 +1130,7 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
                 data => { $c->stash->{devprof}->get_inflated_columns },
                 desc => $c->loc('Successfully updated device profile'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,

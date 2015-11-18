@@ -180,7 +180,7 @@ sub POST :Allow {
         my $item;
         try {
             $item = $c->model('DB')->resultset('voip_trusted_sources')->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create trusted source: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create trusted source.");
             last;

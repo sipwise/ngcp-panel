@@ -61,7 +61,7 @@ sub hal_from_contract {
     #            profile => $billing_mapping->billing_profile,
     #            contract => $contract,
     #        );
-    #    } catch($e) {
+    #    } catch { my $e= $@;
     #        $c->log->error("Failed to create current contract balance for contract id '".$contract->id."': $e");
     #        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
     #        return;
@@ -222,7 +222,7 @@ sub update_contract {
         }
     
         # TODO: what about changed product, do we allow it?
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("Failed to update contract id '".$contract->id."': $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
         return;

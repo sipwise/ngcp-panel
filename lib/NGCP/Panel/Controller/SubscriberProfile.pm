@@ -137,7 +137,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) :Does(ACL) :ACL
                 c    => $c,
                 desc => $c->loc('Subscriber profile set successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -200,7 +200,7 @@ sub set_edit :Chained('set_base') :PathPart('edit') :Does(ACL) :ACLDetachTo('/de
                 c    => $c,
                 desc => $c->loc('Subscriber profile set successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -237,7 +237,7 @@ sub set_delete :Chained('set_base') :PathPart('delete') :Does(ACL) :ACLDetachTo(
             data => { $c->stash->{set}->get_inflated_columns },
             desc => $c->loc('Subscriber profile set successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -307,7 +307,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully cloned'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -429,7 +429,7 @@ sub profile_create :Chained('profile_list') :PathPart('create') :Args(0) :Does(A
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -562,7 +562,7 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -607,7 +607,7 @@ sub profile_delete :Chained('profile_base') :PathPart('delete') :Does(ACL) :ACLD
             data => { $c->stash->{profile}->get_inflated_columns },
             desc => $c->loc('Subscriber profile successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -656,7 +656,7 @@ sub profile_clone :Chained('profile_base') :PathPart('clone') :Does(ACL) :ACLDet
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully cloned'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,

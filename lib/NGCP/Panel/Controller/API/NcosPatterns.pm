@@ -182,7 +182,7 @@ sub POST :Allow {
         my $item;
         try {
             $item = $level->ncos_pattern_lists->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create ncos level: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos level.");
             last;

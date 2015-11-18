@@ -36,7 +36,7 @@ sub hal_from_item {
         try {
             $fax_preference = $prov_subs->create_related('voip_fax_preference', {});
             $fax_preference->discard_changes; # reload
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Error creating empty fax_preference on get");
         };
     }
@@ -146,7 +146,7 @@ sub update_item {
         for my $dest (@{ $resource->{destinations} }) {
             $destinations_rs->create($dest);
         }
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("Error Updating faxserversettings: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "faxserversettings could not be updated.");
         return;

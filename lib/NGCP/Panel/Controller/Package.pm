@@ -119,7 +119,7 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
                 c => $c,
                 desc => $c->loc('Profile package successfully created'),
             );
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -220,7 +220,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Profile package successfully updated'),
             );            
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -258,7 +258,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
             data => $c->stash->{package},
             desc => $c->loc('Profile package successfully deleted'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

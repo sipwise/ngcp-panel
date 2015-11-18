@@ -194,7 +194,7 @@ sub PUT :Allow {
 #        });
 #        try {
 #            $bn->delete;
-#        } catch($e) {
+#        } catch { my $e= $@;
 #            $c->log->error("Failed to delete billingnetwork with id '$id': $e");
 #            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
 #            last;

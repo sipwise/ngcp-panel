@@ -258,7 +258,7 @@ sub POST :Allow {
 
         try {
             $customer = $schema->resultset('contracts')->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
             last;
@@ -303,7 +303,7 @@ sub POST :Allow {
             #    profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,
             #    contract => $customer,
             #);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
             last;

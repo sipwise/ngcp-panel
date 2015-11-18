@@ -195,7 +195,7 @@ sub DELETE :Allow {
         try {
             $zone->billing_fees->delete_all;
             $zone->delete;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Failed to delete billing zone with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
