@@ -224,7 +224,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 data => { $contract->get_inflated_columns }, 
                 desc  => $c->loc('Contract successfully changed!'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -274,7 +274,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             data => { $contract->get_inflated_columns }, 
             desc => $c->loc('Contract successfully terminated'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -397,7 +397,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                     desc  => $c->loc('Contract #[_1] successfully created', $contract->id),
                 );
             });
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -546,7 +546,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                     desc  => $c->loc('Contract #[_1] successfully created', $contract->id),
                 );
             });
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,

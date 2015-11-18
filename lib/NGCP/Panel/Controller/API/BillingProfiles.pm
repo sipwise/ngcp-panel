@@ -182,7 +182,7 @@ sub POST :Allow {
         my $billing_profile;
         try {
             $billing_profile= $schema->resultset('billing_profiles')->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create billing profile: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing profile.");
             last;

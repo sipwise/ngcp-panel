@@ -228,7 +228,7 @@ sub POST :Allow {
                 })->update({ contract_default => 0 });
             }
 
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create soundset: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundset.");
             last;

@@ -196,7 +196,7 @@ sub DELETE :Allow {
         
         try {
             $tset->delete;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Failed to delete cftimeset with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;

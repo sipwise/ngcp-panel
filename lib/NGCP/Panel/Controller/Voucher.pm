@@ -134,7 +134,7 @@ sub delete :Chained('base') :PathPart('delete') {
             c => $c,
             desc  => $c->loc('Billing Voucher successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $$c->stash->{voucher_result}->id },
@@ -219,7 +219,7 @@ sub edit :Chained('base') :PathPart('edit') {
                 c => $c,
                 desc  => $c->loc('Billing voucher successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -291,7 +291,7 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Billing voucher successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -378,7 +378,7 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
                 c => $c,
                 desc => $text,
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,

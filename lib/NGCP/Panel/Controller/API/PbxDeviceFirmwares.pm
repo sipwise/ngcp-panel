@@ -199,7 +199,7 @@ sub POST :Allow {
         my $item;
         try {
             $item = $model->autoprov_firmwares->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create pbxdevicefirmware: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdevicefirmware.");
             last;

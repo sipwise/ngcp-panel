@@ -129,7 +129,7 @@ sub update_item {
             $item->create_related("billing_network_blocks", $block);
         }
         $item->discard_changes;
-    } catch($e) {
+    } catch { my $e= $@;
         #$c->log->error("failed to create billingnetwork: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billingnetwork.");
         return;

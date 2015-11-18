@@ -122,7 +122,7 @@ sub edit :Chained('base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('NCOS level successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -161,7 +161,7 @@ sub delete :Chained('base') :PathPart('delete') {
             c    => $c,
             desc => $c->loc('NCOS level successfully deleted'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -208,7 +208,7 @@ sub create :Chained('levels_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('NCOS level successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -303,7 +303,7 @@ sub pattern_edit :Chained('pattern_base') :PathPart('edit') {
                 data => { $c->stash->{pattern_result}->get_inflated_columns },
                 desc => $c->loc('NCOS pattern successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -330,7 +330,7 @@ sub pattern_delete :Chained('pattern_base') :PathPart('delete') {
             data => { $c->stash->{pattern_result}->get_inflated_columns },
             desc => $c->loc('NCOS pattern successfully deleted'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -362,7 +362,7 @@ sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('NCOS pattern successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -402,7 +402,7 @@ sub pattern_edit_local_ac :Chained('pattern_list') :PathPart('edit_local_ac') :A
                 c    => $c,
                 desc => $c->loc('NCOS level setting successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,

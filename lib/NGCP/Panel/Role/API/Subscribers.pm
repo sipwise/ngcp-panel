@@ -515,7 +515,7 @@ sub update_item {
             try {
                 NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
                 return $subscriber;
-            } catch($e) {
+            } catch { my $e= $@;
                 $c->log->error("failed to terminate subscriber id ".$subscriber->id);
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber");
                 return;
@@ -528,7 +528,7 @@ sub update_item {
             prov_subscriber => $subscriber->provisioning_voip_subscriber,
             level => $resource->{lock} || 0,
         );
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
         return;

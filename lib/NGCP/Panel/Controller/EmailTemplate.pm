@@ -108,7 +108,7 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Email template successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
@@ -173,7 +173,7 @@ sub tmpl_delete :Chained('tmpl_base') :PathPart('delete') {
             data => { $c->stash->{tmpl}->get_inflated_columns },
             desc => $c->loc('Email template successfully deleted'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -226,7 +226,7 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Email template successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,

@@ -122,7 +122,7 @@ sub update_item {
                 auth_key => $mapping->{auth_key},
             });
         }
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("Error Updating ccmapentry for $uuid: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CCMapEntry could not be updated.");
         return;

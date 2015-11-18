@@ -135,7 +135,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{domain} = { id => $new_dom->id };
             });
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -222,7 +222,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     domain => $form->value->{domain},
                 });
             });
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -261,7 +261,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
             NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain)
                 unless($c->config->{features}->{debug});
         });
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

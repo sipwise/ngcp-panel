@@ -137,7 +137,7 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
                 c    => $c,
                 desc => $c->loc('Number block successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -211,7 +211,7 @@ sub block_edit :Chained('block_base') :PathPart('edit') :Does(ACL) :ACLDetachTo(
                 c    => $c,
                 desc => $c->loc('Number block successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -240,7 +240,7 @@ sub block_delete :Chained('block_base') :PathPart('delete') :Does(ACL) :ACLDetac
             data => { $c->stash->{block}->get_inflated_columns },
             desc  => $c->loc('Number block successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

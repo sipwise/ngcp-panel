@@ -178,7 +178,7 @@ sub DELETE :Allow {
         try {
             $ruleset->voip_rewrite_rules->delete;
             $ruleset->delete;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Failed to delete rewriteruleset with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;

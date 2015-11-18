@@ -150,7 +150,7 @@ sub svg_content{
 
         try {
             $content = $t->context->insert($default);
-        } catch($e) {
+        } catch { my $e= $@;
             # TODO: handle error!
             $c and $c->log->error("failed to load default invoice template: $e");
             return;

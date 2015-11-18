@@ -112,7 +112,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Administrator successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -199,7 +199,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 data => { $c->stash->{administrator}->get_inflated_columns },
                 desc => $c->loc('Administrator successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -234,7 +234,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{administrator}->get_inflated_columns },
             desc => $c->loc('Administrator successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -253,7 +253,7 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
         $serial = time;
         try {
             $cert = $c->model('CA')->make_client($c, $serial);
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,

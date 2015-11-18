@@ -110,7 +110,7 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -134,7 +134,7 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
             data => { $c->stash->{set_result}->get_inflated_columns },
             desc => $c->loc('Rewrite rule set successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -187,7 +187,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully cloned'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -241,7 +241,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -301,7 +301,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
                 $elem->update;
             }
             $self->_sip_dialplan_reload($c);
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -406,7 +406,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Rewrite rule successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -431,7 +431,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') {
             data => { $c->stash->{rule_result}->get_inflated_columns },
             desc => $c->loc('Rewrite rule successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -466,7 +466,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Rewrite rule successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,

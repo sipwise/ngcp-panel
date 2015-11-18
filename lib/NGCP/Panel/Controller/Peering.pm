@@ -130,7 +130,7 @@ sub edit :Chained('base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Peering group successfully updated'),
             );
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -161,7 +161,7 @@ sub delete :Chained('base') :PathPart('delete') {
             data => { $c->stash->{group_result}->get_inflated_columns },
             desc => $c->loc('Peering Group successfully deleted'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -200,7 +200,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Peering group successfully created'),
             );
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -270,7 +270,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Peering server successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -342,7 +342,7 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Peering server successfully updated'),
             );
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -371,7 +371,7 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{server_result}->get_inflated_columns },
             desc => $c->loc('Peering server successfully deleted'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -450,7 +450,7 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
             data => { $c->stash->{server_result}->get_inflated_columns },
             desc => $c->loc('Dialogic successfully flashed.'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -586,7 +586,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Peering rule successfully created'),
             );
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -659,7 +659,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Peering rule successfully changed'),
             );
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -688,7 +688,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{rule_result}->get_inflated_columns },
             desc => $c->loc('Peering rule successfully deleted'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

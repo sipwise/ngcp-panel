@@ -228,7 +228,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                     desc  => $c->loc('Customer #[_1] successfully created', $contract->id),
                 );
             });
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -300,7 +300,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
                         contract => $contract_rs->first,
                         now => $now);
         });
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -571,7 +571,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 data => { $contract->get_inflated_columns },
                 desc => $c->loc('Customer #[_1] successfully updated', $contract->id),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -622,7 +622,7 @@ sub terminate :Chained('base_restricted') :PathPart('terminate') :Args(0) {
             data => { $contract->get_inflated_columns },
             desc => $c->loc('Customer successfully terminated'),
         );
-    } catch ($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -816,7 +816,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 c => $c,
                 desc => $c->loc('Subscriber successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -901,7 +901,7 @@ sub delete_fraud :Chained('base_restricted') :PathPart('fraud/delete') :Args(1) 
                 "fraud_".$type."_lock" => undef,
                 "fraud_".$type."_notify" => undef,
             });
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -964,7 +964,7 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
                 desc => $c->loc('Account balance successfully changed!'),
             );
         }
-        catch($e) {
+        catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1041,7 +1041,7 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                 desc => $c->loc('Top-up using cash performed successfully!'),
             );
         }
-        catch($e) {
+        catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1063,7 +1063,7 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                 );                
             });
         }
-        catch($e) {
+        catch { my $e= $@;
             $c->log->error("failed to create topup log record: $e");
         }
         
@@ -1137,7 +1137,7 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                 desc => $c->loc('Top-up using voucher performed successfully!'),
             );
         }
-        catch($e) {
+        catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1159,7 +1159,7 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                 );                
             });
         }
-        catch($e) {
+        catch { my $e= $@;
             $c->log->error("failed to create topup log record: $e");
         }        
         
@@ -1320,7 +1320,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 c => $c,
                 desc => $c->loc('PBX group successfully created'),
             );
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1445,7 +1445,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                 c => $c,
                 desc  => $c->loc('PBX group successfully updated'),
             );
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1527,7 +1527,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
             } else {
                 die $err;
             }
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1650,7 +1650,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
             } else {
                 die $err;
             }
-        } catch ($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1719,7 +1719,7 @@ sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{pbx_device}->get_inflated_columns },
             desc => $c->loc('PBX Device successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete PBX device with id '".$c->stash->{pbx_device}->id."': $e",

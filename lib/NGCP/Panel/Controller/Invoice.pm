@@ -261,7 +261,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 #               stime => $stime,
                 #               etime => $etime
                 #   );
-                #} catch($e) {
+                #} catch { my $e= $@;
                 #    NGCP::Panel::Utils::Message::error(
                 #        c => $c,
                 #        error => $e,
@@ -287,7 +287,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 my $invoice;
                 try {
                     $invoice = $schema->resultset('invoices')->create($form->values);
-                } catch($e) {
+                } catch { my $e= $@;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -351,7 +351,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$out);
 
                     NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
-                } catch($e) {
+                } catch { my $e= $@;
                     NGCP::Panel::Utils::Message::error(
                         c     => $c,
                         log   => $e,
@@ -372,7 +372,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     desc  => $c->loc('Invoice #[_1] successfully created', $invoice->id),
                 );
             });
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -399,7 +399,7 @@ sub delete :Chained('base') :PathPart('delete') {
             data => { $c->stash->{inv}->get_inflated_columns },
             desc => $c->loc('Invoice successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -416,7 +416,7 @@ sub download :Chained('base') :PathPart('download') {
         $c->response->content_type('application/pdf');
         $c->response->body($c->stash->{inv}->data);
         return;
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

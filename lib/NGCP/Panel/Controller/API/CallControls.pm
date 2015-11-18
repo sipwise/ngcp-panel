@@ -115,7 +115,7 @@ sub POST :Allow {
         try {
             NGCP::Panel::Utils::Sems::dial_out($c, $subscriber->provisioning_voip_subscriber,
                 $callee_user, $callee_domain);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to dial out: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create call.");
             last;

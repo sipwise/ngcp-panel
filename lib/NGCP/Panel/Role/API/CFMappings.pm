@@ -207,7 +207,7 @@ sub update_item {
             }
         }
 
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("failed to create cfmapping: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfmapping.");
         return;

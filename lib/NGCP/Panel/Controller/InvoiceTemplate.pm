@@ -156,7 +156,7 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
                 c    => $c,
                 desc => $c->loc('Invoice template successfully created'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -225,7 +225,7 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
                 c    => $c,
                 desc => $c->loc('Invoice template successfully updated'),
             );
-        } catch($e) {
+        } catch { my $e= $@;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -252,7 +252,7 @@ sub delete :Chained('base') :PathPart('delete') {
             data => { $c->stash->{tmpl}->get_inflated_columns },
             desc => $c->loc('Invoice template successfully deleted'),
         );
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -309,7 +309,7 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
             data => $content,
         });
 
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -364,7 +364,7 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args {
         };
 
         NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
-    } catch($e) {
+    } catch { my $e= $@;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => $e,

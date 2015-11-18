@@ -175,7 +175,7 @@ sub DELETE :Allow {
 
         try {
             $fee->delete;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Failed to delete billing fee with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;

@@ -232,7 +232,7 @@ sub update_item {
                 $mapping->delete;
                 $cf_preference->delete;
             }
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Error Updating '$type': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$type' could not be updated.");
             return;

@@ -170,7 +170,7 @@ sub POST :Allow {
 
         try {
             $item = $c->model('DB')->resultset('email_templates')->create($resource);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create email template: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create email template.");
             last;

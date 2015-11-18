@@ -271,7 +271,7 @@ sub require_wellformed_json {
     try {
         NGCP::Panel::Utils::ValidateJSON->new($patch);
         $ret = 1;
-    } catch($e) {
+    } catch { my $e= $@;
         chomp $e;
         $self->error($c, HTTP_BAD_REQUEST, "The entity is not a well-formed '$media_type' document. $e");
     }
@@ -499,7 +499,7 @@ sub apply_patch {
                 }
             }
         }
-    } catch($e) {
+    } catch { my $e= $@;
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The entity could not be processed: $e");
         return;
     }

@@ -417,7 +417,7 @@ sub update_item {
         # in case of PUT, we remove all old entries
         try {
             $full_rs->delete_all;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to clear preferences for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
@@ -471,7 +471,7 @@ sub update_item {
                     }
                 } # SWITCH
             }
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to clear preference for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
@@ -638,7 +638,7 @@ sub update_item {
                 NGCP::Panel::Utils::Subscriber::update_voicemail_number(
                     schema => $c->model('DB'), subscriber => $item);
             }
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to update preference for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;

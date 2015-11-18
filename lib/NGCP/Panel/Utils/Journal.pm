@@ -410,7 +410,7 @@ sub hal_from_journal {
         if (exists $resource{content}) {
             try {
                 $resource{content} = _deserialize_content($journal->content_format,$journal->content);
-            } catch($e) {
+            } catch { my $e= $@;
                 $resource{content} = undef;
                 $c->log->error("Failed to de-serialize content snapshot of journal item '" . $journal->id . "': $e");
                 #$controller->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
@@ -609,7 +609,7 @@ sub _create_journal {
         try {
             $journal{content} = _serialize_content($content_format,$resource);
             #my $test = 1 / 0;
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Failed to serialize journal content snapshot of '" . $params->{resource_name} . '/' . $id . "': $e");
             #$controller->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             #return;
@@ -617,7 +617,7 @@ sub _create_journal {
         };
         try {
             return $c->model('DB')->resultset('journals')->create(\%journal);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("Failed to create journal item for '" . $params->{resource_name} . '/' . $id . "': $e");
             #$controller->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             #return;

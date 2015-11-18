@@ -202,7 +202,7 @@ sub POST :Allow {
             $billing_domain->create_related('domain_resellers', {
                 reseller_id => $reseller_id,
             });
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create domain: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create domain.");
             last;
@@ -224,7 +224,7 @@ sub POST :Allow {
                     die "XMLRPC failed";
                 }
             }
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to activate domain: $e. Domain created"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain. Domain was created");
             $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));

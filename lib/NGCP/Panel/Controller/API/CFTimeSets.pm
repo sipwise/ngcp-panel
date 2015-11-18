@@ -203,7 +203,7 @@ sub POST :Allow {
                 delete $t->{time_set_id};
                 $tset->create_related("voip_cf_periods", $t);
             }
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create cftimeset: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cftimeset.");
             last;

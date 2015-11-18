@@ -199,7 +199,7 @@ sub POST :Allow {
                 $c->response->status(HTTP_CREATED);
                 $c->response->body(q());
 
-            } catch($e) {
+            } catch { my $e= $@;
                 $c->log->error("failed to upload csv: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
@@ -225,7 +225,7 @@ sub POST :Allow {
             my $fee;
             try {
                 $fee = $profile->billing_fees->create($resource);
-            } catch($e) {
+            } catch { my $e= $@;
                 $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
                 last;

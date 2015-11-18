@@ -187,7 +187,7 @@ sub POST :Allow {
             );
             $c->log->debug("faxserver output:\n");
             $c->log->debug($output);
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to send fax: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             return;

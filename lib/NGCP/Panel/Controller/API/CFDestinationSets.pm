@@ -220,7 +220,7 @@ sub POST :Allow {
                     );
                 $dset->create_related("voip_cf_destinations", $d);
             }
-        } catch($e) {
+        } catch { my $e= $@;
             $c->log->error("failed to create cfdestinationset: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfdestinationset.");
             last;

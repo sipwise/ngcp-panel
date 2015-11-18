@@ -400,7 +400,7 @@ sub create_preference_form {
                         data => \%log_data,
                         desc => $c->loc('ip group sequence successfully generated'),
                     );
-                } catch($e) {
+                } catch { my $e= $@;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -422,7 +422,7 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('allowed_ip_grp successfully created'),
                 );
-            } catch($e) {
+            } catch { my $e= $@;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -460,7 +460,7 @@ sub create_preference_form {
                         data => \%log_data,
                         desc => $c->loc('Manual ip group sequence successfully generated'),
                     );
-                } catch($e) {
+                } catch { my $e= $@;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -482,7 +482,7 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('man_allowed_ip_grp successfully created'),
                 );
-            } catch($e) {
+            } catch { my $e= $@;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -527,7 +527,7 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully created', $attribute),
                 );
-            } catch($e) {
+            } catch { my $e= $@;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -574,7 +574,7 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
-            } catch($e) {
+            } catch { my $e= $@;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -606,7 +606,7 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
-            } catch($e) {
+            } catch { my $e= $@;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -638,7 +638,7 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
-            } catch($e) {
+            } catch { my $e= $@;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -664,7 +664,7 @@ sub create_preference_form {
                         data => \%log_data,
                         desc => $c->loc('Preference [_1] successfully deleted', $attribute),
                     );
-                } catch($e) {
+                } catch { my $e= $@;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -684,7 +684,7 @@ sub create_preference_form {
                         data => \%log_data,
                         desc => $c->loc('Preference [_1] successfully deleted', $attribute),
                     );
-                } catch($e) {
+                } catch { my $e= $@;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -706,7 +706,7 @@ sub create_preference_form {
                         data  => \%log_data,
                         desc  => $c->loc('Preference [_1] successfully updated', $attribute),
                     );
-                } catch($e) {
+                } catch { my $e= $@;
                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -902,7 +902,7 @@ sub set_provisoning_voip_subscriber_first_int_attr_value {
         } elsif($new_value > 0) {
             $rs->create({ value => $new_value });
         } # nothing to do for level 0, if no lock is set yet
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("failed to set provisioning_voip_subscriber attribute '$attribute': $e");
         $e->rethrow;
     }
@@ -924,7 +924,7 @@ sub get_provisoning_voip_subscriber_first_int_attr_value {
     );
     try {
         return $rs->first;
-    } catch($e) {
+    } catch { my $e= $@;
         $c->log->error("failed to get provisioning_voip_subscriber attribute '$attribute': $e");
         $e->rethrow;
     }
