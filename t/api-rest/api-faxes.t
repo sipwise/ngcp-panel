@@ -46,6 +46,7 @@ my $test_machine = Test::Collection->new(
         #if feature is inactive on the application level - there is nothing to test more
         #so added this pseudo test just to place it here. Really don't like it.
             ok($content->{message} =~ /$inactive_feature_msg/, "check error message in body: $inactive_feature_msg");
+            done_testing;
             exit();
         }
     }
