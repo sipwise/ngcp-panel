@@ -22,6 +22,30 @@
       "revId": "a1251ceca6bbfd38bc3a0aee5898e6827a13066d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a51691d_145bb655",
+        "filename": "t/api-rest/api-calllists.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-11-19T14:45:06Z",
+      "side": 1,
+      "message": "not if its not neccessary. this kind of forgivingness makes the test ... less useful :)\n\nI don\u0027t think we have items which are rated and unrated at the same time :)",
+      "parentUuid": "7a51691d_9468c6f6",
+      "range": {
+        "startLine": 47,
+        "startChar": 80,
+        "endLine": 47,
+        "endChar": 82
+      },
+      "revId": "a1251ceca6bbfd38bc3a0aee5898e6827a13066d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
