@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "7a51691d_d7ff60a9",
+        "filename": "t/api-rest/api-faxes.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-11-19T15:36:27Z",
+      "side": 1,
+      "message": "I am not agree here, but I have tried:\n\n$test_machine-\u003eDATA_ITEM is not defined there at all.\n\nCan\u0027t use an undefined value as a HASH reference at t/api-rest/api-faxes.t line 82.\n# Looks like your test exited with 255 just after 2.\nDubious, test returned 255 (wstat 65280, 0xff00)\nAll 2 subtests passed \n\n\nIMHO, we current version is good enough to FIX test.\nThen feel free to change it.",
+      "parentUuid": "7a51691d_575db0e8",
+      "range": {
+        "startLine": 49,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 19
+      },
+      "revId": "c21f881ec867e5a4247dece9b09c821a42bd5cbf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a51691d_3477d2d6",
         "filename": "t/api-rest/api-faxes.t",
         "patchSetId": 2
