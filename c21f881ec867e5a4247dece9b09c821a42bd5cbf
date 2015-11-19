@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7a51691d_57cff0b0",
+        "filename": "t/api-rest/api-faxes.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-11-19T15:11:24Z",
+      "side": 1,
+      "message": "but she did not do that before! Should I?",
+      "parentUuid": "7a51691d_1474d6cd",
+      "range": {
+        "startLine": 49,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 19
+      },
+      "revId": "c21f881ec867e5a4247dece9b09c821a42bd5cbf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a51691d_3477d2d6",
         "filename": "t/api-rest/api-faxes.t",
         "patchSetId": 2
