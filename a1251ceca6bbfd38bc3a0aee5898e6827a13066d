@@ -46,6 +46,30 @@
       "revId": "a1251ceca6bbfd38bc3a0aee5898e6827a13066d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a51691d_97d56845",
+        "filename": "t/api-rest/api-calllists.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-11-19T15:10:20Z",
+      "side": 1,
+      "message": "this is separate topic/commit IMHO :-)",
+      "parentUuid": "7a51691d_145bb655",
+      "range": {
+        "startLine": 47,
+        "startChar": 80,
+        "endLine": 47,
+        "endChar": 82
+      },
+      "revId": "a1251ceca6bbfd38bc3a0aee5898e6827a13066d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
