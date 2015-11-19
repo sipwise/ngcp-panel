@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "7a51691d_575db0e8",
+        "filename": "t/api-rest/api-faxes.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-11-19T15:15:36Z",
+      "side": 1,
+      "message": "better yes",
+      "parentUuid": "7a51691d_57cff0b0",
+      "range": {
+        "startLine": 49,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 19
+      },
+      "revId": "c21f881ec867e5a4247dece9b09c821a42bd5cbf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a51691d_3477d2d6",
         "filename": "t/api-rest/api-faxes.t",
         "patchSetId": 2
