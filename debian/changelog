@@ -1,3 +1,20 @@
+ngcp-panel (1.8.3.14+0~mr3.8.3.14) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [e65617e] MT#16057 Fix dbix syntax fetching concat numbers
+
+  [ Gerhard Jungwirth ]
+  * [276c047] MT#15685 suppress output for correct backuritmp
+  * [a7aa103] MT#16113 de translation cash OLD interface
+
+  [ Rene Krenn ]
+  * [f07473b] MT#16171 useless joins for source_subs = OR dest_subs =
+  * [441afeb] MT#16171 revert to prior callist direction filter behaviour
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Nov 2015 06:03:37 +0100
+
 ngcp-panel (1.8.3.13+0~mr3.8.3.13) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
