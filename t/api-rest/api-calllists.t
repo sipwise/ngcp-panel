@@ -47,8 +47,12 @@ SKIP:
     ok( ($cl_collection_ok->{total_count} + $cl_collection_nok->{total_count} ) == $cl_collection->{total_count},
         "Rated and not rated calls should be equal to total number of calls");
     my($call_hal) = $test_machine->get_hal_from_collection($cl_collection);
-    ok(exists $call_hal->{rating_status},
+    if ( $cl_collection->{total_count} < 1 ) {
+        skip("Skip checking existence of rating_status field",1);
+    } else {
+      ok(exists $call_hal->{rating_status},
         "Check existence of rating_status field");
+   }
 
 #/---
 
