@@ -3,10 +3,11 @@ use strict;
 use warnings;
 
 use DateTime::TimeZone::OffsetOnly;
-use Time::Local;
-use POSIX;
 use File::Find::Rule;
+use File::Slurp qw(read_file);
 use List::MoreUtils qw(apply);
+use POSIX;
+use Time::Local;
 
 sub tz_offset {
     use DateTime::TimeZone::OffsetOnly;
@@ -67,6 +68,11 @@ sub get_rrd {
     } while($r > 0);
     close($RRD);
     return $content;
+}
+
+sub get_dpkg_versions {
+    my ($self) = @_;
+    return `LANG=C dpkg -l 2>/dev/null`;
 }
 
 1;

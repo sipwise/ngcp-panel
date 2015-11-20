@@ -1,0 +1,32 @@
+[% site_config.title = c.loc('Version Info') -%]
+
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+<div class="ngcp-separator"></div>
+
+<style type="text/css">
+  pre .sipwise-wide-pre {
+    overflow: auto;
+    word-wrap: normal;
+    white-space: pre;
+  }
+
+  .pre-x-scrollable {
+    overflow: auto;
+    -ms-word-wrap: normal;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    white-space: pre;
+  }
+</style>
+
+<pre class="pre-x-scrollable">
+[% versions_info | html %]
+</pre>
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
