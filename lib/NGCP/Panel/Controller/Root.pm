@@ -5,6 +5,7 @@ BEGIN { extends 'Catalyst::Controller' }
 
 use Scalar::Util qw(blessed);
 use NGCP::Panel::Utils::DateTime qw();
+use NGCP::Panel::Utils::Statistics qw();
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
@@ -252,9 +253,14 @@ sub error_page :Private {
    
     if($c->request->path =~ /^api\/.+/) {
         $c->response->content_type('application/json');
-        $c->response->body(JSON::to_json({ code => 404, message => 'Path not found' })."\n");
+        $c->response->body(JSON::to_json({
+                code => 404,
+                message => 'Path not found',
+                ngcp_version => $c->config->{ngcp_version},
+            })."\n");
     } else {
-        $c->stash(template => 'notfound_page.tt');
+        $c->stash(template => 'notfound_page.tt',
+            ngcp_version => $c->config->{ngcp_version});
     }
     $c->response->status(404);
 }
