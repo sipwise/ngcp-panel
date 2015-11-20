@@ -1,3 +1,19 @@
+ngcp-panel (1.10.1.6+0~mr4.1.1.6) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [fbe2809] MT#14477 Response about faxserver feature unavailability from API
+  * [a2179bb] MT#12347 Faxes feature state check as pseudo test
+
+  [ Gerhard Jungwirth ]
+  * [c589811] MT#15685 suppress output for correct backuritmp
+
+  [ Rene Krenn ]
+  * [a61a35e] MT#16309 correctly apply changed carry_over modes
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Nov 2015 14:18:17 +0100
+
 ngcp-panel (1.10.1.5+0~mr4.1.1.5) unstable; urgency=medium
 
   [ Rene Krenn ]
