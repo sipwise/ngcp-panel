@@ -3,10 +3,11 @@ use strict;
 use warnings;
 
 use DateTime::TimeZone::OffsetOnly;
-use Time::Local;
-use POSIX;
 use File::Find::Rule;
+use File::Slurp qw(read_file);
 use List::MoreUtils qw(apply);
+use POSIX;
+use Time::Local;
 
 sub tz_offset {
     use DateTime::TimeZone::OffsetOnly;
@@ -67,6 +68,18 @@ sub get_rrd {
     } while($r > 0);
     close($RRD);
     return $content;
+}
+
+sub get_ngcp_version {
+    my $content = read_file("/etc/ngcp_version", err_mode => 'quiet');
+    $content //= '';
+    return $content;
+}
+
+
+sub get_panel_version {
+    my ($self) = @_;
+    return $NGCP::Panel::VERSION;
 }
 
 1;

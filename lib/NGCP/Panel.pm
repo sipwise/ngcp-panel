@@ -28,7 +28,7 @@ use Catalyst qw/
 use Log::Log4perl::Catalyst qw();
 extends 'Catalyst';
 
-our $VERSION = '0.01';
+our $VERSION = 'mr4.2.0.0';
 
 my $panel_config;
 for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {

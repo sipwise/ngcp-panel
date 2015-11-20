@@ -5,6 +5,7 @@ BEGIN { extends 'Catalyst::Controller' }
 
 use Scalar::Util qw(blessed);
 use NGCP::Panel::Utils::DateTime qw();
+use NGCP::Panel::Utils::Statistics qw();
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
@@ -249,12 +250,21 @@ sub _prune_row {
 sub error_page :Private {
     my ($self,$c) = @_;
     $c->log->error( 'Failed to find path ' . $c->request->path );
+    my $ngcp_version = NGCP::Panel::Utils::Statistics::get_ngcp_version();
+    my $panel_version = NGCP::Panel::Utils::Statistics::get_panel_version($self);
    
     if($c->request->path =~ /^api\/.+/) {
         $c->response->content_type('application/json');
-        $c->response->body(JSON::to_json({ code => 404, message => 'Path not found' })."\n");
+        $c->response->body(JSON::to_json({
+                code => 404,
+                message => 'Path not found',
+                ngcp_version => $ngcp_version,
+                panel_version => $panel_version,
+            })."\n");
     } else {
-        $c->stash(template => 'notfound_page.tt');
+        $c->stash(template => 'notfound_page.tt',
+            ngcp_version => $ngcp_version,
+            panel_version => $panel_version);
     }
     $c->response->status(404);
 }
