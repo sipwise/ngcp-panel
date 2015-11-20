@@ -10,6 +10,10 @@
 			
 			<div class="error-details">
 				[% c.loc('Sorry, an error has occured, Requested page not found!') %]
+				<br/>
+				[% c.loc('NGCP version: ') _ ngcp_version %]
+				<br/>
+				[% c.loc('Panel version: ') _ panel_version %]
 				
 			</div> <!-- /error-details -->
 			

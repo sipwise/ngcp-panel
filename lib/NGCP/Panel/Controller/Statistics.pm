@@ -125,6 +125,21 @@ sub rrd : Chained('/') :PathPart('statistics/rrd') :Args() {
     return;
 }
 
+sub versions :Chained('/') :PathPart('statistics/versions') :Args() {
+    my ( $self, $c ) = @_;
+    my $versions_info = NGCP::Panel::Utils::Statistics::get_dpkg_versions();
+    use DDP; p $versions_info;
+    $c->response->body($versions_info);
+    $c->response->headers->content_type('text/plain');
+    return;
+}
+
+__PACKAGE__->meta->make_immutable;
+
+1;
+
+__END__
+
 =head1 AUTHOR
 
 Andreas Granig,,,
@@ -135,9 +150,5 @@ This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
-__PACKAGE__->meta->make_immutable;
-
-1;
 
 # vim: set tabstop=4 expandtab:
