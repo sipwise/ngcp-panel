@@ -2,6 +2,7 @@ package NGCP::Panel;
 
 use Moose;
 use Catalyst::Runtime 5.80;
+use File::Slurp qw();
 
 # Set flags and add plugins for the application.
 #
@@ -167,6 +168,7 @@ __PACKAGE__->config(
             }
         }
     },
+    ngcp_version => get_ngcp_version(),
 );
 __PACKAGE__->config( default_view => 'HTML' );
 
@@ -174,6 +176,13 @@ __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
 
 # Start the application
 __PACKAGE__->setup();
+
+sub get_ngcp_version {
+    my $content = File::Slurp::read_file("/etc/ngcp_version", err_mode => 'quiet');
+    $content //= '(unavailable)';
+    chomp($content);
+    return $content;
+}
 
 1;
 
