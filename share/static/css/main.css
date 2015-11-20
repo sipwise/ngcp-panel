@@ -24,6 +24,15 @@ body {
     display: none;
 }
 
+/* add horizontally scrollable pre (to boostrap stlyes) */
+pre.pre-x-scrollable {
+    overflow: auto;
+    -ms-word-wrap: normal;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    white-space: pre;
+}
+
 /* ---------
   The modal
 ------------*/
