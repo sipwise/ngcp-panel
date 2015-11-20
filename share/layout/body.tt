@@ -85,6 +85,9 @@
             <div class="span6">
                 © 2013 <a href="http://www.sipwise.com">Sipwise GmbH</a>, [% c.loc('all rights reserved') %].
             </div>
+            <div class="pull-right">
+                (<a href="[% c.uri_for("/statistics/versions") %]">[% c.config.ngcp_version %]</a>)
+            </div>
         </div>
     </div>
 </div>
