@@ -1,3 +1,20 @@
+ngcp-panel (1.9.1.17+0~mr4.0.1.17) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [94de5b0] MT#16057 Fix dbix syntax fetching concat numbers
+
+  [ Irina Peshinskaya ]
+  * [4a1b880] MT#14477 Response about faxserver feature unavailability from API
+  * [5b1f844] MT#12347 Faxes feature state check as pseudo test
+
+  [ Gerhard Jungwirth ]
+  * [779c1d4] MT#16113 de translation cash OLD interface
+  * [006ab8e] MT#15685 suppress output for correct backuritmp
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Nov 2015 14:24:04 +0100
+
 ngcp-panel (1.9.1.16+0~mr4.0.1.16) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
