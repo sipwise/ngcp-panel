@@ -139,18 +139,13 @@ sub resize_actual_contract_balance {
             });
             $actual_balance->discard_changes();
             $c->log->debug('contract ' . $contract->id . ' contract_balance row resized: ' . _dump_contract_balance($actual_balance));
-            if ($create_next_balance) {
-                $actual_balance = catchup_contract_balances(c => $c,
+            return _create_next_balance(c => $c,
                         contract => $contract,
-                        old_package => $new_package, #$old_package,
-                        now => $end_of_resized_interval->clone->add(seconds => 1),
-                        #suppress_underrun => 1,
-                        suppress_notopup_discard => 1,
+                        last_balance => $actual_balance,
+                        old_package => $old_package,
+                        new_package => $new_package,
                         topup_amount => $topup_amount,
-                        profiles_added => $profiles_added,
-                    );
-                return $actual_balance;
-            }
+                        profiles_added => $profiles_added,) if $create_next_balance;
         }
 
         #underruns due to increased thresholds:
@@ -189,9 +184,28 @@ sub resize_actual_contract_balance {
     
 }
 
+sub _create_next_balance {
+    my %params = @_;
+    my($c,$contract,$last_balance,$old_package,$new_package,$topup_amount,$profiles_added) = @params{qw/c contract last_balance old_package new_package topup_amount profiles_added/};
+
+    return catchup_contract_balances(c => $c,
+                        contract => $contract,
+                        old_package => $new_package, #$old_package,
+                        now => NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end)->clone->add(seconds => 1),
+                        #suppress_underrun => 1,
+                        #suppress_notopup_discard => 1,
+                        is_create_next => 1,
+                        last_notopup_discard_intervals => ($old_package ? $old_package->notopup_discard_intervals : undef),
+                        last_carry_over_mode => ($old_package ? $old_package->carry_over_mode : _DEFAULT_CARRY_OVER_MODE),
+                        topup_amount => $topup_amount,
+                        profiles_added => $profiles_added,
+                    );    
+    
+}
+    
 sub catchup_contract_balances {
     my %params = @_;
-    my($c,$contract,$old_package,$now,$suppress_underrun,$suppress_notopup_discard,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun suppress_notopup_discard topup_amount profiles_added/};
+    my($c,$contract,$old_package,$now,$suppress_underrun,$is_create_next,$last_notopup_discard_intervals,$last_carry_over_mode,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun create_next last_notopup_discard_intervals last_carry_over_mode topup_amount profiles_added/};
     
     my $schema = $c->model('DB');
     $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
@@ -199,11 +213,11 @@ sub catchup_contract_balances {
     $old_package = $contract->profile_package if !exists $params{old_package};
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     $suppress_underrun //= 0;
-    $suppress_notopup_discard //= 0;
     $topup_amount //= 0.0;
     $profiles_added //= 0;
+    $is_create_next //= 0;
 
-    $c->log->debug('catchup contract ' . $contract->id . ' contract_balances (now = ' . NGCP::Panel::Utils::DateTime::to_string($now) . ')');
+    $c->log->debug('catchup contract ' . $contract->id . ' ' . ($is_create_next ? 'future contract_balance' : 'contract_balances') . ' (now = ' . NGCP::Panel::Utils::DateTime::to_string($now) . ')');
     
     my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_discard_intervals,$underrun_profile_threshold,$underrun_lock_threshold);
     
@@ -211,10 +225,15 @@ sub catchup_contract_balances {
         $start_mode = $old_package->balance_interval_start_mode;
         $interval_unit = $old_package->balance_interval_unit;
         $interval_value = $old_package->balance_interval_value;
-        $carry_over_mode = $old_package->carry_over_mode;
-        $notopup_discard_intervals = ($suppress_notopup_discard ? undef : $old_package->notopup_discard_intervals);
         $underrun_profile_threshold = $old_package->underrun_profile_threshold;
         $underrun_lock_threshold = $old_package->underrun_lock_threshold;
+        if ($is_create_next) {
+            $carry_over_mode = $last_carry_over_mode;
+            $notopup_discard_intervals = $last_notopup_discard_intervals;            
+        } else {
+            $carry_over_mode = $old_package->carry_over_mode;
+            $notopup_discard_intervals = $old_package->notopup_discard_intervals;
+        }
         $has_package = 1;
     } else {
         $start_mode = _DEFAULT_START_MODE;
