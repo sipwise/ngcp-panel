@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a51691d_bac72b12",
+        "filename": "lib/NGCP/Panel/Field/PosInteger.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-11-20T04:35:23Z",
+      "side": 1,
+      "message": "ever been here on purpose?",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 18
+      },
+      "revId": "9b0cd49afd86603384e2d32beaee16e5c91c4b95",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a51691d_3adb3bef",
+        "filename": "lib/NGCP/Panel/Utils/Generic.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-11-20T04:35:23Z",
+      "side": 1,
+      "message": "original is_int also considers +-\n\n*is_number \u003d \\\u0026Scalar::Util::looks_like_number;\n#sub is_positive         { $_[0]-\u003eis_number \u0026\u0026 $_[0] \u003e 0 }\n#sub is_negative         { $_[0]-\u003eis_number \u0026\u0026 $_[0] \u003c 0 }\nsub is_integer          {\n    return 0 if !$_[0]-\u003eis_number;\n    return $_[0] \u003d~ m{ ^[+-]? \\d+ $}x;\n}",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 1
+      },
+      "revId": "9b0cd49afd86603384e2d32beaee16e5c91c4b95",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}

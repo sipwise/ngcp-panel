@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a51691d_1ad87fee",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-11-20T04:35:23Z",
+      "side": 0,
+      "message": "where does this actually came from",
+      "range": {
+        "startLine": 157,
+        "startChar": 29,
+        "endLine": 157,
+        "endChar": 34
+      },
+      "revId": "45d9f6e3bc201196c7fbb05609526c6150295ec5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
