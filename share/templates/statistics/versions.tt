@@ -1,0 +1,16 @@
+[% site_config.title = c.loc('Version Info') -%]
+
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+<div class="ngcp-separator"></div>
+
+<pre class="pre-x-scrollable">
+[% versions_info | html %]
+</pre>
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
