@@ -416,8 +416,16 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
     );
     if($form->validated) {
         $form->values->{source} ||= '.';
-        $c->stash->{'profile_result'}
-          ->billing_fees->create($form->values);
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            NGCP::Panel::Utils::Billing::insert_unique_billing_fees(
+                c => $c,
+                schema => $schema,
+                profile => $c->stash->{'profile_result'},
+                fees => [$form->values],
+                return_created => 1,
+            );
+        });
         delete $c->session->{created_objects}->{billing_zone};
         NGCP::Panel::Utils::Message::info(
             c => $c,

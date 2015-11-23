@@ -226,7 +226,13 @@ sub POST :Allow {
 
             my $fee;
             try {
-                $fee = $profile->billing_fees->create($resource);
+                $fee = NGCP::Panel::Utils::Billing::insert_unique_billing_fees(
+                    c => $c,
+                    schema => $schema,
+                    profile => $profile,
+                    fees => [$resource],
+                    return_created => 1,
+                )->[0];
             } catch($e) {
                 $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
