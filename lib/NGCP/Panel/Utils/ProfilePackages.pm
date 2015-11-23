@@ -205,7 +205,7 @@ sub _create_next_balance {
     
 sub catchup_contract_balances {
     my %params = @_;
-    my($c,$contract,$old_package,$now,$suppress_underrun,$is_create_next,$last_notopup_discard_intervals,$last_carry_over_mode,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun create_next last_notopup_discard_intervals last_carry_over_mode topup_amount profiles_added/};
+    my($c,$contract,$old_package,$now,$suppress_underrun,$is_create_next,$last_notopup_discard_intervals,$last_carry_over_mode,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun is_create_next last_notopup_discard_intervals last_carry_over_mode topup_amount profiles_added/};
     
     my $schema = $c->model('DB');
     $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
