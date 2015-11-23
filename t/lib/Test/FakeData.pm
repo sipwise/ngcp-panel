@@ -2,7 +2,7 @@ package Test::FakeData;
 
 use strict;
 
-use Sipwise::Base;
+use Moose;
 use Test::Collection;
 use JSON;
 use Test::More;
