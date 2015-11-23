@@ -1,3 +1,12 @@
+ngcp-panel (1.10.1.7+0~mr4.1.1.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [342e8ab] MT#16309 fix deaf logic due to is_create_next typo
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 23 Nov 2015 15:45:24 +0100
+
 ngcp-panel (1.10.1.6+0~mr4.1.1.6) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
