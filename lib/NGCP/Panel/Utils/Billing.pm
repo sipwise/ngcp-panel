@@ -46,11 +46,12 @@ sub process_billing_fees{
         push @fees, $row;
     }
     
-    $profile->billing_fees_raw->populate(\@fees);
-    $schema->storage->dbh_do(sub{ 
-        my ($storage, $dbh) = @_;
-        $dbh->do("call billing.fill_billing_fees(?)", undef, $profile->id );
-    });
+    insert_unique_billing_fees(
+        c => $c,
+        schema => $schema,
+        profile => $profile,
+        fees => \@fees 
+    );
     
     my $text = $c->loc('Billing Fee successfully uploaded');
     if(@fails) {
@@ -60,6 +61,24 @@ sub process_billing_fees{
     return ( \@fees, \@fails, \$text );
 }
 
+sub insert_unique_billing_fees{
+    my(%params) = @_;
+    my($c,$schema,$profile,$fees,$return_created) = @params{qw/c schema profile fees return_created/};
+    $return_created //= 0;
+    my $created_fees_raw = $profile->billing_fees_raw->populate($fees);
+    $schema->storage->dbh_do(sub{
+        my ($storage, $dbh) = @_;
+        $c->log->debug('call billing.fill_billing_fees('.$profile->id.')');
+        $dbh->do("call billing.fill_billing_fees(?)", undef, $profile->id );
+    });
+
+    #return section
+    if($return_created){
+        my @created_fees = $profile->billing_fees->search({ 'id' => { -in => [map { $_->id } @$created_fees_raw] } } )->all;
+        return \@created_fees;
+    }
+    return;
+}
 sub get_contract_count_stmt {
     return "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`billing_profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
 }
