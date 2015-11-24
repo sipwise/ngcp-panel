@@ -923,7 +923,7 @@ sub get_provisoning_voip_subscriber_first_int_attr_value {
         attribute => $attribute,
     );
     try {
-        return $rs->first;
+        return ($rs->first ? $rs->first->value : undef);
     } catch($e) {
         $c->log->error("failed to get provisioning_voip_subscriber attribute '$attribute': $e");
         $e->rethrow;

@@ -89,12 +89,13 @@ sub check_topup {
     if (defined $plain_code || defined $voucher_id) {
 
         my $voucher;
+        my $dtf = $schema->storage->datetime_parser;
         
         if (defined $plain_code) {
             $voucher = $schema->resultset('vouchers')->search_rs({
                 code => encrypt_code($c, $plain_code),
                 used_at => { '=' => \"'0000-00-00 00:00:00'" } , #used_by_subscriber_id => undef,
-                valid_until => { '>=' => $now },
+                valid_until => { '>=' => $dtf->format_datetime($now) },
                 reseller_id => $contract->contact->reseller_id,
             },{
                 for => 'update',
@@ -110,7 +111,7 @@ sub check_topup {
             $voucher = $schema->resultset('vouchers')->search_rs({
                 id => $voucher_id,
                 used_at => { '=' => \"'0000-00-00 00:00:00'" }, #used_by_subscriber_id => undef,
-                valid_until => { '>=' => $now },
+                valid_until => { '>=' => $dtf->format_datetime($now) },
                 reseller_id => $contract->contact->reseller_id,
             },{
                 for => 'update',

@@ -525,7 +525,7 @@ sub create_topup_log_record {
         lock_level_after => (exists $log_vals->{new_lock_level} ? $log_vals->{new_lock_level} : undef),
         contract_balance_before_id => (exists $log_vals->{old_balance} ? $log_vals->{old_balance}->{id} : undef),
         contract_balance_after_id => (exists $log_vals->{new_balance} ? $log_vals->{new_balance}->{id} : undef),
-        request_token => substr((defined $request_token ? $request_token : $resource->{request_token}),0,255),
+        request_token => substr((defined $request_token ? $request_token : $resource->{request_token} // ''),0,255),
     });
     
 }
