@@ -1,3 +1,15 @@
+ngcp-panel (1.10.1.8+0~mr4.1.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d0ada47] MT#12707 add "Malicious Calls" top-menu item for admin/reseller
+
+  [ Gerhard Jungwirth ]
+  * [5705659] MT#15797 skip domain reload
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Nov 2015 11:28:46 +0100
+
 ngcp-panel (1.10.1.7+0~mr4.1.1.7) unstable; urgency=medium
 
   [ Rene Krenn ]
