@@ -68,6 +68,7 @@ has_field 'initial_profiles.network_id' => (
 has_field 'balance_interval_unit' => (
     type => 'Select',
     options => [
+        { value => 'minute', label => 'minute' },
         { value => 'hour', label => 'hour' },
         { value => 'day', label => 'day' },
         { value => 'week', label => 'week' },
@@ -118,6 +119,7 @@ has_field 'carry_over_mode' => (
 has_field 'timely_duration_unit' => (
     type => 'Select',
     options => [
+        { value => 'minute', label => 'minute' },
         { value => 'hour', label => 'hour' },
         { value => 'day', label => 'day' },
         { value => 'week', label => 'week' },
