@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_ebcde587",
+        "filename": "share/templates/statistics/versions.tt",
+        "patchSetId": 6
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-11-25T12:58:13Z",
+      "side": 1,
+      "message": "TODO: rewrite this cleanly\n\nvalidator: \"Element style not allowed as child of element div in this context.\"",
+      "revId": "219395a0b00c5b508770153c869008b231397435",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
