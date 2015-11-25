@@ -16,6 +16,24 @@
       "revId": "c8b398b98539351b14d1cc8b8d2fcec37104f809",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_4ed88753",
+        "filename": "lib/NGCP/Panel/Utils/Statistics.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-11-25T17:01:27Z",
+      "side": 1,
+      "message": "Nice, tnx for the hint!\n\nDescription is actually nice to have here, as it is a list for enduser, while ${Architecture} we should drop for sure,\n\nso we can use something like\n  \ndpkg-query -f \u0027${db:Status-Abbrev} ${Package} ${Version} ${binary:Summary}\\n\u0027 -W\n\nbut then it is hardly readable due to lack of vertical alignment :-( So IMHO we should stay with \"dpkg -l\" :-(",
+      "parentUuid": "5a4e6583_0e5defe9",
+      "revId": "c8b398b98539351b14d1cc8b8d2fcec37104f809",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
