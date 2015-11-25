@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_289f8305",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-11-25T10:06:18Z",
+      "side": 1,
+      "message": "I am not sure how perl will react on mr here, also Perl uses 001 instead of 1, some there can be surprises.",
+      "revId": "a79be94415ca850c8a7e19dc22624f5dd7011f6c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_08a4c755",
+        "filename": "share/templates/notfound_page.tt",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-11-25T10:06:18Z",
+      "side": 1,
+      "message": "Please show NGCP version here only.\nPanel version will only confuse non-tech guys.\nThen on click on \"NGCP version\" show version of all installed packages on new page. please.",
+      "revId": "a79be94415ca850c8a7e19dc22624f5dd7011f6c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
