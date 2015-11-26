@@ -34,6 +34,24 @@
       "revId": "c8b398b98539351b14d1cc8b8d2fcec37104f809",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_f9949f45",
+        "filename": "lib/NGCP/Panel/Utils/Statistics.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-11-26T13:26:43Z",
+      "side": 1,
+      "message": "dpkg-query -f \u0027${db:Status-Abbrev} ${Package} ${Version}\\n\u0027 -W\n\nsounds fine to me, we really don\u0027t need the description here. thanks!",
+      "parentUuid": "5a4e6583_4ed88753",
+      "revId": "c8b398b98539351b14d1cc8b8d2fcec37104f809",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
