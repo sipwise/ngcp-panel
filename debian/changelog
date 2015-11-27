@@ -1,3 +1,12 @@
+ngcp-panel (1.10.1.9+0~mr4.1.1.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [be95901] MT#16655 "minute" unit in profile packages
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 27 Nov 2015 10:18:10 +0100
+
 ngcp-panel (1.10.1.8+0~mr4.1.1.8) unstable; urgency=medium
 
   [ Kirill Solomko ]
