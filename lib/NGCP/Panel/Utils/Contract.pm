@@ -204,13 +204,13 @@ sub recursively_lock_contract {
 
 sub get_contract_rs {
     my %params = @_;
-    my $schema = $params{schema};
+    my ($schema,$contract_id) = @params{qw/schema contract_id/};
     my $dtf = $schema->storage->datetime_parser;
     my $rs = $schema->resultset('contracts')
         ->search({
             $params{include_terminated} ? () : ('me.status' => { '!=' => 'terminated' }),
         },{
-            bind => [ ( $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local) ) x 2],
+            bind => [ ( $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local) ) x 2, ( $contract_id ) x 2],
             'join' => { 'billing_mappings_actual' => { 'billing_mappings' => 'product'}},
             '+select' => [
                 'billing_mappings.id',
@@ -230,11 +230,12 @@ sub get_contract_rs {
 
 sub get_customer_rs {
     my %params = @_;
-    my $c = $params{c};
+    my ($c,$contract_id) = @params{qw/c contract_id/};
 
     my $customers = get_contract_rs(
         schema => $c->model('DB'),
         include_terminated => $params{include_terminated},
+        contract_id => $contract_id,
     );
     
     $customers = $customers->search({
