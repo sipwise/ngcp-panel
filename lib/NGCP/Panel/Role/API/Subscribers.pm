@@ -178,16 +178,17 @@ sub item_by_id {
 sub get_customer {
     my ($self, $c, $customer_id) = @_;
 
-    my $customer = NGCP::Panel::Utils::Contract::get_contract_rs(
+    my $customer_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
         schema => $c->model('DB'),
+        contract_id => $customer_id,
     );
-    $customer = $customer->search({
+    $customer_rs = $customer_rs->search({
             'contact.reseller_id' => { '-not' => undef },
             'me.id' => $customer_id,
         },{
             join => 'contact',
         });
-    $customer = $customer->search({
+    $customer_rs = $customer_rs->search({
             '-or' => [
                 'product.class' => 'sipaccount',
                 'product.class' => 'pbxaccount',
@@ -198,11 +199,11 @@ sub get_customer {
         });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
-        $customer = $customer->search({
+        $customer_rs = $customer_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         });
     }
-    $customer = $customer->first;
+    my $customer = $customer_rs->first;
     unless($customer) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'customer_id', doesn't exist.");
         return;
