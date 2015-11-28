@@ -597,7 +597,7 @@ sub get_actual_billing_mapping {
     $schema //= $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
     my $dtf = $schema->storage->datetime_parser;
-    return $schema->resultset('billing_mappings_actual')->search({ contract_id => $contract->id },{bind => [ ( $dtf->format_datetime($now) ) x 2],})->first;
+    return $schema->resultset('billing_mappings_actual')->search({ contract_id => $contract->id },{bind => [ ( $dtf->format_datetime($now) ) x 2, ($contract->id) x 2 ],})->first;
 }
 
 
