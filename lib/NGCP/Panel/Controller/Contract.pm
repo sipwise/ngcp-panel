@@ -33,7 +33,9 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'),now => $now);
+        schema => $c->model('DB'), 
+        now => $now 
+    );
     unless($c->user->is_superuser) {
         $rs = $rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
@@ -450,7 +452,9 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
     }
     my $now = $c->stash->{now};
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'), now => $now)
+            schema => $c->model('DB'), 
+            now => $now,
+            contract_id => $contract_id )
         ->search_rs({
             'me.id' => $contract_id,
         });

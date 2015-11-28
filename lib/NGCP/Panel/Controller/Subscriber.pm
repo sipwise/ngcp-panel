@@ -160,7 +160,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 my $preferences = {};
-                my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
+                my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, contract_id => $form->params->{contract}{id} );
                 my $contract = $contract_rs->find({
                     'me.id' => $form->params->{contract}{id},
                 });
@@ -234,7 +234,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(subscriber => $res);
 
     $c->stash->{contract} = $c->stash->{subscriber}->contract;
-    my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
+    my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, contract_id => $c->stash->{contract}->id );
     my $contract = $contract_rs->find({
         'me.id' => $c->stash->{contract}->id,
     });

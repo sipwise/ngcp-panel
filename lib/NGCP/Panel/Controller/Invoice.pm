@@ -164,7 +164,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 my $contract_id = $form->values->{contract}{id};
-                my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
+                my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, contract_id => $contract_id);
                 my $customer = $customer_rs->find({ 'me.id' => $contract_id });
                 unless($customer) {
                     NGCP::Panel::Utils::Message::error(

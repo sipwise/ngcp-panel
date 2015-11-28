@@ -40,9 +40,11 @@ sub auto :Private {
     if($c->user->roles eq "subscriberadmin") {
         my $contract_id = $c->user->account_id;
         my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'));
+            schema => $c->model('DB'), 
+            contract_id => $contract_id,
+        );
         $contract_select_rs = $contract_select_rs->search({ 'me.id' => $contract_id });
-        my $product_id = $contract_select_rs->first->get_column('product_id');
+        my $product_id = $contract_select_rs->first ? $contract_select_rs->first->get_column('product_id') : undef;
         unless($product_id) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
