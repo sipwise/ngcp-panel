@@ -58,7 +58,7 @@ sub GET :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriber => $item);
 
-        my $hal = $self->hal_from_item($c, $item, "callforwards");
+        my $hal = $self->hal_from_item($c, $item);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -109,7 +109,7 @@ sub PATCH :Allow {
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subs_for_callforwards => $item);
-        my $old_resource = $self->hal_from_item($c, $item, "callforwards")->resource;
+        my $old_resource = $self->hal_from_item($c, $item)->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -117,7 +117,7 @@ sub PATCH :Allow {
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
         
-        my $hal = $self->hal_from_item($c, $item, "callforwards");
+        my $hal = $self->hal_from_item($c, $item);
         last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $id });
 
         $guard->commit; 
@@ -127,7 +127,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            #my $hal = $self->hal_from_item($c, $callforward, "callforwards");
+            #my $hal = $self->hal_from_item($c, $callforward);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -160,7 +160,7 @@ sub PUT :Allow {
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
-        my $hal = $self->hal_from_item($c, $item, "callforwards");
+        my $hal = $self->hal_from_item($c, $item);
         last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $id });
         
         $guard->commit; 
@@ -170,7 +170,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            #my $hal = $self->hal_from_item($c, $callforward, "callforwards");
+            #my $hal = $self->hal_from_item($c, $callforward);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -200,7 +200,7 @@ sub DELETE :Allow {
         last unless $self->add_delete_journal_item_hal($c,{ hal_from_item => sub {
             my $self = shift;
             my ($c) = @_;
-            return $self->hal_from_item($c,$item,"callforwards"); },
+            return $self->hal_from_item($c,$item); },
             id => $id});
 
         try {
