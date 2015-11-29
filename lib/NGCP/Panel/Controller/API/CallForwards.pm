@@ -83,9 +83,10 @@ sub GET :Allow {
         my $cfs = $self->item_rs($c, "callforwards");
         (my $total_count, $cfs) = $self->paginate_order_collection($c, $cfs);
         my (@embedded, @links);
+        my $form = $self->get_form($c);
         for my $cf ($cfs->all) {
             try {
-                push @embedded, $self->hal_from_item($c, $cf, "callforwards");
+                push @embedded, $self->hal_from_item($c, $cf, $form);
                 push @links, Data::HAL::Link->new(
                     relation => 'ngcp:'.$self->resource_name,
                     href     => sprintf('%s%s', $self->dispatch_path, $cf->id),

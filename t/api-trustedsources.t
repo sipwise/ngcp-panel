@@ -17,7 +17,7 @@ use Test::FakeData;
 #init test_machine
 my $test_machine = Test::Collection->new(
     name => 'trustedsources',
-    embedded => [qw/subscribers/],
+    embedded_resources => [qw/subscribers/],
 );
 $test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
 $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH DELETE)};

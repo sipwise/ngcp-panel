@@ -82,7 +82,7 @@ $fake_data->set_data_from_script({
 });
 my $test_machine = Test::Collection->new(
     name => 'pbxdevicemodels',
-    embedded => [qw/pbxdevicefirmwares/]
+    embedded_resources => [qw/pbxdevicefirmwares/]
 );
 $test_machine->DATA_ITEM_STORE($fake_data->process('pbxdevicemodels'));
 @{$test_machine->content_type}{qw/POST PUT/}    = (('multipart/form-data') x 2);

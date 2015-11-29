@@ -51,7 +51,7 @@ sub GET :Allow {
         my $cfm = $self->item_by_id($c, $id, "callforwards");
         last unless $self->resource_exists($c, cfm => $cfm);
 
-        my $hal = $self->hal_from_item($c, $cfm, "callforwards");
+        my $hal = $self->hal_from_item($c, $cfm);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -102,7 +102,7 @@ sub PATCH :Allow {
 
         my $callforward = $self->item_by_id($c, $id, "callforwards");
         last unless $self->resource_exists($c, callforward => $callforward);
-        my $old_resource = $self->hal_from_item($c, $callforward, "callforwards")->resource;
+        my $old_resource = $self->hal_from_item($c, $callforward)->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -117,7 +117,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $callforward, "callforwards");
+            my $hal = $self->hal_from_item($c, $callforward);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -136,7 +136,7 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $callforward = $self->item_by_id($c, $id, "callforwards");
+        my $callforward = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, callforward => $callforward);
         my $resource = $self->get_valid_put_data(
             c => $c,
@@ -157,7 +157,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $callforward, "callforwards");
+            my $hal = $self->hal_from_item($c, $callforward);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -173,7 +173,7 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $callforward = $self->item_by_id($c, $id, "callforwards");
+        my $callforward = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, callforward => $callforward);
         my $form = $self->get_form($c);
         my $old_resource = undef;

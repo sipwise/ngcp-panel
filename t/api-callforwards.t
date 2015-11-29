@@ -5,7 +5,7 @@ use JSON qw();
 use Test::More;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
-
+my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
 my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
     "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
 my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
