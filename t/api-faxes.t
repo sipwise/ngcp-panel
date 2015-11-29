@@ -31,7 +31,7 @@ $fake_data->set_data_from_script({
 });
 my $test_machine = Test::Collection->new(
     name => 'faxes',
-    embedded => [qw/subscribers/]
+    embedded_resources => [qw/subscribers/]
 );
 
 

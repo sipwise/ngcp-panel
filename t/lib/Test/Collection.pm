@@ -665,7 +665,7 @@ sub check_patch_correct{
     my($self,$content) = @_;
     my ($res,$rescontent,$req) = $self->request_patch( $content );
     $self->http_code_msg(200, "check patched item", $res, $rescontent);
-    is($rescontent->{_links}->{self}->{href}, $self->DATA_CREATED->{FIRST}, "check patched self link");
+    is($rescontent->{_links}->{self}->{href}, $self->uri2location($req->uri), "check patched self link");
     is($rescontent->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "check patched collection link");
     return ($res,$rescontent,$req);
 }
@@ -746,6 +746,13 @@ sub check_patch_opreplace_paramsextra{
     $self->http_code_msg(400, "check patch extra fields for op", $res, $content);
     like($content->{message}, qr/Invalid PATCH key /, "check patch extra fields for op response");
 }
+sub check_patch_path_wrong{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->request_patch(
+        [ { op => 'replace', path => '/some/path', value => 'invalid' } ],
+    );
+    $self->http_code_msg(422, "check patched invalid path", $res, $content);
+}
 
 sub check_patch_bundle{
     my($self) = @_;
@@ -758,6 +765,7 @@ sub check_patch_bundle{
     $self->check_patch_op_wrong;
     $self->check_patch_opreplace_paramsmiss;
     $self->check_patch_opreplace_paramsextra;
+    $self->check_patch_path_wrong;
 }
 sub check_bundle{
     my($self) = @_;
@@ -870,7 +878,7 @@ sub check_get2put{
 }
 
 sub check_put2get{
-    my($self, $put_in, $get_in) = @_;
+    my($self, $put_in, $get_in, $nocheck) = @_;
     
     my($put_out,$get_out);
 
@@ -880,7 +888,6 @@ sub check_put2get{
     $get_out->{uri} = $get_in->{uri};
 
     $put_out->{content_in} = $self->process_data($put_in->{data_cb}, $put_in->{data_in});
-    $put_out->{content_in} = JSON::to_json($put_out->{content_in});
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
     $self->http_code_msg(200, "check_put2get: check put successful",$put_out->{response}, $put_out->{content});
 
@@ -888,8 +895,9 @@ sub check_put2get{
     delete $get_out->{content}->{_links};
     delete $get_out->{content}->{_embedded};
     my $item_id = delete $get_out->{content}->{id};
-    $put_out->{content_in} = JSON::from_json($put_out->{content_in});
-    is_deeply($put_out->{content_in}, $get_out->{content}, "check_put2get: check PUTed item against POSTed item");
+    if(!$nocheck){
+        is_deeply($put_out->{content_in}, $get_out->{content}, "check_put2get: check PUTed item against POSTed item");
+    }
     $get_out->{content}->{id} = $item_id;
     return ($put_out,$get_out);
 }
@@ -945,6 +953,17 @@ sub resource_clear_file{
     my $cmd = "echo -n '' > $_[1]";
     print "cmd=$cmd;\n";
     `$cmd`;
+}
+sub get_id_from_hal{
+    my($self,$hal,$name) = @_;
+    $name //= $self->name;
+    my $id = $hal->{_embedded}->{'ngcp:'.$name}->{_links}{self}{href} =~ m!${name}/([0-9]*)$!;
+    return $id;
+}
+sub uri2location{
+    my($self,$uri) = @_;
+    $uri=~s/^.*?(\/api\/.*$)/$1/;
+    return $uri;
 }
 sub http_code_msg{
     my($self,$code,$message,$res,$content) = @_;
