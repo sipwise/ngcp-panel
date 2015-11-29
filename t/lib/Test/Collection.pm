@@ -888,7 +888,6 @@ sub check_put2get{
     $get_out->{uri} = $get_in->{uri};
 
     $put_out->{content_in} = $self->process_data($put_in->{data_cb}, $put_in->{data_in});
-    $put_out->{content_in} = JSON::to_json($put_out->{content_in});
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
     $self->http_code_msg(200, "check_put2get: check put successful",$put_out->{response}, $put_out->{content});
 
@@ -896,7 +895,6 @@ sub check_put2get{
     delete $get_out->{content}->{_links};
     delete $get_out->{content}->{_embedded};
     my $item_id = delete $get_out->{content}->{id};
-    $put_out->{content_in} = JSON::from_json($put_out->{content_in});
     is_deeply($put_out->{content_in}, $get_out->{content}, "check_put2get: check PUTed item against POSTed item");
     $get_out->{content}->{id} = $item_id;
     return ($put_out,$get_out);
@@ -953,6 +951,12 @@ sub resource_clear_file{
     my $cmd = "echo -n '' > $_[1]";
     print "cmd=$cmd;\n";
     `$cmd`;
+}
+sub get_id_from_hal{
+    my($self,$hal,$name) = @_;
+    $name //= $self->name;
+    my $id = $hal->{_embedded}->{'ngcp:'.$name}->{_links}{self}{href} =~ m!${name}/([0-9]*)$!;
+    return $id;
 }
 sub http_code_msg{
     my($self,$code,$message,$res,$content) = @_;

@@ -1,140 +1,80 @@
-use Sipwise::Base;
-use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
-use JSON qw();
+use strict;
+use warnings;
+
 use Test::More;
+use Test::Collection;
+use Test::FakeData;
+use Data::Dumper;
 
-my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
-my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
+my $test_machine = Test::Collection->new(
+    name => 'callforwards',
+);
 
-my ($ua, $req, $res);
-$ua = LWP::UserAgent->new;
 
-$ua->ssl_opts(
-        verify_hostname => 0,
-        SSL_verify_mode => 0,
-    );
-my $user = $ENV{API_USER} // 'administrator';
-my $pass = $ENV{API_PASS} // 'administrator';
-$ua->credentials($netloc, "api_admin_http", $user, $pass);
+$test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS)};
+$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH DELETE)};
 
-# OPTIONS tests
-{
-    $req = HTTP::Request->new('OPTIONS', $uri.'/api/callforwards/');
-    $res = $ua->request($req);
-    is($res->code, 200, "check options request");
-    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-callforwards", "check Accept-Post header in options response");
-    my $opts = JSON::from_json($res->decoded_content);
-    my @hopts = split /\s*,\s*/, $res->header('Allow');
-    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
-    foreach my $opt(qw( GET HEAD OPTIONS )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
-    }
-}
-
-my $t = time;
-my $reseller_id = 1;
-my $billing_profile_id; #dummy
-
-# collection test
-my $firstcf = undef;
-my $firstcustomer; #dummy
-my $custcontact = undef; #dummy
-my @allcustomers = (); #dummy
-my $system_contact_id; #dummy
-{
-    # iterate over customers collection to check next/prev links and status
-    my $nexturi = $uri.'/api/callforwards/?page=1&rows=5';
-    do {
-        $res = $ua->get($nexturi);
-        is($res->code, 200, "fetch cfs page");
-        my $collection = JSON::from_json($res->decoded_content);
-        my $selfuri = $uri . $collection->{_links}->{self}->{href};
-        is($selfuri, $nexturi, "check _links.self.href of collection");
-        my $colluri = URI->new($selfuri);
-
-        cmp_ok($collection->{total_count}, '>', 0, "check 'total_count' of collection");
-
-        my %q = $colluri->query_form;
-        ok(exists $q{page} && exists $q{rows}, "check existence of 'page' and 'row' in 'self'");
-        my $page = int($q{page});
-        my $rows = int($q{rows});
-        if($page == 1) {
-            ok(!exists $collection->{_links}->{prev}->{href}, "check absence of 'prev' on first page");
-        } else {
-            ok(exists $collection->{_links}->{prev}->{href}, "check existence of 'prev'");
-        }
-        if(($collection->{total_count} / $rows) <= $page) {
-            ok(!exists $collection->{_links}->{next}->{href}, "check absence of 'next' on last page");
-        } else {
-            ok(exists $collection->{_links}->{next}->{href}, "check existence of 'next'");
-        }
-
-        if($collection->{_links}->{next}->{href}) {
-            $nexturi = $uri . $collection->{_links}->{next}->{href};
-        } else {
-            $nexturi = undef;
-        }
-
-        # TODO: I'd expect that to be an array ref in any case!
-        ok((ref $collection->{_links}->{'ngcp:callforwards'} eq "ARRAY" ||
-            ref $collection->{_links}->{'ngcp:callforwards'} eq "HASH"), "check if 'ngcp:callforwards' is array/hash-ref");
-
-        # remove any contact we find in the collection for later check
-        if(ref $collection->{_links}->{'ngcp:callforwards'} eq "HASH") {
-            ok(exists $collection->{_embedded}->{'ngcp:callforwards'}->{_links}->{'ngcp:callforwards'}, "check presence of ngcp:callforwards relation");
-            ok(exists $collection->{_embedded}->{'ngcp:callforwards'}->{_links}->{'ngcp:subscribers'}, "check presence of ngcp:subscribers relation");
-        } else {
-            foreach my $c(@{ $collection->{_embedded}->{'ngcp:callforwards'} }) {
-                ok(exists $c->{_links}->{'ngcp:callforwards'}, "check presence of ngcp:callforwards relation");
-                ok(exists $c->{_links}->{'ngcp:subscribers'}, "check presence of ngcp:subscribers relation");
+my $fake_data = Test::FakeData->new;
+$fake_data->set_data_from_script({
+    'callforwards' => {
+        'data' => {
+            #not really necessary - there isn't POST method
+            #subscriber_id  => sub { return shift->get_id('subscribers',@_); },
+            cfu => {
+                destinations => [
+                    { destination => "12345", timeout => 200},
+                ],
+                times => undef,
+            },
+            cft => {
+                destinations => [
+                    { destination => "5678" },
+                    { destination => "voicebox", timeout => 500 },
+                ],
+                ringtimeout => 10,
             }
-        }
+        },
+    },
+});
 
-    } while($nexturi);
-}
+$test_machine->DATA_ITEM_STORE($fake_data->process('callforwards'));
+$test_machine->form_data_item( );
 
-
-diag('Note that the next tests require at least one subscriber to be present');
-
-# fetch a callforward (subscriber) id for later tests
-$req = HTTP::Request->new('GET', $uri.'/api/callforwards/?page=1&rows=1');
-$res = $ua->request($req);
-is($res->code, 200, "fetch first callforward");
-my $cf1 = JSON::from_json($res->decoded_content);
-my ($cf1_id) = $cf1->{_embedded}->{'ngcp:callforwards'}->{_links}{self}{href} =~ m!callforwards/([0-9]*)$!;
-
-cmp_ok ($cf1_id, '>', 0, "should be positive integer");
-
-# test cf item
-{
-    $req = HTTP::Request->new('OPTIONS', "$uri/api/callforwards/$cf1_id");
-    $res = $ua->request($req);
-    is($res->code, 200, "check options on item");
-    my @hopts = split /\s*,\s*/, $res->header('Allow');
-    my $opts = JSON::from_json($res->decoded_content);
-    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
-    foreach my $opt(qw( GET HEAD OPTIONS PUT PATCH DELETE )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
-    }
-    foreach my $opt(qw( POST )) {
-        ok(!grep(/^$opt$/, @hopts), "check for absence of '$opt' in Allow header");
-        ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for absence of '$opt' in body");
-    }
-
-    # get our cf
-    $req = HTTP::Request->new('GET', "$uri/api/callforwards/$cf1_id");
+SKIP:{
+    my ($res,$req);
+    my $cf1 = $test_machine->get_item_hal();
     
-    $res = $ua->request($req);
-    is($res->code, 200, "fetch cf id $cf1_id");
-    my $cf1single = JSON::from_json($res->decoded_content);
+    if(!$cf1->{content}->{total_count}){
+        skip("Testing requires at least one present callforward. No creation is available.",1);
+    }
+
+    #$test_machine->check_bundle();
+
+    my($cf1_id) = $test_machine->get_id_from_hal($cf1->{content}); #($cf1,'callforwards');
+    cmp_ok ($cf1_id, '>', 0, "should be positive integer");
+    my $cf1single_uri = "/api/callforwards/$cf1_id";
+    my $cf1single;
+    (undef, $cf1single) = $test_machine->check_item_get($cf1single_uri,"fetch cf id $cf1_id");
+
     is(ref $cf1single, "HASH", "cf should be hash");
     ok(exists $cf1single->{cfu}, "cf should have key cfu");
     ok(exists $cf1single->{cfb}, "cf should have key cfb");
     ok(exists $cf1single->{cft}, "cf should have key cft");
     ok(exists $cf1single->{cfna}, "cf should have key cfna");
+
+    $test_machine->check_put2get({data_in => $test_machine->DATA_ITEM, uri => $cf1single_uri});
+    #($res, $rescontent, $req) = $test_machine->request_put( $test_machine->DATA_ITEM, $cf1single_uri );
+}
+
+done_testing;
+
+1;
+
+
+__DATA__
+
+
+{
 
     # write this cf
     $req = HTTP::Request->new('PUT', "$uri/api/callforwards/$cf1_id");
@@ -196,31 +136,6 @@ cmp_ok ($cf1_id, '>', 0, "should be positive integer");
     delete $cf1put->{_embedded};
     $req = HTTP::Request->new('PUT', "$uri/api/callforwards/$cf1_id");
     
-    # check if it fails without content type
-    $req->remove_header('Content-Type');
-    $req->header('Prefer' => "return=minimal");
-    $res = $ua->request($req);
-    is($res->code, 415, "check put missing content type");
-
-    # check if it fails with unsupported content type
-    $req->header('Content-Type' => 'application/xxx');
-    $res = $ua->request($req);
-    is($res->code, 415, "check put invalid content type");
-
-    $req->remove_header('Content-Type');
-    $req->header('Content-Type' => 'application/json');
-
-    # check if it fails with invalid Prefer
-    $req->header('Prefer' => "return=invalid");
-    $res = $ua->request($req);
-    is($res->code, 400, "check put invalid prefer");
-
-    $req->remove_header('Prefer');
-    $req->header('Prefer' => "return=representation");
-
-    # check if it fails with missing body
-    $res = $ua->request($req);
-    is($res->code, 400, "check put no body");
 
     # check if put is ok
     $req->content(JSON::to_json($cf1put));
