@@ -15,6 +15,7 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Form::CFSimpleAPI;
 use NGCP::Panel::Utils::Subscriber;
+use feature "state";
 
 sub get_form {
     my ($self, $c) = @_;
@@ -24,7 +25,7 @@ sub get_form {
 
 sub hal_from_item {
     my ($self, $c, $item, $type) = @_;
-    my $form;
+    state $form;
     #my $rwr_form = $self->get_form($c, "rules"); #rules?
     
     my $prov_subs = $item->provisioning_voip_subscriber;
@@ -51,16 +52,9 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
-    for my $cf_type (qw/cfu cfb cft cfna/) {
-        my $mapping = $c->model('DB')->resultset('voip_cf_mappings')->search({
-                subscriber_id => $prov_subs->id,
-                type => $cf_type,
-            })->first;
-        if ($mapping) {
-            $resource{$cf_type} = $self->_contents_from_cfm($c, $mapping, $item);
-        } else {
-            $resource{$cf_type} = {};
-        }
+    @resource{qw/cfu cfb cft cfna/} = ({}) x 4;
+    for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all){
+        $resource{$item_cf->type} = $self->_contents_from_cfm($c, $item_cf, $item);
     }
     if(keys %{$resource{cft}}){
         my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -70,6 +64,7 @@ sub hal_from_item {
     }
 
     $form //= $self->get_form($c);
+    $form->clear();
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -88,7 +83,7 @@ sub item_rs {
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
         ->search(
             { 'me.status' => { '!=' => 'terminated' } },
-            { prefetch => 'provisioning_voip_subscriber',},
+            { 'prefetch' => { 'provisioning_voip_subscriber' => 'voip_cf_mappings' },},
         );
     if($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
