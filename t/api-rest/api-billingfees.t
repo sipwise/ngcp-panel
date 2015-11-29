@@ -29,7 +29,7 @@ $fake_data->set_data_from_script({
 });
 my $test_machine = Test::Collection->new(
     name => 'billingfees',
-    embedded => [qw/billingzones billingprofiles/]
+    embedded_resources => [qw/billingzones billingprofiles/]
 );
 $test_machine->DATA_ITEM_STORE($fake_data->process('billingfees'));
 $test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
@@ -115,7 +115,7 @@ $test_machine->check_bundle();
 }
 {
     my($res,$item_put,$req) = $test_machine->check_get2put();
-    $test_machine->check_embedded($item_put);
+    $test_machine->check_embedded($item_put->{content});
 }
 {
     my($res,$mod_fee) = $test_machine->check_patch_correct( [ { op => 'replace', path => '/direction', value => 'in' } ] );
