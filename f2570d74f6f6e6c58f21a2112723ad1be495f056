@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a4e6583_9dd34e38",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-12-01T11:36:19Z",
+      "side": 1,
+      "message": "Yes, I\u0027m pretty sure. Run of the callforwards.pl and, more clear, callforwards_start_form.pl shows 18 seconds vs 1 seconds with and without form instantiaion respectively.",
+      "parentUuid": "5a4e6583_a2eee789",
+      "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a4e6583_c2e1e39b",
         "filename": "sandbox/callforwards.pl",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2015-12-01T09:36:04Z",
       "side": 1,
       "message": "what is done here?",
+      "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_bd9baa71",
+        "filename": "sandbox/callforwards.pl",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-12-01T11:36:19Z",
+      "side": 1,
+      "message": "I spenta lot of time trying to avoid additional queries for each rows, but have found that it gives us only 3 seconds minus. So this is 2 variants of the schematic callforwards GET implementation to find time consumer. 18 seconds of the 200 item processing were taken by form object instantiantion.",
+      "parentUuid": "5a4e6583_c2e1e39b",
       "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
