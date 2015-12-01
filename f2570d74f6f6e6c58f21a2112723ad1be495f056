@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_a2eee789",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-01T09:36:04Z",
+      "side": 1,
+      "message": "are you sure, this gives us performance improvements? I think it might just add a quite complex to track source for possible bugs.",
+      "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c2e1e39b",
+        "filename": "sandbox/callforwards.pl",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-01T09:36:04Z",
+      "side": 1,
+      "message": "what is done here?",
+      "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
