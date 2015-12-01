@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_02d81bee",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-01T09:15:42Z",
+      "side": 1,
+      "message": "$contract_rs-\u003efirst should be sufficient, if everything works, like in the other parts of the code.",
+      "range": {
+        "startLine": 164,
+        "startChar": 31,
+        "endLine": 166,
+        "endChar": 19
+      },
+      "revId": "7e7e148292c382c2dc39d7abd01f3f63d4ecb0a7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
