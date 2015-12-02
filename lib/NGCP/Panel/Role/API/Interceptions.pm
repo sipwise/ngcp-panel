@@ -129,29 +129,17 @@ sub update_item {
         resource => $resource,
     );
 
-    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
-        \[ 'concat(cc,ac,sn) = ?', [ {} => $resource->{number} ]]
-    );
-    unless($num_rs->first) {
-        $c->log->error("invalid number '$$resource{number}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist");
-        last;
-    }
-    $resource->{reseller_id} = $num_rs->first->reseller_id;
-
-    my $sub = $num_rs->first->subscriber;
-    unless($sub) {
-        $c->log->error("invalid number '$$resource{number}', not assigned to any subscriber");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
-        last;
-    }
+    my ($sub, $reseller) = $self->subres_from_number($c, $resource->{number});
+    return unless($sub && $reseller);
+    
+    $resource->{reseller_id} = $reseller->id;
     $resource->{sip_username} = $sub->username;
     $resource->{sip_domain} = $sub->domain->domain;
 
     if($resource->{x3_required} && (!defined $resource->{x3_host} || !defined $resource->{x3_port})) {
         $c->log->error("Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
-        last;
+        return;
     }
     $resource->{x3_host} = $resource->{x3_port} = undef unless($resource->{x3_required});
 
@@ -161,6 +149,33 @@ sub update_item {
     $item->update($resource);
 
     return $item;
+}
+
+sub subres_from_number {
+    my ($self, $c, $number) = @_;
+    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
+        \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
+    );
+    unless($num_rs->first) {
+        $c->log->error("invalid number '$number'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist");
+        return;
+    }
+    my $sub = $num_rs->first->subscriber;
+    unless($sub) {
+        $c->log->error("invalid number '$number', not assigned to any subscriber");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
+        return;
+    }
+
+    my $res = $num_rs->first->reseller;
+    unless($res) {
+        $c->log->error("invalid number '$number', not assigned to any reseller");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
+        return;
+    }
+
+    return ($sub, $res);
 }
 
 1;
