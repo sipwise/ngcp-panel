@@ -6,6 +6,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Utils::Interception;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -105,6 +106,26 @@ sub PATCH :Allow {
 
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
+        my ($sub, $reseller) = $self->subres_from_number($c, $resource->{number});
+        last unless($sub && $reseller);
+
+        my $res = NGCP::Panel::Utils::Interception::request($c, 'PUT', $item->uuid, {
+            number => $resource->{number},
+            sip_username => $sub->username,
+            sip_domain => $sub->domain->domain,
+            delivery_host => $resource->{x2_host},
+            delivery_port => $resource->{x2_port},
+            delivery_user => $resource->{x2_user},
+            delivery_password => $resource->{x2_password},
+            cc_required => $resource->{x3_required},
+            cc_delivery_host => $resource->{x3_host},
+            cc_delivery_port => $resource->{x3_port},
+        });
+        unless($res) {
+            $c->log->error("failed to update capture agents");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update capture agents");
+            last;
+        }
         
         $guard->commit;
 
@@ -145,6 +166,26 @@ sub PUT :Allow {
 
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
+        my ($sub, $reseller) = $self->subres_from_number($c, $resource->{number});
+        last unless($sub && $reseller);
+
+        my $res = NGCP::Panel::Utils::Interception::request($c, 'PUT', $item->uuid, {
+            number => $resource->{number},
+            sip_username => $sub->username,
+            sip_domain => $sub->domain->domain,
+            delivery_host => $resource->{x2_host},
+            delivery_port => $resource->{x2_port},
+            delivery_user => $resource->{x2_user},
+            delivery_password => $resource->{x2_password},
+            cc_required => $resource->{x3_required},
+            cc_delivery_host => $resource->{x3_host},
+            cc_delivery_port => $resource->{x3_port},
+        });
+        unless($res) {
+            $c->log->error("failed to update capture agents");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update capture agents");
+            last;
+        }
 
         $guard->commit; 
 
@@ -171,6 +212,7 @@ sub DELETE :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $item = $self->item_by_id($c, $id);
+        my $uuid = $item->uuid;
         last unless $self->resource_exists($c, interception => $item);
         $item->update({
             deleted => 1,
@@ -188,6 +230,12 @@ sub DELETE :Allow {
             sip_domain => undef,
             uuid => undef,
         });
+        my $res = NGCP::Panel::Utils::Interception::request($c, 'DELETE', $uuid);
+        unless($res) {
+            $c->log->error("failed to update capture agents");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update capture agents");
+            last;
+        }
 
         $guard->commit;
 
