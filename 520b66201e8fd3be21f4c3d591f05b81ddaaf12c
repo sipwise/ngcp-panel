@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_998d9d34",
+        "filename": "lib/NGCP/Panel/Utils/Interception.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2015-12-02T17:13:06Z",
+      "side": 1,
+      "message": "$jdata is undefined. Missing encode_json() ?",
+      "range": {
+        "startLine": 40,
+        "startChar": 22,
+        "endLine": 40,
+        "endChar": 28
+      },
+      "revId": "520b66201e8fd3be21f4c3d591f05b81ddaaf12c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
