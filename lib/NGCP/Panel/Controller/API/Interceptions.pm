@@ -8,6 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Interception;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use UUID qw/generate unparse/;
@@ -205,12 +206,28 @@ sub POST :Allow {
         $resource->{create_timestamp} = $resource->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
 
         my $item;
-        $resource = $self->resnames_to_dbnames($resource);
+        my $dbresource = { %{ $resource } };
+        $dbresource = $self->resnames_to_dbnames($dbresource);
         try {
-            $item = $c->model('DB')->resultset('voip_intercept')->create($resource);
+            $item = $c->model('DB')->resultset('voip_intercept')->create($dbresource);
+            my $res = NGCP::Panel::Utils::Interception::request($c, 'POST', undef, {
+                liid => $resource->{liid},
+                uuid => $resource->{uuid},
+                number => $resource->{number},
+                sip_username => $sub->username,
+                sip_domain => $sub->domain->domain,
+                delivery_host => $resource->{x2_host},
+                delivery_port => $resource->{x2_port},
+                delivery_user => $resource->{x2_user},
+                delivery_password => $resource->{x2_password},
+                cc_required => $resource->{x3_required},
+                cc_delivery_host => $resource->{x3_host},
+                cc_delivery_port => $resource->{x3_port},
+            });
+            die "Failed to populate capture agents\n" unless($res);
         } catch($e) {
             $c->log->error("failed to create interception: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create interception.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create interception");
             last;
         }
 
