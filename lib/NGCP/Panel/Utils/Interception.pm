@@ -3,6 +3,7 @@ package NGCP::Panel::Utils::Interception;
 use Data::Dumper;
 use LWP::UserAgent;
 use TryCatch;
+use JSON;
 
 sub request {
     my ($c, $method, $uuid, $data) = @_;
@@ -37,7 +38,7 @@ sub _request {
     my $req = HTTP::Request->new($method => $url);
     if($data) {
         $req->content_type('application/json');
-        $req->content($jdata);
+        $req->content(encode_json($jdata));
     }
     my $res = $ua->request($req);
     if($res->is_success) {
