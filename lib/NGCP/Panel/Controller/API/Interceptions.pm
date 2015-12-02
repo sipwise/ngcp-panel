@@ -208,9 +208,10 @@ sub POST :Allow {
         $resource->{create_timestamp} = $resource->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
 
         my $item;
-        $resource = $self->resnames_to_dbnames($resource);
+        my $dbresource = { %{ $resource } };
+        $dbresource = $self->resnames_to_dbnames($dbresource);
         try {
-            $item = $c->model('DB')->resultset('voip_intercept')->create($resource);
+            $item = $c->model('DB')->resultset('voip_intercept')->create($dbresource);
             my $res = NGCP::Panel::Utils::Interception::request($c, 'POST', undef, {
                 liid => $resource->{liid},
                 uuid => $resource->{uuid},
