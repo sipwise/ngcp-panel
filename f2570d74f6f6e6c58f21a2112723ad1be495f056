@@ -37,6 +37,75 @@
     },
     {
       "key": {
+        "uuid": "5a4e6583_fc8fdf73",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-03T10:57:47Z",
+      "side": 1,
+      "message": "so how about then in line 27:\n\nmy ($self, $c, $item, $form) \u003d @_;\n\n(and replace $type by the fixed string)\n\nwe already did this once, some time ago",
+      "parentUuid": "5a4e6583_9dd34e38",
+      "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_dc8c2382",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-03T10:57:47Z",
+      "side": 1,
+      "message": "btw we can drop $type here",
+      "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_bce9671c",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-03T10:57:47Z",
+      "side": 1,
+      "message": "and here",
+      "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_9ceeab21",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-03T10:57:47Z",
+      "side": 1,
+      "message": "this line can be deleted too",
+      "revId": "f2570d74f6f6e6c58f21a2112723ad1be495f056",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a4e6583_c2e1e39b",
         "filename": "sandbox/callforwards.pl",
         "patchSetId": 3
