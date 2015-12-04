@@ -7,6 +7,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use List::Util qw/first/;
 use Scalar::Util qw/blessed/;
 use DateTime::Format::Strptime;
+use Hash::Merge qw( merge );
 
 sub process {
     my ($c, $rs, $cols, $row_func) = @_;
@@ -155,7 +156,7 @@ sub process {
         if(defined(my $row = $rs->find($topId))) {
             push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
             if (defined $row_func) {
-                $aaData->[-1] = merge($aaData->[-1], {$row_func->($row)});
+                $aaData->[-1] = merge({$row_func->($row)}, $aaData->[-1]);
             }
             $rs = $rs->search({ 'me.id' => { '!=', $topId} });
         }
@@ -209,8 +210,11 @@ sub process {
     for my $row ($rs->all) {
         push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
         if (defined $row_func) {
-            my $r = $row_func->($row);
-            $aaData->[-1] = merge($aaData->[-1], {$row_func->($row)});
+            #according to http://search.cpan.org/~rehsack/Hash-Merge-0.200/lib/Hash/Merge.pm, 
+            #Left Precedence
+            #This is the default behavior.
+            #The values buried in the left hash will never be lost; any values that can be added from the right hash will be attempted.
+            $aaData->[-1] = merge({$row_func->($row)}, $aaData->[-1]) ;
         }
     }
 
