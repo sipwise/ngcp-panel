@@ -3,6 +3,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use Moose;
 #use namespace::sweep;
+use JSON qw();
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -11,6 +12,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller;
+use NGCP::Panel::Utils::Rtc;
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -182,8 +184,16 @@ sub POST :Allow {
 
         my $reseller;
         try {
-            $reseller = $schema->resultset('resellers')->create($resource);
+            $reseller = $schema->resultset('resellers')->create({
+                name => $resource->{name},
+                status => $resource->{status},
+                contract_id => $resource->{contract_id},
+            });
             NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
+            NGCP::Panel::Utils::Rtc::modify_reseller_rtc(undef, $resource, $c->config,
+                $reseller, sub {
+                    $c->log->warn(shift); return;
+                });
         } catch($e) {
             $c->log->error("failed to create reseller: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reseller.");
