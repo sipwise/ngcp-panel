@@ -155,7 +155,7 @@ sub process {
         if(defined(my $row = $rs->find($topId))) {
             push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
             if (defined $row_func) {
-                $aaData->[-1] = merge($aaData->[-1], {$row_func->($row)});
+                $aaData->[-1] = {%{$aaData->[-1]}, $row_func->($row)};
             }
             $rs = $rs->search({ 'me.id' => { '!=', $topId} });
         }
@@ -209,8 +209,7 @@ sub process {
     for my $row ($rs->all) {
         push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
         if (defined $row_func) {
-            my $r = $row_func->($row);
-            $aaData->[-1] = merge($aaData->[-1], {$row_func->($row)});
+            $aaData->[-1] = {%{$aaData->[-1]}, $row_func->($row)} ;
         }
     }
 
