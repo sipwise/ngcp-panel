@@ -23,6 +23,7 @@ has 'host' => (is => 'rw', default => 'https://www.api-cdk.tld:8191');
 
 has 'login_status' => (is => 'rw', 
         #isa => 'HTTP::Response',
+        default => sub {return {};},
     );
 
 sub mytest {
@@ -90,12 +91,43 @@ sub create_network {
     return $network;
 }
 
+sub create_user {
+    my ($self, $email, $password) = @_;
+    my $ua = $self->ua;
+    my $user_content = encode_json({
+            email => $email,
+            password => $password,
+        });
+    my $user = $self->_create_response(
+        $ua->post($self->host . '/users', 'Content-Type' => 'application/json', Content => $user_content),
+        );
+    return $user;
+}
+
 sub delete_network {
     my ($self, $network_id) = @_;
     my $ua = $self->ua;
     $network_id //= "";
     my $resp;
     $resp = $ua->delete($self->host . "/networks/id/$network_id");
+    return $self->_create_response($resp);
+}
+
+sub delete_user {
+    my ($self, $user_id) = @_;
+    my $ua = $self->ua;
+    $user_id //= "";
+    my $resp;
+    $resp = $ua->delete($self->host . "/users/id/$user_id");
+    return $self->_create_response($resp);
+}
+
+sub delete_app {
+    my ($self, $app_id) = @_;
+    my $ua = $self->ua;
+    $app_id //= "";
+    my $resp;
+    $resp = $ua->delete($self->host . "/apps/id/$app_id");
     return $self->_create_response($resp);
 }
 
