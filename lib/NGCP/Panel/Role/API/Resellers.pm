@@ -13,7 +13,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::Reseller qw();
+use NGCP::Panel::Form::ResellerAPI qw();
 
 sub item_rs {
     my ($self, $c) = @_;
@@ -25,13 +25,18 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Reseller->new;
+    return NGCP::Panel::Form::ResellerAPI->new;
 }
 
 sub hal_from_reseller {
     my ($self, $c, $reseller, $form) = @_;
 
     my %resource = $reseller->get_inflated_columns;
+    if ($reseller->rtc_user) {
+        $resource{enable_rtc} = JSON::true;
+    } else {
+        $resource{enable_rtc} = JSON::false;
+    }
 
     # TODO: we should return the relations in embedded fields,
     # if the structure is returned for one single item
@@ -119,7 +124,16 @@ sub update_reseller {
         }
     }
 
-    $reseller->update($resource);
+    $reseller->update({
+            name => $resource->{name},
+            status => $resource->{status},
+            contract_id => $resource->{contract_id},
+        });
+
+    NGCP::Panel::Utils::Rtc::modify_reseller_rtc($old_resource, $resource, $c->config,
+        $reseller, sub {
+            $c->log->warn(shift); return;
+        });
 
     # TODO: should we lock reseller admin logins if reseller gets terminated?
     # or terminate all his customers and delete non-billing data?

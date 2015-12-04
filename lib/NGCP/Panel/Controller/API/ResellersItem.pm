@@ -106,13 +106,14 @@ sub PATCH :Allow {
         );
         last unless $json;
 
+        my $form = $self->get_form($c);
+
         my $reseller = $self->reseller_by_id($c, $id);
         last unless $self->resource_exists($c, reseller => $reseller);
-        my $old_resource = { $reseller->get_inflated_columns };
+        my $old_resource = $self->hal_from_reseller($c, $reseller, $form)->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = $self->get_form($c);
         $reseller = $self->update_reseller($c, $reseller, $old_resource, $resource, $form);
         last unless $reseller;
 
@@ -153,9 +154,9 @@ sub PUT :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $reseller->get_inflated_columns };
-
         my $form = $self->get_form($c);
+        my $old_resource = $self->hal_from_reseller($c, $reseller, $form)->resource;
+
         $reseller = $self->update_reseller($c, $reseller, $old_resource, $resource, $form);
         last unless $reseller;
 
