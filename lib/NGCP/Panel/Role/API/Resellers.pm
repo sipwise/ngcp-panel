@@ -13,7 +13,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::Reseller qw();
+use NGCP::Panel::Form::ResellerAPI qw();
 
 sub item_rs {
     my ($self, $c) = @_;
@@ -25,7 +25,7 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Reseller->new;
+    return NGCP::Panel::Form::ResellerAPI->new;
 }
 
 sub hal_from_reseller {
