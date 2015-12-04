@@ -23,21 +23,8 @@ has 'host' => (is => 'rw', default => 'https://www.api-cdk.tld:8191');
 
 has 'login_status' => (is => 'rw', 
         #isa => 'HTTP::Response',
+        default => sub {return {};},
     );
-
-sub mytest {
-    my $c = NGCP::Panel::Utils::ComxAPIClient->new(
-        host => 'https://rtcengine.sipwise.com/rtcengine/api',
-    );
-    $c->login('gjungwirth@sipwise', '***', 'rtcengine.sipwise.com:443');
-    #p $c->get_sessions;
-    #p $c->create_session_and_account('npa4V0YkavioQ1GW7Yob', 'sip', 'user1@bar.com', '123456', 'YAqON76yLVtgMgBYeg6v');
-    #p $c->create_session_and_account('npa4V0YkavioQ1GW7Yob', 'sip4', 'sip:alice@192.168.51.150', 'alicepass', 'YAqON76yLVtgMgBYeg6v');
-    #p $c->get_networks;
-    $c->create_network('sip', 'sip-connector', {xms => JSON::false}, 'YAqON76yLVtgMgBYeg6v');
-    print "done\n";
-    return;
-}
 
 # returns appid or 0
 sub login {
@@ -90,12 +77,43 @@ sub create_network {
     return $network;
 }
 
+sub create_user {
+    my ($self, $email, $password) = @_;
+    my $ua = $self->ua;
+    my $user_content = encode_json({
+            email => $email,
+            password => $password,
+        });
+    my $user = $self->_create_response(
+        $ua->post($self->host . '/users', 'Content-Type' => 'application/json', Content => $user_content),
+        );
+    return $user;
+}
+
 sub delete_network {
     my ($self, $network_id) = @_;
     my $ua = $self->ua;
     $network_id //= "";
     my $resp;
     $resp = $ua->delete($self->host . "/networks/id/$network_id");
+    return $self->_create_response($resp);
+}
+
+sub delete_user {
+    my ($self, $user_id) = @_;
+    my $ua = $self->ua;
+    $user_id //= "";
+    my $resp;
+    $resp = $ua->delete($self->host . "/users/id/$user_id");
+    return $self->_create_response($resp);
+}
+
+sub delete_app {
+    my ($self, $app_id) = @_;
+    my $ua = $self->ua;
+    $app_id //= "";
+    my $resp;
+    $resp = $ua->delete($self->host . "/apps/id/$app_id");
     return $self->_create_response($resp);
 }
 
