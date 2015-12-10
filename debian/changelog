@@ -1,3 +1,12 @@
+ngcp-panel (1.8.4.2+0~mr3.8.4.2) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [69aaa4d] MT#16273 Implement X1 agent interface for REST
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Dec 2015 12:50:37 +0100
+
 ngcp-panel (1.8.4.1+0~mr3.8.4.1) unstable; urgency=medium
 
   [ Andreas Granig ]
