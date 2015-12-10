@@ -1029,9 +1029,14 @@ sub field_to_destination {
     my $domain = $params{domain};
     my $d = $params{destination};
     my $uri = $params{uri};
+    my $cf_type = $params{cf_type};
+    my $vm_prefix = "vmu";
+    if(defined $cf_type && $cf_type eq "cfb") {
+        $vm_prefix = "vmb";
+    }
 
     if($d eq "voicebox") {
-        $d = "sip:vmu$number\@voicebox.local";
+        $d = "sip:".$vm_prefix.$number."\@voicebox.local";
     } elsif($d eq "fax2mail") {
         $d = "sip:$number\@fax2mail.local";
     } elsif($d eq "conference") {
@@ -1385,8 +1390,8 @@ sub update_voicemail_number {
 
     for my $cfset ($prov_subs->voip_cf_destination_sets->all) {
         for my $cf ($cfset->voip_cf_destinations->all) {
-            if($cf->destination =~ /\@voicebox\.local$/) {
-                $cf->update({ destination => 'sip:vmu'.$cf_cli.'@voicebox.local' });
+            if($cf->destination =~ /^sip:(vm[ub]).+\@voicebox\.local$/) {
+                $cf->update({ destination => 'sip:'.$1.$cf_cli.'@voicebox.local' });
             }
         }
     }
