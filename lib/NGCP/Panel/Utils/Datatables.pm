@@ -67,7 +67,7 @@ sub process {
             if($col->{search}){
                 $op = (defined $col->{comparison_op} ? $col->{comparison_op} : 'like');
                 $name = _get_joined_column_name_($col->{name});
-                $search_value = (ref $col->{convert_code} eq 'CODE') ? $col->{convert_code}->($searchString) : '%'.$searchString.'%';
+                $search_value = (ref $col->{convert_code} eq 'CODE') ? $col->{convert_code}->($searchString,$rs) : '%'.$searchString.'%';
                 my $stmt;
                 if (defined $search_value) {
                     if($col->{literal_sql}){
@@ -93,7 +93,7 @@ sub process {
                     if ($col->{$search_spec}) {
                         $op = (defined $col->{comparison_op} ? $col->{comparison_op} : ( $search_spec eq 'search_lower_column' ? '<=' : '>=') );
                         $name = _get_joined_column_name_($col->{name});
-                        $search_value = (ref $col->{convert_code} eq 'CODE') ? $col->{convert_code}->($searchString) : $searchString ;
+                        $search_value = (ref $col->{convert_code} eq 'CODE') ? $col->{convert_code}->($searchString,$rs) : $searchString ;
                         if (defined $search_value) {
                             $conjunctSearchColumns{$col->{$search_spec}} = [] unless exists $conjunctSearchColumns{$col->{$search_spec}};
                             push(@{$conjunctSearchColumns{$col->{$search_spec}}},{$name => { $op => $search_value }});
