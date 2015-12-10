@@ -1090,6 +1090,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                         domain => $c->stash->{subscriber}->domain->domain,
                         destination => $d,
                         uri => $dest->field('uri')->field('destination')->value,
+                        cf_type => $cf_type,
                     );
 
                 $dest_set->voip_cf_destinations->create({
@@ -1433,6 +1434,7 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                                 domain => $c->stash->{subscriber}->domain->domain,
                                 destination => $d,
                                 uri => $dest->field('uri')->field('destination')->value,
+                                cf_type => $cf_type,
                             );
 
                         $set->voip_cf_destinations->create({
@@ -1601,6 +1603,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                             domain => $c->stash->{subscriber}->domain->domain,
                             destination => $d,
                             uri => $dest->field('uri')->field('destination')->value,
+                            cf_type => $cf_type,
                         );
 
                     $set->voip_cf_destinations->create({
