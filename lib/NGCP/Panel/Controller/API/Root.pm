@@ -290,6 +290,8 @@ sub field_to_json : Private {
             return "Array";
         /\+NGCP::Panel::Field::Interval/ &&
             return "Object";            
+        /\+NGCP::Panel::Field::DatePicker/ &&
+            return "String";            
         # usually {xxx}{id}
         /\+NGCP::Panel::Field::/ &&
             return "Number";
@@ -334,6 +336,8 @@ sub get_field_poperties :Private{
             $name = 'pbx_group_ids';
         } elsif($field->type =~ /Country$/) {
             $name = 'country';
+        } elsif($field->type =~ /LnpCarrier$/) {
+            $name = 'carrier_id';
         } elsif($field->type !~ /Regex|EmailList|Identifier|PosInteger|Interval|Select|DateTime|URI|IPAddress|DatePicker|ProfileNetwork/) { # ...?
             $name .= '_id';
         }

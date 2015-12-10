@@ -138,9 +138,10 @@ sub validate_form {
         $form->process(params => $resource, posted => 1, %{$form_params} );
         unless($form->validated) {
             my $e = join '; ', map { 
+                my $in = (defined $_->input && ref $_->input eq 'HASH' && exists $_->input->{id}) ? $_->input->{id} : ($_->input // '');
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', 
                     ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
-                    $_->input // '',
+                    $in,
                     join('', @{ $_->errors })
             } $form->error_fields;
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Validation failed. $e");
