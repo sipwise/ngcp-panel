@@ -1,0 +1,68 @@
+[% site_config.title = c.loc('Number Porting') -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/lnp/download') %]"><i class="icon-star"></i> [% c.loc('Download CSV') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/lnp/upload') %]"><i class="icon-star"></i> [% c.loc('Upload CSV') %]</a>
+    </span>
+</div>
+
+[% back_created = 1 -%]
+
+<h3>[% c.loc('LNP Carriers') %]</h3>
+[%
+    helper.name = c.loc('LNP Carriers');
+    helper.identifier = 'lnp_carriers';
+    helper.messages = carrier_messages;
+    helper.dt_columns = carrier_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = carrier_close_target;
+    helper.create_flag = carrier_create_flag;
+    helper.edit_flag = carrier_edit_flag;
+    helper.form_object = carrier_form;
+    helper.ajax_uri = c.uri_for('carrier_ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Delete'), uri = "/lnp/carrier/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Edit'), uri = "/lnp/carrier/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create LNP Carrier'), uri = c.uri_for('/lnp/carrier_create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+
+<div class="ngcp-separator"></div>
+
+<h3>[% c.loc('LNP Numbers') %]</h3>
+[%
+    helper.name = c.loc('Ported Numbers');
+    helper.identifier = 'lnp_numbers';
+    helper.messages = number_messages;
+    helper.dt_columns = number_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = number_close_target;
+    helper.create_flag = number_create_flag;
+    helper.edit_flag = number_edit_flag;
+    helper.form_object = number_form;
+    helper.ajax_uri = c.uri_for('number_ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Delete'), uri = "/lnp/number/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Edit'), uri = "/lnp/number/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Ported Number'), uri = c.uri_for('/lnp/number_create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
