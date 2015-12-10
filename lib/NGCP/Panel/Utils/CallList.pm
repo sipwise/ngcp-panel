@@ -106,7 +106,7 @@ sub process_cdr_item {
         $own_domain = $item->destination_domain;
 
         # rewrite cf to voicemail to "voicemail"
-        if($item->destination_user_in =~ /^vmu/ &&
+        if($item->destination_user_in =~ /^vm[ub]/ &&
            $item->destination_domain_in eq "voicebox.local") {
             $resource->{other_cli} = "voicemail";
             $other_normalize = 0;
