@@ -13,16 +13,6 @@ has_field 'reseller' => (
     },
 );
 
-has_field 'contract' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
-    label => 'Customer',
-    validate_when_empty => 0,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The contract this sound set belongs to. If set, the sound set becomes a customer sound set instead of a system sound set.'],
-    },
-);
-
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
