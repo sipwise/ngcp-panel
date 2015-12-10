@@ -12,9 +12,13 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'contract' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
+    type => '+NGCP::Panel::Field::PbxCustomerContract',
     label => 'Customer',
     validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contract this sound set belongs to. If set, the sound set becomes a customer sound set instead of a system sound set.'],
+    },
 );
 
 has_field 'name' => (
