@@ -31,9 +31,9 @@ function showCallDetails(callId){
 
 
 <select id="Calls_table_external_filter">
-<option value="">Show all calls</option>
+<option value="all">Show all calls</option>
 <option value="outcoming">Show only outgoing calls</option>
-<option value="incoming">Show incoming calls</option>
+<option value="incoming" selected="yes">Show incoming calls</option>
 </select>
 <script>
 $('#Calls_table_external_filter').change( function() { $('#Calls_table').dataTable().fnFilter( $(this).val() ); } );
@@ -50,7 +50,7 @@ $('#Calls_table_external_filter').change( function() { $('#Calls_table').dataTab
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]);
     helper.show_footer = 1;
-
+    helper.search_initial = 'incoming';
     IF (c.user.roles == "admin" || c.user.roles == "reseller");
         IF c.config.features.callflow;
     helper.dt_buttons = [
