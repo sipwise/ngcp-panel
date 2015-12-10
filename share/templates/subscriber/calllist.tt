@@ -54,7 +54,7 @@ function changeCalllist(selection) {
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]);
     helper.show_footer = 1;
-
+    helper.search_initial = 'incoming';
     IF (c.user.roles == "admin" || c.user.roles == "reseller");
         IF c.config.features.callflow;
     helper.dt_buttons = [
