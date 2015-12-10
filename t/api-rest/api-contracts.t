@@ -715,6 +715,25 @@ my @allcontracts = ();
     
 }
 
+# terminate contract 1 should fail
+{
+    $req = HTTP::Request->new('GET', $uri.'/api/contracts/1');
+    $res = $ua->request($req);
+    is($res->code, 200, "check existence of contract with id (1)");
+    my $contract_1 = JSON::from_json($res->decoded_content);
+    is($contract_1->{id}, 1, 'id of contract (1) is 1');
+    is($contract_1->{type}, 'reseller', 'tpye of contract (1) is "reseller"');
+
+    $req = HTTP::Request->new('PATCH', $uri.'/api/contracts/1');
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json([
+        { "op" => "replace", "path" => "/status", "value" => "terminated" }
+    ]));
+    $res = $ua->request($req);
+    is($res->code, 403, "check that its impossible to termination contract (1)");
+}
+
 sub _strip_future_mappings {
     my ($mappings) = @_;
     my @stripped_mappings = ();
