@@ -104,6 +104,14 @@ sub ajax_reseller_filter :Chained('list_customer') :PathPart('ajax/reseller') :A
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_pbx_only :Chained('list_customer') :PathPart('ajax_pbx_only') :Args(0) {
+    my ($self, $c) = @_;
+    my $res = $c->stash->{contract_select_rs}->search_rs({'product.class' => 'pbxaccount'});
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns});
+    $c->detach( $c->view("JSON") );
+    return;
+}
+
 sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
