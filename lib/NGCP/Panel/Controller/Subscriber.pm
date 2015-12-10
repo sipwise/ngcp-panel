@@ -2147,7 +2147,22 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
 
     my $call_cols = [
         { name => "id", title => $c->loc('#')  },
-        { name => "direction", search => 1, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")' },
+        { name => "source_user_id", search => 1,
+            convert_code => sub {
+                my($searchString, $rs) = @_;
+                if('incoming' ne $searchString){
+                    return $searchString;
+                }
+            } 
+        },
+        { name => "destination_user_id", search => 1,
+            convert_code => sub {
+                my($searchString, $rs) = @_;
+                if('outcoming' ne $searchString){
+                    return $searchString;
+                }
+            } 
+        },
         { name => "source_user", search => 1, title => $c->loc('Caller') },
         { name => "destination_user", search => 1, title => $c->loc('Callee') },
         { name => "source_customer_billing_zones_history.detail", search => 1, title => $c->loc('Billing zone') },
@@ -3090,12 +3105,13 @@ sub ajax_calls :Chained('calllist_master') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
 
     # CDRs
-    my $rs = $c->model('DB')->resultset('cdr')->search({
-        -or => [
-            source_user_id => $c->stash->{subscriber}->uuid,
-            destination_user_id => $c->stash->{subscriber}->uuid,
-        ],
-    });
+    my $rs = $c->model('DB')->resultset('cdr');
+    #->search({
+    #    -or => [
+    #        source_user_id => $c->stash->{subscriber}->uuid,
+    #        destination_user_id => $c->stash->{subscriber}->uuid,
+    #    ],
+    #});
     my $owner = {
             subscriber => $c->stash->{subscriber},
             customer => $c->stash->{subscriber}->contract,
