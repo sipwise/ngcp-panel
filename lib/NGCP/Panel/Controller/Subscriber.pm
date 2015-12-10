@@ -2150,7 +2150,6 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
 
     my $call_cols = [
         { name => "id", title => $c->loc('#')  },
-        { name => "direction", search => 1, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")' },
         { name => "source_user", search => 1, title => $c->loc('Caller') },
         { name => "destination_user", search => 1, title => $c->loc('Callee') },
         { name => "source_customer_billing_zones_history.detail", search => 1, title => $c->loc('Billing zone') },
@@ -3092,13 +3091,29 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
 
 sub ajax_calls :Chained('calllist_master') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-
+    $c->log->debug("ajax_calls");
     # CDRs
-    my $rs = $c->model('DB')->resultset('cdr')->search({
-        -or => [
-            source_user_id => $c->stash->{subscriber}->uuid,
-            destination_user_id => $c->stash->{subscriber}->uuid,
-        ],
+    my $rs = $c->model('DB')->resultset('cdr');
+    #->search({
+    #    -or => [
+    #        source_user_id => $c->stash->{subscriber}->uuid,
+    #        destination_user_id => $c->stash->{subscriber}->uuid,
+    #    ],
+    #});
+    
+    #dirty hack
+    my $searchString = $c->request->params->{sSearch};
+    my @wheres;
+    if($searchString ne 'incoming'){
+        push @wheres, {'source_user_id' => $c->stash->{subscriber}->uuid};
+    }
+    if($searchString ne 'outcoming'){
+        push @wheres, {'destination_user_id' => $c->stash->{subscriber}->uuid};
+    }
+    $rs = $rs->search({ 
+        ( 1 < @wheres )
+        ? ('-or' => [ map {%{$_},} @wheres ])
+        : (%{$wheres[0]})
     });
     my $owner = {
             subscriber => $c->stash->{subscriber},
