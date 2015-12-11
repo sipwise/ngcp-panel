@@ -1,20 +1,12 @@
 verbose = %f line %l col %c\n    [%s] %p (%e) = %m\n    %r\n
     # the ouput format, another nice one is 8, the [%s] is the severity
-severity  = 2
+severity  = 3
 theme = security || (pbp && bugs) || cosmetic || sipwise
 
-# This is optional, define your own colors if you like:
-#colour-severity-5 = magenta
-#colour-severity-4 = red
-#colour-severity-3 = yellow
-#colour-severity-2 = blue
-#colour-severity-1 = black
-
 [Documentation::RequirePodSections]
-#lib_sections = NAME | VERSION | SYNOPSIS | DESCRIPTION | INTERFACE | Composition | Attributes | Methods | Exports | DIAGNOSTICS | CONFIGURATION AND ENVIRONMENT | DEPENDENCIES | INCOMPATIBILITIES | BUGS AND LIMITATIONS | TO DO | AUTHOR | SEE ALSO
 add_themes = sipwise
 lib_sections = NAME | DESCRIPTION | LICENSE | AUTHOR
-# lets keep this simple for now
+# let's keep this simple for now
 
 [Bangs::ProhibitCommentedOutCode]
 commentedcoderegex = \$(?!Id)[A-Za-z_].*=/
@@ -41,19 +33,16 @@ allow_includes = 0
 # use Module::Runtime for includes
 
 [TestingAndDebugging::RequireUseStrict]
-equivalent_modules = strictures Sipwise::Base HTML::FormHandler::Moose
+equivalent_modules = strictures Sipwise::Base HTML::FormHandler::Moose Mojo::Base
 
 [TestingAndDebugging::RequireUseWarnings]
-equivalent_modules = strictures Sipwise::Base HTML::FormHandler::Moose
-
-[Modules::RequireEndWithOne]
-severity = 1
-# not really important, since this is redundant with perl5i (Sipwise::Base)
+equivalent_modules = strictures Sipwise::Base HTML::FormHandler::Moose Mojo::Base
 
 ##### Other exclusions
+# not: only relevant with perlcritic 1.117-2 from wheezy,
+[-Miscellanea::RequireRcsKeywords]
 
-# [-Subroutines::RequireFinalReturn]
-# this is actually a good thing
+[-Subroutines::RequireFinalReturn]
 [-CodeLayout::ProhibitHashBarewords]
 # meh, it's super annoying
 [-Lax::ProhibitStringyEval::ExceptForRequire]
@@ -64,3 +53,5 @@ severity = 1
 [-RegularExpressions::RequireDotMatchAnything]
 [-ValuesAndExpressions::ProhibitEmptyQuotes]
 [-ValuesAndExpressions::ProhibitNoisyQuotes]
+[-References::ProhibitDoubleSigils]
+[-ValuesAndExpressions::RequireNumberSeparators]
