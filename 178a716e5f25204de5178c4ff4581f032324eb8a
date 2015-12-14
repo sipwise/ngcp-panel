@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_8d946d38",
+        "filename": "lib/NGCP/Panel/Form/Lnp/Number.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-12-14T16:00:37Z",
+      "side": 1,
+      "message": "for E164 it is better as: ^[^0]+\\d+$",
+      "range": {
+        "startLine": 77,
+        "startChar": 30,
+        "endLine": 77,
+        "endChar": 34
+      },
+      "revId": "178a716e5f25204de5178c4ff4581f032324eb8a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_2dd199cd",
+        "filename": "lib/NGCP/Panel/Utils/MySQL.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-12-14T16:00:37Z",
+      "side": 1,
+      "message": "maybe there is a chance to move \"prepare\" and \"finish\" outside while() otherwise prepare_cached() may gain some speed increase.",
+      "range": {
+        "startLine": 15,
+        "startChar": 2,
+        "endLine": 15,
+        "endChar": 30
+      },
+      "revId": "178a716e5f25204de5178c4ff4581f032324eb8a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
