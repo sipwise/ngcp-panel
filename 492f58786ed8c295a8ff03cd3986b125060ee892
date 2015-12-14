@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_589e2558",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-12-14T21:50:38Z",
+      "side": 1,
+      "message": "not sure if \"($_-\u003einput // \u0027\u0027)\" actually returns an array, which is not what is intended?",
+      "revId": "492f58786ed8c295a8ff03cd3986b125060ee892",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
