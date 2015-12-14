@@ -16,6 +16,24 @@
       "revId": "492f58786ed8c295a8ff03cd3986b125060ee892",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_98bb4dc4",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-12-14T21:59:10Z",
+      "side": 1,
+      "message": "if it returns an array it will be a ref which is translated into scalar as ARRAY(ptr) and if that happens there will be input\u003dARRAY(ptr), which is easily catchable and fixable if needed.",
+      "parentUuid": "7a96c907_589e2558",
+      "revId": "492f58786ed8c295a8ff03cd3986b125060ee892",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
