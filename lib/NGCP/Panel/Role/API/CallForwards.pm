@@ -211,6 +211,7 @@ sub update_item {
                         number => $number,
                         domain => $domain,
                         uri => $d->{destination},
+                        cf_type => $type,
                     );
                 $dset->voip_cf_destinations->update_or_create($d);
             }
