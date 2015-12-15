@@ -483,6 +483,7 @@ around 'item_rs' => sub {
         next unless($p[0]->{query} || $p[0]->{new_rs}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
+        $q = undef if $q eq "NULL"; # IS NULL translation
         if(@p) {
             if (defined $p[0]->{new_rs}) {
                 #compose fresh rs based on current, to support set operations with filters:
