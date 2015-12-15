@@ -22,7 +22,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines email templates to be send when new subscribers are created or when passwords are reset.',
+        'Allows to permit or reject calls to specific LNP carriers as part of an NCOS level.',
 );
 
 class_has 'query_params' => (
