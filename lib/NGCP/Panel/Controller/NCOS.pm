@@ -7,6 +7,7 @@ BEGIN { use base 'Catalyst::Controller'; }
 use NGCP::Panel::Form::NCOS::ResellerLevel;
 use NGCP::Panel::Form::NCOS::AdminLevel;
 use NGCP::Panel::Form::NCOS::Pattern;
+use NGCP::Panel::Form::NCOS::Lnp;
 use NGCP::Panel::Form::NCOS::LocalAC;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -239,6 +240,17 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
         { name => 'pattern', search => 1, title => $c->loc('Pattern') },
         { name => 'description', search => 1, title => $c->loc('Description') },
     ]);
+
+    if($c->user->roles eq "admin") {
+        my $lnp_rs = $c->stash->{level_result}->ncos_lnp_lists;
+        $c->stash(lnp_rs => $lnp_rs);
+
+        $c->stash->{lnp_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+            { name => 'id', search => 1, title => $c->loc('#') },
+            { name => 'lnp_provider.name', search => 1, title => $c->loc('LNP Carrier') },
+            { name => 'description', search => 1, title => $c->loc('Description') },
+        ]);
+    }
     
     $c->stash(local_ac_checked => $c->stash->{level_result}->local_ac,
               template         => 'ncos/pattern_list.tt');
@@ -253,6 +265,19 @@ sub pattern_ajax :Chained('pattern_list') :PathPart('ajax') :Args(0) {
     
     my $resultset = $c->stash->{pattern_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{pattern_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub lnp_ajax :Chained('pattern_list') :PathPart('lnp_ajax') :Args(0) :AllowedRole(admin) {
+    my ($self, $c) = @_;
+
+    unless($c->user->roles eq "admin") {
+        $c->response->body(JSON::to_json({ code => 403, message => 'Path forbidden' })."\n");
+        return;
+    }
+    
+    my $resultset = $c->stash->{lnp_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{lnp_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -417,6 +442,142 @@ sub pattern_edit_local_ac :Chained('pattern_list') :PathPart('edit_local_ac') :A
         close_target => $c->stash->{pattern_base_uri},
         form => $form,
         edit_flag => 1
+    );
+}
+
+sub lnp_root :Chained('pattern_list') :PathPart('lnp') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+sub lnp_base :Chained('pattern_list') :PathPart('lnp') :CaptureArgs(1) :AllowedRole(admin) {
+    my ($self, $c, $lnp_id) = @_;
+
+    unless($c->user->roles eq "admin") {
+        $c->detach('/denied_page');
+    }
+
+    unless($lnp_id && is_int($lnp_id)) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'Invalid NCOS lnp id detected',
+            desc  => $c->loc('Invalid NCOS lnp id detected'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
+    }
+
+    my $res = $c->stash->{lnp_rs}->find($lnp_id);
+    unless(defined($res)) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'NCOS lnp entry does not exist',
+            desc  => $c->loc('NCOS lnp entry does not exist'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
+    }
+    $c->stash(lnp_result => $res);
+}
+
+sub lnp_edit :Chained('lnp_base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::NCOS::Lnp->new(ctx => $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $c->stash->{lnp_result},
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->stash->{lnp_result}->update($form->values);
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                data => { $c->stash->{lnp_result}->get_inflated_columns },
+                desc => $c->loc('NCOS lnp entry successfully updated'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update NCOS lnp entry'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
+    }
+
+    $c->stash(
+        close_target => $c->stash->{pattern_base_uri},
+        lnp_form => $form,
+        lnp_edit_flag => 1
+    );
+}
+
+sub lnp_delete :Chained('lnp_base') :PathPart('delete') {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{lnp_result}->delete;
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { $c->stash->{lnp_result}->get_inflated_columns },
+            desc => $c->loc('NCOS lnp entry successfully deleted'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete NCOS lnp entry'),
+        );
+    };
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
+}
+
+sub lnp_create :Chained('pattern_list') :PathPart('lnp/create') :Args(0) :AllowedRole(admin) {
+    my ($self, $c) = @_;
+
+    unless($c->user->roles eq "admin") {
+        $c->detach('/denied_page');
+    }
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::NCOS::Lnp->new(ctx => $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->stash->{lnp_rs}->create($form->values);
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('NCOS lnp entry successfully created'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create NCOS lnp entry'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
+    }
+
+    $c->stash(
+        close_target => $c->stash->{pattern_base_uri},
+        lnp_form => $form,
+        lnp_create_flag => 1
     );
 }
 

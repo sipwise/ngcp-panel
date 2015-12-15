@@ -1,5 +1,6 @@
-[% site_config.title = c.loc('Number Patterns for [_1]', level_result.level) -%]
+[% site_config.title = c.loc('NCOS details for [_1]', level_result.level) -%]
 
+<h2>[% c.loc('NCOS Number Patterns') %]</h2>
 [%
     helper.name = c.loc('Number Pattern');
     helper.identifier = 'number_pattern';
@@ -28,6 +29,8 @@
     PROCESS 'helpers/datatables.tt';
 -%]
 
+<div class="ngcp-separator"></div>
+
 <div id="number_patterns_local_ac">
     <input id="local_ac" type="checkbox" name="local_ac" disabled="disabled"
         [% IF local_ac_checked %]checked="checked"[% END %]>
@@ -40,5 +43,37 @@
         </a>
     </div>
 </div>
+
+[% IF c.user.roles == "admin" -%]
+<div class="ngcp-separator"></div>
+<h2>[% c.loc('NCOS LNP Carriers') %]</h2>
+[%
+    helper.name = c.loc('LNP Carriers');
+    helper.identifier = 'lnp_carriers';
+    helper.messages = lnp_messages;
+    helper.dt_columns = lnp_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = lnp_create_flag;
+    helper.edit_flag = lnp_edit_flag;
+    helper.form_object = lnp_form;
+    helper.ajax_uri = c.uri_for_action( "/ncos/lnp_ajax", [c.req.captures.0] );
+
+    helper.tmpuri = c.uri_for_action( "/ncos/lnp_root", [c.req.captures.0] );
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create LNP Entry'), uri = c.uri_for_action( "/ncos/lnp_create", [c.req.captures.0] ), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% END -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
