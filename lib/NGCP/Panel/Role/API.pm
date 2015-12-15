@@ -483,6 +483,7 @@ around 'item_rs' => sub {
         next unless($p[0]->{query}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
+        $q = undef if $q eq "NULL"; # IS NULL translation
         if(@p) {
             $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$c), $p[0]->{query}->{second}($q,$c));
         }
