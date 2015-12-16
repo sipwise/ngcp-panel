@@ -1,3 +1,96 @@
+ngcp-panel (1.12.0.0+0~mr4.3.0.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [b15fa6b] MT#12347 Test environment requires perl package String::ShellQuote.
+  * [aecc110] MT#12347 Fix too early distruction of the local test_machine
+  * [9a4f1b5] MT#12347 Disable faxes tests if fax feature is not active
+  * [c54c24a] MT#12347 Fix catalyst config getting for tests
+  * [8261f0e] MT#14477 Response about faxserver feature unavailability from API
+  * [0a81243] MT#12347 Faxes feature state check as pseudo test
+  * [74333c9] MT#14659 Move calls from subscribers master to separate interface
+  * [755ca93] MT#16323 Add rating_status field into item response and filter for collection
+  * [2685c45] MT#7227 Use procedure to make records unique on single fee insertion
+  * [ea559c6] MT#12347 Fix rest-api tests based on FakeData
+  * [1125618] MT#16321 The smallest changes for particular billing_mappings speed
+  * [7e7e148] MT#16321 Additional using of billing_mappings_actual optimization
+  * [7952b7c] MT#16465 Fix custom processing of Datatables rows
+  * [d0f0a84] MT#16231 Apply rewrite rules to the faxes phone numbers in WEB UI
+  * [7fffffb] MT#16121 Optimize callforwards GET method
+  * [5235a7a] MT#15441 Using config for the cli and primary number sync
+
+  [ Jenkins Git User ]
+  * [5e2c7c7] I18N dump: snapshot 2015-10-13 01:13:37 +0200
+  * [25858fd] I18N dump: snapshot 2015-10-16 01:13:51 +0200
+  * [88abda5] I18N dump: snapshot 2015-10-17 01:12:57 +0200
+  * [3b16e71] I18N dump: snapshot 2015-10-23 01:21:01 +0200
+  * [8495bae] I18N dump: snapshot 2015-10-30 01:58:49 +0100
+  * [433c1be] I18N dump: snapshot 2015-11-04 01:13:25 +0100
+  * [b01fa56] I18N dump: snapshot 2015-11-05 01:14:58 +0100
+
+  [ Alexander Lutay ]
+  * [27fb57f] MT#12347 Fix b15fa6b: libstring-shellquote-perl required for api-test only
+  * [e60f943] MT#12347 Update dependency list for package ngcp-panel
+  * [1faa2cd] MT#16323 Fix api-rest/api-calllists.t: skip checking field rating_status if no CDRs exist
+  * [a3154de] MT#12347 Fix test api-rest/api-faxes.t: do not fail if fax is disabled
+  * [2da07ec] MT#16683 Switch panel dependency from libgd-gd2-perl to libgd-perl
+
+  [ Rene Krenn ]
+  * [8545089] MT#15399 allow editing profiles, networks, packages
+  * [0009520] MT#15759 fix contract balance catchup DST problem
+  * [d1f8072] MT#15821 datatable custom mRender js functions
+  * [8940c55] MT#14487 rest-api data dumper tool
+  * [59ec368] MT#16109 update "prepaid" pref correctly
+  * [fa2c02e] MT#16045 notopup expiry for balance intervals output
+  * [59339ff] MT#16171 useless joins for source_subs = OR dest_subs =
+  * [1297bdf] MT#16309 supress notopup balance discard when switching packages
+  * [b9a6ecd] MT#16171 revert to prior callist direction filter behaviour
+  * [64ee5ec] MT#16309 correctly apply changed carry_over modes
+  * [997bdc0] MT#16309 fix deaf logic due to is_create_next typo
+  * [0b607e5] MT#16605 topup log records not persisted for subscribers with lock level
+  * [e5772e7] MT#16655 "minute" unit in profile packages
+
+  [ Gerhard Jungwirth ]
+  * [ab59660] MT#15797 skip domain reload
+  * [8c45fc5] MT#15203 Allow adding alias numbers to pbx group
+  * [ebc569a] MT#15757 fix deleting voicebox email setting
+  * [8980f51] MT#15203 fix pbx group create form
+  * [9a1d6d3] MT#15685 suppress output for correct backuritmp
+  * [74c3b01] MT#16355 show ngcp version and dpkg list
+  * [f4bd2ee] MT#16907 customize panel-specific perlcritc file
+  * [e7e24e7] MT#15693 check deleting contract 1
+  * [59bb04b] MT#15883 import comx API client
+  * [85e2fdf] MT#16883 set vmb prefix in API
+  * [4ab6ff3] MT#16467 only show PBX customers for soundset creation
+
+  [ Michael Prokop ]
+  * [a236b39] MT#15071 Jenkins<->docker integration support
+  * [022ab61] MT#15719 Fix source-is-missing lintian messages
+
+  [ Andreas Granig ]
+  * [4e228c1] MT#16057 Fix dbix syntax fetching concat numbers
+  * [0858ef8] MT#13367 enable jitsi autoprov via preference
+  * [45d9f6e] MT#16443 Fix setting reseller_id for contacts
+  * [04a64e1] MT#16465 partly remove namespace::sweep and others
+  * [520b662] MT#16273 Implement X1 agent interface for REST
+  * [492f587] MT#4067 Implement LNP via panel and API
+  * [e456d6d] MT#16883 Set vmb prefix for cfb to voicemail.
+  * [da9d1a6] MT#4067 Add NCOS LNP handling.
+  * [7f93fbb] MT#4067 Fix NCOS LNP resource description in API
+
+  [ Andrew Pogrebennyk ]
+  * [669c0eb] MT#13367 fix commit 0858ef
+
+  [ Kirill Solomko ]
+  * [f55e59a] MT#12707 add "Malicious Calls" top-menu item for admin/reseller
+  * [9fcd55e] MT#16955 API added NULL query params macro
+
+  [ Richard Fuchs ]
+  * [097d296] MT#16273 fix X1 interface communication
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 16 Dec 2015 09:23:14 +0100
+
 ngcp-panel (1.11.0.0+0~mr4.2.0.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
