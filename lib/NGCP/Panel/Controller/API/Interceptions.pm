@@ -157,7 +157,8 @@ sub OPTIONS :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $guard = $c->model('InterceptDB')->txn_scope_guard;
+    my $cguard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
             c => $c, 
@@ -180,7 +181,9 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist");
             last;
         }
-        $resource->{reseller_id} = $num_rs->first->reseller_id;
+	# use the long way, since with ossbss provisioning, the reseller_id
+	# is not set in this case
+        $resource->{reseller_id} = $num_rs->first->subscriber->contract->contact->reseller_id;
 
         my $sub = $num_rs->first->subscriber;
         unless($sub) {
@@ -208,8 +211,10 @@ sub POST :Allow {
         my $item;
         my $dbresource = { %{ $resource } };
         $dbresource = $self->resnames_to_dbnames($dbresource);
+        $dbresource->{reseller_id} = $resource->{reseller_id};
+	
         try {
-            $item = $c->model('DB')->resultset('voip_intercept')->create($dbresource);
+            $item = $c->model('InterceptDB')->resultset('voip_intercept')->create($dbresource);
             my $res = NGCP::Panel::Utils::Interception::request($c, 'POST', undef, {
                 liid => $resource->{liid},
                 uuid => $resource->{uuid},
@@ -232,6 +237,7 @@ sub POST :Allow {
         }
 
         $guard->commit;
+        $cguard->commit;
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
