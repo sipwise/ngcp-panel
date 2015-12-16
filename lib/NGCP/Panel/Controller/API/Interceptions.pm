@@ -158,6 +158,7 @@ sub POST :Allow {
     my ($self, $c) = @_;
 
     my $guard = $c->model('DB')->txn_scope_guard;
+    my $cguard = $c->model('RoDB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
             c => $c, 
@@ -172,7 +173,7 @@ sub POST :Allow {
             form => $form,
         );
 
-        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
+        my $num_rs = $c->model('RoDB')->resultset('voip_numbers')->search(
             \[ 'concat(cc,ac,sn) = ?', [ {} => $resource->{number} ]]
         );
         unless($num_rs->first) {
@@ -232,6 +233,7 @@ sub POST :Allow {
         }
 
         $guard->commit;
+        $cguard->commit;
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));

@@ -85,6 +85,7 @@ sub OPTIONS :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
+    my $cguard = $c->model('RoDB')->txn_scope_guard;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -126,7 +127,8 @@ sub PATCH :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update capture agents");
             last;
         }
-        
+       
+	$cguard->commit; 
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -148,6 +150,7 @@ sub PATCH :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
+    my $cguard = $c->model('RoDB')->txn_scope_guard;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -209,6 +212,7 @@ sub PUT :Allow {
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
 
+    my $cguard = $c->model('DB')->txn_scope_guard;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $item = $self->item_by_id($c, $id);
@@ -238,6 +242,7 @@ sub DELETE :Allow {
         }
 
         $guard->commit;
+        $cguard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());

@@ -152,7 +152,7 @@ sub update_item {
 
 sub subres_from_number {
     my ($self, $c, $number) = @_;
-    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
+    my $num_rs = $c->model('RoDB')->resultset('voip_numbers')->search(
         \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
     );
     unless($num_rs->first) {
