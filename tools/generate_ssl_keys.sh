@@ -34,19 +34,25 @@ umask 077
 
 echo "Generating OpenSSL certificate files in directory ${DEST}:"
 
+DAYS="$(grep -oE '^default_days\s?=\s?([0-9]+)' "${OPENSSL_CONFIG}" | \
+  awk -F= '{match($2,/\s?([[:digit:]]+).*/, s); print s[1]; exit}')"
+
 if [ "$SKIP_CSR" = "true" ] ; then
   echo "Skipping generation of csr file as requested via SKIP_CSR environment variable."
   echo "Generating only key and crt files now."
-  /usr/bin/openssl req -x509       \
+  /usr/bin/openssl req -x509 -days "${DAYS}" \
        -config "${OPENSSL_CONFIG}" \
        -newkey rsa:4096            \
        -keyout "${KEY_FILE}"       \
        -out "${CRT_FILE}"          \
        -nodes -batch
 else
-  /usr/bin/openssl genrsa -out "${KEY_FILE}" 4096 -config "${OPENSSL_CONFIG}" -batch
-  /usr/bin/openssl req -new -out "${CSR_FILE}" -key "${KEY_FILE}" -config "${OPENSSL_CONFIG}" -batch
-  /usr/bin/openssl x509 -req -in "${CSR_FILE}" -signkey "${KEY_FILE}" -out "${CRT_FILE}" -extfile "${OPENSSL_CONFIG}"
+  /usr/bin/openssl genrsa -out "${KEY_FILE}" 4096 \
+    -config "${OPENSSL_CONFIG}" -batch
+  /usr/bin/openssl req -new -out "${CSR_FILE}" \
+    -key "${KEY_FILE}" -config "${OPENSSL_CONFIG}" -batch
+  /usr/bin/openssl x509 -days "${DAYS}" -req -in "${CSR_FILE}" \
+    -signkey "${KEY_FILE}" -out "${CRT_FILE}" -extfile "${OPENSSL_CONFIG}"
 fi
 
 chmod 640 "${KEY_FILE}" "${CRT_FILE}"
