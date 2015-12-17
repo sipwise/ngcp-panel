@@ -190,10 +190,13 @@ sub POST :Allow {
                 contract_id => $resource->{contract_id},
             });
             NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
-            NGCP::Panel::Utils::Rtc::modify_reseller_rtc(undef, $resource, $c->config,
-                $reseller, sub {
-                    $c->log->warn(shift); return;
-                });
+            NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+                resource => $resource,
+                config => $c->config,
+                reseller_item => $reseller,
+                err_code => sub {
+                        $c->log->warn(shift); return;
+                    });
         } catch($e) {
             $c->log->error("failed to create reseller: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reseller.");
