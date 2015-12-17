@@ -1,3 +1,18 @@
+ngcp-panel (1.8.4.3+0~mr3.8.4.3) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [614368f] MT#16231 Apply rewrite rules to the faxes phone numbers in WEB UI
+
+  [ Andreas Granig ]
+  * [827d9d5] MT#16883 Set vmb prefix for cfb to voicemail.
+
+  [ Gerhard Jungwirth ]
+  * [34dfb91] MT#16883 set vmb prefix in API
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Dec 2015 15:19:56 +0100
+
 ngcp-panel (1.8.4.2+0~mr3.8.4.2) unstable; urgency=medium
 
   [ Andreas Granig ]
