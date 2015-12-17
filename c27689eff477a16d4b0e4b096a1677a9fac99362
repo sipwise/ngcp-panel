@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_a0b600db",
+        "filename": "tools/generate_ssl_keys.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2015-12-17T17:32:47Z",
+      "side": 1,
+      "message": "To get only the first hit, you can use:\n\n\u0027.../\\1/p;Tn;q;:n\u0027\n\n:)",
+      "revId": "c27689eff477a16d4b0e4b096a1677a9fac99362",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
