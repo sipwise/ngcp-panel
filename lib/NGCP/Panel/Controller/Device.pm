@@ -1496,6 +1496,8 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
             # device to upgrade the firmware
             baseurl => "http://" . $c->req->uri->host . ":" .
                          $c->req->uri->port . "/device/autoprov/firmware",
+            booturl => "http://" . $c->req->uri->host . ":" .
+                         $c->req->uri->port . "/device/autoprov/firmware",
         },
     };
 
