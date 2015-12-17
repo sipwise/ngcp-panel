@@ -1,3 +1,18 @@
+ngcp-panel (1.10.1.10+0~mr4.1.1.10) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [315610c] MT#7227 Use procedure to make records unique on single fee insertion
+
+  [ Andreas Granig ]
+  * [0054aa8] MT#16883 Set vmb prefix for cfb to voicemail.
+
+  [ Gerhard Jungwirth ]
+  * [2c2acf0] MT#16883 set vmb prefix in API
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Dec 2015 15:18:56 +0100
+
 ngcp-panel (1.10.1.9+0~mr4.1.1.9) unstable; urgency=medium
 
   [ Rene Krenn ]
