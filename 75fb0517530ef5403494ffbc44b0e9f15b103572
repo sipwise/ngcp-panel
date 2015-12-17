@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_8c030573",
+        "filename": "tools/generate_ssl_keys.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-12-17T09:59:39Z",
+      "side": 1,
+      "message": "Only works if you exactly have this syntax:\n\ndefault_days\u003d 365\n\nBreaks if you have any of those:\n\ndefault_days \u003d 365\ndefault_days\u003d365\n\n... or other possible variants",
+      "revId": "75fb0517530ef5403494ffbc44b0e9f15b103572",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_ecf16996",
+        "filename": "tools/generate_ssl_keys.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-12-17T09:59:39Z",
+      "side": 1,
+      "message": "Needs to be default_days also. We\u0027re not using CRL stuff, not sure how this influences our certificate handling.",
+      "revId": "75fb0517530ef5403494ffbc44b0e9f15b103572",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
