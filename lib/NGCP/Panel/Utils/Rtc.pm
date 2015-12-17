@@ -8,7 +8,9 @@ use JSON qw//;
 use NGCP::Panel::Utils::ComxAPIClient;
 
 sub modify_reseller_rtc {
-    my ($old_resource, $resource, $config, $reseller_item, $err_code) = @_;
+    my %params = @_;
+    my ($old_resource, $resource, $config, $reseller_item, $err_code) =
+        @params{qw/old_resource resource config reseller_item err_code/};
 
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return 0; };
@@ -21,7 +23,11 @@ sub modify_reseller_rtc {
             return;
         }
 
-        _create_rtc_user($resource, $config, $reseller_item, $err_code);
+        _create_rtc_user(
+            resource => $resource,
+            config => $config,
+            reseller_item => $reseller_item,
+            err_code => $err_code);
 
     } elsif ((defined $old_resource) && (defined $resource)) {
 
@@ -30,24 +36,36 @@ sub modify_reseller_rtc {
                 $old_resource->{enable_rtc}) {  # just terminated
 
             $resource->{enable_rtc} = JSON::false;
-            _delete_rtc_user($config, $reseller_item, $err_code);
+            _delete_rtc_user(
+                    config => $config,
+                    reseller_item => $reseller_item,
+                    err_code => $err_code);
 
         } elsif ($old_resource->{enable_rtc} &&
                 !$resource->{enable_rtc}) {  # disable rtc
 
-            _delete_rtc_user($config, $reseller_item, $err_code);
+            _delete_rtc_user(
+                config => $config,
+                reseller_item => $reseller_item,
+                err_code => $err_code);
         } elsif (!$old_resource->{enable_rtc} &&
                 $resource->{enable_rtc} &&
                 $resource->{status} ne 'terminated') {  # enable rtc
 
-            _create_rtc_user($resource, $config, $reseller_item, $err_code);
+            _create_rtc_user(
+                resource => $resource,
+                config => $config,
+                reseller_item => $reseller_item,
+                err_code => $err_code);
         }
     }
     return;
 }
 
 sub _create_rtc_user {
-    my ($resource, $config, $reseller_item, $err_code) = @_;
+    my %params = @_;
+    my ($resource, $config, $reseller_item, $err_code) =
+        @params{qw/resource config reseller_item err_code/};
 
     my $rtc_networks = $resource->{rtc_networks} // [];
     if ('ARRAY' ne (ref $rtc_networks)) {
@@ -103,16 +121,18 @@ sub _create_rtc_user {
                 {xms => JSON::false},
                 $user->{data}{id},
             );
-        if ($user->{code} != 201) {
+        if ($n_response->{code} != 201) {
             return unless &{$err_code}(
-                'Creating rtc network failed. Error code: ' . $user->{code});
+                'Creating rtc network failed. Error code: ' . $n_response->{code});
         }
     }
     return;
 }
 
 sub _delete_rtc_user {
-    my ($config, $reseller_item, $err_code) = @_;
+    my %params = @_;
+    my ($config, $reseller_item, $err_code) =
+        @params{qw/config reseller_item err_code/};
 
     my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
         host => $config->{rtc}{schema}.'://'.
@@ -144,6 +164,151 @@ sub _delete_rtc_user {
             'Deleting rtc user failed. Error code: ' . $delete_resp->{code});
     }
     return;
+}
+
+sub get_rtc_networks {
+    my %params = @_;
+    my ($rtc_user_id, $config, $reseller_item, $include_id, $err_code) =
+        @params{qw/rtc_user_id config reseller_item include_id err_code/};
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+        host => $config->{rtc}{schema}.'://'.
+        $config->{rtc}{host}.':'.$config->{rtc}{port}.
+        $config->{rtc}{path},
+    );
+    $comx->login(
+        $config->{rtc}{user},
+        $config->{rtc}{pass},
+        $config->{rtc}{host}.':'.$config->{rtc}{port});
+    if ($comx->login_status->{code} != 200) {
+        return unless &{$err_code}(
+            'Rtc Login failed. Check config settings.');
+    }
+
+    my $networks_resp = $comx->get_networks_by_user_id($rtc_user_id);
+    my $networks = $networks_resp->{data};
+    unless (defined $networks  && 'ARRAY' eq ref $networks && @{ $networks }) {
+        return unless &{$err_code}(
+            'Fetching networks failed. Code: ' . $networks_resp->{code});
+    }
+
+    my $res = [map {{
+            config =>$_->{config},
+            connector => $_->{connector},
+            tag => $_->{tag},
+            $include_id ? (id => $_->{id}) : (),
+        }} @{ $networks }];
+
+    return $res;
+}
+
+sub modify_rtc_networks {
+    my %params = @_;
+    my ($old_resource, $resource, $config, $reseller_item, $err_code) =
+        @params{qw/old_resource resource config reseller_item err_code/};
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    if ((!defined $old_resource) || (!defined $resource)) { # can only modify (no create/delete) the whole resource
+        return unless &{$err_code}(
+            'Cannot Modify rtc network. Old or new resource missing.');
+    }
+
+    my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+        host => $config->{rtc}{schema}.'://'.
+        $config->{rtc}{host}.':'.$config->{rtc}{port}.
+        $config->{rtc}{path},
+    );
+    $comx->login(
+        $config->{rtc}{user},
+        $config->{rtc}{pass},
+        $config->{rtc}{host}.':'.$config->{rtc}{port});
+    if ($comx->login_status->{code} != 200) {
+        return unless &{$err_code}(
+            'Rtc Login failed. Check config settings.');
+    }
+
+    my (@deleted, @new);
+    for my $nw (@{ $resource->{networks} }) {
+        my $nw_tag = $nw->{tag};
+        my ($old_nw) = grep {$nw_tag eq $_->{tag}} @{ $old_resource->{networks} };
+        if (!defined $old_nw) {
+            push @new, $nw;
+        } else {
+            if ($nw->{connector} ne $old_nw->{connector}
+                    || !_recursive_compare_hashref($nw->{config}, $old_nw->{config})
+                ) {
+                push @deleted, $old_nw;
+                push @new, $nw;
+            }
+        }
+    }
+    for my $nw (@{ $old_resource->{networks} }) {
+        my $nw_tag = $nw->{tag};
+
+        my ($new_nw) = grep {$nw_tag eq $_->{tag}} @{ $resource->{networks} };
+        if (!defined $new_nw) {
+            push @deleted, $nw;
+        }
+    }
+
+    for my $nw (@deleted) {
+        my $n_response = $comx->delete_network($nw->{id});
+        if ($n_response->{code} != 200) {
+            return unless &{$err_code}(
+                'Deleting rtc network failed. Error code: ' . $n_response->{code});
+        }
+    }
+    for my $nw (@new) {
+        my $n_response = $comx->create_network(
+                $nw->{tag},
+                $nw->{connector},
+                $nw->{config} // {},
+                $old_resource->{rtc_user_id},
+            );
+        if ($n_response->{code} != 201) {
+            return unless &{$err_code}(
+                'Creating rtc network failed. Error code: ' . $n_response->{code});
+        }
+    }
+    return;
+}
+
+# 1 if equal, 0 if different
+sub _recursive_compare_hashref {
+    my ($hash1, $hash2) = @_;
+
+    my $ref1 = ref $hash1;
+    my $ref2 = ref $hash2;
+    if ($ref1) {
+        if ($ref2) {
+            return 0 if ($ref1 ne $ref2);
+            if ($ref1 eq "HASH") {
+                return 0 if keys %{$hash1} != keys %{$hash2};
+                for my $k (keys %{$hash1}) {
+                    return 0 if ( !_recursive_compare_hashref($hash1->{$k}, $hash2->{$k}) );
+                }
+                return 1;
+            } elsif ($ref1 =~ m/json.*bool/i) {
+                return $hash1 == $hash2;
+            }
+        } else {
+            return 0;
+        }
+    } else {
+        if ($ref2) {
+            return 0;
+        } else {
+            return $hash1 eq $hash2;
+        }
+    }
+    return 0;  # arrays not supported
 }
 
 1;
