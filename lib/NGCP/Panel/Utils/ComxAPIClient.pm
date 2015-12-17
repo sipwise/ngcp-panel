@@ -147,7 +147,7 @@ sub get_session {
     my $ua = $self->ua;
 
     return $self->_create_response(
-        $ua->get($self->host . "/sessions/id/$session_id")
+        $ua->get($self->host . "/sessions/id/$session_id"),
     );
 }
 
@@ -172,6 +172,12 @@ sub get_users {
 sub get_networks {
     my ($self) = @_;
     my $networks = $self->_resolve_collection_fast( '/networks' );
+    return $networks;
+}
+
+sub get_networks_by_user_id {
+    my ($self, $user_id) = @_;
+    my $networks = $self->_resolve_collection_fast( "/users/id/$user_id/networks" );
     return $networks;
 }
 
