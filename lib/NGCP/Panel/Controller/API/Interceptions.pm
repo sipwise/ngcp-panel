@@ -160,7 +160,7 @@ sub POST :Allow {
     my ($self, $c) = @_;
 
     my $guard = $c->model('DB')->txn_scope_guard;
-    my $cguard = $c->model('CentralDB')->txn_scope_guard;
+    my $cguard = $c->model('RoDB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
             c => $c, 
@@ -175,7 +175,7 @@ sub POST :Allow {
             form => $form,
         );
 
-        my $num_rs = $c->model('CentralDB')->resultset('voip_numbers')->search(
+        my $num_rs = $c->model('RoDB')->resultset('voip_numbers')->search(
             \[ 'concat(cc,ac,sn) = ?', [ {} => $resource->{number} ]]
         );
         unless($num_rs->first) {

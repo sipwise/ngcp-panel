@@ -1,4 +1,4 @@
-package NGCP::Panel::Model::CentralDB;
+package NGCP::Panel::Model::RoDB;
 
 use strict;
 use File::ShareDir 'dist_file';

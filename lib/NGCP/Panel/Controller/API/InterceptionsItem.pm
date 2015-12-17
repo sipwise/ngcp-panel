@@ -87,7 +87,7 @@ sub OPTIONS :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
-    my $cguard = $c->model('CentralDB')->txn_scope_guard;
+    my $cguard = $c->model('RoDB')->txn_scope_guard;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -152,7 +152,7 @@ sub PATCH :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
-    my $cguard = $c->model('CentralDB')->txn_scope_guard;
+    my $cguard = $c->model('RoDB')->txn_scope_guard;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
