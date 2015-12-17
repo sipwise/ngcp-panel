@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_8c40e557",
+        "filename": "tools/generate_ssl_keys.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2015-12-17T11:10:14Z",
+      "side": 1,
+      "message": "No need for the grep+awk fetish: :)\n\nsed -ne \u0027s/^default_days[[:space:]]*\u003d[[:space:]]\\([0-9]\\+\\).*$/\\1/p\u0027\n\nAlso your regex does not support multiple spaces.",
+      "revId": "01d2d2bd72928930c44c2f750e32a68d8529089c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
