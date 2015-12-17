@@ -33,6 +33,23 @@
       "revId": "75fb0517530ef5403494ffbc44b0e9f15b103572",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_2cf8b17b",
+        "filename": "tools/generate_ssl_keys.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2015-12-17T10:01:22Z",
+      "side": 1,
+      "message": "Missing dash before req.",
+      "revId": "75fb0517530ef5403494ffbc44b0e9f15b103572",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
