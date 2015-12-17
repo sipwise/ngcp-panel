@@ -189,6 +189,12 @@ sub get_networks {
     return $networks;
 }
 
+sub get_networks_by_user_id {
+    my ($self, $user_id) = @_;
+    my $networks = $self->_resolve_collection_fast( "/users/id/$user_id/networks" );
+    return $networks;
+}
+
 sub _resolve_collection {
     my ($self, $bare_url, $max_rows) = @_;
     my $ua = $self->ua;

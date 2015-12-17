@@ -138,6 +138,35 @@ sub _delete_rtc_user {
     }
 }
 
+sub get_rtc_networks {
+    my ($rtc_user_id, $config, $reseller_item, $err_code) = @_;
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+        host => $config->{rtc}{host},
+    );
+    $comx->login($config->{rtc}{user},
+        $config->{rtc}{pass}, $config->{rtc}{netloc});
+    if ($comx->login_status->{code} != 200) {
+        return unless &{$err_code}(
+            'Rtc Login failed. Check config settings.');
+    }
+
+    my $networks_resp = $comx->get_networks_by_user_id($rtc_user_id);
+    my $networks = $networks_resp->{data};
+    unless (defined $networks  && 'ARRAY' eq ref $networks && @{ $networks }) {
+        return unless &{$err_code}(
+            'Fetching networks failed. Code: ' . $networks_resp->{code});
+    }
+
+    my $res = [map {{config =>$_->{config}, connector => $_->{connector}, tag => $_->{tag}}} @{ $networks }];
+
+    return $res;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
