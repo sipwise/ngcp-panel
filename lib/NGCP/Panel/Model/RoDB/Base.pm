@@ -1,7 +1,7 @@
-package NGCP::Panel::Model::CentralDB::Base;
+package NGCP::Panel::Model::RoDB::Base;
 #use base 'Catalyst::Model::Adaptor';
 use base 'Catalyst::Model';
-use NGCP::Panel::Model::CentralDB;
+use NGCP::Panel::Model::RoDB;
 use Moose;
 
 
@@ -69,6 +69,6 @@ __PACKAGE__->config(
 
 has 'schema' => (
     is  => 'rw',
-    isa => 'NGCP::Panel::Model::CentralDB',
+    isa => 'NGCP::Panel::Model::RoDB',
 );
 1;
