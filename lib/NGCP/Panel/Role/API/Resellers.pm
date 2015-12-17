@@ -130,10 +130,14 @@ sub update_reseller {
             contract_id => $resource->{contract_id},
         });
 
-    NGCP::Panel::Utils::Rtc::modify_reseller_rtc($old_resource, $resource, $c->config,
-        $reseller, sub {
-            $c->log->warn(shift); return;
-        });
+    NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+        old_resource => $old_resource,
+        resource => $resource,
+        config => $c->config,
+        reseller_item => $reseller,
+        err_code => sub {
+                $c->log->warn(shift); return;
+            });
 
     # TODO: should we lock reseller admin logins if reseller gets terminated?
     # or terminate all his customers and delete non-billing data?
