@@ -143,6 +143,81 @@ sub _delete_rtc_user {
     }
 }
 
+sub get_rtc_networks {
+    my ($rtc_user_id, $config, $reseller_item, $err_code) = @_;
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+        host => $config->{rtc}{schema}.'://'.
+        $config->{rtc}{host}.':'.$config->{rtc}{port}.
+        $config->{rtc}{path},
+    );
+    $comx->login(
+        $config->{rtc}{user},
+        $config->{rtc}{pass},
+        $config->{rtc}{host}.':'.$config->{rtc}{port});
+    if ($comx->login_status->{code} != 200) {
+        return unless &{$err_code}(
+            'Rtc Login failed. Check config settings.');
+    }
+
+    my $networks_resp = $comx->get_networks_by_user_id($rtc_user_id);
+    my $networks = $networks_resp->{data};
+    unless (defined $networks  && 'ARRAY' eq ref $networks && @{ $networks }) {
+        return unless &{$err_code}(
+            'Fetching networks failed. Code: ' . $networks_resp->{code});
+    }
+
+    my $res = [map {{config =>$_->{config}, connector => $_->{connector}, tag => $_->{tag}}} @{ $networks }];
+
+    return $res;
+}
+
+sub modify_rtc_networks {
+    my ($old_resource, $resource, $config, $reseller_item, $err_code) = @_;
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    if ((!defined $old_resource) || (!defined $resource)) { # can only modify (no create/delete) the whole resource
+        return unless &{$err_code}(
+            'Cannot Modify rtc network. Old or new resource missing.');
+    }
+
+    my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+        host => $config->{rtc}{schema}.'://'.
+        $config->{rtc}{host}.':'.$config->{rtc}{port}.
+        $config->{rtc}{path},
+    );
+    $comx->login(
+        $config->{rtc}{user},
+        $config->{rtc}{pass},
+        $config->{rtc}{host}.':'.$config->{rtc}{port});
+    if ($comx->login_status->{code} != 200) {
+        return unless &{$err_code}(
+            'Rtc Login failed. Check config settings.');
+    }
+
+    my (@deleted, @new, @modified);
+    for my $nw (@{ $resource->{networks} }) {
+        my ($nw_tag, $nw_connector, $nw_config) = $nw->['tag', 'connector', 'config'];
+
+        my ($old_nw) = grep {$nw_tag eq $_->{tag}} @{ $old_resource->{networks} };
+        if (!defined $old_nw) {
+            push @new, $nw;
+        } else {
+            if ($nw->{connector} ne $old_nw->{connector} ||
+                $nw->{config} ne $old_nw->{config}) {
+                push @modified, $nw;
+            }
+        }
+    }
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
