@@ -147,10 +147,10 @@ sub create_app {
 
 sub get_sessions {
     my ($self, $max_rows) = @_;
-    my $sessions = $self->_resolve_collection( '/sessions', $max_rows );
-    if ('ARRAY' eq ref $sessions && @{ $sessions }) {
-        for my $session (@{ $sessions }) {
-            $session->{accounts} = $self->_resolve_collection( $session->{accounts}{href} );
+    my $sessions = $self->_resolve_collection_fast( '/sessions', $max_rows );
+    if ('ARRAY' eq ref $sessions->{data} && @{ $sessions->{data} }) {
+        for my $session (@{ $sessions->{data} }) {
+            $session->{accounts} = $self->_resolve_collection_fast( $session->{accounts}{href} );
         }
     }
     return $sessions;
@@ -169,7 +169,7 @@ sub delete_all_sessions {
     my ($self) = @_;
     my $ua = $self->ua;
     my $resp;
-    for my $session_data ($self->get_sessions) {
+    for my $session_data ($self->get_sessions->{data}) {
         my $session_id = $session_data->{id};
         $resp = $ua->delete($self->host . "/sessions/id/$session_id");
         last if $resp->code >= 300;
@@ -179,13 +179,13 @@ sub delete_all_sessions {
 
 sub get_users {
     my ($self, $max_rows) = @_;
-    my $users = $self->_resolve_collection( '/users', $max_rows );
+    my $users = $self->_resolve_collection_fast( '/users', $max_rows );
     return $users;
 }
 
 sub get_networks {
     my ($self) = @_;
-    my $networks = $self->_resolve_collection( '/networks' );
+    my $networks = $self->_resolve_collection_fast( '/networks' );
     return $networks;
 }
 
@@ -195,17 +195,54 @@ sub _resolve_collection {
     my $rel_url = $self->_strip_host( $bare_url );
     my $res = $ua->get($self->host . $rel_url);
     my @result;
-    return [] unless $res->code == 200;
+    return {code => $res->code, response => $res} unless $res->code == 200;
     my $collection = JSON::decode_json($res->content);
-    return [] unless $collection;
+    return {code => $res->code, response => $res,
+        error_detail => 'could not decode_json'} unless $collection;
+    my $item_res;
     for my $item (@{ $collection->{items} }) {
         last if (defined $max_rows && $max_rows-- <= 0);
         my $url = $self->_strip_host( $item->{href} );
-        my $item_res = $ua->get($self->host . $url);
+        $item_res = $ua->get($self->host . $url);
         my $item_data = decode_json($item_res->content);
         push @result, $item_data;
     }
-    return \@result;
+    return {
+            response => $item_res,  # latest response
+            code => $item_res->code,
+            data => \@result,
+            total_count => scalar(@result),
+        };
+}
+
+sub _resolve_collection_fast {
+    my ($self, $bare_url, $max_rows) = @_;
+    my $ua = $self->ua;
+    my $rel_url = $self->_strip_host( $bare_url );
+    $rel_url =
+        $rel_url .
+        ( ($rel_url =~ m/\?/) ? '&' : '?' ) .
+        'expand=true';
+    my $res = $ua->get($self->host . $rel_url);
+    my @result;
+    return {code => $res->code, response => $res} unless $res->code == 200;
+    my $collection = JSON::decode_json($res->content);
+    return {code => $res->code, response => $res,
+        error_detail => 'could not decode_json'} unless $collection;
+    if ('HASH' eq ref $collection) {  # everything ok
+        return {
+                response => $res,
+                code => $res->code,
+                data =>  $collection->{items},
+                total_count => $collection->{total} // (scalar @{ $collection->{items} }),
+            };
+    } else {  # unknown error
+        return {
+                response => $res,
+                code => $res->code,
+                data =>  $collection,
+            };
+    }
 }
 
 sub _strip_host {
