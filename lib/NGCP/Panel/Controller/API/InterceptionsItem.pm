@@ -1,6 +1,7 @@
 package NGCP::Panel::Controller::API::InterceptionsItem;
 use Sipwise::Base;
-use namespace::sweep;
+use Moose;
+#use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
@@ -255,5 +256,8 @@ sub end : Private {
 
     $self->log_response($c);
 }
+
+no Moose;
+1;
 
 # vim: set tabstop=4 expandtab:
