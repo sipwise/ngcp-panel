@@ -1,8 +1,6 @@
 package NGCP::Panel::Controller::API::InterceptionsItem;
-use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
@@ -77,7 +75,7 @@ sub OPTIONS :Allow {
     my ($self, $c, $id) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
     $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
+        Allow => $allowed_methods->join(', '),
         Accept_Patch => 'application/json-patch+json',
     ));
     $c->response->content_type('application/json');
@@ -87,8 +85,8 @@ sub OPTIONS :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
-    my $cguard = $c->model('RoDB')->txn_scope_guard;
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $cguard = $c->model('DB')->txn_scope_guard;
+    my $guard = $c->model('InterceptDB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
@@ -152,8 +150,8 @@ sub PATCH :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
-    my $cguard = $c->model('RoDB')->txn_scope_guard;
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $cguard = $c->model('DB')->txn_scope_guard;
+    my $guard = $c->model('InterceptDB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
@@ -215,7 +213,7 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
 
     my $cguard = $c->model('DB')->txn_scope_guard;
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $guard = $c->model('InterceptDB')->txn_scope_guard;
     {
         my $item = $self->item_by_id($c, $id);
         my $uuid = $item->uuid;
@@ -257,8 +255,5 @@ sub end : Private {
 
     $self->log_response($c);
 }
-
-no Moose;
-1;
 
 # vim: set tabstop=4 expandtab:

@@ -1,7 +1,7 @@
-package NGCP::Panel::Model::RoDB::Base;
+package NGCP::Panel::Model::InterceptDB::Base;
 #use base 'Catalyst::Model::Adaptor';
 use base 'Catalyst::Model';
-use NGCP::Panel::Model::RoDB;
+use NGCP::Panel::Model::InterceptDB;
 use Moose;
 
 
@@ -69,6 +69,6 @@ __PACKAGE__->config(
 
 has 'schema' => (
     is  => 'rw',
-    isa => 'NGCP::Panel::Model::RoDB',
+    isa => 'NGCP::Panel::Model::InterceptDB',
 );
 1;

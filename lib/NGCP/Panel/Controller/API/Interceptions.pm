@@ -1,8 +1,6 @@
 package NGCP::Panel::Controller::API::Interceptions;
-use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+use namespace::sweep;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -148,7 +146,7 @@ sub OPTIONS :Allow {
     my ($self, $c) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
     $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
+        Allow => $allowed_methods->join(', '),
         Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
     ));
     $c->response->content_type('application/json');
@@ -159,8 +157,8 @@ sub OPTIONS :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
-    my $guard = $c->model('DB')->txn_scope_guard;
-    my $cguard = $c->model('RoDB')->txn_scope_guard;
+    my $guard = $c->model('InterceptDB')->txn_scope_guard;
+    my $cguard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
             c => $c, 
@@ -175,7 +173,7 @@ sub POST :Allow {
             form => $form,
         );
 
-        my $num_rs = $c->model('RoDB')->resultset('voip_numbers')->search(
+        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
             \[ 'concat(cc,ac,sn) = ?', [ {} => $resource->{number} ]]
         );
         unless($num_rs->first) {
@@ -183,7 +181,9 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist");
             last;
         }
-        $resource->{reseller_id} = $num_rs->first->reseller_id;
+	# use the long way, since with ossbss provisioning, the reseller_id
+	# is not set in this case
+        $resource->{reseller_id} = $num_rs->first->subscriber->contract->contact->reseller_id;
 
         my $sub = $num_rs->first->subscriber;
         unless($sub) {
@@ -211,8 +211,10 @@ sub POST :Allow {
         my $item;
         my $dbresource = { %{ $resource } };
         $dbresource = $self->resnames_to_dbnames($dbresource);
+        $dbresource->{reseller_id} = $resource->{reseller_id};
+	
         try {
-            $item = $c->model('DB')->resultset('voip_intercept')->create($dbresource);
+            $item = $c->model('InterceptDB')->resultset('voip_intercept')->create($dbresource);
             my $res = NGCP::Panel::Utils::Interception::request($c, 'POST', undef, {
                 liid => $resource->{liid},
                 uuid => $resource->{uuid},
@@ -249,8 +251,5 @@ sub end : Private {
 
     $self->log_response($c);
 }
-
-no Moose;
-1;
 
 # vim: set tabstop=4 expandtab:

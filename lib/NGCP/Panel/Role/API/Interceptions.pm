@@ -1,5 +1,4 @@
 package NGCP::Panel::Role::API::Interceptions;
-use NGCP::Panel::Utils::Generic qw(:all);
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -17,7 +16,7 @@ use NGCP::Panel::Form::InterceptionAPI;
 sub item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('voip_intercept')->search({
+    my $item_rs = $c->model('InterceptDB')->resultset('voip_intercept')->search({
         deleted => 0,
     });
     return $item_rs;
@@ -153,7 +152,7 @@ sub update_item {
 
 sub subres_from_number {
     my ($self, $c, $number) = @_;
-    my $num_rs = $c->model('RoDB')->resultset('voip_numbers')->search(
+    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
         \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
     );
     unless($num_rs->first) {
@@ -170,9 +169,14 @@ sub subres_from_number {
 
     my $res = $num_rs->first->reseller;
     unless($res) {
-        $c->log->error("invalid number '$number', not assigned to any reseller");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
-        return;
+	# with ossbss provisioning, reseller is not set on number,
+	# so take the long way here
+	$res = $sub->contract->contact->reseller;
+    	unless($res) {
+		$c->log->error("invalid number '$number', not assigned to any reseller");
+		$self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
+		return;
+	}
     }
 
     return ($sub, $res);

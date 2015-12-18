@@ -1,4 +1,4 @@
-package NGCP::Panel::Model::RoDB;
+package NGCP::Panel::Model::InterceptDB;
 
 use strict;
 use File::ShareDir 'dist_file';
