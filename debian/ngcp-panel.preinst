@@ -17,7 +17,7 @@ set -e
 case "$1" in
     install|upgrade)
     if [ -f /etc/default/ngcp-panel ]; then
-        sed -e 's/RUN_DAEMON=yes/RUN_DAEMON=no/' \
+        sed -e 's/RUN_DAEMON="\?yes"\?/RUN_DAEMON=no/' \
             -i /etc/default/ngcp-panel
         echo "ngcp-panel disabled. Run ngcpcfg apply to enable."
     fi
