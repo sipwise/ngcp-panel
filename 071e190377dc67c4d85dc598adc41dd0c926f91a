@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_f6ee0f22",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-12-18T20:27:03Z",
+      "side": 1,
+      "message": "probably to be removed?",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_368d577c",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-12-18T20:27:03Z",
+      "side": 1,
+      "message": "Data::Printer was known to break API parts (HAL?) due to the way it accessed some data. Not sure if you remember, but at least I regularly make sure to scan the code and remove usage of it.",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_d6e9931b",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-12-18T20:27:03Z",
+      "side": 1,
+      "message": "why is www.sipwise.com needed here?",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_16905b94",
+        "filename": "ngcp_panel.conf",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-12-18T20:27:03Z",
+      "side": 1,
+      "message": "From what I can see, netloc is actually the realm used to authenticate, right? Can\u0027t this be derived from the host for comx (where the \"host\" option above should be \"url\" anyways)? Easiest thing would be to really have something like this:\n\nschema https\nhost rtcengine.sipwise.com\nport 443\npath /rtcengine/api\nuser foo\npass bar\n\nand by that, you can construct the netloc where needed in the code by \"$host:$port\" and the url by \"$schema://$host:$port/$path\".\n\nWould be more clear, imho.",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
