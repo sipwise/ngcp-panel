@@ -61,7 +61,6 @@ $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPT
 $test_machine->DATA_ITEM_STORE($fake_data->process('faxes'));
 $test_machine->form_data_item();
 
-$test_machine->resource_fill_file($test_machine->DATA_ITEM->{faxfile}->[0]);
 
 {
     my $test_machine_aux = Test::Collection->new(name => 'faxserversettings');
@@ -72,12 +71,18 @@ $test_machine->resource_fill_file($test_machine->DATA_ITEM->{faxfile}->[0]);
     $test_machine_aux->request_put($faxserversettings,$uri);
 }
 
-
+$test_machine->resource_fill_file($test_machine->DATA_ITEM->{faxfile}->[0]);
 $test_machine->check_create_correct( 1 );
+$test_machine->resource_clear_file($test_machine->DATA_ITEM->{faxfile}->[0]);
+
+delete $test_machine->DATA_ITEM->{faxfile};
+$test_machine->DATA_ITEM->{json}->{data}="äöüß";
+$test_machine->form_data_item();
+$test_machine->check_create_correct( 1 );
+
 #$test_machine->check_bundle();
 #$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'faxfile' =>  $test_machine->DATA_ITEM_STORE->{faxfile} }; } );
 
 done_testing;
-$test_machine->resource_clear_file($test_machine->DATA_ITEM->{faxfile}->[0]);
 
 # vim: set tabstop=4 expandtab:
