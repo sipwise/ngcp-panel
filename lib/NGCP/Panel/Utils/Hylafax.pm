@@ -3,7 +3,7 @@ package NGCP::Panel::Utils::Hylafax;
 use Sipwise::Base;
 use File::Temp qw/tempfile/;
 use TryCatch;
-
+use IPC::System::Simple qw/capture/;
 use Data::Dumper;
 
 sub send_fax {
@@ -75,6 +75,15 @@ sub send_fax {
             die $c->loc("Failed to write fax data to temporary file: [_1]", $err);
         }
         close $fh;
+        my $filename_ps = $filename.'.ps';
+        my $cmd = "paps --font=Courier-Bold@11 --left-margin=24 --top-margin=60 --bottom-margin=36 --paper A4 $filename > $filename_ps";
+        my $err_ps = capture($cmd);
+        $c and $c->log->debug( "$cmd: $err_ps;" );
+        if(!$err_ps){
+            $filename = $filename_ps;
+        }else{
+            die $c->loc("Failed to convert text to ps: [_1]", $err_ps);
+        }
     } else {
         $filename = eval { $args{upload}->tempname };
     }
