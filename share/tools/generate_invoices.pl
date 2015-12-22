@@ -49,7 +49,7 @@ my @opt_spec = (
     'help|?',
     'man'
 );
-Log::Log4perl::init('/etc/ngcp-ossbss/logging.conf');
+Log::Log4perl::init('/etc/ngcp-panel/logging.conf');
 my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 
 {
