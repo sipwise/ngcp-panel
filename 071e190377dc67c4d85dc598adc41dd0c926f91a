@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_22466dc0",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-22T11:56:01Z",
+      "side": 1,
+      "message": "yes, can be removed, I\u0027ll do that",
+      "parentUuid": "7a96c907_f6ee0f22",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_368d577c",
         "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
         "patchSetId": 6
@@ -30,6 +48,41 @@
       "writtenOn": "2015-12-18T20:27:03Z",
       "side": 1,
       "message": "Data::Printer was known to break API parts (HAL?) due to the way it accessed some data. Not sure if you remember, but at least I regularly make sure to scan the code and remove usage of it.",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_a2111dae",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-22T11:56:01Z",
+      "side": 1,
+      "message": "I do remember. I was surely going to get rid of it, as this evolves, but I\u0027ll take it out now",
+      "parentUuid": "7a96c907_368d577c",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_e21725a2",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-22T11:56:01Z",
+      "side": 1,
+      "message": "(here it needs a valid email)",
       "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -53,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_c21229b4",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-22T11:56:01Z",
+      "side": 1,
+      "message": "because it needs a valid domain",
+      "parentUuid": "7a96c907_d6e9931b",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_16905b94",
         "filename": "ngcp_panel.conf",
         "patchSetId": 6
@@ -64,6 +135,24 @@
       "writtenOn": "2015-12-18T20:27:03Z",
       "side": 1,
       "message": "From what I can see, netloc is actually the realm used to authenticate, right? Can\u0027t this be derived from the host for comx (where the \"host\" option above should be \"url\" anyways)? Easiest thing would be to really have something like this:\n\nschema https\nhost rtcengine.sipwise.com\nport 443\npath /rtcengine/api\nuser foo\npass bar\n\nand by that, you can construct the netloc where needed in the code by \"$host:$port\" and the url by \"$schema://$host:$port/$path\".\n\nWould be more clear, imho.",
+      "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_221d0dbe",
+        "filename": "ngcp_panel.conf",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-12-22T11:56:01Z",
+      "side": 1,
+      "message": "sounds good, thanks!",
+      "parentUuid": "7a96c907_16905b94",
       "revId": "071e190377dc67c4d85dc598adc41dd0c926f91a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
