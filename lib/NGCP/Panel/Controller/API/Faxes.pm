@@ -183,10 +183,8 @@ sub POST :Allow {
                 c => $c,
                 subscriber => $billing_subscriber,
                 destination => $form->values->{destination},
-                (defined $form->values->{faxfile})
-                    ?
-                    ( upload => $form->values->{faxfile} ) :
-                    ( data => $form->values->{data} ),
+                upload => $form->values->{faxfile},
+                data => $form->values->{data},
             );
             $c->log->debug("faxserver output:\n");
             $c->log->debug($output);
