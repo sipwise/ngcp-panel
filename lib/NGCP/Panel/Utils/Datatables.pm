@@ -9,7 +9,7 @@ use Scalar::Util qw/blessed/;
 use DateTime::Format::Strptime;
 
 sub process {
-    my ($c, $rs, $cols, $row_func, $total_row_func) = @_;
+    my ($c, $rs, $cols, $row_func, $params) = @_;
 
     my $total_row_func = $params->{total_row_func};
     my $use_rs_cb = ('CODE' eq (ref $rs));
