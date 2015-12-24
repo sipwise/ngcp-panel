@@ -22,6 +22,37 @@ has_field 'destination' => (
     },
 );
 
+has_field 'resolution' => (
+    type => 'Select',
+    label => 'Resolution',
+    options => [
+        { label => 'Low', value => 'low' },
+        { label => 'Medium', value => 'medium' },
+        { label => 'Extended', value => 'extended' },
+    ],
+    default => 'low',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Fax resolution'],
+    },
+);
+
+has_field 'notify' => (
+    type => 'Text',
+    label => 'Notify to email',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Email to notify about fax delivery'],
+    },
+);
+has_field 'coverpage' => (
+    type => 'Boolean',
+    label => 'Coverpage',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether to add a coverpage.'],
+    },
+);
 has_field 'data' => (
     type => 'TextArea',
     label => 'Content',
@@ -55,7 +86,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/destination data faxfile/],
+    render_list => [qw/destination resolution coverpage data faxfile/],
 );
 
 has_block 'actions' => (
