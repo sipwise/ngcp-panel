@@ -22,7 +22,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines the actual recording of fax messages. It is referred to by the <a href="#faxs">Faxs</a> relation. A GET on an item returns the binary blob of the recording with Content-Type "audio/x-wav".',
+        'Defines the actual recording of fax messages. It is referred to by the <a href="#faxes">Faxes</a> relation. A GET on an item returns the binary blob of the recording with Content-Type "audio/x-wav".',
 );
 
 with 'NGCP::Panel::Role::API::FaxRecordings';
