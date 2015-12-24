@@ -152,11 +152,13 @@ sub GET : Allow {
         if ($item_rs) {
             $sorting_cols = [$item_rs->result_source->columns];
         }
-
+        my ($form_fields,$form_fields_upload) = $form ? $self->get_collection_properties($form) : ([],[]);
         $c->stash->{collections}->{$rel} = {
             name => $mod, 
             description => $full_mod->api_description,
-            fields => $form ? $self->get_collection_properties($form) : [],
+            fields => $form_fields,
+            uploads => $form_fields_upload,
+            config => $full_mod->config ,
             query_params => $query_params,
             actions => $actions,
             item_actions => $item_actions,
@@ -353,7 +355,7 @@ sub get_field_poperties :Private{
     unless (defined $desc && length($desc) > 0) {
         $desc = 'to be described ...';
     }    
-    return { name => $name, description => $desc, types => \@types };
+    return { name => $name, description => $desc, types => \@types, type_original => $field->type };
 }
 sub get_collection_properties {
     my ($self, $form) = @_;
@@ -362,10 +364,14 @@ sub get_collection_properties {
     my %renderlist = defined $renderlist ? map { $_ => 1 } @{$renderlist} : ();
     
     my @props = ();
+    my @uploads = ();
     foreach my $f($form->fields) {
         my $name = $f->name;
         next if (defined $renderlist && !exists $renderlist{$name});
-        push @props, $self->get_field_poperties($f);
+        my $field_spec = $self->get_field_poperties($f);
+        next if !$field_spec;
+        push @props, $field_spec;
+        push @uploads, $field_spec if $f->type =~/Upload/;
         if(my $spec = $f->element_attr->{implicit_parameter}){
             my $f_implicit = clone($f);
             foreach my $field_attribute (keys %{$spec}){
@@ -375,7 +381,7 @@ sub get_collection_properties {
         }
     }
     @props = sort{$a->{name} cmp $b->{name}} @props;
-    return \@props;
+    return (\@props,\@uploads);
 }
 
 sub end : Private {
