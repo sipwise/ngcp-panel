@@ -335,27 +335,17 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
 
     if($posted && $form->validated) {
         try {
-            if(defined $form->params->{faxfile}) {
-                NGCP::Panel::Utils::Hylafax::send_fax(
-                    c => $c,
-                    subscriber => $subscriber,
-                    destination => $form->params->{destination},
-                    #resolution => 'low', # opt (low, medium, extended)
-                    #notify => 'someone@example.org', # TODO: handle in send_fax, read from prefs!
-                    #coverpage => 1,
-                    upload => $form->params->{faxfile},
-                );
-            } else {
-                NGCP::Panel::Utils::Hylafax::send_fax(
-                    c => $c,
-                    subscriber => $subscriber,
-                    destination => $form->params->{destination},
-                    #resolution => 'low', # opt (low, medium, extended)
-                    #notify => 'someone@example.org', # TODO: handle in send_fax, read from prefs!
-                    #coverpage => 1,
-                    data => $form->params->{data},
-                );
-            }
+            NGCP::Panel::Utils::Hylafax::send_fax(
+                c => $c,
+                subscriber => $subscriber,
+                destination => $form->values->{destination},
+                resolution => $form->values->{resolution}, # opt (low, medium, extended)
+                coverpage => $form->values->{coverpage}, 
+                #notify => $form->values->{notify}, # TODO: handle in send_fax, read from prefs!
+                #coverpage => 1,
+                upload => $form->values->{faxfile},
+                data => $form->values->{data},
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
