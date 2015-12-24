@@ -8,7 +8,16 @@ use Data::Dumper;
 
 sub send_fax {
     my (%args) = @_;
-
+    #%args =>{
+    #    c => $c,
+    #    subscriber => $subscriber,
+    #    [notify => 1,]
+    #    [coverpage => 1,]
+    #    [resolution => ['low'|'medium'|'extended'],]
+    #    [destination => '',]
+    #    [data => '',]
+    #    [upload => '',]
+    #};
     my $c = $args{c};
     my $subscriber = $args{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
@@ -65,9 +74,9 @@ sub send_fax {
 
     push @sendfax_args, '-d '.$args{destination};
 
-    my ($fh, $filename);
+    my (@filenames);
     if($args{data}) {
-        ($fh, $filename) = tempfile;
+        my($fh, $filename) = tempfile;
         unless(print $fh $args{data}) {
             my $err = $!;
             close $fh;
@@ -87,21 +96,24 @@ sub send_fax {
             unlink $filename_ps;
             die $c->loc("Failed to convert text to ps: [_1]", $err_ps);
         }
-    } else {
-        $filename = eval { $args{upload}->tempname };
+        push @filenames, $filename;
+    }
+    if($args{upload}){
+        push @filenames, eval { $args{upload}->tempname };
     }
 
     my $sa = join(' ', @sendfax_args);
     my ($exit,$output);
     for my $host (@hosts) {
-        my $cmd = "$sendfax $sa -h $host $filename";
+        my $cmd = "$sendfax $sa -h $host ".join(" ",@filenames);
         $output = `$cmd 2>&1`;
         $exit = $?;
         $c->log->debug("faxserver command: $cmd; output=$output; exit=$exit;");
         last if $exit eq '0';
     }
-
-    unlink $filename;
+    foreach my $filename(@filenames){
+        unlink $filename;
+    }
     if($exit ne '0') {
         chomp $output;
         die $output."\n";
