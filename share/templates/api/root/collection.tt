@@ -17,6 +17,7 @@
     props_creation_first_flag = 1;
     FOREACH p IN col.fields;
         NEXT IF p.types.0 == 'null';
+        NEXT IF p.type_original == 'Upload';
         IF props_creation_first_flag;
             props_creation_first_flag = 0;
         ELSE;
@@ -38,6 +39,13 @@
     props_plain = props_plain _ "\n";
     IF col.sample;
         props_plain = col.sample _ "\n";
+    END;
+%]
+[%-
+    FOREACH p IN col.uploads;
+        #NEXT IF p.types.0 == 'null';
+        uploads_form = uploads_plain _ ' --form \'' _ p.name _ '=@/path/to/' _ p.name _ '/file\'';
+        uploads_data = uploads_data _ '"' _ p.name _ '" => [\'/path/to/' _ p.name _ '/file\']' _ ( !loop.last() ? ",\n" : "" );
     END;
 %]
 
@@ -67,7 +75,6 @@ Allowed methods for a collection item as in <span>METHOD [% uri %]id</span>:
 
 
 <h[% level + 1 %]>Properties</h[% level + 1%]>
-
 [% UNLESS col.fields.size -%]
 See description how to obtain properties, if any.
 [% ELSE -%]
@@ -225,30 +232,53 @@ Link: </api/' _ id _ '/1>; rel="item self"
 </p>
 [% END -%]
 
+[% MACRO request_macro BLOCK ;
+    props = props_plain | collapse;
+    uploads_form = uploads_form | collapse;
+    content_type = col.config.action.${http_request}.ContentType.0 ? col.config.action.${http_request}.ContentType.0 : 'application/json';
+    IF content_type == 'multipart/form-data' ;
+        request_data_plain = '\'json={' _ props _ '}\' ';
+        props = props_plain | indent(6);
+        uploads_data = uploads_data | indent(3);
+        request_data = "{\n   json => {\n" _ props _ ( uploads_data ? "   }\n" _ uploads_data : "" ) _ "\n}";
+        request_form = ' --form ' _ request_data_plain _ uploads_form ;
+    ELSE;
+        request_data_plain = '\'{' _ props _ '}\'';
+        props = props_plain | indent(3);
+        uploads_data = uploads_data | indent(0);
+        request_data = "{\n" _ props _ ( uploads_data ? "\n" _ uploads_data : "" ) _ "}";
+        request_form = ' --data-binary ' _ request_data_plain _ uploads_form;
+    END;
+    
+    cmd = 'curl -i -X POST -H \'Connection: close\' -H \'Content-Type: ' _ content_type _ '\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/\' ' _ request_form ;
+    
+    request =
+http_request _ ' /api/' _ id _ '/ HTTP/1.1
+Content-Type: ' _ content_type _ '
+
+' _ request_data;
+
+    IF http_request == 'POST' ;
+        response = 'HTTP/1.1 201 Created';
+        IF !col.properties.asynchronous ; 
+            response = response _ '
+Location: /api/' _ id _ '/2' ; 
+        END ;        
+    ELSIF http_request == 'PUT' ;
+        response =
+'HTTP/1.1 204 No Content
+Preference-Applied: return=minimal';
+    END;
+    
+    INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
+    INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
+END%]
+
 [% IF col.actions.grep('^POST$').size -%]
 <h[% level + 2 %]>Create a new <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 [%
-    props = props_plain | collapse;
-
-    cmd = 'curl -i -X POST -H \'Connection: close\' -H \'Content-Type: application/json\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/\' --data-binary \'{ ' _ props _ ' }\'';
-    INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
-
-    props = props_plain | indent(3);
-
-    request =
-'POST /api/' _ id _ '/ HTTP/1.1
-Content-Type: application/json
-
-{
-' _ props _ '}';
-    response = 'HTTP/1.1 201 Created';
-
-    IF !col.properties.asynchronous ; 
-        response = response _ '
-Location: /api/' _ id _ '/2' ; 
-    END ;
-    INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
+    request_macro(http_request = 'POST');
 %]
 </p>
 [% END -%]
@@ -257,24 +287,7 @@ Location: /api/' _ id _ '/2' ;
 <h[% level + 2 %]>Update an existing <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 [%
-    props = props_plain | collapse;
-
-    cmd = 'curl -i -X PUT -H \'Connection: close\' -H \'Content-Type: application/json\' -H \'Prefer: return=minimal\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/2\' --data-binary \'{ ' _ props _ ' }\'';
-    INCLUDE helpers/api_command.tt cmd=cmd extended=1 level=level+3;
-
-    props = props_plain | indent(3);
-    request =
-'PUT /api/' _ id _ '/2 HTTP/1.1
-Content-Type: application/json
-Prefer: return=minimal
-
-{
-' _ props _ '}';
-    response =
-'HTTP/1.1 204 No Content
-Preference-Applied: return=minimal';
-
-    INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
+    request_macro(http_request = 'PUT');
 -%]
 </p>
 [% END -%]

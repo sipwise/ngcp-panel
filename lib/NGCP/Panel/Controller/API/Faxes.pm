@@ -68,7 +68,8 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+            ('POST' eq $_) ? (ContentType => ['multipart/form-data']) : (),
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
