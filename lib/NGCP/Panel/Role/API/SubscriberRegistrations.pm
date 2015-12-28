@@ -175,19 +175,27 @@ sub update_item {
         0, # flags
         $cflags
     );
+    my $item_reloaded;
     
-    if($create) {
+    {
         NGCP::Panel::Utils::Kamailio::flush($c);
         my $rs = $self->item_rs($c);
         my $aor = NGCP::Panel::Utils::Kamailio::get_aor( $c, $sub->provisioning_voip_subscriber );
-        $item = $rs->search_rs(undef, {
+        $item_reloaded = $rs->search_rs(undef, {
             'me.contact' => $form->values->{contact},
             'me.aor' => $aor,
         })->first;
+    }
+    
+    if($create) {
+        $item = $item_reloaded; 
     }else{
         # we need to reload it since we changed the content via an external
         # xmlrpc call
         $item->discard_changes;
+        if($item_reloaded){
+            $item = $item_reloaded;         
+        }
     }
     return $item;
 }
