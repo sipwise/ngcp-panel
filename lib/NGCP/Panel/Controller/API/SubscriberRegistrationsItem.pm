@@ -117,6 +117,7 @@ sub PATCH :Allow {
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
             $c->response->body(q());
         } else {
             my $hal = $self->hal_from_item($c, $item, $form);
@@ -125,6 +126,7 @@ sub PATCH :Allow {
             ), $hal->as_json);
             $c->response->headers($response->headers);
             $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
             $c->response->body($response->content);
         }
     }
@@ -157,6 +159,7 @@ sub PUT :Allow {
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
             $c->response->body(q());
         } else {
             my $hal = $self->hal_from_item($c, $item, $form);
@@ -165,6 +168,7 @@ sub PUT :Allow {
             ), $hal->as_json);
             $c->response->headers($response->headers);
             $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
             $c->response->body($response->content);
         }
     }
