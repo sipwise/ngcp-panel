@@ -31,17 +31,17 @@ has_field 'data' => (
     element_class => [qw/ngcp-autoconf-area/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Content text']
+        title => ['Content text'],
     },
 );
 
 has_field 'faxfile' => (
     type => 'Upload',
     max_size => '67108864', # 64MB
-    label => 'or File',
+    label => 'File',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Supported File Types are TXT, PDF, PS, TIFF'],
+        title => ['File to send. Will be sent if no text content specified. Supported File Types are TXT, PDF, PS, TIFF'],
     },
 );
 
