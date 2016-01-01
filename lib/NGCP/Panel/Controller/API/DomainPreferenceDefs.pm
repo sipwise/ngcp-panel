@@ -84,7 +84,7 @@ sub GET :Allow {
                 $fields->{enum_values} = [];
                 foreach my $enum(@enums) {
                     my $efields = { $enum->get_inflated_columns };
-                    for my $del(qw/id preference_id usr_pref dom_pref peer_pref contract_pref/) {
+                    for my $del(qw/id preference_id usr_pref prof_pref dom_pref peer_pref contract_pref/) {
                         delete $efields->{$del};
                     }
                     $efields->{default_val} = JSON::Types::bool($efields->{default_val});
