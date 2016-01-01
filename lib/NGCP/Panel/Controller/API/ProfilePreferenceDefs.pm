@@ -70,14 +70,14 @@ sub GET :Allow {
         for my $pref($preferences->all) {
             my $fields = { $pref->get_inflated_columns };
             # remove internal fields
-            for my $del(qw/type attribute expose_to_customer internal peer_pref usr_pref prof_pref dom_pref contract_pref voip_preference_groups_id id modify_timestamp/) {
+            for my $del(qw/type attribute expose_to_customer internal peer_pref usr_pref dom_pref contract_pref prof_pref voip_preference_groups_id id modify_timestamp/) {
                 delete $fields->{$del};
             }
             $fields->{max_occur} = int($fields->{max_occur});
             $fields->{read_only} = JSON::Types::bool($fields->{read_only});
             if($fields->{data_type} eq "enum") {
                 my @enums = $pref->voip_preferences_enums->search({
-                    dom_pref => 1,
+                    prof_pref => 1,
                 })->all;
                 $fields->{enum_values} = [];
                 foreach my $enum(@enums) {
