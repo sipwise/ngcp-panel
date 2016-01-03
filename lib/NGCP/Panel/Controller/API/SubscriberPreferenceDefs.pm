@@ -10,6 +10,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Preferences;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use JSON::Types qw();
@@ -63,36 +64,7 @@ sub GET :Allow {
         my $hal = Data::HAL->new(
             links => [@links],
         );
-
-        my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
-            internal => { '!=' => 1 }, # also fetch -1 for ncos, rwr
-            usr_pref => 1,
-        });
-        my $resource = {};
-        for my $pref($preferences->all) {
-            my $fields = { $pref->get_inflated_columns };
-            # remove internal fields
-            for my $del(qw/type attribute expose_to_customer internal peer_pref usr_pref prof_pref dom_pref contract_pref voip_preference_groups_id id modify_timestamp/) {
-                delete $fields->{$del};
-            }
-            $fields->{max_occur} = int($fields->{max_occur});
-            $fields->{read_only} = JSON::Types::bool($fields->{read_only});
-            if($fields->{data_type} eq "enum") {
-                my @enums = $pref->voip_preferences_enums->search({
-                    usr_pref => 1,
-                })->all;
-                $fields->{enum_values} = [];
-                foreach my $enum(@enums) {
-                    my $efields = { $enum->get_inflated_columns };
-                    for my $del(qw/id preference_id usr_pref prof_pref dom_pref peer_pref contract_pref/) {
-                        delete $efields->{$del};
-                    }
-                    $efields->{default_val} = JSON::Types::bool($efields->{default_val});
-                    push @{ $fields->{enum_values} }, $efields;
-                }
-            }
-            $resource->{$pref->attribute} = $fields;
-        }
+        my $resource = NGCP::Panel::Utils::Preferences::api_preferences_defs(c->$c,preferences_group => 'usr_pref');
         $hal->resource($resource);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, 
