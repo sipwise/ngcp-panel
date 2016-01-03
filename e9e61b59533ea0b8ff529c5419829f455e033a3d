@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_08ffef35",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroups.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-03T13:51:36Z",
+      "side": 1,
+      "message": "check peering contract id (system contract)",
+      "revId": "e9e61b59533ea0b8ff529c5419829f455e033a3d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_e8015b3a",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroups.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-03T13:51:36Z",
+      "side": 1,
+      "message": "add journal entry",
+      "range": {
+        "startLine": 191,
+        "startChar": 8,
+        "endLine": 191,
+        "endChar": 22
+      },
+      "revId": "e9e61b59533ea0b8ff529c5419829f455e033a3d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_48ede78a",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-03T13:51:36Z",
+      "side": 1,
+      "message": "maybe another one for IntRange?",
+      "range": {
+        "startLine": 301,
+        "startChar": 8,
+        "endLine": 301,
+        "endChar": 17
+      },
+      "revId": "e9e61b59533ea0b8ff529c5419829f455e033a3d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_a8fb6346",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-03T13:51:36Z",
+      "side": 1,
+      "message": "separate GroupAPI nicer, without that get_custom_values?",
+      "range": {
+        "startLine": 26,
+        "startChar": 11,
+        "endLine": 26,
+        "endChar": 44
+      },
+      "revId": "e9e61b59533ea0b8ff529c5419829f455e033a3d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
