@@ -167,6 +167,7 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
+            exceptions => [qw/set_id/],
         );
 
         my $rule;

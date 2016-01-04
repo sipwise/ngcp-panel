@@ -92,6 +92,7 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
+        exceptions => [qw/set_id/],
     );
 
     $item->update($resource);
