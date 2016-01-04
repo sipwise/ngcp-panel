@@ -2,17 +2,16 @@ package NGCP::Panel::Controller::Peering;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-
 BEGIN { use base 'Catalyst::Controller'; }
 
-use NGCP::Panel::Form::PeeringGroup;
-use NGCP::Panel::Form::PeeringRule;
-use NGCP::Panel::Form::PeeringServer;
+use NGCP::Panel::Form::Peering::Group;
+use NGCP::Panel::Form::Peering::Rule;
+use NGCP::Panel::Form::Peering::Server;
 use NGCP::Panel::Utils::DialogicImg;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Preferences;
-use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::Panel::Utils::Peering;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -108,7 +107,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::PeeringGroup->new;
+    my $form = NGCP::Panel::Form::Peering::Group->new;
     my $params = { $c->stash->{group_result}->get_inflated_columns };
     $params->{contract}{id} = delete $params->{peering_contract_id};
     $params = merge($params, $c->session->{created_objects});
@@ -125,7 +124,7 @@ sub edit :Chained('base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             $c->stash->{group_result}->update($form->custom_get_values);
-            $self->_sip_lcr_reload($c);
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             delete $c->session->{created_objects}->{contract};
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -156,7 +155,7 @@ sub delete :Chained('base') :PathPart('delete') {
             $p->delete;
         }
         $c->stash->{group_result}->delete;
-        $self->_sip_lcr_reload($c);
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{group_result}->get_inflated_columns },
@@ -177,7 +176,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::PeeringGroup->new;
+    my $form = NGCP::Panel::Form::Peering::Group->new;
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     $form->process(
@@ -195,7 +194,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
         try {
             $c->model('DB')->resultset('voip_peer_groups')->create(
                 $formdata );
-            $self->_sip_lcr_reload($c);
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             delete $c->session->{created_objects}->{contract};
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -242,7 +241,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::PeeringServer->new(ctx => $c);
+    my $form = NGCP::Panel::Form::Peering::Server->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -266,7 +265,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
                 enabled => $form->values->{enabled},
             };
             my $server = $c->stash->{group_result}->voip_peer_hosts->create($dbvalues);
-            $self->_sip_lcr_reload($c);
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Peering server successfully created'),
@@ -323,7 +322,7 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::PeeringServer->new(ctx => $c);
+    my $form = NGCP::Panel::Form::Peering::Server->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -338,7 +337,7 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
     if($posted && $form->validated) {
         try {
             $c->stash->{server_result}->update($form->values);
-            $self->_sip_lcr_reload($c);
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Peering server successfully updated'),
@@ -366,7 +365,7 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     
     try {
         $c->stash->{server_result}->delete;
-        $self->_sip_lcr_reload($c);
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{server_result}->get_inflated_columns },
@@ -567,7 +566,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
    
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::PeeringRule->new;
+    my $form = NGCP::Panel::Form::Peering::Rule->new;
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -582,7 +581,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
         try {
             $form->values->{callee_prefix} //= '';
             $c->stash->{group_result}->voip_peer_rules->create($form->values);
-            $self->_sip_lcr_reload($c);
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Peering rule successfully created'),
@@ -639,7 +638,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::PeeringRule->new;
+    my $form = NGCP::Panel::Form::Peering::Rule->new;
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -655,7 +654,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
         try {
             $form->values->{callee_prefix} //= '';
             $c->stash->{rule_result}->update($form->values);
-            $self->_sip_lcr_reload($c);
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Peering rule successfully changed'),
@@ -683,7 +682,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
     
     try {
         $c->stash->{rule_result}->delete;
-        $self->_sip_lcr_reload($c);
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{rule_result}->get_inflated_columns },
@@ -700,19 +699,6 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
     return;
 }
 
-sub _sip_lcr_reload {
-    my ($self, $c) = @_;
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
-<?xml version="1.0" ?>
-<methodCall>
-<methodName>lcr.reload</methodName>
-<params/>
-</methodCall>
-EOF
-
-    return 1;
-}
 
 __PACKAGE__->meta->make_immutable;
 
@@ -840,12 +826,6 @@ Show a modal to edit a peering rule.
 =head2 rules_delete
 
 Delete a peering rule.
-
-=head2 _sip_lcr_reload
-
-This is ported from ossbss.
-
-Reloads lcr cache of sip proxies.
 
 =head1 AUTHOR
 

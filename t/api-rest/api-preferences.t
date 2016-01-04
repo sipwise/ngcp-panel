@@ -1,0 +1,140 @@
+use strict;
+use warnings;
+
+use Test::Collection;
+use Test::FakeData;
+use Test::More;
+use Data::Dumper;
+use JSON;
+use Clone qw/clone/;
+use feature "state";
+
+
+#init test_machine
+my $test_machine = Test::Collection->new(
+    name => 'preferences',
+);
+my $fake_data =  Test::FakeData->new;
+$fake_data->set_data_from_script({
+    preferences => {
+        data => {
+            peeringserver_id  =>  sub { return shift->get_id('peeringservers',@_); },
+            customer_id  =>  sub { return shift->get_id('customers',@_); },
+            subscriber_id  =>  sub { return shift->get_id('subscribers',@_); },
+            domain_id  =>  sub { return shift->get_id('domains',@_); },
+            profile_id  =>  sub { return shift->get_id('subscriberprofiles',@_); },
+            reseller_id  =>  sub { return shift->get_id('resellers',@_); },
+            rewriterule_id  =>  sub { return shift->get_id('rewriterules',@_); },
+            soundset_id  =>  sub { return shift->get_id('soundsets',@_); },
+            ncoslevel_id  =>  sub { return shift->get_id('ncoslevels',@_); },
+        },
+    },
+});
+
+#for item creation test purposes /post request data/
+$test_machine->DATA_ITEM_STORE($fake_data->process('preferences'));
+$test_machine->form_data_item( );
+
+my @apis = qw/subscriber domain peeringserver customer profile/;
+
+foreach my $api (@apis){
+
+
+    my $preferences_old;
+    my $preferences_put;
+    my $index = $api.'_id';
+    my ($preferences) = {'uri' => '/api/'.$api.'preferences/'.$test_machine->DATA_ITEM->{$index}};
+    (undef, $preferences_old) = $test_machine->check_item_get($preferences->{uri});
+    #$preferences->{content} = $preferences_old;
+
+    my $api_test_machine = Test::Collection->new(
+        name => $api.'preferences',
+    );
+    $api_test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
+    $api_test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH DELETE)};
+    my $defs = $api_test_machine->get_item_hal($api.'preferencedefs');
+    delete $defs->{content}->{_links};
+    foreach my $preference_name(keys %{$defs->{content}}){
+        my $preference = $defs->{content}->{$preference_name};
+        $preference->{name} = $preference_name;
+        my $value;
+        if('boolean' eq $preference->{data_type}){
+            $value = JSON::true;
+        }elsif('enum' eq $preference->{data_type}){
+            my @values = @{$preference->{enum_values}};
+            if(@values){
+                if($#values > 0){
+                #take second value from enum if exists
+                    $value = $values[1]->{value};
+                }
+            }
+            #foreach my $preference_enum_value(@{$preference->{enum_values}}){
+            #    
+            #}
+        }elsif('string' eq $preference->{data_type}){
+            $value  = "test_api preference string";
+        }elsif('int' eq $preference->{data_type}){
+            $value = get_preference_id_value($preference);
+        }else{
+            die("unknown data type: ".$preference->{data_type}." for $preference_name;\n");
+        }
+        #print Dumper 
+        $preferences->{content}->{$preference_name} = 2 > $preference->{max_occur} ? $value : [$value] ;
+    }
+    #(undef, $preferences_put->{content}) = $test_machine->request_put($preferences->{content},$preferences->{uri});
+    (undef, $preferences_put->{content}) = $test_machine->check_put2get({data_in=>$preferences->{content},uri=>$preferences->{uri}});
+    (undef, $preferences_put->{content}) = $test_machine->request_put($preferences_old,$preferences->{uri});
+}
+done_testing;
+sub get_preference_id_value{
+    my $preference = shift;
+    my $item;
+    my $item_name;
+    my $res;
+    if($preference->{name}=~/^rewrite_rule_set$/){
+        state $rewriteruleset //= $test_machine->get_item_hal(undef,'/api/rewriterulesets/?reseller_id='.$test_machine->{DATA_ITEM}->{reseller_id});
+        $item = $rewriteruleset;
+        $item_name = 'rewriterulesets';
+    }elsif($preference->{name}=~/^(adm_)?ncos$/){
+        state $ncosleveel //= $test_machine->get_item_hal(undef,'/api/ncoslevels/?reseller_id='.$test_machine->{DATA_ITEM}->{reseller_id});
+        $item = $ncosleveel;
+        $item_name = 'ncoslevels';
+    }elsif($preference->{name}=~/^(contract_)?sound_set$/){
+        state $soundset //= $test_machine->get_item_hal(undef,'/api/soundsets/?reseller_id='.$test_machine->{DATA_ITEM}->{reseller_id});
+        $item = $soundset;
+        $item_name = 'soundsets';
+    }elsif($preference->{name}=~/^(man_)?allowed_ips_grp$/){
+        $res= 'dont_process';
+    }else{
+        $res = 33;#someint
+    }
+    if($item){
+        $res = $test_machine->get_id_from_hal($item->{content},$item_name);
+    }
+    print "res=$res;\n\n\n";
+    return $res;
+}
+
+__DATA__
+
+'lbrtp_set' => {
+    'enum_values' => [
+        {
+            'value' => undef,
+            'default_val' => $VAR1->{'mobile_push_expiry'}{'read_only'},
+            'label' => 'None'
+        },
+        {
+            'value' => '50',
+            'default_val' => $VAR1->{'mobile_push_expiry'}{'read_only'},
+            'label' => 'default'
+        }
+    ],
+    'data_type' => 'enum',
+    'read_only' => $VAR1->{'mobile_push_expiry'}{'read_only'},
+    'max_occur' => 1,
+    'label' => 'The cluster set used for SIP lb and RTP',
+    'description' => 'Use a particular cluster set of load-balancers for SIP towards this endpoint (only for peers, as for subscribers it is defined by Path during registration) and of RTP relays (both peers and subscribers).'
+},
+                         
+# vim: set tabstop=4 expandtab:
