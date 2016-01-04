@@ -160,18 +160,17 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        my $set_id = delete $resource->{set_id}; # keep this, cause formhandler doesn't know it
-
         my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
+            exceptions => [qw/set_id/],
         );
 
         my $rule;
 
-        unless(defined $set_id) {
+        unless(defined $resource->{set_id}) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'set_id'");
             last;
         }
@@ -182,14 +181,13 @@ sub POST :Allow {
         }
 
         my $ruleset = $schema->resultset('voip_rewrite_rule_sets')->find({
-                id => $set_id,
+                id => $resource->{set_id},
                 ($reseller_id ? (reseller_id => $reseller_id) : ()),
             });
         unless($ruleset) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'set_id'.");
             last;
         }
-        $resource->{set_id} = $ruleset->id;
         try {
             $rule = $schema->resultset('voip_rewrite_rules')->create($resource);
         } catch($e) {
