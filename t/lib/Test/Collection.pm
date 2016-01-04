@@ -331,8 +331,12 @@ sub get_hal_from_collection{
     if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
         $reshal = $list_collection;
         $location = $reshal->{_links}->{$hal_name}->{href};
-    } else {
+    } elsif( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
         $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
+        $location = $reshal->{_links}->{self}->{href};
+    }elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
+#preferencedefs collection
+        $reshal = $list_collection;
         $location = $reshal->{_links}->{self}->{href};
     }
     return ($reshal,$location);
@@ -886,7 +890,7 @@ sub check_get2put{
 }
 
 sub check_put2get{
-    my($self, $put_in, $get_in, $nocheck) = @_;
+    my($self, $put_in, $get_in, $check_cb_or_switch) = @_;
     
     my($put_out,$get_out);
 
@@ -903,8 +907,10 @@ sub check_put2get{
     delete $get_out->{content}->{_links};
     delete $get_out->{content}->{_embedded};
     my $item_id = delete $get_out->{content}->{id};
-    if(!$nocheck){
-        is_deeply($put_out->{content_in}, $get_out->{content}, "check_put2get: check PUTed item against POSTed item");
+    if(!$check_cb_or_switch){
+        is_deeply($put_out->{content_in}, $get_out->{content}, "check_put2get: check PUTed item against GETed item");
+    }elsif('CODE' eq ref $check_cb_or_switch){
+        $check_cb_or_switch->($put_out,$get_out);
     }
     $get_out->{content}->{id} = $item_id;
     return ($put_out,$get_out);
