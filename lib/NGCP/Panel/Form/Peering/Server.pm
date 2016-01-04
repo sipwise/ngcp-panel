@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::PeeringServer;
+package NGCP::Panel::Form::Peering::Server;
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -125,14 +125,19 @@ sub validate_via_route {
         $field->add_error("Invalid SIP URI, must be (comma-separated) SIP URI(s) in form sip:ip:port");
     }
 }
-
+#sub validate {
+#    my ($self) = @_;
+#    my $c = $self->ctx;
+#    return unless $c;
+#    my $model = $c->
+#}
 1;
 
 __END__
 
 =head1 NAME
 
-NGCP::Panel::Form::PeeringServer
+NGCP::Panel::Form::Peering::Server
 
 =head1 DESCRIPTION
 
