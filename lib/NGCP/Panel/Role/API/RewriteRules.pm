@@ -15,11 +15,11 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Form::RewriteRule::AdminSet;
 use NGCP::Panel::Form::RewriteRule::ResellerSet;
-use NGCP::Panel::Form::RewriteRule::Rule;
+use NGCP::Panel::Form::RewriteRule::RuleAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::RewriteRule::Rule->new;
+    return NGCP::Panel::Form::RewriteRule::RuleAPI->new;
 }
 
 sub hal_from_item {
@@ -51,6 +51,7 @@ sub hal_from_item {
         form => $form,
         resource => \%resource,
         run => 0,
+        exceptions => [qw/set_id/],
     );
     $hal->resource(\%resource);
     return $hal;
@@ -92,6 +93,7 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
+        exceptions => [qw/set_id/],
     );
 
     $item->update($resource);
