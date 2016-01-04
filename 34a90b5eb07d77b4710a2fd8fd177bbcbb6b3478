@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_e28c1782",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 12
+      },
+      "lineNbr": 3116,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-04T20:18:47Z",
+      "side": 1,
+      "message": "my $searchString \u003d $c-\u003erequest-\u003eparams-\u003e{sSearch};\nmy $rs \u003d $c-\u003emodel(\u0027DB\u0027)-\u003eresultset(\u0027cdr\u0027);\nif($searchString eq \u0027direction:incoming\u0027){\n$rs \u003d $rs-\u003esearch(undef,{\u0027destination_user_id\u0027 \u003d\u003e $c-\u003estash-\u003e{subscriber}-\u003euuid});\n}elsif($searchString eq \u0027direction:outgoing\u0027){\n$rs \u003d $rs-\u003esearch(undef,{\u0027source_user_id\u0027 \u003d\u003e $c-\u003estash-\u003e{subscriber}-\u003euuid});\n}else{\n$rs \u003d $rs-\u003esearch(undef,{\u0027destination_user_id\u0027 \u003d\u003e $c-\u003estash-\u003e{subscriber}-\u003euuid})-\u003eunion_all($rs-\u003esearch(undef,{\u0027source_user_id\u0027 \u003d\u003e $c-\u003estash-\u003e{subscriber}-\u003euuid}));\n}\n\npls also replace \"-\u003eunion(\" in /ngcp-panel/lib/NGCP/Panel/Widget/Plugin/SubscriberCallsOverview.pm Line 31 with \"-\u003eunion_all(\"",
+      "range": {
+        "startLine": 3094,
+        "startChar": 0,
+        "endLine": 3116,
+        "endChar": 7
+      },
+      "revId": "34a90b5eb07d77b4710a2fd8fd177bbcbb6b3478",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_6281e749",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 12
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-04T20:18:47Z",
+      "side": 1,
+      "message": "where is that actually needed here?",
+      "range": {
+        "startLine": 70,
+        "startChar": 108,
+        "endLine": 70,
+        "endChar": 111
+      },
+      "revId": "34a90b5eb07d77b4710a2fd8fd177bbcbb6b3478",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_0296eb94",
+        "filename": "share/templates/subscriber/calllist.tt",
+        "patchSetId": 12
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-04T20:18:47Z",
+      "side": 1,
+      "message": "\"\"",
+      "range": {
+        "startLine": 34,
+        "startChar": 15,
+        "endLine": 34,
+        "endChar": 18
+      },
+      "revId": "34a90b5eb07d77b4710a2fd8fd177bbcbb6b3478",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_2293efa4",
+        "filename": "share/templates/subscriber/calllist.tt",
+        "patchSetId": 12
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-04T20:18:47Z",
+      "side": 1,
+      "message": "\"direction:outcoming\"",
+      "range": {
+        "startLine": 35,
+        "startChar": 15,
+        "endLine": 35,
+        "endChar": 24
+      },
+      "revId": "34a90b5eb07d77b4710a2fd8fd177bbcbb6b3478",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_c28f9374",
+        "filename": "share/templates/subscriber/calllist.tt",
+        "patchSetId": 12
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-04T20:18:47Z",
+      "side": 1,
+      "message": "\"direction:incoming\"",
+      "range": {
+        "startLine": 36,
+        "startChar": 15,
+        "endLine": 36,
+        "endChar": 23
+      },
+      "revId": "34a90b5eb07d77b4710a2fd8fd177bbcbb6b3478",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
