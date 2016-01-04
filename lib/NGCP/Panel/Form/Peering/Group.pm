@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::PeeringGroup;
+package NGCP::Panel::Form::Peering::Group;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -72,7 +72,7 @@ sub custom_get_values {
 
 =head1 NAME
 
-NGCP::Panel::Form::PeeringGroup
+NGCP::Panel::Form::Peering::Group
 
 =head1 DESCRIPTION
 

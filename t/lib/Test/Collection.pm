@@ -331,8 +331,12 @@ sub get_hal_from_collection{
     if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
         $reshal = $list_collection;
         $location = $reshal->{_links}->{$hal_name}->{href};
-    } else {
+    } elsif( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
         $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
+        $location = $reshal->{_links}->{self}->{href};
+    }elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
+#preferencedefs collection
+        $reshal = $list_collection;
         $location = $reshal->{_links}->{self}->{href};
     }
     return ($reshal,$location);
