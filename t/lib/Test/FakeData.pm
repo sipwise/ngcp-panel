@@ -277,6 +277,18 @@ sub build_data{
             'query' => ['name'],
             'no_delete_available' => 1,
         },
+        'rewriterulesets' => {
+            'data' => {
+                reseller_id     => sub { return shift->get_id('resellers',@_); },
+                name            => 'api_test rule set name',
+                description     => 'api_test rule set description',
+                caller_in_dpid  => '1',
+                callee_in_dpid  => '2',
+                caller_out_dpid => '3',
+                callee_out_dpid => '4',
+            },
+            'query' => ['name'],
+        },
     };
     $self->process_data($data);
     return $data;
