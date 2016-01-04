@@ -54,6 +54,7 @@ sub GET : Allow {
         "SubscriberPreferenceDefs" => 1,
         "CustomerPreferenceDefs" => 1,
         "ProfilePreferenceDefs" => 1,
+        "PeeringServerPreferenceDefs" => 1,
     };
 
     my @colls = $self->get_collections;
