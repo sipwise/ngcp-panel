@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::PeeringRule;
+package NGCP::Panel::Form::Peering::Rule;
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -81,7 +81,7 @@ __END__
 
 =head1 NAME
 
-NGCP::Panel::Form::PeeringRule
+NGCP::Panel::Form::Peering::Rule
 
 =head1 DESCRIPTION
 
