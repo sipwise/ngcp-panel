@@ -1,3 +1,5 @@
+# DOCKER_NAME=ngcp-panel-tests-rest-api-jessie
+
 # TODO - switch to sipwise internal one
 FROM debian:jessie
 
@@ -5,7 +7,7 @@ FROM debian:jessie
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2015-09-15
+ENV REFRESHED_AT 2016-01-08
 
 # mirrors behind httpredir randomly throw `Error reading from server. Remote end closed connection`
 # and we want to be independent from any external services anyway
