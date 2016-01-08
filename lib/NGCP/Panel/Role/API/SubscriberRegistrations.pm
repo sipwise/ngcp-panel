@@ -66,6 +66,7 @@ sub hal_from_item {
         relation => 'ngcp:'.$self->resource_name,
     );
 
+    my $user_agent = $resource->{user_agent};
     $self->validate_form(
         c => $c,
         resource => $resource,
@@ -73,6 +74,7 @@ sub hal_from_item {
         run => 0,
         exceptions => [ "subscriber_id" ],
     );
+    $resource->{user_agent} = $user_agent;
 
     $resource->{id} = int($item->id);
 
