@@ -15,7 +15,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::BillingProfile::Admin qw();
+use NGCP::Panel::Form::BillingProfile::PeaktimeAPI qw();
 use NGCP::Panel::Utils::Billing qw();
 
 sub item_rs {
@@ -43,13 +43,16 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::BillingProfile::Admin->new;
+    return NGCP::Panel::Form::BillingProfile::PeaktimeAPI->new;
 }
 
 sub hal_from_profile {
     my ($self, $c, $profile, $form) = @_;
 
     my %resource = $profile->get_inflated_columns;
+
+    my $weekday_peaktimes = NGCP::Panel::Utils::Billing::resource_from_peaktime_weekdays($profile);
+    my $special_peaktimes = NGCP::Panel::Utils::Billing::resource_from_peaktime_specials($profile);
 
     # TODO: we should return the fees in an embedded field,
     # if the structure is returned for one single item
@@ -82,6 +85,8 @@ sub hal_from_profile {
     );
 
     $resource{id} = int($profile->id);
+    $resource{peaktime_weekdays} = $weekday_peaktimes;
+    $resource{peaktime_special} = $special_peaktimes;
     $hal->resource({%resource});
     return $hal;
 }
@@ -91,6 +96,13 @@ sub profile_by_id {
 
     my $profiles = $self->item_rs($c);
     return $profiles->find($id);
+}
+
+sub lock_profile {
+    my ($c,$profile_id) = @_;
+    return $c->model('DB')->resultset('billing_profiles')->find({
+                id => $profile_id
+                },{for => 'update'});
 }
 
 sub update_profile {
@@ -120,10 +132,39 @@ sub update_profile {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
 
+    my $weekday_peaktimes_to_create = [];
+    return unless NGCP::Panel::Utils::Billing::prepare_peaktime_weekdays(c => $c,
+        resource => $resource,
+        peaktimes_to_create => $weekday_peaktimes_to_create,
+        err_code => sub {
+            my ($err) = @_;
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+        }
+    );
+
+    my $special_peaktimes_to_create = [];
+    return unless NGCP::Panel::Utils::Billing::prepare_peaktime_specials(c => $c,
+        resource => $resource,
+        peaktimes_to_create => $special_peaktimes_to_create,
+        err_code => sub {
+            my ($err) = @_;
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+        }
+    );
+
     my $old_prepaid = $profile->prepaid;
-    
+
     try {
+        $profile = $self->lock_profile($c,$profile->id);
         $profile->update($resource);
+        $profile->billing_peaktime_weekdays->delete;
+        foreach my $weekday_peaktime (@$weekday_peaktimes_to_create) {
+            $profile->billing_peaktime_weekdays->create($weekday_peaktime);
+        }
+        $profile->billing_peaktime_specials->delete;
+        foreach my $special_peaktime (@$special_peaktimes_to_create) {
+            $profile->billing_peaktime_specials->create($special_peaktime);
+        }
         NGCP::Panel::Utils::Billing::switch_prepaid(c => $c,
                         profile_id => $profile->id,
                         old_prepaid => $old_prepaid,
@@ -135,7 +176,7 @@ sub update_profile {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
         return;
     };
-                    
+
     return $profile;
 }
 

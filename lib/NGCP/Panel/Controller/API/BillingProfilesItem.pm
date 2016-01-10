@@ -37,7 +37,7 @@ __PACKAGE__->config(
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller/],
             Does => [qw(ACL RequireSSL)],
-        }) }        
+        }) }
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -95,12 +95,13 @@ sub OPTIONS :Allow {
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -115,7 +116,7 @@ sub PATCH :Allow {
         my $form = $self->get_form($c);
         $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
         last unless $profile;
-        
+
         my $hal = $self->hal_from_profile($c, $profile, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
@@ -141,6 +142,7 @@ sub PATCH :Allow {
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
@@ -161,7 +163,7 @@ sub PUT :Allow {
 
         my $hal = $self->hal_from_profile($c, $profile, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
-        
+
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -187,7 +189,7 @@ sub item_base_journal :Journal {
     my $self = shift @_;
     return $self->handle_item_base_journal(@_);
 }
-    
+
 sub journals_get :Journal {
     my $self = shift @_;
     return $self->handle_journals_get(@_);
