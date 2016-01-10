@@ -6,23 +6,30 @@ use Text::CSV_XS;
 use IO::String;
 use NGCP::Schema;
 use NGCP::Panel::Utils::Preferences qw();
+use NGCP::Panel::Utils::DateTime;
+use DateTime::Format::Strptime qw();
+
+use NGCP::Panel::Utils::IntervalTree::Simple;
+
+use constant _CHECK_PEAKTIME_WEEKDAY_OVERLAPS => 1;
+use constant _CHECK_PEAKTIME_SPECIALS_OVERLAPS => 1;
 
 sub check_profile_update_item {
     my ($c,$new_resource,$old_item,$err_code) = @_;
 
     return 1 unless $old_item;
-    
+
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return 0; };
     }
-    
+
     if ($old_item->status eq 'terminated') {
         return 0 unless &{$err_code}("Billing profile is already terminated and cannot be changed.",'status');
     }
-    
+
     my $contract_cnt = $old_item->get_column('contract_cnt');
     #my $package_cnt = $old_item->get_column('package_cnt');
-    
+
     if (($contract_cnt > 0)
         && defined $new_resource->{interval_charge} && $old_item->interval_charge != $new_resource->{interval_charge}) {
         return 0 unless &{$err_code}("Interval charge cannot be changed (profile linked to $contract_cnt contracts).",'interval_charge');
@@ -38,6 +45,151 @@ sub check_profile_update_item {
 
     return 1;
 
+}
+
+sub prepare_peaktime_weekdays {
+    my(%params) = @_;
+    my ($c,$resource,$err_code,$peaktimes_to_create) = @params{qw/c resource err_code peaktimes_to_create/};
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    my $peaktime_weekdays = delete $resource->{peaktime_weekdays};
+    $peaktime_weekdays //= [];
+    if ('ARRAY' ne ref $peaktime_weekdays) {
+        return 0 unless &{$err_code}("peaktime_weekdays is not an array");
+    }
+
+    my @WEEKDAYS = (
+        $c->loc('Monday'),
+        $c->loc('Tuesday'),
+        $c->loc('Wednesday'),
+        $c->loc('Thursday'),
+        $c->loc('Friday'),
+        $c->loc('Saturday'),
+        $c->loc('Sunday')
+    );
+
+    my %intersecter_map = ();
+    foreach my $peaktime_weekday (@$peaktime_weekdays) {
+        if ($peaktime_weekday->{weekday} < 0 || $peaktime_weekday->{weekday} > 6) {
+            return 0 unless &{$err_code}("Peaktime weekday must be between 0 (Monday) and 6 (Sunday)");
+        }
+        my $weekday = $peaktime_weekday->{weekday};
+
+        my $parsetime  = DateTime::Format::Strptime->new(pattern => '%T');
+        my $parsetime2 = DateTime::Format::Strptime->new(pattern => '%R');
+        my $stime = $peaktime_weekday->{start};
+        my $etime = $peaktime_weekday->{stop};
+        $stime = '00:00:00' unless($stime && length($stime));
+        $etime = '23:59:59' unless($etime && length($etime));
+        my $start = $parsetime->parse_datetime($stime)
+                || $parsetime2->parse_datetime($stime);
+        my $end = $parsetime->parse_datetime($etime)
+              || $parsetime2->parse_datetime($etime);
+
+        unless ($start) {
+            return 0 unless &{$err_code}("Unknown weekday peaktime start time '$stime'.");
+        }
+        unless ($end) {
+            return 0 unless &{$err_code}("Unknown weekday peaktime stop time '$etime'.");
+        }
+        $stime = $parsetime->format_datetime($start);
+        $etime = $parsetime->format_datetime($end);
+        if ($end < $start) { #<= actually
+            return 0 unless &{$err_code}("Peaktime ($weekday - $WEEKDAYS[$weekday]) end time $etime must be later than start time $stime.");
+        }
+
+        my $intersecter;
+        if (_CHECK_PEAKTIME_WEEKDAY_OVERLAPS) {
+            if (exists $intersecter_map{$weekday}) {
+                $intersecter = $intersecter_map{$weekday};
+            } else {
+                $intersecter = NGCP::Panel::Utils::IntervalTree::Simple->new();
+                $intersecter_map{$weekday} = $intersecter;
+            }
+        }
+
+        if (defined $intersecter) {
+            my $from = $start->hour * 3600 + $start->minute * 60 + $start->second;
+            my $to = $end->hour * 3600 + $end->minute * 60 + $end->second + 1;
+            my $label = '(' . $weekday . ' - ' . $WEEKDAYS[$weekday] . ' ' . $stime . ' - ' . $etime .')';
+            my $overlaps_with = $intersecter->find($from,$to);
+            if ((scalar @$overlaps_with) > 0) {
+                return 0 unless &{$err_code}("Peaktime $label overlaps with peaktimes " . join(", ",@$overlaps_with));
+            } else {
+                $intersecter->insert($from,$to,$label);
+            }
+        }
+
+        if ('ARRAY' eq ref $peaktimes_to_create) {
+            push(@$peaktimes_to_create,{ weekday => $weekday,
+                    start => $stime,
+                    end => $etime,
+                });
+        }
+
+    }
+
+    return 1;
+}
+
+sub prepare_peaktime_specials {
+    my(%params) = @_;
+    my ($c,$resource,$err_code,$peaktimes_to_create) = @params{qw/c resource err_code peaktimes_to_create/};
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    my $peaktime_specials = delete $resource->{peaktime_special};
+    $peaktime_specials //= [];
+    if ('ARRAY' ne ref $peaktime_specials) {
+        return 0 unless &{$err_code}("peaktime_special is not an array");
+    }
+
+    my $intersecter = (_CHECK_PEAKTIME_SPECIALS_OVERLAPS ? NGCP::Panel::Utils::IntervalTree::Simple->new() : undef);
+    foreach my $peaktime_special (@$peaktime_specials) {
+        my $stime = $peaktime_special->{start};
+        my $etime = $peaktime_special->{stop};
+        #format checked by form
+        my $start = (defined $stime ? NGCP::Panel::Utils::DateTime::from_string($stime) : undef);
+        my $end = (defined $etime ? NGCP::Panel::Utils::DateTime::from_string($etime) : undef);
+
+        #although nullable, rateomat logic does not support open intervals
+        unless ($start) {
+            return 0 unless &{$err_code}("Empty special peaktime start timestamp.");
+        }
+        unless ($end) {
+            return 0 unless &{$err_code}("Empty special peaktime stop timestamp.");
+        }
+        if ($end < $start) { #<= actually
+            return 0 unless &{$err_code}("Special peaktime end timestamp $etime must be later than start timestamp $stime.");
+        }
+
+        if (defined $intersecter) {
+            my $from = $start->epoch;
+            my $to = $end->epoch + 1;
+            my $label = $stime . ' - ' . $etime;
+            my $overlaps_with = $intersecter->find($from,$to);
+            if ((scalar @$overlaps_with) > 0) {
+                return 0 unless &{$err_code}("Special peaktime $label overlaps with peaktimes " . join(", ",@$overlaps_with));
+            } else {
+                $intersecter->insert($from,$to,$label);
+            }
+        }
+
+        if ('ARRAY' eq ref $peaktimes_to_create) {
+            push(@$peaktimes_to_create,{
+                    start => $start,
+                    end => $end,
+                });
+        }
+
+    }
+
+    return 1;
 }
 
 sub process_billing_fees{
@@ -87,9 +239,9 @@ sub process_billing_fees{
         c => $c,
         schema => $schema,
         profile => $profile,
-        fees => \@fees 
+        fees => \@fees
     );
-    
+
     my $text = $c->loc('Billing Fee successfully uploaded');
     if(@fails) {
         $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
@@ -249,13 +401,13 @@ sub switch_prepaid {
     my $rs = $schema->resultset('billing_mappings')->search({
         billing_profile_id => $profile_id,
     });
-    
+
     if($old_prepaid && !$new_prepaid ||
        !$old_prepaid && $new_prepaid) {
-       
-        #this will taking too long, prohibit it: 
+
+        #this will taking too long, prohibit it:
         #die("changing the prepaid flag is not allowed");
-        
+
         foreach my $mapping ($rs->all) {
             my $contract = $mapping->contract;
             next unless($contract->contact->reseller_id); # skip non-customers
@@ -268,11 +420,11 @@ sub switch_prepaid {
                     prov_subscriber => $prov_sub,
                     value => ($new_prepaid ? 1 : 0),
                     attribute => 'prepaid'
-                );  
+                );
             }
         }
     }
-    
+
 }
 
 sub get_contract_count_stmt {
@@ -290,6 +442,50 @@ sub get_datatable_cols {
         { name => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"), },
 
     );
+
+}
+
+sub resource_from_peaktime_weekdays {
+
+    my ($profile) = @_;
+
+    my $datetime_fmt = DateTime::Format::Strptime->new(
+        pattern => '%T',
+    );
+    my $rs = $profile->billing_peaktime_weekdays->search_rs(
+        undef,
+        { order_by => { '-asc' => [ 'weekday', 'start', 'id' ]},
+        });
+    my @weekday_peaktimes = ();
+    foreach my $weekday_peaktime ($rs->all) {
+        my %wp = ( weekday => $weekday_peaktime->weekday );
+        $wp{start} = $weekday_peaktime->start; #($weekday_peaktime->start ? $datetime_fmt->format_datetime($weekday_peaktime->start) : undef);
+        $wp{stop} = $weekday_peaktime->end; #($weekday_peaktime->end ? $datetime_fmt->format_datetime($weekday_peaktime->end) : undef);
+        push(@weekday_peaktimes,\%wp);
+    }
+    return \@weekday_peaktimes;
+
+}
+
+sub resource_from_peaktime_specials {
+
+    my ($profile) = @_;
+
+    my $datetime_fmt = DateTime::Format::Strptime->new(
+        pattern => '%F %T',
+    );
+    my $rs = $profile->billing_peaktime_specials->search_rs(
+        undef,
+        { order_by => { '-asc' => [ 'start', 'id' ]},
+        });
+    my @special_peaktimes = ();
+    foreach my $special_peaktime ($rs->all) {
+        my %sp = ();
+        $sp{start} = ($special_peaktime->start ? $datetime_fmt->format_datetime($special_peaktime->start) : undef);
+        $sp{stop} = ($special_peaktime->end ? $datetime_fmt->format_datetime($special_peaktime->end) : undef);
+        push(@special_peaktimes,\%sp);
+    }
+    return \@special_peaktimes;
 
 }
 

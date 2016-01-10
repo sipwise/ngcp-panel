@@ -37,6 +37,8 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
 
 my $reseller_id = 1;
 
+goto PEAK;
+
 # collection test
 my $firstprofile = undef;
 my @allprofiles = ();
@@ -153,7 +155,7 @@ my @allprofiles = ();
                 delete $profiles{$c->{_links}->{self}->{href}};
             }
         }
-             
+
     } while($nexturi);
 
     is(scalar(keys %profiles), 0, "check if all test billing profiles have been found");
@@ -178,18 +180,18 @@ my @allprofiles = ();
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstprofile);
     $res = $ua->request($req);
-    is($res->code, 200, "fetch one contract item");
+    is($res->code, 200, "fetch one profile item");
     my $profile = JSON::from_json($res->decoded_content);
-    ok(exists $profile->{reseller_id} && $profile->{reseller_id}->is_int, "check existence of reseller_id");
+    ok(exists $profile->{reseller_id} && $profile->{reseller_id} > 0, "check existence of reseller_id");
     ok(exists $profile->{handle}, "check existence of handle");
     ok(exists $profile->{name}, "check existence of name");
-    
+
     # PUT same result again
     my $old_profile = { %$profile };
     delete $profile->{_links};
     delete $profile->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstprofile);
-    
+
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $req->header('Prefer' => "return=minimal");
@@ -242,7 +244,7 @@ my @allprofiles = ();
     is($mod_profile->{name}, "patched name $t", "check patched replace op");
     is($mod_profile->{_links}->{self}->{href}, $firstprofile, "check patched self link");
     is($mod_profile->{_links}->{collection}->{href}, '/api/billingprofiles/', "check patched collection link");
-    
+
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/reseller_id', value => undef } ]
@@ -261,9 +263,9 @@ my @allprofiles = ();
     ));
     $res = $ua->request($req);
     is($res->code, 200, "check patched prepaid");
-    
+
     # TODO: invalid handle etc
-    
+
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/status', value => 'terminated' } ]
     ));
@@ -271,7 +273,126 @@ my @allprofiles = ();
     is($res->code, 200, "terminated profile successful");
     $req = HTTP::Request->new('GET', $uri.'/'.$firstprofile);
     $res = $ua->request($req);
-    is($res->code, 404, "try to fetch terminated profile");    
+    is($res->code, 404, "try to fetch terminated profile");
+}
+
+{
+    $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        reseller_id => $reseller_id,
+        handle => "peakweekdays".time,
+        name => "peak weekdays ".time,
+        peaktime_weekdays => [
+            { weekday => 1,
+              start => '08:00',
+              stop => '10:00',
+            },
+            { weekday => 1,
+              start => '10:01',
+              stop => '12:00',
+            },
+            { weekday => 2,
+              start => '10:00',
+              stop => '12:00',
+            },
+        ],
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "create peaktimes weekday billing profile");
+    my $profile_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $profile_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed profile");
+    my $profile = JSON::from_json($res->decoded_content);
+
+    my $old_profile = { %$profile };
+    delete $profile->{_links};
+    delete $profile->{_embedded};
+    $req = HTTP::Request->new('PUT', $profile_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+
+    my $malformed_profile = { %$profile };
+    $malformed_profile->{peaktime_weekdays} = [
+            { weekday => 1,
+              start => '08:00',
+              stop => '10:00',
+            },
+            { weekday => 1,
+              start => '10:00',
+              stop => '12:00',
+            },];
+    $req->content(JSON::to_json($malformed_profile));
+    $res = $ua->request($req);
+    is($res->code, 422, "try to update profile using overlapping weekday peaktimes");
+    my $err = JSON::from_json($res->decoded_content);
+    ok($err->{message} =~ /overlap/, "check error message in body");
+
+    $req->content(JSON::to_json($profile));
+    $res = $ua->request($req);
+    is($res->code, 200, "check get2put weekday peaktimes successful");
+    my $got = JSON::from_json($res->decoded_content);
+    delete $got->{_links};
+    delete $got->{_embedded};
+    is_deeply($got,$profile,"check get2put weekday peaktimes deeply");
+
+}
+
+PEAK:
+{
+    $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        reseller_id => $reseller_id,
+        handle => "peakspecials".time,
+        name => "peak specials ".time,
+        peaktime_special => [
+            { start => '2016-01-01 08:00:00',
+              stop => '2016-01-02 07:59:59',
+            },
+            { start => '2016-01-02 08:00:00',
+              stop => '2016-01-02 10:00:00',
+            },
+        ],
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "create peaktimes special billing profile");
+    my $profile_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $profile_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed profile");
+    my $profile = JSON::from_json($res->decoded_content);
+
+    my $old_profile = { %$profile };
+    delete $profile->{_links};
+    delete $profile->{_embedded};
+    $req = HTTP::Request->new('PUT', $profile_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+
+    my $malformed_profile = { %$profile };
+    $malformed_profile->{peaktime_special} = [
+            { start => '2016-01-01 08:00:00',
+              stop => '2016-01-02 08:00:00',
+            },
+            { start => '2016-01-02 08:00:00',
+              stop => '2016-01-02 08:00:01',
+            },];
+    $req->content(JSON::to_json($malformed_profile));
+    $res = $ua->request($req);
+    is($res->code, 422, "try to update profile using overlapping special peaktimes");
+    my $err = JSON::from_json($res->decoded_content);
+    ok($err->{message} =~ /overlap/, "check error message in body");
+
+    $req->content(JSON::to_json($profile));
+    $res = $ua->request($req);
+    is($res->code, 200, "check get2put special peaktimes successful");
+    my $got = JSON::from_json($res->decoded_content);
+    delete $got->{_links};
+    delete $got->{_embedded};
+    is_deeply($got,$profile,"check get2put special peaktimes deeply");
+
 }
 
 done_testing;
