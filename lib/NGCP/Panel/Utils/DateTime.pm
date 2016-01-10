@@ -84,7 +84,7 @@ sub set_fake_time {
                 M => 60*60*24*30,
                 y => 60*60*24*365,
             );
-            
+
             if (!$o) {
                 $o = time;
             } elsif ($o =~ m/^([+-]\d+)([smhdMy]?)$/) {
@@ -130,13 +130,13 @@ sub from_string {
 }
 
 sub from_rfc1123_string {
-    
+
     my $s = shift;
-    
+
     my $strp = DateTime::Format::Strptime->new(pattern => RFC_1123_FORMAT_PATTERN,
                                                locale => 'en_US',
                                                on_error => 'undef');
-    
+
     return $strp->parse_datetime($s);
 
 }
@@ -175,15 +175,28 @@ sub to_string
 }
 
 sub to_rfc1123_string {
-    
+
     my $dt = shift;
-    
+
     my $strp = DateTime::Format::Strptime->new(pattern => RFC_1123_FORMAT_PATTERN,
                                                locale => 'en_US',
                                                on_error => 'undef');
-    
+
     return $strp->format_datetime($dt);
 
+}
+
+sub get_weekday_names {
+    my $c = shift;
+    return [
+            $c->loc('Monday'),
+            $c->loc('Tuesday'),
+            $c->loc('Wednesday'),
+            $c->loc('Thursday'),
+            $c->loc('Friday'),
+            $c->loc('Saturday'),
+            $c->loc('Sunday')
+        ];
 }
 
 1;
