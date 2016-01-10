@@ -778,15 +778,7 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
 sub load_weekdays {
     my ($self, $c) = @_;
 
-    my @WEEKDAYS = (
-            $c->loc('Monday'),
-            $c->loc('Tuesday'),
-            $c->loc('Wednesday'),
-            $c->loc('Thursday'),
-            $c->loc('Friday'),
-            $c->loc('Saturday'),
-            $c->loc('Sunday')
-        );
+    my @WEEKDAYS = @{NGCP::Panel::Utils::DateTime::get_weekday_names($c)};
 
     my @weekdays;
     for(0 .. 6) {
