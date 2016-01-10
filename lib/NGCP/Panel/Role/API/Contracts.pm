@@ -48,35 +48,11 @@ sub hal_from_contract {
     my $billing_profile_id = $billing_mapping->billing_profile_id;
     my $future_billing_profiles = NGCP::Panel::Utils::Contract::resource_from_future_mappings($contract);
     my $billing_profiles = NGCP::Panel::Utils::Contract::resource_from_mappings($contract);
-    #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    #my $etime = $stime->clone->add(months => 1);
-    #my $contract_balance = $contract->contract_balances
-    #    ->find({
-    #        start => { '>=' => $stime },
-    #        end => { '<' => $etime },
-    #        });
-    #unless($contract_balance) {
-    #    try {
-    #        NGCP::Panel::Utils::Contract::create_contract_balance(
-    #            c => $c,
-    #            profile => $billing_mapping->billing_profile,
-    #            contract => $contract,
-    #        );
-    #    } catch($e) {
-    #        $c->log->error("Failed to create current contract balance for contract id '".$contract->id."': $e");
-    #        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
-    #        return;
-    #    }
-    #    $contract_balance = $contract->contract_balances->find({
-    #        start => { '>=' => $stime },
-    #        end => { '<' => $etime },
-    #    });
-    #}
-    
+
     #we leave this here to keep the former behaviour: contract balances are also created upon GET api/contracts/4711
     NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $contract,
-            now => $now);    
+            now => $now);
 
     my %resource = $contract->get_inflated_columns;
 
@@ -88,7 +64,7 @@ sub hal_from_contract {
             push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingnetworks', href => sprintf("/api/billingnetworks/%d", $mapping->network_id)));
         }
     }
-    
+
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -118,7 +94,7 @@ sub hal_from_contract {
         exceptions => [ "contact_id", "billing_profile_id" ],
     );
 
-    $resource{type} = $billing_mapping->product->class;    
+    $resource{type} = $billing_mapping->product->class;
     $resource{billing_profiles} = $future_billing_profiles;
     $resource{all_billing_profiles} = $billing_profiles;
 
@@ -140,9 +116,9 @@ sub update_contract {
 
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     my $billing_profile = $billing_mapping->billing_profile;
-    
-    my $old_package = $contract->profile_package; 
-    
+
+    my $old_package = $contract->profile_package;
+
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
     $resource->{contact_id} //= undef;
@@ -155,7 +131,7 @@ sub update_contract {
     );
 
     #my $now = NGCP::Panel::Utils::DateTime::current_local;
-    
+
     my $mappings_to_create = [];
     my $delete_mappings = 0;
     my $set_package = ($resource->{billing_profile_definition} // 'id') eq 'package';
@@ -192,10 +168,10 @@ sub update_contract {
         $contract->update($resource);
         NGCP::Panel::Utils::Contract::remove_future_billing_mappings($contract,$now) if $delete_mappings;
         foreach my $mapping (@$mappings_to_create) {
-            $contract->billing_mappings->create($mapping); 
+            $contract->billing_mappings->create($mapping);
         }
         $contract = $self->contract_by_id($c, $contract->id,1,$now);
-        
+
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $contract,
             old_package => $old_package,
@@ -206,11 +182,11 @@ sub update_contract {
             balance => $balance,
             now => $now,
             profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
-            );        
+            );
 
         $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-        $billing_profile = $billing_mapping->billing_profile;            
-            
+        $billing_profile = $billing_mapping->billing_profile;
+
         if($old_resource->{status} ne $resource->{status}) {
             if($contract->id == 1) {
                 $self->error($c, HTTP_FORBIDDEN, "Cannot set contract status to '".$resource->{status}."' for contract id '1'");
@@ -221,13 +197,13 @@ sub update_contract {
                 contract => $contract,
             );
         }
-    
+
         # TODO: what about changed product, do we allow it?
     } catch($e) {
         $c->log->error("Failed to update contract id '".$contract->id."': $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
         return;
-    };        
+    };
 
     return $contract;
 }

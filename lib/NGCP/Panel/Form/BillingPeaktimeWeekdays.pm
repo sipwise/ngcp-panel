@@ -13,7 +13,7 @@ has_field 'weekday' => (
     type => 'Hidden',
 );
 
-has_field 'start' => ( 
+has_field 'start' => (
     type => 'Text',
     do_label => 0,
     do_wrapper => 1,
@@ -60,7 +60,7 @@ sub validate {
           || $parsetime2->parse_datetime($etime);
 
     if ($end < $start) {
-        my $err_msg = 'Start time must be later than end time.';
+        my $err_msg = 'End time must be later than start time.';
         $self->field('start')->add_error($err_msg);
         $self->field('end')->add_error($err_msg);
     }

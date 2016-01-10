@@ -11,6 +11,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller qw();
+use NGCP::Panel::Utils::Billing qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -21,7 +22,7 @@ require Catalyst::ActionRole::RequireSSL;
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
-    default => 
+    default =>
         'Defines a collection of <a href="#billingfees">Billing Fees</a> and <a href="#billingzones">Billing Zones</a> and can be assigned to <a href="#customers">Customers</a> and <a href="#contracts">System Contracts</a>.'
 );
 
@@ -121,7 +122,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -156,7 +157,7 @@ sub POST :Allow {
     {
         my $schema = $c->model('DB');
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -180,16 +181,42 @@ sub POST :Allow {
             my ($err) = @_;
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
         });
-        
+
+        my $weekday_peaktimes_to_create = [];
+        last unless NGCP::Panel::Utils::Billing::prepare_peaktime_weekdays(c => $c,
+            resource => $resource,
+            peaktimes_to_create => $weekday_peaktimes_to_create,
+            err_code => sub {
+                my ($err) = @_;
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+            }
+        );
+
+        my $special_peaktimes_to_create = [];
+        last unless NGCP::Panel::Utils::Billing::prepare_peaktime_specials(c => $c,
+            resource => $resource,
+            peaktimes_to_create => $special_peaktimes_to_create,
+            err_code => sub {
+                my ($err) = @_;
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+            }
+        );
+
         my $billing_profile;
         try {
             $billing_profile= $schema->resultset('billing_profiles')->create($resource);
+            foreach my $weekday_peaktime (@$weekday_peaktimes_to_create) {
+                $billing_profile->billing_peaktime_weekdays->create($weekday_peaktime);
+            }
+            foreach my $special_peaktime (@$special_peaktimes_to_create) {
+                $billing_profile->billing_peaktime_specials->create($special_peaktime);
+            }
         } catch($e) {
             $c->log->error("failed to create billing profile: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing profile.");
             last;
         }
-        
+
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
