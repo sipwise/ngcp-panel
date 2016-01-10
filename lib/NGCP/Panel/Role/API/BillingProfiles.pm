@@ -15,7 +15,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::BillingProfile::Admin qw();
+use NGCP::Panel::Form::BillingProfile::PeaktimeAPI qw();
 use NGCP::Panel::Utils::Billing qw();
 
 sub item_rs {
@@ -43,13 +43,16 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::BillingProfile::Admin->new;
+    return NGCP::Panel::Form::BillingProfile::PeaktimeAPI->new;
 }
 
 sub hal_from_profile {
     my ($self, $c, $profile, $form) = @_;
 
     my %resource = $profile->get_inflated_columns;
+
+    my $weekday_peaktimes = NGCP::Panel::Utils::Billing::resource_from_peaktime_weekdays($profile);
+    my $special_peaktimes = NGCP::Panel::Utils::Billing::resource_from_peaktime_specials($profile);
 
     # TODO: we should return the fees in an embedded field,
     # if the structure is returned for one single item
@@ -82,6 +85,8 @@ sub hal_from_profile {
     );
 
     $resource{id} = int($profile->id);
+    $resource{weekday_peaktimes} = $weekday_peaktimes;
+    $resource{special_peaktimes} = $special_peaktimes;
     $hal->resource({%resource});
     return $hal;
 }
@@ -121,7 +126,7 @@ sub update_profile {
     });
 
     my $old_prepaid = $profile->prepaid;
-    
+
     try {
         $profile->update($resource);
         NGCP::Panel::Utils::Billing::switch_prepaid(c => $c,
@@ -135,7 +140,7 @@ sub update_profile {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
         return;
     };
-                    
+
     return $profile;
 }
 
