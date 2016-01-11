@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba65a107_4d03b973",
+        "filename": "lib/NGCP/Panel/Utils/Peering.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-11T09:06:19Z",
+      "side": 1,
+      "message": "_method is for internal things by convention. you should make that sip_lcr_reload.",
+      "revId": "1809f99d7d7fa23f3f7f486468450632d772de0b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
