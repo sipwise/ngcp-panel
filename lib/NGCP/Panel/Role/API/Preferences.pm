@@ -362,7 +362,7 @@ sub update_item {
         $accessor = $item->id;
         $elem = $item;
         $full_rs = $elem->voip_prof_preferences;
-        $pref_type = 'profile_pref';
+        $pref_type = 'prof_pref';
         $reseller_id = $item->profile_set->reseller_id;
     } elsif($type eq "subscribers") {
         delete $resource->{subscriber_id};
