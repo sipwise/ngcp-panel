@@ -1,3 +1,12 @@
+ngcp-panel (1.10.1.11+0~mr4.1.1.11) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b29bed9] MT#17247 float field precision given, but no size
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 11 Jan 2016 13:14:29 +0100
+
 ngcp-panel (1.10.1.10+0~mr4.1.1.10) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
