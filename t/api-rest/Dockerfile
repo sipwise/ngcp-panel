@@ -7,6 +7,9 @@ FROM docker.mgm.sipwise.com/sipwise-jessie:latest
 # old cached versions when the Dockerfile is built.
 ENV REFRESHED_AT 2016-01-12
 
+# TODO - the release-trunk-jessie is too dynamic yet, though required build deps
+RUN echo "deb https://deb.sipwise.com/autobuild/ release-trunk-jessie main" >>/etc/apt/sources.list
+
 RUN apt-get update
 RUN apt-get install --assume-yes \
 	devscripts \
