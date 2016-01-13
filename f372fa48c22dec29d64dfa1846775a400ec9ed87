@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba65a107_a4794795",
+        "filename": "share/templates/api/root/collection.tt",
+        "patchSetId": 13
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-13T16:29:29Z",
+      "side": 1,
+      "message": "advanced tt syntax or missing %] ?",
+      "range": {
+        "startLine": 235,
+        "startChar": 29,
+        "endLine": 235,
+        "endChar": 30
+      },
+      "revId": "f372fa48c22dec29d64dfa1846775a400ec9ed87",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba65a107_046833b9",
+        "filename": "share/templates/api/root/collection.tt",
+        "patchSetId": 13
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-13T16:29:29Z",
+      "side": 1,
+      "message": "[%",
+      "range": {
+        "startLine": 280,
+        "startChar": 0,
+        "endLine": 280,
+        "endChar": 5
+      },
+      "revId": "f372fa48c22dec29d64dfa1846775a400ec9ed87",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
