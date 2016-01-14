@@ -21,7 +21,7 @@ require Catalyst::ActionRole::RequireSSL;
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
-    default => 
+    default =>
         'Defines calls placed or received by a customer.',
 );
 
@@ -48,18 +48,19 @@ class_has 'query_params' => (
         {
             param => 'subscriber_id',
             description => 'Filter for calls of a specific subscriber',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { 
-                        'subscriber.id' => $q,
-                    };
-                },
-                second => sub {
-                    return {
-                        join => 'subscriber',
-                    };
-                },
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($q);
+                if ($subscriber) {
+                    my $out_rs = $rs->search_rs({
+                        source_user_id => $subscriber->uuid,
+                    });
+                    my $in_rs = $rs->search_rs({
+                        destination_user_id => $subscriber->uuid,
+                    });
+                    return $out_rs->union_all($in_rs);
+                }
+                return $rs;
             },
         },
     ]},
@@ -131,7 +132,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
