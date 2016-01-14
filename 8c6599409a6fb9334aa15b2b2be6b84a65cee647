@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "ba65a107_aa0591c3",
+        "filename": "lib/NGCP/Panel/Utils/Billing.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-14T11:41:46Z",
+      "side": 1,
+      "message": "ratomat sees those time ranges both start and end *inclusive* aka closed intervals, so strictly speaking [08:00-10:00] overlaps with [10:00-12:00] by one second.\n\nthe +1second is required since the interval tree implementation assumes right-open intervals, i.e. [start,end)",
+      "parentUuid": "ba65a107_ca524513",
+      "revId": "8c6599409a6fb9334aa15b2b2be6b84a65cee647",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba65a107_8a0e8d33",
         "filename": "t/api-rest/api-billingprofiles.t",
         "patchSetId": 4
