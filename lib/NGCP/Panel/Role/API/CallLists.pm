@@ -24,28 +24,27 @@ sub item_rs {
     my $item_rs = $c->model('DB')->resultset('cdr');
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ 
+        $item_rs = $item_rs->search({
             -or => [
                 { source_provider_id => $c->user->reseller->contract_id },
                 { destination_provider_id => $c->user->reseller->contract_id },
             ],
         });
     } elsif($c->user->roles eq "subscriberadmin") {
-        $item_rs = $item_rs->search({ 
+        $item_rs = $item_rs->search({
             -or => [
                 { 'source_account_id' => $c->user->account_id },
                 { 'destination_account_id' => $c->user->account_id },
             ],
         });
     } else {
-        $item_rs = $item_rs->search({ 
-            -or => [
-                { 'source_subscriber.id' => $c->user->voip_subscriber->id },
-                { 'destination_subscriber.id' => $c->user->voip_subscriber->id },
-            ],
-        },{
-            join => ['source_subscriber', 'destination_subscriber'],
+        my $out_rs = $item_rs->search_rs({
+            source_user_id => $c->user->voip_subscriber->uuid,
         });
+        my $in_rs = $item_rs->search_rs({
+            destination_user_id => $c->user->voip_subscriber->uuid,
+        });
+        $item_rs = $out_rs->union_all($in_rs);
     }
     $item_rs = $item_rs->search({
         -not => [
@@ -102,7 +101,7 @@ sub resource_from_item {
     my $resource = NGCP::Panel::Utils::CallList::process_cdr_item($c, $item, $owner);
 
     my $datetime_fmt = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
+        pattern => '%F %T',
     );
 
     $resource->{start_time} = $datetime_fmt->format_datetime($resource->{start_time});
@@ -177,7 +176,7 @@ sub get_owner_data {
                 subscriber => undef,
                 customer => $cust,
             };
-        } 
+        }
     } else {
         return {
             subscriber => $c->user->voip_subscriber,
