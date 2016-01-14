@@ -21,7 +21,7 @@ require Catalyst::ActionRole::RequireSSL;
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
-    default => 
+    default =>
         'Defines call lists in simplified form for showing call histories of subscribers.',
 );
 
@@ -32,18 +32,19 @@ class_has 'query_params' => (
         {
             param => 'subscriber_id',
             description => 'Filter for calls for a specific subscriber. Either this or customer_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific subscriber in order to properly determine the direction of calls.',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { 
-                        'subscriber.id' => $q,
-                    };
-                },
-                second => sub {
-                    return {
-                        join => 'subscriber',
-                    };
-                },
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($q);
+                if ($subscriber) {
+                    my $out_rs = $rs->search_rs({
+                        source_user_id => $subscriber->uuid,
+                    });
+                    my $in_rs = $rs->search_rs({
+                        destination_user_id => $subscriber->uuid,
+                    });
+                    return $out_rs->union_all($in_rs);
+                }
+                return $rs;
             },
         },
         {
@@ -55,7 +56,7 @@ class_has 'query_params' => (
                     return {
                         -or => [
                             'source_account_id' => $q,
-                            'destination_account_id' => $q, 
+                            'destination_account_id' => $q,
                         ],
                     };
                 },
@@ -245,7 +246,7 @@ sub GET :Allow {
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        my $href_data = $owner->{subscriber} ? 
+        my $href_data = $owner->{subscriber} ?
             "subscriber_id=".$owner->{subscriber}->id :
             "customer_id=".$owner->{customer}->id;
         for my $item ($items->all) {
@@ -278,7 +279,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);

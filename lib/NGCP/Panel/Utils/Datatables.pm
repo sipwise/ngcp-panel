@@ -9,7 +9,7 @@ use Scalar::Util qw/blessed/;
 use DateTime::Format::Strptime;
 
 sub process {
-    my ($c, $rs, $cols, $row_func) = @_;
+    my ($c, $rs, $cols, $row_func, $total_row_func) = @_;
 
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
@@ -147,6 +147,9 @@ sub process {
     for my $sum_col (keys %{ $aggregate_cols }) {
         my ($aggregation_method, $accessor) = @{ $aggregate_cols->{$sum_col} };
         $aggregations->{$sum_col} = $rs->get_column(\[$accessor])->$aggregation_method;
+    }
+    if (defined $total_row_func && (scalar keys %{ $aggregate_cols }) > 0) {
+        $aggregations = {%{$aggregations}, $total_row_func->($aggregations) };
     }
 
     # show specific row on top (e.g. if we come back from a newly created entry)
