@@ -28,12 +28,12 @@ around handle => sub {
     my $in_rs = $c->model('DB')->resultset('cdr')->search({
         destination_user_id => $c->user->uuid,
     });
-    my $calls_rs = $out_rs->union($in_rs)->search(undef, {
+    my $calls_rs = $out_rs->union_all($in_rs)->search(undef, {
          order_by => { -desc => 'me.start_time' },
     })->slice(0, 4);
 
     my $sub = $c->user->voip_subscriber;
-    my $calls = [ map { 
+    my $calls = [ map {
                 my $call = { $_->get_inflated_columns };
                 $call->{destination_user_in} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
                     c => $c, subscriber => $sub, number => $call->{destination_user_in}, direction => 'caller_out'

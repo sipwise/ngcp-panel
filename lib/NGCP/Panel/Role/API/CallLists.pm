@@ -25,14 +25,14 @@ sub item_rs {
     my $item_rs = $c->model('DB')->resultset('cdr');
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ 
+        $item_rs = $item_rs->search({
             -or => [
                 { source_provider_id => $c->user->reseller->contract_id },
                 { destination_provider_id => $c->user->reseller->contract_id },
             ],
         });
     } elsif($c->user->roles eq "subscriberadmin") {
-        $item_rs = $item_rs->search({ 
+        $item_rs = $item_rs->search({
             -or => [
                 { 'source_account_id' => $c->user->account_id },
                 { 'destination_account_id' => $c->user->account_id },
@@ -44,6 +44,18 @@ sub item_rs {
         },{
             join => 'subscriber',
         });
+        
+        #we could use this below to improve performance here, but it makes
+        #less sense since rs for reseller or subscriberadmin roles cannot
+        #be improved the same way (using UNION ALL). same holds for filters.
+
+        #my $out_rs = $c->model('DB')->resultset('cdr')->search({
+        #    source_user_id => $c->user->voip_subscriber->uuid,
+        #});
+        #my $in_rs = $c->model('DB')->resultset('cdr')->search({
+        #    destination_user_id => $c->user->voip_subscriber->uuid,
+        #});
+        #$item_rs = $out_rs->union_all($in_rs);
     }
     $item_rs = $item_rs->search({
         -not => [
@@ -100,7 +112,7 @@ sub resource_from_item {
     my $resource = NGCP::Panel::Utils::CallList::process_cdr_item($c, $item, $owner);
 
     my $datetime_fmt = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
+        pattern => '%F %T',
     );
 
     $resource->{start_time} = $datetime_fmt->format_datetime($resource->{start_time});
@@ -175,7 +187,7 @@ sub get_owner_data {
                 subscriber => undef,
                 customer => $cust,
             };
-        } 
+        }
     } else {
         return {
             subscriber => $c->user->voip_subscriber,
