@@ -1,3 +1,16 @@
+ngcp-panel (1.8.4.4+0~mr3.8.4.4) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [4c36cd4] MT#15489 Use textfmt to prepare textfile with utf for hylafax
+  * [1ed8c25] MT#17199 Add user_agent field into subscriberregistrations GET output
+  * [964ea2f] MT#5349 Fix typo in profile preferences metadata
+  * [1ac4a67] MT#15489 Fix faxes form fields description
+  * [efdcf2e] MT#10199 Fix typo in profiles preferences
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Jan 2016 18:02:34 +0100
+
 ngcp-panel (1.8.4.3+0~mr3.8.4.3) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
