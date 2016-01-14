@@ -16,7 +16,7 @@ function showCallDetails(callId){
         'call_details_container',
         uri,
         '',
-        function(){ 
+        function(){
             $('#'+divId).draggable({
                 handle: '.modal-header',
                 cursor: 'crosshair',
@@ -32,8 +32,8 @@ function showCallDetails(callId){
 
 <select id="Calls_table_external_filter">
 <option value="">Show all calls</option>
-<option value="outcoming">Show only outgoing calls</option>
-<option value="incoming">Show incoming calls</option>
+<option value="direction:outgoing">Show outgoing calls only</option>
+<option value="direction:incoming">Show incoming calls only</option>
 </select>
 <script>
 $('#Calls_table_external_filter').change( function() { $('#Calls_table').dataTable().fnFilter( $(this).val() ); } );
@@ -41,7 +41,7 @@ $('#Calls_table_external_filter').change( function() { $('#Calls_table').dataTab
 
 <div class="ngcp-separator"></div>
 
-[%PROCESS 'subscriber/call_details_wrapper.tt' %]  
+[%PROCESS 'subscriber/call_details_wrapper.tt' %]
 [%
     helper.name = 'Calls';
     helper.dt_columns = calls_dt_columns;
