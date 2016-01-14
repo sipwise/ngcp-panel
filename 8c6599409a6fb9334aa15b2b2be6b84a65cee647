@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba65a107_6a577903",
+        "filename": "lib/NGCP/Panel/Form/BillingPeaktimeWeekdays.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-14T10:03:32Z",
+      "side": 1,
+      "message": "good catch",
+      "revId": "8c6599409a6fb9334aa15b2b2be6b84a65cee647",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba65a107_ca524513",
+        "filename": "lib/NGCP/Panel/Utils/Billing.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-14T10:03:32Z",
+      "side": 1,
+      "message": "I guess \"+ 1\" is so that two intervals don\u0027t join?",
+      "revId": "8c6599409a6fb9334aa15b2b2be6b84a65cee647",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba65a107_8a0e8d33",
+        "filename": "t/api-rest/api-billingprofiles.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-14T10:03:32Z",
+      "side": 1,
+      "message": "temporary debug, I guess",
+      "revId": "8c6599409a6fb9334aa15b2b2be6b84a65cee647",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
