@@ -23,50 +23,40 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-#class_has 'api_description' => (
-#    is => 'ro',
-#    isa => 'Str',
-#    default => 
-#        'Defines peering groups.',
-#);
-#
-#class_has 'query_params' => (
-#    is => 'ro',
-#    isa => 'ArrayRef',
-#    default => sub {[
-#        {
-#            param => 'name',
-#            description => 'Filter for peering group name',
-#            query => {
-#                first => sub {
-#                    my $q = shift;
-#                    { name => { like => $q } };
-#                },
-#                second => sub {},
-#            },
-#        },
-#        {
-#            param => 'description',
-#            description => 'Filter for peering group description',
-#            query => {
-#                first => sub {
-#                    my $q = shift;
-#                    { description => { like => $q } };
-#                },
-#                second => sub {},
-#            },
-#        },
-#    ]},
-#);
-#
-##with 'NGCP::Panel::Role::API::PeeringGroups';
-##use base 'NGCP::Panel::Role::API::PeeringGroups';
-#class_has('resource_name', is => 'ro', default => 'peeringgroups');
+sub api_description {
+    return 'Defines peering groups.';
+};
+
+sub query_params {
+    return [
+        {
+            param => 'name',
+            description => 'Filter for peering group name',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { name => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'description',
+            description => 'Filter for peering group description',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { description => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+    ];
+}
+
 sub resource_name{return 'peeringgroupstrys';}
 sub dispatch_path{return '/api/peeringgroupstrys/';}
 sub relation{return 'http://purl.org/sipwise/ngcp-api/#rel-peeringgroupstrys';}
-#class_has('dispatch_path', is => 'ro', default => '/api/peeringgroups/');
-#class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-peeringgroups');
 
 __PACKAGE__->config(
     action => {
