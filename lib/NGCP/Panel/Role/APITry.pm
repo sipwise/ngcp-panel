@@ -578,18 +578,18 @@ sub log_response {
 }
 
 
-sub item_rs {}
-#around 'item_rs' => sub {
-#    my ($orig, $self, @orig_params) = @_;
-#    my $item_rs = $self->$orig(@orig_params);
-#    return unless($item_rs);
-#    
-#    if ($self->can('query_params')) {
-#        return $self->apply_query_params($orig_params[0],$self->query_params,$item_rs);
-#    }
-#    
-#    return $item_rs;
-#};
+#sub item_rs {}
+sub item_rs {
+    my ($self, @orig_params) = @_;
+    my $item_rs = $self->_item_rs(@orig_params);
+    return unless($item_rs);
+    
+    if ($self->can('query_params')) {
+        return $self->apply_query_params($orig_params[0],$self->query_params,$item_rs);
+    }
+    
+    return $item_rs;
+}
 
 sub apply_query_params {
     
