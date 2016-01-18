@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba65a107_9e124bb3",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 3160,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-18T10:57:03Z",
+      "side": 1,
+      "message": "maybe it\u0027s just me, but I find the naming a bit confusing. How about\n\ncalls/ajax\n\ncalls/ajax/in\n\ncalls/ajax/out\n\ncalls/details",
+      "revId": "b74f3ce1b2627fe8ef13f9b69a2f2ce64830bf22",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba65a107_de48c3ce",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-18T10:57:03Z",
+      "side": 1,
+      "message": "$item_rs",
+      "range": {
+        "startLine": 42,
+        "startChar": 21,
+        "endLine": 42,
+        "endChar": 54
+      },
+      "revId": "b74f3ce1b2627fe8ef13f9b69a2f2ce64830bf22",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba65a107_fe4587b3",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-18T10:57:03Z",
+      "side": 1,
+      "message": "$item_rs",
+      "range": {
+        "startLine": 45,
+        "startChar": 20,
+        "endLine": 45,
+        "endChar": 53
+      },
+      "revId": "b74f3ce1b2627fe8ef13f9b69a2f2ce64830bf22",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
