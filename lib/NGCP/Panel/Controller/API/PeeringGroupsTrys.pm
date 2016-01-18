@@ -1,65 +1,72 @@
-package NGCP::Panel::Controller::API::PeeringGroups;
+package NGCP::Panel::Controller::API::PeeringGroupsTrys;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
+#use Sipwise::Base;
+#use Moose;
 #use namespace::sweep;
+no Moose;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+#use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Peering;
 use Path::Tiny qw(path);
+use TryCatch;
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+#BEGIN { extends 'Catalyst::Controller'; }
+no Moose;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroupsTrys/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines peering groups.',
-);
-
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
-        {
-            param => 'name',
-            description => 'Filter for peering group name',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
-        },
-        {
-            param => 'description',
-            description => 'Filter for peering group description',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { description => { like => $q } };
-                },
-                second => sub {},
-            },
-        },
-    ]},
-);
-
-with 'NGCP::Panel::Role::API::PeeringGroups';
-
-class_has('resource_name', is => 'ro', default => 'peeringgroups');
-class_has('dispatch_path', is => 'ro', default => '/api/peeringgroups/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-peeringgroups');
+#class_has 'api_description' => (
+#    is => 'ro',
+#    isa => 'Str',
+#    default => 
+#        'Defines peering groups.',
+#);
+#
+#class_has 'query_params' => (
+#    is => 'ro',
+#    isa => 'ArrayRef',
+#    default => sub {[
+#        {
+#            param => 'name',
+#            description => 'Filter for peering group name',
+#            query => {
+#                first => sub {
+#                    my $q = shift;
+#                    { name => { like => $q } };
+#                },
+#                second => sub {},
+#            },
+#        },
+#        {
+#            param => 'description',
+#            description => 'Filter for peering group description',
+#            query => {
+#                first => sub {
+#                    my $q = shift;
+#                    { description => { like => $q } };
+#                },
+#                second => sub {},
+#            },
+#        },
+#    ]},
+#);
+#
+##with 'NGCP::Panel::Role::API::PeeringGroups';
+##use base 'NGCP::Panel::Role::API::PeeringGroups';
+#class_has('resource_name', is => 'ro', default => 'peeringgroups');
+sub resource_name{return 'peeringgroupstrys';}
+sub dispatch_path{return '/api/peeringgroupstrys/';}
+sub relation{return 'http://purl.org/sipwise/ngcp-api/#rel-peeringgroupstrys';}
+#class_has('dispatch_path', is => 'ro', default => '/api/peeringgroups/');
+#class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-peeringgroups');
 
 __PACKAGE__->config(
     action => {
@@ -182,7 +189,7 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('voip_peer_groups')->create($resource);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
-        } catch($e) {
+        } catch($e){
             $c->log->error("failed to create peering group: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering group.");
             last;

@@ -1,7 +1,7 @@
-package NGCP::Panel::Role::API;
+package NGCP::Panel::Role::APITry;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose::Role;
-use Sipwise::Base;
+#use Moose::Role;
+#use Sipwise::Base;
 
 use Storable qw();
 use JSON qw();
@@ -23,7 +23,7 @@ use NGCP::Panel::Utils::Journal qw();
 #use Data::HAL qw();
 #use Data::HAL::Link qw();
 
-has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
+#has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
 
 sub get_valid_post_data {
     my ($self, %params) = @_;
@@ -579,17 +579,17 @@ sub log_response {
 
 
 sub item_rs {}
-around 'item_rs' => sub {
-    my ($orig, $self, @orig_params) = @_;
-    my $item_rs = $self->$orig(@orig_params);
-    return unless($item_rs);
-    
-    if ($self->can('query_params')) {
-        return $self->apply_query_params($orig_params[0],$self->query_params,$item_rs);
-    }
-    
-    return $item_rs;
-};
+#around 'item_rs' => sub {
+#    my ($orig, $self, @orig_params) = @_;
+#    my $item_rs = $self->$orig(@orig_params);
+#    return unless($item_rs);
+#    
+#    if ($self->can('query_params')) {
+#        return $self->apply_query_params($orig_params[0],$self->query_params,$item_rs);
+#    }
+#    
+#    return $item_rs;
+#};
 
 sub apply_query_params {
     
