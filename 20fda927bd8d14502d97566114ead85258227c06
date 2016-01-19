@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "ba65a107_dffbdd45",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-19T09:48:30Z",
+      "side": 1,
+      "message": "Tha main catch - we never know what parameter may be necessary in the future, and 5 parameters are already enough.",
+      "parentUuid": "ba65a107_30a32ea0",
+      "range": {
+        "startLine": 150,
+        "startChar": 4,
+        "endLine": 150,
+        "endChar": 76
+      },
+      "revId": "20fda927bd8d14502d97566114ead85258227c06",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba65a107_2a418139",
         "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
         "patchSetId": 4
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "The problem is we used is_deeply once ( in the Subscribers Controller), but I really didn\u0027t want to use it, because it\u0027s a test function. That\u0027s also why we sometimes have \"ok ...\" on the stdout; this is the wrong approach IMO. There is Data::Compare, but I hesitated from adding a new module here. So our options are:\n\n* Use Data::Compare - adds a new module, but it doesn\u0027t seem to be very heavy\n\n* Write our own Util - but the we need to make sure, it works as expected, write unit-tests, ...\n\nWaiting for your (and other devs\u0027 opinion here) :)",
       "parentUuid": "ba65a107_2a418139",
+      "range": {
+        "startLine": 259,
+        "startChar": 0,
+        "endLine": 259,
+        "endChar": 28
+      },
+      "revId": "20fda927bd8d14502d97566114ead85258227c06",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba65a107_3fff7936",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-19T09:48:30Z",
+      "side": 1,
+      "message": "I meant that is_deeply may use some \"standard-from-cpan\" function - and we can use the same function, not is_deeply itself.\nI think it is better to add new module. Or just move your function to Utils::Generic - what do you think?",
+      "parentUuid": "ba65a107_d0e2f2d4",
       "range": {
         "startLine": 259,
         "startChar": 0,
