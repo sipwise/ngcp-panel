@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba65a107_7492f358",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 19
+      },
+      "lineNbr": 3109,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2016-01-19T20:57:13Z",
+      "side": 1,
+      "message": "Please use \"outgoing\" to be consistent with the terminology as used in other places of the panel.",
+      "range": {
+        "startLine": 3109,
+        "startChar": 25,
+        "endLine": 3109,
+        "endChar": 34
+      },
+      "revId": "ddd19465a09b3c92cf21811bcf674b92fcaeb8db",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
