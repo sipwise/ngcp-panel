@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "ba65a107_e4a65f53",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroups.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-21T13:55:12Z",
+      "side": 1,
+      "message": "Here I havea question: why we don\u0027t use inheritance for journal\u0027s methods? I\u0027m sure there should be some reason.",
+      "parentUuid": "da7095c5_e8015b3a",
+      "range": {
+        "startLine": 191,
+        "startChar": 8,
+        "endLine": 191,
+        "endChar": 22
+      },
+      "revId": "e9e61b59533ea0b8ff529c5419829f455e033a3d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da7095c5_48ede78a",
         "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
         "patchSetId": 1
@@ -65,6 +89,30 @@
     },
     {
       "key": {
+        "uuid": "ba65a107_248697ba",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-21T13:55:12Z",
+      "side": 1,
+      "message": "I would say that it is not in the context of this review",
+      "parentUuid": "da7095c5_48ede78a",
+      "range": {
+        "startLine": 301,
+        "startChar": 8,
+        "endLine": 301,
+        "endChar": 17
+      },
+      "revId": "e9e61b59533ea0b8ff529c5419829f455e033a3d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da7095c5_a8fb6346",
         "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
         "patchSetId": 1
@@ -76,6 +124,30 @@
       "writtenOn": "2016-01-03T13:51:36Z",
       "side": 1,
       "message": "separate GroupAPI nicer, without that get_custom_values?",
+      "range": {
+        "startLine": 26,
+        "startChar": 11,
+        "endLine": 26,
+        "endChar": 44
+      },
+      "revId": "e9e61b59533ea0b8ff529c5419829f455e033a3d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba65a107_64bb2f73",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-21T13:55:12Z",
+      "side": 1,
+      "message": "I would use existent code. If this method is something that should be removed - it should be removed, and in the place were it was used too.",
+      "parentUuid": "da7095c5_a8fb6346",
       "range": {
         "startLine": 26,
         "startChar": 11,
