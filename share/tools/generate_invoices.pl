@@ -12,7 +12,7 @@ use Email::Sender::Transport::SMTP;
 use Template;
 use Pod::Usage;
 use Log::Log4perl qw/get_logger :levels/;
-
+use feature 'state';
 
 use NGCP::Panel::Utils::Invoice;
 
@@ -63,13 +63,10 @@ my $logger = Log::Log4perl->get_logger('NGCP::Panel');
             }
             my $res = '';
             #boolean values
-            if($opt_spec->{$key} !~ /[=:]/){
-                given($val) {
-                    when(/^(?:t|true|yes|y+1)$/i) {
-                        $res = "--$key";
-                    }
-                    when(/^(?:f|false|no|n)$/i) {
-                    }
+            if($opt_spec->{$key} !~/[=:]/){
+                if($val =~/^(?:t|true|yes|y+1)$/i ) {
+                    $res = "--$key";
+                }elsif($val =~/^(?:f|false|no|n)$/i) {
                 }
             }else{#takes value
                 if($opt_spec->{$key} =~/i\@$/){
