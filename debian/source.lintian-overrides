@@ -13,3 +13,6 @@ ngcp-panel source: source-is-missing share/static/js/libs/jsrrd/flot/jquery.flot
 ngcp-panel source: source-is-missing share/static/js/libs/jsrrd/flot/jquery.flot.resize.js
 ngcp-panel source: source-is-missing share/static/js/libs/svg-edit/extensions/ext-shapes.js
 ngcp-panel source: source-is-missing share/static/js/libs/svg-edit/extensions/ext-star.js
+ngcp-panel source: source-is-missing share/static/js/libs/jquery-ui-1.10.3.custom.js
+ngcp-panel source: source-is-missing share/static/js/plugins/lightbox/jquery.lightbox.js
+ngcp-panel source: source-is-missing share/static/js/plugins/validate/jquery.validate.js
