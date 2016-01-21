@@ -1,15 +1,18 @@
 ngcp-panel source: source-is-missing share/static/js/libs/d3.v2.min-2.8.1.js
-ngcp-panel source: source-is-missing share/static/js/libs/svg-edit/jquery.js
-ngcp-panel source: source-is-missing share/static/js/plugins/hoverIntent/jquery.hoverIntent.minified.js
+ngcp-panel source: source-is-missing share/static/js/libs/jquery-ui-1.10.3.custom.js
 ngcp-panel source: source-is-missing share/static/js/libs/jquery.dataTables.js
-# see debian/missing-sources:
-ngcp-panel source: source-is-missing share/static/js/libs/stanzaio.bundle.js
-ngcp-panel source: source-is-missing share/static/js/libs/svg-edit/sanitize.js
-ngcp-panel source: source-is-missing share/static/js/plugins/flot/jquery.flot.js
-ngcp-panel source: source-is-missing share/static/js/plugins/flot/jquery.flot.resize.js
-ngcp-panel source: source-is-missing share/static/js/plugins/validate/additional-methods.js
 ngcp-panel source: source-is-missing share/static/js/libs/jsrrd/flot/jquery.flot.js
 ngcp-panel source: source-is-missing share/static/js/libs/jsrrd/flot/jquery.flot.navigate.js
 ngcp-panel source: source-is-missing share/static/js/libs/jsrrd/flot/jquery.flot.resize.js
+# see debian/missing-sources:
+ngcp-panel source: source-is-missing share/static/js/libs/stanzaio.bundle.js
 ngcp-panel source: source-is-missing share/static/js/libs/svg-edit/extensions/ext-shapes.js
 ngcp-panel source: source-is-missing share/static/js/libs/svg-edit/extensions/ext-star.js
+ngcp-panel source: source-is-missing share/static/js/libs/svg-edit/jquery.js
+ngcp-panel source: source-is-missing share/static/js/libs/svg-edit/sanitize.js
+ngcp-panel source: source-is-missing share/static/js/plugins/flot/jquery.flot.js
+ngcp-panel source: source-is-missing share/static/js/plugins/flot/jquery.flot.resize.js
+ngcp-panel source: source-is-missing share/static/js/plugins/hoverIntent/jquery.hoverIntent.minified.js
+ngcp-panel source: source-is-missing share/static/js/plugins/lightbox/jquery.lightbox.js
+ngcp-panel source: source-is-missing share/static/js/plugins/validate/additional-methods.js
+ngcp-panel source: source-is-missing share/static/js/plugins/validate/jquery.validate.js
