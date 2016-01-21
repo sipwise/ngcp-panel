@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_7a4f5593",
+        "filename": "debian/ngcp-panel.lintian-overrides",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-01-21T13:57:56Z",
+      "side": 1,
+      "message": "as I can see Mika tried to keep the list sorted Alphabetically here.",
+      "revId": "a5ba53cf0d1b01bd06b445679138b754c9af059b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
