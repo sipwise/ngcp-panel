@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_dd677be9",
+        "filename": "share/templates/api/root/collection.tt",
+        "patchSetId": 13
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-21T14:06:18Z",
+      "side": 1,
+      "message": "mmm - hard to say - maybe I didn\u0027t get what looks strange, sorry\nthe same syntax is e.g. in line 195: tt blok started, every expression ends with \";\"",
+      "parentUuid": "ba65a107_a4794795",
+      "range": {
+        "startLine": 235,
+        "startChar": 29,
+        "endLine": 235,
+        "endChar": 30
+      },
+      "revId": "f372fa48c22dec29d64dfa1846775a400ec9ed87",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba65a107_046833b9",
         "filename": "share/templates/api/root/collection.tt",
         "patchSetId": 13
