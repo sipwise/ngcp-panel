@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use NGCP::Panel::Form::Preferences;
+use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use Data::Validate::IP qw/is_ipv4 is_ipv6/;
 
