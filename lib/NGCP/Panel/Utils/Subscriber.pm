@@ -384,14 +384,14 @@ sub get_pbx_subscribers_rs{
 
     my $c           = $params{c};
     my $schema      = $params{schema} // $c->model('DB');
-    my $ids         = $params{ids} // [];
+    my $ids         = $params{ids};
     my $customer_id = $params{customer_id} // 0;
     my $is_group    = $params{is_group};
 
     my $rs = $schema->resultset('voip_subscribers')->search_rs(
         {
             'status' => { '!=' => 'terminated' },
-            @$ids ? ( 'me.id' => { -in => $ids } ) : (),
+            $ids ? ( 'me.id' => { -in => $ids } ) : (),
             $customer_id ? ( 'contract_id' => $customer_id ) : (),
             $is_group ? ( 'provisioning_voip_subscriber.is_pbx_group' => $is_group ) : (),
         },{
@@ -406,7 +406,7 @@ sub get_pbx_subscribers_by_ids{
 
     my $c           = $params{c};
     my $schema      = $params{schema} // $c->model('DB');
-    my $ids         = $params{ids} // [];
+    my $ids         = $params{ids};
     my $customer_id = $params{customer_id} // 0;
     my $is_group    = $params{is_group};
 
@@ -418,14 +418,15 @@ sub get_pbx_subscribers_by_ids{
    
     my %items_ids_exists =  map{ $_->id => 0 } @items;
     
-    if(@$ids){
+    if($ids){
         my $order_hash = { %items_ids_exists };
         @$order_hash{@$ids} = (1..$#$ids+1);
         @items = sort { $order_hash->{$a->id} <=> $order_hash->{$b->id} } @items;
     }
+    $ids = [];
 
     if($#items < $#$ids){
-        @absent_items_ids = grep { !exists $items_ids_exists{$_} } @{$params{ids}};
+        @absent_items_ids = grep { !exists $items_ids_exists{$_} } @{ $ids };
     }
     
     return wantarray ? (\@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef )) : \@items;
