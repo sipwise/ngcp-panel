@@ -1,3 +1,12 @@
+ngcp-panel (1.11.1.2+0~mr4.2.1.2) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [64d7dee] MT#17465 Fix 'undefined subroutine is_int' for 'allowed_ips' adding missed NGCP::Panel::Utils::Generic
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 22 Jan 2016 14:35:58 +0100
+
 ngcp-panel (1.11.1.1+0~mr4.2.1.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
