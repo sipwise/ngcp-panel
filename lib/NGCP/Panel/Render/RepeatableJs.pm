@@ -34,7 +34,7 @@ sub render_repeatable_js {
     var data_rep_id = \$(this).attr('data-rep-id');
     console.log("data_rep_id=", data_rep_id);
 
-    var id_re = new RegExp('\.[0-9]+\.');
+    var id_re = new RegExp('\\\\.[0-9]+\\\\.');
     var data_rep_id_0 = data_rep_id.replace(id_re, '.0.');
     console.log("data_rep_id_0=", data_rep_id_0);
     
