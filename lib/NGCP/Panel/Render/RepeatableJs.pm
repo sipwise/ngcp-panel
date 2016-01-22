@@ -42,7 +42,7 @@ sub render_repeatable_js {
     // get the repeatable id
     var data_rep_id = \$(this).attr('data-rep-id');
 
-    var id_re = new RegExp('\.[0-9]+\.');
+    var id_re = new RegExp('\\\\.[0-9]+\\\\.');
     var data_rep_id_0 = data_rep_id.replace(id_re, '.0.');
     
     // create a regex out of index placeholder
