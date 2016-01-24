@@ -423,14 +423,17 @@ sub get_subscriber_pbx_items{
 
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
     my $items_are_groups = !($prov_subscriber->is_pbx_group);
-    my $ids = get_subscriber_pbx_items_ids(@_);
-    my $items = get_pbx_subscribers_by_ids(
-        c           => $c,
-        schema      => $schema,
-        customer_id => $subscriber->contract->id ,
-        is_group    => $items_are_groups,
-        ids         => $ids,
-    );
+    my $ids = get_subscriber_pbx_items_ids(@_) // [];
+    my $items = [];
+    if(@$ids){
+        $items = get_pbx_subscribers_by_ids(
+            c           => $c,
+            schema      => $schema,
+            customer_id => $subscriber->contract->id ,
+            is_group    => $items_are_groups,
+            ids         => $ids,
+        );
+    }
     return wantarray ? ($items, $ids) : $items;
 }
 

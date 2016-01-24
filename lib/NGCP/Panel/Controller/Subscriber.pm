@@ -294,7 +294,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
             c          => $c,
             schema     => $c->model('DB'),
             subscriber => $c->stash->{subscriber} ,
-        );
+        ) // [] ;
     }
 }
 
@@ -2593,28 +2593,29 @@ sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does
 
     my $subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
-    my $items = $c->stash->{subscriber_pbx_items};
-   
-    if(defined $move_id){
-        for( my $i=0; $i <= $#$items; $i++ ){
-            if($move_id == $items->[$i]->id){
-                my $i_subling = $i + ( ( $direction eq 'up' ) ? -1 : 1 );
-                @{$items}[$i,$i_subling] = @{$items}[$i_subling,$i];
-                last;
+    my $items = $c->stash->{subscriber_pbx_items} // [] ;
+    if(@$items){
+        if(defined $move_id){
+            for( my $i=0; $i <= $#$items; $i++ ){
+                if($move_id == $items->[$i]->id){
+                    my $i_subling = $i + ( ( $direction eq 'up' ) ? -1 : 1 );
+                    @{$items}[$i,$i_subling] = @{$items}[$i_subling,$i];
+                    last;
+                }
             }
+            NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+                c          => $c,
+                schema     => $c->model('DB'),
+                subscriber => $subscriber,
+                ( $prov_subscriber->is_pbx_group ? 'groupmembers' : 'groups' ) => $items,
+            );
         }
-        NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+        $c->stash->{subscriber_pbx_items} = NGCP::Panel::Utils::Subscriber::get_subscriber_pbx_items(
             c          => $c,
             schema     => $c->model('DB'),
-            subscriber => $subscriber,
-            ( $prov_subscriber->is_pbx_group ? 'groupmembers' : 'groups' ) => $items,
+            subscriber => $subscriber ,
         );
     }
-    $c->stash->{subscriber_pbx_items} = NGCP::Panel::Utils::Subscriber::get_subscriber_pbx_items(
-        c          => $c,
-        schema     => $c->model('DB'),
-        subscriber => $subscriber ,
-    );
     $c->stash->{template} = 'subscriber/pbx_group_items.tt';
     $c->detach( $c->view('TT') );
 }
