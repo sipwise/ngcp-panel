@@ -38,7 +38,7 @@ sub login {
 }
 
 sub create_session_and_account {
-    my ($self, $appid, $network, $identifier, $accessToken, $owner) = @_;
+    my ($self, $appid, $network, $identifier, $accessToken, $owner, $account_config) = @_;
     my $ua = $self->ua;
     my $session_content = encode_json({
         app => $appid,
@@ -53,6 +53,7 @@ sub create_session_and_account {
         identifier => $identifier,
         accessToken => $accessToken,
         owner => $owner,
+        $account_config ? (config => encode_json($account_config)) : (),
         });
     #p $account_content;
     my $account = $self->_create_response(
@@ -60,6 +61,19 @@ sub create_session_and_account {
         );
     $account->{data}{session} = $session->{data};
     return $account;
+}
+
+sub create_session {
+    my ($self, $appid, $owner) = @_;
+    my $ua = $self->ua;
+    my $session_content = encode_json({
+        app => $appid,
+        owner => $owner,
+        });
+    my $session = $self->_create_response(
+        $ua->post($self->host . '/sessions', 'Content-Type' => 'application/json', Content => $session_content),
+        );
+    return $session;
 }
 
 sub create_network {
@@ -167,6 +181,12 @@ sub get_users {
     my ($self, $max_rows) = @_;
     my $users = $self->_resolve_collection_fast( '/users', $max_rows );
     return $users;
+}
+
+sub get_apps_by_user_id {
+    my ($self, $user_id) = @_;
+    my $apps = $self->_resolve_collection_fast( "/users/id/$user_id/apps" );
+    return $apps;
 }
 
 sub get_networks {
