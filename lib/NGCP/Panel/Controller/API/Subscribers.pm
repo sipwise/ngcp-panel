@@ -250,22 +250,22 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
-    my $guard = $schema->txn_scope_guard;    
+    my $guard = $schema->txn_scope_guard;
     {
         my $subscribers_rs = $self->item_rs($c);
         (my $total_count, $subscribers_rs) = $self->paginate_order_collection($c, $subscribers_rs);
         my $subscribers = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
             rs => $subscribers_rs,
-            contract_id_field => 'contract_id');          
-        my $now = NGCP::Panel::Utils::DateTime::current_local;        
+            contract_id_field => 'contract_id');
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links, %contract_map);
         my $form = $self->get_form($c);
         for my $subscriber (@$subscribers) {
             my $contract = $subscriber->contract;
-            my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+            NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $contract,
                 now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
-            $contract_map{$contract->id} = 1;            
+            $contract_map{$contract->id} = 1;
             my $resource = $self->resource_from_item($c, $subscriber, $form);
             push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
             push @links, Data::HAL::Link->new(
