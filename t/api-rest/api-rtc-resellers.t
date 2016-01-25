@@ -44,7 +44,7 @@ my $reseller_id;
     cmp_ok($reseller_id, '>', 0, 'got valid reseller id');
     ($res, $content) = $test_machine->check_item_get("/api/resellers/$reseller_id/", "fetch created reseller");
     is($res->code, 200, 'reseller successfully retrieved');
-    # ok($content->{enable_rtc}, 'rtc is enabled on created reseller');
+    ok($content->{enable_rtc}, 'rtc is enabled on created reseller');
 }
 
 # test rtcnetworks API
