@@ -22,6 +22,30 @@
       "revId": "2009da5009b232d7572b8845e90c6e1f1f19cf91",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_06e4c40b",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-25T09:12:16Z",
+      "side": 1,
+      "message": "true. Was supposed to be $ids //\u003d [];",
+      "parentUuid": "9a6a9dd7_ab75a133",
+      "range": {
+        "startLine": 426,
+        "startChar": 4,
+        "endLine": 426,
+        "endChar": 14
+      },
+      "revId": "2009da5009b232d7572b8845e90c6e1f1f19cf91",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
