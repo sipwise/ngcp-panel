@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_31b6e08b",
+        "filename": "script/set-vagrant-dev-env.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-01-25T14:00:26Z",
+      "side": 1,
+      "message": "What about to use environment variable if defined? Like\n  \nVAGRANT_MNT\u003d${VAGRANT_MNT:-/usr/local/devel}\n\nIn this case you will be able to integrate it into vagrant previsioning easily (different developers uses different pathes).",
+      "revId": "b667fb4a7c101cc35c0f6098a13b8147f2e45b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_51bb5472",
+        "filename": "script/set-vagrant-dev-env.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-01-25T14:00:26Z",
+      "side": 1,
+      "message": "tap test is unhappy :-)\nyou are running loop which executed once only :-)\n\nhttps://jenkins.mgm.sipwise.com/job/ngcp-panel-tap-test/2518/tapResults/\n\nYeah, jenkins knows nothing about the \"beautiful code\"...",
+      "revId": "b667fb4a7c101cc35c0f6098a13b8147f2e45b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
