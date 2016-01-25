@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_7131b80a",
+        "filename": "script/set-vagrant-dev-env.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2016-01-25T14:20:53Z",
+      "side": 1,
+      "message": "What about making the script idempotence so it can be executed multiple times without causing any damage? (Check for .orig files and warn but don\u0027t do anything about them?)\nJust an idea to ensure there\u0027s no problem in development then when someone executes it twice by mistake.",
+      "revId": "b667fb4a7c101cc35c0f6098a13b8147f2e45b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_51bb5472",
         "filename": "script/set-vagrant-dev-env.sh",
         "patchSetId": 2
