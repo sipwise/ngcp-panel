@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_e6f8b0c6",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-25T09:10:10Z",
+      "side": 1,
+      "message": "this shouldn\u0027t be necessary any more. you can only get [] empty or with content.",
+      "revId": "063c60ced34a3ba5d5cb186d4ce8205e1acc8dfe",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_a602b8b2",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 2636,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-25T09:10:10Z",
+      "side": 1,
+      "message": "same here",
+      "revId": "063c60ced34a3ba5d5cb186d4ce8205e1acc8dfe",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
