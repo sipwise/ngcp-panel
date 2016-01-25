@@ -62,6 +62,19 @@ sub create_session_and_account {
     return $account;
 }
 
+sub create_session {
+    my ($self, $appid, $owner) = @_;
+    my $ua = $self->ua;
+    my $session_content = encode_json({
+        app => $appid,
+        owner => $owner,
+        });
+    my $session = $self->_create_response(
+        $ua->post($self->host . '/sessions', 'Content-Type' => 'application/json', Content => $session_content),
+        );
+    return $session;
+}
+
 sub create_network {
     my ($self, $tag, $connector, $config, $owner) = @_;
     my $ua = $self->ua;
@@ -167,6 +180,12 @@ sub get_users {
     my ($self, $max_rows) = @_;
     my $users = $self->_resolve_collection_fast( '/users', $max_rows );
     return $users;
+}
+
+sub get_apps_by_user_id {
+    my ($self, $user_id) = @_;
+    my $apps = $self->_resolve_collection_fast( "/users/id/$user_id/apps" );
+    return $apps;
 }
 
 sub get_networks {

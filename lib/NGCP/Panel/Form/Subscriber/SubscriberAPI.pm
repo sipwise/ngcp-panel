@@ -162,6 +162,25 @@ has_field 'profile' => (
     },
 );
 
+has_field 'enable_rtc' => (
+    type => 'Boolean',
+    required => 0,
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether an RTC-entity should be created for this reseller.'],
+    }
+);
+
+has_field 'rtc_browser_token' => (  # readonly
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Browser token, which a WebRTC client needs to make a connection.'],
+    }
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -173,7 +192,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group_ids pbx_groupmember_ids is_pbx_pilot display_name profile_set profile/ ],
+    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group_ids pbx_groupmember_ids is_pbx_pilot display_name profile_set profile enable_rtc/ ],
 );
 
 has_block 'actions' => (

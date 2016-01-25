@@ -281,6 +281,200 @@ sub modify_rtc_networks {
     return;
 }
 
+# returns enable_rtc (true|false) and rtc_browser_token (string)
+sub get_rtc_subscriber_data {
+    my %params = @_;
+    my ($prov_subs, $config, $err_code) =
+        @params{qw/prov_subs config err_code/};
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    unless ($prov_subs) {
+        return unless &{$err_code}(
+            "Couldn't get rtc_subscriber_data. No provisioining subscriber.");
+    }
+
+    my $rtc_session = $prov_subs->rtc_session;
+    unless ($rtc_session) {
+        return {enable_rtc => 0};  # JSON::false ?
+    }
+    return {enable_rtc => 1, rtc_browser_token => 'abcde TODO'};
+}
+
+sub modify_subscriber_rtc {
+    my %params = @_;
+    my ($old_resource, $resource, $config, $prov_subs, $err_code) =
+        @params{qw/old_resource resource config prov_subs err_code/};
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    if ((!defined $old_resource) && (defined $resource)) { # newly created reseller
+
+        # 1. enable_rtc is off -> do nothing
+        if (!$resource->{enable_rtc}) {
+            return;
+        }
+
+        _create_subscriber_rtc(
+            resource => $resource,
+            config => $config,
+            prov_subs => $prov_subs,
+            err_code => $err_code);
+
+    } elsif ((defined $old_resource) && (defined $resource)) {
+
+        if($old_resource->{status} ne 'terminated' &&
+                $resource->{status} eq 'terminated' &&
+                $old_resource->{enable_rtc}) {  # just terminated
+
+            $resource->{enable_rtc} = JSON::false;
+            _delete_subscriber_rtc(
+                    config => $config,
+                    prov_subs => $prov_subs,
+                    err_code => $err_code);
+
+        } elsif ($old_resource->{enable_rtc} &&
+                !$resource->{enable_rtc}) {  # disable rtc
+
+            _delete_subscriber_rtc(
+                config => $config,
+                prov_subs => $prov_subs,
+                err_code => $err_code);
+        } elsif (!$old_resource->{enable_rtc} &&
+                $resource->{enable_rtc} &&
+                $resource->{status} ne 'terminated') {  # enable rtc
+
+            _create_rtc_user(
+                resource => $resource,
+                config => $config,
+                prov_subs => $prov_subs,
+                err_code => $err_code);
+        }
+    }
+    return;
+}
+
+sub _create_subscriber_rtc {
+    my %params = @_;
+    my ($resource, $config, $prov_subs, $err_code) =
+        @params{qw/resource config prov_subs err_code/};
+
+    my $reseller = $prov_subs->voip_subscriber->contract->contact->reseller;
+    unless ($reseller) {
+        return unless &{err_code}(
+            'Creating subscriber rtc data failed. Reseller not found.');
+    }
+    my $rtc_user = $reseller->rtc_user;
+    unless ($rtc_user) {
+        return unless &{err_code}(
+            'Creating subscriber rtc data failed. Reseller has not enabled rtc.');
+    }
+
+    my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+        host => $config->{rtc}{schema}.'://'.
+        $config->{rtc}{host}.':'.$config->{rtc}{port}.
+        $config->{rtc}{path},
+    );
+    $comx->login(
+        $config->{rtc}{user},
+        $config->{rtc}{pass},
+        $config->{rtc}{host}.':'.$config->{rtc}{port});
+    if ($comx->login_status->{code} != 200) {
+        return unless &{$err_code}(
+            'Rtc Login failed. Check config settings.');
+    }
+
+    my $comx_apps = $comx->get_apps_by_user_id($rtc_user->rtc_user_id);
+    my $comx_app;
+    if ($comx_apps->{data} && @{ $comx_apps->{data} }){
+        $comx_app = $comx_apps->{data}[0];
+    } else {
+        return unless &{$err_code}(
+            '_create_subscriber_rtc: Could not find app.');
+    }
+
+    my $session = $comx->create_session(
+            $comx_app->{id},
+            $rtc_user->rtc_user_id,
+        );
+    if ($session->{code} != 201) {
+        return unless &{$err_code}(
+            'Creating rtc session failed. Error code: ' . $session->{code});
+    }
+
+    # # 3. create relation in our db
+    # $prov_subs->create_related('rtc_session', {
+    #         rtc_session_id => $session->{data}{id},
+    #     });
+
+    # # 4. create related app
+    # my $app = $comx->create_app(
+    #         $reseller_name . '_app',
+    #         $reseller_name . 'www.sipwise.com',
+    #         $user->{data}{id},
+    #     );
+    # if ($app->{code} != 201) {
+    #     return unless &{$err_code}(
+    #         'Creating rtc app failed. Error code: ' . $app->{code});
+    # }
+
+    # # 5. create related networks
+    # for my $n (@{ $rtc_networks }) {
+    #     my $n_response = $comx->create_network(
+    #             $reseller_name . "_$n",
+    #             $n . '-connector',
+    #             {xms => JSON::false},
+    #             $user->{data}{id},
+    #         );
+    #     if ($n_response->{code} != 201) {
+    #         return unless &{$err_code}(
+    #             'Creating rtc network failed. Error code: ' . $n_response->{code});
+    #     }
+    # }
+    # return;
+}
+
+sub _delete_subscriber_rtc {
+    # my %params = @_;
+    # my ($config, $prov_subs, $err_code) =
+    #     @params{qw/config prov_subs err_code/};
+
+    # my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+    #     host => $config->{rtc}{schema}.'://'.
+    #     $config->{rtc}{host}.':'.$config->{rtc}{port}.
+    #     $config->{rtc}{path},
+    # );
+    # $comx->login(
+    #     $config->{rtc}{user},
+    #     $config->{rtc}{pass},
+    #     $config->{rtc}{host}.':'.$config->{rtc}{port});
+    # if ($comx->login_status->{code} != 200) {
+    #     return unless &{$err_code}(
+    #         'Rtc Login failed. Check config settings.');
+    # }
+
+    # my $rtc_user = $reseller_item->rtc_user;
+    # if (!defined $rtc_user) {
+    #     return unless &{$err_code}(
+    #         'No rtc user found in db for this reseller.');
+    # }
+    # # app and networks are deleted automatically
+    # my $delete_resp = $comx->delete_user(
+    #         $rtc_user->rtc_user_id,
+    #     );
+    # if ($delete_resp->{code} == 200) {
+    #     $rtc_user->delete;
+    # } else {
+    #     return unless &{$err_code}(
+    #         'Deleting rtc user failed. Error code: ' . $delete_resp->{code});
+    # }
+    # return;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:

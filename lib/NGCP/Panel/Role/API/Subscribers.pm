@@ -19,6 +19,7 @@ use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Events;
+use NGCP::Panel::Utils::Rtc;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -34,7 +35,16 @@ sub resource_from_item {
     my $customer = $self->get_customer($c, $item->contract_id);
     delete $prov_resource->{domain_id};
     delete $prov_resource->{account_id};
-    my %resource = %{ merge($bill_resource, $prov_resource) };
+    my $rtc_resource = NGCP::Panel::Utils::Rtc::get_rtc_subscriber_data(
+            prov_subs => $item->provisioning_voip_subscriber,
+            config => $c->config,
+            err_code => sub { $c->log->warn(shift); return; },
+        );
+    my %resource = (
+        %{ merge($bill_resource, $prov_resource) },
+        $rtc_resource ? %{ $rtc_resource } : (),
+    );
+
     $resource{administrative} = delete $resource{admin};
 
     unless($customer->get_column('product_class') eq 'pbxaccount') {
