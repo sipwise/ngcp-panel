@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_56a4a556",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-26T23:31:01Z",
+      "side": 1,
+      "message": "I think it would be better here to add %paramsfor further callbacks and othe configurations. \n\nAll theese configuration functions for such widely used util will be just added, and at the end call will look like \nprocess($c,$rs,$cols,undef,sub{}, undef,undef, sub{}, sub{}); etc.",
+      "range": {
+        "startLine": 12,
+        "startChar": 35,
+        "endLine": 12,
+        "endChar": 50
+      },
+      "revId": "58a55b9855e80ecb61ec10d5b65037db998b3348",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
