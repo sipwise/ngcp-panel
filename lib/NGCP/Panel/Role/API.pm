@@ -137,9 +137,9 @@ sub validate_form {
         # check keys/vals
         $form->process(params => $resource, posted => 1, %{$form_params} );
         unless($form->validated) {
-            my $e = join '; ', map { 
+            my $e = join '; ', map {
                 my $in = (defined $_->input && ref $_->input eq 'HASH' && exists $_->input->{id}) ? $_->input->{id} : ($_->input // '');
-                sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', 
+                sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'',
                     ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
                     $in,
                     join('', @{ $_->errors })
@@ -163,7 +163,7 @@ sub validate_form {
 
 sub validate_fields {
     my ($self, $c, $resource, $fields, $run) = @_;
-    
+
     for my $k (keys %{ $resource }) {
         #if($resource->{$k}->$_isa('JSON::XS::Boolean') || $resource->{$k}->$_isa('JSON::PP::Boolean')) {
         if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
@@ -207,7 +207,7 @@ sub error {
     my ($self, $c, $code, $message) = @_;
 
     $c->log->error("error $code - $message"); # TODO: user, trace etc
-    
+
     $c->response->content_type('application/json');
     $c->response->status($code);
     $c->response->body(JSON::to_json({ code => $code, message => $message })."\n");
@@ -243,7 +243,7 @@ sub require_body {
     my ($self, $c) = @_;
     return 1 if length $c->stash->{body};
 
-    
+
 
     $self->error($c, HTTP_BAD_REQUEST, "This request is missing a message body.");
     return;
@@ -290,7 +290,7 @@ sub allowed_methods_filtered {
         }
         return \@methods;
     } else {
-        return $self->allowed_methods; 
+        return $self->allowed_methods;
     }
 }
 
@@ -329,7 +329,7 @@ sub valid_id {
 sub require_valid_patch {
     my ($self, $c, $json, $ops) = @_;
 
-    my $valid_ops = { 
+    my $valid_ops = {
         'replace' => { 'path' => 1, 'value' => 1 },
         'copy' => { 'from' => 1, 'path' => 1 },
         'remove' => { 'path' => 1 },
@@ -469,7 +469,7 @@ sub apply_patch {
                         } else {
                             die($pe); #->rethrow;
                         }
-                    }                    
+                    }
                 } elsif ('move' eq $_ or 'copy' eq $_) {
                     try {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
@@ -482,7 +482,7 @@ sub apply_patch {
                         } else {
                             die($pe); #->rethrow;
                         }
-                    }                      
+                    }
                 } elsif ('test' eq $_) {
                     try {
                         die "test failed - path: $op->{path} value: $op->{value}\n"
@@ -497,7 +497,7 @@ sub apply_patch {
                         } else {
                             die($pe); #->rethrow;
                         }
-                    }  
+                    }
                 }
             }
         }
@@ -523,7 +523,7 @@ sub apply_patch {
 #        }
 #        NGCP::Panel::Utils::DateTime::set_fake_time();
 #        $c->stash->{is_fake_time} = 0;
-#        $c->log('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));        
+#        $c->log('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));
 #    }
 #}
 
@@ -535,7 +535,7 @@ sub apply_patch {
 #        $c->log('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));
 #    }
 #}
-    
+
 sub set_body {
     my ($self, $c) = @_;
     $c->stash->{body} = $c->request->body ? (do { local $/; $c->request->body->getline }) : '';
@@ -583,16 +583,16 @@ around 'item_rs' => sub {
     my ($orig, $self, @orig_params) = @_;
     my $item_rs = $self->$orig(@orig_params);
     return unless($item_rs);
-    
+
     if ($self->can('query_params')) {
         return $self->apply_query_params($orig_params[0],$self->query_params,$item_rs);
     }
-    
+
     return $item_rs;
 };
 
 sub apply_query_params {
-    
+
     my ($self,$c,$query_params,$item_rs) = @_;
     # no query params defined in collection controller
     unless(@{ $query_params }) {
@@ -601,16 +601,22 @@ sub apply_query_params {
 
     foreach my $param(keys %{ $c->req->query_params }) {
         my @p = grep { $_->{param} eq $param } @{ $query_params };
-        next unless($p[0]->{query}); # skip "dummy" query parameters
+        next unless($p[0]->{query} || $p[0]->{new_rs}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
         $q = undef if $q eq "NULL"; # IS NULL translation
         if(@p) {
-            $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$c), $p[0]->{query}->{second}($q,$c));
+            if (defined $p[0]->{new_rs}) {
+                #compose fresh rs based on current, to support set operations with filters:
+                $item_rs = $p[0]->{new_rs}($c,$q,$item_rs);
+            } elsif (defined $p[0]->{query}) {
+                #regular chaining:
+                $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$c), $p[0]->{query}->{second}($q,$c));
+            }
         }
     }
     return $item_rs;
-    
+
 }
 
 sub is_true {
@@ -641,7 +647,7 @@ sub delay_commit {
     my ($self, $c, $guard) = @_;
     my $allow_delay_commit = 0;
     my $cfg = $c->config->{api_debug_opts};
-    $allow_delay_commit = ((defined $cfg->{allow_delay_commit}) && $cfg->{allow_delay_commit} ? 1 : 0) if defined $cfg;    
+    $allow_delay_commit = ((defined $cfg->{allow_delay_commit}) && $cfg->{allow_delay_commit} ? 1 : 0) if defined $cfg;
     if ($allow_delay_commit) {
         my $delay = $c->request->header('X-Delay-Commit'); #('Expect');
         if ($delay && $delay =~ /\d+/ && $delay > 0 && $delay < 500) {
