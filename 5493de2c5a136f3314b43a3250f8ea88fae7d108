@@ -16,6 +16,24 @@
       "revId": "5493de2c5a136f3314b43a3250f8ea88fae7d108",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_c0f0efcb",
+        "filename": "script/set-vagrant-dev-env.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-01-26T10:21:00Z",
+      "side": 1,
+      "message": "Good catch! I missed it.",
+      "parentUuid": "9a6a9dd7_2cb0c7dc",
+      "revId": "5493de2c5a136f3314b43a3250f8ea88fae7d108",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
