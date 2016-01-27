@@ -263,12 +263,20 @@ sub create_subscriber {
             foreach my $range(@{ $params->{e164range} }) {
                 if(defined $range->{e164range}{cc} && $range->{e164range}{cc} ne '') {
                     my $len = $range->{e164range}{snlength};
-                    foreach my $ext(0 .. int("9" x $len)) {
-                        $range->{e164range}{sn} = sprintf("%s%0".$len."d", $range->{e164range}{snbase}, $ext);
+                    if ($len) {
+                        foreach my $ext(0 .. int("9" x $len)) {
+                            $range->{e164range}{sn} = sprintf("%s%0".$len."d", $range->{e164range}{snbase}, $ext);
+                            push @alias_numbers, { e164 => {
+                                cc => $range->{e164range}{cc},
+                                ac => $range->{e164range}{ac},
+                                sn => $range->{e164range}{sn},
+                            }};
+                        }
+                    } else {
                         push @alias_numbers, { e164 => {
-                            cc => $range->{e164range}{cc},   
-                            ac => $range->{e164range}{ac},   
-                            sn => $range->{e164range}{sn},   
+                            cc => $range->{e164range}{cc},
+                            ac => $range->{e164range}{ac},
+                            sn => $range->{e164range}{snbase},
                         }};
                     }
                 }
