@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9a6a9dd7_d68f55cb",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 3118,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-27T07:47:31Z",
+      "side": 1,
+      "message": "I don\u0027t know whether we should jump back and forth with euros and cents every time a customer wants something different. Is this the final way; accepted by everyone?\n\nI put those kind of processings usually into process_cdr_item (10 lines above), to be consistent between API and Panel.",
+      "revId": "58a55b9855e80ecb61ec10d5b65037db998b3348",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_56a4a556",
         "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
         "patchSetId": 8
