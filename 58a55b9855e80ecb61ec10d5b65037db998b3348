@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_79e99a19",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 3118,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-27T08:07:44Z",
+      "side": 1,
+      "message": "\u003ejump back and forth with euros..\ni agree. but regarding the frequently used callist view, there was also comments from melita regarding rounding (elaine insisted on removing 0.0002cents from the 4.0002cents costs displayed). so truncating might reduce such noise here.\n\u003eput into process_cdr_item\nwell, total_customer_cost seems not to be present in api form/json. also, the same transformation is needed for the totals here, so would be an argument to keep that at the same location.",
+      "parentUuid": "9a6a9dd7_d68f55cb",
+      "revId": "58a55b9855e80ecb61ec10d5b65037db998b3348",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_56a4a556",
         "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
         "patchSetId": 8
