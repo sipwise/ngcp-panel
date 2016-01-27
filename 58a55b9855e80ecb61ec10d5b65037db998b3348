@@ -81,6 +81,30 @@
       "revId": "58a55b9855e80ecb61ec10d5b65037db998b3348",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_79ee7a8d",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-27T09:34:19Z",
+      "side": 1,
+      "message": "while not - I meant add not additional paramater, but params\nso\nmy ($c, $rs, $cols, $row_func, $params) \u003d @_;\nmy $total_row_func \u003d $params-\u003e{total_row_func};",
+      "parentUuid": "9a6a9dd7_16862dba",
+      "range": {
+        "startLine": 12,
+        "startChar": 35,
+        "endLine": 12,
+        "endChar": 50
+      },
+      "revId": "58a55b9855e80ecb61ec10d5b65037db998b3348",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
