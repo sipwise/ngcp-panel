@@ -407,6 +407,7 @@ sub topup_contract_balance {
         contract => $contract,
         old_package => $old_package,
         now => $now);
+    my $old_cash_balance = $balance->cash_balance;
     if ($log_vals) {
         $log_vals->{old_balance} = { $balance->get_inflated_columns };
         my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
@@ -465,6 +466,7 @@ sub topup_contract_balance {
 
     $balance->update({ cash_balance => $balance->cash_balance + $topup_amount }); #add in new interval
     $contract->discard_changes();
+    my $new_cash_balance = $balance->cash_balance;
     if ($log_vals) {
         $log_vals->{new_balance} = { $balance->get_inflated_columns };
         my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
@@ -476,6 +478,12 @@ sub topup_contract_balance {
         set_subscriber_lock_level(c => $c, contract => $contract, lock_level => $package->topup_lock_level);
         $log_vals->{new_lock_level} = $package->topup_lock_level;
     }
+
+    NGCP::Panel::Utils::Events::insert(
+        c => $c, schema => $schema, type => 'topup_cash',
+        subscriber => $subscriber // $contract->voip_subscribers->first,
+        old_status => $old_cash_balance, new_status => $new_cash_balance,
+    );
     
     return $balance;
 }
