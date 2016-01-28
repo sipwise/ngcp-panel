@@ -1,14 +1,15 @@
 package NGCP::Panel::Controller::API::Root;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
+
 #use namespace::sweep;
-use Moose;
+use Moo;
+use TryCatch;
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();
 use HTTP::Response qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+use MooX::ClassAttribute qw(class_has);
 use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
@@ -37,7 +38,9 @@ __PACKAGE__->config(
     },
     action_roles => [qw(HTTPMethods)],
 );
-
+sub allowed_methods{
+    return [qw/GET HEAD OPTIONS/];
+}
 sub auto :Private {
     my ($self, $c) = @_;
 

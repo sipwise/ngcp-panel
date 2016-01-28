@@ -1,10 +1,11 @@
 package NGCP::Panel::Controller::API::InterceptionsItem;
-use Sipwise::Base;
-use Moose;
+
+use Moo;
+
 #use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Interception;

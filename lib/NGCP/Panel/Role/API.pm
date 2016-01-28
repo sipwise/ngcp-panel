@@ -1,7 +1,7 @@
 package NGCP::Panel::Role::API;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose::Role;
-use Sipwise::Base;
+use Moo::Role;
+
 
 use Storable qw();
 use JSON qw();
