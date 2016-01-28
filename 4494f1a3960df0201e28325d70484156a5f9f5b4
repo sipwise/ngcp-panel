@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_8a4d2e75",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 40
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-28T08:42:41Z",
+      "side": 1,
+      "message": "so we should add search where clauses only if a search string is given. may better to check for non-empty strin gexplicitly here (one might search for 0",
+      "range": {
+        "startLine": 62,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 20
+      },
+      "revId": "4494f1a3960df0201e28325d70484156a5f9f5b4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_ea306aea",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 40
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-01-28T08:42:41Z",
+      "side": 1,
+      "message": "so this is second performance improvement: build a isolated rs for the aggregations. i didnt test it but looks nice, can we merge it?",
+      "range": {
+        "startLine": 181,
+        "startChar": 4,
+        "endLine": 204,
+        "endChar": 5
+      },
+      "revId": "4494f1a3960df0201e28325d70484156a5f9f5b4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
