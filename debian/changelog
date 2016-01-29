@@ -1,3 +1,16 @@
+ngcp-panel (1.10.1.12+0~mr4.1.1.12) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [9c5ae4a] MT#17199 Add user_agent field into subscriberregistrations GET output
+  * [e73361a] MT#5349 Fix typo in profile preferences metadata
+  * [aa6cdb6] MT#15489 Fix faxes form fields description
+  * [010922f] MT#10199 Fix typo in profiles preferences
+  * [489f87e] MT#16983 Don't display pbxgroups and subscribers if there is no linked
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Jan 2016 14:18:42 +0100
+
 ngcp-panel (1.10.1.11+0~mr4.1.1.11) unstable; urgency=medium
 
   [ Rene Krenn ]
