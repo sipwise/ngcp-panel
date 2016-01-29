@@ -8,7 +8,7 @@ use base 'Catalyst::Component';
 
 sub client_signing_template {
     my ($self, $serial) = @_;
-    return <<"";
+    return <<"TEMPLATE_END";
 cn = "Sipwise NGCP API client certificate"
 expiration_days = 3650
 serial = $serial
@@ -16,13 +16,13 @@ tls_www_client
 signing_key
 encryption_key
 
+TEMPLATE_END
 }
 
 sub COMPONENT {
     my ($class, $app, $args) = @_;
     $args = $class->merge_config_hashes($class->config, $args);
     my $self = $class->new($app, $args);
-    no autobox::Core; # wonky initialisation order
     return $self;
 }
 
@@ -31,13 +31,9 @@ sub make_client {
     my $client_key = Path::Tiny->tempfile;
     my $command = 'openssl x509 -noout -purpose -in ' . $c->config->{ssl}->{rest_api_certfile};
     $c->log->debug($command);
-    my ($stdout, $stderr) = capture {
-        try {
-            system $command;
-        };
-    };
+    my $stdout = `$command 2>&1` // "";
     unless ($stdout =~ m/SSL (client|server) CA : Yes/) {
-        $c->log->error("Failed to check CA certificate: $stderr");
+        $c->log->error("Failed to check CA certificate: $stdout");
         die [$c->loc('Cannot use the configured certificate for signing client certificates'), "showdetails"];
     }
     $command = sprintf 'certtool -p --bits 3248 --outfile %s 1>&- 2>&-', $client_key->stringify;
@@ -55,17 +51,8 @@ sub make_client {
         ($c->config->{ssl}->{rest_api_keyfile}  || $c->config->{ssl}->{keyfile}),
         $client_signing_template->stringify;
     $c->log->debug($command);
-    my $exep;
-    ($stdout, $stderr) = capture {
-        try {
-            system $command;
-        } catch ($e) {
-            $exep = $e;
-        };
-    };
+    $stdout = `$command 2>&1`;
     $c->log->debug($stdout) if $stdout;
-    $c->log->warn($stderr) if $stderr;
-    die $exep if $exep;
     my $cert = $client_cert->slurp . $client_key->slurp =~ s/.*(?=-----BEGIN RSA PRIVATE KEY-----)//mrs;
     $client_cert->remove;
     $client_key->remove;
