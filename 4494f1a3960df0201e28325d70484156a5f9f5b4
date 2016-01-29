@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_4a5876fa",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 40
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-29T00:25:30Z",
+      "side": 1,
+      "message": "I think sometimes user may want to search exactly \"0\".",
+      "parentUuid": "9a6a9dd7_8a4d2e75",
+      "range": {
+        "startLine": 62,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 20
+      },
+      "revId": "4494f1a3960df0201e28325d70484156a5f9f5b4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_ea306aea",
         "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
         "patchSetId": 40
@@ -36,6 +60,30 @@
       "writtenOn": "2016-01-28T08:42:41Z",
       "side": 1,
       "message": "so this is second performance improvement: build a isolated rs for the aggregations. i didnt test it but looks nice, can we merge it?",
+      "range": {
+        "startLine": 181,
+        "startChar": 4,
+        "endLine": 204,
+        "endChar": 5
+      },
+      "revId": "4494f1a3960df0201e28325d70484156a5f9f5b4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_6a5d3ae9",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 40
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-01-29T00:25:30Z",
+      "side": 1,
+      "message": "I will merge with your changes, check on callist table and then submit. I still didn\u0027t figure out how to test all our datatables easy and dynamically, but I think these changes still are useful.",
+      "parentUuid": "9a6a9dd7_ea306aea",
       "range": {
         "startLine": 181,
         "startChar": 4,
