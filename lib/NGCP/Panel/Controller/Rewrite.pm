@@ -130,6 +130,7 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
     
     try {
         $c->stash->{set_result}->delete;
+        $self->_sip_dialplan_reload($c);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{set_result}->get_inflated_columns },
@@ -184,6 +185,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                     });
                 }
             });
+            $self->_sip_dialplan_reload($c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully cloned'),
