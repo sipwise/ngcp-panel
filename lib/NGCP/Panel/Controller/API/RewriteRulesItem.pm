@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Rewrite;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -111,6 +112,7 @@ sub PATCH :Allow {
         last unless $rule;
 
         $guard->commit; 
+        NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -151,6 +153,7 @@ sub PUT :Allow {
         last unless $rule;
 
         $guard->commit;
+        NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -183,6 +186,7 @@ sub DELETE :Allow {
             last;
         }
         $guard->commit;
+        NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
