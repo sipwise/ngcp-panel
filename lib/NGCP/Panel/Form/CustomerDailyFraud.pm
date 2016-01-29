@@ -30,6 +30,7 @@ has_field 'fraud_daily_lock' => (
         { value => 2, label => 'all outgoing calls' },
         { value => 3, label => 'incoming and outgoing' },
         { value => 4, label => 'global (including CSC)' },
+        { value => 5, label => 'ported (call forwarding only)' },
     ],
 );
 

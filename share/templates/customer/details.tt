@@ -11,6 +11,7 @@
         { level = 2, text = c.loc("all outgoing calls") },
         { level = 3, text = c.loc("incoming and outgoing") },
         { level = 4, text = c.loc("global (including web login)") },
+        { level = 5, text = c.loc("ported (call forwarding only)") },
     ];
 -%]
 <script src="/js/jquery.dump.js"></script>
@@ -332,8 +333,8 @@
     </div>
     [% END -%]
 
-    [% IF 
-        c.config.features.cloudpbx && 
+    [% IF
+        c.config.features.cloudpbx &&
         (c.user.roles == 'admin' || c.user.roles == 'reseller' || c.user.roles == 'subscriberadmin')
     -%]
     <div class="accordion-group">
@@ -342,7 +343,7 @@
         </div>
         <div class="accordion-body collapse" id="collapse_soundsets">
             <div class="accordion-inner">
-            
+
 [%
     helper.name = c.loc('Sound Set');
     helper.identifier = 'sound_sets';
@@ -383,12 +384,12 @@
                 <span>
                     [% IF c.user.billing_data -%]
                     <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/customer/topup_voucher", [contract.id]) %]"><i class="icon-repeat"></i> [% c.loc('Top-up Voucher') %]</a>
-                    [% END -%]     
+                    [% END -%]
                     <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/customer/topup_cash", [contract.id]) %]"><i class="icon-repeat"></i> [% c.loc('Top-up Cash') %]</a>
                     <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/customer/edit_balance", [contract.id]) %]"><i class="icon-edit"></i> [% c.loc('Set Cash Balance') %]</a>
                 </span>
                 <div class="ngcp-separator"></div>
-                [% END -%]     
+                [% END -%]
 
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
@@ -411,11 +412,11 @@
                             <td>[% c.loc('Free time balance') %]</td>
                             <td>[% balance.free_time_balance %]</td>
                             <td>[% c.loc('Free time spent') %]</td>
-                            <td>[% balance.free_time_balance_interval %]</td>                            
+                            <td>[% balance.free_time_balance_interval %]</td>
                         </tr>
                     </tbody>
-                </table>                        
-                        
+                </table>
+
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <th>
@@ -429,19 +430,19 @@
                             <td>[% c.loc('Interval to') %]</td>
                             <td>[% balance.end %]</td>
                         </tr>
-                        
+
                         <tr>
                             <td>[% c.loc('"Timely" top-ups from') %]</td>
                             <td>[% timely_topup_start %]</td>
                             <td>[% c.loc('"Timely" top-ups to') %]</td>
                             <td>[% timely_topup_end %]</td>
                         </tr>
-                        
+
                         <tr>
                             <td colspan="2">[% c.loc('Balance will be discarded, if no tup-up happens until') %]</td>
                             <td colspan="2">[% notopup_expiration %]</td>
-                        </tr>                          
-                        
+                        </tr>
+
                     </tbody>
                 </table>
 
@@ -466,15 +467,15 @@
                             <td>[% c.loc('Balance threshold when underrun profiles get applied') %]</td>
                             <td>[% package.underrun_profile_threshold ? money_format( package.underrun_lock_threshold / 100 ) : '' %]</td>
                             <td>[% c.loc('Balance threshold when subscribers will be locked') %]</td>
-                            <td>[% package.underrun_lock_threshold ? money_format( package.underrun_lock_threshold / 100 ) : '' %]</td>                            
+                            <td>[% package.underrun_lock_threshold ? money_format( package.underrun_lock_threshold / 100 ) : '' %]</td>
                         </tr>
                     </tbody>
-                </table>                 
-                
+                </table>
+
             </div>
         </div>
     </div>
-    
+
 
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -483,8 +484,8 @@
         <div class="accordion-body collapse" id="collapse_balanceintervals">
 
             <div class="accordion-inner">
-            
-[% 
+
+[%
     helper.name = c.loc('Balance Interval');
     helper.identifier = 'balance_intervals';
     helper.dt_columns = balanceinterval_dt_columns;
@@ -497,7 +498,7 @@
 %]
             </div>
         </div>
-    </div>    
+    </div>
 
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -506,8 +507,8 @@
         <div class="accordion-body collapse" id="collapse_topuplog">
 
             <div class="accordion-inner">
-            
-[% 
+
+[%
     helper.name = c.loc('Topuplog');
     helper.identifier = 'topup_logs';
     helper.dt_columns = topuplog_dt_columns;
@@ -520,8 +521,8 @@
 %]
             </div>
         </div>
-    </div>   
-   
+    </div>
+
     [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -558,11 +559,11 @@
                             <td>[% fraud.fraud_interval_notify.defined ? fraud.fraud_interval_notify : fraud_def_message %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions pull-right">
-                                    <a class="btn btn-small btn-primary" 
+                                    <a class="btn btn-small btn-primary"
                                        href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "month") %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
-                                    <a class="btn btn-small btn-secondary" data-confirm="Delete" 
+                                    <a class="btn btn-small btn-secondary" data-confirm="Delete"
                                        href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "month") %]">
                                         <i class="icon-trash"></i> [% c.loc('Delete') %]
                                     </a>
@@ -587,11 +588,11 @@
                             <td>[% fraud.fraud_daily_notify.defined ? fraud.fraud_daily_notify : fraud_def_message %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions pull-right">
-                                    <a class="btn btn-small btn-primary" 
+                                    <a class="btn btn-small btn-primary"
                                        href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "day") %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
-                                    <a class="btn btn-small btn-secondary" data-confirm="Delete" 
+                                    <a class="btn btn-small btn-secondary" data-confirm="Delete"
                                        href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "day") %]">
                                         <i class="icon-trash"></i> [% c.loc('Delete') %]
                                     </a>
@@ -611,7 +612,7 @@
         </div>
         <div class="accordion-body collapse" id="collapse_invoices">
             <div class="accordion-inner">
-            
+
 [%
     helper.name = c.loc('Invoice');
     helper.identifier = 'invoices';
@@ -775,7 +776,7 @@ if(!linekeys){
             [%END%]
             };
         [%END%]
-        linekeys['[% line.linerange_id %].[% line.key_num %].[% line.extension_unit %]'] = { 
+        linekeys['[% line.linerange_id %].[% line.key_num %].[% line.extension_unit %]'] = {
           'mode': '[% line.line_type %]',
           'sub': '[% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain%]',
           'subid': [% line.provisioning_voip_subscriber.id %],
@@ -827,7 +828,7 @@ function create_ranges_annotations(id,type,ranges){
             }
 [% END -%]
             var action = '<i class="fa '+(linekeyCurrent ? 'fa-plus-square' : 'fa-user')+' fa-fw"></i> ' +
-                '<select class="subselect" name="line.' + linecmt + '.subscriber_id" id="line.' + linecmt + '.subscriber_id">' + 
+                '<select class="subselect" name="line.' + linecmt + '.subscriber_id" id="line.' + linecmt + '.subscriber_id">' +
                 '<option value="0">'+(linekeyCurrent ? '[% c.loc("Subscriber") %]' : '[% c.loc("None") %]' )+'</option>' +
 [% FOR sub IN subscribers.all -%]
                 '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
@@ -836,14 +837,14 @@ function create_ranges_annotations(id,type,ranges){
                 '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
 [% END -%]
                 '</select>' +
-                '<select class="modeselect" name="line.' + linecmt + '.type" id="line.' + linecmt + '.type">' + 
+                '<select class="modeselect" name="line.' + linecmt + '.type" id="line.' + linecmt + '.type">' +
 [% FOR opt IN ["private", "shared", "blf"] -%]
-                (range.can_[% opt %] == "1" ? 
+                (range.can_[% opt %] == "1" ?
                     '<option value="[% opt %]"'+((linekeyCurrent && linekeyCurrent.mode == '[% opt %]' ) ? '  selected="selected"' : '')+'>[% opt %]</option>' : '') +
 [% END -%]
-                '</select>' + 
-                '<input type="hidden" name="line.' + linecmt + '.line" id="line.' + linecmt + '.line" value="' + a.range_id + '.' + a.line_index + '.' + unit + '"/>' + 
-                '<input type="hidden" name="line.' + linecmt + '.extension_unit" id="line.' + linecmt + '.extension_unit" value="' + unit + '"/>' + 
+                '</select>' +
+                '<input type="hidden" name="line.' + linecmt + '.line" id="line.' + linecmt + '.line" value="' + a.range_id + '.' + a.line_index + '.' + unit + '"/>' +
+                '<input type="hidden" name="line.' + linecmt + '.extension_unit" id="line.' + linecmt + '.extension_unit" value="' + unit + '"/>' +
                 '';
             markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '" data-pos-top="' + a.y + '" data-pos-left="' + a.x + '">' + action + '</div>';
         }
@@ -951,7 +952,7 @@ function add_extension_button(){
     }
 }
 function get_linecmt(){
-    var linecmt = []; 
+    var linecmt = [];
     $("select[id^='line.']").each(function (i, element) {
         var found = element.id.match(/line\.(\d+)\.type/);
         if(found && found[1]){
@@ -966,7 +967,7 @@ function get_linecmt(){
     return linecmt_max;
 }
 function get_extension_divcnt(id_in){
-    var divcnt = {}; 
+    var divcnt = {};
     $("div[id^='annotated_extension_']").each(function (i, element) {
         var found = element.id.match(/annotated_extension_(\d+)_(\d+)/);
         if(found && found[1] && found[2]){

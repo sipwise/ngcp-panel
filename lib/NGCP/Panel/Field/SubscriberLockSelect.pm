@@ -6,12 +6,13 @@ extends 'HTML::FormHandler::Field::Select';
 sub build_options {
     my ($self) = @_;
 
-    return [ 
+    return [
         { label => 'none', value => undef },
         { label => 'foreign', value => 1 },
         { label => 'outgoing', value => 2 },
         { label => 'all calls', value => 3 },
         { label => 'global', value => 4 },
+        { label => 'ported', value => 5 },
     ];
 }
 

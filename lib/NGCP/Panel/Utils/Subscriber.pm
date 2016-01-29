@@ -19,6 +19,7 @@ my %LOCK = (
     2, 'outgoing',
     3, 'incoming and outgoing',
     4, 'global',
+    5, 'ported',
 );
 
 
@@ -26,7 +27,7 @@ sub period_as_string {
     my $set = shift;
 
     my @wdays = (qw/
-        invalid Sunday Monday Tuesday Wednesday Thursday Friday Saturday    
+        invalid Sunday Monday Tuesday Wednesday Thursday Friday Saturday
     /);
     my @months = (qw/
         invalid January February March April May June July August September October November December
@@ -100,7 +101,7 @@ sub destination_as_string {
 
 sub lock_provisoning_voip_subscriber {
     my %params = @_;
-    
+
     NGCP::Panel::Utils::Preferences::set_provisoning_voip_subscriber_first_int_attr_value(%params,
         value => $params{level},
         attribute => 'lock'
@@ -109,7 +110,7 @@ sub lock_provisoning_voip_subscriber {
 
 sub get_provisoning_voip_subscriber_lock_level {
     my %params = @_;
-    
+
     NGCP::Panel::Utils::Preferences::get_provisoning_voip_subscriber_first_int_attr_value(%params,
         attribute => 'lock'
         );
@@ -117,12 +118,12 @@ sub get_provisoning_voip_subscriber_lock_level {
 
 sub switch_prepaid {
     my %params = @_;
-    
+
     NGCP::Panel::Utils::Preferences::set_provisoning_voip_subscriber_first_int_attr_value(%params,
         value => ($params{prepaid} ? 1 : 0),
         attribute => 'prepaid'
-        );    
-    
+        );
+
 }
 
 sub switch_prepaid_contract {
@@ -134,7 +135,7 @@ sub switch_prepaid_contract {
             prov_subscriber => $subscriber->provisioning_voip_subscriber,
         ) if ($subscriber->provisioning_voip_subscriber);
     }
-    
+
 }
 
 sub get_lock_string {
@@ -266,9 +267,9 @@ sub create_subscriber {
                     foreach my $ext(0 .. int("9" x $len)) {
                         $range->{e164range}{sn} = sprintf("%s%0".$len."d", $range->{e164range}{snbase}, $ext);
                         push @alias_numbers, { e164 => {
-                            cc => $range->{e164range}{cc},   
-                            ac => $range->{e164range}{ac},   
-                            sn => $range->{e164range}{sn},   
+                            cc => $range->{e164range}{cc},
+                            ac => $range->{e164range}{ac},
+                            sn => $range->{e164range}{sn},
                         }};
                     }
                 }
@@ -318,8 +319,8 @@ sub create_subscriber {
         $preferences->{cc} = $params->{e164}{cc}
             if(defined $params->{e164}{cc} && length($params->{e164}{cc}) > 0);
 
-        update_preferences(c => $c, 
-            prov_subscriber => $prov_subscriber, 
+        update_preferences(c => $c,
+            prov_subscriber => $prov_subscriber,
             preferences => $preferences
         );
 
@@ -366,12 +367,12 @@ sub update_preferences {
             unless(defined $preferences->{$k}) {
                 $pref->first->delete;
             } else {
-                $pref->first->update({ 
+                $pref->first->update({
                     'value' => $preferences->{$k},
                 });
             }
         } else {
-            $pref->create({ 
+            $pref->create({
                 'value' => $preferences->{$k},
             }) if(defined $preferences->{$k});
         }
@@ -415,9 +416,9 @@ sub get_pbx_subscribers_by_ids{
     my (@items,@absent_items_ids);
 
     @items = $pbx_subscribers_rs->all();
-   
+
     my %items_ids_exists =  map{ $_->id => 0 } @items;
-    
+
     if(@$ids){
         my $order_hash = { %items_ids_exists };
         @$order_hash{@$ids} = (1..$#$ids+1);
@@ -427,7 +428,7 @@ sub get_pbx_subscribers_by_ids{
     if($#items < $#$ids){
         @absent_items_ids = grep { !exists $items_ids_exists{$_} } @{$params{ids}};
     }
-    
+
     return wantarray ? (\@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef )) : \@items;
 }
 sub get_subscriber_pbx_items{
@@ -487,18 +488,18 @@ sub manage_pbx_groups{
     my $subscriber      = $params{subscriber};
     my $customer        = $params{customer} // $subscriber->contract;
 
-    my $groups       = $params{groups} // ( @$group_ids ? get_pbx_subscribers_by_ids( 
-        c           => $c, 
-        schema      => $schema, 
-        ids         => $group_ids, 
-        customer_id => $customer->id, 
+    my $groups       = $params{groups} // ( @$group_ids ? get_pbx_subscribers_by_ids(
+        c           => $c,
+        schema      => $schema,
+        ids         => $group_ids,
+        customer_id => $customer->id,
         is_group    => 1,
     ) : [] );
-    my $groupmembers = $params{groupmembers} // ( @$groupmember_ids ? get_pbx_subscribers_by_ids( 
-        c           => $c, 
-        schema      => $schema, 
-        ids         => $groupmember_ids, 
-        customer_id => $customer->id, 
+    my $groupmembers = $params{groupmembers} // ( @$groupmember_ids ? get_pbx_subscribers_by_ids(
+        c           => $c,
+        schema      => $schema,
+        ids         => $groupmember_ids,
+        customer_id => $customer->id,
         is_group    => 0,
     ) : [] );
 
@@ -506,13 +507,13 @@ sub manage_pbx_groups{
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
     my $subscriber_uri  = get_pbx_group_member_name( subscriber => $subscriber );
     my $member_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, 
-        attribute => 'cloud_pbx_hunt_group', 
+        c => $c,
+        attribute => 'cloud_pbx_hunt_group',
     )->search_rs({
         subscriber_id => { -in => [ $prov_subscriber->voip_pbx_groups->get_column('group_id')->all ] },
         value         => $subscriber_uri,
     });
-    
+
     $member_preferences_rs->delete;
     $prov_subscriber->voip_pbx_groups->delete;
 
@@ -524,8 +525,8 @@ sub manage_pbx_groups{
             group_id => $group_prov_subscriber->id,
         });
         my $preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c               => $c, 
-            attribute       => 'cloud_pbx_hunt_group', 
+            c               => $c,
+            attribute       => 'cloud_pbx_hunt_group',
             prov_subscriber => $group_prov_subscriber,
         );
         $preferences_rs->create({ value => $subscriber_uri });
@@ -534,8 +535,8 @@ sub manage_pbx_groups{
     #delete old members to support correct order
     $prov_subscriber->voip_pbx_group_members->delete;
     my $group_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, 
-        attribute => 'cloud_pbx_hunt_group', 
+        c => $c,
+        attribute => 'cloud_pbx_hunt_group',
         prov_subscriber => $prov_subscriber,
     );
     $group_preferences_rs->delete;
@@ -591,11 +592,11 @@ sub update_subscriber_numbers {
         my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
         if(defined $cli_pref) {
-            if($cli_pref->first 
-                && defined $primary_number_old 
+            if($cli_pref->first
+                && defined $primary_number_old
                 && ( $cli_pref->first->value eq number_as_string($primary_number_old) )
                 && $c->config->{numbermanagement}->{auto_sync_cli}){
-                
+
                 $cli_pref->delete;
             }
         }
@@ -658,17 +659,17 @@ sub update_subscriber_numbers {
             my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
             if($cli_pref->first) {
-                if(defined $primary_number_old 
-                    && ( number_as_string($primary_number_old) eq $cli_pref->first->value ) 
+                if(defined $primary_number_old
+                    && ( number_as_string($primary_number_old) eq $cli_pref->first->value )
                     && $c->config->{numbermanagement}->{auto_sync_cli} ){
-                    
+
                     $cli_pref->first->update({ value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} });
                 }
             } else {
                 if( ! defined $primary_number_old && $c->config->{numbermanagement}->{auto_sync_cli} ){
                     $cli_pref->create({
                         subscriber_id => $prov_subs->id,
-                        value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} 
+                        value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn}
                     });
                 }
             }
@@ -680,8 +681,8 @@ sub update_subscriber_numbers {
 
             if(defined $billing_subs->primary_number
                 && $billing_subs->primary_number_id != $number->id) {
-                $old_cli = $billing_subs->primary_number->cc . 
-                    ($billing_subs->primary_number->ac // '') . 
+                $old_cli = $billing_subs->primary_number->cc .
+                    ($billing_subs->primary_number->ac // '') .
                     $billing_subs->primary_number->sn;
                 $billing_subs->primary_number->delete;
             }
@@ -952,8 +953,8 @@ sub terminate {
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
         if($prov_subscriber && $prov_subscriber->profile_id) {
             NGCP::Panel::Utils::Events::insert(
-                c => $c, schema => $schema, 
-                subscriber => $subscriber, type => 'stop_profile', 
+                c => $c, schema => $schema,
+                subscriber => $subscriber, type => 'stop_profile',
                 old => $prov_subscriber->profile_id, new => undef,
             );
         }
@@ -1447,7 +1448,7 @@ sub mark_voicemail_read{
 
 sub number_as_string{
     my ($number_row, %params) = @_;
-    return 'HASH' eq ref $number_row 
+    return 'HASH' eq ref $number_row
         ? $number_row->{cc} . ($number_row->{ac} // '') . $number_row->{sn}
         : $number_row->cc . ($number_row->ac // '') . $number_row->sn;
 }
