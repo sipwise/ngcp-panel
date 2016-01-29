@@ -8,7 +8,7 @@ use NGCP::Panel::Form::RewriteRule::ResellerSet;
 use NGCP::Panel::Form::RewriteRule::CloneSet;
 use NGCP::Panel::Form::RewriteRule::Rule;
 use NGCP::Panel::Utils::Message;
-use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::Panel::Utils::Rewrite;
 use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -129,6 +129,7 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
     
     try {
         $c->stash->{set_result}->delete;
+        NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
         NGCP::Panel::Utils::Message->info(
             c    => $c,
             data => { $c->stash->{set_result}->get_inflated_columns },
@@ -183,6 +184,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                     });
                 }
             });
+            NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
             NGCP::Panel::Utils::Message->info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully cloned'),
@@ -300,7 +302,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
                 $elem->priority(int($last_priority) - 1);
                 $elem->update;
             }
-            $self->_sip_dialplan_reload($c);
+            NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -401,7 +403,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             $c->stash->{rule_result}->update($form->values);
-            $self->_sip_dialplan_reload($c);
+            NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
             NGCP::Panel::Utils::Message->info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule successfully updated'),
@@ -425,7 +427,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') {
     
     try {
         $c->stash->{rule_result}->delete;
-        $self->_sip_dialplan_reload($c);
+        NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
         NGCP::Panel::Utils::Message->info(
             c    => $c,
             data => { $c->stash->{rule_result}->get_inflated_columns },
@@ -461,7 +463,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
             my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 49;
             $form->values->{priority} = int($last_priority) + 1;
             $c->stash->{rules_rs}->create($form->values);
-            $self->_sip_dialplan_reload($c);
+            NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
             NGCP::Panel::Utils::Message->info(
                 c    => $c,
                 desc => $c->loc('Rewrite rule successfully created'),
@@ -478,20 +480,6 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
 
     $c->stash(form => $form);
     $c->stash(create_flag => 1);
-}
-
-sub _sip_dialplan_reload {
-    my ($self, $c) = @_;
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
-<?xml version="1.0" ?>
-<methodCall>
-<methodName>dialplan.reload</methodName>
-<params/>
-</methodCall>
-EOF
-
-    return 1;
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -95,8 +95,6 @@ sub update_item {
 
     $item->update($resource);
 
-
-
     return $item;
 }
 
