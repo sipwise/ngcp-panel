@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_2fce6f84",
+        "filename": "lib/NGCP/Panel/Field/PosInteger.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-29T13:14:14Z",
+      "side": 1,
+      "message": "otherwise we can get the error:\n\nInconsistent hierarchy during C3 merge of class \u0027NGCP::Panel::Field::PosInteger\u0027:\n\tcurrent merge results [\n\t\tNGCP::Panel::Field::PosInteger,\n\t]",
+      "revId": "94517884346262ca3cd3350d46352b27eb52572e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_4fcba372",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-29T13:14:14Z",
+      "side": 1,
+      "message": "this is effectively like a normal alias number",
+      "revId": "94517884346262ca3cd3350d46352b27eb52572e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}

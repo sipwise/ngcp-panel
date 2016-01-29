@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_6fb467f2",
+        "filename": "lib/NGCP/Panel/Field/E164Range.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-01-29T13:14:14Z",
+      "side": 0,
+      "message": "not needed, because checked in the validate method.",
+      "revId": "9a5cd2feab1d1dc0acb3324ceb004c9567c99072",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
