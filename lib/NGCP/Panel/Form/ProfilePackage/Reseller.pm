@@ -30,7 +30,7 @@ has_field 'name' => (
 
 has_field 'description' => (
     type => 'Text',
-    label => 'Description',    
+    label => 'Description',
     required => 1,
     maxlength => 255,
     element_attr => {
@@ -43,7 +43,7 @@ has_field 'initial_balance' => (
     type => 'Money',
     label => 'Initial Balance',
     #inflate_method => sub { return $_[1] * 100.0 },
-    #deflate_method => sub { return $_[1] / 100.0 },    
+    #deflate_method => sub { return $_[1] / 100.0 },
     element_attr => {
         rel => ['tooltip'],
         title => ['The initial balance (in cents) that will be set for the very first balance interval.']
@@ -58,7 +58,7 @@ has_field 'initial_profiles' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
@@ -67,7 +67,7 @@ has_field 'initial_profiles' => (
         title => ['An array of objects with keys "profile_id" and "network_id" to create profile mappings from when applying this profile package to a customer.']
     },
     deflate_value_method => \&_deflate_mappings,
-    inflate_default_method => \&_inflate_mappings,    
+    inflate_default_method => \&_inflate_mappings,
 );
 
 has_field 'initial_profiles.row' => (
@@ -94,7 +94,7 @@ has_field 'initial_profiles_add' => (
 
 has_field 'balance_interval' => (
     type => '+NGCP::Panel::Field::Interval',
-    label => 'Balance Interval', 
+    label => 'Balance Interval',
     do_label => 1,
     tags => {
         before_element => '<div class="ngcp-interval-row control-group">',
@@ -109,7 +109,7 @@ has_field 'balance_interval_start_mode' => (
         { value => '1st', label => '1st day of month' },
         { value => 'create', label => 'upon customer creation' },
         { value => 'topup_interval', label => 'start interval upon top-up' },
-        { value => 'topup', label => 'new interval for each top-up' },        
+        { value => 'topup', label => 'new interval for each top-up' },
     ],
     element_attr => {
         rel => ['tooltip'],
@@ -134,7 +134,7 @@ has_field 'carry_over_mode' => (
 
 has_field 'timely_duration' => (
     type => '+NGCP::Panel::Field::Interval',
-    label => '"Timely" Duration', 
+    label => '"Timely" Duration',
     do_label => 1,
     tags => {
         before_element => '<div class="ngcp-interval-row control-group">',
@@ -144,7 +144,7 @@ has_field 'timely_duration' => (
 
 has_field 'notopup_discard_intervals' => (
     type => 'PosInteger',
-    label => 'Discard balance after intervals', 
+    label => 'Discard balance after intervals',
     element_attr => {
         rel => ['tooltip'],
         title => ['The balance will be discarded if no top-up happened for the the given number of balance intervals.']
@@ -156,7 +156,7 @@ has_field 'underrun_lock_threshold' => (
     type => 'Money',
     label => 'Underrun lock threshold',
     #inflate_method => sub { return $_[1] * 100.0 },
-    #deflate_method => sub { return $_[1] / 100.0 },      
+    #deflate_method => sub { return $_[1] / 100.0 },
     element_attr => {
         rel => ['tooltip'],
         title => ['The balance threshold (in cents) for the underrun lock level to come into effect.']
@@ -172,21 +172,22 @@ has_field 'underrun_lock_level' => (
         { value => '2', label => 'outgoing' },
         { value => '3', label => 'all calls' },
         { value => '4', label => 'global' },
+        { value => '5', label => 'ported (call forwarding only)' },
     ],
-    label => 'Underrun lock level', 
+    label => 'Underrun lock level',
     element_attr => {
         rel => ['tooltip'],
         title => ['The lock level to set all customer\'s subscribers to in case the balance underruns "underrun_lock_threshold".']
     },
     deflate_value_method => \&_deflate_lock_level,
-    inflate_default_method => \&_deflate_lock_level,    
+    inflate_default_method => \&_deflate_lock_level,
 );
 
 has_field 'underrun_profile_threshold' => (
     type => 'Money',
     label => 'Underrun profile threshold',
     #inflate_method => sub { return $_[1] * 100.0 },
-    #deflate_method => sub { return $_[1] / 100.0 },      
+    #deflate_method => sub { return $_[1] / 100.0 },
     element_attr => {
         rel => ['tooltip'],
         title => ['The balance threshold (in cents) for underrun profiles to come into effect.']
@@ -199,7 +200,7 @@ has_field 'underrun_profiles' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
@@ -208,7 +209,7 @@ has_field 'underrun_profiles' => (
         title => ['An array of objects with keys "profile_id" and "network_id" to create profile mappings from when the balance underruns the "underrun_profile_threshold" value.']
     },
     deflate_value_method => \&_deflate_mappings,
-    inflate_default_method => \&_inflate_mappings,      
+    inflate_default_method => \&_inflate_mappings,
 );
 
 has_field 'underrun_profiles.row' => (
@@ -241,6 +242,7 @@ has_field 'topup_lock_level' => (
         { value => '2', label => 'outgoing' },
         { value => '3', label => 'all calls' },
         { value => '4', label => 'global' },
+        { value => '5', label => 'ported (call forwarding only)' },
     ],
     label => 'Top-up lock level',
     element_attr => {
@@ -255,7 +257,7 @@ has_field 'service_charge' => (
     type => 'Money',
     label => 'Service Charge',
     #inflate_method => sub { return $_[1] * 100.0 },
-    #deflate_method => sub { return $_[1] / 100.0 },      
+    #deflate_method => sub { return $_[1] / 100.0 },
     element_attr => {
         rel => ['tooltip'],
         title => ['The service charge amount (in cents) will be subtracted from the voucher amount upon every top-up.']
@@ -269,16 +271,16 @@ has_field 'topup_profiles' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
     element_attr => {
         rel => ['tooltip'],
         title => ['An array of objects with keys "profile_id" and "network_id" to create profile mappings from when a customer top-ups with a voucher associated with this profile package.']
-    },      
+    },
     deflate_value_method => \&_deflate_mappings,
-    inflate_default_method => \&_inflate_mappings,  
+    inflate_default_method => \&_inflate_mappings,
 );
 
 has_field 'topup_profiles.row' => (
@@ -383,7 +385,7 @@ sub validate {
     my ($self) = @_;
     my $c = $self->ctx;
     return unless $c;
-    
+
     my $resource = Storable::dclone($self->values);
     if (defined $resource->{reseller}) {
         $resource->{reseller_id} = $resource->{reseller}{id};
@@ -396,7 +398,7 @@ sub validate {
         $resource->{$_.'_value'} = $resource->{$_}{value} || undef;
         delete $resource->{$_};
     }
-    
+
     NGCP::Panel::Utils::ProfilePackages::check_balance_interval(
             c => $c,
             resource => $resource,
@@ -412,8 +414,8 @@ sub validate {
                 foreach my $field (@fields) {
                     $self->field($field)->add_error($err);
                 }
-            });            
-            
+            });
+
     my $mappings_to_create = [];
     NGCP::Panel::Utils::ProfilePackages::prepare_profile_package(
             c => $c,
@@ -425,7 +427,7 @@ sub validate {
                     $self->field($field)->add_error($err);
                 }
             });
-    
+
 }
 
 1;
