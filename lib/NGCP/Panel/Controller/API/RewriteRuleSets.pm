@@ -10,6 +10,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Rewrite;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -241,6 +242,7 @@ sub POST :Allow {
         }
 
         $guard->commit;
+        NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $ruleset->id));
