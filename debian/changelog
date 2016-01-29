@@ -1,3 +1,12 @@
+ngcp-panel (1.11.1.4+0~mr4.2.1.4) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [49b8efb] MT#16983 Don't display pbxgroups and subscribers if there is no linked
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Jan 2016 14:21:48 +0100
+
 ngcp-panel (1.11.1.3+0~mr4.2.1.3) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
