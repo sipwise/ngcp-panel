@@ -94,7 +94,7 @@ has_field 'balance_interval_start_mode' => (
         { value => 'create', label => 'upon customer creation' },
         { value => '1st', label => '1st day of month' },
         { value => 'topup_interval', label => 'start interval upon top-up' },
-        { value => 'topup', label => 'new interval for each top-up' },     
+        { value => 'topup', label => 'new interval for each top-up' },
     ],
     element_attr => {
         rel => ['tooltip'],
@@ -165,13 +165,14 @@ has_field 'underrun_lock_level' => (
         { value => '2', label => 'outgoing' },
         { value => '3', label => 'all calls' },
         { value => '4', label => 'global' },
+        { value => '5', label => 'ported (call forwarding only)' },
     ],
     element_attr => {
         rel => ['tooltip'],
         title => ['The lock level to set all customer\'s subscribers to in case the balance underruns "underrun_lock_threshold".']
     },
     deflate_value_method => \&_deflate_lock_level,
-    inflate_default_method => \&_deflate_lock_level,    
+    inflate_default_method => \&_deflate_lock_level,
 );
 
 has_field 'underrun_profile_threshold' => (
@@ -213,13 +214,14 @@ has_field 'topup_lock_level' => (
         { value => '2', label => 'outgoing' },
         { value => '3', label => 'all calls' },
         { value => '4', label => 'global' },
+        { value => '5', label => 'ported (call forwarding only)' },
     ],
     element_attr => {
         rel => ['tooltip'],
         title => ['The lock level to reset all customer\'s subscribers to after a successful top-up (usually 0).']
     },
     deflate_value_method => \&_deflate_lock_level,
-    inflate_default_method => \&_deflate_lock_level,    
+    inflate_default_method => \&_deflate_lock_level,
 );
 
 has_field 'service_charge' => (

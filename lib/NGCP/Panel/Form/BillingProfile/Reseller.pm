@@ -93,6 +93,7 @@ has_field 'fraud_interval_lock' => (
         { value => 2, label => 'all outgoing calls' },
         { value => 3, label => 'incoming and outgoing' },
         { value => 4, label => 'global (including CSC)' },
+        { value => 5, label => 'ported (call forwarding only)' },
     ],
     element_attr => {
         rel => ['tooltip'],
@@ -128,6 +129,7 @@ has_field 'fraud_daily_lock' => (
         { value => 2, label => 'all outgoing calls' },
         { value => 3, label => 'incoming and outgoing' },
         { value => 4, label => 'global (including CSC)' },
+        { value => 5, label => 'ported (call forwarding only)' },
     ],
     element_attr => {
         rel => ['tooltip'],
@@ -181,7 +183,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/handle name prepaid interval_charge interval_free_time interval_free_cash 
+    render_list => [qw/handle name prepaid interval_charge interval_free_time interval_free_cash
         fraud_interval_limit fraud_interval_lock fraud_interval_notify
         fraud_daily_limit fraud_daily_lock fraud_daily_notify fraud_use_reseller_rates
         currency id
@@ -207,7 +209,7 @@ sub validate {
     my ($self) = @_;
     my $c = $self->ctx;
     return unless $c;
-    
+
     my $resource = Storable::dclone($self->values);
     if (defined $resource->{reseller}) {
         $resource->{reseller_id} = $resource->{reseller}{id};
@@ -215,14 +217,14 @@ sub validate {
     } else {
         $resource->{reseller_id} = ($c->user->is_superuser ? undef : $c->user->reseller_id);
     }
-    
+
     NGCP::Panel::Utils::Billing::check_profile_update_item($c,$resource,$c->stash->{profile_result},sub {
                 my ($err,@fields) = @_;
                 foreach my $field (@fields) {
                     $self->field($field)->add_error($err);
                 }
-            });    
-    
+            });
+
 }
 
 1
