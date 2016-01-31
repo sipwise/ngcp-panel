@@ -108,6 +108,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
+            $form->values->{md5pass} = delete $form->values->{password};
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -166,7 +167,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     } else {
         $form = NGCP::Panel::Form::Administrator::Reseller->new(ctx => $c);
     }
-    $form->field('md5pass')->{required} = 0;
+    $form->field('password')->{required} = 0;
 
     $form->process(
         posted => $posted,
@@ -193,7 +194,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 delete $form->values->{reseller};
             }
-            delete $form->values->{md5pass} unless length $form->values->{md5pass};
+            delete $form->values->{password} unless length $form->values->{password};
+            if(exists $form->values->{password}) {
+                $form->values->{md5pass} = delete $form->values->{password};
+            }
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
