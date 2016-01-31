@@ -11,7 +11,7 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'login' => (type => 'Text', required => 1, minlength => 5);
-has_field 'md5pass' => (type => 'Password', required => 1, label => 'Password');
+has_field 'password' => (type => 'Password', required => 1, label => 'Password');
 for (qw(is_active show_passwords call_data billing_data)) {
     has_field $_ => (type => 'Boolean', default => 1);
 }
@@ -23,12 +23,12 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(
-        login md5pass is_master is_active read_only show_passwords call_data billing_data
+        login password is_master is_active read_only show_passwords call_data billing_data
     )],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(save)],);
 
-sub validate_md5pass {
+sub validate_password {
     my ($self, $field) = @_;
     my $c = $self->form->ctx;
     return unless $c;
