@@ -11,6 +11,7 @@ use DateTime::Format::Strptime;
 sub process {
     my ($c, $rs, $cols, $row_func, $params) = @_;
 
+    $params //= {};
     my $total_row_func = $params->{total_row_func};
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
