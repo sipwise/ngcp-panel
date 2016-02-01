@@ -6,7 +6,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+##use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Peering;
 use Path::Tiny qw(path);

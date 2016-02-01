@@ -1,12 +1,10 @@
 package NGCP::Panel::Controller::API::BalanceIntervalsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use boolean qw(true);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+#use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);

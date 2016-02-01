@@ -1,15 +1,13 @@
 package NGCP::Panel::Controller::API::Resellers;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use JSON qw();
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+#use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller;
 use NGCP::Panel::Utils::Rtc;
