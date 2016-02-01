@@ -7,6 +7,7 @@ use HTTP::Headers qw();
 use HTTP::Response qw();
 use HTTP::Status qw(:constants);
 #use MooseX::ClassAttribute qw(class_has);
+use Moo;
 use MooX::ClassAttribute qw(class_has);
 use File::Find::Rule;
 use JSON qw(to_json);
