@@ -17,6 +17,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Allows to permit or reject calls to specific LNP carriers as part of an NCOS level.';
 };

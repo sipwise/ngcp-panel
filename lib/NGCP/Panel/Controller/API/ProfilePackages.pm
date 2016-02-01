@@ -17,6 +17,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Containers of settings for <a href="#customerbalances">Customer Balances</a> and <a href="#billingprofiles">Billing Profiles</a> to be applied to <a href="#customers">Customers</a>.';
 };

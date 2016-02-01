@@ -19,6 +19,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Defines a reseller on the system. A reseller can manage his own <a href="#domains">Domains</a> and <a href="#customers">Customers</a>.';
 }

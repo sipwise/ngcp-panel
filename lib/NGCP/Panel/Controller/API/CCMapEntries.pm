@@ -17,6 +17,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Creates a calling card mapping entry. For call through, it uses the UUID of the subscriber to attach allowed '.
         'CLIs able to perform a call through.';

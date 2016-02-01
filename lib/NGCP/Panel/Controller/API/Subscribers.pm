@@ -21,6 +21,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Defines an actual user who can log into the web panel, register devices via SIP and/or '.
         'XMPP and place and receive calls via SIP. A subscriber always belongs to a '.

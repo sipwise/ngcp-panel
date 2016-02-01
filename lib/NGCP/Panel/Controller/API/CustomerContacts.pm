@@ -17,6 +17,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Defines a physical or legal person\'s address (postal and/or email) to be used to identify <a href="#customers">Customers</a>.';
 };

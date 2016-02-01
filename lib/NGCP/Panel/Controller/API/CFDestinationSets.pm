@@ -15,6 +15,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Defines a collection of CallForward Destination Sets, including their destination, which can be set '.
         'to define CallForwards using <a href="#cfmappings">CFMappings</a>.',;

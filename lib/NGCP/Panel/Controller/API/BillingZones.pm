@@ -16,6 +16,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Defines zones used to group destinations within <a href="#billingprofiles">Billing Profiles</a>. The zones can be used to group customer\'s calls, like calls within his country or any calls to mobile numbers.';
 };

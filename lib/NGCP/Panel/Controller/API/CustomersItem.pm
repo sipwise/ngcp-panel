@@ -18,6 +18,10 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 with 'NGCP::Panel::Role::API::Customers';
 
 class_has('resource_name', is => 'ro', default => 'customers');

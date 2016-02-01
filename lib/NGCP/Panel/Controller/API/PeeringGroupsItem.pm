@@ -15,6 +15,10 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
+sub allowed_methods{
     return [qw/GET PUT PATCH OPTIONS HEAD/];
 }
 

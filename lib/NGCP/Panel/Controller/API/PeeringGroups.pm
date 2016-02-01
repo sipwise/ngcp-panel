@@ -23,6 +23,10 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Defines peering groups.';
 };

@@ -15,6 +15,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 sub api_description {
     return 'Specifies callforward mappings of a subscriber, where multiple mappings can be specified per type (cfu, cfb, cft cfna) ' . 
         'One mapping consists of destinationset name (see <a href="#cfdestinationsets">CFDestinationSets</a>) and a timeset name ' .

@@ -19,6 +19,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 with 'NGCP::Panel::Role::API';
 
 class_has('resource_name', is => 'ro', default => 'subscriberpreferencedefs');
