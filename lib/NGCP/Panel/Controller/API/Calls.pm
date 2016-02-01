@@ -8,7 +8,6 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 #use MooseX::ClassAttribute qw(class_has);
-use Moo;
 use MooX::ClassAttribute qw(class_has);
 use TryCatch;
 use NGCP::Panel::Utils::DateTime;
@@ -29,7 +28,7 @@ sub api_description {
 
 class_has 'query_params' => (
     is => 'ro',
-    isa => 'ArrayRef',
+
     default => sub {[
         {
             param => 'customer_id',

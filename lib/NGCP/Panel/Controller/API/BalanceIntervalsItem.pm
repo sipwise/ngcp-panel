@@ -5,7 +5,6 @@ use boolean qw(true);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 #use MooseX::ClassAttribute qw(class_has);
-use Moo;
 use MooX::ClassAttribute qw(class_has);
 use TryCatch;
 use NGCP::Panel::Utils::DateTime;
@@ -30,7 +29,7 @@ class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#
 
 class_has 'query_params' => (
     is => 'ro',
-    isa => 'ArrayRef',
+
     default => sub {[
         {
             param => 'start',
