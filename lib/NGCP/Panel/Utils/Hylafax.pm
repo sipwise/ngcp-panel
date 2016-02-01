@@ -3,7 +3,7 @@ package NGCP::Panel::Utils::Hylafax;
 use Sipwise::Base;
 use File::Temp qw/tempfile/;
 use TryCatch;
-use IPC::System::Simple qw/capture/;
+use IPC::System::Simple qw//;
 use Data::Dumper;
 
 sub send_fax {
@@ -77,7 +77,7 @@ sub send_fax {
         close $fh;
         my $filename_ps = $filename.'.ps';
         my $cmd = "textfmt -O UTF8:Yes -B -f Courier-Bold -p 11 -s A4 > $filename_ps < $filename";
-        my $err_ps = capture($cmd);
+        my $err_ps = IPC::System::Simple::capture($cmd);
         $c and $c->log->debug( "$cmd: $err_ps;" );
         if(!$err_ps){
             unlink $filename;
