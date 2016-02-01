@@ -11,7 +11,6 @@ use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -21,7 +20,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-with 'NGCP::Panel::Role::API::ApplyRewrites';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::ApplyRewrites/;
 
 sub api_description {
     return 'Applies rewrite rules to a given number according to the given direction. It can for example be used to normalize user input to E164 using callee_in direction, or to denormalize E164 to user output using caller_out.';

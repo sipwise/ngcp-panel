@@ -10,7 +10,6 @@ use HTTP::Status qw(:constants);
 use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -53,7 +52,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::BillingZones';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::BillingZones/;
 
 class_has('resource_name', is => 'ro', default => 'billingzones');
 class_has('dispatch_path', is => 'ro', default => '/api/billingzones/');

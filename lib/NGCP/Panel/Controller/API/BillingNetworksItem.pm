@@ -12,7 +12,6 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Reseller qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -21,7 +20,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-with 'NGCP::Panel::Role::API::BillingNetworks';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::BillingNetworks/;
 
 class_has('resource_name', is => 'ro', default => 'billingnetworks');
 class_has('dispatch_path', is => 'ro', default => '/api/billingnetworks/');

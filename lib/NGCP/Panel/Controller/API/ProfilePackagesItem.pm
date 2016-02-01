@@ -8,7 +8,6 @@ use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -17,7 +16,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-with 'NGCP::Panel::Role::API::ProfilePackages';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::ProfilePackages/;
 
 class_has('resource_name', is => 'ro', default => 'profilepackages');
 class_has('dispatch_path', is => 'ro', default => '/api/profilepackages/');

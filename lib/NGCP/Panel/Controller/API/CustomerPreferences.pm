@@ -11,7 +11,6 @@ use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -25,7 +24,7 @@ sub api_description {
     return 'Specifies certain properties (preferences) for a <a href="#customers">Customer</a>. The full list of properties can be obtained via <a href="/api/customerpreferencedefs/">CustomerPreferenceDefs</a>.';
 };
 
-with 'NGCP::Panel::Role::API::Preferences';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Preferences/;
 
 class_has('resource_name', is => 'ro', default => 'customerpreferences');
 class_has('dispatch_path', is => 'ro', default => '/api/customerpreferences/');

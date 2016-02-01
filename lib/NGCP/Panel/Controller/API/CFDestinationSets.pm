@@ -9,7 +9,6 @@ use HTTP::Status qw(:constants);
 #use MooseX::ClassAttribute qw(class_has);
 use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -56,7 +55,7 @@ class_has 'query_params' => (
 );
 
 
-with 'NGCP::Panel::Role::API::CFDestinationSets';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::CFDestinationSets/;
 
 class_has('resource_name', is => 'ro', default => 'cfdestinationsets');
 class_has('dispatch_path', is => 'ro', default => '/api/cfdestinationsets/');

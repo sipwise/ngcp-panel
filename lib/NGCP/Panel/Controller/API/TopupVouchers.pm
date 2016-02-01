@@ -13,7 +13,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ProfilePackages;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -25,7 +24,7 @@ sub allowed_methods{
 
 use NGCP::Panel::Form::Topup::VoucherAPI;
 
-with 'NGCP::Panel::Role::API';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API/;
 
 sub api_description {
     return 'Defines topup via voucher codes.';

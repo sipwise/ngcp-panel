@@ -12,7 +12,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::Billing qw();
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -55,7 +54,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::BillingProfiles';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::BillingProfiles/;
 
 class_has('resource_name', is => 'ro', default => 'billingprofiles');
 class_has('dispatch_path', is => 'ro', default => '/api/billingprofiles/');

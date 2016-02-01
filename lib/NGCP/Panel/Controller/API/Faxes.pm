@@ -14,7 +14,6 @@ use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API::Subscribers;
 use Encode qw( encode_utf8 );
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -54,7 +53,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::Faxes';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Faxes/;
 
 class_has('resource_name', is => 'ro', default => 'faxes');
 class_has('dispatch_path', is => 'ro', default => '/api/faxes/');

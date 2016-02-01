@@ -13,7 +13,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller;
 use NGCP::Panel::Utils::Rtc;
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -45,7 +44,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::Resellers';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Resellers/;
 
 class_has('resource_name', is => 'ro', default => 'resellers');
 class_has('dispatch_path', is => 'ro', default => '/api/resellers/');

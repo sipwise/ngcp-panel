@@ -11,7 +11,6 @@ use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller qw();
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -54,7 +53,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::LnpCarriers';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::LnpCarriers/;
 
 class_has('resource_name', is => 'ro', default => 'lnpcarriers');
 class_has('dispatch_path', is => 'ro', default => '/api/lnpcarriers/');

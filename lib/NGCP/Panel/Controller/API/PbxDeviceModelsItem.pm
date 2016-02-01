@@ -13,7 +13,6 @@ use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use Clone qw/clone/;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -22,7 +21,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-with 'NGCP::Panel::Role::API::PbxDeviceModels';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::PbxDeviceModels/;
 
 class_has('resource_name', is => 'ro', default => 'pbxdevicemodels');
 class_has('dispatch_path', is => 'ro', default => '/api/pbxdevicemodels/');

@@ -15,7 +15,6 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use UUID;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -216,7 +215,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::Subscribers';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Subscribers/;
 
 class_has('resource_name', is => 'ro', default => 'subscribers');
 class_has('dispatch_path', is => 'ro', default => '/api/subscribers/');

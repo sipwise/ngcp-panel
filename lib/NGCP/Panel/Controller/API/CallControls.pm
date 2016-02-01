@@ -14,7 +14,6 @@ use Safe::Isa qw($_isa);
 
 use NGCP::Panel::Utils::Sems;
 
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -35,7 +34,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::CallControls';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::CallControls/;
 
 class_has('resource_name', is => 'ro', default => 'callcontrols');
 class_has('dispatch_path', is => 'ro', default => '/api/callcontrols/');

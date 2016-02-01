@@ -11,7 +11,6 @@ use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use NGCP::Panel::Utils::Billing;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -43,7 +42,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::BillingFees';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::BillingFees/;
 
 class_has('resource_name', is => 'ro', default => 'billingfees');
 class_has('dispatch_path', is => 'ro', default => '/api/billingfees/');

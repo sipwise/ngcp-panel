@@ -15,7 +15,6 @@ use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::Lnp;
 use NGCP::Panel::Utils::MySQL;
 
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -59,7 +58,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::LnpNumbers';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::LnpNumbers/;
 
 class_has('resource_name', is => 'ro', default => 'lnpnumbers');
 class_has('dispatch_path', is => 'ro', default => '/api/lnpnumbers/');

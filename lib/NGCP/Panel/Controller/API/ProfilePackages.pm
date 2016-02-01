@@ -11,7 +11,6 @@ use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -82,7 +81,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::ProfilePackages';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::ProfilePackages/;
 
 class_has('resource_name', is => 'ro', default => 'profilepackages');
 class_has('dispatch_path', is => 'ro', default => '/api/profilepackages/');

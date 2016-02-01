@@ -13,7 +13,6 @@ use NGCP::Panel::Utils::Preferences;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use JSON::Types qw();
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -23,7 +22,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-with 'NGCP::Panel::Role::API';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API/;
 
 class_has('resource_name', is => 'ro', default => 'customerpreferencedefs');
 class_has('dispatch_path', is => 'ro', default => '/api/customerpreferencedefs/');

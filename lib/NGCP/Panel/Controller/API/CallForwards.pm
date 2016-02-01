@@ -11,7 +11,6 @@ use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -49,7 +48,7 @@ class_has 'documentation_sample' => (
     } },
 );
 
-with 'NGCP::Panel::Role::API::CallForwards';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::CallForwards/;
 
 class_has('resource_name', is => 'ro', default => 'callforwards');
 class_has('dispatch_path', is => 'ro', default => '/api/callforwards/');

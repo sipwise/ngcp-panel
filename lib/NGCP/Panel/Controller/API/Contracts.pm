@@ -12,7 +12,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -66,7 +65,7 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::Contracts';
+use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Contracts/;
 
 class_has('resource_name', is => 'ro', default => 'contracts');
 class_has('dispatch_path', is => 'ro', default => '/api/contracts/');
