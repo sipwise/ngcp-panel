@@ -4,6 +4,7 @@ no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 #use MooseX::ClassAttribute qw(class_has);
+use MooX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
