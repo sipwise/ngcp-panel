@@ -1,3 +1,15 @@
+ngcp-panel (1.11.1.5+0~mr4.2.1.5) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [6131a9c] MT#17487 remove the use of capture
+
+  [ Andreas Granig ]
+  * [b293ec4] MT#17623 Reload dialplan cache on rwr changes
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 01 Feb 2016 15:21:26 +0100
+
 ngcp-panel (1.11.1.4+0~mr4.2.1.4) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
