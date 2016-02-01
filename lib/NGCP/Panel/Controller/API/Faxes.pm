@@ -10,6 +10,7 @@ use HTTP::Status qw(:constants);
 #use MooseX::ClassAttribute qw(class_has);
 use Moo;
 use MooX::ClassAttribute qw(class_has);
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);

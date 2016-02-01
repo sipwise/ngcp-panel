@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 #use MooseX::ClassAttribute qw(class_has);
 use Moo;
 use MooX::ClassAttribute qw(class_has);
+use TryCatch;
 use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
