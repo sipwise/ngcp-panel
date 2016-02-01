@@ -4,28 +4,39 @@ no Moose;
 use boolean qw(true);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::BalanceIntervals';
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has('resource_name', is => 'ro', default => 'balanceintervals');
-class_has('dispatch_path', is => 'ro', default => '/api/balanceintervals/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-balanceintervals');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::BalanceIntervals/;
 
-#class_has(@{ __PACKAGE__->get_journal_query_params() });
+sub resource_name{
+    return 'balanceintervals';
+}
+sub dispatch_path{
+    return '/api/balanceintervals/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-balanceintervals';
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+#sub journal_query_params {
+#    my($self,$query_params) = @_;
+#    return $self->get_journal_query_params($query_params);
+#}
+
+sub query_params {
+    return [
         {
             param => 'start',
             description => 'Filter balance intervals starting after or at the specified time stamp.',
@@ -39,8 +50,8 @@ class_has 'query_params' => (
             },
         },
         #the end value of intervals is not constant along the retrieval operations 
-    ]},
-);
+    ];
+}
 
 __PACKAGE__->config(
     action => {

@@ -6,27 +6,26 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Defines call lists in simplified form for showing call histories of subscribers.',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Defines call lists in simplified form for showing call histories of subscribers.';
+};
+
+sub query_params {
+    return [
         {
             param => 'subscriber_id',
             description => 'Filter for calls for a specific subscriber. Either this or customer_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific subscriber in order to properly determine the direction of calls.',
@@ -200,14 +199,20 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::CallLists';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::CallLists/;
 
-class_has('resource_name', is => 'ro', default => 'calllists');
-class_has('dispatch_path', is => 'ro', default => '/api/calllists/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-calllists');
+sub resource_name{
+    return 'calllists';
+}
+sub dispatch_path{
+    return '/api/calllists/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-calllists';
+}
 
 __PACKAGE__->config(
     action => {

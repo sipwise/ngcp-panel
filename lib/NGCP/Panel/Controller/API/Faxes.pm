@@ -7,36 +7,34 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API::Subscribers;
 use Encode qw( encode_utf8 );
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Defines the meta information like duration, sender etc for fax recordings. The actual recordings can be fetched via the <a href="#faxrecordings">FaxRecordings</a> relation. NOTE: There is no Location header in the POST method response, as creation is asynchronous.',
-);
-class_has 'properties' => (
-    is => 'ro',
-    isa => 'HashRef',
-    default => sub { {
-        asynchronous => 1,
-    }; },
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Defines the meta information like duration, sender etc for fax recordings. The actual recordings can be fetched via the <a href="#faxrecordings">FaxRecordings</a> relation. NOTE: There is no Location header in the POST method response, as creation is asynchronous.';
+};
+
+#sub properties {
+#    return {
+#        asynchronous => 1,
+#    };
+#}
+
+sub query_params {
+    return [
         {
             param => 'subscriber_id',
             description => 'Filter for faxes belonging to a specific subscriber',
@@ -49,14 +47,20 @@ class_has 'query_params' => (
                 second => sub { },
             },
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::Faxes';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Faxes/;
 
-class_has('resource_name', is => 'ro', default => 'faxes');
-class_has('dispatch_path', is => 'ro', default => '/api/faxes/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-faxes');
+sub resource_name{
+    return 'faxes';
+}
+sub dispatch_path{
+    return '/api/faxes/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-faxes';
+}
 
 __PACKAGE__->config(
     action => {

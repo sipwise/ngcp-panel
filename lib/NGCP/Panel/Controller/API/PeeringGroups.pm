@@ -6,13 +6,14 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-##use MooseX::ClassAttribute qw(class_has);
+#
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Peering;
 use Path::Tiny qw(path);
 use TryCatch;
 use Safe::Isa qw($_isa);
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;

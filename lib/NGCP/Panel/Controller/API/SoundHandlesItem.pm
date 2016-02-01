@@ -3,21 +3,31 @@ use NGCP::Panel::Utils::Generic qw(:all);
 no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::SoundHandles';
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has('resource_name', is => 'ro', default => 'soundhandles');
-class_has('dispatch_path', is => 'ro', default => '/api/soundhandles/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-soundhandles');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::SoundHandles/;
+
+sub resource_name{
+    return 'soundhandles';
+}
+sub dispatch_path{
+    return '/api/soundhandles/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-soundhandles';
+}
 
 __PACKAGE__->config(
     action => {

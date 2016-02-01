@@ -6,39 +6,44 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::Voucher;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
 use NGCP::Panel::Form::Topup::CashAPI;
 
-with 'NGCP::Panel::Role::API';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines topup via voucher codes.',
-);
+sub api_description {
+    return 'Defines topup via voucher codes.';
+};
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
-    ]},
-);
+sub query_params {
+    return [
+    ];
+}
 
-class_has('resource_name', is => 'ro', default => 'topupcash');
-class_has('dispatch_path', is => 'ro', default => '/api/topupcash/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-topupcash');
+sub resource_name{
+    return 'topupcash';
+}
+sub dispatch_path{
+    return '/api/topupcash/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-topupcash';
+}
 
 __PACKAGE__->config(
     action => {

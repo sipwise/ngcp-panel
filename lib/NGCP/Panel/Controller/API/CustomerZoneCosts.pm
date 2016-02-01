@@ -6,25 +6,24 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Returns for each customer, the customer_id and the number of calls, the total duration and the call fees grouped by zone.',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Returns for each customer, the customer_id and the number of calls, the total duration and the call fees grouped by zone.';
+};
+
+sub query_params {
+    return [
         {
             param => 'customer_id',
             description => 'Filter for a specific customer.',
@@ -46,15 +45,21 @@ class_has 'query_params' => (
             param => 'end',
             description => 'Filter for a specific end time in format YYYY-MM-DDThhmmss.',
         },
-    ]},
-);
+    ];
+}
 
 
-with 'NGCP::Panel::Role::API::CustomerZoneCosts';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerZoneCosts/;
 
-class_has('resource_name', is => 'ro', default => 'customerzonecosts');
-class_has('dispatch_path', is => 'ro', default => '/api/customerzonecosts/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customerzonecosts');
+sub resource_name{
+    return 'customerzonecosts';
+}
+sub dispatch_path{
+    return '/api/customerzonecosts/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-customerzonecosts';
+}
 
 __PACKAGE__->config(
     action => {

@@ -6,26 +6,25 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::DeviceBootstrap;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Specifies a PBX device deployed at a customer.',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Specifies a PBX device deployed at a customer.';
+};
+
+sub query_params {
+    return [
         {
             param => 'customer_id',
             description => 'Search for PBX devices belonging to a specific customer',
@@ -59,15 +58,21 @@ class_has 'query_params' => (
                 second => sub {},
             },
         }
-    ]},
-);
+    ];
+}
 
 
-with 'NGCP::Panel::Role::API::PbxDevices';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDevices/;
 
-class_has('resource_name', is => 'ro', default => 'pbxdevices');
-class_has('dispatch_path', is => 'ro', default => '/api/pbxdevices/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevices');
+sub resource_name{
+    return 'pbxdevices';
+}
+sub dispatch_path{
+    return '/api/pbxdevices/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevices';
+}
 
 __PACKAGE__->config(
     action => {

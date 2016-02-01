@@ -1,30 +1,41 @@
 package NGCP::Panel::Controller::API::MailToFaxSettingsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
 #use namespace::sweep;
+use TryCatch;
+
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::MailToFaxSettings';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::MailToFaxSettings/;
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has('resource_name', is => 'ro', default => 'mailtofaxsettings');
-class_has('dispatch_path', is => 'ro', default => '/api/mailtofaxsettings/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-mailtofaxsettings');
+sub resource_name{
+    return 'mailtofaxsettings';
+}
+sub dispatch_path{
+    return '/api/mailtofaxsettings/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-mailtofaxsettings';
+}
 
-class_has(@{ __PACKAGE__->get_journal_query_params() });
+sub journal_query_params {
+    my($self,$query_params) = @_;
+    return $self->get_journal_query_params($query_params);
+}
 
 __PACKAGE__->config(
     action => {

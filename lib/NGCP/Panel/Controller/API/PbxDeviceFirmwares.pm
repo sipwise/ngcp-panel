@@ -6,27 +6,26 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines firmwares for a <a href="#pbxdevicemodels">PbxDeviceModel</a>. To create or update a firmware, do a POST or PUT with Content-Type application/octet-stream and pass the properties via query parameters, e.g. <span>/api/pbxdevicefirmwares/?device_id=1&amp;filename=test.bin&amp;version=1.0</span>',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Defines firmwares for a <a href="#pbxdevicemodels">PbxDeviceModel</a>. To create or update a firmware, do a POST or PUT with Content-Type application/octet-stream and pass the properties via query parameters, e.g. <span>/api/pbxdevicefirmwares/?device_id=1&amp;filename=test.bin&amp;version=1.0</span>';
+};
+
+sub query_params {
+    return [
         {
             param => 'device_id',
             description => 'Filter for firmwares of a specific device model',
@@ -60,14 +59,20 @@ class_has 'query_params' => (
                 second => sub { },
             },
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::PbxDeviceFirmwares';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceFirmwares/;
 
-class_has('resource_name', is => 'ro', default => 'pbxdevicefirmwares');
-class_has('dispatch_path', is => 'ro', default => '/api/pbxdevicefirmwares/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicefirmwares');
+sub resource_name{
+    return 'pbxdevicefirmwares';
+}
+sub dispatch_path{
+    return '/api/pbxdevicefirmwares/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicefirmwares';
+}
 
 __PACKAGE__->config(
     action => {

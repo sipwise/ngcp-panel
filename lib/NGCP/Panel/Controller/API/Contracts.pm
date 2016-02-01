@@ -6,28 +6,27 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.';
+};
+
+sub query_params {
+    return [
         {
             param => 'contact_id',
             description => 'Filter for contracts with a specific contact id',
@@ -61,14 +60,20 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::Contracts';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Contracts/;
 
-class_has('resource_name', is => 'ro', default => 'contracts');
-class_has('dispatch_path', is => 'ro', default => '/api/contracts/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-contracts');
+sub resource_name{
+    return 'contracts';
+}
+sub dispatch_path{
+    return '/api/contracts/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-contracts';
+}
 
 __PACKAGE__->config(
     action => {

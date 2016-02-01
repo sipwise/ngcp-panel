@@ -5,30 +5,29 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Interception;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use UUID qw/generate unparse/;
 use NGCP::Panel::Utils::DateTime;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines lawful interceptions of subscribers.',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Defines lawful interceptions of subscribers.';
+};
+
+sub query_params {
+    return [
         {
             param => 'liid',
             description => 'Filter for interceptions of a specific interception id',
@@ -51,14 +50,20 @@ class_has 'query_params' => (
                 second => sub { },
             },
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::Interceptions';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Interceptions/;
 
-class_has('resource_name', is => 'ro', default => 'interceptions');
-class_has('dispatch_path', is => 'ro', default => '/api/interceptions/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-interceptions');
+sub resource_name{
+    return 'interceptions';
+}
+sub dispatch_path{
+    return '/api/interceptions/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-interceptions';
+}
 
 __PACKAGE__->config(
     action => {

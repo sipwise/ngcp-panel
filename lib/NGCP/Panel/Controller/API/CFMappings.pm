@@ -6,33 +6,31 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Specifies callforward mappings of a subscriber, where multiple mappings can be specified per type (cfu, cfb, cft cfna) ' . 
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
+
+sub api_description {
+    return 'Specifies callforward mappings of a subscriber, where multiple mappings can be specified per type (cfu, cfb, cft cfna) ' . 
         'One mapping consists of destinationset name (see <a href="#cfdestinationsets">CFDestinationSets</a>) and a timeset name ' .
-        '(see <a href="#cftimesets">CFTimeSets</a>).',
-);
+        '(see <a href="#cftimesets">CFTimeSets</a>).';
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
-    ]},
-);
+sub query_params {
+    return [
+    ];
+}
 
-class_has 'documentation_sample' => (
-    is => 'ro',
-    default => sub { {
+sub documentation_sample {
+    return  {
         cfb => [{
             "destinationset" => "quickset_cfb",
             "timeset" => undef,
@@ -41,14 +39,20 @@ class_has 'documentation_sample' => (
         cft => [],
         cft_ringtimeout => "200",
         cfu => [],
-    } },
-);
+    } ;
+}
 
-with 'NGCP::Panel::Role::API::CFMappings';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::CFMappings/;
 
-class_has('resource_name', is => 'ro', default => 'cfmappings');
-class_has('dispatch_path', is => 'ro', default => '/api/cfmappings/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-cfmappings');
+sub resource_name{
+    return 'cfmappings';
+}
+sub dispatch_path{
+    return '/api/cfmappings/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-cfmappings';
+}
 
 __PACKAGE__->config(
     action => {

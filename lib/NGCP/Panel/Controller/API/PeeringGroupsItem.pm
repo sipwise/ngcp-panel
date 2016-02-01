@@ -3,18 +3,19 @@ package NGCP::Panel::Controller::API::PeeringGroupsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-use base qw/NGCP::Panel::Controller::API::EntitiesItem NGCP::Panel::Role::API::PeeringGroups/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET PUT PATCH OPTIONS HEAD/];
+    return [qw/GET POST OPTIONS HEAD/];
 }
 
 __PACKAGE__->config(

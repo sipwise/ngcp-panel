@@ -3,21 +3,31 @@ use NGCP::Panel::Utils::Generic qw(:all);
 no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::PbxDeviceConfigs';
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has('resource_name', is => 'ro', default => 'pbxdeviceconfigs');
-class_has('dispatch_path', is => 'ro', default => '/api/pbxdeviceconfigs/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-pbxdeviceconfigs');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceConfigs/;
+
+sub resource_name{
+    return 'pbxdeviceconfigs';
+}
+sub dispatch_path{
+    return '/api/pbxdeviceconfigs/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdeviceconfigs';
+}
 
 __PACKAGE__->config(
     action => {

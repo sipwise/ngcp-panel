@@ -6,27 +6,26 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 #use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Log of successful and failed <a href="#topupcash">TopupCash</a> and <a href="#topupvoucher">TopupVoucher</a> requests.',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Log of successful and failed <a href="#topupcash">TopupCash</a> and <a href="#topupvoucher">TopupVoucher</a> requests.';
+};
+
+sub query_params {
+    return [
         {
             param => 'reseller_id',
             description => 'Filter for top-up requests for customers/subscribers of a specific reseller.',
@@ -143,14 +142,20 @@ class_has 'query_params' => (
                 second => sub { },
             },
         },         
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::TopupLogs';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::TopupLogs/;
 
-class_has('resource_name', is => 'ro', default => 'topuplogs');
-class_has('dispatch_path', is => 'ro', default => '/api/topuplogs/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-topuplogs');
+sub resource_name{
+    return 'topuplogs';
+}
+sub dispatch_path{
+    return '/api/topuplogs/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-topuplogs';
+}
 
 __PACKAGE__->config(
     action => {

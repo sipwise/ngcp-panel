@@ -6,35 +6,40 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::ApplyRewrites';
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Applies rewrite rules to a given number according to the given direction. It can for example be used to normalize user input to E164 using callee_in direction, or to denormalize E164 to user output using caller_out.',
-);
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::ApplyRewrites/;
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
-    ]},
-);
+sub api_description {
+    return 'Applies rewrite rules to a given number according to the given direction. It can for example be used to normalize user input to E164 using callee_in direction, or to denormalize E164 to user output using caller_out.';
+};
 
-class_has('resource_name', is => 'ro', default => 'applyrewrites');
-class_has('dispatch_path', is => 'ro', default => '/api/applyrewrites/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-applyrewrites');
+sub query_params {
+    return [
+    ];
+}
+
+sub resource_name{
+    return 'applyrewrites';
+}
+sub dispatch_path{
+    return '/api/applyrewrites/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-applyrewrites';
+}
 
 __PACKAGE__->config(
     action => {

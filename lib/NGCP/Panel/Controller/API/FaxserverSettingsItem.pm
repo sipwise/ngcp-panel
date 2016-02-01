@@ -6,24 +6,37 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use Clone qw/clone/;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::FaxserverSettings';
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has('resource_name', is => 'ro', default => 'faxserversettings');
-class_has('dispatch_path', is => 'ro', default => '/api/faxserversettings/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-faxserversettings');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::FaxserverSettings/;
 
-class_has(@{ __PACKAGE__->get_journal_query_params() });
+sub resource_name{
+    return 'faxserversettings';
+}
+sub dispatch_path{
+    return '/api/faxserversettings/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-faxserversettings';
+}
+
+sub journal_query_params {
+    my($self,$query_params) = @_;
+    return $self->get_journal_query_params($query_params);
+}
 
 __PACKAGE__->config(
     action => {

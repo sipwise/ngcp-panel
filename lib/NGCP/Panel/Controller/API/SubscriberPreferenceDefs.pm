@@ -6,23 +6,33 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-#use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use JSON::Types qw();
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API';
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has('resource_name', is => 'ro', default => 'subscriberpreferencedefs');
-class_has('dispatch_path', is => 'ro', default => '/api/subscriberpreferencedefs/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferencedefs');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API/;
+
+sub resource_name{
+    return 'subscriberpreferencedefs';
+}
+sub dispatch_path{
+    return '/api/subscriberpreferencedefs/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferencedefs';
+}
 
 __PACKAGE__->config(
     action => {
