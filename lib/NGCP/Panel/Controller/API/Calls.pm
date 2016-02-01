@@ -17,12 +17,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Defines calls placed or received by a customer.',
-);
+sub api_description {
+    return 'Defines calls placed or received by a customer.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

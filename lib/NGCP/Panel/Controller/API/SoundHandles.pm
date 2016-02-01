@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Provides a read-only overview of available sound handles and their corresponding groups.',
-);
+sub api_description {
+    return 'Provides a read-only overview of available sound handles and their corresponding groups.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

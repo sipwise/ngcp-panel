@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines the meta information like duration, callerid etc for voicemail recordings. The actual recordings can be fetched via the <a href="#voicemailrecordings">VoicemailRecordings</a> relation.',
-);
+sub api_description {
+    return 'Defines the meta information like duration, callerid etc for voicemail recordings. The actual recordings can be fetched via the <a href="#voicemailrecordings">VoicemailRecordings</a> relation.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

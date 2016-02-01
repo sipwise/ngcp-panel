@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Specifies certain properties (preferences) for a <a href="#peeringservers">Peering servers</a>. The full list of properties can be obtained via <a href="/api/peeringserverpreferencedefs/">PeeringSserverPreferenceDefs</a>.'
-);
+sub api_description {
+    return 'Specifies certain properties (preferences) for a <a href="#peeringservers">Peering servers</a>. The full list of properties can be obtained via <a href="/api/peeringserverpreferencedefs/">PeeringSserverPreferenceDefs</a>.';
+};
 
 with 'NGCP::Panel::Role::API::Preferences';
 

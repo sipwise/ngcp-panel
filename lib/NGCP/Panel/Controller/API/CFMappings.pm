@@ -14,14 +14,11 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Specifies callforward mappings of a subscriber, where multiple mappings can be specified per type (cfu, cfb, cft cfna) ' . 
+sub api_description {
+    return 'Specifies callforward mappings of a subscriber, where multiple mappings can be specified per type (cfu, cfb, cft cfna) ' . 
         'One mapping consists of destinationset name (see <a href="#cfdestinationsets">CFDestinationSets</a>) and a timeset name ' .
-        '(see <a href="#cftimesets">CFTimeSets</a>).',
-);
+        '(see <a href="#cftimesets">CFTimeSets</a>).';
+}
 
 class_has 'query_params' => (
     is => 'ro',

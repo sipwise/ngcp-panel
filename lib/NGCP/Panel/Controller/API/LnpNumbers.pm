@@ -21,12 +21,9 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines LNP number entries ported to a specific <a href="#lnpcarriers">LNP Carrier</a>. You can POST numbers individually one-by-one using json. To bulk-upload numbers, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/lnpnumbers/?purge_existing=true"',
-);
+sub api_description {
+    return 'Defines LNP number entries ported to a specific <a href="#lnpcarriers">LNP Carrier</a>. You can POST numbers individually one-by-one using json. To bulk-upload numbers, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/lnpnumbers/?purge_existing=true"';
+};
 
 class_has 'query_params' => (
     is => 'ro',

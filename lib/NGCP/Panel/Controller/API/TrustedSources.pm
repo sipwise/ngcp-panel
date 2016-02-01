@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines trusted sources for subscribers to bypass SIP authentication.',
-);
+sub api_description {
+    return 'Defines trusted sources for subscribers to bypass SIP authentication.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

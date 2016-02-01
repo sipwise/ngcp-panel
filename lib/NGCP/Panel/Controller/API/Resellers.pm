@@ -18,12 +18,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => ( 
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines a reseller on the system. A reseller can manage his own <a href="#domains">Domains</a> and <a href="#customers">Customers</a>.'
-);
+sub api_description {
+    return 'Defines a reseller on the system. A reseller can manage his own <a href="#domains">Domains</a> and <a href="#customers">Customers</a>.';
+}
 
 class_has 'query_params' => (
     is => 'ro',

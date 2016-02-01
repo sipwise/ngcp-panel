@@ -17,12 +17,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines customer balances to access cash and free time balance.',
-);
+sub api_description {
+    return 'Defines customer balances to access cash and free time balance.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

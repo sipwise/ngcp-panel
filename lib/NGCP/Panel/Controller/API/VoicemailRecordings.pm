@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines the actual recording of voicemail messages. It is referred to by the <a href="#voicemails">Voicemails</a> relation. A GET on an item returns the binary blob of the recording with Content-Type "audio/x-wav".',
-);
+sub api_description {
+    return 'Defines the actual recording of voicemail messages. It is referred to by the <a href="#voicemails">Voicemails</a> relation. A GET on an item returns the binary blob of the recording with Content-Type "audio/x-wav".';
+};
 
 with 'NGCP::Panel::Role::API::VoicemailRecordings';
 

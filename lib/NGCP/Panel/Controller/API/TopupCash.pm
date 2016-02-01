@@ -22,12 +22,9 @@ use NGCP::Panel::Form::Topup::CashAPI;
 
 with 'NGCP::Panel::Role::API';
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines topup via voucher codes.',
-);
+sub api_description {
+    return 'Defines topup via voucher codes.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

@@ -17,12 +17,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Histories of contracts\' cash balance intervals.',
-);
+sub api_description {
+    return 'Histories of contracts\' cash balance intervals.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

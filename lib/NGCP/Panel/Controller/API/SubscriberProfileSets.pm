@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines subscriber profile sets allowing the admin or subscriber to choose from profiles within this set, which in turn define the available features for a subscriber.',
-);
+sub api_description {
+    return 'Defines subscriber profile sets allowing the admin or subscriber to choose from profiles within this set, which in turn define the available features for a subscriber.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

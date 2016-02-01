@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines an LNP carrier with its routing prefix and holds a collection of <a href="#lnpnumbers">LNP Numbers</a>.',
-);
+sub api_description {
+    return 'Defines an LNP carrier with its routing prefix and holds a collection of <a href="#lnpnumbers">LNP Numbers</a>.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

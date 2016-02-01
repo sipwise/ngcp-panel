@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines a physical or legal person\'s address (postal and/or email) to be used in <a href="#contracts">System Contracts</a> (contracts for peerings and resellers).'
-);
+sub api_description {
+    return 'Defines a physical or legal person\'s address (postal and/or email) to be used in <a href="#contracts">System Contracts</a> (contracts for peerings and resellers).';
+};
 
 class_has 'query_params' => (
     is => 'ro',

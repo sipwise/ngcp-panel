@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Defines call lists in simplified form for showing call histories of subscribers.',
-);
+sub api_description {
+    return 'Defines call lists in simplified form for showing call histories of subscribers.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines the voicemail settings for a subscriber to perform IVR and Voice2mail.',
-);
+sub api_description {
+    return 'Defines the voicemail settings for a subscriber to perform IVR and Voice2mail.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

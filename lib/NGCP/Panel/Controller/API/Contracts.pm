@@ -17,12 +17,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.',
-);
+sub api_description {
+    return 'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

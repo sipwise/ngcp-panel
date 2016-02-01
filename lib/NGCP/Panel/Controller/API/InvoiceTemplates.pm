@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines invoice templates used to generate customer invoices. Only returns meta data at this point.',
-);
+sub api_description {
+    return 'Defines invoice templates used to generate customer invoices. Only returns meta data at this point.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

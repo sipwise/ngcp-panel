@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines firmwares for a <a href="#pbxdevicemodels">PbxDeviceModel</a>. To create or update a firmware, do a POST or PUT with Content-Type application/octet-stream and pass the properties via query parameters, e.g. <span>/api/pbxdevicefirmwares/?device_id=1&amp;filename=test.bin&amp;version=1.0</span>',
-);
+sub api_description {
+    return 'Defines firmwares for a <a href="#pbxdevicemodels">PbxDeviceModel</a>. To create or update a firmware, do a POST or PUT with Content-Type application/octet-stream and pass the properties via query parameters, e.g. <span>/api/pbxdevicefirmwares/?device_id=1&amp;filename=test.bin&amp;version=1.0</span>';
+};
 
 class_has 'query_params' => (
     is => 'ro',

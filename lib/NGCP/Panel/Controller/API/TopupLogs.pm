@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Log of successful and failed <a href="#topupcash">TopupCash</a> and <a href="#topupvoucher">TopupVoucher</a> requests.',
-);
+sub api_description {
+    return 'Log of successful and failed <a href="#topupcash">TopupCash</a> and <a href="#topupvoucher">TopupVoucher</a> requests.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

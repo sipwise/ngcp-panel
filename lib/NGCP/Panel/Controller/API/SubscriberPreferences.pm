@@ -17,12 +17,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Specifies certain properties (preferences) for a <a href="#subscribers">Subscriber</a>. The full list of properties can be obtained via <a href="/api/subscriberpreferencedefs/">SubscriberPreferenceDefs</a>.'
-);
+sub api_description {
+    return 'Specifies certain properties (preferences) for a <a href="#subscribers">Subscriber</a>. The full list of properties can be obtained via <a href="/api/subscriberpreferencedefs/">SubscriberPreferenceDefs</a>.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

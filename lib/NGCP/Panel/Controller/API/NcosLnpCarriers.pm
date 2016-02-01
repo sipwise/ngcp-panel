@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Allows to permit or reject calls to specific LNP carriers as part of an NCOS level.',
-);
+sub api_description {
+    return 'Allows to permit or reject calls to specific LNP carriers as part of an NCOS level.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

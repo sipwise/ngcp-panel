@@ -17,12 +17,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Defines a collection of <a href="#billingfees">Billing Fees</a> and <a href="#billingzones">Billing Zones</a> and can be assigned to <a href="#customers">Customers</a> and <a href="#contracts">System Contracts</a>.'
-);
+sub api_description {
+    return 'Defines a collection of <a href="#billingfees">Billing Fees</a> and <a href="#billingzones">Billing Zones</a> and can be assigned to <a href="#customers">Customers</a> and <a href="#contracts">System Contracts</a>.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

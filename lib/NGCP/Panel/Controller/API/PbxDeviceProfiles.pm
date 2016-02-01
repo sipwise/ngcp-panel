@@ -14,12 +14,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Specifies a profile to be set in <a href="#pbxdevices">PbxDevices</a>.',
-);
+sub api_description {
+    return 'Specifies a profile to be set in <a href="#pbxdevices">PbxDevices</a>.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

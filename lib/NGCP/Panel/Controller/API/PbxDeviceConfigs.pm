@@ -16,12 +16,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines configs for a <a href="#pbxdevicemodels">PbxDeviceModel</a>. To create or update a config, do a POST or PUT with the proper Content-Type (e.g. text/xml) and pass the properties via query parameters, e.g. <span>/api/pbxdeviceconfigs/?device_id=1&amp;version=1.0</span>',
-);
+sub api_description {
+    return 'Defines configs for a <a href="#pbxdevicemodels">PbxDeviceModel</a>. To create or update a config, do a POST or PUT with the proper Content-Type (e.g. text/xml) and pass the properties via query parameters, e.g. <span>/api/pbxdeviceconfigs/?device_id=1&amp;version=1.0</span>';
+};
 
 class_has 'query_params' => (
     is => 'ro',

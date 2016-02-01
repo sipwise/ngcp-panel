@@ -15,12 +15,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Specifies a PBX device deployed at a customer.',
-);
+sub api_description {
+    return 'Specifies a PBX device deployed at a customer.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

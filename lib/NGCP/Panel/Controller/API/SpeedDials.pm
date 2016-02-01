@@ -19,12 +19,9 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Show a collection of speeddials, belonging to a specific subscriber.',
-);
+sub api_description {
+    return 'Show a collection of speeddials, belonging to a specific subscriber.';
+};
 
 class_has 'query_params' => (
     is => 'ro',

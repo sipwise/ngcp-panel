@@ -16,13 +16,10 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines sound files for system and customer sound sets. To create or update a sound file, do a POST or PUT with Content-Type audio/x-wav and pass '.
-        'the properties via query parameters, e.g. <span>/api/soundfiles/?set_id=1&amp;filename=test.wav&amp;loopplay=true&amp;handle=music_on_hold</span>',
-);
+sub api_description {
+    return 'Defines sound files for system and customer sound sets. To create or update a sound file, do a POST or PUT with Content-Type audio/x-wav and pass '.
+        'the properties via query parameters, e.g. <span>/api/soundfiles/?set_id=1&amp;filename=test.wav&amp;loopplay=true&amp;handle=music_on_hold</span>';
+}
 
 class_has 'query_params' => (
     is => 'ro',
