@@ -1,3 +1,12 @@
+ngcp-panel (1.8.4.6+0~mr3.8.4.6) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [cce744f] MT#17623 Reload dialplan cache on rwr changes
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 01 Feb 2016 15:36:55 +0100
+
 ngcp-panel (1.8.4.5+0~mr3.8.4.5) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
