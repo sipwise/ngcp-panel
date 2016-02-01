@@ -42,7 +42,7 @@ sub resource_from_item {
         delete $resource{is_pbx_pilot};
         delete $resource{pbx_extension};
     }
-    unless($self->is_true($resource{is_pbx_group})) {
+    unless(is_true($resource{is_pbx_group})) {
         delete $resource{pbx_hunt_policy};
         delete $resource{cloud_pbx_hunt_policy};
         delete $resource{pbx_hunt_timeout};
@@ -304,12 +304,12 @@ sub prepare_resource {
             join => 'provisioning_voip_subscriber',
         })->first;
 
-        if($pilot && $self->is_true($resource->{is_pbx_pilot}) && $pilot->id != $subscriber_id) {
+        if($pilot && is_true($resource->{is_pbx_pilot}) && $pilot->id != $subscriber_id) {
             $c->log->error("failed to create subscriber, contract_id " . $customer->id . " already has pbx pilot subscriber");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer already has a pbx pilot subscriber.");
             return;
         }
-        elsif(!$pilot && !$self->is_true($resource->{is_pbx_pilot})) {
+        elsif(!$pilot && !is_true($resource->{is_pbx_pilot})) {
             $c->log->error("failed to create subscriber, contract_id " . $customer->id . " has no pbx pilot subscriber and is_pbx_pilot is set");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer has no pbx pilot subscriber yet and is_pbx_pilot is not set.");
             return;
@@ -362,7 +362,7 @@ sub prepare_resource {
             $resource->{e164}->{ac} = $pilot->primary_number->ac // '';
             $resource->{e164}->{sn} = $pilot->primary_number->sn . $resource->{pbx_extension};
 
-            unless($self->is_true($resource->{is_pbx_group})) {
+            unless(is_true($resource->{is_pbx_group})) {
                 if(exists $resource->{pbx_group_ids}) {
                     unless(ref $resource->{pbx_group_ids} eq "ARRAY") {
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid pbx_group_ids parameter, must be an array.");
@@ -407,7 +407,7 @@ sub prepare_resource {
             }
         }
 
-        if($self->is_true($resource->{is_pbx_group})) {
+        if(is_true($resource->{is_pbx_group})) {
             $preferences->{cloud_pbx_hunt_policy}  = $resource->{cloud_pbx_hunt_policy};
             $preferences->{cloud_pbx_hunt_timeout} = $resource->{cloud_pbx_hunt_timeout};
             $preferences->{cloud_pbx_hunt_policy}  //= $resource->{pbx_hunt_policy};
@@ -502,7 +502,7 @@ sub update_item {
     my $groupmembers = $full_resource->{groupmembers};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
-    if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !$self->is_true($resource->{is_pbx_pilot})) {
+    if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !is_true($resource->{is_pbx_pilot})) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot revoke is_pbx_pilot status from a subscriber.");
         return;
     }
@@ -634,7 +634,7 @@ sub update_item {
         profile_id => $profile ? $profile->id : undef,
         pbx_extension => $resource->{pbx_extension},
     };
-    if($self->is_true($resource->{is_pbx_group})) {
+    if(is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
         NGCP::Panel::Utils::Subscriber::update_preferences(
