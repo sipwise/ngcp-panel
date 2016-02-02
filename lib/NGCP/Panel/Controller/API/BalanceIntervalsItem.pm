@@ -5,6 +5,7 @@ use boolean qw(true);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 #use MooseX::ClassAttribute qw(class_has);
+use Moo;
 use MooX::ClassAttribute qw(class_has);
 use TryCatch;
 use NGCP::Panel::Utils::DateTime;
