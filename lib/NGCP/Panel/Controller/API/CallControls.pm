@@ -36,7 +36,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::CallControls/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::CallControls/;
 
 class_has('resource_name', is => 'ro', default => 'callcontrols');
 class_has('dispatch_path', is => 'ro', default => '/api/callcontrols/');

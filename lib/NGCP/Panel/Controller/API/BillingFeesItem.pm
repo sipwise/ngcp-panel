@@ -19,7 +19,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::BillingFees/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::BillingFees/;
 
 class_has('resource_name', is => 'ro', default => 'billingfees');
 class_has('dispatch_path', is => 'ro', default => '/api/billingfees/');

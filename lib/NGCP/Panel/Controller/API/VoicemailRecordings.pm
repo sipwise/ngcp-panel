@@ -26,7 +26,7 @@ sub api_description {
     return 'Defines the actual recording of voicemail messages. It is referred to by the <a href="#voicemails">Voicemails</a> relation. A GET on an item returns the binary blob of the recording with Content-Type "audio/x-wav".';
 };
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::VoicemailRecordings/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::VoicemailRecordings/;
 
 class_has('resource_name', is => 'ro', default => 'voicemailrecordings');
 class_has('dispatch_path', is => 'ro', default => '/api/voicemailrecordings/');

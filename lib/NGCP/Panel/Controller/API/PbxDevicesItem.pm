@@ -22,7 +22,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::PbxDevices/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDevices/;
 
 class_has('resource_name', is => 'ro', default => 'pbxdevices');
 class_has('dispatch_path', is => 'ro', default => '/api/pbxdevices/');

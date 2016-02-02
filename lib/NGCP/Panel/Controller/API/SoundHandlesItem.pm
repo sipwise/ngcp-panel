@@ -19,7 +19,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::SoundHandles/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::SoundHandles/;
 
 class_has('resource_name', is => 'ro', default => 'soundhandles');
 class_has('dispatch_path', is => 'ro', default => '/api/soundhandles/');

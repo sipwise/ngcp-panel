@@ -26,7 +26,7 @@ sub allowed_methods{
 
 use NGCP::Panel::Utils::Journal qw();
 
-#use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API/;
+#use base qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
 sub dispatch_path{return '/api/';}
 

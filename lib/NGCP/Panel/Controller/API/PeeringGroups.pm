@@ -15,15 +15,11 @@ use NGCP::Panel::Utils::Peering;
 use Path::Tiny qw(path);
 use TryCatch;
 use Safe::Isa qw($_isa);
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
-
-sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
-}
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];

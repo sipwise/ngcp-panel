@@ -57,7 +57,7 @@ class_has 'query_params' => (
 );
 
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::CFTimeSets/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::CFTimeSets/;
 
 class_has('resource_name', is => 'ro', default => 'cftimesets');
 class_has('dispatch_path', is => 'ro', default => '/api/cftimesets/');

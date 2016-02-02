@@ -55,7 +55,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::LnpCarriers/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::LnpCarriers/;
 
 class_has('resource_name', is => 'ro', default => 'lnpcarriers');
 class_has('dispatch_path', is => 'ro', default => '/api/lnpcarriers/');

@@ -44,7 +44,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::NcosLevels/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::NcosLevels/;
 
 class_has('resource_name', is => 'ro', default => 'ncoslevels');
 class_has('dispatch_path', is => 'ro', default => '/api/ncoslevels/');

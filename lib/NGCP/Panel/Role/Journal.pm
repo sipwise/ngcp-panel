@@ -18,7 +18,7 @@ sub get_journal_action_config {
     my ($class,$resource_name,$action_template) = @_;
     my $cfg = NGCP::Panel::Utils::Journal::get_journal_resource_config(NGCP::Panel->config,$resource_name);
     if ($cfg->{journal_resource_enabled}) {
-        return NGCP::Panel::Utils::Journal::get_api_journal_action_config('api/' . $resource_name,$action_template,$class->attributed_methods('Journal'));
+        return NGCP::Panel::Utils::Journal::get_api_journal_action_config('api/' . $resource_name,$action_template,$class->get_journal_methods('Journal'));
     }
     return [];
 }

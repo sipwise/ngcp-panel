@@ -48,7 +48,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::MaliciousCalls/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::MaliciousCalls/;
 
 class_has('resource_name', is => 'ro', default => 'maliciouscalls');
 class_has('dispatch_path', is => 'ro', default => '/api/maliciouscalls/');

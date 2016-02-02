@@ -47,7 +47,7 @@ class_has 'documentation_sample' => (
     } },
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::CFMappings/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::CFMappings/;
 
 class_has('resource_name', is => 'ro', default => 'cfmappings');
 class_has('dispatch_path', is => 'ro', default => '/api/cfmappings/');

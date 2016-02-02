@@ -8,7 +8,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 #};
 use base 'NGCP::Panel::Role::API';
 
-
+use Moo;
 use boolean qw(true);
 use Data::HAL::Link qw();
 use Data::HAL qw();

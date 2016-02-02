@@ -22,7 +22,7 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Preferences/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
 
 class_has('resource_name', is => 'ro', default => 'profilepreferences');
 class_has('dispatch_path', is => 'ro', default => '/api/profilepreferences/');

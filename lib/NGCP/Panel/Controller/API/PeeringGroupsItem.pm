@@ -11,17 +11,13 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-use base qw/NGCP::Panel::Controller::API::EntitiesItem NGCP::Panel::Role::API::PeeringGroups/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
-}
-
-sub allowed_methods{
-    return [qw/GET PUT PATCH OPTIONS HEAD/];
 }
 
 __PACKAGE__->config(

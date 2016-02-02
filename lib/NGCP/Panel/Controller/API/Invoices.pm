@@ -90,7 +90,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Invoices/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Invoices/;
 
 class_has('resource_name', is => 'ro', default => 'invoices');
 class_has('dispatch_path', is => 'ro', default => '/api/invoices/');

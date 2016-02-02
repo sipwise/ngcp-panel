@@ -26,7 +26,7 @@ sub api_description {
     return 'Specifies certain properties (preferences) for a <a href="#domains">Domain</a>. The full list of properties can be obtained via <a href="/api/domainpreferencedefs/">DomainPreferenceDefs</a>.';
 };
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Preferences/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
 
 class_has('resource_name', is => 'ro', default => 'domainpreferences');
 class_has('dispatch_path', is => 'ro', default => '/api/domainpreferences/');

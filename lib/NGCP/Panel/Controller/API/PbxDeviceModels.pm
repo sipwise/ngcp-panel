@@ -102,7 +102,7 @@ class_has 'documentation_sample' => (
 );
 
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::PbxDeviceModels/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceModels/;
 
 class_has('resource_name', is => 'ro', default => 'pbxdevicemodels');
 class_has('dispatch_path', is => 'ro', default => '/api/pbxdevicemodels/');

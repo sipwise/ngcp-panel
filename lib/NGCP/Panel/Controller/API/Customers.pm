@@ -115,7 +115,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Customers/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Customers/;
 
 class_has('resource_name', is => 'ro', default => 'customers');
 class_has('dispatch_path', is => 'ro', default => '/api/customers/');

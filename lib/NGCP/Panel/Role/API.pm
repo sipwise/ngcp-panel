@@ -17,6 +17,8 @@ use HTTP::Headers::Util qw(split_header_words);
 use NGCP::Panel::Utils::ValidateJSON qw();
 #use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Journal qw();
+use Moo;
+use base qw/NGCP::Panel::Role::Journal/;
 #use boolean qw(true);
 #use Data::HAL qw();
 #use Data::HAL::Link qw();
@@ -651,7 +653,9 @@ sub delay_commit {
     }
     $guard->commit();
 }
-
+sub get_journal_methods{
+	return [];
+}
 
 1;
 # vim: set tabstop=4 expandtab:

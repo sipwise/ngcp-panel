@@ -57,7 +57,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Domains/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Domains/;
 
 class_has('resource_name', is => 'ro', default => 'domains');
 class_has('dispatch_path', is => 'ro', default => '/api/domains/');

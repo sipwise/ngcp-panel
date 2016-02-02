@@ -54,7 +54,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::BillingZones/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::BillingZones/;
 
 class_has('resource_name', is => 'ro', default => 'billingzones');
 class_has('dispatch_path', is => 'ro', default => '/api/billingzones/');

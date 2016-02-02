@@ -48,7 +48,7 @@ class_has 'query_params' => (
     ]},
 );
 
-use base qw/Catalyst::Controller::ActionRole NGCP::Panel::Role::API::Reminders/;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Reminders/;
 
 class_has('resource_name', is => 'ro', default => 'reminders');
 class_has('dispatch_path', is => 'ro', default => '/api/reminders/');
