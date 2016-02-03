@@ -235,7 +235,9 @@ sub _strip_host {
     my ($self, $url) = @_;
     my $url_orig = $self->host;
     my $url_noip = $url_orig =~ s!:\d+!!r;
-    return $url =~ s!$url_orig|$url_noip!!r;
+    my $fake_host = 'https://' .
+        ($self->ua->default_header('Host') || "NONEXSISTENT");
+    return $url =~ s!$url_orig|$url_noip|$fake_host!!r;
 }
 
 sub _create_response {

@@ -7,11 +7,15 @@ use NGCP::Panel::Utils::ComxAPIClient;
 my $comx_host = $ENV{COMX_HOST} // 'https://rtcengine.sipwise.com/rtcengine/api';
 my $comx_user = $ENV{COMX_USER} // 'gjungwirth@sipwise';
 my $comx_pass = $ENV{COMX_PASS};
-my $comx_netloc = $comx_host =~ s!^https://([^/:]*)(:[0-9]*)?/.*$!$1.($2||":443")!re;  # 'rtcengine.sipwise.com:443'
+my $fake_host = $ENV{COMX_FAKE_HOST};
+my $comx_netloc = $comx_host =~ s!^https://([^/:]+)(:[0-9]*)?/?.*$!$1.($2||":443")!re;  # 'rtcengine.sipwise.com:443'
 
 my $c = NGCP::Panel::Utils::ComxAPIClient->new(
     host => $comx_host,
 );
+if ($fake_host) {
+    $c->ua->default_header( Host => $fake_host );
+}
 $c->login($comx_user, $comx_pass, $comx_netloc);
 ok($c->login_status, "Login done");
 is($c->login_status->{code}, 200, "Login successful");

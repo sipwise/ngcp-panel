@@ -62,6 +62,9 @@ sub _create_rtc_user {
         $config->{rtc}{host}.':'.$config->{rtc}{port}.
         $config->{rtc}{path},
     );
+    if ($config->{rtc}{fake_host}) {
+        $comx->ua->default_header( Host => $config->{rtc}{fake_host} );
+    }
     $comx->login(
         $config->{rtc}{user},
         $config->{rtc}{pass},
@@ -119,6 +122,9 @@ sub _delete_rtc_user {
         $config->{rtc}{host}.':'.$config->{rtc}{port}.
         $config->{rtc}{path},
     );
+    if ($config->{rtc}{fake_host}) {
+        $comx->ua->default_header( Host => $config->{rtc}{fake_host} );
+    }
     $comx->login(
         $config->{rtc}{user},
         $config->{rtc}{pass},
