@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_c69555e5",
+        "filename": "share/templates/widgets/admin_topmenu_settings.tt",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-03T12:09:08Z",
+      "side": 1,
+      "message": "maybe removing this only",
+      "revId": "b4214dbf9fc34c6569e6f829003e607baf01ba1f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
