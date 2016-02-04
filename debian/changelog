@@ -1,3 +1,12 @@
+ngcp-panel (1.8.4.7+0~mr3.8.4.7) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [5ef4c4c] MT#15489 don't import capture into own namespace
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Feb 2016 17:14:06 +0100
+
 ngcp-panel (1.8.4.6+0~mr3.8.4.6) unstable; urgency=medium
 
   [ Andreas Granig ]
