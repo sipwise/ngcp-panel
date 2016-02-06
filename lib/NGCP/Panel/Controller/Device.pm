@@ -15,6 +15,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
 use NGCP::Panel::Utils::DateTime;
+use DateTime::Format::HTTP;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -1161,7 +1162,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     delete $c->response->cookies->{ngcp_panel_session};
     $c->response->headers->remove_header('Connection');
     $c->response->headers->remove_header('X-Catalyst');
-    $c->response->headers->push_header('Last-Modified' => NGCP::Panel::Utils::DateTime::current_local);
+    $c->response->headers->push_header('Last-Modified' => DateTime::Format::HTTP->format_datetime());
 
     # this is going to be used if we want to do the cert check on the server,
     # the format is like this:
@@ -1419,7 +1420,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
     delete $c->response->cookies->{ngcp_panel_session};
     $c->response->headers->remove_header('Connection');
     $c->response->headers->remove_header('X-Catalyst');
-    $c->response->headers->push_header('Last-Modified' => NGCP::Panel::Utils::DateTime::current_local);
+    $c->response->headers->push_header('Last-Modified' => DateTime::Format::HTTP->format_datetime());
 
 
     foreach my $did (@id) {
