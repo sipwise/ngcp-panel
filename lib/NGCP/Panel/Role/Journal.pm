@@ -1,4 +1,5 @@
 package NGCP::Panel::Role::Journal;
+use Moo;
 sub add_create_journal_item_hal {
     my ($self,$c,@args) = @_;
     return NGCP::Panel::Utils::Journal::add_journal_item_hal($self,$c,NGCP::Panel::Utils::Journal::CREATE_JOURNAL_OP,@args);

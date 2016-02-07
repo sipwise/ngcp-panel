@@ -1,7 +1,6 @@
 package NGCP::Panel::Role::API::PbxDeviceModelImages;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose::Role;
-use Sipwise::Base;
+use base 'NGCP::Panel::Role::API';
 
 sub get_form {
     my ($self, $c) = @_;

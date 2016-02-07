@@ -1,4 +1,4 @@
-package NGCP::Panel::Role::API::PeeringGroupsTrys;
+package NGCP::Panel::Role::API::PeeringGroups;
 use NGCP::Panel::Utils::Generic qw(:all);
 #use Moose::Role;
 #use Sipwise::Base;
