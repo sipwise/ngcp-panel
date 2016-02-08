@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_2288b470",
+        "filename": "lib/NGCP/Panel/Field/PosInteger.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-08T09:49:27Z",
+      "side": 1,
+      "message": "Just for curiosity - did you try to remove Sipwise::Base here? What was the error?",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 18
+      },
+      "revId": "029765d8a5387e69bc4f6bcb7a53480a3ce864b1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
