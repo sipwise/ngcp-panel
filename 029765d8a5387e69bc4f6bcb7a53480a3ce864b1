@@ -22,6 +22,30 @@
       "revId": "029765d8a5387e69bc4f6bcb7a53480a3ce864b1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_42e7e840",
+        "filename": "lib/NGCP/Panel/Field/PosInteger.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-08T09:55:51Z",
+      "side": 1,
+      "message": "removing it, without changing line 4? should not make a difference IMO.\n\nIMO, we don\u0027t need Sipwise::Base anymore in a lot of the Form/Field packages, but I just left it, because it\u0027s consistent with everything else. (I tried now, still works)",
+      "parentUuid": "9a6a9dd7_2288b470",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 18
+      },
+      "revId": "029765d8a5387e69bc4f6bcb7a53480a3ce864b1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
