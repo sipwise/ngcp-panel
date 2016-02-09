@@ -1,12 +1,14 @@
 package NGCP::Panel::Role::API;
-use NGCP::Panel::Utils::Generic qw(:all);
+no Moose;
 
+use NGCP::Panel::Utils::Generic qw(:all);
+use boolean qw(true);
+use Safe::Isa qw($_isa);
 use Storable qw();
 use JSON qw();
 use JSON::Pointer;
 use JSON::Pointer::Exception qw();
 use HTTP::Status qw(:constants);
-use Safe::Isa qw($_isa);
 use Scalar::Util qw/blessed/;
 use TryCatch;
 use DateTime::Format::HTTP qw();
@@ -14,15 +16,13 @@ use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use HTTP::Headers::Util qw(split_header_words);
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
-#use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Journal qw();
-use Moo;
 use base qw/NGCP::Panel::Role::Journal/;
-#use boolean qw(true);
-#use Data::HAL qw();
-#use Data::HAL::Link qw();
 
+#fun - there is no one usage of the last_modified through all ngcp-panel sources. even in javascript
 #has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
 
 sub get_valid_post_data {
@@ -653,8 +653,70 @@ sub delay_commit {
     }
     $guard->commit();
 }
-sub get_journal_methods{
-	return [];
+
+sub hal_from_item {
+    my ($self, $c, $item, $form) = @_;
+    my %resource = $item->get_inflated_columns;
+    $resource{contract_id} = delete $resource{peering_contract_id};
+    my $hal = Data::HAL->new(
+        links => [
+            Data::HAL::Link->new(
+                relation => 'curies',
+                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+                name => 'ngcp',
+                templated => true,
+            ),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+        ],
+        relation => 'ngcp:'.$self->resource_name,
+    );
+
+    $form //= $self->get_form($c);
+
+    $self->validate_form(
+        c => $c,
+        resource => \%resource,
+        form => $form,
+        run => 0,
+    );
+
+    $resource{id} = int($item->id);
+    $hal->resource({%resource});
+    return $hal;
+}
+
+sub item_by_id {
+    my ($self, $c, $id) = @_;
+    my $item_rs = $self->item_rs($c);
+    return $item_rs->find($id);
+}
+
+sub update_item {
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+    );
+    last unless $resource;
+    $resource = $self->process_resource($c, $item, $old_resource, $resource, $form);
+    last unless $resource;
+    last unless $self->check_duplicate($c, $item, $old_resource, $resource, $form);
+    $item = $self->update($c, $item, $old_resource, $resource, $form);
+    return $item;
+}
+sub process_resource{
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    return $resource;
+}
+sub update{
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    $item->update($resource);
+    return $item;
 }
 
 1;

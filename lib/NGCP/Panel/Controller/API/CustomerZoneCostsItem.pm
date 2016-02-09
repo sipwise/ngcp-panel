@@ -17,7 +17,7 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET OPTIONS HEAD/];
 }
 
 use base qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerZoneCosts/;

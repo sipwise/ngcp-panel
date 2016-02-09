@@ -19,7 +19,7 @@ require Catalyst::ActionRole::RequireSSL;
 
 use base qw/Catalyst::Controller NGCP::Panel::Role::API::MailToFaxSettings/;
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
 sub resource_name{
