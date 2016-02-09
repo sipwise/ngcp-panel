@@ -38,7 +38,7 @@ sub login {
 }
 
 sub create_session_and_account {
-    my ($self, $appid, $network, $identifier, $accessToken, $owner) = @_;
+    my ($self, $appid, $network, $identifier, $accessToken, $owner, $account_config) = @_;
     my $ua = $self->ua;
     my $session_content = encode_json({
         app => $appid,
@@ -53,6 +53,7 @@ sub create_session_and_account {
         identifier => $identifier,
         accessToken => $accessToken,
         owner => $owner,
+        $account_config ? (config => encode_json($account_config)) : (),
         });
     #p $account_content;
     my $account = $self->_create_response(
