@@ -532,9 +532,10 @@ sub create_rtc_session {
     my $account = $comx->create_session_and_account(
             $comx_app->{id},
             $resource->{rtc_network_tag},
-            $subscriber_item->username . '@' . $subscriber_item->domain->domain,
+            'sip:' . $subscriber_item->username . '@' . $subscriber_item->domain->domain,
             $subscriber_item->provisioning_voip_subscriber->password,
             $rtc_user->rtc_user_id,
+            {xms => JSON::false},
         );
     if ($account->{code} != 201) {
         return unless &{$err_code}(
