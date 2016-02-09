@@ -1,3 +1,66 @@
+ngcp-panel (1.10.3.0+0~mr4.1.3.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [c8f3aba] MT#12347 Disable faxes tests if fax feature is not active
+  * [65e8189] MT#14659 Move calls from subscribers master to separate interface
+  * [344a474] MT#14477 Response about faxserver feature unavailability from API
+  * [20a065b] MT#12347 Faxes feature state check as pseudo test
+  * [522359f] MT#16323 Add rating_status field into item response and filter for collection
+  * [c58e8e7] MT#7227 Use procedure to make records unique on single fee insertion
+  * [6c8e133] MT#16231 Apply rewrite rules to the faxes phone numbers in WEB UI
+  * [ca3f4d3] MT#16121 Optimize callforwards GET method
+  * [1be0c52] MT#16321 The smallest changes for particular billing_mappings speed
+  * [6e3bbb8] MT#15489 Use textfmt to prepare textfile with utf for hylafax
+  * [5f9f4e4] MT#17199 Add user_agent field into subscriberregistrations GET output
+  * [5c18eb7] MT#5349 Fix typo in profile preferences metadata
+  * [1ac962b] MT#15489 Fix faxes form fields description
+  * [902b37c] MT#10199 Fix typo in profiles preferences
+  * [d364d3d] MT#16983 Don't display pbxgroups and subscribers if there is no linked
+
+  [ Rene Krenn ]
+  * [568fa8e] MT#15821 datatable custom mRender js functions
+  * [b5016bc] MT#14487 rest-api data dumper tool
+  * [cc4ee33] MT#16109 update "prepaid" pref correctly
+  * [3b3cab1] MT#16045 notopup expiry for balance intervals output
+  * [5597f69] MT#16309 supress notopup balance discard when switching packages
+  * [96fa837] MT#16309 correctly apply changed carry_over modes
+  * [2246fb8] MT#16309 fix deaf logic due to is_create_next typo
+  * [e4d2853] MT#16655 "minute" unit in profile packages
+  * [6b23798] MT#17247 float field precision given, but no size
+
+  [ Gerhard Jungwirth ]
+  * [b7d8e0f] MT#15797 skip domain reload
+  * [344b4e3] MT#15757 fix deleting voicebox email setting
+  * [6d61b45] MT#15203 Allow adding alias numbers to pbx group
+  * [9b1f28e] MT#15203 fix pbx group create form
+  * [23ea9b0] MT#15685 suppress output for correct backuritmp
+  * [9493ad6] MT#16355 show ngcp version and dpkg list
+  * [5c0964d] MT#16883 set vmb prefix in API
+  * [ac24eae] MT#16467 only show PBX customers for soundset creation
+  * [adf1b80] MT#17473 fix repeatableJs regex
+  * [f9d4fa1] MT#15489 don't import capture into own namespace
+
+  [ Michael Prokop ]
+  * [367eaf3] MT#15071 Jenkins<->docker integration support
+
+  [ Andreas Granig ]
+  * [c007a6e] MT#13367 enable jitsi autoprov via preference
+  * [e84c2a8] MT#16883 Set vmb prefix for cfb to voicemail.
+  * [032ee51] MT#17623 Reload dialplan cache on rwr changes
+
+  [ Andrew Pogrebennyk ]
+  * [938e570] MT#13367 fix commit 0858ef
+
+  [ Kirill Solomko ]
+  * [ebed5c8] MT#12707 add "Malicious Calls" top-menu item for admin/reseller
+
+  [ Victor Seva ]
+  * [12a2ec7] MT#16933 tools/generate_ssl_keys.sh: force days argument at x509
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 09 Feb 2016 12:13:09 +0100
+
 ngcp-panel (1.10.2.0+0~mr4.1.2.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
