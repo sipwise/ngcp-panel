@@ -1,3 +1,36 @@
+ngcp-panel (1.8.5.1+0~mr3.8.5.1) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [d41b82d] MT#16355 show ngcp version and dpkg list
+  * [28a389b] MT#16883 set vmb prefix in API
+  * [0a443c5] MT#16467 only show PBX customers for soundset creation
+  * [097c1d5] MT#17473 fix repeatableJs regex
+  * [9f8a3b0] MT#15489 don't import capture into own namespace
+
+  [ Andreas Granig ]
+  * [b9f6f6c] MT#16273 Implement X1 agent interface for REST
+  * [427dad2] MT#16883 Set vmb prefix for cfb to voicemail.
+  * [0df0e0b] MT#16985 Use InterceptDB schema for interceptions.
+  * [8744a91] MT#17623 Reload dialplan cache on rwr changes
+
+  [ Irina Peshinskaya ]
+  * [4baac5f] MT#16231 Apply rewrite rules to the faxes phone numbers in WEB UI
+  * [70db00c] MT#16121 Optimize callforwards GET method
+  * [c4d1277] MT#16321 The smallest changes for particular billing_mappings speed
+  * [0d8cdff] MT#15489 Use textfmt to prepare textfile with utf for hylafax
+  * [bb7d999] MT#17199 Add user_agent field into subscriberregistrations GET output
+  * [8478f8e] MT#5349 Fix typo in profile preferences metadata
+  * [5ead3a0] MT#15489 Fix faxes form fields description
+  * [4e40eee] MT#10199 Fix typo in profiles preferences
+  * [7707872] MT#16983 Don't display pbxgroups and subscribers if there is no linked
+
+  [ Victor Seva ]
+  * [7027a6a] MT#16933 tools/generate_ssl_keys.sh: force days argument at x509
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 09 Feb 2016 19:50:27 +0100
+
 ngcp-panel (1.8.5.0+0~mr3.8.5.0) unstable; urgency=medium
 
   [ Andreas Granig ]
