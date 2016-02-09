@@ -103,8 +103,18 @@ sub auto :Private {
                 }
                 $self->api_apply_fake_time($c);
                 return 1;
+            } elsif ($c->req->headers->header("NGCP-UserAgent") eq "NGCP::Panel::Client::API") {
+                $c->log->debug("++++++ Root::auto API request with system auth");
+                my $realm = "api_admin_system";
+                my $res = $c->authenticate({}, $realm);
 
+                unless ($c->user_exists) {
+                    $c->log->debug("+++++ invalid api admin system login");
+                    $c->log->warn("invalid api system login from '".$c->req->address."'");
+                }
 
+                $self->api_apply_fake_time($c);
+                return 1;
             } else {
                 $c->log->debug("++++++ Root::auto API request with http auth");
                 my $realm = "api_admin_http";

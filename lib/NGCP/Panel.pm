@@ -153,6 +153,21 @@ __PACKAGE__->config(
             },
             use_session => 0,
         },
+        api_admin_system => {
+            credential => {
+                class => 'HTTP',
+                type => 'basic',
+                username_field => 'login',
+                password_field => 'password',
+                password_type => 'clear',
+            },
+            store => {
+                class => '+NGCP::Panel::AuthenticationStore::System',
+                file  => '/etc/default/ngcp-api',
+                group => 'auth_system',
+            },
+            use_session => 0,
+        },
         subscriber => {
             credential => {
                 class => 'Password',
