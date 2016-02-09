@@ -106,9 +106,18 @@ sub auto :Private {
 
 
             } else {
-                $c->log->debug("++++++ Root::auto API request with http auth");
-                my $realm = "api_admin_http";
+                $c->log->debug("++++++ Root::auto API request with system auth");
+                my $realm = "api_admin_system";
                 my $res = $c->authenticate({}, $realm);
+                if($c->user_exists) {
+                    $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_system");
+                    $self->api_apply_fake_time($c);
+                    return 1;
+                }
+
+                $c->log->debug("++++++ Root::auto API request with http auth");
+                $realm = "api_admin_http";
+                $res = $c->authenticate({}, $realm);
 
                 unless($c->user_exists && $c->user->is_active)  {
                     $c->user->logout if($c->user);
