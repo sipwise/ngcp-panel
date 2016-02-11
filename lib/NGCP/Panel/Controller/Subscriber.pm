@@ -43,17 +43,14 @@ use NGCP::Panel::Form::Subscriber::TrustedSource;
 use NGCP::Panel::Form::Subscriber::Location;
 use NGCP::Panel::Form::Subscriber::SpeedDial;
 use NGCP::Panel::Form::Subscriber::AutoAttendant;
-use NGCP::Panel::Form::Faxserver::Name;
-use NGCP::Panel::Form::Faxserver::Password;
 use NGCP::Panel::Form::Faxserver::Active;
-use NGCP::Panel::Form::Faxserver::SendStatus;
-use NGCP::Panel::Form::Faxserver::SendCopy;
 use NGCP::Panel::Form::Faxserver::Destination;
+use NGCP::Panel::Form::Faxserver::Name;
 use NGCP::Panel::Form::MailToFax::Active;
+use NGCP::Panel::Form::MailToFax::ACL;
 use NGCP::Panel::Form::MailToFax::SecretKey;
 use NGCP::Panel::Form::MailToFax::SecretKeyRenew;
 use NGCP::Panel::Form::MailToFax::SecretRenewNotify;
-use NGCP::Panel::Form::MailToFax::ACL;
 use NGCP::Panel::Form::Subscriber::Webfax;
 use NGCP::Panel::Form::Subscriber::ResetPassword;
 use NGCP::Panel::Form::Subscriber::RecoverPassword;
@@ -2905,18 +2902,6 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 }
                 last SWITCH;
             };
-            /^password$/ && do {
-                $form = NGCP::Panel::Form::Faxserver::Password->new(ctx => $c);
-                $params = { 'password' => $faxpref->password };
-                $form->process(params => $posted ? $c->req->params : $params);
-                NGCP::Panel::Utils::Navigation::check_form_buttons(
-                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
-                );
-                if($posted && $form->validated) {
-                    $faxpref->update({ password => $form->field('password')->value });
-                }
-                last SWITCH;
-            };
             /^active$/ && do {
                 $form = NGCP::Panel::Form::Faxserver::Active->new;
                 $params = { 'active' => $faxpref->active };
@@ -2929,30 +2914,6 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 }
                 last SWITCH;
             };
-            /^send_status$/ && do {
-                $form = NGCP::Panel::Form::Faxserver::SendStatus->new;
-                $params = { 'send_status' => $faxpref->send_status };
-                $form->process(params => $posted ? $c->req->params : $params);
-                NGCP::Panel::Utils::Navigation::check_form_buttons(
-                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
-                );
-                if($posted && $form->validated) {
-                    $faxpref->update({ send_status => $form->field('send_status')->value });
-                }
-                last SWITCH;
-            };
-            /^send_copy$/ && do {
-                $form = NGCP::Panel::Form::Faxserver::SendCopy->new;
-                $params = { 'send_copy' => $faxpref->send_copy };
-                $form->process(params => $posted ? $c->req->params : $params);
-                NGCP::Panel::Utils::Navigation::check_form_buttons(
-                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
-                );
-                if($posted && $form->validated) {
-                    $faxpref->update({ send_copy => $form->field('send_copy')->value });
-                }
-                last SWITCH;
-            };
             /^destinations$/ && do {
                 $form = NGCP::Panel::Form::Faxserver::Destination->new;
                 unless($posted) {
@@ -2961,7 +2922,6 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                         push @dests, {
                             destination => $dest->destination,
                             filetype => $dest->filetype,
-                            cc => $dest->cc,
                             incoming => $dest->incoming,
                             outgoing => $dest->outgoing,
                             status => $dest->status,
@@ -2981,7 +2941,6 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                         $prov_subscriber->voip_fax_destinations->create({
                             destination => $dest->field('destination')->value,
                             filetype => $dest->field('filetype')->value,
-                            cc => $dest->field('cc')->value,
                             incoming => $dest->field('incoming')->value,
                             outgoing => $dest->field('outgoing')->value,
                             status => $dest->field('status')->value,

@@ -775,14 +775,11 @@ sub test_faxserversettings {
         active => JSON::PP::true,
         destinations => [ {destination => 'test_fax_destination_'.$t.'@example.com', #??
                            filetype => 'TIFF',
-                           cc => JSON::PP::true,
                            incoming => JSON::PP::true,
                            outgoing => JSON::PP::false,
                            status => JSON::PP::true,} ],
         name => 'fax_server_settings_'.$t,
         password => 'fax_server_settings_password_'.$t,
-        send_copy => JSON::PP::false,
-        send_status => JSON::PP::false,
         }));
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("PUT test faxserversettings"));

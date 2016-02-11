@@ -18,7 +18,7 @@ has_field 'destination' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
@@ -29,8 +29,8 @@ has_field 'destination.id' => (
 );
 
 has_field 'destination.destination' => (
-    type => 'Text',
-    label => 'Destination',
+    type => 'Email',
+    label => 'Destination Email',
     required => 1,
     wrapper_class => [qw/hfh-rep-field/],
 );
@@ -45,13 +45,6 @@ has_field 'destination.filetype' => (
     ],
     label => 'File Type',
     required => 1,
-    wrapper_class => [qw/hfh-rep-field/],
-);
-
-has_field 'destination.cc' => (
-    type => 'Boolean',
-    label => 'Incoming Email as CC',
-    default => 0,
     wrapper_class => [qw/hfh-rep-field/],
 );
 

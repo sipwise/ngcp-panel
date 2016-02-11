@@ -33,35 +33,19 @@ has_field 'active' => (
     required => 0,
 );
 
-
-has_field 'send_copy' => (
-    type => 'Boolean',
-    label => 'Send Copies',
-    required => 0,
-);
-
-
-
-has_field 'send_status' => (
-    type => 'Boolean',
-    label => 'Send Reports',
-    required => 0,
-);
-
-
 has_field 'destinations' => (
     type => 'Repeatable',
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
 );
 
 has_field 'destinations.destination' => (
-    type => 'Text',
-    label => 'Destination',
+    type => 'Email',
+    label => 'Destination Email',
     required => 1,
 );
 
@@ -75,12 +59,6 @@ has_field 'destinations.filetype' => (
     ],
     label => 'File Type',
     required => 1,
-);
-
-has_field 'destinations.cc' => (
-    type => 'Boolean',
-    label => 'Incoming Email as CC',
-    default => 0,
 );
 
 has_field 'destinations.incoming' => (
