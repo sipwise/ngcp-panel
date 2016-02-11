@@ -191,7 +191,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 foreach my $mapping (@$mappings_to_create) {
                     $contract->billing_mappings->create($mapping);
                 }
-                $contract->discard_changes;
+                $contract = $c->stash->{contract_rs}->first;
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
