@@ -283,22 +283,6 @@
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>[% c.loc('Password for Sendfax') %]</td>
-                            <td>
-                                [% faxpref.password %]
-                            </td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'password') %]">
-                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
-                                    </a>
-                                    [% END -%]
-                                </div>
-
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
                             <td>[% c.loc('Active') %]</td>
                             <td>
                                 [% faxpref.active ? c.loc('yes') : c.loc('no') %]
@@ -307,38 +291,6 @@
                                 <div class="sw_actions">
                                     [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'active') %]">
-                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
-                                    </a>
-                                    [% END -%]
-                                </div>
-
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>[% c.loc('Send Reports') %]</td>
-                            <td>
-                                [% faxpref.send_status ? c.loc('yes') : ('no') %]
-                            </td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_status') %]">
-                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
-                                    </a>
-                                    [% END -%]
-                                </div>
-
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>[% c.loc('Send Copies') %]</td>
-                            <td>
-                                [% faxpref.send_copy ? c.loc('yes') : c.loc('no') %]
-                            </td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_copy') %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
                                     [% END -%]
