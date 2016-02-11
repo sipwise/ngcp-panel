@@ -294,30 +294,30 @@ sub allowed_methods_filtered {
     }
 }
 
-sub allowed_methods {
-    my ($self) = @_;
-    #my $meta = $self->meta;
-    #my @allow;
-    #for my $method ($meta->get_method_list) {
-    #    push @allow, $meta->get_method($method)->name
-    #        if $meta->get_method($method)->can('attributes') &&
-    #           grep { 'Allow' eq $_ } @{ $meta->get_method($method)->attributes };
-    #}
-    #return [sort @allow];
-    return $self->attributed_methods('Allow');
-}
+# sub allowed_methods {
+    # my ($self) = @_;
+    # #my $meta = $self->meta;
+    # #my @allow;
+    # #for my $method ($meta->get_method_list) {
+    # #    push @allow, $meta->get_method($method)->name
+    # #        if $meta->get_method($method)->can('attributes') &&
+    # #           grep { 'Allow' eq $_ } @{ $meta->get_method($method)->attributes };
+    # #}
+    # #return [sort @allow];
+    # return $self->attributed_methods('Allow');
+# }
 
-sub attributed_methods {
-    my ($self,$attribute) = @_;
-    my $meta = $self->meta;
-    my @attributed;
-    for my $method ($meta->get_method_list) {
-        push @attributed, $meta->get_method($method)->name
-            if $meta->get_method($method)->can('attributes') &&
-               grep { $attribute eq $_ } @{ $meta->get_method($method)->attributes };
-    }
-    return [sort @attributed];
-}
+# sub attributed_methods {
+    # my ($self,$attribute) = @_;
+    # my $meta = $self->meta;
+    # my @attributed;
+    # for my $method ($meta->get_method_list) {
+        # push @attributed, $meta->get_method($method)->name
+            # if $meta->get_method($method)->can('attributes') &&
+               # grep { $attribute eq $_ } @{ $meta->get_method($method)->attributes };
+    # }
+    # return [sort @attributed];
+# }
 
 sub valid_id {
     my ($self, $c, $id) = @_;
