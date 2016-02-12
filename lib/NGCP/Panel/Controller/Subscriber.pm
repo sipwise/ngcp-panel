@@ -17,7 +17,7 @@ use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Sems;
-use NGCP::Panel::Utils::Hylafax;
+use NGCP::Panel::Utils::Fax;
 use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
@@ -337,12 +337,13 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
 
     if($posted && $form->validated) {
         try {
-            NGCP::Panel::Utils::Hylafax::send_fax(
+            NGCP::Panel::Utils::Fax::send_fax(
                 c => $c,
                 subscriber => $subscriber,
                 destination => $form->values->{destination},
-                resolution => $form->values->{resolution}, # opt (low, medium, extended)
-                coverpage => $form->values->{coverpage}, 
+                quality => $form->values->{quality}, # opt (normal, fine,super)
+                #coverpage => $form->values->{coverpage}, 
+                pageheader => $form->values->{pageheader}, 
                 #notify => $form->values->{notify}, # TODO: handle in send_fax, read from prefs!
                 #coverpage => 1,
                 upload => $form->values->{faxfile},
