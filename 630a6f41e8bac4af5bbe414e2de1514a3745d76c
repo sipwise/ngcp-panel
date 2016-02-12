@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_6bbc3bbc",
+        "filename": "lib/NGCP/Panel/Controller/Contract.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-12T16:07:51Z",
+      "side": 1,
+      "message": "I would have avoided that additional stash element, as I see no neccessity for it",
+      "revId": "630a6f41e8bac4af5bbe414e2de1514a3745d76c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
