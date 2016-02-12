@@ -36,6 +36,11 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         schema => $c->model('DB'), 
         now => $now 
     );
+    my $rs_all = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'),
+        now => $now,
+        include_terminated => 1,
+    );
     unless($c->user->is_superuser) {
         $rs = $rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
@@ -51,6 +56,7 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
             ],
         });
     $c->stash(contract_select_rs => $rs);
+    $c->stash(contract_select_all_rs => $rs_all);
     $c->stash(now => $now);
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
@@ -79,6 +85,14 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
             '+select' => 'billing_mappings.id',
             '+as' => 'bmid',
         });
+    my $contract_terminated_rs = $c->stash->{contract_select_all_rs}
+        ->search({
+            'me.id' => $contract_id,
+        },{
+            '+select' => 'billing_mappings.id',
+            '+as' => 'bmid',
+        });
+
     my $contract_first = $contract_rs->first;
 
     unless(defined($contract_first)) {
@@ -103,6 +117,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
+    $c->stash(contract_terminated_rs => $contract_terminated_rs);
     $c->stash(billing_mapping => $billing_mapping );
     $c->stash(billing_mappings_ordered_result => $billing_mappings_ordered ); # all billings mappings are displayed in the details page
 
@@ -191,8 +206,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 foreach my $mapping (@$mappings_to_create) {
                     $contract->billing_mappings->create($mapping); 
                 }
-                $contract = $c->stash->{contract_rs}->first;
-                
+
+                $contract = $c->stash->{contract_terminated_rs}->first;
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
                     old_package => $old_package,
@@ -256,13 +271,14 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 
     try {
         my $old_status = $contract->status;
-        $contract->update({ 
-            status => 'terminated',
-            terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-        });
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
             $contract->voip_contract_preferences->delete;
+            $contract->update({
+                status => 'terminated',
+                terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
+            });
+            $contract = $c->stash->{contract_terminated_rs}->first;
             # if status changed, populate it down the chain
             if($contract->status ne $old_status) {
                 NGCP::Panel::Utils::Contract::recursively_lock_contract(

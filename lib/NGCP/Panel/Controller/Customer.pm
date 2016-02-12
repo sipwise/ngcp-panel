@@ -66,9 +66,14 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, now => $now);
-
+    my $rs_all = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'),
+        now => $now,
+        include_terminated => 1,
+    );
     $c->stash(
         contract_select_rs => $rs,
+        contract_select_all_rs => $rs_all,
         template => 'customer/list.tt',
         now => $now
     );
@@ -270,6 +275,13 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             '+select' => 'billing_mappings.id',
             '+as' => 'bmid',
         });
+    my $contract_terminated_rs = $c->stash->{contract_select_all_rs}
+        ->search({
+            'me.id' => $contract_id,
+        },{
+            '+select' => 'billing_mappings.id',
+            '+as' => 'bmid',
+        });
 
     if($c->user->roles eq 'reseller') {
         $contract_rs = $contract_rs->search({
@@ -429,6 +441,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(template => 'customer/details.tt'); 
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
+    $c->stash(contract_terminated_rs => $contract_terminated_rs);
     $c->stash(billing_mapping => $billing_mapping );
     #$c->stash(now => $now );
     $c->stash(billing_mappings_ordered_result => $billing_mappings_ordered );
@@ -524,7 +537,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 foreach my $mapping (@$mappings_to_create) {
                     $contract->billing_mappings->create($mapping); 
                 }
-                $contract = $c->stash->{contract_rs}->first;
+                $contract = $c->stash->{contract_terminated_rs}->first;
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
@@ -569,7 +582,11 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     prepaid => $billing_profile->prepaid,
                     contract => $contract,
                 );
-                
+
+                if ($contract->status eq 'terminated') {
+                    delete $c->stash->{close_target};
+                }
+
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{network};
                 delete $c->session->{created_objects}->{billing_profile};
@@ -617,6 +634,7 @@ sub terminate :Chained('base_restricted') :PathPart('terminate') :Args(0) {
                 status => 'terminated',
                 terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
             });
+            $contract = $c->stash->{contract_terminated_rs}->first;
             # if status changed, populate it down the chain
             if($contract->status ne $old_status) {
                 NGCP::Panel::Utils::Contract::recursively_lock_contract(
