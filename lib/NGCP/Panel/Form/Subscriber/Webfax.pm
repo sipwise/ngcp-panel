@@ -22,18 +22,18 @@ has_field 'destination' => (
     },
 );
 
-has_field 'resolution' => (
+has_field 'quality' => (
     type => 'Select',
-    label => 'Resolution',
+    label => 'Quality',
     options => [
-        { label => 'Low', value => 'low' },
-        { label => 'Medium', value => 'medium' },
-        { label => 'Extended', value => 'extended' },
+        { label => 'Normal', value => 'normal' },
+        { label => 'Fine', value => 'fine' },
+        { label => 'Super', value => 'super' },
     ],
     default => 'low',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Fax resolution'],
+        title => ['Fax quality'],
     },
 );
 
@@ -51,6 +51,14 @@ has_field 'coverpage' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Whether to add a coverpage'],
+    },
+);
+has_field 'pageheader' => (
+    type => 'text',
+    label => 'Page header',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Header text to add on every page'],
     },
 );
 has_field 'data' => (
@@ -86,7 +94,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/destination resolution coverpage data faxfile/],
+    render_list => [qw/destination quality pageheader data faxfile/],
 );
 
 has_block 'actions' => (
