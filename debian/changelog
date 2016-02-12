@@ -1,3 +1,12 @@
+ngcp-panel (1.11.1.6+0~mr4.2.1.6) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [ff2fd87] MT#17887 Properly update captagent on X1 PUT/PATCH
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 12 Feb 2016 15:34:18 +0100
+
 ngcp-panel (1.11.1.5+0~mr4.2.1.5) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
