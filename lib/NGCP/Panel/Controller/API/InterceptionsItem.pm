@@ -113,13 +113,13 @@ sub PATCH :Allow {
             number => $resource->{number},
             sip_username => $sub->username,
             sip_domain => $sub->domain->domain,
-            delivery_host => $resource->{x2_host},
-            delivery_port => $resource->{x2_port},
-            delivery_user => $resource->{x2_user},
-            delivery_password => $resource->{x2_password},
-            cc_required => $resource->{x3_required},
-            cc_delivery_host => $resource->{x3_host},
-            cc_delivery_port => $resource->{x3_port},
+            delivery_host => $resource->{delivery_host},
+            delivery_port => $resource->{delivery_port},
+            delivery_user => $resource->{delivery_user},
+            delivery_password => $resource->{delivery_password},
+            cc_required => $resource->{cc_required},
+            cc_delivery_host => $resource->{cc_delivery_host},
+            cc_delivery_port => $resource->{cc_delivery_port},
         });
         unless($res) {
             $c->log->error("failed to update capture agents");
@@ -173,13 +173,13 @@ sub PUT :Allow {
             number => $resource->{number},
             sip_username => $sub->username,
             sip_domain => $sub->domain->domain,
-            delivery_host => $resource->{x2_host},
-            delivery_port => $resource->{x2_port},
-            delivery_user => $resource->{x2_user},
-            delivery_password => $resource->{x2_password},
-            cc_required => $resource->{x3_required},
-            cc_delivery_host => $resource->{x3_host},
-            cc_delivery_port => $resource->{x3_port},
+            delivery_host => $resource->{delivery_host},
+            delivery_port => $resource->{delivery_port},
+            delivery_user => $resource->{delivery_user},
+            delivery_password => $resource->{delivery_password},
+            cc_required => $resource->{cc_required},
+            cc_delivery_host => $resource->{cc_delivery_host},
+            cc_delivery_port => $resource->{cc_delivery_port},
         });
         unless($res) {
             $c->log->error("failed to update capture agents");
