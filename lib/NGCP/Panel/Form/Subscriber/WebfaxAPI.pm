@@ -16,7 +16,7 @@ has_field 'subscriber_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/subscriber_id destination resolution coverpage data faxfile/],
+    render_list => [qw/subscriber_id destination quality pageheader data faxfile/],
 );
 
 1;
