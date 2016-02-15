@@ -25,7 +25,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Show a collection of speeddials, belonging to a specific subscriber.',
+        'Show a collection of speeddials, belonging to a specific subscriber. The collection\'s id corresponds to the subscriber\'s id.',
 );
 
 class_has 'query_params' => (
