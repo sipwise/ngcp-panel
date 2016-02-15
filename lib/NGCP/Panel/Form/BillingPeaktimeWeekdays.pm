@@ -59,6 +59,14 @@ sub validate {
     my $end = $parsetime->parse_datetime($etime)
           || $parsetime2->parse_datetime($etime);
 
+    unless ($start && $end) {
+        $self->field('start')->add_error("wrong format - must be HH:MM:SS or HH:MM")
+            unless $start;
+        $self->field('end')->add_error("wrong format - must be HH:MM:SS or HH:MM")
+            unless $end;
+        return;
+    }
+
     if ($end < $start) {
         my $err_msg = 'Start time must be later than end time.';
         $self->field('start')->add_error($err_msg);
