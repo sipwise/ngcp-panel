@@ -6,6 +6,10 @@ extends 'HTML::FormHandler';
 
 has_field 'speeddials' => (
     type => 'Repeatable',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An array of hashes, each containing the keys "slot" ("*0 .. *9") and "destination" (A valid SIP URI).'],
+    },
 );
 
 has_field 'speeddials.slot' => (
