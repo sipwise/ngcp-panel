@@ -1,3 +1,12 @@
+ngcp-panel (1.8.5.3+0~mr3.8.5.3) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [b24a236] MT#17727 Use http format for last-modified
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Feb 2016 13:56:31 +0100
+
 ngcp-panel (1.8.5.2+0~mr3.8.5.2) unstable; urgency=medium
 
   [ Andreas Granig ]
