@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_1ae38308",
+        "filename": "lib/NGCP/Panel/Controller/API/Resellers.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-16T15:43:40Z",
+      "side": 1,
+      "message": "nice :-)",
+      "range": {
+        "startLine": 197,
+        "startChar": 16,
+        "endLine": 199,
+        "endChar": 23
+      },
+      "revId": "25655606e4ff0010ee95c4cd752feac8ebe40e33",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_ba95b741",
+        "filename": "lib/NGCP/Panel/Controller/API/RtcNetworksItem.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-16T15:43:40Z",
+      "side": 1,
+      "message": "good practice to always put txn scope guard in place in the controller actions",
+      "revId": "25655606e4ff0010ee95c4cd752feac8ebe40e33",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_3ade8712",
+        "filename": "lib/NGCP/Panel/Controller/API/RtcNetworksItem.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-16T15:43:40Z",
+      "side": 1,
+      "message": "subscriber?",
+      "range": {
+        "startLine": 99,
+        "startChar": 11,
+        "endLine": 99,
+        "endChar": 22
+      },
+      "revId": "25655606e4ff0010ee95c4cd752feac8ebe40e33",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_fa9faf01",
+        "filename": "t/api-rest/api-rtc-resellers.t",
+        "patchSetId": 10
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-16T15:43:40Z",
+      "side": 1,
+      "message": "maybe the test should also check if provisioning really happened on comx side, i.e. using the comxclinet again here.",
+      "range": {
+        "startLine": 58,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 52
+      },
+      "revId": "25655606e4ff0010ee95c4cd752feac8ebe40e33",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
