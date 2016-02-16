@@ -85,6 +85,30 @@
       "revId": "25655606e4ff0010ee95c4cd752feac8ebe40e33",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_2e83ac57",
+        "filename": "t/api-rest/api-rtc-resellers.t",
+        "patchSetId": 10
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-16T16:32:06Z",
+      "side": 1,
+      "message": "I don\u0027t know. I really prefer to keep the API tests, API-only. By checking the API result or a consecutive GET we anyways only get the correct data if the backend provisioning succeeeded. But indeend we should enable those kind of checks like in line 47.\n\nBasically, this is one of the cases, where we need a deterministic way to check if the tested host has a certain feature (comx here) enabled, and only then run this test. Thats also why I\u0027d prefer to disable this test per default for now.",
+      "parentUuid": "9a6a9dd7_fa9faf01",
+      "range": {
+        "startLine": 58,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 52
+      },
+      "revId": "25655606e4ff0010ee95c4cd752feac8ebe40e33",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
