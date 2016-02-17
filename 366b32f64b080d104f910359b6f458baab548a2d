@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_d939d7d9",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-02-17T15:33:35Z",
+      "side": 1,
+      "message": "sub_id is needless as it is determinted by the \"caller\" option when the queued send fax is being processed.",
+      "range": {
+        "startLine": 27,
+        "startChar": 4,
+        "endLine": 27,
+        "endChar": 48
+      },
+      "revId": "366b32f64b080d104f910359b6f458baab548a2d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_99335ff6",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-02-17T15:33:35Z",
+      "side": 1,
+      "message": "please rename \"resolution\" into \"quality\" as it was initially named like that in the fax_journal and also \"resoltion\" means \"WxH\" where quality is the overall measure of an entity.\nfrom /usr/sbin/send-fax:\n    --quality      -- normal | fine | super (default: normal)\n\nwe do not need \"low\" resolution as faxes will be quite hard to read with that.",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 33,
+        "endChar": 5
+      },
+      "revId": "366b32f64b080d104f910359b6f458baab548a2d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_b9309be9",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-02-17T15:33:35Z",
+      "side": 1,
+      "message": "you can now add \"header\" parameter, otherwise the one from fax preferences is used.\n\nfrom /usr/sbin/ngcp-fax:\n-----------------------\n    --header       -- a custom header (takes over the subscriber\u0027s fax header preference)\n                      prevents a custom header to be added if set to \u0027\u0027\n-----------------------\n\nalso now the header (if specified) is added into all pages instead of only text ones.",
+      "revId": "366b32f64b080d104f910359b6f458baab548a2d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
