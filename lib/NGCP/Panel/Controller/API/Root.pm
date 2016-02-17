@@ -1,8 +1,6 @@
 package NGCP::Panel::Controller::API::Root;
+
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-#use namespace::sweep;
-use Moose;
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();
@@ -12,7 +10,8 @@ use MooseX::ClassAttribute qw(class_has);
 use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller'; }
+use TryCatch;
+use base qw/Catalyst::Controller NGCP::Panel::Role::API/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -20,9 +19,12 @@ require Catalyst::ActionRole::RequireSSL;
 
 use NGCP::Panel::Utils::Journal qw();
 
-with 'NGCP::Panel::Role::API';
+#with 'NGCP::Panel::Role::API';
 
-class_has('dispatch_path', is => 'ro', default => '/api/');
+sub dispatch_path{return '/api/';}
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD/];
+}
 
 __PACKAGE__->config(
     action => {
@@ -40,9 +42,11 @@ __PACKAGE__->config(
 
 sub auto :Private {
     my ($self, $c) = @_;
-
+    
     $self->set_body($c);
     $self->log_request($c);
+    #my $executor = new NGCP::Panel::Controller::API::Executor;
+    #$executor->do($c);
     return 1;
 }
 

@@ -184,7 +184,7 @@ sub get_api_journal_query_params {
             });
     return ['journal_query_params',
         is => 'ro',
-        isa => 'ArrayRef',
+        #isa => 'ArrayRef',
         default => sub { #[ #sub {[
             \@params
         }, #], #]},
@@ -290,7 +290,7 @@ sub handle_api_journalsitem_get {
 sub handle_api_journals_options {
     my ($controller, $c, $id) = @_;
     my @allowed_methods = ('OPTIONS');
-    my %journal_actions_found = map { $_ => 1 } @{ $controller->attributed_methods('Journal') };
+    my %journal_actions_found = map { $_ => 1 } @{ $controller->get_journal_methods };
     if (exists $journal_actions_found{'journals_get'}) {
         push(@allowed_methods,'GET');
         if (exists $journal_actions_found{'journals_head'}) {
@@ -308,7 +308,7 @@ sub handle_api_journals_options {
 sub handle_api_journalsitem_options {
     my ($controller, $c, $id) = @_;
     my @allowed_methods = ('OPTIONS');
-    my %journal_actions_found = map { $_ => 1 } @{ $controller->attributed_methods('Journal') };
+    my %journal_actions_found = map { $_ => 1 } @{ $controller->get_journal_methods };
     if (exists $journal_actions_found{'journalsitem_get'}) {
         push(@allowed_methods,'GET');
         if (exists $journal_actions_found{'journalsitem_head'}) {
@@ -326,7 +326,7 @@ sub handle_api_journalsitem_options {
 sub _has_journal_method {
 
     my ($controller, $action) = @_;
-    my %journal_actions_found = map { $_ => 1 } @{ $controller->attributed_methods('Journal') };
+    my %journal_actions_found = map { $_ => 1 } @{ $controller->get_journal_methods };
     return exists $journal_actions_found{$action};
     
 }
