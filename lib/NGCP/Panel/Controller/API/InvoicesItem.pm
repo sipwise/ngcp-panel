@@ -1,25 +1,33 @@
 package NGCP::Panel::Controller::API::InvoicesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::Invoices';
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD/];
+}
 
-class_has('resource_name', is => 'ro', default => 'invoices');
-class_has('dispatch_path', is => 'ro', default => '/api/invoices/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-invoices');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Invoices/;
+
+sub resource_name{
+    return 'invoices';
+}
+sub dispatch_path{
+    return '/api/invoices/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-invoices';
+}
 
 __PACKAGE__->config(
     action => {

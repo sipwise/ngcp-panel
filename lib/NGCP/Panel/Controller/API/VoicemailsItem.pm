@@ -1,26 +1,34 @@
 package NGCP::Panel::Controller::API::VoicemailsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Subscriber;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::Voicemails';
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
+}
 
-class_has('resource_name', is => 'ro', default => 'voicemails');
-class_has('dispatch_path', is => 'ro', default => '/api/voicemails/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-voicemails');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Voicemails/;
+
+sub resource_name{
+    return 'voicemails';
+}
+sub dispatch_path{
+    return '/api/voicemails/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-voicemails';
+}
 
 __PACKAGE__->config(
     action => {

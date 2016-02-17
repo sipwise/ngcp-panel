@@ -1,25 +1,33 @@
 package NGCP::Panel::Controller::API::InterceptionsItem;
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Interception;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::Interceptions';
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
+}
 
-class_has('resource_name', is => 'ro', default => 'interceptions');
-class_has('dispatch_path', is => 'ro', default => '/api/interceptions/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-interceptions');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Interceptions/;
+
+sub resource_name{
+    return 'interceptions';
+}
+sub dispatch_path{
+    return '/api/interceptions/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-interceptions';
+}
 
 __PACKAGE__->config(
     action => {

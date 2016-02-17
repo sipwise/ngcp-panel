@@ -1,14 +1,14 @@
 package NGCP::Panel::Role::API;
-use NGCP::Panel::Utils::Generic qw(:all);
-use Moose::Role;
-use Sipwise::Base;
+no Moose;
 
+use NGCP::Panel::Utils::Generic qw(:all);
+use boolean qw(true);
+use Safe::Isa qw($_isa);
 use Storable qw();
 use JSON qw();
 use JSON::Pointer;
 use JSON::Pointer::Exception qw();
 use HTTP::Status qw(:constants);
-use Safe::Isa qw($_isa);
 use Scalar::Util qw/blessed/;
 use TryCatch;
 use DateTime::Format::HTTP qw();
@@ -16,14 +16,14 @@ use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use HTTP::Headers::Util qw(split_header_words);
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
-#use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Journal qw();
-#use boolean qw(true);
-#use Data::HAL qw();
-#use Data::HAL::Link qw();
+use base qw/NGCP::Panel::Role::Journal/;
 
-has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
+#fun - there is no one usage of the last_modified through all ngcp-panel sources. even in javascript
+#has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
 
 sub get_valid_post_data {
     my ($self, %params) = @_;
@@ -294,30 +294,30 @@ sub allowed_methods_filtered {
     }
 }
 
-sub allowed_methods {
-    my ($self) = @_;
-    #my $meta = $self->meta;
-    #my @allow;
-    #for my $method ($meta->get_method_list) {
-    #    push @allow, $meta->get_method($method)->name
-    #        if $meta->get_method($method)->can('attributes') &&
-    #           grep { 'Allow' eq $_ } @{ $meta->get_method($method)->attributes };
-    #}
-    #return [sort @allow];
-    return $self->attributed_methods('Allow');
-}
+# sub allowed_methods {
+    # my ($self) = @_;
+    # #my $meta = $self->meta;
+    # #my @allow;
+    # #for my $method ($meta->get_method_list) {
+    # #    push @allow, $meta->get_method($method)->name
+    # #        if $meta->get_method($method)->can('attributes') &&
+    # #           grep { 'Allow' eq $_ } @{ $meta->get_method($method)->attributes };
+    # #}
+    # #return [sort @allow];
+    # return $self->attributed_methods('Allow');
+# }
 
-sub attributed_methods {
-    my ($self,$attribute) = @_;
-    my $meta = $self->meta;
-    my @attributed;
-    for my $method ($meta->get_method_list) {
-        push @attributed, $meta->get_method($method)->name
-            if $meta->get_method($method)->can('attributes') &&
-               grep { $attribute eq $_ } @{ $meta->get_method($method)->attributes };
-    }
-    return [sort @attributed];
-}
+# sub attributed_methods {
+    # my ($self,$attribute) = @_;
+    # my $meta = $self->meta;
+    # my @attributed;
+    # for my $method ($meta->get_method_list) {
+        # push @attributed, $meta->get_method($method)->name
+            # if $meta->get_method($method)->can('attributes') &&
+               # grep { $attribute eq $_ } @{ $meta->get_method($method)->attributes };
+    # }
+    # return [sort @attributed];
+# }
 
 sub valid_id {
     my ($self, $c, $id) = @_;
@@ -578,10 +578,10 @@ sub log_response {
 }
 
 
-sub item_rs {}
-around 'item_rs' => sub {
-    my ($orig, $self, @orig_params) = @_;
-    my $item_rs = $self->$orig(@orig_params);
+#sub item_rs {}
+sub item_rs {
+    my ($self, @orig_params) = @_;
+    my $item_rs = $self->_item_rs(@orig_params);
     return unless($item_rs);
 
     if ($self->can('query_params')) {
@@ -589,7 +589,7 @@ around 'item_rs' => sub {
     }
 
     return $item_rs;
-};
+}
 
 sub apply_query_params {
 
@@ -611,36 +611,32 @@ sub apply_query_params {
                 $item_rs = $p[0]->{new_rs}($c,$q,$item_rs);
             } elsif (defined $p[0]->{query}) {
                 #regular chaining:
-                $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$c), $p[0]->{query}->{second}($q,$c));
+                my($sub_where,$sub_attributes) = $self->get_query_callbacks(\@p);
+                $item_rs = $item_rs->search($sub_where->($q,$c), $sub_attributes->($q,$c));
             }
         }
     }
     return $item_rs;
 
 }
-
-sub is_true {
-    my ($self, $v) = @_;
-    my $val;
-    if(ref $v eq "") {
-        $val = $v;
-    } else {
-        $val = ${$v};
+sub get_query_callbacks{
+    my ($self, $query_param_spec) = @_;
+    #while believe that there is only one parameter
+    my @p = @$query_param_spec;
+    my($sub_where,$sub_attributes);
+    if($p[0]->{query_type}){
+        if('string_like' eq $p[0]->{query_type}){
+            $sub_where = sub {my ($q, $c) = @_; { $p[0]->{param} => { like => $q } };};
+        }elsif('string_eq' eq $p[0]->{query_type}){
+            $sub_where = sub {my ($q, $c) = @_; { $p[0]->{param} => $q };};
+        }
     }
-    return 1 if(defined $val && $val == 1);
-    return;
-}
-
-sub is_false {
-    my ($self, $v) = @_;
-    my $val;
-    if(ref $v eq "") {
-        $val = $v;
-    } else {
-        $val = ${$v};
+    if($p[0]->{query}){
+        $sub_where //= $p[0]->{query}->{first};
+        $sub_attributes = $p[0]->{query}->{second};
     }
-    return 1 unless(defined $val && $val == 1);
-    return;
+    $sub_attributes //= sub {};
+    return ($sub_where,$sub_attributes);
 }
 
 sub delay_commit {
@@ -658,69 +654,69 @@ sub delay_commit {
     $guard->commit();
 }
 
-sub add_create_journal_item_hal {
-    my ($self,$c,@args) = @_;
-    return NGCP::Panel::Utils::Journal::add_journal_item_hal($self,$c,NGCP::Panel::Utils::Journal::CREATE_JOURNAL_OP,@args);
+sub hal_from_item {
+    my ($self, $c, $item, $form) = @_;
+    my %resource = $item->get_inflated_columns;
+    $resource{contract_id} = delete $resource{peering_contract_id};
+    my $hal = Data::HAL->new(
+        links => [
+            Data::HAL::Link->new(
+                relation => 'curies',
+                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+                name => 'ngcp',
+                templated => true,
+            ),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+        ],
+        relation => 'ngcp:'.$self->resource_name,
+    );
+
+    $form //= $self->get_form($c);
+
+    $self->validate_form(
+        c => $c,
+        resource => \%resource,
+        form => $form,
+        run => 0,
+    );
+
+    $resource{id} = int($item->id);
+    $hal->resource({%resource});
+    return $hal;
 }
 
-sub add_update_journal_item_hal {
-    my ($self,$c,@args) = @_;
-    return NGCP::Panel::Utils::Journal::add_journal_item_hal($self,$c,NGCP::Panel::Utils::Journal::UPDATE_JOURNAL_OP,@args);
+sub item_by_id {
+    my ($self, $c, $id) = @_;
+    my $item_rs = $self->item_rs($c);
+    return $item_rs->find($id);
 }
 
-sub add_delete_journal_item_hal {
-    my ($self,$c,@args) = @_;
-    return NGCP::Panel::Utils::Journal::add_journal_item_hal($self,$c,NGCP::Panel::Utils::Journal::DELETE_JOURNAL_OP,@args);
-}
+sub update_item {
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-sub get_journal_action_config {
-    my ($class,$resource_name,$action_template) = @_;
-    my $cfg = NGCP::Panel::Utils::Journal::get_journal_resource_config(NGCP::Panel->config,$resource_name);
-    if ($cfg->{journal_resource_enabled}) {
-        return NGCP::Panel::Utils::Journal::get_api_journal_action_config('api/' . $resource_name,$action_template,$class->attributed_methods('Journal'));
-    }
-    return [];
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+    );
+    last unless $resource;
+    $resource = $self->process_resource($c, $item, $old_resource, $resource, $form);
+    last unless $resource;
+    last unless $self->check_duplicate($c, $item, $old_resource, $resource, $form);
+    $item = $self->update($c, $item, $old_resource, $resource, $form);
+    return $item;
 }
-
-sub get_journal_query_params {
-    my ($class,$query_params) = @_;
-    return NGCP::Panel::Utils::Journal::get_api_journal_query_params($query_params);
+sub process_resource{
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    return $resource;
 }
-
-sub handle_item_base_journal {
-    return NGCP::Panel::Utils::Journal::handle_api_item_base_journal(@_);
-}
-
-sub handle_journals_get {
-    return NGCP::Panel::Utils::Journal::handle_api_journals_get(@_);
-}
-
-sub handle_journalsitem_get {
-    return NGCP::Panel::Utils::Journal::handle_api_journalsitem_get(@_);
-}
-
-sub handle_journals_options {
-    return NGCP::Panel::Utils::Journal::handle_api_journals_options(@_);
-}
-
-sub handle_journalsitem_options {
-    return NGCP::Panel::Utils::Journal::handle_api_journalsitem_options(@_);
-}
-
-sub handle_journals_head {
-    return NGCP::Panel::Utils::Journal::handle_api_journals_head(@_);
-}
-
-sub handle_journalsitem_head {
-    return NGCP::Panel::Utils::Journal::handle_api_journalsitem_head(@_);
-}
-
-sub get_journal_relation_link {
-    my $cfg = NGCP::Panel::Utils::Journal::get_journal_resource_config(NGCP::Panel->config,$_[0]->resource_name);
-    if ($cfg->{journal_resource_enabled}) {
-        return NGCP::Panel::Utils::Journal::get_journal_relation_link(@_);
-    }
-    return ();
+sub update{
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    $item->update($resource);
+    return $item;
 }
 
 1;
