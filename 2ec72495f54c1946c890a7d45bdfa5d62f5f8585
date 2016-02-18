@@ -2,6 +2,108 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a7fa997_7f3183a1",
+        "filename": "lib/NGCP/Panel/Controller/API/Admins.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-18T16:50:18Z",
+      "side": 1,
+      "message": "one day, let\u0027s derive this 3 from each other, shouldn\u0027t we?",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_3f2b0b32",
+        "filename": "lib/NGCP/Panel/Controller/API/ApplyRewrites.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-18T16:50:18Z",
+      "side": 1,
+      "message": "shouldn\u0027t be necessary",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_1f264f69",
+        "filename": "lib/NGCP/Panel/Controller/API/AutoAttendantsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-18T16:50:18Z",
+      "side": 1,
+      "message": "necessary?",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_3c7239e6",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-18T16:50:18Z",
+      "side": 1,
+      "message": "I don\u0027t think this is ever automatically propagated to Moose, even if called from a moose-class",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_bc7de9b3",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-18T16:50:18Z",
+      "side": 1,
+      "message": "might be the remainder of some deleted \"lars-feature then\". Like we had some additional caching-control headers, which have been kicked out at some point. didn\u0027t check though. can be deleted in that case",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_7fbbc3c4",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-18T16:50:18Z",
+      "side": 1,
+      "message": "I also think we cannot always rely on \"hal_from_item\" and \"update_item\" to be the same for all controllers, especially with our hacky, unstable \"validate_form\".\n\nHow is this planned to be used? As a default for simple Controllers, which don\u0027t override it? In that case, that\u0027s a great idea I think.",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_190c2f94",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 2
@@ -82,6 +184,29 @@
       "writtenOn": "2016-02-18T09:24:03Z",
       "side": 1,
       "message": "should we introduce additional phases here:\n-validate (e.g. time overlaps)\n-validate_referential (e.g. wrong reseller)\n-transform_entities (e.g. filter and sanitize input resource for update)",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_1fb08fdc",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-18T16:50:18Z",
+      "side": 1,
+      "message": "only here?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 75
+      },
       "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
