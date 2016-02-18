@@ -7,6 +7,7 @@ use Crypt::Rijndael;
 use Digest::MD5 qw/md5_hex/;
 use Storable qw/freeze/;
 use JSON qw(decode_json encode_json);
+use Encode;
 use NGCP::Panel::Form::Device::Model;
 use NGCP::Panel::Form::Device::ModelAdmin;
 use NGCP::Panel::Form::Device::Firmware;
@@ -1392,7 +1393,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $data = $dev->profile->config->data;
 
     my $var_hash = md5_hex(freeze $vars);
-    my $cfg_hash = md5_hex($data);
+    my $cfg_hash = md5_hex(Encode::encode_utf8($data));
     $vars->{checksum} = md5_hex($var_hash . $cfg_hash);
 
     my $processed_data = "";
