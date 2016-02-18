@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_190c2f94",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-18T09:24:03Z",
+      "side": 1,
+      "message": "i know an id is absent for some resources; will they override  hal_from_item then?",
+      "range": {
+        "startLine": 685,
+        "startChar": 4,
+        "endLine": 685,
+        "endChar": 35
+      },
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_3911ebac",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-18T09:24:03Z",
+      "side": 1,
+      "message": "think we need to allow variable additional params here, i.e. \"now\" timestamp and the like",
+      "range": {
+        "startLine": 691,
+        "startChar": 4,
+        "endLine": 691,
+        "endChar": 29
+      },
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_f9229300",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-18T09:24:03Z",
+      "side": 1,
+      "message": "not done the same way in all resources?",
+      "range": {
+        "startLine": 700,
+        "startChar": 4,
+        "endLine": 704,
+        "endChar": 6
+      },
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_d925570b",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 705,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-18T09:24:03Z",
+      "side": 1,
+      "message": "should we introduce additional phases here:\n-validate (e.g. time overlaps)\n-validate_referential (e.g. wrong reseller)\n-transform_entities (e.g. filter and sanitize input resource for update)",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
