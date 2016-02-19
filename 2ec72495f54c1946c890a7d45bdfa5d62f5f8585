@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_ffacb337",
+        "filename": "lib/NGCP/Panel/Controller/API/Admins.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-19T05:00:46Z",
+      "side": 1,
+      "message": "Yes, sure. \nAnd getters also can be implemented in common class, returning our variables from child, I think.",
+      "parentUuid": "7a7fa997_7f3183a1",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_3f2b0b32",
         "filename": "lib/NGCP/Panel/Controller/API/ApplyRewrites.pm",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2016-02-18T16:50:18Z",
       "side": 1,
       "message": "shouldn\u0027t be necessary",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_9fa9ff26",
+        "filename": "lib/NGCP/Panel/Controller/API/ApplyRewrites.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-19T05:00:46Z",
+      "side": 1,
+      "message": "Ok, will remove, thank you.",
+      "parentUuid": "7a7fa997_3f2b0b32",
       "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -104,6 +140,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_5fbcc76c",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-19T05:00:46Z",
+      "side": 1,
+      "message": "exactly, maybe with few callbacks.",
+      "parentUuid": "7a7fa997_7fbbc3c4",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_190c2f94",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 2
@@ -115,6 +169,30 @@
       "writtenOn": "2016-02-18T09:24:03Z",
       "side": 1,
       "message": "i know an id is absent for some resources; will they override  hal_from_item then?",
+      "range": {
+        "startLine": 685,
+        "startChar": 4,
+        "endLine": 685,
+        "endChar": 35
+      },
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_7fc183e3",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-19T05:00:46Z",
+      "side": 1,
+      "message": "Very specialcases will be overriden",
+      "parentUuid": "7a7fa997_190c2f94",
       "range": {
         "startLine": 685,
         "startChar": 4,
@@ -150,6 +228,30 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_1fb64f8b",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-19T05:00:46Z",
+      "side": 1,
+      "message": "We will add it when will need it (sure, we will).",
+      "parentUuid": "7a7fa997_3911ebac",
+      "range": {
+        "startLine": 691,
+        "startChar": 4,
+        "endLine": 691,
+        "endChar": 29
+      },
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_f9229300",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 2
@@ -173,6 +275,30 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_3fbb0b74",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-19T05:00:46Z",
+      "side": 1,
+      "message": "Yes, we have rather often exceptions for id fields. I think  callback or controller method will help us there.",
+      "parentUuid": "7a7fa997_f9229300",
+      "range": {
+        "startLine": 700,
+        "startChar": 4,
+        "endLine": 704,
+        "endChar": 6
+      },
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_d925570b",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 2
@@ -184,6 +310,24 @@
       "writtenOn": "2016-02-18T09:24:03Z",
       "side": 1,
       "message": "should we introduce additional phases here:\n-validate (e.g. time overlaps)\n-validate_referential (e.g. wrong reseller)\n-transform_entities (e.g. filter and sanitize input resource for update)",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_dfaf772a",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 705,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-19T05:00:46Z",
+      "side": 1,
+      "message": "Yes,I thought about it, but decided to implement the first step just as clear role replacement. These changes get into this review occasionally.\nI have sample implementation based on peering groups in the branch ipeshinskaya/17173, but it is really mess there.\n\n\nReally I think that if we use FormHandler - correct way is move as many checks as possible to forms. So behavior doesn\u0027t differ between WEB and API. And other validations yes, should be moved to controller methods, like you said. Maybe with some library of common checks in utils.",
+      "parentUuid": "7a7fa997_d925570b",
       "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
