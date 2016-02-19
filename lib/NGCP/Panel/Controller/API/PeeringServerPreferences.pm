@@ -65,7 +65,7 @@ sub GET :Allow {
             push @embedded, $self->hal_from_item($c, $container_item, $container_type);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('%s%d', $self->dispatch_path, $container_items->id),
+                href     => sprintf('%s%d', $self->dispatch_path, $container_item->id),
             );
         }
         push @links,
