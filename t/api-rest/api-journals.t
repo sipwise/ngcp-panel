@@ -5,7 +5,6 @@ use JSON qw();
 use Test::More;
 use Storable qw();
 
-use JSON::PP;
 use LWP::Debug;
 
 BEGIN {
@@ -492,8 +491,8 @@ sub test_voicemailsettings {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');    
     $req->content(JSON::to_json({
-        attach => JSON::PP::true,
-        delete => JSON::PP::true,
+        attach => JSON::true,
+        delete => JSON::true,
         email =>  'voicemail_email_'.$t.'@example.com',
         pin => '1234',
         }));
@@ -772,12 +771,12 @@ sub test_faxserversettings {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');    
     $req->content(JSON::to_json({
-        active => JSON::PP::true,
+        active => JSON::true,
         destinations => [ {destination => 'test_fax_destination_'.$t.'@example.com', #??
                            filetype => 'TIFF',
-                           incoming => JSON::PP::true,
-                           outgoing => JSON::PP::false,
-                           status => JSON::PP::true,} ],
+                           incoming => JSON::true,
+                           outgoing => JSON::false,
+                           status => JSON::true,} ],
         name => 'fax_server_settings_'.$t,
         password => 'fax_server_settings_password_'.$t,
         }));
@@ -798,7 +797,7 @@ sub test_faxserversettings {
     $req->header('Content-Type' => 'application/json-patch+json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/active', value => JSON::PP::false } ]
+        [ { op => 'replace', path => '/active', value => JSON::false } ]
     ));
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("PATCH test faxserversettings"));
@@ -2355,7 +2354,7 @@ sub _test_journal_top_journalitem {
             return $journal;
         }
     }
-    return undef;
+    return;
 }
 
 sub _test_journal_options_head {
