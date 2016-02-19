@@ -17,13 +17,30 @@ fi
 
 SERVER="${1}"
 
+if [[ "${2:-}" == "stable" ]]; then
+  SELECT=stable;
+elif [[ "${2:-}" == "fast" ]]; then
+  SELECT=fast;
+fi
+
+if [ -z "${SELECT:-}" ] ; then
+  echo "Test selection: all"
+  SELECT=$(echo t/api-rest/*.t)
+elif [[ $SELECT == "stable"  ]]; then
+  echo "Test selection: stable"
+  SELECT=$(echo t/api-rest/api-{billingfees,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,cfdestinationsets,ncoslevels,pbxdevicemodels,pbxdevices,peeringgroups,peeringrules,peeringservers,preferences,profilepackages,resellers,rewriterules,soundsets,subscriberregistrations,subscribers,systemcontacts,threads,topuplogs,trustedsources,valid-patch,vouchers}.t)
+elif [[ $SELECT == "fast" ]]; then
+  echo "Test selection: fast"
+  SELECT=$(echo t/api-rest/api-{billingnetworks,billingzones,calls,cert-auth,cfdestinationsets,ncoslevels,peeringgroups,peeringrules,peeringservers,resellers,rewriterules,soundsets,systemcontacts,valid-patch,vouchers}.t)
+fi
+
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
 RC=0
 # api-threads.t and api-balanceintervals.t are failing with the "-Pretty option" :(
 CATALYST_SERVER="https://${SERVER}:1443" prove -v --color -l -It/lib \
-                 t/api-rest/*.t | tee -a /code/api-rest.pretty || RC=$?
-#CATALYST_SERVER="https://${SERVER}:1443" prove --formatter TAP::Formatter::JUnit -l -It/lib t/api-rest/*.t | tee -a /code/api-rest.xml || RC=$?
+                  $SELECT | tee -a /code/api-rest.pretty || RC=$?
+#CATALYST_SERVER="https://${SERVER}:1443" prove --formatter TAP::Formatter::JUnit -l -It/lib $SELECT | tee -a /code/api-rest.xml || RC=$?
 echo "Finished test execution, test execution returned with exit code ${RC}."
 for file in /code/api-rest.pretty /code/api-rest.xml ; do
   if [ -f "$file" ] ; then
