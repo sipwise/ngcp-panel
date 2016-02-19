@@ -142,7 +142,7 @@ my @allrules = ();
     is($res->code, 422, "create rule with negative set_id");
     $err = JSON::from_json($res->decoded_content);
     is($err->{code}, "422", "check error code in body");
-    like($err->{message}, qr/Invalid 'set_id'/, "check error message in body");
+    like($err->{message}, qr/(Invalid|Validation failed).*'set_id'/, "check error message in body");
 
     # try to create rule with missing match_pattern
     $req = HTTP::Request->new('POST', $uri.'/api/rewriterules/');
@@ -194,7 +194,7 @@ my @allrules = ();
     is($res->code, 422, "create rule without set_id");
     $err = JSON::from_json($res->decoded_content);
     is($err->{code}, "422", "check error code in body");
-    like($err->{message}, qr/Required: 'set_id'/, "check error message in body");
+    like($err->{message}, qr/Required: 'set_id'|set_id.*required/, "check error message in body");
 
     # iterate over rules collection to check next/prev links and status
     my $nexturi = $uri.'/api/rewriterules/?page=1&rows=5';
