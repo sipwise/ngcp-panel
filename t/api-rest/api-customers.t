@@ -688,25 +688,7 @@ my @allcustomers = ();
     #is($res->code, 200, "multi-bill-prof: fetch customer");
     ##$patched_customer = JSON::from_json($res->decoded_content);
     #is_deeply(JSON::from_json($res->decoded_content)->{billing_profiles},\@expected_mappings,"multi-bill-prof: check billing network cascade delete ");
-    
-    $req = HTTP::Request->new('PATCH', $uri.'/api/billingprofiles/'.$second_billing_profile_id);
-    $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => 'terminated' } ]
-    ));
-    $res = $ua->request($req);
-    is($res->code, 422, "multi-bill-prof: try to terminate second billing profile");
-    
-    $req = HTTP::Request->new('PATCH', $uri.'/api/billingnetworks/'.$billing_network_id);
-    $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => 'terminated' } ]
-    ));
-    $res = $ua->request($req);
-    is($res->code, 422, "multi-bill-prof: try to terminate billing network");
-    
+
     $req = HTTP::Request->new('PATCH', $customeruri);
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => 'application/json-patch+json');
@@ -920,25 +902,7 @@ my @allcustomers = ();
     push(@profile_networks,@$initial_profiles);
     push(@profile_networks,@{$data->{billing_profiles}});    
     _check_mappings(\@profile_networks,$customer);    
-    
-    $req = HTTP::Request->new('PATCH', $uri.'/api/billingprofiles/'.$third_billing_profile_id);
-    $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => 'terminated' } ]
-    ));
-    $res = $ua->request($req);
-    is($res->code, 422, "prof-package: try to terminate third billing profile");
-    
-    $req = HTTP::Request->new('PATCH', $uri.'/api/billingnetworks/'.$second_billing_network_id);
-    $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => 'terminated' } ]
-    ));
-    $res = $ua->request($req);
-    is($res->code, 422, "prof-package: try to terminate second billing network");
-    
+
     $req = HTTP::Request->new('PATCH', $customeruri);
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => 'application/json-patch+json');
@@ -978,15 +942,6 @@ my @allcustomers = ();
 
 # terminate
 {
-    $req = HTTP::Request->new('PATCH', $uri.'/api/billingprofiles/'.$billing_profile_id);
-    $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => 'terminated' } ]
-    ));
-    $res = $ua->request($req);
-    is($res->code, 422, "try to terminate billing profile");
-    
     # check if deletion of contact fails before terminating the customers
     $req = HTTP::Request->new('DELETE', $uri.'/'.$custcontact->{_links}->{self}->{href});
     $res = $ua->request($req);
