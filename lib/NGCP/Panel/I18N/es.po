@@ -745,6 +745,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"An array of hashes, each containing the keys \"slot\" (\"*0 .. *9\") and "
+"\"destination\" (A valid SIP URI)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "An array of line/key definitions for this device. Each element is a hash "
 "containing the keys name, can_private, can_shared, can_blf and keys (which "
 "in turn is an array of hashes having x, y and labelpos allowing top, bottom, "
@@ -6268,8 +6274,7 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Patrón"
 
