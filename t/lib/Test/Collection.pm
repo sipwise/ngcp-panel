@@ -16,8 +16,14 @@ use Clone qw/clone/;
 use File::Basename;
 use Test::HTTPRequestAsCurl;
 use Data::Dumper;
+use Storable;
 
-
+has 'data_cache_file' => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => sub {'/tmp/ngcp-api-test-data-cache';},
+);
 has 'local_test' => (
     is => 'rw',
     isa => 'Str',
@@ -472,6 +478,14 @@ sub request_delete{
     my $req = HTTP::Request->new('DELETE', $self->normalize_uri($uri));
     my $res = $self->request($req);
     my $content = $self->get_response_content($res);
+
+    my $restored = (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
+    if('204' eq $res->code){
+        $restored->{deleted}->{204}->{$uri} = 1;
+    }
+    $restored->{deleted}->{all}->{$uri} = [$res->code,$res->message];
+    store $restored, $self->data_cache_file;
+    
     return($req,$res,$content);
 }
 sub request_get{
@@ -861,6 +875,7 @@ sub clear_test_data_all{
         $self->http_code_msg(204, "check delete item $del_uri",$res,$content);
     }
     $self->clear_data_created();
+    return \@uris;
 }
 sub clear_test_data_dependent{
     my($self,$uri) = @_;
