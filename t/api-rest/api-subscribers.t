@@ -31,7 +31,7 @@ $fake_data->set_data_from_script({
             email                => undef,
             external_id          => undef,
             is_pbx_group         => 1,
-            is_pbx_pilot         => 1,
+            is_pbx_pilot         => 0,
             pbx_extension        => '111',
             pbx_group_ids        => [],
             pbx_groupmember_ids  => [],
