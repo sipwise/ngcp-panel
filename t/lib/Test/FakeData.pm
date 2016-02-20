@@ -16,7 +16,9 @@ use Storable;
 
 sub BUILD {
     my $self = shift;
-    $self->read_cached_data();
+    if($self->test_machine->cache_data){
+        $self->read_cached_data();
+    }
 }
 has 'data_cache_file' => (
     is => 'ro',
@@ -571,18 +573,9 @@ sub create{
     }
     return $self->get_existent_id($collection_name);
 }
-sub clear_test_data_all{
-    my $self = shift;
-    my($force_delete) = @_;
-    if($ENV{API_BULK_TEST_RUN} && !$force_delete){
-       store {loaded => $self->loaded, created => $self->created}, $self->data_cache_file;
-    }else{
-        ( 'HASH' eq ref $self->created ) and ( $self->test_machine->clear_test_data_all([ map {$_->{location}} values %{$self->created} ]) );
-    }
-}
 sub read_cached_data{
     my $self = shift;
-    if( ! -e $self->data_cache_file ){
+    if(! -e $self->data_cache_file ){
         return;
     }
     my $restored = retrieve($self->data_cache_file);
@@ -602,6 +595,15 @@ sub read_cached_data{
     $self->created($restored->{created} // {} );
     #delete $restored->{deleted};
     store {loaded => $self->loaded, created => $self->created}, $self->data_cache_file;
+}
+sub clear_test_data_all{
+    my $self = shift;
+    my($force_delete) = @_;
+    if($self->test_machine->cache_data && !$force_delete){
+       store {loaded => $self->loaded, created => $self->created}, $self->data_cache_file;
+    }else{
+       ( 'HASH' eq ref $self->created ) and ( $self->test_machine->clear_test_data_all([ map {$_->{location}} values %{$self->created} ]) );
+    }
 }
 sub DEMOLISH{
     my($self) = @_;

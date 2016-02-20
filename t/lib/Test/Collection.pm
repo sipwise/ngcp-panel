@@ -24,6 +24,12 @@ has 'data_cache_file' => (
     lazy => 1,
     default => sub {'/tmp/ngcp-api-test-data-cache';},
 );
+has 'cache_data' => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => $ENV{API_CACHE_FAKE_DATA} // '1',
+);
 has 'local_test' => (
     is => 'rw',
     isa => 'Str',
@@ -185,30 +191,26 @@ sub get_cloned{
 }
 sub init_catalyst_config{
     my $self = shift;
-    my $catalyst_config;
-    my $panel_config;
-    if ($self->{local_test}) {
-        for my $path(qw#../ngcp_panel.conf ngcp_panel.conf#) {
-            if(-f $path) {
-                $panel_config = $path;
-                last;
-            }
+    my $config;
+    my $restored;
+    if($self->cache_data){
+        $restored = $self->get_cached_data;
+        if($restored->{loaded} && $restored->{loaded}->{configdefs}){
+            $config = $restored->{loaded}->{configdefs}->{content};
         }
-        $panel_config //= dirname($0).'/../../ngcp_panel.conf';
-    } else {
-        #taken 1:1 from /lib/NGCP/Panel.pm
-        for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
-            if(-f $path) {
-                $panel_config = $path;
-                last;
-            }
-        }
-        $panel_config //= dirname($0).'/ngcp_panel.conf';
     }
-    $catalyst_config = Config::General->new($panel_config);   
-    my %config = $catalyst_config->getall();
-    $self->{catalyst_config} = \%config;
-    $self->{panel_config} = $panel_config;
+    if(!$config){
+        my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri('/api/configdefs/'));
+        my $location;
+        ($config,$location) = $self->get_hal_from_collection($list_collection);
+        if($self->cache_data){
+            $restored->{loaded} //= {};
+            $restored->{loaded}->{configdefs} = { content => $config, location => $location };
+            store $restored, $self->data_cache_file;
+        }
+    }
+    $self->{catalyst_config} = $config;
+    $self->{panel_config} = $config->{file};
     return $self->{catalyst_config};
 }
 sub init_ua {
@@ -478,14 +480,21 @@ sub request_delete{
     my $req = HTTP::Request->new('DELETE', $self->normalize_uri($uri));
     my $res = $self->request($req);
     my $content = $self->get_response_content($res);
-
-    my $restored = (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
-    if('204' eq $res->code){
-        $restored->{deleted}->{204}->{$uri} = 1;
+    if($self->cache_data){
+        #my $restored = (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
+        #if('204' eq $res->code){
+        #    $restored->{deleted}->{204}->{$uri} = 1;
+        #}
+        #$restored->{deleted}->{all}->{$uri} = [$res->code,$res->message];
+        #store $restored, $self->data_cache_file;
+        $self->replace_cached_data(sub{
+            my $restored = shift;
+            if('204' eq $res->code){
+                $restored->{deleted}->{204}->{$uri} = 1;
+            }
+            $restored->{deleted}->{all}->{$uri} = [$res->code,$res->message];
+        });
     }
-    $restored->{deleted}->{all}->{$uri} = [$res->code,$res->message];
-    store $restored, $self->data_cache_file;
-    
     return($req,$res,$content);
 }
 sub request_get{
@@ -1009,5 +1018,17 @@ sub http_code_msg{
         }
     }
     $code and is($res->code, $code, $message_res);
+}
+sub get_cached_data{
+    my($self) = @_;
+    return (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
+}
+
+sub replace_cached_data{
+    my($self,$data_callback,$restored) = @_;
+    $restored //= $self->get_cached_data;
+    $data_callback->($restored);
+    store $restored,$self->data_cache_file;
+    return $restored;
 }
 1;
