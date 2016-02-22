@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_1dc17480",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-02-22T15:08:28Z",
+      "side": 1,
+      "message": "I would say also add:\n\n    if($args{pageheader}) {\n        $sendfax_args{header} \u003d $args{pageheader};\n    }\n\nP.S. can also rename header -\u003e pageheader in NGCP::Fax if needed, both names are fine with me :)",
+      "revId": "14488d0e6380e790c6eb1bfe0d6178eb62cd801b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
