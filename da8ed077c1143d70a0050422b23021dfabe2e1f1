@@ -70,6 +70,30 @@
       "revId": "da8ed077c1143d70a0050422b23021dfabe2e1f1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_1d23b406",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-02-22T16:32:27Z",
+      "side": 1,
+      "message": "well, forgot that we use Sipwise::Base that handles modules runtime and catches such usage.\nfeel free to keep it as it is you prefer, although I would pack it around eval and if someone tries to use send_fax() on CE with our API he receives back \"Faxes are not supported on the Community Edition\".",
+      "parentUuid": "7a7fa997_7d2bc8eb",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 18
+      },
+      "revId": "da8ed077c1143d70a0050422b23021dfabe2e1f1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
