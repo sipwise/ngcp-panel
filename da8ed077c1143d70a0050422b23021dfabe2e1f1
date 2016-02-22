@@ -22,6 +22,30 @@
       "revId": "da8ed077c1143d70a0050422b23021dfabe2e1f1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_1dce545b",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-22T16:12:05Z",
+      "side": 1,
+      "message": "mmm, thank you for your note. \n\nI think in common it is not bad to allow module to run his initialization, so let\u0027s it stay.\n\nOr do I miss something?",
+      "parentUuid": "7a7fa997_7db668de",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 18
+      },
+      "revId": "da8ed077c1143d70a0050422b23021dfabe2e1f1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
