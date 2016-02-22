@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_6b4d4172",
+        "filename": "t/api-rest/testrunner",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-02-22T10:12:58Z",
+      "side": 1,
+      "message": "$2 is not defined and doesn\u0027t work due to set -e above:\n\ntestuser@80ee29a9e0eb:/code$ cd /code \u0026\u0026 ./t/api-rest/testrunner 10.15.20.194       \n./t/api-rest/testrunner: line 18: $2: unbound variable\ntestuser@80ee29a9e0eb:/code$",
+      "revId": "145a4ec903223e04dda806f575c5cf25647be9a8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_cb3015eb",
+        "filename": "t/api-rest/testrunner",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-02-22T10:12:58Z",
+      "side": 1,
+      "message": "Please add default here if nothing defined,\nI prefer to have defaults backward compatible,\nso it will not be necessary to change test from my side.",
+      "revId": "145a4ec903223e04dda806f575c5cf25647be9a8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
