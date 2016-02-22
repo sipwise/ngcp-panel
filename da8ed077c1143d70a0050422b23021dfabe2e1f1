@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_7db668de",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-02-22T16:03:46Z",
+      "side": 1,
+      "message": "I would use \"require\" instead as \"use\" implies BEGIN {}.",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 18
+      },
+      "revId": "da8ed077c1143d70a0050422b23021dfabe2e1f1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
