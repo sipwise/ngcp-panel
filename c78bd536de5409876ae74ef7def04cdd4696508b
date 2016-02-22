@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_1d3734e5",
+        "filename": "lib/NGCP/Panel/Controller/API/ConfigDefs.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-22T14:14:09Z",
+      "side": 1,
+      "message": "What about this? This should imo be equivalent",
+      "revId": "c78bd536de5409876ae74ef7def04cdd4696508b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
