@@ -12,6 +12,7 @@ use MooseX::ClassAttribute qw(class_has);
 use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
+use NGCP::Panel::Utils::API;
 BEGIN { extends 'Catalyst::Controller'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -58,7 +59,7 @@ sub GET : Allow {
         "ConfigDefs" => 1,
     };
 
-    my @colls = $self->get_collections;
+    my @colls = NGCP::Panel::Utils::API::get_collections_files;
     foreach my $coll(@colls) {
         my $mod = $coll;
         $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
@@ -204,32 +205,10 @@ sub OPTIONS : Allow {
     return;
 }
 
-sub get_collections {
-    my ($self) = @_;
-
-    # figure out base path of our api modules
-    my $libpath = $INC{"NGCP/Panel/Controller/API/Root.pm"};
-    $libpath =~ s/Root\.pm$//;
-
-    # find all modules not called Root.pm and *Item.pm
-    # (which should then be just collections)
-    my $rootrule = File::Find::Rule->new->name('Root.pm');
-    my $itemrule = File::Find::Rule->new->name('*Item.pm');
-    my $rule = File::Find::Rule->new
-        ->mindepth(1)
-        ->maxdepth(1)
-        ->name('*.pm')
-        ->not($rootrule)
-        ->not($itemrule);
-    my @colls = $rule->in($libpath);
-
-    return @colls;
-}
-
 sub collections_link_headers : Private {
     my ($self) = @_;
 
-    my @colls = $self->get_collections;
+    my @colls = NGCP::Panel::Utils::API::get_collections_files;
 
     # create Link header for each of the collections
     my @links = ();
