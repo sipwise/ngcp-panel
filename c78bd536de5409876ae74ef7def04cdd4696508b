@@ -52,6 +52,24 @@
       "revId": "c78bd536de5409876ae74ef7def04cdd4696508b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_fdaef8e6",
+        "filename": "lib/NGCP/Panel/Controller/API/ConfigDefs.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-22T14:56:46Z",
+      "side": 1,
+      "message": "I tried this too - seems like it doesn\u0027t do unblessing. \nSo the only way to return internal vision it\u0027s process all error-makers. Do you think it worth to do?",
+      "parentUuid": "7a7fa997_1d3e54b9",
+      "revId": "c78bd536de5409876ae74ef7def04cdd4696508b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
