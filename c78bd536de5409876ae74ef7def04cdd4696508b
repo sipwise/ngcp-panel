@@ -16,6 +16,24 @@
       "revId": "c78bd536de5409876ae74ef7def04cdd4696508b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_5d5ccc25",
+        "filename": "lib/NGCP/Panel/Controller/API/ConfigDefs.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-22T14:33:10Z",
+      "side": 1,
+      "message": "unfortunately it keeps blessed values, which can\u0027t be converted into json (it fails)",
+      "parentUuid": "7a7fa997_1d3734e5",
+      "revId": "c78bd536de5409876ae74ef7def04cdd4696508b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
