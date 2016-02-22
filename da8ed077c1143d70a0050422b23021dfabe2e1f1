@@ -46,6 +46,30 @@
       "revId": "da8ed077c1143d70a0050422b23021dfabe2e1f1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_7d2bc8eb",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-02-22T16:22:05Z",
+      "side": 1,
+      "message": "\"use\" implies BEGIN { require Module; Module-\u003eimport(...) }; \nthe problem with BEGIN {} in our case is that the macro is run during the code compilation and will fail during ngcp-panel start when NGCP/Fax.pm is missing.\nthere are no compile based imports that are required to be in the caller package namespace in NGCP::Fax part, therefore \"require\" should be sufficient enough and will dynamically load the module.",
+      "parentUuid": "7a7fa997_1dce545b",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 18
+      },
+      "revId": "da8ed077c1143d70a0050422b23021dfabe2e1f1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
