@@ -5,7 +5,6 @@ BEGIN { use base 'Catalyst::Controller'; }
 use HTML::Entities;
 use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
-use Test::More;
 use Data::Dumper;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -869,7 +868,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         my $new_auth_prefs = {};
         NGCP::Panel::Utils::Preferences::get_peer_auth_params(
             $c, $prov_subscriber, $new_auth_prefs);
-        unless(is_deeply($old_auth_prefs, $new_auth_prefs)) {
+        unless(compare($old_auth_prefs, $new_auth_prefs)) {
             try {
 
                 if(!NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) &&
@@ -2532,7 +2531,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                             sn => $subscriber->primary_number->sn,
                         };
                         if($subscriber->provisioning_voip_subscriber->admin &&
-                           !is_deeply($old_number, $new_number)) {
+                           !compare($old_number, $new_number)) {
                             foreach my $sub($c->stash->{subscribers}->all, ( $c->stash->{pbx_groups} ? $c->stash->{pbx_groups}->all : () )) {
                                 my $base_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                                         c => $c, attribute => 'cloud_pbx_base_cli',
