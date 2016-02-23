@@ -34,6 +34,24 @@
       "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b6f8a64a",
+        "filename": "t/api-rest/api-journals.t",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-02-23T09:29:50Z",
+      "side": 0,
+      "message": "the problem ever was that JsonXS (which is installed by default and preferred by perl if it can choose) breaks Data::HAL, which must use PP (back then it was like that at least). boolean flags are hardly ever used in json hal responses though.\n\nit should not matter any more if this test script is now running in a separate docker container.",
+      "parentUuid": "1a76adc5_96da4a16",
+      "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
