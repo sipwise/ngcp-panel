@@ -22,6 +22,45 @@ has_field 'destination' => (
     },
 );
 
+has_field 'quality' => (
+    type => 'Select',
+    label => 'Quality',
+    options => [
+        { label => 'Normal', value => 'normal' },
+        { label => 'Fine', value => 'fine' },
+        { label => 'Super', value => 'super' },
+    ],
+    default => 'low',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Fax quality'],
+    },
+);
+
+has_field 'notify' => (
+    type => 'Text',
+    label => 'Notify to email',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Email to notify about fax delivery'],
+    },
+);
+has_field 'coverpage' => (
+    type => 'Boolean',
+    label => 'Coverpage',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether to add a coverpage'],
+    },
+);
+has_field 'pageheader' => (
+    type => 'Text',
+    label => 'Page header',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Header text to add on every page'],
+    },
+);
 has_field 'data' => (
     type => 'TextArea',
     label => 'Content',
@@ -55,7 +94,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/destination data faxfile/],
+    render_list => [qw/destination quality pageheader data faxfile/],
 );
 
 has_block 'actions' => (
