@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_395fa774",
+        "filename": "lib/NGCP/Panel/Controller/API/ConfigDefs.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-23T10:14:16Z",
+      "side": 1,
+      "message": "should probably be admin-only",
+      "revId": "24454385f1f1afdbfd2320a2f335dc42e6aab9f1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d953136b",
+        "filename": "lib/NGCP/Panel/Controller/API/ConfigDefs.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-23T10:14:16Z",
+      "side": 1,
+      "message": "about this: no, I think it\u0027s not worth to spend too much thoughts about it. it\u0027 for internal use only anyways.",
+      "revId": "24454385f1f1afdbfd2320a2f335dc42e6aab9f1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
