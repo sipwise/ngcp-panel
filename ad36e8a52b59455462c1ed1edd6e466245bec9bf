@@ -16,6 +16,24 @@
       "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_96da4a16",
+        "filename": "t/api-rest/api-journals.t",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-23T08:46:33Z",
+      "side": 0,
+      "message": "true, I don\u0027t recall the true cause. seems to work though in docker. I\u0027ll check with Rene.",
+      "parentUuid": "7a7fa997_80b677db",
+      "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
