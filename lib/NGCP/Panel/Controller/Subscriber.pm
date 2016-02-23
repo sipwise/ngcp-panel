@@ -17,7 +17,7 @@ use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Sems;
-use NGCP::Panel::Utils::Hylafax;
+use NGCP::Panel::Utils::Fax;
 use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
@@ -337,27 +337,18 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
 
     if($posted && $form->validated) {
         try {
-            if(defined $form->params->{faxfile}) {
-                NGCP::Panel::Utils::Hylafax::send_fax(
-                    c => $c,
-                    subscriber => $subscriber,
-                    destination => $form->params->{destination},
-                    #resolution => 'low', # opt (low, medium, extended)
-                    #notify => 'someone@example.org', # TODO: handle in send_fax, read from prefs!
-                    #coverpage => 1,
-                    upload => $form->params->{faxfile},
-                );
-            } else {
-                NGCP::Panel::Utils::Hylafax::send_fax(
-                    c => $c,
-                    subscriber => $subscriber,
-                    destination => $form->params->{destination},
-                    #resolution => 'low', # opt (low, medium, extended)
-                    #notify => 'someone@example.org', # TODO: handle in send_fax, read from prefs!
-                    #coverpage => 1,
-                    data => $form->params->{data},
-                );
-            }
+            NGCP::Panel::Utils::Fax::send_fax(
+                c => $c,
+                subscriber => $subscriber,
+                destination => $form->values->{destination},
+                quality => $form->values->{quality}, # opt (normal, fine,super)
+                #coverpage => $form->values->{coverpage}, 
+                pageheader => $form->values->{pageheader}, 
+                #notify => $form->values->{notify}, # TODO: handle in send_fax, read from prefs!
+                #coverpage => 1,
+                upload => $form->values->{faxfile},
+                data => $form->values->{data},
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message::error(
                 c     => $c,

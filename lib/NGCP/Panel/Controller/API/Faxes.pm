@@ -13,6 +13,7 @@ use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API::Subscribers;
+use NGCP::Panel::Utils::Fax;
 use Encode qw( encode_utf8 );
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -179,14 +180,12 @@ sub POST :Allow {
             last;
         }
         try {
-            my $output = NGCP::Panel::Utils::Hylafax::send_fax(
+            my $output = NGCP::Panel::Utils::Fax::send_fax(
                 c => $c,
                 subscriber => $billing_subscriber,
                 destination => $form->values->{destination},
-                (defined $form->values->{faxfile})
-                    ?
-                    ( upload => $form->values->{faxfile} ) :
-                    ( data => $form->values->{data} ),
+                upload => $form->values->{faxfile},
+                data => $form->values->{data},
             );
             $c->log->debug("faxserver output:\n");
             $c->log->debug($output);
