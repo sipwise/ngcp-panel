@@ -70,6 +70,41 @@
       "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d9d0f3f9",
+        "filename": "t/api-rest/api-journals.t",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-23T09:58:31Z",
+      "side": 0,
+      "message": "Actually, now I ran this test on docker, my machine and a ce-trunk, and it worked everywhere (except for an unrelated error)",
+      "parentUuid": "1a76adc5_761d2e73",
+      "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d9f7938b",
+        "filename": "t/api-rest/api-journals.t",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-23T09:58:31Z",
+      "side": 0,
+      "message": "this should be JSON-\u003enew(); though",
+      "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
