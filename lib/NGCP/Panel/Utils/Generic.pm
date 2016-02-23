@@ -1,16 +1,18 @@
 package NGCP::Panel::Utils::Generic;
 use strict;
+use warnings;
 use Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(is_int is_integer is_decimal merge);
-%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge)],
-                 all    =>  [qw(&is_int &is_integer &is_decimal &merge)]);
+@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare);
+%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare)],
+                 all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare)]);
 
 use Hash::Merge;
+use Data::Compare qw//;
 
 sub is_int {
     my $val = shift;
@@ -36,6 +38,11 @@ sub is_decimal {
 sub merge {
     my ($a, $b) = @_;
     return Hash::Merge::merge($a, $b);
+}
+
+# 0 if different, 1 if equal
+sub compare {
+    return Data::Compare::Compare(@_);
 }
 
 1;
