@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_75d0bb53",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-02-23T22:38:55Z",
+      "side": 1,
+      "message": "Just in case, Kirill, maybe we should create ngcp-faxserver-ce which will install some face/empty class to do not use eval/require here?\n\nIn the same time I do not speak Perl, so cannot say it is OK or not here. so LGTM",
+      "revId": "db53b6e035b4848012313de950792edc41a1aa71",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
