@@ -52,6 +52,24 @@
       "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_761d2e73",
+        "filename": "t/api-rest/api-journals.t",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-02-23T09:47:39Z",
+      "side": 0,
+      "message": "Maybe we can add kind of check/protection here to check and warn user if JSON (not a JSOP:PP) is used? Because in next life we can start running in on host machine again and will be surprised why the test stops working?",
+      "parentUuid": "1a76adc5_b6f8a64a",
+      "revId": "ad36e8a52b59455462c1ed1edd6e466245bec9bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
