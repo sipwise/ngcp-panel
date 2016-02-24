@@ -24,7 +24,7 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
     my $type = "callforwards";
-    
+
     my $prov_subs = $item->provisioning_voip_subscriber;
     die "no provisioning_voip_subscriber" unless $prov_subs;
 
@@ -244,6 +244,7 @@ sub update_item {
         }
     }
 
+    $item->discard_changes;
     return $item;
 }
 
