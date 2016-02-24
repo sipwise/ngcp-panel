@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_2bac24ed",
+        "filename": "t/api-rest/testrunner",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-02-24T20:01:57Z",
+      "side": 1,
+      "message": "elif [ -z $SELECT ]\n\n(otherwise we will not be able to select single tests) (this has low prio though)",
+      "revId": "496aea8de8fca177cc451cc6f226fb03a5255571",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
