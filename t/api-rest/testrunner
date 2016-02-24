@@ -1,48 +1,59 @@
 #!/bin/bash
 
-if ! [ -f /.dockerinit ]; then
+set -e
+set -u
+
+if ! [ -f /.dockerinit ] ; then
   echo "Not running inside docker, exiting to avoid data damage." >&2
   exit 1
 fi
 
-set -e
-set -u
+SERVER="${1:-}"
+SELECT="${2:-}"
+OUTPUT_DIRECTORY="${3:-/code/}"
+FORMAT="${4:-pretty}"
 
-if [ -z "${1:-}" ] ; then
-  echo "Usage: $0 <testsystem>" >&2
+if [ -z "${SERVER}" ] ; then
+  echo "Usage: $0 <testsystem> [<testset>] [<output_directory>] [junit]" >&2
   echo
   echo "Usage example: $0 192.168.88.162"
+  echo "Usage example: $0 192.168.88.162 fast /results/ junit"
+  echo "Possible test set: all, stable, fast, t/api-rest/api-root.t"
+  echo "Default test set: all"
   exit 1
 fi
 
-SERVER="${1}"
-
-if [[ "${2:-}" == "stable" ]]; then
-  SELECT=stable;
-elif [[ "${2:-}" == "fast" ]]; then
-  SELECT=fast;
-fi
-
-if [ -z "${SELECT:-}" ] ; then
+if [ "${SELECT}" = "stable" ] ; then
+  echo "Test selection: ${SELECT}"
+  SELECT=$(echo t/api-rest/api-{billingfees,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,cfdestinationsets,ncoslevels,pbxdevicemodels,pbxdevices,peeringgroups,peeringrules,peeringservers,preferences,profilepackages,resellers,rewriterules,soundsets,subscriberregistrations,subscribers,systemcontacts,threads,topuplogs,trustedsources,valid-patch,vouchers}.t)
+elif [ "${SELECT}" = "fast" ] ; then
+  echo "Test selection: ${SELECT}"
+  SELECT=$(echo t/api-rest/api-{billingnetworks,billingzones,calls,cert-auth,cfdestinationsets,ncoslevels,peeringgroups,peeringrules,peeringservers,resellers,rewriterules,soundsets,systemcontacts,valid-patch,vouchers}.t)
+else
   echo "Test selection: all"
   SELECT=$(echo t/api-rest/*.t)
-elif [[ $SELECT == "stable"  ]]; then
-  echo "Test selection: stable"
-  SELECT=$(echo t/api-rest/api-{billingfees,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,cfdestinationsets,ncoslevels,pbxdevicemodels,pbxdevices,peeringgroups,peeringrules,peeringservers,preferences,profilepackages,resellers,rewriterules,soundsets,subscriberregistrations,subscribers,systemcontacts,threads,topuplogs,trustedsources,valid-patch,vouchers}.t)
-elif [[ $SELECT == "fast" ]]; then
-  echo "Test selection: fast"
-  SELECT=$(echo t/api-rest/api-{billingnetworks,billingzones,calls,cert-auth,cfdestinationsets,ncoslevels,peeringgroups,peeringrules,peeringservers,resellers,rewriterules,soundsets,systemcontacts,valid-patch,vouchers}.t)
 fi
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
+
+export CATALYST_SERVER="https://${SERVER}:1443"
 RC=0
-# api-threads.t and api-balanceintervals.t are failing with the "-Pretty option" :(
-CATALYST_SERVER="https://${SERVER}:1443" prove -v --color -l -It/lib \
-                  $SELECT | tee -a /code/api-rest.pretty || RC=$?
-#CATALYST_SERVER="https://${SERVER}:1443" prove --formatter TAP::Formatter::JUnit -l -It/lib $SELECT | tee -a /code/api-rest.xml || RC=$?
+
+if [ "${FORMAT}" = "junit" ] ; then
+  # shellcheck disable=SC2086
+  prove --formatter TAP::Formatter::JUnit -l -It/lib $SELECT | \
+    tee -a "${OUTPUT_DIRECTORY}/api-rest.xml"
+  RC=${PIPESTATUS[0]}
+else
+  # api-threads.t and api-balanceintervals.t are failing with the "-Pretty option" :(
+  # shellcheck disable=SC2086
+  prove -v --color -l -It/lib $SELECT | tee -a "${OUTPUT_DIRECTORY}/api-rest.pretty"
+  RC=${PIPESTATUS[0]}
+fi
+
 echo "Finished test execution, test execution returned with exit code ${RC}."
-for file in /code/api-rest.pretty /code/api-rest.xml ; do
+for file in "${OUTPUT_DIRECTORY}/api-rest.pretty" "${OUTPUT_DIRECTORY}/api-rest.xml" ; do
   if [ -f "$file" ] ; then
     echo "Test results available at ${file}"
   fi
