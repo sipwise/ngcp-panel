@@ -35,7 +35,7 @@ NGCP::Panel::Utils::API::Subscribers
 
 =head1 DESCRIPTION
 
-A temporary helper to manipulate subscribers related data in REST API moules
+A temporary helper to manipulate subscribers related data in REST API modules
 
 =head1 METHODS
 
