@@ -9,7 +9,7 @@ if ! [ -f /.dockerinit ] ; then
 fi
 
 SERVER="${1:-}"
-SELECT="${2:-}"
+SELECT="${2:-all}"
 OUTPUT_DIRECTORY="${3:-/code/}"
 FORMAT="${4:-pretty}"
 
@@ -29,9 +29,11 @@ if [ "${SELECT}" = "stable" ] ; then
 elif [ "${SELECT}" = "fast" ] ; then
   echo "Test selection: ${SELECT}"
   SELECT=$(echo t/api-rest/api-{billingnetworks,billingzones,calls,cert-auth,cfdestinationsets,ncoslevels,peeringgroups,peeringrules,peeringservers,resellers,rewriterules,soundsets,systemcontacts,valid-patch,vouchers}.t)
-else
+elif [ "${SELECT}" = "all" ] ; then
   echo "Test selection: all"
   SELECT=$(echo t/api-rest/*.t)
+else
+  echo "Test selection: ${SELECT}"
 fi
 
 echo "################################################################################"
@@ -59,3 +61,5 @@ for file in "${OUTPUT_DIRECTORY}/api-rest.pretty" "${OUTPUT_DIRECTORY}/api-rest.
   fi
 done
 echo "################################################################################"
+
+exit "${RC}"
