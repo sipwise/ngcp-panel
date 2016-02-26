@@ -16,6 +16,24 @@
       "revId": "496aea8de8fca177cc451cc6f226fb03a5255571",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_051a746e",
+        "filename": "t/api-rest/testrunner",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-02-26T12:01:58Z",
+      "side": 1,
+      "message": "Good point, I missed it.\n\nFor some reason I noticed your comment only now, when it is merged. we should address it in https://gerrit.mgm.sipwise.com/#/c/4908/",
+      "parentUuid": "1a76adc5_2bac24ed",
+      "revId": "496aea8de8fca177cc451cc6f226fb03a5255571",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
