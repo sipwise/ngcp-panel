@@ -106,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_6899bd6d",
+        "filename": "lib/NGCP/Panel/Controller/API/SoundSets.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-02-29T14:33:15Z",
+      "side": 1,
+      "message": "With this commit I tried to change as less as possible, expect Roles removing itself.\n\nFor these 3 methods, I was going to use package variables and methods to access them, implementedd in the parent class (Role/API.pm)\n\nOf course with such implementation we will need less variables.",
+      "parentUuid": "1a76adc5_686e9dcb",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_3c7239e6",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 2
