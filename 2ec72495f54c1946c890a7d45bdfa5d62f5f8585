@@ -89,6 +89,23 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_686e9dcb",
+        "filename": "lib/NGCP/Panel/Controller/API/SoundSets.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2016-02-29T13:05:55Z",
+      "side": 1,
+      "message": "Just taking this controller as an example: can the resource name returned here just implicitly used to form the two methods below? I would assume dispatch_path() and relation() will always return something like this:\n\nsub dispatch_path {\n  return \u0027/api/\u0027 . resource_name() . \u0027/\u0027;\n}\n\nand same with relation?\n\nThat saves more copy/paste stuff.",
+      "revId": "2ec72495f54c1946c890a7d45bdfa5d62f5f8585",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_3c7239e6",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 2
