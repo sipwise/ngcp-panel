@@ -8,7 +8,7 @@ use Scalar::Util qw/blessed/;
 use DateTime::Format::Strptime;
 
 sub process {
-    my ($c, $rs, $cols, $row_func) = @_;
+    my ($c, $rs, $cols, $row_func, $total_row_func) = @_;
 
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
@@ -29,7 +29,7 @@ sub process {
             if($col->{literal_sql}) {
                 $rs = $rs->search_rs(undef, {
                     $col->{join} ? ( join => $col->{join} ) : (),
-                    $col->{no_column} ? () : ( 
+                    $col->{no_column} ? () : (
                         '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor}  },
                         '+as' => [ $col->{accessor} ],
                     )
@@ -57,7 +57,7 @@ sub process {
         # avoid amigious column names if we have the same column in different joined tables
         if($col->{search}){
             my $name = _get_joined_column_name_($col->{name});
-            my $stmt; 
+            my $stmt;
             if($col->{literal_sql}){
                 if(!ref $col->{literal_sql}){
                     #we can't use just accessor because of the count query
@@ -113,6 +113,9 @@ sub process {
     for my $sum_col (keys %{ $aggregate_cols }) {
         my $aggregation_method = $aggregate_cols->{$sum_col};
         $aggregations->{$sum_col} = $rs->get_column($sum_col)->$aggregation_method;
+    }
+    if (defined $total_row_func && (scalar keys %{ $aggregate_cols }) > 0) {
+        $aggregations = {%{$aggregations}, $total_row_func->($aggregations) };
     }
 
     # show specific row on top (e.g. if we come back from a newly created entry)

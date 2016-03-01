@@ -113,8 +113,8 @@ sub validate_form {
         # check keys/vals
         $form->process(params => $resource, posted => 1, %{$form_params} );
         unless($form->validated) {
-            my $e = join '; ', map { 
-                sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', 
+            my $e = join '; ', map {
+                sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'',
                     ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
                     $_->input // '',
                     $_->errors->join(q())
@@ -138,7 +138,7 @@ sub validate_form {
 
 sub validate_fields {
     my ($self, $c, $resource, $fields, $run) = @_;
-    
+
     for my $k (keys %{ $resource }) {
         #if($resource->{$k}->$_isa('JSON::XS::Boolean') || $resource->{$k}->$_isa('JSON::PP::Boolean')) {
         if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
@@ -182,7 +182,7 @@ sub error {
     my ($self, $c, $code, $message) = @_;
 
     $c->log->error("error $code - $message"); # TODO: user, trace etc
-    
+
     $c->response->content_type('application/json');
     $c->response->status($code);
     $c->response->body(JSON::to_json({ code => $code, message => $message })."\n");
@@ -217,7 +217,7 @@ sub require_body {
     my ($self, $c) = @_;
     return 1 if length $c->stash->{body};
 
-    
+
 
     $self->error($c, HTTP_BAD_REQUEST, "This request is missing a message body.");
     return;
@@ -264,7 +264,7 @@ sub allowed_methods_filtered {
         }
         return \@methods;
     } else {
-        return $self->allowed_methods; 
+        return $self->allowed_methods;
     }
 }
 
@@ -290,7 +290,7 @@ sub valid_id {
 sub require_valid_patch {
     my ($self, $c, $json, $ops) = @_;
 
-    my $valid_ops = { 
+    my $valid_ops = {
         'replace' => { 'path' => 1, 'value' => 1 },
         'copy' => { 'from' => 1, 'path' => 1 },
         'remove' => { 'path' => 1 },
@@ -480,11 +480,17 @@ around 'item_rs' => sub {
     my $c = $orig_params[0];
     foreach my $param(keys %{ $c->req->query_params }) {
         my @p = grep { $_->{param} eq $param } @{ $self->query_params };
-        next unless($p[0]->{query}); # skip "dummy" query parameters
+        next unless($p[0]->{query} || $p[0]->{new_rs}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
         if(@p) {
-            $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$c), $p[0]->{query}->{second}($q,$c));
+            if (defined $p[0]->{new_rs}) {
+                #compose fresh rs based on current, to support set operations with filters:
+                $item_rs = $p[0]->{new_rs}($c,$q,$item_rs);
+            } elsif (defined $p[0]->{query}) {
+                #regular chaining:
+                $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$c), $p[0]->{query}->{second}($q,$c));
+            }
         }
     }
     return $item_rs;
