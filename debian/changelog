@@ -1,3 +1,13 @@
+ngcp-panel (1.10.2.4+0~mr4.1.2.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [782ddf6] MT#16121 PUT /api/callforwards/id json-hal response broken
+  * [2794ce3] MT#16855 UNION ALL for panel UI call lists
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 02 Mar 2016 21:13:38 +0100
+
 ngcp-panel (1.10.2.3+0~mr4.1.2.3) unstable; urgency=medium
 
   [ Rene Krenn ]
