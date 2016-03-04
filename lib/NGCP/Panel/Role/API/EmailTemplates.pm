@@ -39,8 +39,7 @@ sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
     my %resource = $item->get_inflated_columns;
 
-    my $hal = Data::HAL->new(
-        links => [
+    my $links = [
             Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
@@ -50,8 +49,13 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)),
-        ],
+    ];
+    if ($item->reseller_id) {
+        push @{$links}, Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id));
+    }
+
+    my $hal = Data::HAL->new(
+        links => $links,
         relation => 'ngcp:'.$self->resource_name,
     );
 

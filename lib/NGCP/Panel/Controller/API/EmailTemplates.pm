@@ -35,7 +35,7 @@ class_has 'query_params' => (
             query => {
                 first => sub {
                     my $q = shift;
-                    { reseller_id => $q };
+                    return { reseller_id => $q };
                 },
                 second => sub {},
             },
@@ -79,7 +79,10 @@ sub GET :Allow {
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->search({}, {prefetch => ['reseller']})->all) {
+        unless ($c->request->param('reseller_id')) {
+            $items = $items->search({}, {prefetch => ['reseller']});
+        }
+        for my $item ($items->all) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
