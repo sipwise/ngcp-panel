@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fad0f9df_52e93419",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberAPI.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-03-04T12:30:56Z",
+      "side": 1,
+      "message": "true, I\u0027ll drop this field",
+      "parentUuid": "fad0f9df_928f9c75",
+      "range": {
+        "startLine": 171,
+        "startChar": 68,
+        "endLine": 171,
+        "endChar": 76
+      },
+      "revId": "ca6573e79745d332cf095d81caa1f363a311eeb3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_3281104b",
         "filename": "lib/NGCP/Panel/Role/API/RtcSessions.pm",
         "patchSetId": 8
@@ -36,6 +60,30 @@
       "writtenOn": "2016-03-04T12:20:26Z",
       "side": 1,
       "message": "ok, so recreation is not in place for now, but an explicit POST /api/rtcsession is required",
+      "range": {
+        "startLine": 43,
+        "startChar": 8,
+        "endLine": 43,
+        "endChar": 69
+      },
+      "revId": "ca6573e79745d332cf095d81caa1f363a311eeb3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_72eeb824",
+        "filename": "lib/NGCP/Panel/Role/API/RtcSessions.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-03-04T12:30:56Z",
+      "side": 1,
+      "message": "yes, true, this is the case when in the comx-part the session expired or disappeared for some other reason. Probably this should be fixed now, because otherwise it gives us stale DB entries.\n\nI\u0027d say delete from our mysql, because otherwise we basically workaround comx\u0027s expiry date.",
+      "parentUuid": "fad0f9df_3281104b",
       "range": {
         "startLine": 43,
         "startChar": 8,
