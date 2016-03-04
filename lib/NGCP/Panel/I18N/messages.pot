@@ -1528,6 +1528,10 @@ msgstr ""
 msgid "Country Code, e.g. 1 for US or 43 for Austria"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Coverpage"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/billing/zones.tt share/templates/subscriber/preferences.tt
 msgid "Create"
 msgstr ""
@@ -2455,6 +2459,10 @@ msgid "Email template successfully updated"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Email to notify about fax delivery"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency CLI"
 msgstr ""
 
@@ -2652,11 +2660,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Failed to clone subscriber profile"
-msgstr ""
-
-#. ($err_ps)
-#: lib/NGCP/Panel/Utils/Hylafax.pm
-msgid "Failed to convert text to ps: %1"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -3328,11 +3331,6 @@ msgstr ""
 msgid "Failed to upload LNP numbers"
 msgstr ""
 
-#. ($err)
-#: lib/NGCP/Panel/Utils/Hylafax.pm
-msgid "Failed to write fax data to temporary file: %1"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Family"
 msgstr ""
@@ -3351,6 +3349,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Fax Server"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Fax quality"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -3391,6 +3393,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Find Subscriber by UUID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Fine"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm lib/NGCP/Panel/Controller/Device.pm lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3691,6 +3697,10 @@ msgstr ""
 
 #: share/templates/widgets/admin_system_overview.tt
 msgid "Hardware <strong>Ok</strong>"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Header text to add on every page"
 msgstr ""
 
 #: share/templates/subscriber/webphone.tt
@@ -5008,6 +5018,10 @@ msgid "None"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Normal"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Normalized CLI (usually E164) of calling party."
 msgstr ""
 
@@ -5025,6 +5039,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Notify email"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Notify to email"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5355,6 +5373,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Package id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Page header"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -5792,6 +5814,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Q"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Quality"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7127,6 +7153,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Sunday"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Super"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9138,6 +9168,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether this subscriber is used as PBX pilot subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Whether to add a coverpage"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

@@ -1974,6 +1974,10 @@ msgstr "Ländervorwahl"
 msgid "Country Code, e.g. 1 for US or 43 for Austria"
 msgstr "Ländervorwahr, z.B. 1 für US oder 43 für Österreich"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Coverpage"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/billing/zones.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Create"
@@ -3113,6 +3117,10 @@ msgid "Email template successfully updated"
 msgstr "Email-Vorlage erfolgreich geändert"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Email to notify about fax delivery"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency CLI"
 msgstr "Notrufnummer"
 
@@ -3339,11 +3347,6 @@ msgstr "Klonen des Übersetzungsregel-Sets fehlgeschlagen."
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Failed to clone subscriber profile"
-msgstr ""
-
-#. ($err_ps)
-#: lib/NGCP/Panel/Utils/Hylafax.pm
-msgid "Failed to convert text to ps: %1"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -4028,11 +4031,6 @@ msgstr ""
 msgid "Failed to upload LNP numbers"
 msgstr ""
 
-#. ($err)
-#: lib/NGCP/Panel/Utils/Hylafax.pm
-msgid "Failed to write fax data to temporary file: %1"
-msgstr "Fehler beim temporären Speichern des Fax: %1"
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Family"
 msgstr "Familie"
@@ -4052,6 +4050,10 @@ msgstr "Fax Nummer"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Fax Server"
 msgstr "Fax Server"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Fax quality"
+msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "Fax2Mail and Sendfax"
@@ -4097,6 +4099,10 @@ msgstr "Dateien"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Find Subscriber by UUID"
 msgstr "Subscriber anhand UUID finden"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Fine"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/Device.pm
@@ -4421,6 +4427,10 @@ msgstr "Handle"
 #: share/templates/widgets/admin_system_overview.tt
 msgid "Hardware <strong>Ok</strong>"
 msgstr "Hardware <strong>Ok</strong>"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Header text to add on every page"
+msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "Hide Offline"
@@ -5136,7 +5146,8 @@ msgstr ""
 msgid "Keys add"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -5887,6 +5898,10 @@ msgid "None"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Normal"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Normalized CLI (usually E164) of calling party."
 msgstr ""
 "Normalisierte Rufnummer (üblicherweise E164) des anrufenden Teilnehmers."
@@ -5905,6 +5920,10 @@ msgstr "Benachrichtigungs-Emails"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Notify email"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Notify to email"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6251,6 +6270,10 @@ msgstr ""
 msgid "Package id"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Page header"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Pages"
 msgstr "Seiten"
@@ -6300,7 +6323,8 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Pattern"
 
@@ -6747,6 +6771,10 @@ msgstr "Provisionierungs-URL pushen"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Q"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Quality"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8354,6 +8382,10 @@ msgstr "Sprachnachrichten-Einstellungen erfolgreich aktualisiert"
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Sunday"
 msgstr "Sonntag"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Super"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Supports Busy Lamp Field"
@@ -10696,6 +10728,10 @@ msgid "Whether this subscriber is used as PBX pilot subscriber."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Whether to add a coverpage"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Whether to also intercept call content via X-3 interface (false by default)."
 msgstr ""
@@ -11147,8 +11183,7 @@ msgstr ""
 msgid "noanswer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-#: share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "none"
 msgstr "nicht"
 
@@ -11362,6 +11397,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Failed to write fax data to temporary file: %1"
+#~ msgstr "Fehler beim temporären Speichern des Fax: %1"
 
 #~ msgid "Call Distribution"
 #~ msgstr "Anruf-Verteilung"
