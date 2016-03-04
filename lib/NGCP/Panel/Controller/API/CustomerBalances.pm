@@ -76,6 +76,19 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
+        {
+            param => 'domain',
+            description => 'Filter for contracts with subscribers belonging to a specific domain',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'domain.domain' => { '=' => $q } };
+                },
+                second => sub {
+                    { join => { voip_subscribers => 'domain' } };
+                },
+            },
+        },
     ]},
 );
 
