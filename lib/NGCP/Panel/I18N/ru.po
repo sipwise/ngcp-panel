@@ -382,6 +382,10 @@ msgid "A human readable profile name."
 msgstr "Удобочитаемое имя тарифа."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A list of emails to send the notify to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A list of shell patterns specifying which CLIs are allowed to be set by the "
 "subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing "
@@ -721,6 +725,14 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An arbitrary hash of additional config contents; e.g. {\"xms\": false}"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An arbitrary name, to address that network instance"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An array of PBX group ids this subscriber belongs to."
 msgstr "Массив идентификаторов PBX групп к которым принадлежит абонент."
 
@@ -767,6 +779,12 @@ msgid ""
 "containing the keys name, can_private, can_shared, can_blf and keys (which "
 "in turn is an array of hashes having x, y and labelpos allowing top, bottom, "
 "left right)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"An array of objects with keys \"config\", \"connector\" and \"tag\" to "
+"create RTC networks for this reseller"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -1779,6 +1797,7 @@ msgstr "Компания"
 msgid "Company Reg. Number"
 msgstr "Рег. номер компании"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/customer/details.tt
 msgid "Config"
 msgstr ""
@@ -1802,6 +1821,10 @@ msgstr "Управление настройками"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Connectable Models"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Connector"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -1951,6 +1974,14 @@ msgstr "Контракты"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Cost"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Cost limit for the interval."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Cost within the interval."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2288,6 +2319,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Customer successfully terminated"
 msgstr "Клиент успешно удален"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Customer that a fraud event belongs to."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Customer was not found"
@@ -4485,6 +4520,10 @@ msgid "ID"
 msgstr "ID"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "ID in the backend RTC API (readonly)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "INBOX"
 msgstr "Входящие"
 
@@ -4750,8 +4789,24 @@ msgid "Internals"
 msgstr "Служебные"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Interval"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Interval Lock"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Interval Notify"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Interval charge"
 msgstr "Стоимость биллинг периода"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Interval cost"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Interval free cash"
@@ -4763,6 +4818,14 @@ msgstr "Бесплатные минуты"
 
 #: share/templates/customer/details.tt
 msgid "Interval from"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Interval limit"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Interval of the fraud events."
 msgstr ""
 
 #: share/templates/customer/details.tt
@@ -5307,6 +5370,10 @@ msgstr "Загрузка..."
 msgid "Lock Level"
 msgstr "Уровень блокировки"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Lock type for the interval."
+msgstr ""
+
 #. (login_name)
 #: share/layout/body.tt
 msgid "Logged in as %1"
@@ -5822,6 +5889,10 @@ msgid "Network-Provided Display Name"
 msgstr "Сетевое отображаемое имя абонента"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Networks"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Never"
 msgstr ""
 
@@ -6036,6 +6107,12 @@ msgstr "Цена первого интервала Offpeak"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Old"
 msgstr "Старые"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"One of the available options. This defines, to which networks rtc "
+"subscribers will be able to connect to."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Onpeak follow interval"
@@ -7131,6 +7208,10 @@ msgstr "Rm"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rtc networks"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rtc user id"
 msgstr ""
 
 #: share/templates/rewrite/rules_list.tt
@@ -8434,6 +8515,10 @@ msgid "TLS"
 msgstr "TLS"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Tag"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Template"
 msgstr "Шаблон"
 
@@ -9670,7 +9755,15 @@ msgid "The reseller id this contact belongs to."
 msgstr "ID реселлера, которому принадлежит этот контакт."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id this customer belongs to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id this device model belongs to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id this networks belong to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10259,6 +10352,10 @@ msgid "Type"
 msgstr "Тип"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Type of the fraud event."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "UDP"
 msgstr "UDP"
 
@@ -10389,6 +10486,10 @@ msgstr "Использовать бесплатные минуты"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use rates of the reseller's billing profile for fraud control."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Use reseller rates"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10729,6 +10830,10 @@ msgid "Whether it is a call between subscribers of one single customer."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Whether the reseller rates were used for interval_cost or not."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Whether the subscriber can configure other subscribers within his Customer "
 "account."
@@ -11001,6 +11106,10 @@ msgstr "Клонированный профиль абонента"
 #: share/templates/subprofile/set_list.tt
 msgid "cloned Subscriber Profile Set"
 msgstr "Клонированный набор профиля абонента"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "conference"
+msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "connected - registering..."
@@ -11314,11 +11423,19 @@ msgid "single: by 'billing_profile_id' field"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "sip-connector"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "sipaccount"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "sippeering"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "sipwise-connector"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11382,6 +11499,10 @@ msgid "upon customer creation"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "webrtc"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "week"
 msgstr ""
 
@@ -11401,6 +11522,10 @@ msgstr "белый список"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "x"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "xmpp-connector"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
