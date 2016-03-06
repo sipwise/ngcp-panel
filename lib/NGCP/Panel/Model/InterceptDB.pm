@@ -21,6 +21,7 @@ sub setup {
 
 __PACKAGE__->config(
     connect_info => [],
+    schema_class => 'NGCP::InterceptSchema',
 );
 
 sub set_transaction_isolation {
