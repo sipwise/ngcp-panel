@@ -31,7 +31,8 @@ sub new {
     }
 
     foreach my $key (qw(login password roles port)) {
-        die $class.": undefined $group $key parameter" unless $data{$key};
+        $data{$key} //= '';
+        #die $class.": undefined $group $key parameter" unless $data{$key};
     }
 
     my $self = bless {
