@@ -6,7 +6,8 @@ extends 'NGCP::Panel::Form::EmailTemplate::Reseller';
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
-    validate_when_empty => 1,
+    validate_when_empty => 0,
+    required => 0,
 );
 
 has_block 'fields' => (
