@@ -1,17 +1,43 @@
+<script>
+enqueLists.push([{
+    res: 'domains_count',
+    cb: function(data) {
+        console.log(data);
+        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Domain') %]' : '[% c.loc('Domains') %]') + '</li>');
+    }
+},{
+    res: 'customers_count',
+    cb: function(data) {
+        console.log(data);
+        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Customer') %]' : '[% c.loc('Customers') %]') + '</li>');
+    }
+},{
+    res: 'subscribers_count',
+    cb: function(data) {
+        console.log(data);
+        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Subscriber') %]' : '[% c.loc('Subscribers') %]') + '</li>');
+    }
+},{
+    res: 'resellers_count',
+    cb: function(data) {
+        console.log(data);
+        $("#admin_reseller_overview_lazy_loading").remove();
+        $("#admin_reseller_overview_lazy_items_header").append(
+            '<div class="plan-price">' +
+                '<span>' + data.widget_data + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Reseller') %]' : '[% c.loc('Resellers') %]') + '</span>' +
+            '</div>');
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
-        <div class="plan-header">
+        <div class="plan-header" id="admin_reseller_overview_lazy_items_header">
             <div class="plan-title">[% c.loc('Resellers') %]</div>
-            <div class="plan-price">
-                <span>[% resellers.count %]</span>
-                <span class="term">[% resellers.count == 1 ? c.loc('Reseller') : c.loc('Resellers') %]</span>
-            </div>
+            <div class="plan-price widget-loading" id="admin_reseller_overview_lazy_loading"><span>0</span><span class="term">processing ...</span></div>
         </div>
         <div class="plan-features">
-            <ul>
-                <li><strong>[% domains.count %]</strong> [% domains.count == 1 ? c.loc('Domain') : c.loc('Domains') %]</li>
-                <li><strong>[% customers.count %]</strong> [% customers.count == 1 ? c.loc('Customer') : c.loc('Customers') %]</li>
-                <li><strong>[% subscribers.count %]</strong> [% subscribers.count == 1 ? c.loc('Subscriber') : c.loc('Subscribers') %]</li>
+            <ul id="admin_reseller_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">

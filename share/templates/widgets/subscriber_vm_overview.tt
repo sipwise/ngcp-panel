@@ -1,34 +1,52 @@
+<script>
+enqueLists.push([{
+    res: 'voicemails_slice',
+    cb: function(data) {
+        console.log(data);
+        var voicemails = data.widget_data;
+        if (voicemails.length == 0) {
+            $("#subscriber_voicemail_overview_lazy_items_list").append('<li>[% c.loc('No new messages') %]</li>');
+        } else {
+            for (var i = 0; i < voicemails.length; i++) {
+                var voicemail = voicemails[i];
+                $("#subscriber_voicemail_overview_lazy_items_list").append('<li>' +
+                        '<div class="row-fluid">' +
+                            '<div class="span1">' +
+                                '<a href="' + voicemail.play_uri + '" alt="listen">' +
+                                    '<i class="icon-volume-up" style="color:green"></i>' +
+                                '</a>' +
+                            '</div>' +
+                           '<div class="span8">' + voicemail.callerid + '</div>' +
+                        '</div>' +
+                        '<div class="row-fluid">' +
+                            '<div class="offset1 span8">' + voicemail.origtime + '</div>' +
+                            '<div class="span1">' + voicemail.duration + 's</div>' +
+                        '</div>' +
+                '</li>');
+            }
+        }
+    }
+},{
+    res: 'voicemails_count',
+    cb: function(data) {
+        console.log(data);
+        $("#subscriber_voicemail_overview_lazy_loading").remove();
+        $("#subscriber_voicemail_overview_lazy_items_header").append(
+            '<div class="plan-price">' +
+                '<span>' + data.widget_data + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('New Message') %]' : '[% c.loc('New Messages') %]') + '</span>' +
+            '</div>');
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
-        <div class="plan-header">
+        <div class="plan-header" id="subscriber_voicemail_overview_lazy_items_header">
             <div class="plan-title">[% c.loc('Voicebox Messages') %]</div>
-            <div class="plan-price">
-                <span>[% vmails.count %]</span>
-                <span class="term">[% vmails.count == 1 ? c.loc('New Message') : c.loc('New Messages') %]</span>
-            </div>
+            <div class="plan-price widget-loading" id="subscriber_voicemail_overview_lazy_loading"><span>0</span><span class="term">processing ...</span></div>
         </div>
         <div class="plan-features large">
-            <ul>
-                [% IF vmails.count == 0 -%]
-                <li>[% c.loc('No new messages') %]</li>
-                [% ELSE -%]
-                    [% FOR vmail IN vmails.all -%]
-                    <li>
-                        <div class="row-fluid">
-                            <div class="span1">
-                                <a href="[% c.uri_for_action('/subscriber/play_voicemail', [subscriber.id, vmail.id]) %]" alt="listen">
-                                    <i class="icon-volume-up" style="color:green"></i>
-                                </a>
-                            </div>
-                           <div class="span8">[% vmail.callerid -%]</div>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="offset1 span8">[% vmail.origtime -%]</div>
-                            <div class="span1">[% vmail.duration -%]s</div>
-                        </div>
-                    </li>
-                    [% END -%]
-                [% END -%]
+            <ul id="subscriber_voicemail_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">
