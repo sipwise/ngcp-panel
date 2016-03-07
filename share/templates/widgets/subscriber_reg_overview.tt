@@ -1,32 +1,47 @@
-[% USE Math -%]
+<script>
+enqueLists.push([{
+    res: 'registrations_slice',
+    cb: function(data) {
+        console.log(data);
+        var registrations = data.widget_data;
+        if (registrations.length == 0) {
+            $("#subscriber_registration_overview_lazy_items_list").append('<li>[% c.loc('No devices registered') %]</li>');
+        } else {
+            for (var i = 0; i < registrations.length; i++) {
+                var registration = registrations[i];
+                $("#subscriber_registration_overview_lazy_items_list").append('<li>' +
+                    '<div class="row-fluid"><div>' +
+                        (registration.user_agent.length > 48 ?
+                            registration.user_agent.length.substring(0,45) + '...'
+                        :
+                            registration.user_agent
+                        ) +
+                    '</div></div>' +
+                '</li>');
+            }
+        }
+    }
+},{
+    res: 'registrations_count',
+    cb: function(data) {
+        console.log(data);
+        $("#subscriber_registration_overview_lazy_loading").remove();
+        $("#subscriber_registration_overview_lazy_items_header").append(
+            '<div class="plan-price">' +
+                '<span>' + data.widget_data + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Registered Device') %]' : '[% c.loc('Registered Devices') %]') + '</span>' +
+            '</div>');
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
-        <div class="plan-header">
+        <div class="plan-header" id="subscriber_registration_overview_lazy_items_header">
             <div class="plan-title">[% c.loc('Registered Devices') %]</div>
-            <div class="plan-price">
-                <span>[% reg_count %]</span>
-                <span class="term">[% reg_count == 1 ? c.loc('Registered Device') : c.loc('Registered Devices') %]</span>
-            </div>
+            <div class="plan-price widget-loading" id="subscriber_registration_overview_lazy_loading"><span>0</span><span class="term">processing ...</span></div>
         </div>
         <div class="plan-features large">
-            <ul>
-                [% IF reg_count == 0 -%]
-                <li>[% c.loc('No devices registered') %]</li>
-                [% ELSE -%]
-                    [% FOR reg IN regs.all -%]
-                    <li>
-                        <div class="row-fluid">
-                            <div>
-                                [% IF reg.user_agent.length > 48 -%]
-                                    [% ua = reg.user_agent.substr(45, reg.user_agent.length - 45, '...'); ua %]
-                                [% ELSE -%]
-                                    [% reg.user_agent %]
-                                [% END -%]
-                            </div>
-                        </div>
-                    </li>
-                    [% END -%]
-                [% END -%]
+            <ul id="subscriber_registration_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">

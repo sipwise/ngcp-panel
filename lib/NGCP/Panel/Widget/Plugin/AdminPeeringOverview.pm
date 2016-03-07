@@ -22,15 +22,7 @@ has 'priority' => (
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    my $peer_groups = $c->model('DB')->resultset('voip_peer_groups')->search_rs({});
-    my $peer_hosts = $peer_groups->search_related_rs('voip_peer_hosts');
-    my $peer_rules = $peer_groups->search_related_rs('voip_peer_rules');
-
-    $c->stash(
-        groups => $peer_groups,
-        hosts => $peer_hosts,
-        rules => $peer_rules,
-    );
+    # add queries used in tt here ...
 
     return;
 };
@@ -44,6 +36,48 @@ sub filter {
         ref $c->controller eq 'NGCP::Panel::Controller::Dashboard'
     );
     return;
+}
+
+sub _prepare_peer_groups_count {
+    my ($self, $c) = @_;
+    my $peer_groups = $c->model('DB')->resultset('voip_peer_groups')->search_rs({});
+    $c->stash(
+        groups => $peer_groups,
+    );
+}
+
+sub _prepare_hosts_count {
+    my ($self, $c) = @_;
+    $self->_prepare_peer_groups_count($c);
+    $c->stash(
+        hosts => $c->stash->{groups}->search_related_rs('voip_peer_hosts'),
+    );
+}
+
+sub _prepare_rules_count {
+    my ($self, $c) = @_;
+    $self->_prepare_peer_groups_count($c);
+    $c->stash(
+        rules => $c->stash->{groups}->search_related_rs('voip_peer_rules'),
+    );
+}
+
+sub groups_count {
+    my ($self, $c) = @_;
+    $self->_prepare_peer_groups_count($c);
+    return $c->stash->{groups}->count;
+}
+
+sub hosts_count {
+    my ($self, $c) = @_;
+    $self->_prepare_hosts_count($c);
+    return $c->stash->{hosts}->count;
+}
+
+sub rules_count {
+    my ($self, $c) = @_;
+    $self->_prepare_rules_count($c);
+    return $c->stash->{rules}->count;
 }
 
 1;
