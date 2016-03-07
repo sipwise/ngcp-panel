@@ -1,17 +1,43 @@
+<script>
+enqueLists.push([{
+    res: 'peering_sum',
+    cb: function(data) {
+        console.log(data);
+        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Peering Costs') %]</li>');
+    }
+},{
+    res: 'reseller_sum',
+    cb: function(data) {
+        console.log(data);
+        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Reseller Revenue') %]</li>');
+    }
+},{
+    res: 'customer_sum',
+    cb: function(data) {
+        console.log(data);
+        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Customer Revenue') %]</li>');
+    }
+},{
+    res: 'profiles_count',
+    cb: function(data) {
+        console.log(data);
+        $("#admin_billing_overview_lazy_loading").remove();
+        $("#admin_billing_overview_lazy_items_header").append(
+            '<div class="plan-price">' +
+                '<span>' + data.widget_data + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Billing Profile') %]' : '[% c.loc('Billing Profiles') %]') + '</span>' +
+            '</div>');
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
-        <div class="plan-header">
+        <div class="plan-header" id="admin_billing_overview_lazy_items_header">
             <div class="plan-title">[% c.loc('Billing') %]</div>
-            <div class="plan-price">
-                <span>[% profiles.count %]</span>
-                <span class="term">[% profiles.count == 1 ? c.loc('Billing Profile') : c.loc('Billing Profiles') %]</span>
-            </div>
+            <div class="plan-price widget-loading" id="admin_billing_overview_lazy_loading"><span>0</span><span class="term">processing ...</span></div>
         </div>
         <div class="plan-features">
-            <ul>
-                <li><strong>[% FILTER format("%.02f") %][% (peering_sum  || 0) / 100.0 %][% END %]</strong> [% c.loc('Peering Costs') %]</li>
-                <li><strong>[% FILTER format("%.02f") %][% (reseller_sum || 0) / 100.0 %][% END %]</strong> [% c.loc('Reseller Revenue') %]</li>
-                <li><strong>[% FILTER format("%.02f") %][% (customer_sum || 0) / 100.0 %][% END %]</strong> [% c.loc('Customer Revenue') %]</li>
+            <ul id="admin_billing_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">
