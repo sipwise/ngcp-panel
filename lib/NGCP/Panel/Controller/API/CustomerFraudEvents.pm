@@ -1,7 +1,5 @@
 package NGCP::Panel::Controller::API::CustomerFraudEvents;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
 #use namespace::sweep;
 use boolean qw(true);
 use Data::HAL qw();
@@ -10,23 +8,21 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use Path::Tiny qw(path);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Defines a list of customers with fraud limits above defined thresholds for a specific interval.'
-);
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Defines a list of customers with fraud limits above defined thresholds for a specific interval.';
+};
+
+sub query_params {
+    return [
         {
             param => 'reseller_id',
             description => 'Filter for fraud events belonging to a specific reseller',
@@ -42,14 +38,21 @@ class_has 'query_params' => (
             param => 'interval',
             description => 'Interval filter. values: day, month. default: month',
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::CustomerFraudEvents';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerFraudEvents/;
 
-class_has('resource_name', is => 'ro', default => 'customerfraudevents');
-class_has('dispatch_path', is => 'ro', default => '/api/customerfraudevents/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customerfraudevents');
+sub resource_name{
+    return 'customerfraudevents';
+}
+sub dispatch_path{
+    return '/api/customerfraudevents/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-customerfraudevents';
+}
+
 
 __PACKAGE__->config(
     action => {

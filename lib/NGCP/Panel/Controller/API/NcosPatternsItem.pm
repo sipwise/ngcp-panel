@@ -1,25 +1,33 @@
 package NGCP::Panel::Controller::API::NcosPatternsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::NcosPatterns';
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
+}
 
-class_has('resource_name', is => 'ro', default => 'ncospatterns');
-class_has('dispatch_path', is => 'ro', default => '/api/ncospatterns/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-ncospatterns');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::NcosPatterns/;
+
+sub resource_name{
+    return 'ncospatterns';
+}
+sub dispatch_path{
+    return '/api/ncospatterns/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-ncospatterns';
+}
 
 __PACKAGE__->config(
     action => {

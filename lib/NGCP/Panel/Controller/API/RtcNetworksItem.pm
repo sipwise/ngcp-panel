@@ -1,24 +1,31 @@
 package NGCP::Panel::Controller::API::RtcNetworksItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
-
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::RtcNetworks';
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD PATCH PUT/];
+}
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::RtcNetworks/;
 
-class_has('resource_name', is => 'ro', default => 'rtcnetworks');
-class_has('dispatch_path', is => 'ro', default => '/api/rtcnetworks/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rtcnetworks');
-
-class_has(@{ __PACKAGE__->get_journal_query_params() });
+sub resource_name{
+    return 'rtcnetworks';
+}
+sub dispatch_path{
+    return '/api/rtcnetworks/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-rtcnetworks';
+}
+sub journal_query_params {
+    my($self,$query_params) = @_;
+    return $self->get_journal_query_params($query_params);
+}
 
 __PACKAGE__->config(
     action => {

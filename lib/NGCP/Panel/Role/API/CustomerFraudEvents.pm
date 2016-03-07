@@ -1,12 +1,6 @@
 package NGCP::Panel::Role::API::CustomerFraudEvents;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose::Role;
-use Sipwise::Base;
-with 'NGCP::Panel::Role::API' => {
-    -alias       =>{ item_rs  => '_item_rs', },
-    -excludes    => [ 'item_rs' ],
-};
-
+use base 'NGCP::Panel::Role::API';
 use boolean qw(true);
 use TryCatch;
 use Data::HAL qw();

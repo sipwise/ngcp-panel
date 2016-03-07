@@ -1,35 +1,39 @@
 package NGCP::Panel::Controller::API::CustomerFraudEventsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD/];
+}
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerFraudEvents/;
+
+sub resource_name{
+    return 'customerfraudevents';
+}
+sub dispatch_path{
+    return '/api/customerfraudevents/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-customerfraudevents';
+}
+
+sub query_params {
+    return [
         {
             param => 'interval',
             description => 'Interval filter. values: day, month. default: month',
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::CustomerFraudEvents';
-
-class_has('resource_name', is => 'ro', default => 'customerfraudevents');
-class_has('dispatch_path', is => 'ro', default => '/api/customerfraudevents/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customerfraudevents');
 
 __PACKAGE__->config(
     action => {

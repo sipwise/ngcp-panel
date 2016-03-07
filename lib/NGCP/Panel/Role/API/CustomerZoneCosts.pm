@@ -1,11 +1,8 @@
 package NGCP::Panel::Role::API::CustomerZoneCosts;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose::Role;
-use Sipwise::Base;
-with 'NGCP::Panel::Role::API' => {
-    -alias       =>{ item_rs  => '_item_rs', },
-    -excludes    => [ 'item_rs' ],
-};
+
+use base 'NGCP::Panel::Role::API';
+
 
 use boolean qw(true);
 use Data::HAL::Link qw();
@@ -16,13 +13,12 @@ use JSON::Types;
 use TryCatch;
 use NGCP::Panel::Utils::Contract;
 
-has 'datetime_format' => (
-    is => 'rw',
-    default => sub { DateTime::Format::Strptime->new(pattern => '%Y-%m-%dT%H%M%S',
+sub datetime_format {
+    return DateTime::Format::Strptime->new(pattern => '%Y-%m-%dT%H%M%S',
             time_zone => DateTime::TimeZone->new(name => 'local'),
             on_error => 'undef',
-        )},
-);
+        );
+}
 
 sub get_form {
     my ($self, $c) = @_;
