@@ -1,34 +1,31 @@
 package NGCP::Panel::Controller::API::PbxDeviceConfigs;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines configs for a <a href="#pbxdevicemodels">PbxDeviceModel</a>. To create or update a config, do a POST or PUT with the proper Content-Type (e.g. text/xml) and pass the properties via query parameters, e.g. <span>/api/pbxdeviceconfigs/?device_id=1&amp;version=1.0</span>',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Defines configs for a <a href="#pbxdevicemodels">PbxDeviceModel</a>. To create or update a config, do a POST or PUT with the proper Content-Type (e.g. text/xml) and pass the properties via query parameters, e.g. <span>/api/pbxdeviceconfigs/?device_id=1&amp;version=1.0</span>';
+};
+
+sub query_params {
+    return [
         {
             param => 'device_id',
             description => 'Filter for configs of a specific device model',
@@ -62,14 +59,20 @@ class_has 'query_params' => (
                 second => sub { },
             },
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::PbxDeviceConfigs';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceConfigs/;
 
-class_has('resource_name', is => 'ro', default => 'pbxdeviceconfigs');
-class_has('dispatch_path', is => 'ro', default => '/api/pbxdeviceconfigs/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-pbxdeviceconfigs');
+sub resource_name{
+    return 'pbxdeviceconfigs';
+}
+sub dispatch_path{
+    return '/api/pbxdeviceconfigs/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdeviceconfigs';
+}
 
 __PACKAGE__->config(
     action => {

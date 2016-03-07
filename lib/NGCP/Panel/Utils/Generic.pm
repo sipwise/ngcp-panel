@@ -7,9 +7,9 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare);
-%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare)],
-                 all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare)]);
+@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true);
+%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true)],
+                 all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true)]);
 
 use Hash::Merge;
 use Data::Compare qw//;
@@ -39,7 +39,29 @@ sub merge {
     my ($a, $b) = @_;
     return Hash::Merge::merge($a, $b);
 }
+sub is_true {
+    my ($v) = @_;
+    my $val;
+    if(ref $v eq "") {
+        $val = $v;
+    } else {
+        $val = ${$v};
+    }
+    return 1 if(defined $val && $val == 1);
+    return;
+}
 
+sub is_false {
+    my ($v) = @_;
+    my $val;
+    if(ref $v eq "") {
+        $val = $v;
+    } else {
+        $val = ${$v};
+    }
+    return 1 unless(defined $val && $val == 1);
+    return;
+}
 # 0 if different, 1 if equal
 sub compare {
     return Data::Compare::Compare(@_);

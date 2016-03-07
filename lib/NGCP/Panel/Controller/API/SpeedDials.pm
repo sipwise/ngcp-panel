@@ -1,37 +1,34 @@
 package NGCP::Panel::Controller::API::SpeedDials;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use UUID;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Show a collection of speeddials, belonging to a specific subscriber. The collection\'s id corresponds to the subscriber\'s id.',
-);
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Show a collection of speeddials, belonging to a specific subscriber. The collection\'s id corresponds to the subscriber\'s id.';
+};
+
+sub query_params {
+    return [
         {
             param => 'nonempty',
             description => 'Filter for subscribers with nonempty speeddials',
@@ -46,14 +43,20 @@ class_has 'query_params' => (
                 },
             },
         },
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::SpeedDials';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::SpeedDials/;
 
-class_has('resource_name', is => 'ro', default => 'speeddials');
-class_has('dispatch_path', is => 'ro', default => '/api/speeddials/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-speeddials');
+sub resource_name{
+    return 'speeddials';
+}
+sub dispatch_path{
+    return '/api/speeddials/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-speeddials';
+}
 
 __PACKAGE__->config(
     action => {
