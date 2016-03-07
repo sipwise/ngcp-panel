@@ -22,10 +22,10 @@ sub instantiate_plugins {
         my $inst = NGCP::Panel::Widget->new;
         $inst->load_plugin($_);
         if($inst->filter($c, $type_filter)) {
-            push @instances, $inst;
+            push @instances, { instance => $inst, name => $_ };
         }
     }
-    return sort {$a->priority > $b->priority} @instances;
+    return sort {$a->{instance}->priority > $b->{instance}->priority} @instances;
 }
 
 no Moose;
