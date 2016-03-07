@@ -1,11 +1,23 @@
+<script>
+enqueLists.push([{
+    res: 'calls_slice',
+    cb: function(data) {
+        console.log(data);
+        var calls = data.widget_data;
+        $('#subscriber_calls_overview_calls_size').html(calls.length);
+        $('#subscriber_calls_overview_calls_size_label').html((calls.length == 1 ? '[% c.loc('Recent Call') %]' : '[% c.loc('Recent Calls') %]'));
+        //$("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Domain') %]' : '[% c.loc('Domains') %]') + '</li>');
+    }
+}]);
+</script>
 [% USE Math -%]
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
             <div class="plan-title">[% c.loc('Call List') %]</div>
             <div class="plan-price">
-                <span>[% calls.size %]</span>
-                <span class="term">[% calls.size != 1 ? c.loc('Recent Calls') : c.loc('Recent Call') %]</span>
+                <span id="subscriber_calls_overview_calls_size"></span>
+                <span class="term" id="subscriber_calls_overview_calls_size_label"></span>
             </div>
         </div>
         <div class="plan-features large">

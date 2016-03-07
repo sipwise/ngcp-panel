@@ -22,28 +22,8 @@ has 'priority' => (
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    my $out_rs = $c->model('DB')->resultset('cdr')->search({
-        source_user_id => $c->user->uuid,
-    });
-    my $in_rs = $c->model('DB')->resultset('cdr')->search({
-        destination_user_id => $c->user->uuid,
-    });
-    my $calls_rs = $out_rs->union_all($in_rs)->search(undef, {
-         order_by => { -desc => 'me.start_time' },
-    })->slice(0, 4);
+    #$c->stash(calls => []);
 
-    my $sub = $c->user->voip_subscriber;
-    my $calls = [ map {
-                my $call = { $_->get_inflated_columns };
-                $call->{destination_user_in} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                    c => $c, subscriber => $sub, number => $call->{destination_user_in}, direction => 'caller_out'
-                );
-                $call->{source_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                    c => $c, subscriber => $sub, number => $call->{source_cli}, direction => 'caller_out'
-                );
-                $call;
-            } $calls_rs->all ];
-    $c->stash(calls => $calls);
     return;
 };
 
@@ -56,6 +36,39 @@ sub filter {
         ref $c->controller eq 'NGCP::Panel::Controller::Dashboard'
     );
     return;
+}
+
+sub _prepare_calls_slice {
+    my ($self, $c) = @_;
+
+    my $out_rs = $c->model('DB')->resultset('cdr')->search({
+        source_user_id => $c->user->uuid,
+    });
+    my $in_rs = $c->model('DB')->resultset('cdr')->search({
+        destination_user_id => $c->user->uuid,
+    });
+    my $calls_rs = $out_rs->union_all($in_rs)->search(undef, {
+         order_by => { -desc => 'me.start_time' },
+    })->slice(0, 4);
+
+    $c->stash(calls_rs => $calls_rs);
+
+}
+
+sub calls_slice {
+    my ($self, $c) = @_;
+    $self->_prepare_calls_slice($c);
+    my $sub = $c->user->voip_subscriber;
+    return [ map {
+                my $call = { $_->get_inflated_columns };
+                $call->{destination_user_in} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                    c => $c, subscriber => $sub, number => $call->{destination_user_in}, direction => 'caller_out'
+                );
+                $call->{source_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                    c => $c, subscriber => $sub, number => $call->{source_cli}, direction => 'caller_out'
+                );
+                $call;
+            } $c->stash->{calls_rs}->all ];
 }
 
 1;
