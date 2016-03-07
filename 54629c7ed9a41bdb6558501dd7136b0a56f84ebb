@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_9b8fb775",
+        "filename": "lib/NGCP/Panel/Role/API/EmailTemplates.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-03-07T12:21:35Z",
+      "side": 1,
+      "message": "Imho it is better to define the links \u003d\u003e [ ] array outside to have all elements as proper links, to avoid empty ones.\n\nmy $hal_links \u003d [ Data::HAL::Link-\u003enew ..... ];\n...\nData::HAL-\u003enew(\nlinks \u003d\u003e $hal_links,\n)",
+      "range": {
+        "startLine": 50,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 33
+      },
+      "revId": "54629c7ed9a41bdb6558501dd7136b0a56f84ebb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
