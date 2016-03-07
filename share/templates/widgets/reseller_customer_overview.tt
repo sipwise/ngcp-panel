@@ -1,16 +1,37 @@
+<script>
+enqueLists.push([{
+    res: 'contacts_count',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Contact') %]' : '[% c.loc('Contacts') %]') + '</li>');
+    }
+},{
+    res: 'subscribers_count',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Subscriber') %]' : '[% c.loc('Subscribers') %]') + '</li>');
+    }
+},{
+    res: 'customers_count',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_customer_overview_lazy_loading").remove();
+        $("#reseller_customer_overview_lazy_items_header").append(
+            '<div class="plan-price">' +
+                '<span>' + data.widget_data + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Customer') %]' : '[% c.loc('Customers') %]') + '</span>' +
+            '</div>');
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
-        <div class="plan-header">
+        <div class="plan-header" id="reseller_customer_overview_lazy_items_header">
             <div class="plan-title">[% c.loc('Customers') %]</div>
-            <div class="plan-price">
-                <span>[% customers.count %]</span>
-                <span class="term">[% customers.count == 1 ? c.loc('Customer') : c.loc('Customers') %]</span>
-            </div>
+            <div class="plan-price widget-loading" id="reseller_customer_overview_lazy_loading"><span>0</span><span class="term">processing ...</span></div>
         </div>
         <div class="plan-features">
-            <ul>
-                <li><strong>[% contacts.count %]</strong> [% contacts.count == 1 ? c.loc('Contact') : c.loc('Contacts') %]</li>
-                <li><strong>[% subscribers.count %]</strong> [% subscribers.count == 1 ? c.loc('Subscriber') : c.loc('Subscribers') %]</li>
+            <ul id="reseller_customer_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">
