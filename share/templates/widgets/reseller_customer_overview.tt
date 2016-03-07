@@ -1,3 +1,18 @@
+<script>
+enqueLists.push([{
+    res: 'contacts_count',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Contact') %]' : '[% c.loc('Contacts') %]') + '</li>');
+    }
+},{
+    res: 'subscribers_count',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Subscriber') %]' : '[% c.loc('Subscribers') %]') + '</li>');
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
@@ -8,9 +23,7 @@
             </div>
         </div>
         <div class="plan-features">
-            <ul>
-                <li><strong>[% contacts.count %]</strong> [% contacts.count == 1 ? c.loc('Contact') : c.loc('Contacts') %]</li>
-                <li><strong>[% subscribers.count %]</strong> [% subscribers.count == 1 ? c.loc('Subscriber') : c.loc('Subscribers') %]</li>
+            <ul id="reseller_customer_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">

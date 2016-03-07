@@ -1,3 +1,18 @@
+<script>
+enqueLists.push([{
+    res: 'reseller_sum',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Reseller Cost') %]</li>');
+    }
+},{
+    res: 'customer_sum',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Customer Revenue') %]</li>');
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
@@ -8,9 +23,7 @@
             </div>
         </div>
         <div class="plan-features">
-            <ul>
-                <li><strong>[% FILTER format("%.02f") %][% (reseller_sum || 0) / 100.0 %][% END %]</strong> [% c.loc('Reseller Cost') %]</li>
-                <li><strong>[% FILTER format("%.02f") %][% (customer_sum || 0) / 100.0 %][% END %]</strong> [% c.loc('Customer Revenue') %]</li>
+            <ul id="reseller_billing_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">

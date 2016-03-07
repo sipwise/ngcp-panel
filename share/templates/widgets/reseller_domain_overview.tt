@@ -1,3 +1,18 @@
+<script>
+enqueLists.push([{
+    res: 'rwr_sets_count',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_domain_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Rewrite Rule Set') %]' : '[% c.loc('Rewrite Rule Sets') %]') + '</li>');
+    }
+},{
+    res: 'sound_sets_count',
+    cb: function(data) {
+        console.log(data);
+        $("#reseller_domain_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Sound Set') %]' : '[% c.loc('Sound Sets') %]') + '</li>');
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
@@ -8,9 +23,7 @@
             </div>
         </div>
         <div class="plan-features">
-            <ul>
-                <li><strong>[% rwr_sets.count %]</strong> [% rwr_sets.count == 1 ? c.loc('Rewrite Rule Set') : c.loc('Rewrite Rule Sets') %]</li>
-                <li><strong>[% sound_sets.count %]</strong> [% sound_sets.count == 1 ? c.loc('Sound Set') : c.loc('Sound Set') %]</li>
+            <ul id="reseller_domain_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">
