@@ -1,10 +1,7 @@
 package NGCP::Panel::Role::API::Interceptions;
-use Moose::Role;
-use Sipwise::Base;
-with 'NGCP::Panel::Role::API' => {
-    -alias       =>{ item_rs  => '_item_rs', },
-    -excludes    => [ 'item_rs' ],
-};
+
+use base 'NGCP::Panel::Role::API';
+
 
 use boolean qw(true);
 use TryCatch;

@@ -1,38 +1,40 @@
 package NGCP::Panel::Controller::API::RtcNetworks;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose;
+use TryCatch;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
-
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default =>
-        'Show a collection of RTC networks, belonging to a specific reseller.',
-);
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
-    ]},
-);
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD/];
+}
 
-with 'NGCP::Panel::Role::API::RtcNetworks';
+sub api_description {
+    return 'Show a collection of RTC networks, belonging to a specific reseller.';
+};
 
-class_has('resource_name', is => 'ro', default => 'rtcnetworks');
-class_has('dispatch_path', is => 'ro', default => '/api/rtcnetworks/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rtcnetworks');
+sub query_params {
+    return [];
+}
+
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::RtcNetworks/;
+
+sub resource_name{
+    return 'rtcnetworks';
+}
+sub dispatch_path{
+    return '/api/rtcnetworks/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-rtcnetworks';
+}
 
 __PACKAGE__->config(
     action => {

@@ -1,30 +1,41 @@
 package NGCP::Panel::Controller::API::ProfilePreferencesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::Preferences';
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD PATCH PUT/];
+}
 
-class_has('resource_name', is => 'ro', default => 'profilepreferences');
-class_has('dispatch_path', is => 'ro', default => '/api/profilepreferences/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-profilepreferences');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
 
-class_has(@{ __PACKAGE__->get_journal_query_params() });
+sub resource_name{
+    return 'profilepreferences';
+}
+sub dispatch_path{
+    return '/api/profilepreferences/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-profilepreferences';
+}
+
+sub journal_query_params {
+    my($self,$query_params) = @_;
+    return $self->get_journal_query_params($query_params);
+}
 
 __PACKAGE__->config(
     action => {
@@ -187,39 +198,8 @@ sub PUT :Allow {
     return;
 }
 
-sub item_base_journal :Journal {
-    my $self = shift @_;
-    return $self->handle_item_base_journal(@_);
-}
-    
-sub journals_get :Journal {
-    my $self = shift @_;
-    return $self->handle_journals_get(@_);
-}
-
-sub journalsitem_get :Journal {
-    my $self = shift @_;
-    return $self->handle_journalsitem_get(@_);
-}
-
-sub journals_options :Journal {
-    my $self = shift @_;
-    return $self->handle_journals_options(@_);
-}
-
-sub journalsitem_options :Journal {
-    my $self = shift @_;
-    return $self->handle_journalsitem_options(@_);
-}
-
-sub journals_head :Journal {
-    my $self = shift @_;
-    return $self->handle_journals_head(@_);
-}
-
-sub journalsitem_head :Journal {
-    my $self = shift @_;
-    return $self->handle_journalsitem_head(@_);
+sub get_journal_methods{
+    return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 } 
 
 sub end : Private {

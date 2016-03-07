@@ -1,14 +1,13 @@
 package NGCP::Panel::Controller::API::Subscribers;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
@@ -16,25 +15,23 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use UUID;
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Defines an actual user who can log into the web panel, register devices via SIP and/or '.
-        'XMPP and place and receive calls via SIP. A subscriber always belongs to a '.
-        '<a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.',
-);
+sub allowed_methods{
+    return [qw/GET POST OPTIONS HEAD/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Defines an actual user who can log into the web panel, register devices via SIP and/or '.
+        'XMPP and place and receive calls via SIP. A subscriber always belongs to a '.
+        '<a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.';
+}
+
+sub query_params {
+    return [
         {
             param => 'profile_id',
             description => 'Search for subscribers having a specific subscriber profile',
@@ -212,15 +209,20 @@ class_has 'query_params' => (
                 },
                 second => sub {},
             },
-        },        
-    ]},
-);
+        },    ];
+}
 
-with 'NGCP::Panel::Role::API::Subscribers';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Subscribers/;
 
-class_has('resource_name', is => 'ro', default => 'subscribers');
-class_has('dispatch_path', is => 'ro', default => '/api/subscribers/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-subscribers');
+sub resource_name{
+    return 'subscribers';
+}
+sub dispatch_path{
+    return '/api/subscribers/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-subscribers';
+}
 
 __PACKAGE__->config(
     action => {
