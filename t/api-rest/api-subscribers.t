@@ -52,7 +52,7 @@ $test_machine->form_data_item( );
 $test_machine->check_create_correct( 1, sub{ $_[0]->{username} .= time().'_'.$_[1]->{i} ; } );
 ##$test_machine->check_bundle();
 ##$test_machine->check_get2put();
-
+my $remote_config = $test_machine->init_catalyst_config;
 #-------  MT#15441
 {  
     my $intentional_cli = '111'.time();
@@ -88,31 +88,38 @@ $test_machine->check_create_correct( 1, sub{ $_[0]->{username} .= time().'_'.$_[
     delete $preferences->{content}->{cli};
     (undef, $preferences_put->{content}) = $test_machine->request_put($preferences->{content},$preferences->{uri});
     is($preferences_put->{content}->{cli}, undef, "check that cli was deleted on subscriberpreferences put with empty cli");
-#3
-    $subscriber->{content}->{primary_number} = $intentional_primary_number;
-    ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
-    is($preferences_get->{content}->{cli}, number_as_string($intentional_primary_number), "check that cli was created on subscriber phones update: $preferences_get->{content}->{cli} == ".number_as_string($intentional_primary_number) );
-#/3
-    $intentional_primary_number = {
-        'cc' => '222',
-        'ac' => '333',
-        'sn' => '444'.time(),
-    };
-#4
-    $subscriber->{content}->{primary_number} = $intentional_primary_number;
-    ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
-    is($preferences_get->{content}->{cli}, number_as_string($intentional_primary_number), "check that cli was updated on subscriber phones update: $preferences_get->{content}->{cli} == ".number_as_string($intentional_primary_number) );
-#/4
-#5
-    delete $subscriber->{content}->{primary_number};
-    ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
-    is($preferences_get->{content}->{cli}, undef, "check that cli was deleted on subscriber phones update");
-#/5
+    if($remote_config->{config}->{numbermanagement}->{auto_sync_cli}){
+    #3
+        $subscriber->{content}->{primary_number} = $intentional_primary_number;
+        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
+        is($preferences_get->{content}->{cli}, number_as_string($intentional_primary_number), "check that cli was created on subscriber phones update: $preferences_get->{content}->{cli} == ".number_as_string($intentional_primary_number) );
+    #/3
+        $intentional_primary_number = {
+            'cc' => '222',
+            'ac' => '333',
+            'sn' => '444'.time(),
+        };
+    #4
+        $subscriber->{content}->{primary_number} = $intentional_primary_number;
+        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
+        is($preferences_get->{content}->{cli}, number_as_string($intentional_primary_number), "check that cli was updated on subscriber phones update: $preferences_get->{content}->{cli} == ".number_as_string($intentional_primary_number) );
+    #/4
+    #5
+        delete $subscriber->{content}->{primary_number};
+        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
+        is($preferences_get->{content}->{cli}, undef, "check that cli was deleted on subscriber phones update");
+    #/5
+    }
 }
 
-$test_machine->clear_test_data_all();
+$test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 done_testing;
 
+
+undef $fake_data;
+undef $test_machine;
+
+#--------------------aux ------------
 
 sub number_as_string{
     my ($number_row, %params) = @_;
