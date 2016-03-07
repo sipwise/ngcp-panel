@@ -1,28 +1,36 @@
 package NGCP::Panel::Controller::API::DomainPreferencesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::Preferences';
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD PATCH PUT/];
+}
 
-class_has('resource_name', is => 'ro', default => 'domainpreferences');
-class_has('dispatch_path', is => 'ro', default => '/api/domainpreferences/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-domainpreferences');
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
+
+sub resource_name{
+    return 'domainpreferences';
+}
+sub dispatch_path{
+    return '/api/domainpreferences/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-domainpreferences';
+}
 
 __PACKAGE__->config(
     action => {

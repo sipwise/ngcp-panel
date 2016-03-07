@@ -1,34 +1,31 @@
 package NGCP::Panel::Controller::API::PbxDeviceModelImages;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Moose;
-#use namespace::sweep;
+no Moose;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
+
+use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-class_has 'api_description' => (
-    is => 'ro',
-    isa => 'Str',
-    default => 
-        'Used to download the front and mac image of a <a href="#pbxdevicemodels">PbxDeviceModel</a>. Returns a binary attachment with the correct content type (e.g. image/jpeg) of the image.',
-);
+sub allowed_methods{
+    return [qw/OPTIONS/];
+}
 
-class_has 'query_params' => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub {[
+sub api_description {
+    return 'Used to download the front and mac image of a <a href="#pbxdevicemodels">PbxDeviceModel</a>. Returns a binary attachment with the correct content type (e.g. image/jpeg) of the image.';
+};
+
+sub query_params {
+    return [
         {
             param => 'type',
             description => 'Either "front" (default) or "mac" to download one or the other.',
@@ -38,15 +35,20 @@ class_has 'query_params' => (
                 second => sub {},
             }
         }
-    ]},
-);
+    ];
+}
 
-with 'NGCP::Panel::Role::API::PbxDeviceModelImages';
-with 'NGCP::Panel::Role::API::PbxDeviceModels';
+use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceModelImages NGCP::Panel::Role::API::PbxDeviceModels/;
 
-class_has('resource_name', is => 'ro', default => 'pbxdevicemodelimages');
-class_has('dispatch_path', is => 'ro', default => '/api/pbxdevicemodelimages/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicemodelimages');
+sub resource_name{
+    return 'pbxdevicemodelimages';
+}
+sub dispatch_path{
+    return '/api/pbxdevicemodelimages/';
+}
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicemodelimages';
+}
 
 __PACKAGE__->config(
     action => {
