@@ -64,10 +64,10 @@ sub auto :Private {
     }
 
     unless($c->user_exists) {
-       
+
         if(index($c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') == 0) {
             $c->log->debug("++++++ Root::auto unauthenticated API request");
-            my $ssl_dn = $c->request->env->{SSL_CLIENT_M_DN} // ""; 
+            my $ssl_dn = $c->request->env->{SSL_CLIENT_M_DN} // "";
             my $ssl_sn = hex ($c->request->env->{SSL_CLIENT_M_SERIAL} // 0);
             if($ssl_sn) {
                 $c->log->debug("++++++ Root::auto API request with client auth sn '$ssl_sn'");
@@ -81,7 +81,7 @@ sub auto :Private {
                     return;
                 }
 
-                my $res = $c->authenticate({ 
+                my $res = $c->authenticate({
                         ssl_client_m_serial => $ssl_sn,
                         is_active => 1, # TODO: abused as password until NoPassword handler is available
                     }, 'api_admin_cert');
@@ -141,7 +141,7 @@ sub auto :Private {
             $c->response->status(403);
             return;
         }
-        
+
         # store uri for redirect after login
         my $target = undef;
         if($c->request->method eq 'GET') {
@@ -175,8 +175,8 @@ sub auto :Private {
     my $plugin_finder = NGCP::Panel::Widget->new;
     my $topmenu_templates = [];
     foreach($plugin_finder->instantiate_plugins($c, 'topmenu_widgets')) {
-        $_->handle($c);
-        push @{ $topmenu_templates }, $_->template; 
+        $_->{instance}->handle($c);
+        push @{ $topmenu_templates }, $_->{instance}->template;
     }
     $c->stash(topmenu => $topmenu_templates);
 
@@ -252,7 +252,7 @@ sub _prune_row {
 sub error_page :Private {
     my ($self,$c) = @_;
     $c->log->error( 'Failed to find path ' . $c->request->path );
-   
+
     if($c->request->path =~ /^api\/.+/) {
         $c->response->content_type('application/json');
         $c->response->body(JSON::to_json({
@@ -267,7 +267,7 @@ sub error_page :Private {
 
 sub denied_page :Private {
     my ($self,$c) = @_;
-    
+
     $c->log->error('Access denied to path ' . $c->request->path );
     if($c->request->path =~ /^api\/.+/) {
         $c->response->content_type('application/json');
@@ -310,7 +310,7 @@ sub api_apply_fake_time :Private {
         }
         NGCP::Panel::Utils::DateTime::set_fake_time();
         $c->stash->{is_fake_time} = 0;
-        #$c->log->debug('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));        
+        #$c->log->debug('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));
     }
 }
 

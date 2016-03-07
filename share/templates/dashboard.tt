@@ -1,5 +1,28 @@
-[% site_config.title = c.loc('Dashboard') -%]
 [% wcount = widgets.size() > 4 ? 4 : widgets.size() -%]
+<script src="/js/jquery.ajaxq.js"></script>
+<script>
+var enqueLists = [];
+$(document).ready(function () {
+    if (enqueLists.length > 0) {
+        var queue = $.ajaxq.Queue(enqueLists.length);
+        var i = 0;
+        var widgetDone = 0;
+        while (widgetDone < enqueLists.length) {
+            var ajaxCall = enqueLists[i].shift();
+            if (ajaxCall) {
+                queue.getJSON('[% c.uri_for('/dashboard/ajax') %]/' + ajaxCall.res, ajaxCall.cb);
+            } else {
+                widgetDone++;
+            }
+            i = (i + 1) % enqueLists.length
+        }
+        console.log('widget data loading enqueued.');
+    }
+});
+</script>
+
+[% site_config.title = c.loc('Dashboard') -%]
+
 <div class="row">
     <div class="span12">
         <div class="pricing-plans plans-[% wcount %]">

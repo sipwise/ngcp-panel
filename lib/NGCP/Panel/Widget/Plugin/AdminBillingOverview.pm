@@ -78,5 +78,11 @@ sub filter {
     return;
 }
 
+sub profiles_count {
+    my ($self, $c) = @_;
+    
+    return $c->stash->{profiles}->count;
+}
+
 1;
 # vim: set tabstop=4 expandtab:

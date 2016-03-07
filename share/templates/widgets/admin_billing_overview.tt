@@ -1,3 +1,14 @@
+<script>
+enqueLists.push([{
+    res: 'profiles_count',
+    cb: function(data) {
+    console.log(data);
+$("#test").append('<li><a href="/user/messages"><span class="tab">Message Center' + data.widget_data + '</span></a></li>');
+//<li><strong>[% FILTER format("%.02f") %][% (peering_sum  || 0) / 100.0 %][% END %]</strong> [% c.loc('Peering Costs') %]</li>
+    }
+}]);
+
+</script>
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
@@ -8,7 +19,7 @@
             </div>
         </div>
         <div class="plan-features">
-            <ul>
+            <ul id="test">
                 <li><strong>[% FILTER format("%.02f") %][% (peering_sum  || 0) / 100.0 %][% END %]</strong> [% c.loc('Peering Costs') %]</li>
                 <li><strong>[% FILTER format("%.02f") %][% (reseller_sum || 0) / 100.0 %][% END %]</strong> [% c.loc('Reseller Revenue') %]</li>
                 <li><strong>[% FILTER format("%.02f") %][% (customer_sum || 0) / 100.0 %][% END %]</strong> [% c.loc('Customer Revenue') %]</li>
