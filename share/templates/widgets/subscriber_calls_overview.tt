@@ -1,48 +1,58 @@
-[% USE Math -%]
+<script>
+enqueLists.push([{
+    res: 'calls_slice',
+    cb: function(data) {
+        console.log(data);
+        var calls = data.widget_data;
+        $("#subscriber_call_overview_lazy_loading").remove();
+        $("#subscriber_call_overview_lazy_items_header").append(
+            '<div class="plan-price">' +
+                '<span>' + calls.length + '</span>' +
+                '<span class="term">' + (calls.length == 1 ? '[% c.loc('Recent Call') %]' : '[% c.loc('Recent Calls') %]') + '</span>' +
+            '</div>');
+        if (calls.length == 0) {
+            $("#subscriber_call_overview_lazy_items_list").append('<li>[% c.loc('No calls yet') %]</li>');
+        } else {
+            for (var i = 0; i < calls.length; i++) {
+                var call = calls[i];
+                $("#subscriber_call_overview_lazy_items_list").append('<li>' +
+                    '<div class="row-fluid">' +
+                        (call.source_user_id == '[% c.user.uuid %]' ?
+                            '<div class="span1"><i ' +
+                            (call.call_status == "ok" ?
+                                'class="icon-circle-arrow-right" style="color:green"'
+                            :
+                                'class="icon-circle-arrow-up" style="color:red"'
+                            ) + '></i></div>' +
+                            '<div class="span8">' + call.destination_user_in + '</div>'
+                        :
+                            '<div class="span1"><i ' +
+                            (call.call_status == "ok" ?
+                                'class="icon-circle-arrow-left" style="color:green"'
+                            :
+                                'class="icon-circle-arrow-down" style="color:red"'
+                            ) + '></i></div>' +
+                            '<div class="span8">' + call.source_cli + '</div>'
+                        ) +
+                    '</div>' +
+                    '<div class="row-fluid">' +
+                        '<div class="offset1 span8">' + call.start_time + '</div>' +
+                        '<div class="span1">' + Math.floor(call.duration) + 's</div>' +
+                    '</div>' +
+                '</li>');
+            }
+        }
+    }
+}]);
+</script>
 <div class="plan-container">
     <div class="plan">
-        <div class="plan-header">
+        <div class="plan-header" id="subscriber_call_overview_lazy_items_header">
             <div class="plan-title">[% c.loc('Call List') %]</div>
-            <div class="plan-price">
-                <span>[% calls.size %]</span>
-                <span class="term">[% calls.size != 1 ? c.loc('Recent Calls') : c.loc('Recent Call') %]</span>
-            </div>
+            <div class="plan-price widget-loading" id="subscriber_call_overview_lazy_loading"><span>0</span><span class="term">processing ...</span></div>
         </div>
         <div class="plan-features large">
-            <ul>
-                [% IF calls.size == 0 -%]
-                <li>[% c.loc('No calls yet') %]</li>
-                [% ELSE -%]
-                    [% FOR call IN calls -%]
-                    <li>
-                        <div class="row-fluid">
-                        [% IF call.source_user_id == c.user.uuid -%]
-                            <div class="span1">
-                            [% IF call.call_status == "ok" -%]
-                                <i class="icon-circle-arrow-right" style="color:green"></i>
-                            [% ELSE -%]
-                                <i class="icon-circle-arrow-up" style="color:red"></i>
-                            [% END -%]
-                            </div>
-                            <div class="span8">[% call.destination_user_in | uri_unescape %]</div>
-                        [% ELSE -%]
-                            <div class="span1">
-                            [% IF call.call_status == "ok" -%]
-                                <i class="icon-circle-arrow-left" style="color:green"></i>
-                            [% ELSE -%]
-                                <i class="icon-circle-arrow-down" style="color:red"></i>
-                            [% END -%]
-                            </div>
-                            <div class="span8">[% call.clir ? "anonymous" : call.source_cli | uri_unescape %]</div>
-                        [% END -%]
-                        </div>
-                        <div class="row-fluid">
-                            <div class="offset1 span8">[% call.start_time -%]</div>
-                            <div class="span1">[% Math.int(call.duration) -%]s</div>
-                        </div>
-                    </li>
-                    [% END -%]
-                [% END -%]
+            <ul id="subscriber_call_overview_lazy_items_list">
             </ul>
         </div>
         <div class="plan-actions">
