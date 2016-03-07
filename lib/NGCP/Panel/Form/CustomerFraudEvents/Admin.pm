@@ -4,12 +4,10 @@ use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::CustomerFraudEvents::Reseller';
 #use Moose::Util::TypeConstraints;
 
-has_field 'reseller_id' => (
-    type => 'PosInteger',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The reseller id this customer belongs to.']
-    },
+has_field 'reseller' => (
+    type => '+NGCP::Panel::Field::Reseller',
+    validate_when_empty => 0,
+    required => 0,
 );
 
 1;
