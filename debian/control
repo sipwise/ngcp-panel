@@ -101,6 +101,7 @@ Depends: gettext,
          ngcp-templates-ce-ngcp-panel (>= 3.0.19) | ngcp-templates-pro-ngcp-panel (>= 3.0.19),
          nginx-common,
          openssl,
+         sox,
          ${misc:Depends},
          ${perl:Depends}
 Description: Catalyst based application
