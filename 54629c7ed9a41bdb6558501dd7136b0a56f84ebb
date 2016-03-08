@@ -22,6 +22,30 @@
       "revId": "54629c7ed9a41bdb6558501dd7136b0a56f84ebb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_26578e04",
+        "filename": "lib/NGCP/Panel/Role/API/EmailTemplates.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-08T01:50:43Z",
+      "side": 1,
+      "message": "We always have mandatory links with relations collection,profile,self. So I don\u0027t see how we can get empty links array. Or maybe I got your idea wrong.",
+      "parentUuid": "fad0f9df_9b8fb775",
+      "range": {
+        "startLine": 50,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 33
+      },
+      "revId": "54629c7ed9a41bdb6558501dd7136b0a56f84ebb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
