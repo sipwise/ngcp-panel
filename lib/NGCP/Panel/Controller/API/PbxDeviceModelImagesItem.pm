@@ -17,8 +17,8 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceModelImages/;
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceModels/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceModelImages/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceModels/;
 
 sub resource_name{
     return 'pbxdevicemodelimages';

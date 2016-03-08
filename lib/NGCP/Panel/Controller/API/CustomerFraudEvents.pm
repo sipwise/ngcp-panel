@@ -41,7 +41,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerFraudEvents/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerFraudEvents/;
 
 sub resource_name{
     return 'customerfraudevents';

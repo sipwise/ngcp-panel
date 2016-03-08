@@ -1,7 +1,7 @@
 package NGCP::Panel::Role::API::PeeringRules;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use base 'NGCP::Panel::Role::API';
+use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);

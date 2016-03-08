@@ -53,7 +53,7 @@ sub query_params {
 }
 
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::CFTimeSets/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CFTimeSets/;
 
 sub resource_name{
     return 'cftimesets';

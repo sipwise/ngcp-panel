@@ -202,7 +202,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::CallLists/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CallLists/;
 
 sub resource_name{
     return 'calllists';

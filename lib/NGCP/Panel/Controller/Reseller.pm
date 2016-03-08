@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Reseller;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 #use namespace::sweep;
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 use DateTime qw();
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use File::Type;

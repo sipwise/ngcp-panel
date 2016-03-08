@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::InvoiceTemplate;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 #use namespace::sweep;
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 use File::Type;
 use MIME::Base64 qw(encode_base64);

@@ -3,7 +3,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;

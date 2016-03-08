@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::SubscriberProfile;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::SubscriberProfile::SetAdmin;
 use NGCP::Panel::Form::SubscriberProfile::SetReseller;

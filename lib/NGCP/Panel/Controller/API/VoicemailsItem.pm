@@ -18,7 +18,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::Voicemails/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Voicemails/;
 
 sub resource_name{
     return 'voicemails';

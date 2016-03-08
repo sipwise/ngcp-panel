@@ -1,5 +1,5 @@
 package NGCP::Panel::Template::Plugin::DeviceConfig;
-use base 'Template::Plugin';
+use parent 'Template::Plugin';
 use Crypt::RC4;
 
 sub new {

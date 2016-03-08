@@ -40,7 +40,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::NcosLevels/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::NcosLevels/;
 
 sub resource_name{
     return 'ncoslevels';

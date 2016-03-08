@@ -29,7 +29,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceFirmwares/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceFirmwares/;
 
 sub resource_name{
     return 'pbxdevicefirmwarebinaries';

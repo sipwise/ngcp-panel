@@ -4,7 +4,7 @@ use Sipwise::Base;
 use Text::CSV_XS;
 use DateTime::Format::ISO8601;
 
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::Voucher::Admin;
 use NGCP::Panel::Form::Voucher::Reseller;

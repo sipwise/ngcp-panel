@@ -40,7 +40,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::BillingFees/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::BillingFees/;
 
 sub resource_name{
     return 'billingfees';

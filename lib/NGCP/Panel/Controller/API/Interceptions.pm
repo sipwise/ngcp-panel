@@ -53,7 +53,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::Interceptions/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Interceptions/;
 
 sub resource_name{
     return 'interceptions';

@@ -62,7 +62,7 @@ sub query_params {
 }
 
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDevices/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDevices/;
 
 sub resource_name{
     return 'pbxdevices';

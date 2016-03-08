@@ -17,7 +17,7 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::MailToFaxSettings/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::MailToFaxSettings/;
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }

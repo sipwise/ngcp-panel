@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Invoice;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 #use namespace::sweep;
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;

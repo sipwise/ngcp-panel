@@ -53,7 +53,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::Domains/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Domains/;
 
 sub resource_name{
     return 'domains';

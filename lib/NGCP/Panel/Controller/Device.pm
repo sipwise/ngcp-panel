@@ -18,7 +18,7 @@ use NGCP::Panel::Utils::Device;
 use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::HTTP;
 
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 sub auto :Private {
     my ($self, $c) = @_;

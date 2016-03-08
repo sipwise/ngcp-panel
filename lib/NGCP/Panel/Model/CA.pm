@@ -4,7 +4,7 @@ use MIME::Base64 qw(decode_base64);
 use Time::HiRes qw();
 use Path::Tiny qw();
 use Sys::Hostname qw(hostname);
-use base 'Catalyst::Component';
+use parent 'Catalyst::Component';
 
 sub client_signing_template {
     my ($self, $serial) = @_;

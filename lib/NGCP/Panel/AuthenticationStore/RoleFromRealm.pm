@@ -1,6 +1,6 @@
 package NGCP::Panel::AuthenticationStore::RoleFromRealm;
 use Sipwise::Base;
-use base 'Catalyst::Authentication::Store::DBIx::Class::User';
+use parent 'Catalyst::Authentication::Store::DBIx::Class::User';
 
 sub roles {
     my ($self) = @_;

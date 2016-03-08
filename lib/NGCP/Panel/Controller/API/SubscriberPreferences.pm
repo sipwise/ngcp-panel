@@ -54,7 +54,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
 
 sub resource_name{
     return 'subscriberpreferences';

@@ -9,7 +9,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;

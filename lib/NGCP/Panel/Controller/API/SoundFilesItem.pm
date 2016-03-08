@@ -17,7 +17,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT DELETE/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::SoundFiles/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SoundFiles/;
 
 sub resource_name{
     return 'soundfiles';
