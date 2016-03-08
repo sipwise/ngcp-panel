@@ -8280,10 +8280,6 @@ msgid "The reseller id this contact belongs to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The reseller id this customer belongs to."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id this device model belongs to."
 msgstr ""
 

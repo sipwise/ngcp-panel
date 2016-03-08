@@ -5182,8 +5182,7 @@ msgstr ""
 msgid "Keys add"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -9721,10 +9720,6 @@ msgid "The reseller id this contact belongs to."
 msgstr "Id del reseller al que pertenece este contacto."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The reseller id this customer belongs to."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id this device model belongs to."
 msgstr ""
 
@@ -11275,8 +11270,7 @@ msgstr ""
 msgid "noanswer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-#: share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "none"
 msgstr "ninguno"
 
