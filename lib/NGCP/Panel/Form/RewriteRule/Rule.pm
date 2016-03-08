@@ -123,7 +123,7 @@ sub validate {
     my $r = $self->field('replace_pattern')->value // "";
     my $re = "s/$s/$r/";
 
-    eval { use warnings FATAL => qw(all); m/$re/; };
+    eval { use warnings FATAL => qw(all); local $_ = ""; m/$re/; };
     
     if( $@ && $self->field('match_pattern')->num_errors < 1 ) {
         my $err_msg = 'Match pattern and Replace Pattern do not work together.';
