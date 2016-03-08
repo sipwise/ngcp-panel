@@ -15,9 +15,6 @@ use DateTime::Format::ISO8601 qw();
 BEGIN {
     unshift(@INC,'../../lib');
 }
-use NGCP::Panel::Utils::ProfilePackages qw();
-
-#my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
