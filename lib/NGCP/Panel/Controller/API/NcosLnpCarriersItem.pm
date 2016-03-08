@@ -17,7 +17,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::NcosLnpCarriers/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::NcosLnpCarriers/;
 
 sub resource_name{
     return 'ncoslnpcarriers';

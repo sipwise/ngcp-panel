@@ -65,7 +65,7 @@ sub query_params {
 }
 
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::BillingNetworks/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::BillingNetworks/;
 
 sub resource_name{
     return 'billingnetworks';

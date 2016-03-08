@@ -91,7 +91,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerBalances/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerBalances/;
 
 sub resource_name{
     return 'customerbalances';

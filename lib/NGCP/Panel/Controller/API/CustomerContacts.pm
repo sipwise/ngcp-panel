@@ -51,7 +51,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerContacts/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerContacts/;
 
 sub resource_name{
     return 'customercontacts';

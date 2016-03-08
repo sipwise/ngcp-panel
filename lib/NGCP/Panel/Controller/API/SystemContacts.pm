@@ -40,7 +40,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::SystemContacts/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SystemContacts/;
 
 sub resource_name{
     return 'systemcontacts';

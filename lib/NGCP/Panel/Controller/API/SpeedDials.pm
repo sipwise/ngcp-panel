@@ -46,7 +46,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::SpeedDials/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SpeedDials/;
 
 sub resource_name{
     return 'speeddials';

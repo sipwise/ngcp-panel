@@ -20,7 +20,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerLocations/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerLocations/;
 
 sub resource_name{
     return 'customerlocations';

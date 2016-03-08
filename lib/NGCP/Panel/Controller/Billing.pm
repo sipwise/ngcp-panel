@@ -3,7 +3,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use DateTime::Format::ISO8601;
 
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::BillingProfile::Admin;
 use NGCP::Panel::Form::BillingProfile::Reseller;

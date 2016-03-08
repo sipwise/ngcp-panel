@@ -24,7 +24,7 @@ sub api_description {
     return 'Defines the actual recording of fax messages. It is referred to by the <a href="#faxes">Faxes</a> relation. A GET on an item returns the binary blob of the recording with Content-Type "audio/x-wav".';
 };
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::FaxRecordings/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::FaxRecordings/;
 
 sub resource_name{
     return 'faxrecordings';

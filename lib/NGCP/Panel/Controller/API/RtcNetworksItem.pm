@@ -11,7 +11,7 @@ require Catalyst::ActionRole::RequireSSL;
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::RtcNetworks/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::RtcNetworks/;
 
 sub resource_name{
     return 'rtcnetworks';
