@@ -41,10 +41,12 @@ has_field 'direction' => (
         { label => 'callee_in', value => 'callee_in' },
         { label => 'caller_out', value => 'caller_out' },
         { label => 'callee_out', value => 'callee_out' },
+        { label => 'caller_lnp', value => 'caller_lnp' },
+        { label => 'callee_lnp', value => 'callee_lnp' },
     ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['The direction rule set to apply, one of caller_in, callee_in, caller_out, callee_out']
+        title => ['The direction rule set to apply, one of caller_in, callee_in, caller_out, callee_out, caller_lnp, callee_lnp']
     },
 );
 

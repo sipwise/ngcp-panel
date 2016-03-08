@@ -536,7 +536,11 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
                     while(my ($k,$v) = each %old_attributes) {
                         if($v eq "rewrite_rule_set") {
                             $profile->voip_prof_preferences->search({
-                                'attribute.attribute' => { -in => [qw/rewrite_rule_set rewrite_caller_in_dpid rewrite_caller_out_dpid rewrite_callee_in_dpid rewrite_callee_out_dpid/] },
+                                'attribute.attribute' => { -in => [qw/
+                                    rewrite_rule_set 
+                                    rewrite_caller_in_dpid rewrite_caller_out_dpid
+                                    rewrite_callee_in_dpid rewrite_callee_out_dpid
+                                    rewrite_callee_lnp_dpid rewrite_caller_lnp_dpid/] },
                             },{
                                 join => 'attribute'
                             })->delete_all;
