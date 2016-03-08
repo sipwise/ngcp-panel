@@ -40,7 +40,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::EmailTemplates/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::EmailTemplates/;
 
 sub resource_name{
     return 'emailtemplates';

@@ -51,7 +51,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::NcosLnpCarriers/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::NcosLnpCarriers/;
 
 sub resource_name{
     return 'ncoslnpcarriers';

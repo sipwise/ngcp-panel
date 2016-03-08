@@ -97,7 +97,7 @@ sub documentation_sample {
 }
 
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceModels/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceModels/;
 
 sub resource_name{
     return 'pbxdevicemodels';

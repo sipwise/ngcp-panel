@@ -32,7 +32,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::AutoAttendants/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::AutoAttendants/;
 
 sub resource_name{
     return 'autoattendants';

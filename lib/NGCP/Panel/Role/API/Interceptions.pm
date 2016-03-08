@@ -1,6 +1,6 @@
 package NGCP::Panel::Role::API::Interceptions;
 
-use base 'NGCP::Panel::Role::API';
+use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);

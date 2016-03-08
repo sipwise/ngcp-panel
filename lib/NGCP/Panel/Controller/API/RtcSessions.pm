@@ -25,7 +25,7 @@ sub query_params {
     return [];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::RtcSessions/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::RtcSessions/;
 
 sub resource_name{
     return 'rtcsessions';

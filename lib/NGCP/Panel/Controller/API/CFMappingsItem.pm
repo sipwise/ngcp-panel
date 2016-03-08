@@ -20,7 +20,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::CFMappings/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CFMappings/;
 
 sub resource_name{
     return 'cfmappings';

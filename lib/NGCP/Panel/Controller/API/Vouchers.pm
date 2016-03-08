@@ -50,7 +50,7 @@ sub query_params {
         },    ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::Vouchers/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Vouchers/;
 
 sub resource_name{
     return 'vouchers';

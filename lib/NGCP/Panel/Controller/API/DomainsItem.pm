@@ -20,7 +20,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD DELETE/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::Domains/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Domains/;
 
 sub resource_name{
     return 'domains';

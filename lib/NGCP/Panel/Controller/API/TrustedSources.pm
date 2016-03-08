@@ -44,7 +44,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::TrustedSources/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::TrustedSources/;
 
 sub resource_name{
     return 'trustedsources';

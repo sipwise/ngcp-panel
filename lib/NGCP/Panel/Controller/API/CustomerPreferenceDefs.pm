@@ -22,7 +22,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
 sub resource_name{
     return 'customerpreferencedefs';

@@ -1,6 +1,6 @@
 package NGCP::Panel::Model::DB::Base;
-#use base 'Catalyst::Model::Adaptor';
-use base 'Catalyst::Model';
+#use parent 'Catalyst::Model::Adaptor';
+use parent 'Catalyst::Model';
 use NGCP::Panel::Model::DB;
 use Moose;
 
