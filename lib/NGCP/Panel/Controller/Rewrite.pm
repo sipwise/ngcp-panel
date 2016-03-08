@@ -405,7 +405,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::RewriteRule::Rule->new;
+    my $form = NGCP::Panel::Form::RewriteRule::Rule->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -464,7 +464,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::RewriteRule::Rule->new;
+    my $form = NGCP::Panel::Form::RewriteRule::Rule->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,

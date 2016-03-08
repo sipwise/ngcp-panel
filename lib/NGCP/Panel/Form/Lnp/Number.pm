@@ -10,10 +10,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'id' => (
-    type => 'Hidden'
-);
-
 has_field 'lnp_provider' => (
     type => '+NGCP::Panel::Field::LnpCarrier',
     label => 'LNP Carrier',
@@ -30,25 +26,36 @@ has_field 'number' => (
     maxlength => 31,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The ported number']
+        title => ['The ported number.']
     },
 );
 
-has_field 'start' => (
-    type => '+NGCP::Panel::Field::DatePicker',
-    required => 1,
+has_field 'routing_number' => (
+    type => 'Text',
+    required => 0,
+    maxlength => 31,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The date when the porting gets active in format YYYY-MM-DD.']
+        title => ['An optional routing number replacing the ported number.']
+    },
+);
+
+
+has_field 'start' => (
+    type => '+NGCP::Panel::Field::DatePicker',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The optional date when the porting gets active in format YYYY-MM-DD.']
     },
 );
 
 has_field 'end' => (
     type => '+NGCP::Panel::Field::DatePicker',
-    required => 1,
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The date when the porting gets inactive again in format YYYY-MM-DD.']
+        title => ['The optional date when the porting gets inactive again in format YYYY-MM-DD.']
     },
 );
 
@@ -62,7 +69,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/lnp_provider number start end/],
+    render_list => [qw/lnp_provider number routing_number start end/],
 );
 
 has_block 'actions' => (

@@ -15,6 +15,7 @@ has_field 'match_pattern' => (
     type => '+NGCP::Panel::Field::Regexp',
     required => 1,
     inflate_default_method => \&inflate_match_pattern,
+    deflate_value_method => \&deflate_match_pattern,
     element_attr => {
         rel => ['tooltip'],
         title => ['Match pattern, a regular expression.'],
@@ -26,6 +27,7 @@ has_field 'replace_pattern' => (
     required => 1,
     label => 'Replacement Pattern',
     inflate_default_method => \&inflate_replace_pattern,
+    deflate_value_method => \&deflate_replace_pattern,
     element_attr => {
         rel => ['tooltip'],
         title => ['Replacement pattern.'],
@@ -86,7 +88,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/match_pattern replace_pattern description direction enabled field/],
+    render_list => [qw/match_pattern replace_pattern description direction field enabled/],
 );
 
 has_block 'actions' => (
@@ -95,11 +97,12 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
-before 'update_model' => sub {
-    my $self = shift;
-    $self->value->{match_pattern} =~   s/\$\{(\w+)\}/\$avp(s:$1)/g;
-    $self->value->{match_pattern} =~   s/\@\{(\w+)\}/\$(avp(s:$1)[+])/g;
-    $self->value->{replace_pattern} =~ s/\$\{(\w+)\}/\$avp(s:$1)/g;
+sub deflate_match_pattern {
+    my ($self, $value) = @_;
+
+    $value =~ s/\$\{(\w+)\}/\$avp(s:$1)/g;
+    $value =~ s/\@\{(\w+)\}/\$(avp(s:$1)[+])/g;
+    return $value;
 };
 
 sub inflate_match_pattern {
@@ -109,6 +112,13 @@ sub inflate_match_pattern {
     $value =~ s/\$\(avp\(s\:(\w+)\)\[\+\]\)/\@{$1}/g;
     return $value;
 }
+
+sub deflate_replace_pattern {
+    my ($self, $value) = @_;
+
+    $value =~ s/\$\{(\w+)\}/\$avp(s:$1)/g;
+    return $value;
+};
 
 sub inflate_replace_pattern {
     my ($self, $value) = @_;
@@ -123,7 +133,7 @@ sub validate {
     my $r = $self->field('replace_pattern')->value // "";
     my $re = "s/$s/$r/";
 
-    eval { use warnings FATAL => qw(all); m/$re/; };
+    eval { use warnings FATAL => qw(all); $_ = ''; m/$re/; };
     
     if( $@ && $self->field('match_pattern')->num_errors < 1 ) {
         my $err_msg = 'Match pattern and Replace Pattern do not work together.';

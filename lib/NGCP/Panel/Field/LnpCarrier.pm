@@ -25,8 +25,8 @@ has_field 'create' => (
 sub validate {
     my ( $self ) = @_;
     my $value = $self->value;
-    $self->add_error('Value must be a positive integer')
-        if(!$self->has_errors && $value !~ /^\d+$/);
+    $self->add_error('LNP carrier id must be a positive integer')
+        if(!$self->has_errors && $value->{id} !~ /^\d+$/);
 }
 
 no Moose;
