@@ -1,6 +1,6 @@
 package NGCP::Panel::Role::API::CustomerFraudEvents;
 use NGCP::Panel::Utils::Generic qw(:all);
-use base 'NGCP::Panel::Role::API';
+use parent 'NGCP::Panel::Role::API';
 use boolean qw(true);
 use TryCatch;
 use Data::HAL qw();

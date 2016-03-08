@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Dashboard;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 use NGCP::Panel::Widget;
 
 =head1 NAME

@@ -53,7 +53,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::Voicemails/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Voicemails/;
 
 sub resource_name{
     return 'voicemails';

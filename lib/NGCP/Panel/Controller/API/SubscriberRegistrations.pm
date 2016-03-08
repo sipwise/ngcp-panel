@@ -60,7 +60,7 @@ sub query_params {
     ];
 };
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::SubscriberRegistrations/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SubscriberRegistrations/;
 
 sub resource_name{
     return 'subscriberregistrations';

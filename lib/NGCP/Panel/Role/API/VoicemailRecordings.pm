@@ -1,7 +1,7 @@
 package NGCP::Panel::Role::API::VoicemailRecordings;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use base 'NGCP::Panel::Role::API';
+use parent 'NGCP::Panel::Role::API';
 
 
 sub _item_rs {

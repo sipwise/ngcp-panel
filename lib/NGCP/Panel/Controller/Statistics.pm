@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Statistics;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-BEGIN { use base 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Utils::Statistics;
 use NGCP::Panel::Form::Statistics;

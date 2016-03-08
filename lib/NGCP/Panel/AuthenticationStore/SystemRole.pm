@@ -1,6 +1,6 @@
 package NGCP::Panel::AuthenticationStore::SystemRole;
 use Sipwise::Base;
-use base 'Catalyst::Authentication::User::Hash';
+use parent 'Catalyst::Authentication::User::Hash';
 
 sub roles  {
     my $self = shift;

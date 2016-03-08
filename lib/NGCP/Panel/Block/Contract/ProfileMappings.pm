@@ -1,6 +1,6 @@
 package NGCP::Panel::Block::Contract::ProfileMappings;
 
-use base ("NGCP::Panel::Block::Block");
+use parent ("NGCP::Panel::Block::Block");
 
 sub template {
     my $self = shift;

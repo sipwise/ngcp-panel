@@ -1,6 +1,6 @@
 package NGCP::Panel::Model::InterceptDB::Base;
-#use base 'Catalyst::Model::Adaptor';
-use base 'Catalyst::Model';
+#use parent 'Catalyst::Model::Adaptor';
+use parent 'Catalyst::Model';
 use NGCP::Panel::Model::InterceptDB;
 use Moose;
 

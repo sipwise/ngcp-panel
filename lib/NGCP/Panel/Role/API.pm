@@ -20,7 +20,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
-use base qw/NGCP::Panel::Role::Journal/;
+use parent qw/NGCP::Panel::Role::Journal/;
 
 #fun - there is no one usage of the last_modified through all ngcp-panel sources. even in javascript
 #has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);

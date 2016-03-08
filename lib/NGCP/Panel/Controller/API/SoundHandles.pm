@@ -42,7 +42,7 @@ sub query_params {
     ];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API::SoundHandles/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SoundHandles/;
 
 sub resource_name{
     return 'soundhandles';

@@ -3,7 +3,7 @@ use Sipwise::Base;
 
 use URI::Escape qw/uri_unescape/;
 
-use base 'Catalyst::View::TT';
+use parent 'Catalyst::View::TT';
 
 use NGCP::Panel::Utils::I18N;
 
