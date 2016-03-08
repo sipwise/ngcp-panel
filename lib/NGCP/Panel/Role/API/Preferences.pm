@@ -399,10 +399,11 @@ sub update_item {
     # make sure to not clear any internal prefs, except for those defined
     # in extra:
     my $extra = [qw/
-        rewrite_caller_in_dpid rewrite_caller_out_dpid 
-        rewrite_callee_in_dpid rewrite_callee_out_dpid 
+        rewrite_caller_in_dpid rewrite_caller_out_dpid
+        rewrite_callee_in_dpid rewrite_callee_out_dpid
+        rewrite_caller_lnp_dpid rewrite_callee_lnp_dpid
         ncos_id adm_ncos_id adm_cf_ncos_id
-        sound_set contract_sound_set 
+        sound_set contract_sound_set
         allowed_ips_grp man_allowed_ips_grp
     /];
     $full_rs = $full_rs->search({
@@ -431,7 +432,10 @@ sub update_item {
                     # no special treatment for *_sound_set deletion, as id is stored in right name
                     /^rewrite_rule_set$/ && do {
                         unless(exists $resource->{$k}) {
-                            foreach my $p(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
+                            foreach my $p(qw/
+                                caller_in_dpid callee_in_dpid
+                                caller_out_dpid callee_out_dpid
+                                caller_lnp_dpid callee_lnp_dpid/) {
                                 my $rs = $self->get_preference_rs($c, $type, $elem, 'rewrite_' . $p);
                                 next unless $rs; # unknown resource, just ignore
                                 $rs->delete;
@@ -526,7 +530,10 @@ sub update_item {
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown rewrite_rule_set '".$resource->{$pref}."'");
                         return;
                     }
-                    foreach my $k(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
+                    foreach my $k(qw/
+                                    caller_in_dpid callee_in_dpid
+                                    caller_out_dpid callee_out_dpid
+                                    caller_lnp_dpid callee_lnp_dpid/) {
                         my $rs = $self->get_preference_rs($c, $type, $elem, 'rewrite_'.$k);
                         if($rs->first) {
                             $rs->first->update({ value => $rwr_set->$k });

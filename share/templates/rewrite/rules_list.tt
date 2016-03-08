@@ -114,6 +114,26 @@
             </div>
         </div>
     </div>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_lnpcaller">[% c.loc('LNP Rewrite Rules for Caller') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_lnpcaller">
+            <div class="accordion-inner">
+                [% show_rules(m_rules = rules.caller_lnp) %]
+            </div>
+        </div>
+    </div>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_lnpcallee">[% c.loc('LNP Rewrite Rules for Callee') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_lnpcallee">
+            <div class="accordion-inner">
+                [% show_rules(m_rules = rules.callee_lnp) %]
+            </div>
+        </div>
+    </div>
 </div>
 
 [% IF edit_flag || create_flag -%]

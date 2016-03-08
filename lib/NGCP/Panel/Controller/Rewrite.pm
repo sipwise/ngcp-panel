@@ -340,8 +340,22 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
     },{
         order_by => { -asc => 'priority' },
     })->all;
+
+    my @caller_lnp = $rules_rs->search({
+        field => 'caller',
+        direction => 'lnp',
+    },{
+        order_by => { -asc => 'priority' },
+    })->all;
+
+    my @callee_lnp = $rules_rs->search({
+        field => 'callee',
+        direction => 'lnp',
+    },{
+        order_by => { -asc => 'priority' },
+    })->all;
     
-    for my $row (@caller_in, @callee_in, @caller_out, @callee_out) {
+    for my $row (@caller_in, @callee_in, @caller_out, @callee_out, @caller_lnp, @callee_lnp) {
         my $mp = $row->match_pattern;
         my $rp = $row->replace_pattern;
         $mp =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
@@ -356,6 +370,8 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
         callee_in  => \@callee_in,
         caller_out => \@caller_out,
         callee_out => \@callee_out,
+        caller_lnp => \@caller_lnp,
+        callee_lnp => \@callee_lnp,
     });
     return;
 }

@@ -168,7 +168,7 @@ sub create_preference_form {
     my $base_uri = $params{base_uri};
     my $edit_uri = $params{edit_uri};
     my $enums    = $params{enums};
-    
+
     my $aip_grp_rs;
     my $aip_group_id;
     my $man_aip_grp_rs;
@@ -740,8 +740,10 @@ sub set_rewrite_preferences {
     my $rwrs_result   = $params{rwrs_result};
     my $pref_rs       = $params{pref_rs};
 
-    for my $rules ("callee_in_dpid", "caller_in_dpid",
-                 "callee_out_dpid", "caller_out_dpid") {
+    for my $rules(qw/
+                    callee_in_dpid caller_in_dpid
+                    callee_out_dpid caller_out_dpid
+                    callee_lnp_dpid caller_lnp_dpid/) {
 
         my $attribute_id = $c->model('DB')->resultset('voip_preferences')
             ->find({attribute => "rewrite_$rules"})->id;
@@ -1018,8 +1020,9 @@ with all the rewrite_rule_sets. Also helper.rewrite_rule_sets needs to be
 set in the template (to be used by F<helpers/pref_table.tt>).
 
 On update 4 voip_*_preferences will be created with the attributes
-rewrite_callee_in_dpid, rewrite_caller_in_dpid, rewrite_callee_out_dpid
-and rewrite_caller_out_dpid (using the helper method set_rewrite_preferences).
+rewrite_callee_in_dpid, rewrite_caller_in_dpid, rewrite_callee_out_dpid,
+rewrite_caller_out_dpid, rewrite_callee_lnp_dpid, rewrite_caller_lnp_dpid
+(using the helper method set_rewrite_preferences).
 
 For compatibility with ossbss and the www_admin panel, no preference with
 the attribute rewrite_rule_set is created and caller_in_dpid is used to

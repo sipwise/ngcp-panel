@@ -1189,7 +1189,7 @@ sub apply_rewrite {
     my $sub_type = 'provisioning';
     my $rwr_rs = undef;
 
-    return $callee unless $dir =~ /^(caller_in|callee_in|caller_out|callee_out)$/;
+    return $callee unless $dir =~ /^(caller_in|callee_in|caller_out|callee_out|callee_lnp|caller_lnp)$/;
 
     my ($field, $direction) = split /_/, $dir;
     $dir = "rewrite_".$dir."_dpid";

@@ -46,10 +46,11 @@ has_field 'direction' => (
     options => [
         { label => 'Inbound', value => 'in'},
         { label => 'Outbound', value => 'out'},
+        { label => 'LNP', value => 'lnp'},
     ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Inbound (in) or Outbound (out).']
+        title => ['Inbound (in), Outbound (out) or LNP (lnp).']
     },
 );
 
