@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_cc734314",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-03-08T15:11:19Z",
+      "side": 1,
+      "message": "/^(caller|callee)_(in|out|lnp)$/",
+      "range": {
+        "startLine": 1192,
+        "startChar": 36,
+        "endLine": 1192,
+        "endChar": 101
+      },
+      "revId": "259d13dd22d30b4e800eae775fae31c6b3c9b184",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
