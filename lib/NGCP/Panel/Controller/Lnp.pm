@@ -37,6 +37,7 @@ sub list :Chained('/') :PathPart('lnp') :CaptureArgs(0) {
     $c->stash->{number_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", "search" => 1, "title" => $c->loc("#") },
         { name => "number", "search" => 1, "title" => $c->loc("Number") },
+        { name => "routing_number", "search" => 1, "title" => $c->loc("Routing Number") },
         { name => "lnp_provider.name", "search" => 1, "title" => $c->loc("Carrier") },
         { name => "start", "search" => 0, "title" => $c->loc("Start Date") },
         { name => "end", "search" => 0, "title" => $c->loc("End Date") },
@@ -250,7 +251,9 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
     my $form;
     my $params = $c->stash->{number};
     $params->{lnp_provider}{id} = delete $params->{lnp_provider_id};
+    $params->{start} //= '';
     $params->{start} =~ s/T\d{2}:\d{2}:\d{2}$//;
+    $params->{end} //= '';
     $params->{end} =~ s/T\d{2}:\d{2}:\d{2}$//;
     $params = merge($params, $c->session->{created_objects});
     $form = NGCP::Panel::Form::Lnp::Number->new(ctx => $c);
@@ -271,8 +274,17 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
             $schema->txn_do(sub {
                 $form->values->{lnp_provider_id} = $form->values->{lnp_provider}{id};
                 delete $form->values->{lnp_provider};
-                $form->values->{start} .= 'T00:00:00';
-                $form->values->{end} .= 'T23:59:59';
+                if(length $form->values->{start}) {
+                    $form->values->{start} .= 'T00:00:00';
+                } else {
+                    $form->values->{start} = undef;
+                }
+                if(length $form->values->{end}) {
+                    $form->values->{end} .= 'T23:59:59';
+                } else {
+                    $form->values->{end} = undef;
+                }
+                $form->values->{routing_number} = undef unless(length $form->values->{routing_number});
                 my $carrier = $c->model('DB')->resultset('lnp_providers')->find($form->values->{lnp_provider_id});
                 unless($carrier) {
                     NGCP::Panel::Utils::Message::error(
@@ -337,8 +349,16 @@ sub number_create :Chained('list') :PathPart('number_create') :Args(0) {
                 );
                 $c->flash(number_messages => delete $c->flash->{messages});
             }
-            $form->values->{start} .= 'T00:00:00';
-            $form->values->{end} .= 'T23:59:59';
+            if(length $form->values->{start}) {
+                $form->values->{start} .= 'T00:00:00';
+            } else {
+                delete $form->values->{start} ;
+            }
+            if(length $form->values->{end}) {
+                $form->values->{end} .= 'T23:59:59';
+            } else {
+                delete $form->values->{end};
+            }
             my $number = $carrier->lnp_numbers->create($form->values);
             $c->session->{created_objects}->{lnp_number} = { id => $number->id };
             NGCP::Panel::Utils::Message::info(
