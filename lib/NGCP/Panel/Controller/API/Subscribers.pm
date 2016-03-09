@@ -29,6 +29,15 @@ sub api_description {
         'XMPP and place and receive calls via SIP. A subscriber always belongs to a '.
         '<a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.';
 }
+sub documentation_sample {
+    return {
+        'create' => 'default',
+        'update' => { "domain_id" => 4,
+           "password" => "test",
+           "username" => "test",
+        },
+    };
+}
 
 sub query_params {
     return [
