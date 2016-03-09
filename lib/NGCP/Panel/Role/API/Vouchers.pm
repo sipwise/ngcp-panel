@@ -13,7 +13,7 @@ use NGCP::Panel::Form::Voucher::AdminAPI;
 use NGCP::Panel::Form::Voucher::ResellerAPI;
 use NGCP::Panel::Utils::Voucher;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('vouchers');

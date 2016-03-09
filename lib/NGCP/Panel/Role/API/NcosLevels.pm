@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::NCOS::ResellerLevelAPI;
 use NGCP::Panel::Form::NCOS::AdminLevelAPI;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('ncos_levels');

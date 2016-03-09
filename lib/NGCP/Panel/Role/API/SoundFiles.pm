@@ -31,7 +31,7 @@ sub transcode_data {
     return $resource;
 }
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voip_sound_files')->search(

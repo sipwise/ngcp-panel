@@ -13,7 +13,7 @@ use NGCP::Panel::Form::MaliciousCall::Admin;
 use NGCP::Panel::Form::MaliciousCall::Reseller;
 use Data::Dumper;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('malicious_calls');

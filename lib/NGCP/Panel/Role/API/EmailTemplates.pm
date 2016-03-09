@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::EmailTemplate::Admin;
 use NGCP::Panel::Form::EmailTemplate::Reseller;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('email_templates');

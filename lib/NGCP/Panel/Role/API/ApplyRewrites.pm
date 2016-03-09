@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Form::RewriteRule::ApplyAPI;
 
-sub item_rs {
+sub _item_rs {
 }
 
 sub get_form {

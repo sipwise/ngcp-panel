@@ -4,7 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use base 'NGCP::Panel::Role::API';
 
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voicemail_spool')->search({

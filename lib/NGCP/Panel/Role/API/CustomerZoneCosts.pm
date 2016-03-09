@@ -129,7 +129,7 @@ sub query_param_string {
     return $query_string;
 }
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);

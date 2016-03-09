@@ -16,7 +16,7 @@ use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Form::CallList::Subscriber;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('cdr');

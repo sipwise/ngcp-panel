@@ -46,7 +46,7 @@ sub _contract_rs {
     #return $item_rs;
 }
 
-sub item_rs {
+sub _item_rs {
     
     my $self = shift;
     return $self->_contract_rs(@_);

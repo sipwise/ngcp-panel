@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Subscriber::WebfaxAPI;
 use NGCP::Panel::Utils::Subscriber;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('fax_journal')->search({

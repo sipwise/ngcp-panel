@@ -80,7 +80,7 @@ sub resource_from_item {
     return \%resource;
 }
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
     my $item_rs = $c->model('DB')->resultset('autoprov_field_devices');
 

@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Subscriber::RegisteredAPI;
 use NGCP::Panel::Utils::Kamailio;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my @joins = ();;

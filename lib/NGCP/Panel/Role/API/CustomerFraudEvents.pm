@@ -9,7 +9,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::CustomerFraudEvents::Admin;
 use NGCP::Panel::Form::CustomerFraudEvents::Reseller;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('contract_fraud_events')->search(

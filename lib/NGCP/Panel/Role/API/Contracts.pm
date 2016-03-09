@@ -14,7 +14,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Form::Contract::ContractAPI qw();
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c, $include_terminated,$now) = @_;
 
     my $item_rs = NGCP::Panel::Utils::Contract::get_contract_rs(

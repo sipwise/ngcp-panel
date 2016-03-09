@@ -217,7 +217,7 @@ sub get_resource {
     return $resource;
 }
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c, $type) = @_;
     my $item_rs;
 
