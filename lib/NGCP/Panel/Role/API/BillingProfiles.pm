@@ -15,7 +15,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::BillingProfile::PeaktimeAPI qw();
 use NGCP::Panel::Utils::Billing qw();
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('billing_profiles');

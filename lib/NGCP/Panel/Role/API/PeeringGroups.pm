@@ -16,7 +16,7 @@ sub dispatch_path{return '/api/peeringgroups/';}
 sub relation{return 'http://purl.org/sipwise/ngcp-api/#rel-peeringgroups';}
 
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
     my $item_rs = $c->model('DB')->resultset('voip_peer_groups');
     return $item_rs;

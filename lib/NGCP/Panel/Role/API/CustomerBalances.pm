@@ -14,7 +14,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::DateTime;
 
-sub item_rs {
+sub _item_rs {
     
     my ($self, $c, $include_terminated,$now) = @_;
     

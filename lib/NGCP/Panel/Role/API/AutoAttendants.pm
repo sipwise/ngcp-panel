@@ -55,7 +55,7 @@ sub hal_from_item {
     return $hal;
 }
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs;

@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Peering::RuleAPI;
 use NGCP::Panel::Utils::Peering;
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
     my $item_rs = $c->model('DB')->resultset('voip_peer_rules');
     return $item_rs;

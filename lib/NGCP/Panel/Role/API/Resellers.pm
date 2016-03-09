@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Form::ResellerAPI qw();
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c) = @_;
 
     # no restriction needed, as only admins have access here?

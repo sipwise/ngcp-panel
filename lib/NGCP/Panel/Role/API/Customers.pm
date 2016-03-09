@@ -16,7 +16,7 @@ use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Form::Contract::CustomerAPI qw();
 
-sub item_rs {
+sub _item_rs {
     my ($self, $c, $now) = @_;
 
     # returns a contracts rs filtered based on role
