@@ -22,6 +22,7 @@ sub upload_csv {
     my %carriers = ();
     open(my $fh, '<:encoding(utf8)', $data);
     $start = time;
+    my $chunk_size = 2000;
     while ( my $line = $csv->getline($fh)) {
         ++$linenum;
         unless (scalar @{ $line } == scalar @cols) {
@@ -39,23 +40,26 @@ sub upload_csv {
             });
             $carriers{$k} = $carrier->id;
         }
+        $row->{start} ||= undef;
+        $row->{end} ||= undef;
         push @numbers, [$carriers{$k}, $row->{number}, $row->{start}, $row->{end}];
+
+        if($linenum % $chunk_size == 0) {
+            NGCP::Panel::Utils::MySQL::bulk_insert(
+                c => $c,
+                schema => $schema,
+                do_transaction => 0,
+                query => "INSERT INTO billing.lnp_numbers(lnp_provider_id, number, start, end)",
+                data => \@numbers,
+                chunk_size => $chunk_size
+            );
+            @numbers = ();
+        }
     }
     $end = time;
     close $fh;
-    $c->log->debug("Parsing LNP CSV took " . ($end - $start) . "s");
+    $c->log->debug("Parsing and uploading LNP CSV took " . ($end - $start) . "s");
 
-    $start = time;
-    NGCP::Panel::Utils::MySQL::bulk_insert(
-        c => $c,
-        schema => $schema,
-        do_transaction => 0,
-        query => "INSERT INTO billing.lnp_numbers(lnp_provider_id, number, start, end)",
-        data => \@numbers,
-        chunk_size => 2000
-    );
-    $end = time;
-    $c->log->debug("Bulk inserting LNP CSV took " . ($end - $start) . "s");
     
     my $text = $c->loc('LNP numbers successfully uploaded');
     if(@fails) {
