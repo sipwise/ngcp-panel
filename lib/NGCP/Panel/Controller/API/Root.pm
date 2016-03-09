@@ -158,6 +158,26 @@ sub GET : Allow {
             $sorting_cols = [$item_rs->result_source->columns];
         }
         my ($form_fields,$form_fields_upload) = $form ? $self->get_collection_properties($form) : ([],[]);
+        my $sample = {} ;
+        if($full_mod->can('documentation_sample')){
+            my $sample_orig = $full_mod->documentation_sample;
+            my $sample_process = sub{
+                my $s = shift;
+                $s = to_json($s, {pretty => 1}) =~ s/(^\s*{\s*)|(\s*}\s*$)//rg =~ s/\n   /\n/rg;
+                return $s;
+            };
+            my $no_process_sample = 0;
+            foreach my $action (qw/create update/){
+                if($sample_orig->{$action} && ($sample_orig->{$action} ne 'default')){
+                    $sample->{$action} = $sample_process->($sample_orig->{$action});
+                    $no_process_sample = 1;
+                }
+            }
+            if(!$no_process_sample){
+                $sample = $sample_process->($sample_orig);
+            }
+            $sample = { sample => $sample, sample_orig => $sample_orig };
+        }
         $c->stash->{collections}->{$rel} = {
             name => $mod, 
             description => $full_mod->api_description,
@@ -170,9 +190,7 @@ sub GET : Allow {
             sorting_cols => $sorting_cols,
             uri => $uri,
             properties => ( $full_mod->can('properties') ?  $full_mod->properties : {} ),#
-            sample => $full_mod->can('documentation_sample') # generate pretty json, but without outer brackets (this is tricky though)
-                ? to_json($full_mod->documentation_sample, {pretty => 1}) =~ s/(^\s*{\s*)|(\s*}\s*$)//rg =~ s/\n   /\n/rg
-                : undef,
+            %$sample,
             journal_resource_config => $journal_resource_config,
         };
         
