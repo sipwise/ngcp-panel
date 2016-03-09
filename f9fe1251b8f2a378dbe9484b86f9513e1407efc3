@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_9cbb2ac4",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerBalances.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-03-09T10:55:02Z",
+      "side": 1,
+      "message": "this has no effect, more specifically it creates this:\n\nGROUP BY `me`.`id`, `me`.`customer_id`, `me`.`contact_id`, `me`.`order_id`, `me`.`profile_package_id`, `me`.`status`, `me`.`external_id`, `me`.`send_invoice`, `me`.`modify_timestamp`, `me`.`create_timestamp`, `me`.`activate_timestamp`, `me`.`terminate_timestamp`, `me`.`max_subscribers`, `me`.`subscriber_email_template_id`, `me`.`passreset_email_template_id`, `me`.`invoice_email_template_id`, `me`.`invoice_template_id`, `me`.`vat_rate`, `me`.`add_vat`, `billing_mappings`.`id`, `billing_mappings`.`start_date`, `billing_mappings`.`product_id`",
+      "revId": "f9fe1251b8f2a378dbe9484b86f9513e1407efc3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
