@@ -826,6 +826,10 @@ msgstr "Внешний id, например представляемый вне�
 msgid "An external id, e.g. provided by a 3rd party provisioning."
 msgstr "Внешний id, например представляемый внешней системой автоконфигурации"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An optional routing number replacing the ported number."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Anonymous"
 msgstr ""
@@ -4652,8 +4656,8 @@ msgid "Inbound"
 msgstr "Входящий"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Inbound (in) or Outbound (out)."
-msgstr "Входящий (in) или Исходящий (out)."
+msgid "Inbound (in), Outbound (out) or LNP (lnp)."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Inbound Network-Provided Number"
@@ -4733,6 +4737,14 @@ msgstr ""
 msgid "Internal # for inbound caller rewrite rule set"
 msgstr ""
 "Внутренний набор правил перезаписи вызывающего (Caller) при входящем звонке"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal # for lnp callee rewrite rule set"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal # for lnp caller rewrite rule set"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal # for outbound callee rewrite rule set"
@@ -5210,7 +5222,12 @@ msgstr ""
 msgid "Keys add"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -5221,6 +5238,14 @@ msgstr ""
 
 #: share/templates/lnp/list.tt
 msgid "LNP Numbers"
+msgstr ""
+
+#: share/templates/rewrite/rules_list.tt
+msgid "LNP Rewrite Rules for Callee"
+msgstr ""
+
+#: share/templates/rewrite/rules_list.tt
+msgid "LNP Rewrite Rules for Caller"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -6030,6 +6055,7 @@ msgid "Number Pattern"
 msgstr "Шаблон Номера"
 
 #: share/templates/lnp/list.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Number Porting"
 msgstr ""
 
@@ -6395,7 +6421,8 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Шаблон"
 
@@ -7203,6 +7230,14 @@ msgstr "Тайм-аут вызова"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rm"
 msgstr "Rm"
+
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Routing Number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Routing number"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rtc networks"
@@ -9114,14 +9149,6 @@ msgid "The date until this voucher is valid."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The date when the porting gets active in format YYYY-MM-DD."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The date when the porting gets inactive again in format YYYY-MM-DD."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The datetime (YYYY-MM-DD HH:mm:ss) pointing the begin of the time range when "
 "top-ups will be considered 'timely'."
@@ -9222,10 +9249,8 @@ msgstr "Подробное название тарифной зоны (напр�
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The direction rule set to apply, one of caller_in, callee_in, caller_out, "
-"callee_out"
+"callee_out, caller_lnp, callee_lnp"
 msgstr ""
-"Направление применения набора правил, одно из caller_in, callee_in, "
-"caller_out, callee_out"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The domain id this subscriber belongs to."
@@ -9621,6 +9646,15 @@ msgid "The number to send the fax to"
 msgstr "Номер для отправки факса"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The optional date when the porting gets active in format YYYY-MM-DD."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The optional date when the porting gets inactive again in format YYYY-MM-DD."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The package this voucher belongs to."
 msgstr ""
 
@@ -9690,7 +9724,7 @@ msgid "The port of the X-3 interface."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The ported number"
+msgid "The ported number."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11041,6 +11075,10 @@ msgid "callee_in"
 msgstr "callee_in"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "callee_lnp"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "callee_out"
 msgstr "callee_out"
 
@@ -11051,6 +11089,10 @@ msgstr "вызываемый или звонящий."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "caller_in"
 msgstr "caller_in"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "caller_lnp"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "caller_out"
@@ -11531,6 +11573,16 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "да"
+
+#~ msgid "Inbound (in) or Outbound (out)."
+#~ msgstr "Входящий (in) или Исходящий (out)."
+
+#~ msgid ""
+#~ "The direction rule set to apply, one of caller_in, callee_in, caller_out, "
+#~ "callee_out"
+#~ msgstr ""
+#~ "Направление применения набора правил, одно из caller_in, callee_in, "
+#~ "caller_out, callee_out"
 
 #~ msgid "Failed to write fax data to temporary file: %1"
 #~ msgstr "Ошибка записи факса во временный файл: %1"

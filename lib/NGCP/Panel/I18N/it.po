@@ -829,6 +829,10 @@ msgid "An external id, e.g. provided by a 3rd party provisioning."
 msgstr ""
 "Un ID esterno, es. fornito da un sistema di provisioning di terze parti."
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An optional routing number replacing the ported number."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Anonymous"
 msgstr ""
@@ -4664,7 +4668,7 @@ msgid "Inbound"
 msgstr "In ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Inbound (in) or Outbound (out)."
+msgid "Inbound (in), Outbound (out) or LNP (lnp)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -4743,6 +4747,14 @@ msgstr "# interno per set di rewrite rules in ingresso per chiamato"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal # for inbound caller rewrite rule set"
 msgstr "# interno per set di rewrite rules in ingresso per chiamante"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal # for lnp callee rewrite rule set"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal # for lnp caller rewrite rule set"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal # for outbound callee rewrite rule set"
@@ -5218,7 +5230,12 @@ msgstr ""
 msgid "Keys add"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -5229,6 +5246,14 @@ msgstr ""
 
 #: share/templates/lnp/list.tt
 msgid "LNP Numbers"
+msgstr ""
+
+#: share/templates/rewrite/rules_list.tt
+msgid "LNP Rewrite Rules for Callee"
+msgstr ""
+
+#: share/templates/rewrite/rules_list.tt
+msgid "LNP Rewrite Rules for Caller"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -6036,6 +6061,7 @@ msgid "Number Pattern"
 msgstr "Pattern Numero"
 
 #: share/templates/lnp/list.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Number Porting"
 msgstr ""
 
@@ -6401,7 +6427,8 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr ""
 
@@ -7197,6 +7224,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rm"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Routing Number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Routing number"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9101,14 +9136,6 @@ msgid "The date until this voucher is valid."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The date when the porting gets active in format YYYY-MM-DD."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The date when the porting gets inactive again in format YYYY-MM-DD."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The datetime (YYYY-MM-DD HH:mm:ss) pointing the begin of the time range when "
 "top-ups will be considered 'timely'."
@@ -9205,7 +9232,7 @@ msgstr "Il nome completo della zona (es. US Numeri Cellulari)."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The direction rule set to apply, one of caller_in, callee_in, caller_out, "
-"callee_out"
+"callee_out, caller_lnp, callee_lnp"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9596,6 +9623,15 @@ msgid "The number to send the fax to"
 msgstr "Il numero a cui inviare il fax."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The optional date when the porting gets active in format YYYY-MM-DD."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The optional date when the porting gets inactive again in format YYYY-MM-DD."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The package this voucher belongs to."
 msgstr ""
 
@@ -9662,7 +9698,7 @@ msgid "The port of the X-3 interface."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The ported number"
+msgid "The ported number."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11023,6 +11059,10 @@ msgid "callee_in"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "callee_lnp"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "callee_out"
 msgstr ""
 
@@ -11032,6 +11072,10 @@ msgstr "chiamato o chiamante."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "caller_in"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "caller_lnp"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
