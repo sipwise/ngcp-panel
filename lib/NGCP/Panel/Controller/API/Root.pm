@@ -156,6 +156,25 @@ sub GET : Allow {
             $sorting_cols = [$item_rs->result_source->columns];
         }
         my ($form_fields,$form_fields_upload) = $form ? $self->get_collection_properties($form) : ([],[]);
+
+        my $documentation_sample = {} ;
+        my $documentation_sample_process = sub{
+            my $s = shift;
+            $s = to_json($s, {pretty => 1}) =~ s/(^\s*{\s*)|(\s*}\s*$)//rg =~ s/\n   /\n/rg;
+            return $s;
+        };
+        if($full_mod->can('documentation_sample')){
+            $documentation_sample->{sample_orig}->{default} = $full_mod->documentation_sample;
+            $documentation_sample->{sample}->{default} = $documentation_sample_process->($documentation_sample->{sample_orig}->{default});
+        }
+        foreach my $action (qw/create update/){
+            my $method = 'documentation_sample_'.$action;
+            if($full_mod->can($method)){
+                $documentation_sample->{sample_orig}->{$action} = $full_mod->$method;
+                $documentation_sample->{sample}->{$action} = $documentation_sample_process->($documentation_sample->{sample_orig}->{$action});
+            }
+        }
+
         $c->stash->{collections}->{$rel} = {
             name => $mod, 
             description => $full_mod->api_description,
@@ -168,9 +187,7 @@ sub GET : Allow {
             sorting_cols => $sorting_cols,
             uri => $uri,
             properties => ( $full_mod->can('properties') ?  $full_mod->properties : {} ),#
-            sample => $full_mod->can('documentation_sample') # generate pretty json, but without outer brackets (this is tricky though)
-                ? to_json($full_mod->documentation_sample, {pretty => 1}) =~ s/(^\s*{\s*)|(\s*}\s*$)//rg =~ s/\n   /\n/rg
-                : undef,
+            %$documentation_sample,
             journal_resource_config => $journal_resource_config,
         };
         
