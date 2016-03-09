@@ -88,7 +88,7 @@ sub resource_from_item {
                 sn => $n->sn,
             };
             next if($resource{primary_number} && 
-               is_deeply($resource{primary_number}, $alias));
+               compare($resource{primary_number}, $alias));
             push @{ $resource{alias_numbers} }, $alias;
         }
     }
