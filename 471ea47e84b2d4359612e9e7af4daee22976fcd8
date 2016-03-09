@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_b94de0c6",
+        "filename": "lib/NGCP/Panel/Form/RewriteRule/Rule.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-09T07:43:43Z",
+      "side": 1,
+      "message": "Do I understand right that this can be also written as:\n\n$_ \u003d \"\";\nreturn $_ \u003d~m/$re/;\n\n?\n\nMaybe local $_ //\u003d \"\"; \n\n?",
+      "range": {
+        "startLine": 126,
+        "startChar": 42,
+        "endLine": 126,
+        "endChar": 57
+      },
+      "revId": "471ea47e84b2d4359612e9e7af4daee22976fcd8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
