@@ -16,6 +16,24 @@
       "revId": "f9fe1251b8f2a378dbe9484b86f9513e1407efc3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_afda6e15",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerBalances.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-03-09T12:06:49Z",
+      "side": 1,
+      "message": "hm, tested it yesterday with a customer with 2 subs and .../?domain\u003dexample.org returned 2 rows, with \"distinct\" it returned only 1 row as intended. I will check that more intensively from the inside. GROUP BY is what \"distinct\" is supposed to add.",
+      "parentUuid": "fad0f9df_9cbb2ac4",
+      "revId": "f9fe1251b8f2a378dbe9484b86f9513e1407efc3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
