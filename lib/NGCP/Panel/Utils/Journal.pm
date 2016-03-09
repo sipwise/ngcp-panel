@@ -182,13 +182,7 @@ sub get_api_journal_query_params {
                     second => sub { },
                 },
             });
-    return ['journal_query_params',
-        is => 'ro',
-        isa => 'ArrayRef',
-        default => sub { #[ #sub {[
-            \@params
-        }, #], #]},
-    ];
+    return \@params;
 }
 
 sub handle_api_item_base_journal {
