@@ -12,34 +12,41 @@
 
 [% col.description %]
 
-[%-
-    #props_plain = '"id" : 1';
-    props_creation_first_flag = 1;
-    FOREACH p IN col.fields;
-        NEXT IF p.types.0 == 'null';
-        NEXT IF p.type_original == 'Upload';
-        IF props_creation_first_flag;
-            props_creation_first_flag = 0;
+[% MACRO get_props_plain BLOCK ;
+    IF col.sample && !( action && col.sample.${action} == 'default');
+        IF !action || !col.sample.${action};
+            props_plain = col.sample _ "\n";
         ELSE;
-            props_plain = props_plain _ ",\n";
+            props_plain = col.sample.${action} _ "\n";
         END;
-        IF p.types.0 == "Number";
-          val = 4;
-        ELSIF p.types.0 == "String";
-          val = '"test"';
-        ELSIF p.types.0 == "Boolean";
-          val = 'true';
-        ELSIF p.types.0 == "Array";
-          val = '[]';
-        ELSE;
-          val = '"missing"';
+    ELSE;
+        #props_plain = '"id" : 1';
+        props_creation_first_flag = 1;
+        FOREACH p IN col.fields;
+            NEXT IF p.types.0 == 'null';
+            NEXT IF p.type_original == 'Upload';
+            IF props_creation_first_flag;
+                props_creation_first_flag = 0;
+            ELSE;
+                props_plain = props_plain _ ",\n";
+            END;
+            IF p.types.0 == "Number";
+              val = 4;
+            ELSIF p.types.0 == "String";
+              val = '"test"';
+            ELSIF p.types.0 == "Boolean";
+              val = 'true';
+            ELSIF p.types.0 == "Array";
+              val = '[]';
+            ELSE;
+              val = '"missing"';
+            END;
+            props_plain = props_plain _ '"' _ p.name _ '" : ' _ val;
         END;
-        props_plain = props_plain _ '"' _ p.name _ '" : ' _ val;
+        props_plain = props_plain _ "\n";
     END;
-    props_plain = props_plain _ "\n";
-    IF col.sample;
-        props_plain = col.sample _ "\n";
-    END;
+    props_plain;
+END;
 %]
 [%-
     FOREACH p IN col.uploads;
@@ -129,7 +136,7 @@ Accept-Post: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/#re
     cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/?page=1&rows=1\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
-    props = props_plain | indent(12);
+    props = get_props_plain() | indent(12);
 
     request =
 'GET /api/' _ id _ '/?page=1&rows=1 HTTP/1.1';
@@ -197,7 +204,7 @@ Content-Type: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/"
     cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/1\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
-    props = props_plain | indent(3);
+    props = get_props_plain() | indent(3);
 
     request =
 'GET /api/' _ id _ '/1 HTTP/1.1';
@@ -233,31 +240,15 @@ Link: </api/' _ id _ '/1>; rel="item self"
 [% END -%]
 
 [% MACRO request_macro BLOCK ;
-    props = props_plain | collapse;
-    uploads_form = uploads_form | collapse;
-    content_type = col.config.action.${http_request}.ContentType.0 ? col.config.action.${http_request}.ContentType.0 : 'application/json';
-    IF content_type == 'multipart/form-data' ;
-        request_data_plain = '\'json={' _ props _ '}\' ';
-        props = props_plain | indent(6);
-        uploads_data = uploads_data | indent(3);
-        request_data = "{\n   json => {\n" _ props _ ( uploads_data ? "   }\n" _ uploads_data : "" ) _ "\n}";
-        request_form = ' --form ' _ request_data_plain _ uploads_form ;
-    ELSE;
-        request_data_plain = '\'{' _ props _ '}\'';
-        props = props_plain | indent(3);
-        uploads_data = uploads_data | indent(0);
-        request_data = "{\n" _ props _ ( uploads_data ? "\n" _ uploads_data : "" ) _ "}";
-        request_form = ' --data-binary ' _ request_data_plain _ uploads_form;
-    END;
-    
-
     IF http_request == 'POST' ;
+        action = 'create';
         response = 'HTTP/1.1 201 Created';
         IF !col.properties.asynchronous ; 
             response = response _ '
 Location: /api/' _ id _ '/2' ; 
         END ;
     ELSIF http_request == 'PUT' ;
+        action = 'update';
         item_id = 2;        
         request_headers = "\nPrefer: return=minimal";        
         request_headers_form = ' -H \'Prefer: return=minimal\'';        
@@ -265,6 +256,26 @@ Location: /api/' _ id _ '/2' ;
 'HTTP/1.1 204 No Content
 Preference-Applied: return=minimal';
     END;
+
+    props = get_props_plain( action => action) | collapse;
+    uploads_form = uploads_form | collapse;
+    content_type = col.config.action.${http_request}.ContentType.0 ? col.config.action.${http_request}.ContentType.0 : 'application/json';
+
+    IF content_type == 'multipart/form-data' ;
+        request_data_plain = '\'json={' _ props _ '}\' ';
+        props = get_props_plain( action => action) | indent(6);
+        uploads_data = uploads_data | indent(3);
+        request_data = "{\n   json => {\n" _ props _ ( uploads_data ? "   }\n" _ uploads_data : "" ) _ "\n}";
+        request_form = ' --form ' _ request_data_plain _ uploads_form ;
+    ELSE;
+        request_data_plain = '\'{' _ props _ '}\'';
+        props = get_props_plain( action => action) | indent(3);
+        uploads_data = uploads_data | indent(0);
+        request_data = "{\n" _ props _ ( uploads_data ? "\n" _ uploads_data : "" ) _ "}";
+        request_form = ' --data-binary ' _ request_data_plain _ uploads_form;
+    END;
+    
+
 
     cmd = 'curl -i -X ' _ http_request _ ' -H \'Connection: close\' -H \'Content-Type: ' _ content_type _ '\'' _ request_headers_form _ ' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/' _ item_id _ '\' ' _ request_form ;
     
@@ -303,6 +314,7 @@ END%]
 [%
     props = ''; rem = 0; rep = 0;
     FOREACH p IN col.fields;
+        NEXT IF col.sample_orig && col.sample_orig.update && ( col.sample_orig.update != 'default' ) && ( !col.sample_orig.update.${p.name} );
         type = p.types.0;
         IF type == 'null';
             NEXT IF rem >= 1;
@@ -365,6 +377,7 @@ END%]
 [%
     props = ''; rem = 0; rep = 0;
     FOREACH p IN col.fields;
+        NEXT IF col.sample_orig && col.sample_orig.update && ( col.sample_orig.update != 'default' ) && ( !col.sample_orig.update.${p.name} );
         type = p.types.0;
         IF type == 'null';
             NEXT IF rem >= 1;
