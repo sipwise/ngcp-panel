@@ -15,7 +15,7 @@ sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'upload_lnp' => ( 
     type => 'Upload',
-    max_size => '67108864', # 64MB
+    max_size => '2097152000', # 2GB
 );
 
 has_field 'purge_existing' => (

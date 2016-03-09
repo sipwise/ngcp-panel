@@ -35,9 +35,9 @@ sub list :Chained('/') :PathPart('lnp') :CaptureArgs(0) {
     my $number_rs = $c->model('DB')->resultset('lnp_numbers');
     $c->stash(number_rs => $number_rs);
     $c->stash->{number_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", "search" => 1, "title" => $c->loc("#") },
+        { name => "id", "search" => 0, "title" => $c->loc("#") },
         { name => "number", "search" => 1, "title" => $c->loc("Number") },
-        { name => "routing_number", "search" => 1, "title" => $c->loc("Routing Number") },
+        { name => "routing_number", "search" => 0, "title" => $c->loc("Routing Number") },
         { name => "lnp_provider.name", "search" => 1, "title" => $c->loc("Carrier") },
         { name => "start", "search" => 0, "title" => $c->loc("Start Date") },
         { name => "end", "search" => 0, "title" => $c->loc("End Date") },

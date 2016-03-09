@@ -46,6 +46,7 @@
     helper.messages = number_messages;
     helper.dt_columns = number_dt_columns;
     helper.length_change = 1;
+    helper.no_sort = 1;
 
     helper.close_target = number_close_target;
     helper.create_flag = number_create_flag;
