@@ -22,9 +22,6 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
 use base qw/NGCP::Panel::Role::Journal/;
 
-#fun - there is no one usage of the last_modified through all ngcp-panel sources. even in javascript
-#has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
-
 sub get_valid_post_data {
     my ($self, %params) = @_;
 
@@ -242,9 +239,6 @@ sub valid_media_type {
 sub require_body {
     my ($self, $c) = @_;
     return 1 if length $c->stash->{body};
-
-
-
     $self->error($c, HTTP_BAD_REQUEST, "This request is missing a message body.");
     return;
 }
@@ -656,8 +650,9 @@ sub delay_commit {
 
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
-    my %resource = $item->get_inflated_columns;
-    $resource{contract_id} = delete $resource{peering_contract_id};
+    my $resource = {$item->get_inflated_columns};
+    $resource = $self->process_hal_resource($c, $item, $resource, $form);
+    $links = $self->hal_links($c, $item, $resource, $form) // [];
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -669,6 +664,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            @$links
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -677,14 +673,18 @@ sub hal_from_item {
 
     $self->validate_form(
         c => $c,
-        resource => \%resource,
+        resource => $resource,
         form => $form,
         run => 0,
     );
 
-    $resource{id} = int($item->id);
-    $hal->resource({%resource});
+    $resource->{id} = int($item->id);
+    $hal->resource({%$resource});
     return $hal;
+}
+sub hal_links{
+    my($self, $c, $item, $resource, $form) = @_;
+    return [];
 }
 
 sub item_by_id {
@@ -703,21 +703,37 @@ sub update_item {
         resource => $resource,
     );
     last unless $resource;
-    $resource = $self->process_resource($c, $item, $old_resource, $resource, $form);
+    $resource = $self->process_form_resource($c, $item, $old_resource, $resource, $form);
     last unless $resource;
     last unless $self->check_duplicate($c, $item, $old_resource, $resource, $form);
     $item = $self->update($c, $item, $old_resource, $resource, $form);
     return $item;
 }
-sub process_resource{
+sub process_form_resource{
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
     return $resource;
 }
+sub process_hal_resource{
+    my($self, $c, $item, $resource, $form) = @_;
+    return $resource;
+}
+
 sub update{
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
     $item->update($resource);
     return $item;
 }
+
+#------ accessors --- move allthese staff to config maybe?
+sub dispatch_path{
+    my $self = shift;
+    return '/api/'.$self->resource_name.'/';
+}
+sub relation{
+    my $self = shift;
+    return 'http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name;
+}
+#------ /accessors --- move allthese staff to config maybe?
 
 1;
 # vim: set tabstop=4 expandtab:
