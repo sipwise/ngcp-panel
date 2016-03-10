@@ -29,7 +29,11 @@ my $test_machine = Test::Collection->new('name'=>'','ALLOW_EMPTY_COLLECTION' => 
 my $fake_data = Test::FakeData->new;
 $test_machine->clear_cache;
 my $remote_config = $test_machine->init_catalyst_config;
-print Dumper $remote_config ;
+if(! ( scalar keys $opt->{collections} ) ){
+    print Dumper $remote_config ;
+}else{
+    print Dumper @{$remote_config->{meta}->{'collections'}}{keys $opt->{collections}};
+}
 my $data = $remote_config->{meta}->{'collections'};
 
 
