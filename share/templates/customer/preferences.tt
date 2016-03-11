@@ -1,18 +1,29 @@
-[% site_config.title = c.loc('Customer #[_1] - Preferences',contract.id) -%]
+[%
+    IF location.id;
+        site_config.title = c.loc('Customer #[_1] - Preferences for Location "[_2]"',contract.id,location.name);
+    ELSE;
+        site_config.title = c.loc('Customer #[_1] - Preferences',contract.id);
+    END;
+%]
 
 [%
     helper.name = c.loc('Customer');
     helper.identifier = 'customer';
     helper.messages = messages;
-    
+
     helper.edit_preference = edit_preference;
     helper.preference = preference;
     helper.preference_meta = preference_meta;
     helper.preference_values = preference_values;
     helper.pref_groups = pref_groups;
     helper.form = form;
-    helper.base_uri = c.uri_for(contract.id,'preferences');
+    IF location.id;
+        helper.base_uri = c.uri_for(contract.id,'location',location.id,'preferences',);
+    ELSE;
+        helper.base_uri = c.uri_for(contract.id,'preferences');
+    END;
     helper.ncos_levels = ncos_levels;
+    helper.location_id = location_id;
 
     helper.top_buttons = [
         { name = c.loc('Back'), uri = c.uri_for(contract.id, 'details'), icon = 'icon-arrow-left' },

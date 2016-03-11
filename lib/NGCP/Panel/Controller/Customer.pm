@@ -16,6 +16,7 @@ use NGCP::Panel::Form::Customer::PbxGroupEdit;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
+use NGCP::Panel::Form::Customer::Location;
 use NGCP::Panel::Form::Contract::Customer;
 use NGCP::Panel::Form::Contract::ProductSelect;
 use NGCP::Panel::Form::Topup::Cash;
@@ -29,6 +30,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Voucher;
+use NGCP::Panel::Utils::ContractLocations qw();
 use Template;
 
 =head1 NAME
@@ -409,6 +411,11 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         ->count;
     }
 
+    my $locations = $contract_rs->first->voip_contract_locations->search_rs(
+                undef,
+                { join => 'voip_contract_location_blocks',
+                  group_by => 'me.id' });
+
     $c->stash->{invoice_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "serial", search => 1, title => $c->loc("Serial #") },
@@ -417,6 +424,13 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         { name => "amount_net", search => 1, title => $c->loc("Net Amount") },
         { name => "amount_vat", search => 1, title => $c->loc("VAT Amount") },
         { name => "amount_total", search => 1, title => $c->loc("Total Amount") },
+    ]);
+
+    $c->stash->{location_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "name", search => 1, title => $c->loc("Name") },
+        { name => "description", search => 1, title => $c->loc("Description") },
+        NGCP::Panel::Utils::ContractLocations::get_datatable_cols($c),
     ]);
 
     my ($is_timely,$timely_start,$timely_end) = NGCP::Panel::Utils::ProfilePackages::get_timely_range(
@@ -446,6 +460,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     #$c->stash(now => $now );
     $c->stash(billing_mappings_ordered_result => $billing_mappings_ordered );
     $c->stash(future_billing_mappings => $future_billing_mappings );
+    $c->stash(locations => $locations );
 }
 
 sub base_restricted :Chained('base') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -1908,13 +1923,225 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     );
 }
 
-sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
+sub location_ajax :Chained('base') :PathPart('location/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    NGCP::Panel::Utils::Datatables::process($c,
+        @{$c->stash}{qw(locations location_dt_columns)});
+    $c->detach( $c->view("JSON") );
+}
+
+sub location_create :Chained('base_restricted') :PathPart('location/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $contract = $c->stash->{contract};
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Customer::Location->new;
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                my $vcl = $c->model('DB')->resultset('voip_contract_locations')->create({
+                    contract_id => $c->stash->{contract}->id,
+                    name => $form->values->{name},
+                    description => $form->values->{description},
+                });
+                for my $block (@{$form->values->{blocks}}) {
+                    $vcl->create_related("voip_contract_location_blocks", $block);
+                }
+                $c->session->{created_objects}->{network} = { id => $vcl->id };
+            });
+
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc => $c->loc('Location successfully created'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create location.'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action("/customer/details", [$contract->id]),
+        create_flag => 1,
+        form => $form
+    );
+}
+
+sub location_base :Chained('base_restricted') :PathPart('location') :CaptureArgs(1) {
+    my ($self, $c, $location_id) = @_;
+
+    unless($location_id && is_int($location_id)) {
+        $location_id //= '';
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            data => { id => $location_id },
+            desc => $c->loc('Invalid location id detected'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    my $res = $c->stash->{contract}->voip_contract_locations->find($location_id);
+    unless(defined($res)) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            desc => $c->loc('Location does not exist'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    $c->stash(location => {$res->get_inflated_columns},
+              location_blocks => [ map { { $_->get_inflated_columns }; }
+                                    $res->voip_contract_location_blocks->all ],
+              location_result => $res);
+}
+
+sub location_edit :Chained('location_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $contract = $c->stash->{contract};
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Customer::Location->new(ctx => $c);
+    my $params = $c->stash->{location};
+    $params->{blocks} = $c->stash->{location_blocks};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+
+                $c->stash->{'location_result'}->update({
+                    name => $form->values->{name},
+                    description => $form->values->{description},
+                });
+                $c->stash->{'location_result'}->voip_contract_location_blocks->delete;
+                for my $block (@{$form->values->{blocks}}) {
+                    $c->stash->{'location_result'}->create_related("voip_contract_location_blocks", $block);
+                }
+            });
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc  => $c->loc('Location successfully updated'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update location'),
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
+
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action("/customer/details", [$contract->id]),
+        edit_flag => 1,
+        form => $form
+    );
+}
+
+sub location_delete :Chained('location_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $contract = $c->stash->{contract};
+    my $location = $c->stash->{location_result};
+
+    try {
+        $location->delete;
+        NGCP::Panel::Utils::Message::info(
+            c => $c,
+            data => $c->stash->{location},
+            desc => $c->loc('Location successfully deleted'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            data  => $c->stash->{location},
+            desc  => $c->loc('Failed to terminate location'),
+        );
+    };
+
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
+}
+
+sub location_preferences :Chained('location_base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
 
     $self->load_preference_list($c);
     $c->stash(template => 'customer/preferences.tt');
 }
 
+sub location_preferences_base :Chained('location_base') :PathPart('preferences') :CaptureArgs(1) {
+    my ($self, $c, $pref_id) = @_;
+
+    $self->preferences_base($c, $pref_id);
+}
+
+sub location_preferences_edit :Chained('location_preferences_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $contract = $c->stash->{contract};
+    my $location = $c->stash->{location};
+    my $pref_id  = $c->stash->{pref_id};
+
+    my $base_uri = $c->uri_for($contract->id,
+                               'location', $location->{id},
+                               'preferences');
+    my $edit_uri = $c->uri_for($contract->id,
+                               'location', $location->{id},
+                               'preferences', $pref_id,
+                               'edit');
+
+    $c->stash(edit_preference => 1);
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->search({contract_pref => 1})
+        ->all;
+
+    my $pref_rs = $contract->voip_contract_preferences(
+                    { location_id => $location->{id} }, undef);
+
+    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
+        pref_rs => $pref_rs,
+        enums   => \@enums,
+        base_uri => $base_uri,
+        edit_uri => $edit_uri,
+    );
+}
+
+sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
+    my ($self, $c) = @_;
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'customer/preferences.tt');
+}
 
 sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
     my ($self, $c, $pref_id) = @_;
@@ -1934,8 +2161,10 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         ->search({
             attribute_id => $pref_id,
             contract_id => $c->stash->{contract}->id,
+            location_id => $c->stash->{location}{id} || undef,
         });
     my @values = $c->stash->{preference}->get_column("value")->all;
+    $c->stash->{pref_id} = $pref_id;
     $c->stash->{preference_values} = \@values;
     $c->stash(template => 'customer/preferences.tt');
 }
@@ -1950,13 +2179,17 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         ->search({contract_pref => 1})
         ->all;
 
-    my $pref_rs = $c->stash->{contract}->voip_contract_preferences;
+    my $pref_rs = $c->stash->{contract}->voip_contract_preferences(
+                    { location_id => undef }, undef);
+
+    my $base_uri = $c->uri_for_action('/customer/preferences', [$c->stash->{contract}->id]);
+    my $edit_uri = $c->uri_for_action('/customer/preferences_edit', [$c->stash->{contract}->id]);
 
     NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
         pref_rs => $pref_rs,
         enums   => \@enums,
-        base_uri => $c->uri_for_action('/customer/preferences', [$c->stash->{contract}->id]),
-        edit_uri => $c->uri_for_action('/customer/preferences_edit', [$c->stash->{contract}->id]),
+        base_uri => $base_uri,
+        edit_uri => $edit_uri,
     );
 }
 
@@ -1967,6 +2200,8 @@ sub load_preference_list :Private {
         ->resultset('voip_preferences')
         ->search({
                 contract_id => $c->stash->{contract}->id,
+                'voip_contract_preferences.location_id' =>
+                    $c->stash->{location}{id} || undef,
             },{
                 prefetch => 'voip_contract_preferences',
             });
