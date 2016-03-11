@@ -630,6 +630,41 @@
         </div>
     </div>
 
+    [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") || c.user.roles == "admin" || c.user.roles == "reseller" -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_locations">[% c.loc('Locations') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_locations">
+            <div class="accordion-inner">
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/location_create', [ c.req.captures.0 ]) %]">
+                        <i class="icon-star"></i> [% c.loc('Create Location') %]
+                    </a>
+
+[%
+    helper.name = c.loc('Locations');
+    helper.identifier = 'locations';
+    helper.length_change = 1;
+    helper.dt_columns = location_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/customer/location_ajax', [ c.req.captures.0 ]);
+
+    helper.tmpuri = c.uri_for(contract.id, 'location');
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Preferences'), uri = helper.tmpuri _ "/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+%]
+
+            </div>
+        </div>
+    </div>
+    [% END -%]
+
 </div>
 
 [% IF create_flag == 1 -%]

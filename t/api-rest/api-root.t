@@ -65,6 +65,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         customerbalances => 1,
         customercontacts => 1,
         customerfraudevents => 1,
+        customerlocations => 1,
         customerpreferencedefs => 1,
         customerpreferences => 1,
         customers => 1,
