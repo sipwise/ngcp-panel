@@ -22,6 +22,30 @@
       "revId": "4438756017eb637da93008854b2cae71a471668b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_06eefcec",
+        "filename": "lib/NGCP/Panel/Controller/Dashboard.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-03-11T14:22:44Z",
+      "side": 1,
+      "message": "yes bute one can only call a method of those plugins here, no code injection possible.",
+      "parentUuid": "fad0f9df_a605b0c3",
+      "range": {
+        "startLine": 53,
+        "startChar": 35,
+        "endLine": 53,
+        "endChar": 40
+      },
+      "revId": "4438756017eb637da93008854b2cae71a471668b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
