@@ -11,7 +11,7 @@ use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::CustomerBalance;
+use NGCP::Panel::Form::CustomerBalanceAPI;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::DateTime;
 
@@ -32,7 +32,7 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CustomerBalance->new;
+    return NGCP::Panel::Form::CustomerBalanceAPI->new;
 }
 
 sub hal_from_item {
@@ -112,7 +112,11 @@ sub update_item {
     );
 
     $resource->{cash_balance} *= 100;
-    $item->update($resource);
+    # silently forbid to update cash_balance_interval and free_time_balance_interval
+    $item->update({
+            cash_balance => $resource->{cash_balance},
+            free_time_balance => $resource->{free_time_balance},
+        });
 
     return $item;
 }
