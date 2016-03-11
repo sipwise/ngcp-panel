@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_a605b0c3",
+        "filename": "lib/NGCP/Panel/Controller/Dashboard.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-03-11T14:17:25Z",
+      "side": 1,
+      "message": "Security!! I don\u0027t think using an unsafe parameter as a function name is a good idea. (even though I don\u0027t see any practical attack here, currently)",
+      "range": {
+        "startLine": 53,
+        "startChar": 35,
+        "endLine": 53,
+        "endChar": 40
+      },
+      "revId": "4438756017eb637da93008854b2cae71a471668b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
