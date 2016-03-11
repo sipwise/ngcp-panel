@@ -843,6 +843,7 @@ sub get_contract_preference_rs {
     my $c = $params{c};
     my $attribute = $params{attribute};
     my $contract = $params{contract};
+    my $location_id = $params{location_id} || undef;
 
     my $preference = $c->model('DB')->resultset('voip_preferences')->find({
             attribute => $attribute, 'contract_pref' => 1,
@@ -850,6 +851,7 @@ sub get_contract_preference_rs {
     return unless($preference);
     return $preference->voip_contract_preferences->search_rs({
             contract_id => $contract->id,
+            location_id => $location_id,
         });
 }
 

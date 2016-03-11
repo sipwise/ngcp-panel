@@ -73,7 +73,9 @@ sub get_resource {
     } elsif($type eq "peerings") {
         $prefs = $item->voip_peer_preferences;
     } elsif($type eq "contracts") {
-        $prefs = $item->voip_contract_preferences;
+        $prefs = $item->voip_contract_preferences->search(
+                    { location_id => $c->request->param('location_id') || undef },
+                    undef);
     }
     $prefs = $prefs->search({
     }, {
@@ -194,7 +196,6 @@ sub get_resource {
         } else {
             $resource->{$pref->attribute->attribute} = $value;
         }
-
     }
 
     if($type eq "domains") {
@@ -212,6 +213,8 @@ sub get_resource {
     } elsif($type eq "contracts") {
         $resource->{customer_id} = int($item->id);
         $resource->{id} = int($item->id);
+        $prefs->first ? $resource->{location_id} = $prefs->first->location_id
+                      : undef;
     }
 
     return $resource;
@@ -326,6 +329,7 @@ sub get_preference_rs {
             c => $c,
             attribute => $attr,
             contract => $elem,
+            location_id => $c->request->param('location_id') || undef,
         );
     }
     return $rs;
@@ -384,9 +388,13 @@ sub update_item {
     } elsif($type eq "contracts") {
         delete $resource->{customer_id};
         delete $old_resource->{customer_id};
+        delete $resource->{location_id};
+        delete $old_resource->{location_id};
         $accessor = $item->id;
         $elem = $item;
-        $full_rs = $elem->voip_contract_preferences;
+        $full_rs = $elem->voip_contract_preferences->search_rs(
+                    { location_id => $c->request->param('location_id') || undef },
+                    undef);
         $pref_type = 'contract_pref';
         $reseller_id = $item->contact->reseller_id;
     } else {
