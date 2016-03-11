@@ -25,7 +25,7 @@ sub instantiate_plugins {
             push @instances, { instance => $inst, name => $_ };
         }
     }
-    return sort {$a->{instance}->priority > $b->{instance}->priority} @instances;
+    return sort {$a->{instance}->priority <=> $b->{instance}->priority} @instances;
 }
 
 no Moose;
