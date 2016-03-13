@@ -505,7 +505,7 @@ sub update_item {
     }
 
     if($resource->{customer_id} && ( $resource->{customer_id} != $subscriber->contract->id ) ){
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer_id can't be changed.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "customer_id can't be changed.");
         return;
     }
 
