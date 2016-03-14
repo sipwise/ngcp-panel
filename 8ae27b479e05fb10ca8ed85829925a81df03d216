@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_543b4eeb",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-14T21:35:30Z",
+      "side": 1,
+      "message": "removed second import of the TryCatch",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 13
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_7440d256",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-14T21:35:30Z",
+      "side": 1,
+      "message": "added space before braces in all subs",
+      "range": {
+        "startLine": 11,
+        "startChar": 19,
+        "endLine": 11,
+        "endChar": 20
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_1425c6c1",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroupsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-14T21:35:30Z",
+      "side": 1,
+      "message": "use parent instead of base",
+      "range": {
+        "startLine": 3,
+        "startChar": 4,
+        "endLine": 3,
+        "endChar": 10
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_34224aba",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-14T21:35:30Z",
+      "side": 1,
+      "message": "changed to parent from base",
+      "range": {
+        "startLine": 4,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 10
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_d42e5ea5",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-14T21:35:30Z",
+      "side": 1,
+      "message": "removed old comments",
+      "range": {
+        "startLine": 731,
+        "startChar": 21,
+        "endLine": 731,
+        "endChar": 22
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_f42b6292",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-14T21:35:30Z",
+      "side": 1,
+      "message": "added newlines between subs",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 0
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_b41dda75",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-14T21:35:30Z",
+      "side": 1,
+      "message": "as for me - these blocks are here historically. We may review (and remove) these extra blocks later, I think. Now I would refer to move the code step by step, without additional improvements. It may help if something will go wrong, i think.",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 5
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_9418d685",
+        "filename": "lib/NGCP/Panel/Role/EntitiesItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-14T21:35:30Z",
+      "side": 1,
+      "message": "parent instead of base",
+      "range": {
+        "startLine": 3,
+        "startChar": 4,
+        "endLine": 3,
+        "endChar": 10
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
