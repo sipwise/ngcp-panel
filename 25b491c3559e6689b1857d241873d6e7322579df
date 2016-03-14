@@ -1,0 +1,203 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_540cae94",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "Probably \"reduced\" or \"reduction\"",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_74ec52c8",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "This modules is imported twice.",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_7403f273",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "Space before the brace for all subs?",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_942bf6ea",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringGroupsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "You use parent in the other module, but left the deprecated base here.",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_343c8a2f",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "Could be switched to use parent too?",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_b4307a57",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "Missing space between words.",
+      "range": {
+        "startLine": 727,
+        "startChar": 27,
+        "endLine": 727,
+        "endChar": 35
+      },
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_54358e44",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "Ditto.",
+      "range": {
+        "startLine": 736,
+        "startChar": 28,
+        "endLine": 736,
+        "endChar": 36
+      },
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_143f0627",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "Missing newlines between subs?",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_d4489ece",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "Why this code block?",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_f445a2b3",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "And this code block? Is this related to the guard above? And (w/o known exactly what it is doing) wouldn\u0027t it work as well when leaving the function scope? instead of the specific code block?",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_941216b3",
+        "filename": "lib/NGCP/Panel/Role/EntitiesItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-14T15:49:53Z",
+      "side": 1,
+      "message": "parent?",
+      "revId": "25b491c3559e6689b1857d241873d6e7322579df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
