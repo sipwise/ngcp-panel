@@ -1,3 +1,15 @@
+ngcp-panel (1.8.5.5+0~mr3.8.5.5) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [8bf404c] MT#14659 Move calls from subscribers master to separate interface
+
+  [ Rene Krenn ]
+  * [277915f] MT#18395 lazy load dashboard values
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Mar 2016 14:34:03 +0100
+
 ngcp-panel (1.8.5.4+0~mr3.8.5.4) unstable; urgency=medium
 
   [ Rene Krenn ]
