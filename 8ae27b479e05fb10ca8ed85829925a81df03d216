@@ -94,6 +94,23 @@
     },
     {
       "key": {
+        "uuid": "fad0f9df_6f731bb2",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-15T10:50:04Z",
+      "side": 1,
+      "message": "Missing space before braces.",
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_d42e5ea5",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 2
@@ -110,6 +127,46 @@
         "startChar": 21,
         "endLine": 731,
         "endChar": 22
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_0f684fb9",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-15T10:50:04Z",
+      "side": 1,
+      "message": "Missing space before brace, and missing newline between subs?",
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_2f6513e1",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-15T10:50:04Z",
+      "side": 1,
+      "message": "Trailing whitespace?",
+      "range": {
+        "startLine": 31,
+        "startChar": 64,
+        "endLine": 31,
+        "endChar": 65
       },
       "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
@@ -140,6 +197,40 @@
     },
     {
       "key": {
+        "uuid": "fad0f9df_afa023f5",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-15T10:50:04Z",
+      "side": 1,
+      "message": "Spaces before braces, here and in other subs below.",
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_8f9bdfc8",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-15T10:50:04Z",
+      "side": 1,
+      "message": "Missing newline between subs.",
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_b41dda75",
         "filename": "lib/NGCP/Panel/Role/Entities.pm",
         "patchSetId": 2
@@ -151,6 +242,30 @@
       "writtenOn": "2016-03-14T21:35:30Z",
       "side": 1,
       "message": "as for me - these blocks are here historically. We may review (and remove) these extra blocks later, I think. Now I would refer to move the code step by step, without additional improvements. It may help if something will go wrong, i think.",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 5
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_cf61e7d4",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-15T10:50:04Z",
+      "side": 1,
+      "message": "Sure, makes sense.",
+      "parentUuid": "fad0f9df_b41dda75",
       "range": {
         "startLine": 39,
         "startChar": 4,
@@ -179,6 +294,29 @@
         "startChar": 4,
         "endLine": 3,
         "endChar": 10
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_0f960f95",
+        "filename": "t/api-rest/api-all.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-15T10:50:04Z",
+      "side": 1,
+      "message": "Spacing issues here? :)",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 6
       },
       "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
