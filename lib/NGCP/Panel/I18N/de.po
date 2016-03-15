@@ -122,6 +122,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Customer.pm
+#: lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/Device.pm
@@ -784,6 +785,21 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"An array of location blocks, each containing the keys (base) \"ip\" address "
+"and an optional \"mask\" to specify the network portion (subnet prefix "
+"length)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"An array of location blocks, each containing the keys (base) \"ip\" address "
+"and an optional \"mask\" to specify the network portion (subnet prefix "
+"length). The specified blocks must not overlap and can uniformly contain "
+"either IPv6 addresses or IPv4 addresses."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "An array of objects with keys \"config\", \"connector\" and \"tag\" to "
 "create RTC networks for this reseller"
 msgstr ""
@@ -1039,6 +1055,7 @@ msgstr "Blockierte Benutzer"
 
 #: share/templates/widgets/admin_billing_overview.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/reseller_billing_overview.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Billing"
 msgstr "Verrechnung"
@@ -1319,8 +1336,8 @@ msgstr "Anruf-Ablauf für Call-ID %1"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
-#: share/templates/widgets/subscriber_cf_overview.tt
 msgid "Call Forward Busy"
 msgstr "Ruf-Weiterleitung bei Besetzt"
 
@@ -1355,8 +1372,8 @@ msgstr "Ruf-Weiterleitung konfiguriert"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
-#: share/templates/widgets/subscriber_cf_overview.tt
 msgid "Call Forward Timeout"
 msgstr "Ruf-Weiterleitung bei keiner Antwort"
 
@@ -1383,8 +1400,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
-#: share/templates/widgets/subscriber_cf_overview.tt
 msgid "Call Forward Unavailable"
 msgstr "Ruf-Weiterleitung bei nicht erreichbar"
 
@@ -1415,8 +1432,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
-#: share/templates/widgets/subscriber_cf_overview.tt
 msgid "Call Forward Unconditional"
 msgstr "Ruf-Weiterleitung immer"
 
@@ -1971,6 +1988,10 @@ msgstr "Vertrag existiert nicht"
 msgid "Contract does not exist for subscriber"
 msgstr "Vertrag zu diesem Subscriber existiert nicht"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Contract id"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Contract.pm
 msgid "Contract successfully changed!"
 msgstr "Vertrag erfolgreich geändert!"
@@ -2090,6 +2111,10 @@ msgstr ""
 
 #: share/templates/ncos/pattern_list.tt
 msgid "Create LNP Entry"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Create Location"
 msgstr ""
 
 #: share/templates/ncos/list.tt
@@ -2259,6 +2284,11 @@ msgstr "Kunde #%1"
 msgid "Customer #%1 - Preferences"
 msgstr "Kunde #%1 - Präferenzen"
 
+#. (contract.id,location.name)
+#: share/templates/customer/preferences.tt
+msgid "Customer #%1 - Preferences for Location \"%2\""
+msgstr ""
+
 #. ($contract->id)
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Customer #%1 successfully created"
@@ -2400,6 +2430,10 @@ msgid "Default Files"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Default LNP prefix"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Default Profile"
 msgstr "Vorgabe-Profil"
 
@@ -2414,9 +2448,17 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Defines a default LNP prefix which is written into CDRs if no LNP entry is "
+"found in the LNP database. This prefix is NOT usable for routing purposes "
+"like rewrite rules, only for CDR tagging."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/administrator/list.tt share/templates/billing/fees.tt
 #: share/templates/billing/peaktimes.tt share/templates/billing/zones.tt
 #: share/templates/contact/list.tt share/templates/customer/details.tt
+#: share/templates/customer/details.tt
 #: share/templates/customer/details.tt
 #: share/templates/customer/details.tt
 #: share/templates/customer/details.tt share/templates/device/list.tt
@@ -2491,6 +2533,7 @@ msgstr "Installierte Geräte"
 msgid "Deployed Devices"
 msgstr "Installierte Geräte"
 
+#: lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/NCOS.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm
 #: lib/NGCP/Panel/Controller/Peering.pm
@@ -3022,6 +3065,7 @@ msgstr "E164 Bereich hinzufügen"
 #: share/templates/customer/details.tt
 #: share/templates/customer/details.tt
 #: share/templates/customer/details.tt
+#: share/templates/customer/details.tt
 #: share/templates/customer/list.tt share/templates/device/list.tt
 #: share/templates/device/list.tt share/templates/device/list.tt
 #: share/templates/device/list.tt share/templates/emailtemplate/list.tt
@@ -3485,6 +3529,10 @@ msgstr ""
 msgid "Failed to create invoice."
 msgstr "Rechnung erstellen Fehlgeschlagen"
 
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Failed to create location."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Failed to create man_allowed_ip_grp"
 msgstr ""
@@ -3825,6 +3873,10 @@ msgstr ""
 msgid "Failed to terminate contract"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Failed to terminate location"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Failed to terminate reseller"
 msgstr ""
@@ -3952,6 +4004,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to update invoice template"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Failed to update location"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -4971,6 +5027,10 @@ msgstr ""
 msgid "Invalid lnp provider id detected!"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Invalid location id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Invalid mailtofax setting."
 msgstr ""
@@ -5225,8 +5285,7 @@ msgstr ""
 msgid "LNP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -5387,6 +5446,35 @@ msgstr ""
 #: share/templates/helpers/datatables.tt
 msgid "Loading..."
 msgstr "Lädt..."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Location Block"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Location Name"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Location does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Location successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Location successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Location successfully updated"
+msgstr ""
+
+#: share/templates/customer/details.tt
+#: share/templates/customer/details.tt
+msgid "Locations"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/customer/details.tt
@@ -5839,6 +5927,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Customer.pm
+#: lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
@@ -5882,6 +5971,10 @@ msgid "Name in Fax Header for Sendfax"
 msgstr "Name in Fax-Kopf für Sendfax"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Name of the location."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Nat"
 msgstr ""
 
@@ -5900,6 +5993,7 @@ msgid "Network"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/BillingNetworks.pm
+#: lib/NGCP/Panel/Utils/ContractLocations.pm
 msgid "Network Blocks"
 msgstr ""
 
@@ -6700,6 +6794,7 @@ msgstr ""
 msgid "Preference '"
 msgstr "Präferenz '"
 
+#: share/templates/customer/details.tt
 #: share/templates/customer/details.tt
 #: share/templates/customer/details.tt
 #: share/templates/customer/details.tt
@@ -7779,6 +7874,7 @@ msgstr "Sound Set für System-Prompts wie Fehler-Ansagen usw."
 
 #: share/templates/customer/details.tt share/templates/sound/list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/reseller_domain_overview.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Sound Sets"
 msgstr "Sound Sets"
@@ -8996,6 +9092,10 @@ msgid "The content type this config is served as."
 msgstr "Der Content-Type dieser Konfiguration."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The contract id this location belongs to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The contract this sound set belongs to. If set, the sound set becomes a "
 "customer sound set instead of a system sound set."
@@ -10103,6 +10203,10 @@ msgid "The unique name of the billing network."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The unique name of the location."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The unique name of the profile package."
 msgstr ""
 
@@ -11004,6 +11108,10 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "and"
+msgstr ""
+
+#: lib/NGCP/Panel/Widget/Plugin/SubscriberCallsOverview.pm
+msgid "anonymous"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
