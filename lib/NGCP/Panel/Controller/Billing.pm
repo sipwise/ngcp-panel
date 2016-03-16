@@ -664,6 +664,7 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
 
     my $zone_info = { $c->stash->{zone_result}->get_inflated_columns };
     try {
+        $c->stash->{zone_result}->billing_fees->delete_all;
         $c->stash->{zone_result}->delete;
         NGCP::Panel::Utils::Message::info(
             c => $c,
