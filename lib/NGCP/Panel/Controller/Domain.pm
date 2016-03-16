@@ -88,9 +88,8 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
     } else {
         $form = NGCP::Panel::Form::Domain::Reseller->new;
     }
-    my $params = {};
-    $params = merge($params, $c->session->{created_objects});
-    delete $params->{domain} if exists($params->{domain}{id});
+    my $params = { %{ $c->session->{created_objects} } };
+    delete $params->{domain} if exists $params->{domain};
     $form->process(
         posted => $posted,
         params => $c->request->params,
