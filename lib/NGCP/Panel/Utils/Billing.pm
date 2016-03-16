@@ -213,6 +213,10 @@ sub process_billing_fees{
         }
         my $row = {};
         @{$row}{@cols} = @fields;
+        unless($row->{zone}){
+            push @fails, $linenum;
+            next;            
+        }
         my $k = $row->{zone}.'__NGCP__'.$row->{zone_detail};
         unless(exists $zones{$k}) {
             my $zone = $profile->billing_zones->find_or_create({
