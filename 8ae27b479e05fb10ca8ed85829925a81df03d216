@@ -301,6 +301,30 @@
     },
     {
       "key": {
+        "uuid": "fad0f9df_3509e431",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-03-16T11:06:43Z",
+      "side": 1,
+      "message": "Sure, but these could be replaced with just \"return\"s no?",
+      "parentUuid": "fad0f9df_faeeebb3",
+      "range": {
+        "startLine": 111,
+        "startChar": 8,
+        "endLine": 111,
+        "endChar": 12
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_9418d685",
         "filename": "lib/NGCP/Panel/Role/EntitiesItem.pm",
         "patchSetId": 2
