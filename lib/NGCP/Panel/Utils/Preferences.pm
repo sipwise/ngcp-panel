@@ -968,6 +968,9 @@ sub api_preferences_defs{
                 push @{ $fields->{enum_values} }, $efields;
             }
         }
+        if ($pref->attribute =~ m/^(rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|sound_set|contract_sound_set)$/) {
+            $fields->{data_type} = string;
+        }
         $resource->{$pref->attribute} = $fields;
     }
     return $resource;
