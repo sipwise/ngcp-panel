@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_d592d8f5",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 972,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-03-16T10:45:43Z",
+      "side": 1,
+      "message": "is it really safe to just overwrite this, i.e. is sub api_preferences_defs used for def requests only?",
+      "range": {
+        "startLine": 972,
+        "startChar": 12,
+        "endLine": 972,
+        "endChar": 32
+      },
+      "revId": "5ed07c7943582d6bc959143972bace1171ead4c6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
