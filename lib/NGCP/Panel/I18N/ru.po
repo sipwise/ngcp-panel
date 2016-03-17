@@ -1313,6 +1313,14 @@ msgstr "CSS"
 msgid "Call Blockings"
 msgstr "Блокировка звонков"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Call Deflection allows a called endpoint to redirect the unanswered call to "
+"another destination during the call setup phase by sending 302 redirect "
+"message in ringing phase. Disabling the preference will make the platform "
+"ignore the redirect message."
+msgstr ""
+
 #: share/templates/subscriber/calllist.tt
 msgid "Call Details"
 msgstr ""
@@ -2422,7 +2430,7 @@ msgstr "По умолчанию"
 msgid "Default Files"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Default LNP prefix"
 msgstr ""
 
@@ -3216,6 +3224,10 @@ msgstr "Суффикс экстренных вызовов"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Apple/Google Mobile Push"
 msgstr "Включить Apple/Google Mobile Push"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable Call Deflection"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Peer Authentication"
@@ -4670,6 +4682,13 @@ msgid ""
 msgstr ""
 "Если активен, этот набор звуков будет использован для всех существующих и "
 "новых абонентов если другие наборы звуков не указаны для них."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"If enabled, an LNP lookup is performed for calls from this peer using the "
+"network-provided calling party number. The resulting LNP prefix is written "
+"to CDRs as source_lnp_prefix."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""

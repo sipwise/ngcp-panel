@@ -1024,6 +1024,10 @@ msgstr ""
 msgid "Call Blockings"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Call Deflection allows a called endpoint to redirect the unanswered call to another destination during the call setup phase by sending 302 redirect message in ringing phase. Disabling the preference will make the platform ignore the redirect message."
+msgstr ""
+
 #: share/templates/subscriber/calllist.tt
 msgid "Call Details"
 msgstr ""
@@ -1939,7 +1943,7 @@ msgstr ""
 msgid "Default Files"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Default LNP prefix"
 msgstr ""
 
@@ -2541,6 +2545,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Apple/Google Mobile Push"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable Call Deflection"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3902,6 +3910,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If active, this sound set is used for all existing and new subscribers if no specific sound set is specified for them"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, an LNP lookup is performed for calls from this peer using the network-provided calling party number. The resulting LNP prefix is written to CDRs as source_lnp_prefix."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
