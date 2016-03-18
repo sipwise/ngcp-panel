@@ -1,3 +1,12 @@
+ngcp-panel (1.8.5.6+0~mr3.8.5.6) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [b080e01] MT#17309 show interval values in customerbalances api
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 18 Mar 2016 10:31:38 +0100
+
 ngcp-panel (1.8.5.5+0~mr3.8.5.5) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
