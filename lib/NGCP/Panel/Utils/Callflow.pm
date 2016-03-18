@@ -4,6 +4,42 @@ use warnings;
 
 use NGCP::Panel::Utils::GD::Simple;
 
+sub get_packet_rs {
+    my ($schema, $callid, $config) = @_;
+
+    if ( $config->{callflow}{complex_callid_match} ) {
+        return $schema->resultset('packets')->search({
+                'message.call_id' => { regexp => "^$callid(.*(_pbx-1|_b2b-1))?\$" },
+            }, {
+                join => { message_packets => 'message' },
+            });
+    } else {
+        return $schema->resultset('packets')->search({
+                'message.call_id' => { -in => [ $callid, $callid.'_b2b-1', $callid.'_pbx-1' ] },
+            }, {
+                join => { message_packets => 'message' },
+            });
+    }
+}
+
+sub get_message_rs {
+    my ($schema, $callid, $config) = @_;
+
+    if ( $config->{callflow}{complex_callid_match} ) {
+        return $schema->resultset('messages')->search({
+                'me.call_id' => { regexp => "^$callid(.*(_pbx-1|_b2b-1))?\$" },
+            }, {
+                order_by => { -asc => 'timestamp' },
+            });
+    } else {
+        return $schema->resultset('messages')->search({
+                'me.call_id' => { -in => [ $callid, $callid.'_b2b-1', $callid.'_pbx-1' ] },
+            }, {
+                order_by => { -asc => 'timestamp' },
+            });
+    }
+}
+
 sub generate_pcap {
     my $packets = shift;
 

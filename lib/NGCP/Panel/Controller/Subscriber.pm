@@ -4114,11 +4114,8 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $packet_rs = $c->model('DB')->resultset('packets')->search({
-        'message.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
-    }, {
-        join => { message_packets => 'message' },
-    });
+    my $packet_rs = NGCP::Panel::Utils::Callflow::get_packet_rs(
+        $c->model('DB'), $cid, $c->config);
 
     my $packets = [ $packet_rs->all ];
     my $pcap = NGCP::Panel::Utils::Callflow::generate_pcap($packets);
@@ -4132,11 +4129,8 @@ sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $calls_rs = $c->model('DB')->resultset('messages')->search({
-        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
-    }, {
-        order_by => { -asc => 'timestamp' },
-    });
+    my $calls_rs = NGCP::Panel::Utils::Callflow::get_message_rs(
+        $c->model('DB'), $cid, $c->config);
 
     my $calls = [ $calls_rs->all ];
     my $png = NGCP::Panel::Utils::Callflow::generate_callmap_png($c, $calls);
@@ -4150,11 +4144,8 @@ sub get_callmap :Chained('callflow_base') :PathPart('callmap') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $calls_rs = $c->model('DB')->resultset('messages')->search({
-        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
-    }, {
-        order_by => { -asc => 'timestamp' },
-    });
+    my $calls_rs = NGCP::Panel::Utils::Callflow::get_message_rs(
+        $c->model('DB'), $cid, $c->config);
 
     my $calls = [ $calls_rs->all ];
     my $map = NGCP::Panel::Utils::Callflow::generate_callmap($c, $calls);
@@ -4169,12 +4160,9 @@ sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
     my ($self, $c, $packet_id) = @_;
     my $cid = $c->stash->{callid};
 
-    my $packet = $c->model('DB')->resultset('messages')->find({
-        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
-        'me.id' => $packet_id,
-    }, {
-        order_by => { -asc => 'timestamp' },
-    });
+    my $packet = NGCP::Panel::Utils::Callflow::get_message_rs(
+            $c->model('DB'), $cid, $c->config)
+        ->find({ 'me.id' => $packet_id });
 
     return unless($packet);
 
