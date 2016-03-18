@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dad5f5cf_914a3c54",
+        "filename": "t/api-rest/api-rtc-full.t",
+        "patchSetId": 11
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-03-18T13:32:14Z",
+      "side": 1,
+      "message": "low prob of collision, but i still prefer $t (especially when repeating test runs)",
+      "range": {
+        "startLine": 127,
+        "startChar": 27,
+        "endLine": 127,
+        "endChar": 43
+      },
+      "revId": "635c92a04d070e795cb4402195805b14d0b2086f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
