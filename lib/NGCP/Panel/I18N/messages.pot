@@ -1963,6 +1963,10 @@ msgstr ""
 msgid "Defines a default LNP prefix which is written into CDRs if no LNP entry is found in the LNP database. This prefix is NOT usable for routing purposes like rewrite rules, only for CDR tagging."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Defines whether the subscriber can still register and send/receive calls if Emergency Mode is enabled for the domain of the subscriber. If disabled, registrations and calls are blocked and dropped."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/administrator/list.tt share/templates/billing/fees.tt share/templates/billing/peaktimes.tt share/templates/billing/zones.tt share/templates/contact/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/emailtemplate/list.tt share/templates/helpers/datatables.tt share/templates/invoice/invoice_list.tt share/templates/invoice/template_list.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/maliciouscall/list.tt share/templates/ncos/list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/voicemail.tt share/templates/voucher/list.tt
 msgid "Delete"
 msgstr ""
@@ -2536,7 +2540,15 @@ msgid "Emergency CLI"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency Mode Enabled"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Prefix variable"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency Priorization"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3902,6 +3914,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Idle interval before connecting first caller in PBX Call Queue. By default it is 10 seconds"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If activated for this domain, subscribers not having the emergency_priorization flag set are no longer able to register and place calls except for emergency calls."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
