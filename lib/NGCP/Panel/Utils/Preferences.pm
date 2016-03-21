@@ -39,6 +39,7 @@ sub load_preference_list {
     my $prof_pref = $params{prof_pref};
     my $usr_pref = $params{usr_pref};
     my $contract_pref = $params{contract_pref};
+    my $contract_location_pref = $params{contract_location_pref};
     my $profile = $params{sub_profile};
 
     my $customer_view = $params{customer_view} // 0;
@@ -50,6 +51,9 @@ sub load_preference_list {
             $contract_pref ? ('voip_preferences.contract_pref' => 1,
                 -or => ['voip_preferences_enums.contract_pref' => 1,
                     'voip_preferences_enums.contract_pref' => undef]) : (),
+            $contract_location_pref ? ('voip_preferences.contract_location_pref' => 1,
+                -or => ['voip_preferences_enums.contract_location_pref' => 1,
+                    'voip_preferences_enums.contract_location_pref' => undef]) : (),
             $peer_pref ? ('voip_preferences.peer_pref' => 1,
                 -or => ['voip_preferences_enums.peer_pref' => 1,
                     'voip_preferences_enums.peer_pref' => undef]) : (),
@@ -846,7 +850,9 @@ sub get_contract_preference_rs {
     my $location_id = $params{location_id} || undef;
 
     my $preference = $c->model('DB')->resultset('voip_preferences')->find({
-            attribute => $attribute, 'contract_pref' => 1,
+            attribute => $attribute,
+            contract_pref => 1,
+            contract_location_pref => $location_id ? 1 : 0,
         });
     return unless($preference);
     return $preference->voip_contract_preferences->search_rs({
@@ -949,7 +955,7 @@ sub api_preferences_defs{
     for my $pref($preferences->all) {
         my $fields = { $pref->get_inflated_columns };
         # remove internal fields
-        for my $del(qw/type attribute expose_to_customer internal peer_pref usr_pref dom_pref contract_pref prof_pref voip_preference_groups_id id modify_timestamp/) {
+        for my $del(qw/type attribute expose_to_customer internal peer_pref usr_pref dom_pref contract_pref contract_location_pref prof_pref voip_preference_groups_id id modify_timestamp/) {
             delete $fields->{$del};
         }
         $fields->{max_occur} = int($fields->{max_occur});
@@ -961,7 +967,7 @@ sub api_preferences_defs{
             $fields->{enum_values} = [];
             foreach my $enum(@enums) {
                 my $efields = { $enum->get_inflated_columns };
-                for my $del(qw/id preference_id usr_pref prof_pref dom_pref peer_pref contract_pref/) {
+                for my $del(qw/id preference_id usr_pref prof_pref dom_pref peer_pref contract_pref contract_location_pref/) {
                     delete $efields->{$del};
                 }
                 $efields->{default_val} = JSON::Types::bool($efields->{default_val});

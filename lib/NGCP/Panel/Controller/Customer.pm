@@ -2122,7 +2122,7 @@ sub location_preferences_edit :Chained('location_preferences_base') :PathPart('e
 
     my @enums = $c->stash->{preference_meta}
         ->voip_preferences_enums
-        ->search({contract_pref => 1})
+        ->search({contract_pref => 1, contract_location_pref => 1})
         ->all;
 
     my $pref_rs = $contract->voip_contract_preferences(
@@ -2225,6 +2225,7 @@ sub load_preference_list :Private {
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         contract_pref => 1,
+        contract_location_pref => $c->stash->{location}{id} ? 1 : 0,
         customer_view => ($c->user->roles eq 'subscriberadmin' ? 1 : 0),
     );
 }
