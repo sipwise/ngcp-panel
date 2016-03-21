@@ -1,3 +1,152 @@
+ngcp-panel (1.13.0.0+0~mr4.4.0.0) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [638a4de] MT#16985 Use CentralDB schema for interceptions.
+  * [c6f5897] MT#16107 Provide HTTP firmware url.
+  * [88dd69e] MT#16107 Provide firmware.booturl in bootstrap
+  * [f9ce228] MT#16985 Rename CentralDB to RoDB
+  * [6ef3ad1] MT#16985 Fix disabling RUN_DAEMON
+  * [d609623] MT#16985 InterceptDB points to pair instead of RO
+  * [011622f] MT#16985 Use Moose in trunk for API
+  * [75045e1] MT#8725 Increase max firmware size to 128M
+  * [0562ab5] MT#17623 Reload dialplan cache on rwr changes
+  * [9887494] MT#17505 Link git paths to deb paths
+  * [e0f8002] MT#17641 Add admins resource to api
+  * [d8c9032] MT#17543 Drop call distribution graph from panel
+  * [7db7343] MT#17887 Properly update captagent on X1 PUT/PATCH
+  * [a579c89] MT#16777 Implement lnp rewrite rules.
+  * [e3873da] MT#16777 LNP adaptions and RWR fixes
+  * [362b571] MT#16777 Write chunks to db to not run out of mem
+
+  [ Victor Seva ]
+  * [18973d7] MT#16985 debian: disable daemon by default on upgrade too
+  * [d938afb] MT#16933 tools/generate_ssl_keys.sh: force days argument at x509
+  * [bd79f5f] MT#16985 debian: remove sites-enabled link to ngcp-panel config
+  * [c6b51a1] MT#17293 Switch Dockerfile files to use a sipwise-jessie image
+  * [7ebf28c] MT#17293 t/api-rest/Dockerfile: add release-trunk-jessie repo. fix c6b51a136c07
+  * [9527ed9] MT#15719 Fix source-is-missing lintian messages
+  * [56b5669] MT#18453 ngcp-panel: add missing sox dependency
+
+  [ Guillem Jover ]
+  * [0da5436] MT#16473 Convert debian/copyright to machine-readable format
+
+  [ Irina Peshinskaya ]
+  * [3b8dbc8] MT#15489 Use textfmt to prepare textfile with utf for hylafax
+  * [dd8d988] MT#7227 Just a comment about code decision
+  * [687c541] MT#15489 Fix faxes form fields description
+  * [ddf2bbf] MT#14477 Test faxes creation with text data field
+  * [1782648] MT#5349 Fix typo in profile preferences metadata
+  * [db2c16c] MT#15633 Unify preferences defs
+  * [21b9b96] MT#17199 Add user_agent field into subscriberregistrations GET output
+  * [5623471] MT#17137 Rewrite rules documentation enchancement
+  * [71118be] MT#10199 Fix typo in profiles preferences
+  * [81bb050] MT#15633 API for peering groups, servers, rules
+  * [36c08c6] MT#11731 Consider different content types for API actions
+  * [6c62894] MT#17415 Remove using experimental feature of the perl
+  * [bbfe673] MT#16983 Don't display pbxgroups and subscribers if there is no linked
+  * [9a5cd2f] MT#14659 Optimize aggregation and counts in datatables
+  * [0a446f8] MT#14659 Fix Datatables uninitialized value error
+  * [0a96490] MT#17727 Use http format for last-modified
+  * [f24dff7] MT#14659 Fix Datatables uninitialized value error
+  * [7a1565b] MT#15491 Adapt Panel to new NGCP::Fax fax server
+  * [0b077f3] MT#18407 Consider null in emailtemplate.reseller_id
+  * [0272c29] MT#17173 Remove Moose Roles from API
+  * [734ed9a] MT#18515 Check zone name against empty value on fees CSV upload
+  * [e2264a8] MT#17173 Fix forgotten journal_query_params
+  * [2120779] MT#18439 Fix API doc examples alignment
+  * [b0be8e2] MT#17495 Fix API doc for subscriber - no customer_id for update
+
+  [ Rene Krenn ]
+  * [a2aeb2b] MT#17201 reloading terminated contracts
+  * [ce8c0dd] MT#17247 float field precision given, but no size
+  * [ad37197] MT#17263 edit offpeak/onpeak using api
+  * [58a55b9] MT#16855 UNION ALL for panel UI call lists
+  * [22607ee] MT#13337 add subscriber lock level 5 ('ported')
+  * [c7b7d6a] MT#17855 fix customer and contract relaod
+  * [69cd569] MT#17855 terminating a contract by edit AND term. button
+  * [45b0f85] MT#16121 PUT /api/callforwards/id json-hal response broken
+  * [4438756] MT#18395 lazy load dashboard values
+  * [18766cc] MT#18395 widget sorting fix
+  * [935b5e0] MT#18515 delete fee entries with zone (UI)
+
+  [ Michael Prokop ]
+  * [9b95f35] MT#8075 Refresh Dockerfile + set DOCKER_NAME for *-source-tests
+  * [6980fd4] MT#17699 Bump Standards-Version to 3.9.7
+  * [4b9d291] MT#17699 Update source-is-missing lintian overwrites
+
+  [ Gerhard Jungwirth ]
+  * [ad0612a] MT#16985 update config-file for InterceptDB
+  * [81c4dde] MT#15883 implement rtc-reseller connection
+  * [7a7fb94] MT#15883 use expand param of rtc API
+  * [60d66f8] MT#16113 reduce l10n spam in commits
+  * [b62c3fd] MT#17473 fix repeatableJs regex
+  * [40ed685] MT#17487 remove the use of capture
+  * [029765d] MT#17473 allow single numbers in alias range field
+  * [cae2c0a] MT#17491 improve speeddials api documentation
+  * [93a3ef4] MT#17507 add better errors on peaktime edits
+  * [45115f5] MT#15269 fix some api tests, add test selection
+  * [3f2ac5c] MT#14675 fix local logging conf
+  * [a221ae2] MT#18089 replace is_deeply by Data::Compare in controller
+  * [e9580d2] MT#15883 implement rtcnetworks API
+  * [bb03c1f] MT#17173 fix item filtering in API
+  * [54dc4f5] MT#15269 remove obsolete dependencies in tests
+  * [9c9f333] MT#18089 replace is_deeply in Subscribers API Role
+  * [de6d947] MT#15883 rtc-sessions and account (subscribers)
+  * [b78b703] MT#18219 improve preference documentation for stringified relationships
+  * [0a154cd] MT#17617 fix domain prefill
+  * [635c92a] MT#15883 comx provide fully functioning test
+
+  [ Alexander Lutay ]
+  * [10aed03] MT#17465 Fix 'undefined subroutine is_int' for 'allowed_ips' adding missed NGCP::Panel::Utils::Generic
+  * [496aea8] MT#15269 Add REST API test support of Jenkins runner
+  * [8ab155a] MT#15269 Restore possibilit to trigger one/specific REST API test
+
+  [ Kirill Solomko ]
+  * [d5592b1] MT#14679 add mail2fax for GUI and API interfaces
+  * [5c54121] MT#16017 cleaned up Fax preferences
+  * [082eb9e] MT#14675 ossbss removal
+  * [847ed54] MT#18381 added API customer fraud events /customerfraudevents/
+  * [c28c419] MT#18381 fix reseller_id form field
+  * [c292207] MT#17801 added api_admin_system authentication method
+  * [be1942a] MT#18409 - /api/customerbalances add filter by domain
+  * [992ba6b] MT#18499 added customer multi locations feature
+  * [eec01ac] MT#18499 added customer location filter by contract_location_pref
+
+  [ Jenkins Git User ]
+  * [92d10d6] I18N dump: snapshot 2016-02-12 14:55:31 +0100
+  * [03209c4] I18N dump: snapshot 2016-02-13 01:13:59 +0100
+  * [78ba251] I18N dump: snapshot 2016-02-14 01:14:29 +0100
+  * [88323de] I18N dump: snapshot 2016-02-15 01:14:09 +0100
+  * [9c45dc6] I18N dump: snapshot 2016-02-16 01:13:47 +0100
+  * [3f862fd] I18N dump: snapshot 2016-02-20 01:13:32 +0100
+  * [c04c6ee] I18N dump: snapshot 2016-02-20 11:45:20 +0100
+  * [45fd15b] I18N dump: snapshot 2016-02-21 01:13:52 +0100
+  * [ad36e8a] I18N dump: snapshot 2016-02-22 01:13:44 +0100
+  * [d9644f8] I18N dump: snapshot 2016-02-24 01:21:59 +0100
+  * [214977a] I18N dump: snapshot 2016-02-25 01:14:19 +0100
+  * [93231df] I18N dump: snapshot 2016-02-26 01:22:13 +0100
+  * [9448386] I18N dump: snapshot 2016-02-27 01:13:27 +0100
+  * [3bdd84c] I18N dump: snapshot 2016-02-28 01:13:58 +0100
+  * [d44eb37] I18N dump: snapshot 2016-02-29 01:13:44 +0100
+  * [8c21db3] I18N dump: snapshot 2016-03-01 01:13:44 +0100
+  * [4b945a4] I18N dump: snapshot 2016-03-02 01:13:42 +0100
+  * [3d636a2] I18N dump: snapshot 2016-03-03 01:14:16 +0100
+  * [ece2d27] I18N dump: snapshot 2016-03-04 01:14:03 +0100
+  * [0b6e44c] I18N dump: snapshot 2016-03-05 01:14:52 +0100
+  * [1a04acf] I18N dump: snapshot 2016-03-07 01:14:11 +0100
+  * [19eba7f] I18N dump: snapshot 2016-03-08 01:13:43 +0100
+  * [102934a] I18N dump: snapshot 2016-03-09 01:13:50 +0100
+  * [6d8f3d0] I18N dump: snapshot 2016-03-15 15:50:03 +0100
+  * [22c989e] I18N dump: snapshot 2016-03-16 01:13:42 +0100
+  * [75efbd0] I18N dump: snapshot 2016-03-17 01:14:40 +0100
+  * [7d540ec] I18N dump: snapshot 2016-03-19 01:14:19 +0100
+  * [d4064fe] I18N dump: snapshot 2016-03-20 01:13:54 +0100
+  * [2d4bb1c] I18N dump: snapshot 2016-03-21 01:29:07 +0100
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Mar 2016 22:24:32 +0100
+
 ngcp-panel (1.12.0.0+0~mr4.3.0.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
