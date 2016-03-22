@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dad5f5cf_8b30c157",
+        "filename": "lib/NGCP/Panel/Form/Balance/CustomerBalanceAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-03-22T13:03:49Z",
+      "side": 1,
+      "message": "should i add \"(Read-only)\" here?",
+      "revId": "d73a73cdd3ab3a0657ecd6d5e2b6c23345339032",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
