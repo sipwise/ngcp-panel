@@ -34,6 +34,24 @@
       "revId": "d73a73cdd3ab3a0657ecd6d5e2b6c23345339032",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_8b7e81e3",
+        "filename": "lib/NGCP/Panel/Form/Balance/CustomerBalanceAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-03-22T13:09:15Z",
+      "side": 1,
+      "message": "but thats what I did in the original branch. You know, the fields get deleted when they are not in the form. I do prevent updates anyway.\n\nThis way, at least we have documentation",
+      "parentUuid": "dad5f5cf_4b1179ab",
+      "revId": "d73a73cdd3ab3a0657ecd6d5e2b6c23345339032",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
