@@ -278,6 +278,53 @@
     },
     {
       "key": {
+        "uuid": "dad5f5cf_306ee1ca",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-03-23T15:39:53Z",
+      "side": 1,
+      "message": "get is supposed to run under an txn as well, as any db access should (no matter if read only!).\nwe should rely on autocommit, and clearly want to know when our record snapshot starts.",
+      "parentUuid": "fad0f9df_cf61e7d4",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 5
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_90522d12",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-03-23T15:39:53Z",
+      "side": 1,
+      "message": "option to set the txn isolation level would be required here.",
+      "range": {
+        "startLine": 106,
+        "startChar": 4,
+        "endLine": 106,
+        "endChar": 5
+      },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_faeeebb3",
         "filename": "lib/NGCP/Panel/Role/Entities.pm",
         "patchSetId": 2
@@ -319,6 +366,23 @@
         "endLine": 111,
         "endChar": 12
       },
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_505cc525",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-03-23T15:39:53Z",
+      "side": 1,
+      "message": "and another option to inject multiple other txn\u0027s here",
       "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
