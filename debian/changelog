@@ -1,3 +1,16 @@
+ngcp-panel (1.11.1.11+0~mr4.2.1.11) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [102b943] MT#18515 Check zone name against empty value on fees CSV upload
+  * [9c6524d] MT#18439 Fix API doc examples alignment
+
+  [ Gerhard Jungwirth ]
+  * [24828d9] MT#17309 show interval values in customerbalances api
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 24 Mar 2016 23:06:29 +0100
+
 ngcp-panel (1.11.1.10+0~mr4.2.1.10) unstable; urgency=medium
 
   [ Rene Krenn ]
