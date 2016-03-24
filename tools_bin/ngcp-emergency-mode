@@ -1,0 +1,243 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use English;
+
+my $config_path = '/etc/ngcp-emergency-mode/ngcp-emergency-mode.conf';
+
+# required to use XMLDispatcher from ngcp-panel
+{
+    package DummyLogger;
+    use Moose;
+
+    sub debug {};
+    sub info {};
+    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
+    sub warn {};
+    sub error {};
+    sub fatal {};
+    1;
+}
+{
+    package DummyController;
+    use Moose;
+    has 'log' => (
+        is => 'rw',
+        isa => 'DummyLogger',
+        default => sub { return DummyLogger->new; }
+    );
+    1;
+}
+
+
+use Redis;
+use URI;
+use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::API::Client;
+use Config::Simple;
+use TryCatch;
+use Sys::Syslog qw(:standard :macros);
+use IO::Prompter;
+
+openlog($PROGRAM_NAME, "ndelay,pid", LOG_LOCAL0);
+
+sub DEBUG {
+    my ($msg) = @_;
+    # only log debug to syslog to not clutter console
+    syslog(LOG_DEBUG, $msg);
+}
+
+sub INFO {
+    my ($msg) = @_;
+    print $msg, "\n";
+    syslog(LOG_INFO, $msg);
+}
+
+sub ERROR {
+    my ($msg) = @_;
+    print STDERR $msg, "\n";
+    syslog(LOG_ERR, $msg);
+}
+
+my $mode = shift @ARGV;
+my @emergency_domains = @ARGV;
+unless(($mode eq "enable" || $mode eq "disable") && @emergency_domains) {
+    ERROR "Usage: $PROGRAM_NAME <enable|disable> <all|[domain1 domain2 ...]>";
+    exit 1;
+}
+DEBUG "Emergency mode '$mode' requested for domains " . join(", ", @emergency_domains);
+
+my $config = Config::Simple->new($config_path);
+my $enabled = $config->param('ENABLED');
+my @redis_hosts = split(/\s*,\s*/, $config->param('REDIS_IPS'));
+my $redis_port = $config->param('REDIS_PORT');
+my $redis_db = $config->param('REDIS_DB');
+
+unless($enabled) {
+    ERROR "Emergency mode is globally disabled in config.yml, aborting!";
+    exit 1;
+}
+
+DEBUG "Using redis db $redis_db on port $redis_port for hosts " . join(", ", @redis_hosts);
+
+my $client = new NGCP::API::Client;
+my $res = $client->request('GET', '/api/domains/');
+unless($res->is_success) {
+    ERROR "Failed to fetch domains from API, aborting!";
+    exit 1;
+}
+my $ngcp_domains = $res->as_hash->{_embedded}->{'ngcp:domains'};
+my %domain_names = map { ($_->{domain}, $_->{id}) } @{ $ngcp_domains };
+my %domain_ids = map { ($_->{id}, $_->{domain}) } @{ $ngcp_domains };
+my %emergency_domain_names = ();
+foreach my $dom(@emergency_domains) {
+    if($dom eq 'all') {
+        # use all domains
+        %emergency_domain_names = %domain_names;
+        last;
+    }
+    if(!exists $domain_names{$dom}) {
+        ERROR "Domain $dom does not exist, aborting!";
+        exit 1;
+    }
+    $emergency_domain_names{$dom} = $domain_names{$dom};
+}
+
+INFO "" . ($mode eq "enable" ? "A" : "Dea") . "ctivating emergency mode for domains " . join(", ", keys %emergency_domain_names);
+DEBUG "Waiting for user confirmation...";
+$res = prompt(-in => *STDIN, -prompt => 'Please confirm (yes/no): ');
+DEBUG "User entered '$res'";
+if($res ne "yes") {
+    INFO "Aborting emergency mode $mode by user request!";
+    exit 0;
+}
+
+foreach my $domid(values %emergency_domain_names) {
+    $res = $client->request('GET', '/api/domainpreferences/'.$domid);
+    unless($res->is_success) {
+        ERROR "Failed to fetch preferences for domain $domain_ids{$domid}, skipping!";
+        next;
+    }
+    my $prefs = $res->as_hash;
+    if($mode eq "enable" && exists $prefs->{emergency_mode_enabled} && $prefs->{emergency_mode_enabled} == 1) {
+        INFO "Emergency mode for domain $domain_ids{$domid} already active, skipping...";
+    } elsif($mode eq "disable" && (!exists $prefs->{emergency_mode_enabled} || $prefs->{emergency_mode_enabled} == 0)) {
+        INFO "Emergency mode for domain $domain_ids{$domid} already inactive, skipping...";
+    } else {
+        $prefs->{emergency_mode_enabled} = ($mode eq "enable" ? JSON::true : JSON::false);
+        $res = $client->request('PUT', '/api/domainpreferences/'.$domid, $prefs);
+        unless($res->is_success) {
+            ERROR "Failed to $mode emergency mode for domain $domain_ids{$domid}, skipping...";
+            next;
+        }
+    }
+}
+
+if($mode eq "disable") {
+    INFO "Emergency mode disabled.";
+    exit 0;
+}
+
+DEBUG "Tearing down non-emergency calls of activated domains...";
+
+foreach my $redis_host(@redis_hosts) {
+    DEBUG "Checking redis at $redis_host:$redis_port...";
+    my $redis;
+    try {
+        $redis = Redis->new(
+        server => "$redis_host:$redis_port",
+        cnx_timeout => 3,
+        read_timeout => 3,
+        on_connect => sub {
+            my ($redis) = @_;
+            $redis->select($redis_db);
+        });
+    } catch($e) {
+        DEBUG "Failed to connect to redis at $redis_host:$redis_port, skipping...";
+    }
+    next unless(defined $redis);
+
+    DEBUG "Fetching role of redis instance...";
+    my @role = $redis->role;
+    my $role = shift @role;
+    unless($role eq "master") {
+        DEBUG "Redis at $redis_host:$redis_port has role $role, skipping...";
+        next;
+    }
+
+    DEBUG "Processing call list on redis...";
+
+    my @tags = $redis->smembers('sems_calls');
+    my %priocalls = ();
+    my %nonpriocalls = ();
+    my %tag2cid = ();
+
+    foreach my $tag (@tags) {
+        my %call = $redis->hgetall($tag);
+
+        my $cid = $call{ci};
+        $cid =~ s/_b2b\-1//g;
+        $tag2cid{$tag} = $cid;
+
+        my $local_dom = URI->new($call{lp})->host;
+        my $remote_dom = URI->new($call{rp})->host;
+        if(exists $emergency_domain_names{$local_dom} || exists $emergency_domain_names{$remote_dom}) {
+            DEBUG "Call $cid with local domain $local_dom and remote domain $remote_dom is in emergency domain, checking prio...";
+
+            if($call{ru} =~ /;ep[ab]=yes/) {
+                if(exists $priocalls{$cid}) {
+                    push @{ $priocalls{$cid} }, $tag;
+                } else {
+                    $priocalls{$cid} = [ $tag ];
+                }
+                DEBUG "Call $cid has an emergency priorization leg on tag $tag...";
+            } else {
+                if(exists $nonpriocalls{$cid}) {
+                    push @{ $nonpriocalls{$cid} }, $tag;
+                } else {
+                    $nonpriocalls{$cid} = [ $tag ];
+                }
+                DEBUG "Call $cid has no emergency priorization leg on tag $tag...";
+            }
+        } else {
+            DEBUG "Call $cid local domain $local_dom or remote domain $remote_dom are not in emergency mode, skipping...";
+        }
+    }
+
+    my @nonpriotags = ();
+    foreach my $cid (keys %nonpriocalls) {
+        DEBUG "Cross checking call $cid for priorized tag...";
+        if(exists $priocalls{$cid}) {
+            DEBUG "Emergency call $cid found...";
+        } else {
+            DEBUG "Normal call $cid found...";
+            push @nonpriotags, @{ $nonpriocalls{$cid} };
+        }
+    }
+
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+    my $c = DummyController->new;
+    foreach my $tag(@nonpriotags) {
+        DEBUG "Tearing down normal call tag $tag for call id $tag2cid{$tag}...";
+        my @ret = $dispatcher->dispatch($c, "appserver", 1, 1, <<EOF);
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+  <methodName>di</methodName>
+  <params>
+    <param><value><string>sbc</string></value></param>
+    <param><value><string>postControlCmd</string></value></param>
+    <param><value><string>$tag</string></value></param>
+    <param><value><string>teardown</string></value></param>
+  </params>
+</methodCall>
+EOF
+
+        if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>(Accepted|Not found)</value># } @ret) {
+            DEBUG "Failed to dispatch teardown request: " . join(", ", @ret);
+        }
+    }
+}
+
+INFO "Emergency mode successfully activated";
+1;
+# vim: set tabstop=4 expandtab:
