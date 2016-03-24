@@ -2,6 +2,7 @@
     IF helper.dt_columns;
         helper.column_titles = [];
         helper.column_fields = [];
+        helper.column_sortable_map = {};
         FOR col IN helper.dt_columns;
             IF !col.accessor;
                 col.accessor = col.name;
@@ -10,6 +11,7 @@
             NEXT UNLESS col.title;
             helper.column_titles.push(col.title);
             helper.column_fields.push(col.accessor);
+            helper.column_sortable_map.${col.accessor} = (col.sortable.defined ? col.sortable : 1);
         END;
     END;
     backuri = c.req.uri;
@@ -66,9 +68,9 @@ $(document).ready(function() {
         },
         [% IF helper.column_sort -%]
             "aaSorting": [
-            [% 
+            [%
                 FOR f IN helper.column_fields;
-                    IF helper.column_sort == f; 
+                    IF helper.column_sort == f;
             -%]
                 [ [% loop.index %], "asc" ],
             [%
@@ -82,7 +84,7 @@ $(document).ready(function() {
         },
         "aoColumns": [
             [% FOREACH f IN helper.column_fields -%]
-            { 
+            {
                 "mData": "[% f %]",
                 "mRender": function ( data, type, full ) {
                     if(data == null)
@@ -91,9 +93,10 @@ $(document).ready(function() {
                         var renderCustom = [% custom_renderers.${f} -%];
                     [% ELSE -%]
                         var renderCustom = function(data, type, full) { return data; };
-                    [% END -%]                         
+                    [% END -%]
                     return String(renderCustom(data, type, full)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');//"
-                }
+                },
+                "bSortable": [% IF helper.column_sortable_map.${f} %] true [% ELSE %] false [% END %]
             },
             [% END -%]
             {   "mRender": function ( data, type, full ) {
@@ -113,7 +116,7 @@ $(document).ready(function() {
                            '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %][%IF button.onclick -%] onclick="[%button.onclick%]"[%END%][%IF button.tooltip -%] rel="tooltip" data-original-title="[%button.tooltip%]"[%END%] [% button.attributes %]>' +
                               '<i class="[% button.icon %]"></i> [% button.name %]' +
                             '</a>';
-                            
+
                       [% IF button.condition -%]
                         }
                       [% END -%]
@@ -291,4 +294,3 @@ $(document).ready(function() {
     helper.show_footer = 0;
  -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
-
