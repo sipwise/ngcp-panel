@@ -111,6 +111,11 @@ Description: Catalyst based application
 Package: ngcp-panel-tools
 Architecture: all
 Depends: curl,
+         libio-prompter-perl,
+         libmoose-perl,
+         libredis-perl,
+         libtrycatch-perl,
+         liburi-perl,
          openssl,
          ${misc:Depends},
          ${perl:Depends}
