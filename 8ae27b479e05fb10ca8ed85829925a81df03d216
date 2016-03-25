@@ -372,6 +372,23 @@
     },
     {
       "key": {
+        "uuid": "dad5f5cf_642587aa",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2016-03-25T10:53:06Z",
+      "side": 1,
+      "message": "Since we already change the whole behavior, please add Return: representation\u003dfull/minimal like we have it with PUT/PATCH, since it\u0027s always quite annoying to parse the newly created entity id from the Location header returned in 200 after POST.",
+      "revId": "8ae27b479e05fb10ca8ed85829925a81df03d216",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dad5f5cf_505cc525",
         "filename": "lib/NGCP/Panel/Role/Entities.pm",
         "patchSetId": 2
