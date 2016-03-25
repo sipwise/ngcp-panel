@@ -1672,6 +1672,10 @@ msgid "Cash Balance"
 msgstr "Кассовый остаток"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Cash Balance (Interval)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/customer/details.tt
 msgid "Cash balance"
 msgstr ""
@@ -5327,8 +5331,7 @@ msgstr ""
 msgid "LNP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -9258,7 +9261,19 @@ msgstr ""
 "Символ или ISO код валюты, для счетов-фактур и показа на веб интерфейсе."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The current cash balance of the customer in EUR/USD/etc for the current "
+"interval (Read-only)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The current cash balance of the customer in EUR/USD/etc."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The current free-time balance of the customer for the current interval in "
+"seconds (Read-only)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
