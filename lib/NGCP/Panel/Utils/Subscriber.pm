@@ -391,16 +391,18 @@ sub update_preferences {
 sub get_pbx_subscribers_rs{
     my %params = @_;
 
-    my $c           = $params{c};
-    my $schema      = $params{schema} // $c->model('DB');
-    my $ids         = $params{ids} // [];
+    my $c             = $params{c};
+    my $schema        = $params{schema} // $c->model('DB');
+    my $ids           = $params{ids} // [];
+    my $sync_with_ids = $params{sync_with_ids} // 0;
+
     my $customer_id = $params{customer_id} // 0;
     my $is_group    = $params{is_group};
 
     my $rs = $schema->resultset('voip_subscribers')->search_rs(
         {
             'status' => { '!=' => 'terminated' },
-            @$ids ? ( 'me.id' => { -in => $ids } ) : (),
+            (@$ids || $sync_with_ids) ? ( 'me.id' => { -in => $ids } ) : (),
             $customer_id ? ( 'contract_id' => $customer_id ) : (),
             $is_group ? ( 'provisioning_voip_subscriber.is_pbx_group' => $is_group ) : (),
         },{
@@ -410,48 +412,49 @@ sub get_pbx_subscribers_rs{
     return $rs;
 }
 #the method named "item" as it can return both groups or groups members
-sub get_pbx_subscribers_by_ids{
+sub get_pbx_subscribers_ordered_by_ids{
     my %params = @_;
 
-    my $c           = $params{c};
-    my $schema      = $params{schema} // $c->model('DB');
-    my $ids         = $params{ids} // [];
-    my $customer_id = $params{customer_id} // 0;
-    my $is_group    = $params{is_group};
-
-    my $pbx_subscribers_rs = get_pbx_subscribers_rs(@_);
+    my $ids           = $params{ids} // [];
+    my $sync_with_ids = $params{sync_with_ids} // 0;
 
     my (@items,@absent_items_ids);
 
-    @items = $pbx_subscribers_rs->all();
+    if(!$sync_with_ids || ($ids && ( 'ARRAY' eq ref $ids ) && @$ids)){
+        my $c           = $params{c};
+        my $schema      = $params{schema} // $c->model('DB');
+        my $customer_id = $params{customer_id} // 0;
+        my $is_group    = $params{is_group};
 
-    my %items_ids_exists =  map{ $_->id => 0 } @items;
+        my $pbx_subscribers_rs = get_pbx_subscribers_rs(@_);
+        @items = $pbx_subscribers_rs->all();
+        my %items_ids_exists =  map{ $_->id => 0 } @items;
 
-    if(@$ids){
-        my $order_hash = { %items_ids_exists };
-        @$order_hash{@$ids} = (1..$#$ids+1);
-        @items = sort { $order_hash->{$a->id} <=> $order_hash->{$b->id} } @items;
+        if(@$ids){
+            my $order_hash = { %items_ids_exists };
+            @$order_hash{@$ids} = (1..$#$ids+1);
+            @items = sort { $order_hash->{$a->id} <=> $order_hash->{$b->id} } @items;
+        }
+        if($#items < $#$ids){
+            @absent_items_ids = grep { !exists $items_ids_exists{$_} } @{$params{ids}};
+        }
     }
-
-    if($#items < $#$ids){
-        @absent_items_ids = grep { !exists $items_ids_exists{$_} } @{$params{ids}};
-    }
-
     return wantarray ? (\@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef )) : \@items;
 }
 sub get_subscriber_pbx_items{
     my %params = @_;
 
-    my $c          = $params{c};
-    my $schema     = $params{schema} // $c->model('DB');
-    my $subscriber = $params{subscriber};
-
-    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
-    my $items_are_groups = !($prov_subscriber->is_pbx_group);
     my $ids = get_subscriber_pbx_items_ids(@_) // [];
     my $items = [];
+
     if(@$ids){
-        $items = get_pbx_subscribers_by_ids(
+        my $c          = $params{c};
+        my $schema     = $params{schema} // $c->model('DB');
+        my $subscriber = $params{subscriber};
+        my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        my $items_are_groups = !($prov_subscriber->is_pbx_group);
+        
+        $items = get_pbx_subscribers_ordered_by_ids(
             c           => $c,
             schema      => $schema,
             customer_id => $subscriber->contract->id ,
@@ -496,14 +499,14 @@ sub manage_pbx_groups{
     my $subscriber      = $params{subscriber};
     my $customer        = $params{customer} // $subscriber->contract;
 
-    my $groups       = $params{groups} // ( @$group_ids ? get_pbx_subscribers_by_ids(
+    my $groups       = $params{groups} // ( @$group_ids ? get_pbx_subscribers_ordered_by_ids(
         c           => $c,
         schema      => $schema,
         ids         => $group_ids,
         customer_id => $customer->id,
         is_group    => 1,
     ) : [] );
-    my $groupmembers = $params{groupmembers} // ( @$groupmember_ids ? get_pbx_subscribers_by_ids(
+    my $groupmembers = $params{groupmembers} // ( @$groupmember_ids ? get_pbx_subscribers_ordered_by_ids(
         c           => $c,
         schema      => $schema,
         ids         => $groupmember_ids,
