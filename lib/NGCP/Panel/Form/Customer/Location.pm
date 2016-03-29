@@ -106,7 +106,7 @@ has_field 'blocks.rm' => (
 has_field 'blocks_add' => (
     type => 'AddElement',
     repeatable => 'blocks',
-    value => 'Add another billing network block',
+    value => 'Add another location block',
     element_class => [qw/btn btn-primary pull-right/],
 );
 
