@@ -53,7 +53,6 @@ $test_machine->form_data_item( );
 ##$test_machine->check_bundle();
 ##$test_machine->check_get2put();
 #$test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
-
 my $remote_config = $test_machine->init_catalyst_config;
 #-------  MT#15441
 {
