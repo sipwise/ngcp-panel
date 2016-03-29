@@ -825,6 +825,7 @@ sub get_item_post_content{
 sub check_item_post{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $content = $self->get_item_post_content($data_cb, $data_in, $data_cb_data);
+    #print Dumper $content;
     my ($res,$rescontent,$req) = $self->request_post($content);#,$uri,$req
     return wantarray ? ($res,$rescontent,$req,$content) : $res;
 };
@@ -834,22 +835,33 @@ sub check_create_correct{
         $self->clear_data_created;
     }
     $self->DATA_CREATED->{ALL} //= {};
+    my @created = ();
     for(my $i = 1; $i <= $number; ++$i) {
-        my ($res, $content, $req) = $self->check_item_post( $uniquizer_cb , undef, { i => $i } );
+        my $created_info={};
+        my ($res, $content, $req, $content_post) = $self->check_item_post( $uniquizer_cb , undef, { i => $i } );
         $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
         my $location = $res->header('Location');
         if($location){
             #some interfaces (e.g. subscribers) don't provide hal after creation - is it correct, by the way?
+            my $get ={};
             if(!$content){
-                my($res_get,$content_get,$content_req) = $self->check_item_get($location,"no object returned after POST");
-                if($content_get){
-                    $content = $content_get;
-                }
+                @$get{qw/res_get content_get req_get/} = $self->check_item_get($location,"no object returned after POST");
             }
-            $self->DATA_CREATED->{ALL}->{$location} = { num => $i, content => $content, res => $res, req => $req, location => $location};
+            $created_info = { 
+                num => $i, 
+                content => $content ? $content : $get->{content_get}, 
+                res => $res, 
+                req => $req, 
+                location => $location, 
+                content_post => $content_post,
+                %$get,
+            };
+            push @created, $created_info;
+            $self->DATA_CREATED->{ALL}->{$location} = $created_info;
             $self->DATA_CREATED->{FIRST} = $location unless $self->DATA_CREATED->{FIRST};
         }
     }
+    return \@created;
 }
 
 sub clear_test_data_all{
@@ -898,7 +910,7 @@ sub check_put2get{
     $get_in->{uri} //= $put_in->{uri};
     $put_in->{uri} //= $get_in->{uri};
     $get_out->{uri} = $get_in->{uri};
-
+    $put_in->{data_in} //=  $put_in->{content};
     $put_out->{content_in} = $self->process_data($put_in->{data_cb}, $put_in->{data_in});
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
     $self->http_code_msg(200, "check_put2get: check put successful",$put_out->{response}, $put_out->{content});
@@ -906,14 +918,18 @@ sub check_put2get{
     @{$get_out}{qw/response content request/} = $self->check_item_get($get_out->{uri});
     delete $get_out->{content}->{_links};
     delete $get_out->{content}->{_embedded};
+    delete $put_out->{content_in}->{_links};
+    delete $put_out->{content_in}->{_embedded};
     my $item_id = delete $get_out->{content}->{id};
+    my $item_id_in = delete $put_out->{content_in}->{id};
     if('CODE' eq ref $check_cb_or_switch){
         $check_cb_or_switch->($put_out,$get_out);
     }
     if(!$check_cb_or_switch || 'CODE' eq ref $check_cb_or_switch){
-        is_deeply($put_out->{content_in}, $get_out->{content}, "check_put2get: check PUTed item against GETed item");
+        is_deeply($get_out->{content}, $put_out->{content_in}, "$self->{name}: check_put2get: check PUTed item against GETed item");
     }
     $get_out->{content}->{id} = $item_id;
+    $put_out->{content_in}->{id} = $item_id_in;
     return ($put_out,$get_out);
 }
 

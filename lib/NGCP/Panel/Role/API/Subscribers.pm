@@ -366,13 +366,14 @@ sub prepare_resource {
                         return;
                     }
                     my $absent_ids;
-                    ($groups,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_by_ids(
-                        c           => $c,
-                        schema      => $schema,
-                        ids         => $resource->{pbx_group_ids},
-                        customer_id => $resource->{customer_id},
-                        is_group    => 1,
-                    );
+                    ($groups,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_ordered_by_ids(
+                            c           => $c,
+                            schema      => $schema,
+                            ids         => $resource->{pbx_group_ids},
+                            customer_id => $resource->{customer_id},
+                            is_group    => 1,
+                            sync_with_ids => 1,
+                        );
                     if($absent_ids){
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '".$absent_ids->[0]."' in pbx_group_ids, does not exist for this customer.");
                         return;                
@@ -388,13 +389,14 @@ sub prepare_resource {
                         return;
                     }
                     my $absent_ids;
-                    ($groupmembers,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_by_ids(
-                        c           => $c,
-                        schema      => $schema,
-                        ids         => $resource->{pbx_groupmember_ids},
-                        customer_id => $resource->{customer_id},
-                        is_group    => 0,
-                    );
+                    ($groupmembers,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_ordered_by_ids(
+                        c            => $c,
+                        schema       => $schema,
+                        ids          => $resource->{pbx_groupmember_ids},
+                        customer_id  => $resource->{customer_id},
+                        is_group     => 0,
+                        sync_with_ids => 1,
+                    ) ;
                     if($absent_ids){
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '".$absent_ids->[0]."' in pbx_groupmember_ids, does not exist for this customer.");
                         return;
