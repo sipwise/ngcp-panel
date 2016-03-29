@@ -1,3 +1,12 @@
+ngcp-panel (1.11.1.12+0~mr4.2.1.12) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [403f1b2] MT#18699 control if datatable columns can be sorted
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 29 Mar 2016 12:47:44 +0200
+
 ngcp-panel (1.11.1.11+0~mr4.2.1.11) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
