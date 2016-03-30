@@ -5,6 +5,18 @@ use warnings;
 use Text::CSV_XS;
 use NGCP::Panel::Utils::MySQL;
 
+sub _insert_batch {
+    my ($c, $schema, $numbers, $chunk_size) = @_;
+    NGCP::Panel::Utils::MySQL::bulk_insert(
+	c => $c,
+	schema => $schema,
+	do_transaction => 0,
+	query => "INSERT INTO billing.lnp_numbers(lnp_provider_id, number, routing_number, start, end)",
+	data => $numbers,
+	chunk_size => $chunk_size
+    );
+}
+
 sub upload_csv {
     my(%params) = @_;
     my ($c,$data,$schema) = @params{qw/c data schema/};
@@ -13,7 +25,7 @@ sub upload_csv {
     # csv bulk upload
     my $csv = Text::CSV_XS->new({ allow_whitespace => 1, binary => 1, keep_meta_info => 1 });
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
-    my @cols = qw/carrier_name carrier_prefix number start end/;
+    my @cols = qw/carrier_name carrier_prefix number routing_number start end/;
 
     my @fields ;
     my @fails = ();
@@ -42,25 +54,20 @@ sub upload_csv {
         }
         $row->{start} ||= undef;
         $row->{end} ||= undef;
-        push @numbers, [$carriers{$k}, $row->{number}, $row->{start}, $row->{end}];
+        push @numbers, [$carriers{$k}, $row->{number}, $row->{routing_number}, $row->{start}, $row->{end}];
 
         if($linenum % $chunk_size == 0) {
-            NGCP::Panel::Utils::MySQL::bulk_insert(
-                c => $c,
-                schema => $schema,
-                do_transaction => 0,
-                query => "INSERT INTO billing.lnp_numbers(lnp_provider_id, number, start, end)",
-                data => \@numbers,
-                chunk_size => $chunk_size
-            );
+            _insert_batch($c, $schema, \@numbers, $chunk_size);
             @numbers = ();
         }
+    }
+    if(@numbers) {
+        _insert_batch($c, $schema, \@numbers, $chunk_size);
     }
     $end = time;
     close $fh;
     $c->log->debug("Parsing and uploading LNP CSV took " . ($end - $start) . "s");
 
-    
     my $text = $c->loc('LNP numbers successfully uploaded');
     if(@fails) {
         $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
@@ -74,7 +81,7 @@ sub create_csv {
     my($c) = @params{qw/c/};
 
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
-    my @cols = qw/carrier_name carrier_prefix number start end/;
+    my @cols = qw/carrier_name carrier_prefix number routing_number start end/;
 
     my $lnp_rs = $c->stash->{number_rs}->search_rs(
         undef,
@@ -92,10 +99,10 @@ sub create_csv {
         delete $lnp{id};
         $lnp{start} =~ s/T\d{2}:\d{2}:\d{2}//;
         $lnp{end} =~ s/T\d{2}:\d{2}:\d{2}//;
-        $c->res->write(join (",", @lnp{@cols}) );
-        $c->res->write("\n");
+        $c->res->write_fh->write(join (",", @lnp{@cols}) );
+        $c->res->write_fh->write("\n");
     }
-    $c->res->close;
+    $c->res->write_fh->close;
     $end = time;
     $c->log->debug("Creating LNP CSV for download took " . ($end - $start) . "s");
     return 1;
