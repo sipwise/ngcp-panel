@@ -92,10 +92,10 @@ sub create_csv {
         delete $lnp{id};
         $lnp{start} =~ s/T\d{2}:\d{2}:\d{2}//;
         $lnp{end} =~ s/T\d{2}:\d{2}:\d{2}//;
-        $c->res->write(join (",", @lnp{@cols}) );
-        $c->res->write("\n");
+        $c->res->write_fh->write(join (",", @lnp{@cols}) );
+        $c->res->write_fh->write("\n");
     }
-    $c->res->close;
+    $c->res->write_fh->close;
     $end = time;
     $c->log->debug("Creating LNP CSV for download took " . ($end - $start) . "s");
     return 1;
