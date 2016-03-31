@@ -53,11 +53,11 @@ sub upload_csv {
             $carriers{$k} = $carrier->id;
         }
         $row->{start} ||= undef;
-        if($row->{start} && $row->{start} =~ /^\d{2}:\d{2}:\d{2}$/) {
+        if($row->{start} && $row->{start} =~ /^\d{4}-\d{2}-\d{2}$/) {
             $row->{start} .= 'T00:00:00';
         }
         $row->{end} ||= undef;
-        if($row->{end} && $row->{end} =~ /^\d{2}:\d{2}:\d{2}$/) {
+        if($row->{end} && $row->{end} =~ /^\d{4}-\d{2}-\d{2}$/) {
             $row->{end} .= 'T23:59:59';
         }
         push @numbers, [$carriers{$k}, $row->{number}, $row->{routing_number}, $row->{start}, $row->{end}];
