@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dad5f5cf_992b2deb",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-03-31T12:14:07Z",
+      "side": 1,
+      "message": "missing space between if and the bracket confuses and affects the flow of readability imho.\nlets have a common coding convention, the most straight forward and widely used for perl is perlstyle (perldoc perlstyle)\n(personally leans towards K\u0026R ;-) also it is very very similar perlstyle)",
+      "range": {
+        "startLine": 105,
+        "startChar": 4,
+        "endLine": 105,
+        "endChar": 7
+      },
+      "revId": "717e9f6ad9cb39fa9ed18e735970b5f7985c7b2d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_5935c544",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-03-31T12:14:07Z",
+      "side": 1,
+      "message": "in this case we should return with an error if invalid TZ is specified otherwise that effectively screws up the actual result for clients who are not aware of the right time representation for the desired TZ.",
+      "range": {
+        "startLine": 105,
+        "startChar": 31,
+        "endLine": 105,
+        "endChar": 85
+      },
+      "revId": "717e9f6ad9cb39fa9ed18e735970b5f7985c7b2d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
