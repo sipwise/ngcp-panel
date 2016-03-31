@@ -11,6 +11,7 @@ use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
+use DateTime::TimeZone;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
@@ -26,6 +27,10 @@ sub api_description {
 
 sub query_params {
     return [
+        {
+            param => 'tz',
+            description => 'Format start_time according to the optional time zone provided here, e.g. Europe/Berlin.',
+        },
         {
             param => 'subscriber_id',
             description => 'Filter for calls for a specific subscriber. Either this or customer_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific subscriber in order to properly determine the direction of calls.',
@@ -242,6 +247,11 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     my $schema = $c->model('DB');
     {
+        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
+            return;
+        }
+
         my $owner = $self->get_owner_data($c, $schema);
         last unless $owner;
         $c->stash(owner => $owner); # for query_param: direction
