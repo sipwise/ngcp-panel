@@ -11,6 +11,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use POSIX;
 use DateTime::Format::Strptime;
+use DateTime::TimeZone;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Subscriber;
@@ -101,8 +102,11 @@ sub resource_from_item {
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
     );
+    if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+        $item->start_time->set_time_zone($c->req->param('tz'));
+    }
 
-    $resource->{start_time} = $datetime_fmt->format_datetime($resource->{start_time});
+    $resource->{start_time} = $datetime_fmt->format_datetime($item->start_time);
     return $resource;
 }
 
