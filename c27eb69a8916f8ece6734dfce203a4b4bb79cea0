@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "dad5f5cf_686f9093",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-31T20:35:07Z",
+      "side": 1,
+      "message": "pretty error",
+      "range": {
+        "startLine": 378,
+        "startChar": 1,
+        "endLine": 378,
+        "endChar": 157
+      },
+      "revId": "c27eb69a8916f8ece6734dfce203a4b4bb79cea0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_086cc49b",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-31T20:35:07Z",
+      "side": 1,
+      "message": "and other pretty error",
+      "range": {
+        "startLine": 401,
+        "startChar": 0,
+        "endLine": 401,
+        "endChar": 163
+      },
+      "revId": "c27eb69a8916f8ece6734dfce203a4b4bb79cea0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dad5f5cf_5fa5ad02",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 4
@@ -13,6 +59,30 @@
       "writtenOn": "2016-03-29T09:16:13Z",
       "side": 1,
       "message": "shouldn\u0027t we try to load each id once here, to provide a pretty errormsgs before letting the foreign key contraint stop the txn upon unknown subscriber ids?",
+      "range": {
+        "startLine": 445,
+        "startChar": 4,
+        "endLine": 445,
+        "endChar": 5
+      },
+      "revId": "c27eb69a8916f8ece6734dfce203a4b4bb79cea0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_4872cc7d",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-03-31T20:35:07Z",
+      "side": 1,
+      "message": "Did you mean error before manage_pbx_groups? Pretty error is raised from prepare_resources that is called before changes.",
+      "parentUuid": "dad5f5cf_5fa5ad02",
       "range": {
         "startLine": 445,
         "startChar": 4,
