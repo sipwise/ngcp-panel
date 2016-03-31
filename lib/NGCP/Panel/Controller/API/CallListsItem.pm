@@ -7,6 +7,7 @@ use HTTP::Status qw(:constants);
 use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
+use DateTime::TimeZone;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
@@ -53,6 +54,11 @@ sub auto :Private {
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
+        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
+            return;
+        }
+
         my $schema = $c->model('DB');
         last unless $self->valid_id($c, $id);
 
