@@ -374,8 +374,10 @@ sub get_contract_zonesfees {
         $allzones{$zname}{duration} += $cols{duration} || 0;
         $allzones{$zname}{free_time} += $cols{free_time} || 0;
         $allzones{$zname}{number} += $cols{number} || 0;
-        $allzones{$zname}{zone} = $zone->get_column('zone')//'';
-        $allzones{$zname}{zone_detail} = $zone->get_column('zone_detail')//'';
+        if($params{group_by_detail}){
+            $allzones{$zname}{zone} = $zone->get_column('zone')//'';
+            $allzones{$zname}{zone_detail} = $zone->get_column('zone_detail') // '';
+        }
     }
 
     return \%allzones;
