@@ -52,7 +52,6 @@ $test_machine->form_data_item( );
 $test_machine->check_create_correct( 1, sub{ $_[0]->{username} .= time().'_'.$_[1]->{i} ; } );
 ##$test_machine->check_bundle();
 ##$test_machine->check_get2put();
-
 #-------  MT#15441
 {  
     my $intentional_cli = '111'.time();
