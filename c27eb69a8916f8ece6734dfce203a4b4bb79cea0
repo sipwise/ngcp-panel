@@ -48,6 +48,52 @@
     },
     {
       "key": {
+        "uuid": "dad5f5cf_be8ff222",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-01T14:54:44Z",
+      "side": 1,
+      "message": "trailing \"array eq ref ..\" should be enough",
+      "range": {
+        "startLine": 427,
+        "startChar": 27,
+        "endLine": 427,
+        "endChar": 34
+      },
+      "revId": "c27eb69a8916f8ece6734dfce203a4b4bb79cea0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_de8d1633",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-01T14:54:44Z",
+      "side": 1,
+      "message": "uah :-)",
+      "range": {
+        "startLine": 439,
+        "startChar": 38,
+        "endLine": 439,
+        "endChar": 44
+      },
+      "revId": "c27eb69a8916f8ece6734dfce203a4b4bb79cea0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dad5f5cf_5fa5ad02",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 4
@@ -83,6 +129,30 @@
       "side": 1,
       "message": "Did you mean error before manage_pbx_groups? Pretty error is raised from prepare_resources that is called before changes.",
       "parentUuid": "dad5f5cf_5fa5ad02",
+      "range": {
+        "startLine": 445,
+        "startChar": 4,
+        "endLine": 445,
+        "endChar": 5
+      },
+      "revId": "c27eb69a8916f8ece6734dfce203a4b4bb79cea0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_5e928658",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-01T14:54:44Z",
+      "side": 1,
+      "message": "sry forget it, didnt saw that this block is always run if there are ids",
+      "parentUuid": "dad5f5cf_4872cc7d",
       "range": {
         "startLine": 445,
         "startChar": 4,
