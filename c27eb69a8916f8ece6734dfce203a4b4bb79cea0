@@ -162,6 +162,30 @@
       "revId": "c27eb69a8916f8ece6734dfce203a4b4bb79cea0",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_beddb216",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-01T14:59:28Z",
+      "side": 1,
+      "message": "i just though of trying to load each id explicitly, to see if it exists, and have a \"subscriber id x does not exist\" error if not.\n\neven if it would not allow to store invalid id values due to foreign key constraint later on..",
+      "parentUuid": "dad5f5cf_5e928658",
+      "range": {
+        "startLine": 445,
+        "startChar": 4,
+        "endLine": 445,
+        "endChar": 5
+      },
+      "revId": "c27eb69a8916f8ece6734dfce203a4b4bb79cea0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
