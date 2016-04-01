@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dad5f5cf_0bfcbe3d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-04-01T12:49:17Z",
+      "side": 1,
+      "message": "Motivation and context please!? AFAIUI the templates have been unified in a single package, and probably depending on the global package now does not make sense?",
+      "revId": "e2e28ee9cb77e40918e5fcd2c69cb55a4985f6d1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
