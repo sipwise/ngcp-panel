@@ -6,7 +6,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-
+use Clone qw/clone/;
 use TryCatch;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
@@ -193,6 +193,7 @@ sub PATCH :Allow {
 
         my $form = $self->get_form($c);
         my $old_resource = $self->resource_from_item($c, $subscriber, $form);
+        $old_resource = clone($old_resource);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
