@@ -76,8 +76,8 @@ has 'base_uri' => (
     is => 'ro',
     isa => 'Str',
     default => sub {
-        $_[0]->{local_test} 
-        ? ( length($_[0]->{local_test})>1 ? $_[0]->{local_test} : 'https://127.0.0.1:4443' ) 
+        $_[0]->{local_test}
+        ? ( length($_[0]->{local_test})>1 ? $_[0]->{local_test} : 'https://127.0.0.1:4443' )
         : $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
     },
 );
@@ -324,11 +324,13 @@ sub get_item_hal{
     my($self,$name,$uri) = @_;
     $name ||= $self->name;
     my $resitem ;
-    if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
-        $resitem = $self->get_created_first;
-    }
-    if($self->DATA_LOADED->{$name} && @{$self->DATA_LOADED->{$name}}){
-        $resitem = $self->DATA_LOADED->{$name}->[0];
+    if(!$uri){
+        if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
+            $resitem = $self->get_created_first;
+        }
+        if($self->DATA_LOADED->{$name} && @{$self->DATA_LOADED->{$name}}){
+            $resitem = $self->DATA_LOADED->{$name}->[0];
+        }
     }
     if(!$resitem){
         my ($reshal, $location);
@@ -336,9 +338,11 @@ sub get_item_hal{
         #print "uri=$uri;";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
         ($reshal,$location) = $self->get_hal_from_collection($list_collection,$name);
-        $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location };
-        $self->DATA_LOADED->{$name} ||= [];
-        push @{$self->DATA_LOADED->{$name}}, $resitem;
+        #if($reshal->{content}->{total_count}){
+            $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location };
+            $self->DATA_LOADED->{$name} ||= [];
+            push @{$self->DATA_LOADED->{$name}}, $resitem;
+        #}
     }
     return $resitem;
 }
@@ -348,6 +352,7 @@ sub get_hal_from_collection{
     my $hal_name = $self->get_hal_name($name);
     my($reshal,$location);
     if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
+#found first subscriber
         $reshal = $list_collection;
         $location = $reshal->{_links}->{$hal_name}->{href};
     } elsif( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
@@ -362,7 +367,7 @@ sub get_hal_from_collection{
 }
 sub get_created_first{
     my($self) = @_;
-    return $self->DATA_CREATED->{ALL}->{$self->DATA_CREATED->{FIRST}};
+    return $self->DATA_CREATED->{FIRST} ? $self->DATA_CREATED->{ALL}->{$self->DATA_CREATED->{FIRST}} : undef;
 }
 sub get_uri_current{
     my($self) = @_;
@@ -389,8 +394,8 @@ sub encode_content{
 }
 sub request{
     my($self,$req) = @_;
-    
-    
+
+
     my $credentials = {};
     (@$credentials{qw/user password/},undef,undef) = $self->get_role_credentials();
     my $curl = Test::HTTPRequestAsCurl::as_curl($req, credentials => $credentials );
@@ -844,7 +849,7 @@ sub check_item_get{
     $uri = $self->normalize_uri($uri);
     my ($res, $content, $req) = $self->request_get($uri);
     $self->http_code_msg(200, $msg.($msg?": ":"")."fetch uri: $uri", $res);
-    return wantarray ? ($res, $content, $req) : $res;    
+    return wantarray ? ($res, $content, $req) : $res;
 }
 sub process_data{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
@@ -865,6 +870,7 @@ sub get_item_post_content{
 sub check_item_post{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $content = $self->get_item_post_content($data_cb, $data_in, $data_cb_data);
+    #print Dumper $content;
     my ($res,$rescontent,$req) = $self->request_post($content);#,$uri,$req
     return wantarray ? ($res,$rescontent,$req,$content) : $res;
 };
@@ -874,22 +880,33 @@ sub check_create_correct{
         $self->clear_data_created;
     }
     $self->DATA_CREATED->{ALL} //= {};
+    my @created = ();
     for(my $i = 1; $i <= $number; ++$i) {
-        my ($res, $content, $req) = $self->check_item_post( $uniquizer_cb , undef, { i => $i } );
+        my $created_info={};
+        my ($res, $content, $req, $content_post) = $self->check_item_post( $uniquizer_cb , undef, { i => $i } );
         $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
         my $location = $res->header('Location');
         if($location){
             #some interfaces (e.g. subscribers) don't provide hal after creation - is it correct, by the way?
+            my $get ={};
             if(!$content){
-                my($res_get,$content_get,$content_req) = $self->check_item_get($location,"no object returned after POST");
-                if($content_get){
-                    $content = $content_get;
-                }
+                @$get{qw/res_get content_get req_get/} = $self->check_item_get($location,"no object returned after POST");
             }
-            $self->DATA_CREATED->{ALL}->{$location} = { num => $i, content => $content, res => $res, req => $req, location => $location};
+            $created_info = {
+                num => $i,
+                content => $content ? $content : $get->{content_get},
+                res => $res,
+                req => $req,
+                location => $location,
+                content_post => $content_post,
+                %$get,
+            };
+            push @created, $created_info;
+            $self->DATA_CREATED->{ALL}->{$location} = $created_info;
             $self->DATA_CREATED->{FIRST} = $location unless $self->DATA_CREATED->{FIRST};
         }
     }
+    return \@created;
 }
 
 sub clear_test_data_all{
@@ -911,10 +928,11 @@ sub clear_test_data_dependent{
 
 sub check_get2put{
     my($self, $put_in, $get_in) = @_;
-    
+
     my($put_out,$get_out);
 
     $get_in //= {};
+    $put_in //= {};
     $get_in->{uri} //= $put_in->{uri};
     $put_in->{uri} //= $get_in->{uri};
 
@@ -932,14 +950,14 @@ sub check_get2put{
 
 sub check_put2get{
     my($self, $put_in, $get_in, $check_cb_or_switch) = @_;
-    
+
     my($put_out,$get_out);
 
     $get_in //= {};
     $get_in->{uri} //= $put_in->{uri};
     $put_in->{uri} //= $get_in->{uri};
     $get_out->{uri} = $get_in->{uri};
-
+    $put_in->{data_in} //=  $put_in->{content};
     $put_out->{content_in} = $self->process_data($put_in->{data_cb}, $put_in->{data_in});
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
     $self->http_code_msg(200, "check_put2get: check put successful",$put_out->{response}, $put_out->{content});
@@ -947,14 +965,18 @@ sub check_put2get{
     @{$get_out}{qw/response content request/} = $self->check_item_get($get_out->{uri});
     delete $get_out->{content}->{_links};
     delete $get_out->{content}->{_embedded};
+    delete $put_out->{content_in}->{_links};
+    delete $put_out->{content_in}->{_embedded};
     my $item_id = delete $get_out->{content}->{id};
+    my $item_id_in = delete $put_out->{content_in}->{id};
     if('CODE' eq ref $check_cb_or_switch){
         $check_cb_or_switch->($put_out,$get_out);
     }
     if(!$check_cb_or_switch || 'CODE' eq ref $check_cb_or_switch){
-        is_deeply($put_out->{content_in}, $get_out->{content}, "check_put2get: check PUTed item against GETed item");
+        is_deeply($get_out->{content}, $put_out->{content_in}, "$self->{name}: check_put2get: check PUTed item against GETed item");
     }
     $get_out->{content}->{id} = $item_id;
+    $put_out->{content_in}->{id} = $item_id_in;
     return ($put_out,$get_out);
 }
 
@@ -970,7 +992,7 @@ sub check_post2get{
     @{$post_out}{qw/response content request data/} = $self->check_item_post( $post_in->{data_cb}, $post_in->{data_in} );
     $self->http_code_msg(201, "check_post2get: POST item '".$self->name."' for check_post2get", @{$post_out}{qw/response content/});
     $post_out->{location} = $self->normalize_uri(($post_out->{response}->header('Location') // ''));
-    
+
     $get_out->{uri} = $get_in->{uri} // $post_out->{location};
     @{$get_out}{qw/response content request/} = $self->check_item_get( $get_out->{uri}, "check_post2get: fetch POSTed test '".$self->name."'" );
 
@@ -985,7 +1007,7 @@ sub put_and_get{
     my($self, $put_in, $get_in) = @_;
     my($put_out,$put_get_out,$get_out);
     @{$put_out}{qw/response content request/} = $self->request_put($put_in->{content},$put_in->{uri});
-    @{$put_get_out}{qw/response content request/} = $self->check_item_get($put_in->{uri});    
+    @{$put_get_out}{qw/response content request/} = $self->check_item_get($put_in->{uri});
     @{$get_out}{qw/response content request/} = $self->check_item_get($get_in->{uri});
     delete $put_get_out->{content_in}->{_links};
     delete $put_get_out->{content_in}->{_embedded};
