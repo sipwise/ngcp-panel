@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dad5f5cf_39ffa136",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2016-04-01T12:27:14Z",
+      "side": 1,
+      "message": "Ok, this is not going to work, since the return value is not checked when this method is called. Fixing.",
+      "revId": "2cebcac6547c993d69f9325433cb3b5bafd0f25b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
