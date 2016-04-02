@@ -274,11 +274,12 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     ]);
     $c->stash->{fax_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
-        { name => "the_timestamp", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Timestamp') },
+        { name => "time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Timestamp') },
         { name => "status", search => 1, title => $c->loc('Status') },
         { name => "duration", search => 1, title => $c->loc('Duration') },
         { name => "direction", search => 1, title => $c->loc('Direction') },
-        { name => "peer_number", search => 1, title => $c->loc('Peer Number') },
+        { name => "caller", search => 1, title => $c->loc('Caller') },
+        { name => "callee", search => 1, title => $c->loc('Callee') },
         { name => "pages", search => 1, title => $c->loc('Pages') },
     ]);
 
@@ -371,18 +372,18 @@ sub webfax_ajax :Chained('base') :PathPart('webfax/ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
-    my $fax_rs = $c->model('DB')->resultset('fax_journal')->search({
-        'subscriber.uuid' => $subscriber->uuid,
+    my $fax_rs = $c->model('DB')->resultset('voip_fax_journal')->search({
+        'voip_subscriber.id' => $subscriber->id,
     },{
-        join => 'subscriber',#kamailio.subscriber is meant here
+        join => { 'provisioning_voip_subscriber' => 'voip_subscriber' },
     });
 
     NGCP::Panel::Utils::Datatables::process($c, $fax_rs, $c->stash->{fax_dt_columns},
         sub {
             my ($result) = @_;
             my %data = ();
-            my $destination = {destination => $result->peer_number};
-            $data{peer_number} = NGCP::Panel::Utils::Subscriber::destination_as_string(
+            my $destination = {destination => $result->callee};
+            $data{callee} = NGCP::Panel::Utils::Subscriber::destination_as_string(
                 $c,
                 $destination,
                 $subscriber,

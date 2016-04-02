@@ -7,19 +7,19 @@ use base 'NGCP::Panel::Role::API';
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('fax_journal')->search({
+    my $item_rs = $c->model('DB')->resultset('voip_fax_journal')->search({
         filename => { '!=' => '' },
         'voip_subscriber.id' => { '!=' => undef },
     },{
-        join => { subscriber => { provisioning_voip_subscriber => 'voip_subscriber' } }
+        join => { 'provisioning_voip_subscriber' => 'voip_subscriber' },
     });
 
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ 
-            'contact.reseller_id' => $c->user->reseller_id 
+        $item_rs = $item_rs->search({
+            'contact.reseller_id' => $c->user->reseller_id
         },{
-            join => { subscriber => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } } }
+            join => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } }
         });
     }
     return $item_rs;
