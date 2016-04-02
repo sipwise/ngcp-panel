@@ -1514,6 +1514,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee"
 msgstr "Destino"
@@ -1548,6 +1549,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6589,10 +6591,6 @@ msgstr "Usuario de la autenticación al peer"
 #: share/templates/peering/preferences.tt
 msgid "Peer Host \"%1\" - Preferences"
 msgstr "Preferencias del servidor de peer %1"
-
-#: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Peer Number"
-msgstr "Número de teléfono"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Peer auth realm"
@@ -11710,6 +11708,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Peer Number"
+#~ msgstr "Número de teléfono"
 
 #~ msgid "Failed to write fax data to temporary file: %1"
 #~ msgstr "Fallo al escribir los datos del fax al fichero temporal %1"

@@ -1162,7 +1162,7 @@ msgstr ""
 msgid "Called at"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee"
 msgstr ""
 
@@ -1194,7 +1194,7 @@ msgstr ""
 msgid "Callee uuid"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller"
 msgstr ""
 
@@ -5679,10 +5679,6 @@ msgstr ""
 #. (server.name)
 #: share/templates/peering/preferences.tt
 msgid "Peer Host \"%1\" - Preferences"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Peer Number"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
