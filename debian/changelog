@@ -1,3 +1,24 @@
+ngcp-panel (1.12.2.0+0~mr4.3.2.0) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [16a93a3] MT#17309 show interval values in customerbalances api
+
+  [ Rene Krenn ]
+  * [f9a3ed6] MT#18699 control if datatable columns can be sorted
+
+  [ Kirill Solomko ]
+  * [233ff90] MT#18499 fixed GUI "add location" form description
+  * [2e1423b] MT#18865 adapt use of provisioning.voip_fax_journal
+
+  [ Andreas Granig ]
+  * [71ef669] MT#18593 Script puts system into emergency mode
+  * [b35c33b] MT#16777 Fix up/downloading CSV
+  * [ddf0ead] MT#16777 Fix date instead of time in lnp csv
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 04 Apr 2016 23:31:26 +0200
+
 ngcp-panel (1.12.1.0+0~mr4.3.1.0) unstable; urgency=medium
 
   [ Andreas Granig ]
