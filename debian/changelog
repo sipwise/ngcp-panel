@@ -1,3 +1,12 @@
+ngcp-panel (1.11.1.13+0~mr4.2.1.13) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [c662ae6] MT#18637 Don't show zone name and detail in zonecost API values
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Apr 2016 14:44:39 +0200
+
 ngcp-panel (1.11.1.12+0~mr4.2.1.12) unstable; urgency=medium
 
   [ Rene Krenn ]
