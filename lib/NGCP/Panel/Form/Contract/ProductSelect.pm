@@ -25,5 +25,16 @@ has_block 'fields' => (
     render_list => [qw/contact billing_profile_definition billing_profile billing_profiles profile_add profile_package product max_subscribers status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
 );
 
+sub validate {
+    my $self = shift;
+    my $product = $self->field('product');
+    my $max_subscribers = $self->field('max_subscribers');
+
+    if($max_subscribers->value && $product->value eq 'sipaccount') {
+        $max_subscribers->add_error('Max Subscribers should not be set when the Product is "Basic SIP Account"');
+    }
+    return;
+}
+
 1;
 # vim: set tabstop=4 expandtab:
