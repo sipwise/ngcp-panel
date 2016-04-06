@@ -150,7 +150,7 @@ sub process_cdr_item {
     }
 
     # strip any _b2b-1 and _pbx-1 to allow grouping of calls
-    $resource->{call_id} =~ s/(_b2b-1)|(_pbx-1)//g;
+    $resource->{call_id} =~ s/(_b2b-1|_pbx-1)+$//g;
 
     my $own_sub = ($resource->{direction} eq "out")
         ? $billing_src_sub

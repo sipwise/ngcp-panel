@@ -3221,7 +3221,14 @@ sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
         group_by => 'me.call_id',
     });
 
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{capture_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{capture_dt_columns},
+        sub {
+            my $result = shift;
+            $result->{call_id} =~ s/(_b2b-1|_pbx-1)+$//g;
+            # similar to Utils::CallList::process_cdr_item
+            return $result;
+        }
+    );
     $c->detach( $c->view("JSON") );
 }
 
