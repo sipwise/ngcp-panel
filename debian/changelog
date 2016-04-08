@@ -1,3 +1,13 @@
+ngcp-panel (1.8.5.9+0~mr3.8.5.9) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [9adc128] MT#17805 captured dialogs process callid
+  * [fe0f1a3] MT#18977 compatible plaintext error dialogic page
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Apr 2016 13:48:26 +0200
+
 ngcp-panel (1.8.5.8+0~mr3.8.5.8) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
