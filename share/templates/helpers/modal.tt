@@ -1,3 +1,4 @@
+<!-- modal.tt -->
 [% MACRO modal_header BLOCK -%]
 
 <div id="mod_edit" class="modal hide ngcp-modal">

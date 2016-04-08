@@ -699,8 +699,6 @@ sub preferences_base :Chained('profile_base') :PathPart('preferences') :CaptureA
             attribute_id => $pref_id,
             profile_id => $profile->id,
         });
-    my @values = $c->stash->{preference}->get_column("value")->all;
-    $c->stash->{preference_values} = \@values;
     $c->stash(template => 'subprofile/preferences.tt');
 }
 
