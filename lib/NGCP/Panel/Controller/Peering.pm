@@ -409,15 +409,15 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
         $config->{out_codecs} = \@new_out_codecs;
     }
 
+    $c->response->body('');
+    $c->response->header('X-Accel-Buffering' => 'no');
+    $c->response->headers->content_type('text/plain');
+
     try {
         if ($config->{mode} ne 'none') {
             my $api = NGCP::Panel::Utils::DialogicImg->new(
                 server => 'https://' . $config->{ip_config},
             );
-
-            $c->response->body('');
-            $c->response->header('X-Accel-Buffering' => 'no');
-            $c->response->headers->content_type('text/plain');
 
             $c->write("Logging in ...\n");
 
@@ -444,6 +444,8 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
                         $c->write($shortlog);
                     });
             }
+        } else {
+            $c->write("Dialogic not enabled. Doing nothing.\n");
         }
         NGCP::Panel::Utils::Message::info(
             c    => $c,
@@ -456,6 +458,7 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
             error => $e,
             desc  => $c->loc('Failed to flash dialogic'),
         );
+        $c->write("Faild to flash dialogic. Probably couldn't log in.");
     };
     #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;
