@@ -2163,9 +2163,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
             contract_id => $c->stash->{contract}->id,
             location_id => $c->stash->{location}{id} || undef,
         });
-    my @values = $c->stash->{preference}->get_column("value")->all;
     $c->stash->{pref_id} = $pref_id;
-    $c->stash->{preference_values} = \@values;
     $c->stash(template => 'customer/preferences.tt');
 }
 

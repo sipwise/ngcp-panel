@@ -324,8 +324,6 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
             attribute_id => $pref_id,
             domain_id => $provisioning_domain_id,
         });
-    my @values = $c->stash->{preference}->get_column("value")->all;
-    $c->stash->{preference_values} = \@values;
     $c->stash(template => 'domain/preferences.tt');
 }
 
