@@ -1,3 +1,4 @@
+<!-- pref_table.tt -->
 [% UNLESS helper.skip_head == 1 -%]
 <div class="row">
     [% FOR button IN helper.top_buttons -%]
@@ -192,23 +193,20 @@
         </div>
     [% ELSIF helper.preference_meta.max_occur != 1 %]
         <div class="modal-body">
-        [% i = 0 -%]
-        [% FOREACH v IN helper.preference.all %]
-            [% val = helper.preference_values.$i -%]
+        [% FOREACH v IN helper.preference_values %]
             <div class="row-fluid">
-            [% IF v.value.substr(0,1) == '#' %]
-                <input type="text" value="[% val %]" disabled="disabled" class="ngcp-entry-disabled"/>
+            [% IF v.disabled %]
+                <input type="text" value="[% v.value %]" disabled="disabled" class="ngcp-entry-disabled"/>
             [% ELSE %]
-                <input type="text" value="[% val %]" disabled="disabled"/>
+                <input type="text" value="[% v.value %]" disabled="disabled"/>
             [% END %]
             <a class="btn btn-primary pull-right" href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
-            [% IF v.value.substr(0,1) == '#' %]
+            [% IF v.disabled %]
                 <a class="btn btn-primary pull-right" style="margin:0 5px 0 5px" href="?activate=[% v.id %]"><i class="icon-ok"></i></a>
             [% ELSE %]
                 <a class="btn btn-primary pull-right" style="margin:0 5px 0 5px" href="?deactivate=[% v.id %]"><i class="icon-ban-circle"></i></a>
             [% END %]
           </div>
-            [% i = i + 1 -%]
         [% END %]
         <form action="[% helper.form.action %]" method="post">
             [% helper.form.field(helper.preference_meta.attribute).render %]
