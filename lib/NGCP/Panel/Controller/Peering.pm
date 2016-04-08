@@ -522,8 +522,6 @@ sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') 
         },{
             prefetch => 'peer_host',
         });
-    my @values = $c->stash->{preference}->get_column("value")->all;
-    $c->stash->{preference_values} = \@values;
     return;
 }
 
