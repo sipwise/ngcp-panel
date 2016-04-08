@@ -200,10 +200,6 @@ sub create_preference_form {
         }
     }
 
-    $c->stash->{preference_values} = [
-        $c->stash->{preference}->get_column("value")->all
-    ];
-
     my $preselected_value = undef;
     if ($c->stash->{preference_meta}->attribute eq "rewrite_rule_set") {
         my $rewrite_caller_in_dpid = $pref_rs->search({
@@ -299,18 +295,10 @@ sub create_preference_form {
                 }
             }
         }
-    } elsif($c->stash->{subscriber} && 
-          ($c->stash->{preference_meta}->attribute eq "block_in_list" || $c->stash->{preference_meta}->attribute eq "block_out_list")) {
-        foreach my $v(@{ $c->stash->{preference_values} }) {
-            $v =~ s/^\#//;
-            if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-                $v = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                    c => $c, subscriber => $c->stash->{subscriber}, number => $v, direction => 'caller_out'
-                );
-            }
-        }
     } elsif ($c->stash->{preference_meta}->max_occur == 1) {
-        $preselected_value = $c->stash->{preference_values}->[0];
+        if ($c->stash->{preference}->first) {
+            $preselected_value = $c->stash->{preference}->first->value;
+        }
     }
 
     my $form = NGCP::Panel::Form::Preferences->new({
@@ -520,7 +508,6 @@ sub create_preference_form {
                     $v .= $suffix;
 
                 }
-                push @{ $c->stash->{preference_values} }, $v;
             }
             try {
                 $pref_rs->create({
@@ -728,11 +715,33 @@ sub create_preference_form {
     }
 
     OUT:
-    
+
+    my $preference_values = [];
+    foreach my $p ( $c->stash->{preference}->all ) {
+        my $v = $p->value;
+        $v =~ s/^\#//;
+        if( ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") &&
+            $c->stash->{subscriber} &&
+            (   $c->stash->{preference_meta}->attribute eq "block_in_list" ||
+                $c->stash->{preference_meta}->attribute eq "block_out_list" )
+            ) {
+            $v = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                c => $c, subscriber => $c->stash->{subscriber}, number => $v, direction => 'caller_out',
+            );
+        }
+
+        push @{ $preference_values }, {
+                id => $p->id,
+                value => $v,
+                disabled => !!($v =~ m/^\#/),
+            };
+    }
+
     $form->process if ($posted && $form->validated);
-    $c->stash(form       => $form,
-              aip_grp_rs => $aip_grp_rs,
-              man_aip_grp_rs => $man_aip_grp_rs);
+    $c->stash(form              => $form,
+              aip_grp_rs        => $aip_grp_rs,
+              man_aip_grp_rs    => $man_aip_grp_rs,
+              preference_values => $preference_values);
 
     return 1;
 }
