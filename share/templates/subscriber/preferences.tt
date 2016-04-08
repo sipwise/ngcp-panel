@@ -1,3 +1,4 @@
+<!-- preferences.tt -->
 [%
     IF subscriber.provisioning_voip_subscriber.is_pbx_group;
         site_config.title = c.loc('PBX Group Preferences for [_1]@[_2]', subscriber.username, subscriber.domain.domain);
@@ -13,7 +14,6 @@
     helper.edit_preference = edit_preference;
     helper.preference = preference;
     helper.preference_meta = preference_meta;
-    helper.preference_values = preference_values;
     helper.pref_groups = pref_groups;
     helper.form = form;
     helper.base_uri = c.uri_for(subscriber.id,'preferences');

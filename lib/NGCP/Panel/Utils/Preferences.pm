@@ -729,7 +729,9 @@ sub create_preference_form {
 
     OUT:
     
+    $c->stash->{preference_meta}->discard_changes;
     $form->process if ($posted && $form->validated);
+    use DDP; p $form;
     $c->stash(form       => $form,
               aip_grp_rs => $aip_grp_rs,
               man_aip_grp_rs => $man_aip_grp_rs);

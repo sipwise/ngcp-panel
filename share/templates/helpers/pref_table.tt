@@ -1,3 +1,4 @@
+<!-- pref_table.tt -->
 [% UNLESS helper.skip_head == 1 -%]
 <div class="row">
     [% FOR button IN helper.top_buttons -%]
@@ -194,12 +195,11 @@
         <div class="modal-body">
         [% i = 0 -%]
         [% FOREACH v IN helper.preference.all %]
-            [% val = helper.preference_values.$i -%]
             <div class="row-fluid">
             [% IF v.value.substr(0,1) == '#' %]
-                <input type="text" value="[% val %]" disabled="disabled" class="ngcp-entry-disabled"/>
+                <input type="text" value="[% v.value %]" disabled="disabled" class="ngcp-entry-disabled"/>
             [% ELSE %]
-                <input type="text" value="[% val %]" disabled="disabled"/>
+                <input type="text" value="[% v.value %]" disabled="disabled"/>
             [% END %]
             <a class="btn btn-primary pull-right" href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
             [% IF v.value.substr(0,1) == '#' %]
