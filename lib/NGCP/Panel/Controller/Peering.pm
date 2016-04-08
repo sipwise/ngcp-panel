@@ -410,21 +410,22 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
         $config->{out_codecs} = \@new_out_codecs;
     }
 
+    $c->response->header('X-Accel-Buffering' => 'no');
+    $c->response->body('');
+    $c->response->headers->content_type('text/plain');
+
     try {
         if ($config->{mode} ne 'none') {
             my $api = NGCP::Panel::Utils::DialogicImg->new(
                 server => 'https://' . $config->{ip_config},
             );
 
-            $c->response->body('');
-            $c->response->header('X-Accel-Buffering' => 'no');
-            $c->response->headers->content_type('text/plain');
-
             $c->write("Logging in ...\n");
 
             $api->login( $c->config->{dialogic}{username}, $c->config->{dialogic}{password} );
+            die "Couldn't log in to dialogic." if ($api->appid == 0);
             my $resp = $api->obtain_lock();
-            die "Couldn't connect to dialogic"
+            die "Couldn't connect to dialogic to obtain lock."
                 unless ($resp->code == 200);
 
             if ($config->{mode} eq 'sipsip') {
@@ -445,6 +446,8 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
                         $c->write($shortlog);
                     });
             }
+        } else {
+            $c->write("Dialogic not enabled. Doing nothing.\n");
         }
         NGCP::Panel::Utils::Message::info(
             c    => $c,
@@ -457,6 +460,7 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
             error => $e,
             desc  => $c->loc('Failed to flash dialogic'),
         );
+        $c->write("Faild to flash dialogic. Probably couldn't log in.");
     };
     #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;

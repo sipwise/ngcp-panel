@@ -395,9 +395,8 @@ sub login {
     my $resp = $self->post(
         '/oamp/user_management/users/logged_in?appid=0',
         { user => { name => $username, password => $password } } );
-    my $code = $resp->code;
-    my $data = $resp->data;
-    if ( $code == 200 ) {
+    if ( $resp->code == 200 ) {
+        my $data = $resp->data;
         $self->appid( $data->{appid} );
         return $self->appid;
     }
