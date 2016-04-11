@@ -14,16 +14,7 @@ use Pod::Usage;
 use Log::Log4perl qw/get_logger :levels/;
 use feature 'state';
 
-use NGCP::Panel::Utils::Invoice;
-
-use Sipwise::Base;
-
-use NGCP::Panel;
-use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Utils::InvoiceTemplate;
-use NGCP::Panel::Utils::Email;
-
+#use Sipwise::Base;
 
 my $opt = {};
 my $opt_cfg = {};
@@ -49,8 +40,6 @@ my @opt_spec = (
     'help|?',
     'man'
 );
-Log::Log4perl::init('/etc/ngcp-panel/logging.conf');
-my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 
 {
     my $config_file = "/etc/ngcp-invoice-gen/invoice-gen.conf";
@@ -107,6 +96,15 @@ my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 }
 $opt_cfg->{enable} or die("Invoice generation disabled by default. Current invoice generation will damage billing records.");
 
+require NGCP::Panel;
+require NGCP::Panel::Utils::DateTime;
+require NGCP::Panel::Utils::Contract;
+require NGCP::Panel::Utils::InvoiceTemplate;
+require NGCP::Panel::Utils::Email;
+require NGCP::Panel::Utils::Invoice;
+
+Log::Log4perl::init('/etc/ngcp-panel/logging.conf');
+my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 my $dbh;
 {
     my ($dbcfg);
