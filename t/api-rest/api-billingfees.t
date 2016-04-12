@@ -116,6 +116,9 @@ $test_machine->check_bundle();
 {
     my($res,$item_put,$req) = $test_machine->check_get2put();
     $test_machine->check_embedded($item_put->{content});
+    #check create after edit
+    #19035
+    $test_machine->check_create_correct( 1, sub{ $_[0]->{destination} .= $_[1]->{i} + 3 ; } );
 }
 {
     my($res,$mod_fee) = $test_machine->check_patch_correct( [ { op => 'replace', path => '/direction', value => 'in' } ] );
@@ -139,6 +142,7 @@ $test_machine->check_bundle();
 }
 
 $test_machine->clear_test_data_all();
+$fake_data->created({});
 
 {
     my $uri = $test_machine->normalize_uri('/api/billingzones/'.$test_machine->DATA_ITEM->{billing_zone_id});
