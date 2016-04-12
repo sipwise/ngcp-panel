@@ -250,7 +250,17 @@ sub insert_unique_billing_fees{
     my(%params) = @_;
     my($c,$schema,$profile,$fees,$return_created) = @params{qw/c schema profile fees return_created/};
     $return_created //= 0;
+
+    #while we use lower id we don't need insert records from billing_fees, they are already contain in billing_fees with lower id 
+    $profile->billing_fees_raw->delete();
+
+    $schema->storage->dbh_do(sub{
+        my ($storage, $dbh) = @_;
+        (my ($auto_increment)) = $dbh->selectrow_array('select `AUTO_INCREMENT` from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = "billing" AND TABLE_NAME   = "billing_fees"');
+        $dbh->do('alter table billing.billing_fees_raw auto_increment='.$auto_increment);
+    });
     my $created_fees_raw = $profile->billing_fees_raw->populate($fees);
+
     $schema->storage->dbh_do(sub{
         my ($storage, $dbh) = @_;
         $c->log->debug('call billing.fill_billing_fees('.$profile->id.')');
