@@ -250,6 +250,9 @@ sub insert_unique_billing_fees{
     my(%params) = @_;
     my($c,$schema,$profile,$fees,$return_created) = @params{qw/c schema profile fees return_created/};
     $return_created //= 0;
+
+    #while we use lower id we don't need insert records from billing_fees, they are already contain in billing_fees with lower id 
+    $profile->billing_fees_raw->delete();
     my $created_fees_raw = $profile->billing_fees_raw->populate($fees);
     $schema->storage->dbh_do(sub{
         my ($storage, $dbh) = @_;
