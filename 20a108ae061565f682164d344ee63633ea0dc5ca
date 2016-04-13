@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_532cd64a",
+        "filename": "share/templates/helpers/pref_table.tt",
+        "patchSetId": 5
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-04-13T06:47:51Z",
+      "side": 1,
+      "message": "is it correct for enabled preference?",
+      "range": {
+        "startLine": 200,
+        "startChar": 57,
+        "endLine": 200,
+        "endChar": 76
+      },
+      "revId": "20a108ae061565f682164d344ee63633ea0dc5ca",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
