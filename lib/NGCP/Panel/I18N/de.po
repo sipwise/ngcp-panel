@@ -11494,8 +11494,7 @@ msgstr ""
 msgid "noanswer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-#: share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "none"
 msgstr "nicht"
 
