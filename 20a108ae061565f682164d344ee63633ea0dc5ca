@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "bada0100_8a943f38",
+        "filename": "share/templates/helpers/pref_table.tt",
+        "patchSetId": 5
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-13T11:17:30Z",
+      "side": 1,
+      "message": "just for understanding, this one seems to be new and not from db, where does it come from?",
+      "range": {
+        "startLine": 197,
+        "startChar": 20,
+        "endLine": 197,
+        "endChar": 28
+      },
+      "revId": "20a108ae061565f682164d344ee63633ea0dc5ca",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_532cd64a",
         "filename": "share/templates/helpers/pref_table.tt",
         "patchSetId": 5
