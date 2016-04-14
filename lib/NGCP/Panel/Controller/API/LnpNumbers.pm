@@ -222,8 +222,14 @@ sub POST :Allow {
                 resource => $resource,
                 form => $form,
             );
-            $resource->{start} .= "T00:00:00";
-            $resource->{end} .= "T23:59:59";
+            $resource->{start} ||= undef;
+            if($resource->{start} && $resource->{start} =~ /^\d{4}-\d{2}-\d{2}$/) {
+                $resource->{start} .= 'T00:00:00';
+            }
+            $resource->{end} ||= undef;
+            if($resource->{end} && $resource->{end} =~ /^\d{4}-\d{2}-\d{2}$/) {
+                $resource->{end} .= 'T23:59:59';
+            }
 
             my $carrier = $c->model('DB')->resultset('lnp_providers')->find($resource->{lnp_provider_id});
             unless($carrier) {
