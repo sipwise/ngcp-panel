@@ -1,0 +1,97 @@
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#control-caller-subscriber-id").show();
+    $("#control-caller-peer-id").hide();
+
+    $('input[name$="caller_type"]').click(function(){
+        if($(this).attr("value")=="subscriber"){
+            $("#control-caller-subscriber-id").show();
+            $("#control-caller-peer-id").hide();
+            $('div"#control-caller-type" input[type=checkbox]').prop('checked', false);
+        }
+        if($(this).attr("value")=="peer"){
+            $("#control-caller-subscriber-id").hide();
+            $("#control-caller-peer-id").show();
+            $('div"#control-caller-type" input[type=checkbox]').prop('checked', false);
+        }
+    });
+});
+</script>
+
+[% site_config.title = c.loc('Call Routing Verification');
+   form = translate_form(form);
+-%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+
+<div class="ngcp-separator"></div>
+
+<div class="row">
+
+    [% form.render_start %]
+    <div class="form_messages">
+    </div>
+    <div>
+    <div class="controls">
+    <input type="hidden" name="submitid" id="submitid" value="" /></div>
+    </div>
+
+    [% form.field('caller').render %]
+    [% form.field('callee').render %]
+    [% form.field('caller_type').render %]
+    <div id="control-caller-type">
+        <div id="control-caller-subscriber-id">
+            [% form.field('caller_subscriber_id').render %]
+        </div>
+        <div id="control-caller-peer-id">
+            [% form.field('caller_peer_id').render %]
+        </div>
+    </div>
+
+    <div id="mytest">
+    <div class="accordion" id="call_routing_verify">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#call_routing_verify" href="#collapse_caller_rewrite_id">[% c.loc('Caller Rewrite Rules Override') -%]</a>
+            </div>
+            <div class="accordion-body collapse" id="collapse_caller_rewrite_id">
+                <div class="accordion-inner">
+                    [% form.field('caller_rewrite_id').render %]
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#call_routing_verify" href="#collapse_callee_rewrite_id">[% c.loc('Callee Rewrite Rules Override') -%]</a>
+            </div>
+            <div class="accordion-body collapse" id="collapse_callee_rewrite_id">
+                <div class="accordion-inner">
+                    [% form.field('callee_rewrite_id').render %]
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#call_routing_verify" href="#collapse_callee_peer_id">[% c.loc('Callee Peer Override') -%]</a>
+            </div>
+            <div class="accordion-body collapse" id="collapse_callee_peer_id">
+                <div class="accordion-inner">
+                    [% form.field('callee_peer_id').render %]
+                </div>
+            </div>
+        </div>
+    </div>
+    </div
+
+    [% form.field('verify').render %]
+
+    [% form.render_end %]
+</div>
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
