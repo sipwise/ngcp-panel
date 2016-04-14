@@ -105,8 +105,15 @@ sub update_item {
         return;
     }
 =cut
-    $resource->{start} .= "T00:00:00";
-    $resource->{end} .= "T23:59:59";
+
+    $resource->{start} ||= undef;
+    if($resource->{start} && $resource->{start} =~ /^\d{4}-\d{2}-\d{2}$/) {
+        $resource->{start} .= 'T00:00:00';
+    }
+    $resource->{end} ||= undef;
+    if($resource->{end} && $resource->{end} =~ /^\d{4}-\d{2}-\d{2}$/) {
+        $resource->{end} .= 'T23:59:59';
+    }
 
     $item->update($resource);
     $item->discard_changes; # agranig: otherwise start/end is not updated!?
