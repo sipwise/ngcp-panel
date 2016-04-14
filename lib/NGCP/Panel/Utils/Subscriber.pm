@@ -1186,6 +1186,7 @@ sub apply_rewrite {
     my $subscriber = $params{subscriber};
     my $callee = $params{number};
     my $dir = $params{direction};
+    my $rws_id = $params{rws_id}; # override rewrite rule set
     my $sub_type = 'provisioning';
     my $rwr_rs = undef;
 
@@ -1194,7 +1195,17 @@ sub apply_rewrite {
     my ($field, $direction) = split /_/, $dir;
     $dir = "rewrite_".$dir."_dpid";
 
-    unless ($subscriber) {
+    if ($rws_id) {
+        $rwr_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets')->search({
+                    id => $rws_id,
+                  }, {
+                    '+select' => (sprintf "%s_%s_dpid", $field, $direction),
+                    '+as' => qw(rwr_id),
+                  });
+        unless ($rwr_rs->count) {
+            return $callee;
+        }
+    } elsif (not $subscriber) {
         $c->log->warn('could not apply rewrite: no subscriber found.');
         return $callee;
     } elsif ($subscriber->provisioning_voip_subscriber) {
@@ -1227,13 +1238,21 @@ sub apply_rewrite {
     }
 
     my $rule_rs = $c->model('DB')->resultset('voip_rewrite_rules')->search({
-        'ruleset.'.$field.'_'.$direction.'_dpid' => $rwr_rs->first->value,
+        'ruleset.'.$field.'_'.$direction.'_dpid' =>
+            $rws_id ? $rwr_rs->first->get_column('rwr_id')
+                    : $rwr_rs->first->value,
         direction => $direction,
         field => $field,
     }, {
         join => 'ruleset',
         order_by => { -asc => 'priority' },
     });
+
+    unless($rule_rs->count) {
+        $c->log->warn('could not apply rewrite: no rewrite rule set found.');
+        return $callee;
+    }
+
     my $cache = {};
     foreach my $r($rule_rs->all) {
         my @entries = ();
@@ -1460,6 +1479,31 @@ sub number_as_string{
         ? $number_row->{cc} . ($number_row->{ac} // '') . $number_row->{sn}
         : $number_row->cc . ($number_row->ac // '') . $number_row->sn;
 }
+
+sub lookup {
+    my (%params) = @_;
+
+    my ($c, $lookup) = @{params}{qw(c lookup)};
+
+    my $rs = $c->model('DB')->resultset('voip_subscribers')->search({
+        'voip_dbaliases.username' => { 'like' => $lookup.'%' },
+        status => { '!=' => 'terminated' },
+    }, {
+        join => { 'provisioning_voip_subscriber' => 'voip_dbaliases' },
+        order_by => { -desc => qw/voip_dbaliases.username/ },
+    });
+    if (not $rs->first and $lookup =~ /(\S+?)\@(\S+)/) {
+        $rs = $c->model('DB')->resultset('voip_subscribers')->search({
+            username => $1,
+            'domain.domain' => $2,
+            status => { '!=' => 'terminated' },
+        }, {
+            join => 'domain',
+        });
+    }
+    return $rs->first || undef;
+}
+
 1;
 
 =head1 NAME
