@@ -2470,6 +2470,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Defines how to provide the routing number after a LNP query. If enabled, rn "
+"parameter will be used."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Defines whether the subscriber can still register and send/receive calls if "
 "Emergency Mode is enabled for the domain of the subscriber. If disabled, "
 "registrations and calls are blocked and dropped."
@@ -4714,10 +4720,18 @@ msgstr ""
 "Subscriber gesetzt, wenn kein anderes Sound Set für sie gesetzt ist."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled allows LNP queries for local subscribers."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "If enabled, an LNP lookup is performed for calls from this peer using the "
 "network-provided calling party number. The resulting LNP prefix is written "
 "to CDRs as source_lnp_prefix."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, npdi parameter will be added if there is a LNP query."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5354,6 +5368,10 @@ msgstr ""
 msgid "LNP Rewrite Rules for Caller"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP Routing number to rn param"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "LNP carrier does not exist!"
 msgstr ""
@@ -5368,6 +5386,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "LNP carrier successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP for local subscribers"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP npdi param"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
