@@ -1,0 +1,68 @@
+[% site_config.title = c.loc('Call Routing Verification') -%]
+[%
+    helper.name = c.loc('Call Routing Verification');
+    helper.identifier = 'call_routing_verify';
+
+    helper.close_target = close_target;
+
+    PROCESS "helpers/modal.tt";
+-%]
+
+<div id="mod_edit" class="modal hide ngcp-modal">
+    <div class="modal-header">
+        <button id="mod_close" type="button" class="close mod_close">×</button>
+        <h3>[% c.loc('Result') %]</h3>
+    </div>
+
+    <div class="ngcp-statistics">
+    <table>
+        <tr>
+            <td width="100" align="right">caller:</td>
+            <td><code>[% caller -%]</code></td>
+            <td width="100" align="right">callee:</td>
+            <td><code>[% callee -%]</code></td>
+        </tr>
+        <tr>
+            <td width="100" align="right">caller in:</td>
+            <td><code>[% caller_in -%]</code></td>
+            <td width="100" align="right">callee in:</td>
+            <td><code>[% callee_in -%]</code></td>
+        </tr>
+        <tr>
+            <td width="100" align="right">caller out:</td>
+            <td><code>[% caller_out -%]</code></td>
+            <td width="100" align="right">callee out:</td>
+            <td><code>[% callee_out -%]</code></td>
+        </tr>
+        <tr>
+            <td width="100" align="right">caller type:</td>
+            <td><code>[% caller_type -%]</code></td>
+            <td width="100" align="right">callee type:</td>
+            <td><code>[% callee_type -%]</code></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>Log:</td>
+        </tr>
+        <tr>
+            <td>
+                <pre>
+[% log.join("\n") -%]
+                </pre>
+            </td>
+        </tr>
+    </table>
+    </div>
+
+    <div class="ngcp-separator"></div>
+
+[%
+    modal_footer();
+    modal_script(m.close_target = helper.close_target);
+
+-%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
+
