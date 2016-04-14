@@ -56,7 +56,7 @@ else
 fi
 
 chmod 640 "${KEY_FILE}" "${CRT_FILE}"
-chown root:ssl-cert "${CRT_FILE}"
+chown root:ssl-cert "${KEY_FILE}" "${CRT_FILE}"
 [ -r "${CSR_FILE}" ] && chmod 600 "${CSR_FILE}"
 
 if [ "$SKIP_CSR" = "true" ] ; then
