@@ -154,6 +154,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_cb756633",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T13:02:03Z",
+      "side": 1,
+      "message": "i meant, this verify form allows one to explicitly choose a rewrite rule set, whiche is nice since that page will most likely be used to try out things. so only if none is selected, the one from prefs are used.",
+      "parentUuid": "bada0100_cb19e623",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_6b46ba25",
         "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
         "patchSetId": 2
@@ -236,6 +254,30 @@
       "side": 1,
       "message": "our rewrite_rule_set preferences are quite ... complicated \u003d)\nbasically when you create a rewrite rule set it also creates 4 preferences (for kamailio db).\nfor instance:\nmysql\u003e select * from voip_rewrite_rule_sets\\G\n*************************** 1. row ***************************\n             id: 7\n    reseller_id: 1\n           name: api_test rule set name\n    description: api_test rule set description\n caller_in_dpid: 37\n callee_in_dpid: 39\ncaller_out_dpid: 41\ncallee_out_dpid: 43\ncaller_lnp_dpid: 45\ncallee_lnp_dpid: 47\n\nthere is no \"rewrite rule set\" id saved in subscriber/domain/preferences but instead those 4, therefore I have to pick one, \"caller_in_dpid\" is what I need in this case to get the \"id\" from preferences and then I can fetch the actual rewrite rule set id by using this id.",
       "parentUuid": "bada0100_0b4b6e2c",
+      "range": {
+        "startLine": 138,
+        "startChar": 30,
+        "endLine": 138,
+        "endChar": 34
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_eb72aa48",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T13:02:03Z",
+      "side": 1,
+      "message": "ok so it means domain pref id",
+      "parentUuid": "bada0100_2be4320c",
       "range": {
         "startLine": 138,
         "startChar": 30,
@@ -447,6 +489,30 @@
       "side": 1,
       "message": "almost. I keep all of the code kinda linear on purpose so to be able to tweak enrich parts if needed. otherwise this all could be split/put into \"common use\" functions.",
       "parentUuid": "bada0100_ebff0aa9",
+      "range": {
+        "startLine": 358,
+        "startChar": 12,
+        "endLine": 358,
+        "endChar": 35
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8b8f5e23",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T13:02:03Z",
+      "side": 1,
+      "message": "absolutely ok, just for understanding",
+      "parentUuid": "bada0100_aba6e2bf",
       "range": {
         "startLine": 358,
         "startChar": 12,
