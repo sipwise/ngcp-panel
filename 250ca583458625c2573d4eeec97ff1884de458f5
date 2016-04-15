@@ -1,0 +1,267 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_0bafeee4",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "new to peer/peer groups model, but always only first one here?",
+      "range": {
+        "startLine": 79,
+        "startChar": 58,
+        "endLine": 79,
+        "endChar": 63
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8b82fe50",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "i really like that verbose stuff.\n\nafaics this could be wired into the branches above, would be easier to follow",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4bf3b60a",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "ok can be selected explicitly ...",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0bddae70",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "... or taken from prefs otherwise.",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_6b46ba25",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "i often just use if ($rs-\u003efirst) { ... to avoid count query at all. dbix should should cache it actually, so it would save us one query.",
+      "range": {
+        "startLine": 136,
+        "startChar": 16,
+        "endLine": 136,
+        "endChar": 26
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0b4b6e2c",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "what does dpid stands for actually?",
+      "range": {
+        "startLine": 138,
+        "startChar": 30,
+        "endLine": 138,
+        "endChar": 34
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_eb514ad9",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "ok rwrs from subscirber prefs have highest precedence, then rwrs of the domain follow..\noriginally thought there was some \"merging\"..",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_2b6f5294",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "ok seems there shouldnt be more than one",
+      "range": {
+        "startLine": 173,
+        "startChar": 39,
+        "endLine": 173,
+        "endChar": 44
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4b0f36e2",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "we have the final rwrs for the caller.",
+      "range": {
+        "startLine": 183,
+        "startChar": 12,
+        "endLine": 183,
+        "endChar": 35
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_cb0246b4",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "shouldn\u0027t this happen only if the rwr is of \"incoming\" direction?",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_ebff0aa9",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "same logic to come here for callee as for caller, right?",
+      "range": {
+        "startLine": 358,
+        "startChar": 12,
+        "endLine": 358,
+        "endChar": 35
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8b2c3e4c",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "same here, additional check if rwr is dir \"outgoing\"?",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_eb5e2a12",
+        "filename": "lib/NGCP/Panel/Form/CallRouting/Verify.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-15T12:27:06Z",
+      "side": 1,
+      "message": "just minor, but could make sense to create a seperate field",
+      "range": {
+        "startLine": 52,
+        "startChar": 13,
+        "endLine": 52,
+        "endChar": 43
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
