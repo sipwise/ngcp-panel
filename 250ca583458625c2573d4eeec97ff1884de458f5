@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_6b2b1a31",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "for now only first one (though adding also check for enabled state and selection of only enabled ones).",
+      "parentUuid": "bada0100_0bafeee4",
+      "range": {
+        "startLine": 79,
+        "startChar": 58,
+        "endLine": 79,
+        "endChar": 63
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_8b82fe50",
         "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
         "patchSetId": 2
@@ -36,6 +60,24 @@
       "writtenOn": "2016-04-15T12:27:06Z",
       "side": 1,
       "message": "i really like that verbose stuff.\n\nafaics this could be wired into the branches above, would be easier to follow",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0b204e48",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "I cannot add it into branches above as I only call it once here where I have all the data from the checks above.\nGoing to a comment headline here to make it clearer.",
+      "parentUuid": "bada0100_8b82fe50",
       "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -59,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_2b1d1210",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "sorry, not following here. \ncaller_rewrite_id is when you have an explicitly selected value to be used no matter what instead of actual existing/non-existing subscriber/peer rewrite rule sets.",
+      "parentUuid": "bada0100_4bf3b60a",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_0bddae70",
         "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
         "patchSetId": 2
@@ -76,6 +136,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_cb19e623",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "sorry not following here.\nif there is no explicit \"rewrite rule set\" to use then it is taken from the subscriber/domain/peer preferences as it is normally performed in our actual logic.",
+      "parentUuid": "bada0100_0bddae70",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_6b46ba25",
         "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
         "patchSetId": 2
@@ -87,6 +165,30 @@
       "writtenOn": "2016-04-15T12:27:06Z",
       "side": 1,
       "message": "i often just use if ($rs-\u003efirst) { ... to avoid count query at all. dbix should should cache it actually, so it would save us one query.",
+      "range": {
+        "startLine": 136,
+        "startChar": 16,
+        "endLine": 136,
+        "endChar": 26
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8bd3de37",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "yes, good point, I also like using first but somehow stick to count() in this cases, going to adjust them to first().",
+      "parentUuid": "bada0100_6b46ba25",
       "range": {
         "startLine": 136,
         "startChar": 16,
@@ -122,6 +224,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_2be4320c",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "our rewrite_rule_set preferences are quite ... complicated \u003d)\nbasically when you create a rewrite rule set it also creates 4 preferences (for kamailio db).\nfor instance:\nmysql\u003e select * from voip_rewrite_rule_sets\\G\n*************************** 1. row ***************************\n             id: 7\n    reseller_id: 1\n           name: api_test rule set name\n    description: api_test rule set description\n caller_in_dpid: 37\n callee_in_dpid: 39\ncaller_out_dpid: 41\ncallee_out_dpid: 43\ncaller_lnp_dpid: 45\ncallee_lnp_dpid: 47\n\nthere is no \"rewrite rule set\" id saved in subscriber/domain/preferences but instead those 4, therefore I have to pick one, \"caller_in_dpid\" is what I need in this case to get the \"id\" from preferences and then I can fetch the actual rewrite rule set id by using this id.",
+      "parentUuid": "bada0100_0b4b6e2c",
+      "range": {
+        "startLine": 138,
+        "startChar": 30,
+        "endLine": 138,
+        "endChar": 34
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_eb514ad9",
         "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
         "patchSetId": 2
@@ -139,6 +265,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_abbfc2cf",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "subscriber prefs have higher precendence, yes.",
+      "parentUuid": "bada0100_eb514ad9",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_2b6f5294",
         "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
         "patchSetId": 2
@@ -150,6 +294,30 @@
       "writtenOn": "2016-04-15T12:27:06Z",
       "side": 1,
       "message": "ok seems there shouldnt be more than one",
+      "range": {
+        "startLine": 173,
+        "startChar": 39,
+        "endLine": 173,
+        "endChar": 44
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0bce0e84",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "yes.",
+      "parentUuid": "bada0100_2b6f5294",
       "range": {
         "startLine": 173,
         "startChar": 39,
@@ -185,6 +353,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_cbc7a663",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "yes.",
+      "parentUuid": "bada0100_4b0f36e2",
+      "range": {
+        "startLine": 183,
+        "startChar": 12,
+        "endLine": 183,
+        "endChar": 35
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_cb0246b4",
         "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
         "patchSetId": 2
@@ -196,6 +388,24 @@
       "writtenOn": "2016-04-15T12:27:06Z",
       "side": 1,
       "message": "shouldn\u0027t this happen only if the rwr is of \"incoming\" direction?",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8ba19eab",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "it is always \"incoming\" first to normalise it (hence \"in\"). then when an outgoing termination point is identified the \"outbound\" part is used.",
+      "parentUuid": "bada0100_cb0246b4",
       "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -225,6 +435,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_aba6e2bf",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "almost. I keep all of the code kinda linear on purpose so to be able to tweak enrich parts if needed. otherwise this all could be split/put into \"common use\" functions.",
+      "parentUuid": "bada0100_ebff0aa9",
+      "range": {
+        "startLine": 358,
+        "startChar": 12,
+        "endLine": 358,
+        "endChar": 35
+      },
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_8b2c3e4c",
         "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
         "patchSetId": 2
@@ -236,6 +470,24 @@
       "writtenOn": "2016-04-15T12:27:06Z",
       "side": 1,
       "message": "same here, additional check if rwr is dir \"outgoing\"?",
+      "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4babb689",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-04-15T12:43:41Z",
+      "side": 1,
+      "message": "yes, now I need to apply the caller/calle \"outbound\" part.",
+      "parentUuid": "bada0100_8b2c3e4c",
       "revId": "250ca583458625c2573d4eeec97ff1884de458f5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
