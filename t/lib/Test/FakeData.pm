@@ -219,6 +219,18 @@ sub build_data{
             'query' => ['external_id'],
             'no_delete_available' => 1,
         },
+        'customer_sipaccount' => {
+            'data' => {
+                status             => 'active',
+                contact_id         => sub { return shift->create('customercontacts',@_); },
+                billing_profile_id => sub { return shift->create('billingprofiles',@_); },
+                external_id        => 'api_test customer sipaccount',
+                type               => 'sipaccount',
+            },
+            'query' => ['external_id'],
+            'no_delete_available' => 1,
+            'collection' => 'customers',
+        },
         'billingprofiles' => {
             'data' => {
                 name        => 'api_test test profile'.time(),
@@ -313,7 +325,7 @@ sub load_db{
         if((!exists $self->loaded->{$collection_name}) && $data->{$collection_name}->{query}){
             my(undef,$content) = $self->search_item($collection_name,$data);
             if($content->{total_count}){
-                my $values = $content->{_embedded}->{$self->test_machine->get_hal_name($collection_name)};
+                my $values = $content->{_embedded}->{$self->test_machine->get_hal_name($self->get_collection_interface($collection_name))};
                 $values = ('HASH' eq ref $values) ? [$values] : $values;
                 $self->loaded->{$collection_name} = [ map {
                     {
@@ -341,7 +353,7 @@ sub clear_db{
         }
         my(undef,$content) = $self->search_item($collection_name,$data);
         if($content->{total_count}){
-            my $values = $content->{_links}->{$self->test_machine->get_hal_name($collection_name)};
+            my $values = $content->{_links}->{$self->test_machine->get_hal_name($self->get_collection_interface($collection_name))};
             $values = ('HASH' eq ref $values) ? [$values] : $values;
             my @locations = map {$_->{href}} @$values;
             if($data->{$collection_name}->{no_delete_available}){
@@ -385,7 +397,7 @@ sub search_item{
             $field_name.'='.uri_escape($search_value);
         } @{$item->{query}}
     );
-    my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string,$collection_name));
+    my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string,$self->get_collection_interface($collection_name)));
     #time for memoize?
     $self->searched->{$collection_name} = [$res, $content, $req];
     return ($res, $content, $req);
@@ -517,7 +529,7 @@ sub create{
     my $data = clone($self->data->{$collection_name}->{data});
     my $test_machine = clone $self->test_machine;
     $test_machine->set(
-        name            => $collection_name,
+        name            => $self->get_collection_interface($collection_name),
         DATA_ITEM       => $data,
     );
     if(exists $self->data->{$collection_name}->{create_special} && 'CODE' eq ref $self->data->{$collection_name}->{create_special}){
@@ -565,6 +577,12 @@ sub DEMOLISH{
         print "We have test items, which can't delete through API:\n";
         print Dumper [ sort { $a cmp $b } keys %{$self->undeletable} ];
     }
+}
+
+sub get_collection_interface{
+    my($self,$collection_name,$data) = @_;
+    $data //= $self->data;
+    return $data->{$collection_name}->{collection} ?  $data->{$collection_name}->{collection} : $collection_name;
 }
 1;
 __END__
