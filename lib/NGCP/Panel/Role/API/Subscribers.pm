@@ -87,14 +87,14 @@ sub resource_from_item {
                 ac => $n->ac,
                 sn => $n->sn,
             };
-            next if($resource{primary_number} && 
+            next if($resource{primary_number} &&
                compare($resource{primary_number}, $alias));
             push @{ $resource{alias_numbers} }, $alias;
         }
     }
 
     my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'lock', 
+        c => $c, attribute => 'lock',
         prov_subscriber => $item->provisioning_voip_subscriber);
     if($pref->first) {
         #cast to Numeric accordingly to the form field type and customer note in the ticket #10313
@@ -153,7 +153,7 @@ sub _item_rs {
         $item_rs = $item_rs->search(undef,
         {
             join => { 'contract' => 'contact' }, #for filters
-        });        
+        });
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
@@ -222,7 +222,7 @@ sub get_billing_profile {
 
 sub prepare_resource {
     my ($self, $c, $schema, $resource, $item) = @_;
-    
+
     my $groups = [];
     my $groupmembers = [];
     my $domain;
@@ -231,7 +231,7 @@ sub prepare_resource {
             ->search({ domain => $resource->{domain} });
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
-            $domain = $domain->search({ 
+            $domain = $domain->search({
                 'domain_resellers.reseller_id' => $c->user->reseller_id,
             }, {
                 join => 'domain_resellers',
@@ -270,7 +270,7 @@ sub prepare_resource {
         $domain = $c->model('DB')->resultset('domains')->search({'me.id' => $resource->{domain_id}});
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
-            $domain = $domain->search({ 
+            $domain = $domain->search({
                 'domain_resellers.reseller_id' => $c->user->reseller_id,
             }, {
                 join => 'domain_resellers',
@@ -285,10 +285,10 @@ sub prepare_resource {
 
     my $customer = $self->get_customer($c, $resource->{customer_id});
     return unless($customer);
-    if(!$item && defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
+    if(!$item && defined $customer->max_subscribers && $customer->voip_subscribers->search({
             status => { '!=' => 'terminated' },
         })->count >= $customer->max_subscribers) {
-        
+
         $self->error($c, HTTP_FORBIDDEN, "Maximum number of subscribers reached.");
         return;
     }
@@ -366,16 +366,17 @@ sub prepare_resource {
                         return;
                     }
                     my $absent_ids;
-                    ($groups,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_by_ids(
+                    ($groups,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_ordered_by_ids(
                         c           => $c,
                         schema      => $schema,
                         ids         => $resource->{pbx_group_ids},
                         customer_id => $resource->{customer_id},
                         is_group    => 1,
+                        sync_with_ids => 1,
                     );
                     if($absent_ids){
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '".$absent_ids->[0]."' in pbx_group_ids, does not exist for this customer.");
-                        return;                
+                        return;
                     }
                 }
             } else {
@@ -388,18 +389,19 @@ sub prepare_resource {
                         return;
                     }
                     my $absent_ids;
-                    ($groupmembers,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_by_ids(
-                        c           => $c,
-                        schema      => $schema,
-                        ids         => $resource->{pbx_groupmember_ids},
-                        customer_id => $resource->{customer_id},
-                        is_group    => 0,
-                    );
+                    ($groupmembers,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_ordered_by_ids(
+                        c            => $c,
+                        schema       => $schema,
+                        ids          => $resource->{pbx_groupmember_ids},
+                        customer_id  => $resource->{customer_id},
+                        is_group     => 0,
+                        sync_with_ids => 1,
+                    ) ;
                     if($absent_ids){
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '".$absent_ids->[0]."' in pbx_groupmember_ids, does not exist for this customer.");
                         return;
                     }
-                   
+
                 }
             }
         }
@@ -639,7 +641,7 @@ sub update_item {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
         NGCP::Panel::Utils::Subscriber::update_preferences(
-            c => $c, 
+            c => $c,
             prov_subscriber => $prov_subscriber,
             'preferences'   => {
                 cloud_pbx_hunt_policy  => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_policy},
