@@ -1,3 +1,14 @@
+ngcp-panel (1.12.1.6+0~mr4.3.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [381ad2c] MT#19113 always fill in caller/callee_in/out values in apply rewrite rules
+  * [2663ff5] MT#19113 fix an error when no callee peers are found
+  * [af02c09] MT#19113 fix voip_peer_hosts, javascript radio check
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Apr 2016 17:58:33 +0200
+
 ngcp-panel (1.12.1.5+0~mr4.3.1.5) unstable; urgency=medium
 
   [ Kirill Solomko ]
