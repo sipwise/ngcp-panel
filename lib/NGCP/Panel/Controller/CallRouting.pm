@@ -73,11 +73,11 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
         }
         $data->{caller_peer} = $rs->first;
 
-        unless ($rs->voip_peer_hosts->first) {
+        unless ($data->{caller_peer}->voip_peer_hosts->first) {
             push @log, sprintf "caller peer with id %d does not contain any peer hosts",
                 $rs->id;
         }
-        $data->{caller_peer_host} = $rs->voip_peer_hosts->first;
+        $data->{caller_peer_host} = $data->{caller_peer}->voip_peer_hosts->first;
     } else {
         push @log, sprintf "no caller subscriber/peer was specified, using subscriber lookup based on caller %s",
             $data->{caller};
@@ -292,11 +292,11 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
         }
         $data->{callee_peer} = $rs->first;
 
-        unless ($rs->voip_peer_hosts->first) {
+        unless ($data->{callee_peer}->voip_peer_hosts->first) {
             push @log, sprintf "callee peer with id %d does not contain any peer hosts",
                 $rs->id;
         }
-        $data->{callee_peer_host} = $rs->voip_peer_hosts->first;
+        $data->{callee_peer_host} = $data->{callee_peer}->voip_peer_hosts->first;
     } else {
         push @log, sprintf "callee subscriber lookup based on %s",
             $data->{callee};
