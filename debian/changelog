@@ -1,3 +1,12 @@
+ngcp-panel (1.12.1.5+0~mr4.3.1.5) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d5193d2] MT#19113 CallRoutingVerity fix wrong argument in get_dom_preference() call
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Apr 2016 14:10:21 +0200
+
 ngcp-panel (1.12.1.4+0~mr4.3.1.4) unstable; urgency=medium
 
   [ Kirill Solomko ]
