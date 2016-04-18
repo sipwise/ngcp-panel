@@ -322,7 +322,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                                         caller => $data->{caller_in},
                                         callee => $data->{callee_in},
                                     );
-            unless (scalar @{$data->{callee_peers}}) {
+            unless ($data->{callee_peers} && scalar @{$data->{callee_peers}}) {
                 push @log, sprintf "no callee peers found";
                 goto RESULT;
             }
