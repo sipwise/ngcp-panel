@@ -253,6 +253,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
 
     # apply inbound rewrite rules
     foreach my $type (qw(caller callee)) {
+        $data->{$type.'_in'} = $data->{$type};
         next unless $data->{caller_rewrite};
         my $new;
         if ($data->{caller_subscriber_id}) {
@@ -431,6 +432,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
 
     # apply outbound rewrite rules
     foreach my $type (qw(caller callee)) {
+        $data->{$type.'_out'} = $data->{$type};
         next unless $data->{callee_rewrite};
         my $new;
         if ($data->{callee_subscriber_id}) {
@@ -464,13 +466,12 @@ RESULT:
             $data->{$type.'_subscriber'}
                 ? 'subscriber'
                 : $data->{$type.'_peer'} ? 'peer' : 'unknown';
-        foreach my $dir (qw(in out)) {
+        #foreach my $dir (qw(in out)) {
             #$data->{$type.'_'.$dir} ||= $data->{$type.'_type'} ne 'unknown'
             #                                ? $data->{$type}
             #                                : '';
             # fill in a value even if caller/callee is not identified
-            $data->{$type.'_'.$dir} ||= $data->{$type};
-        }
+        #}
     }
 
     $c->stash(
