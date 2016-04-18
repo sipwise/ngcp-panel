@@ -1,15 +1,20 @@
 <script type="text/javascript">
-$(document).ready(function(){
-    $("#control-caller-subscriber-id").show();
-    $("#control-caller-peer-id").hide();
+$(document).ready(function() {
+    if ($('input[name=caller_type]:checked').attr("value") == "peer") {
+        $("#control-caller-subscriber-id").hide();
+        $("#control-caller-peer-id").show();
+    } else {
+        $("#control-caller-subscriber-id").show();
+        $("#control-caller-peer-id").hide();
+    }
 
-    $('input[name$="caller_type"]').click(function(){
-        if($(this).attr("value")=="subscriber"){
+    $('input[name$="caller_type"]').click(function() {
+        if ($(this).attr("value") == "subscriber") {
             $("#control-caller-subscriber-id").show();
             $("#control-caller-peer-id").hide();
             $('div"#control-caller-type" input[type=checkbox]').prop('checked', false);
         }
-        if($(this).attr("value")=="peer"){
+        if ($(this).attr("value") == "peer") {
             $("#control-caller-subscriber-id").hide();
             $("#control-caller-peer-id").show();
             $('div"#control-caller-type" input[type=checkbox]').prop('checked', false);
