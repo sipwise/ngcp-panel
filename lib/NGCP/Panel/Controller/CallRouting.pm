@@ -6,7 +6,8 @@ use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::CallRouting::Verify;
 use NGCP::Panel::Utils::Navigation;
-use NGCP::Panel::Utils::Subscriber;;
+use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::Peering;
 
 use Sys::Hostname;
 
@@ -127,11 +128,11 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
             );
             if ($rs->first) {
                 @{$usr_prefs{$pref}} = map { $_->value } $rs->all;
-            } elsif ($pref eq 'allowed_clis_reject_policy') {
+            } else {
                 $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
                     c => $c, attribute => $pref,
-                    prov_subscriber =>
-                    $data->{caller_subscriber}->provisioning_voip_subscriber->domain,
+                    prov_domain =>
+                        $data->{caller_subscriber}->provisioning_voip_subscriber->domain,
                 );
                 if ($rs->first) {
                     @{$usr_prefs{$pref}} = map { $_->value } $rs->all;
@@ -163,7 +164,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                         foreach my $cli (qw(user_cli cli)) {
                             if (defined $usr_prefs{$cli}) {
                                 $data->{caller} = $usr_prefs{$cli}[0];
-                                push @log, sprintf ", taken from '$cli' %d",
+                                $log[-1] .= sprintf ", taken from '$cli' %d",
                                     $usr_prefs{$cli}[0];
                                 last;
                             }
