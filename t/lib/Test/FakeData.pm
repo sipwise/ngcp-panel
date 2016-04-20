@@ -2,7 +2,7 @@ package Test::FakeData;
 
 use strict;
 
-use Sipwise::Base;
+use Moose;
 use Test::Collection;
 use JSON;
 use Test::More;
@@ -219,6 +219,18 @@ sub build_data{
             'query' => ['external_id'],
             'no_delete_available' => 1,
         },
+        'customer_sipaccount' => {
+            'data' => {
+                status             => 'active',
+                contact_id         => sub { return shift->create('customercontacts',@_); },
+                billing_profile_id => sub { return shift->create('billingprofiles',@_); },
+                external_id        => 'api_test customer sipaccount',
+                type               => 'sipaccount',
+            },
+            'query' => ['external_id'],
+            'no_delete_available' => 1,
+            'collection' => 'customers',
+        },
         'billingprofiles' => {
             'data' => {
                 name        => 'api_test test profile'.time(),
@@ -228,32 +240,6 @@ sub build_data{
             'default' => 'billing_profiles',
             'no_delete_available' => 1,
             'dependency_requires_recreation' => ['resellers'],
-        },
-        'subscribers' => {
-            'data' => {
-                administrative       => 0,
-                customer_id          => sub { return shift->get_id('customers',@_); },
-                primary_number       => { ac => 111, cc=> 111, sn => 111 },
-                alias_numbers        => [ { ac => 11, cc=> 11, sn => 11 } ],
-                username             => 'api_test_username',
-                password             => 'api_test_password',
-                webusername          => 'api_test_webusername',
-                webpassword          => undef,
-                domain_id            => sub { return shift->get_id('domains',@_); },,
-                #domain_id            =>
-                email                => undef,
-                external_id          => undef,
-                is_pbx_group         => 1,
-                is_pbx_pilot         => 1,
-                pbx_extension        => '111',
-                pbx_group_ids        => [],
-                pbx_groupmember_ids  => [],
-                profile_id           => sub { return shift->get_id('subscriberprofiles',@_); },
-                status               => 'active',
-                pbx_hunt_policy      => 'parallel',
-                pbx_hunt_timeout     => '15',
-            },
-            'query' => ['username'],
         },
         'domains' => {
             'data' => {
@@ -286,12 +272,12 @@ sub build_data{
             },
             'query' => ['version'],
             'create_special'=> sub {
-                my ($self,$collection_name) = @_;
-                my $prev_params = $self->test_machine->get_cloned('content_type','QUERY_PARAMS');
-                $self->test_machine->content_type->{POST} = $self->data->{$collection_name}->{data}->{content_type};
-                $self->test_machine->QUERY_PARAMS($self->test_machine->hash2params($self->data->{$collection_name}->{data}));
-                $self->test_machine->check_create_correct(1, sub {return 'test_api_empty_config';} );
-                $self->test_machine->set(%$prev_params);
+                my ($self,$collection_name,$test_machine) = @_;
+                my $prev_params = $test_machine->get_cloned('content_type','QUERY_PARAMS');
+                $test_machine->content_type->{POST} = $self->data->{$collection_name}->{data}->{content_type};
+                $test_machine->QUERY_PARAMS($test_machine->hash2params($self->data->{$collection_name}->{data}));
+                $test_machine->check_create_correct(1, sub {return 'test_api_empty_config';} );
+                $test_machine->set(%$prev_params);
             },
             'no_delete_available' => 1,
         },
@@ -302,6 +288,18 @@ sub build_data{
             },
             'query' => ['name'],
             'no_delete_available' => 1,
+        },
+        'rewriterulesets' => {
+            'data' => {
+                reseller_id     => sub { return shift->get_id('resellers',@_); },
+                name            => 'api_test rule set name',
+                description     => 'api_test rule set description',
+                caller_in_dpid  => '1',
+                callee_in_dpid  => '2',
+                caller_out_dpid => '3',
+                callee_out_dpid => '4',
+            },
+            'query' => ['name'],
         },
     };
     $self->process_data($data);
@@ -324,12 +322,10 @@ sub load_db{
     $data //= $self->data;
     $collections_slice //= [keys %$data];
     foreach my $collection_name( @$collections_slice ){
-        #print "load_db: collection_name=$collection_name;\n";
         if((!exists $self->loaded->{$collection_name}) && $data->{$collection_name}->{query}){
             my(undef,$content) = $self->search_item($collection_name,$data);
-            #print Dumper $content;
             if($content->{total_count}){
-                my $values = $content->{_embedded}->{$self->test_machine->get_hal_name($collection_name)};
+                my $values = $content->{_embedded}->{$self->test_machine->get_hal_name($self->get_collection_interface($collection_name))};
                 $values = ('HASH' eq ref $values) ? [$values] : $values;
                 $self->loaded->{$collection_name} = [ map {
                     {
@@ -345,6 +341,7 @@ sub load_db{
 
 sub clear_db{
     my($self,$data,$order_array,$collections_slice) = @_;
+    $data ||= $self->data;
     $order_array //= [qw/contracts systemcontacts customercontacts/];
     my $order_hash = {};
     $collections_slice //= [keys %$data];
@@ -356,11 +353,11 @@ sub clear_db{
         }
         my(undef,$content) = $self->search_item($collection_name,$data);
         if($content->{total_count}){
-            my $values = $content->{_links}->{$self->test_machine->get_hal_name($collection_name)};
+            my $values = $content->{_links}->{$self->test_machine->get_hal_name($self->get_collection_interface($collection_name))};
             $values = ('HASH' eq ref $values) ? [$values] : $values;
             my @locations = map {$_->{href}} @$values;
             if($data->{$collection_name}->{no_delete_available}){
-                @{$self->undeletable->{@locations}} = ($collection_name) x @locations;
+                @{$self->undeletable}{@locations} = ($collection_name) x @locations;
             }else{
                 if($data->{$collection_name}->{delete_potentially_dependent}){
                     #no checking of deletion success will be done for items which may depend on not deletable ones
@@ -372,6 +369,7 @@ sub clear_db{
                 }else{
                     $self->test_machine->clear_test_data_all([ @locations ]);
                 }
+                $self->clear_cached_data($collection_name);
             }
         }
     }
@@ -399,15 +397,18 @@ sub search_item{
             $field_name.'='.uri_escape($search_value);
         } @{$item->{query}}
     );
-    my $name_prev = $self->test_machine->{name};
-    $self->test_machine->name($collection_name);
-    my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string));
-    $name_prev and $self->test_machine->name($name_prev);
+    my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string,$self->get_collection_interface($collection_name)));
     #time for memoize?
     $self->searched->{$collection_name} = [$res, $content, $req];
     return ($res, $content, $req);
 }
+sub clear_cached_data{
+    my($self, @collections)  = @_;
+    delete @{$self->loaded}{@collections};
+    delete @{$self->created}{@collections};
+    delete @{$self->searched}{@collections};
 
+}
 sub set_data_from_script{
     my($self, $data_in)  = @_;
     while (my($collection_name,$collection_data) = each %$data_in ){
@@ -445,6 +446,55 @@ sub load_data_from_script{
     }
 }
 
+sub load_collection_data{
+    my($self, $collection_name)  = @_;
+    if(!$self->data->{$collection_name}){
+        $self->load_data_from_script($collection_name);
+    }
+    if(! ( $self->collection_id_exists($collection_name) ) ){
+        $self->clear_db(undef,undef,[$collection_name]);
+        $self->load_db(undef,[$collection_name]);
+    }
+}
+sub get_id{
+    my $self = shift;
+    #my( $collection_name, $parents_in, $params)  = @_;
+    my( $collection_name )  = @_;
+    $self->load_collection_data($collection_name);
+    my $res_id;
+    if( $self->collection_id_exists($collection_name) ){
+        $res_id = $self->get_existent_id($collection_name);
+    }else{
+        $res_id = $self->create(@_);
+    }
+    return $res_id;
+}
+sub get_existent_item{
+    my($self, $collection_name)  = @_;
+    my $item = $self->created->{$collection_name}->[0]
+        || $self->loaded->{$collection_name}->[0];
+    return $item
+}
+sub get_existent_id{
+    my($self, $collection_name)  = @_;
+    my $id = $self->test_machine->get_id_from_created($self->created->{$collection_name}->[0])
+        || $self->test_machine->get_id_from_created($self->loaded->{$collection_name}->[0]);
+    return $id
+}
+sub collection_id_exists{
+    my($self, $collection_name)  = @_;
+    return (exists $self->loaded->{$collection_name}) || ( exists $self->created->{$collection_name});
+}
+sub set_collection_data_fields{
+    my($self, $collection_name, $fields)  = @_;
+    @{ $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data} }{keys %$fields} = values %$fields;
+}
+sub get_collection_data_fields{
+    my($self, $collection_name, @fields )  = @_;
+    my $data = $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data};
+    my %res = map { $_ => $data->{$_} } @fields;
+    return wantarray ? %res : ( values %res )[0];
+}
 sub process{
     my($self, $collection_name, $parents_in)  = @_;
     $self->load_collection_data($collection_name);
@@ -462,38 +512,10 @@ sub process{
     }
     return $self->data->{$collection_name}->{data};
 }
-sub load_collection_data{
-    my($self, $collection_name)  = @_;
-    if(!$self->data->{$collection_name}){
-        $self->load_data_from_script($collection_name);
-    }
-    if(!$self->collection_id_exists($collection_name) ){
-        $self->clear_db(undef,undef,[$collection_name]);
-        $self->load_db(undef,[$collection_name]);
-    }
-}
-sub get_id{
-    my $self = shift;
-    #my( $collection_name, $parents_in, $params)  = @_;
-    my( $collection_name )  = @_;
-    $self->load_collection_data($collection_name);
-    if( $self->collection_id_exists($collection_name) ){
-        return $self->get_existent_id($collection_name);
-    }
-    return $self->create(@_);
-}
-
-sub get_existent_id{
-    my($self, $collection_name)  = @_;
-    my $id = $self->test_machine->get_id_from_created($self->created->{$collection_name}->[0])
-        || $self->test_machine->get_id_from_created($self->loaded->{$collection_name}->[0]);
-    return $id
-}
 
 sub create{
     my($self, $collection_name, $parents_in, $params)  = @_;
     $parents_in //= {};
-    #print "collection_name=$collection_name;\n";
     if($parents_in->{$collection_name}){
         if($self->data->{$collection_name}->{default}){
             $self->data->{$collection_name}->{process_cycled} = {'parents'=>$parents_in};
@@ -505,21 +527,27 @@ sub create{
     $self->process($collection_name, $parents_in);
     #create itself
     my $data = clone($self->data->{$collection_name}->{data});
-    $self->test_machine->set(
-        name            => $collection_name,
+    my $test_machine = clone $self->test_machine;
+    $test_machine->set(
+        name            => $self->get_collection_interface($collection_name),
         DATA_ITEM       => $data,
     );
     if(exists $self->data->{$collection_name}->{create_special} && 'CODE' eq ref $self->data->{$collection_name}->{create_special}){
-        $self->data->{$collection_name}->{create_special}->($self,$collection_name);
+        $self->data->{$collection_name}->{create_special}->($self,$collection_name,$test_machine);
     }else{
-        $self->test_machine->check_create_correct(1);
+        $test_machine->check_create_correct(1);
     }
-    $self->created->{$collection_name} = [values %{$self->test_machine->DATA_CREATED->{ALL}}];
+    $self->created->{$collection_name} = [values %{$test_machine->DATA_CREATED->{ALL}}];
 
     if($self->data->{$collection_name}->{process_cycled}){
+        #parents is a flat description of the dependency hierarchy
+        #parent is just a collection which requires  id of the current collection in its data
+        #parents = { $parent_collection_name => [ $number_of_parents_levels_before, [ @nested_keys in collection to set this collection value]] }
+        #so, last_parent is just a collection, which directly requires current collection item id
         my $parents_cycled = $self->data->{$collection_name}->{process_cycled}->{parents};
         my $last_parent = ( sort { $parents_cycled->{$b}->[0] <=> $parents_cycled->{$a}->[0] } keys %{$parents_cycled} )[0];
         if(grep {$collection_name} @{$self->data->{$last_parent}->{dependency_requires_recreation}} ){
+            undef $test_machine;
             nest( $self->data->{$last_parent}->{data}, @{$parents_cycled->{$last_parent}->[1]}, $self->get_existent_id($collection_name) );
             my %parents_temp = %{$parents_cycled};
             delete $parents_temp{$last_parent};
@@ -528,31 +556,19 @@ sub create{
             #so all we need - update "created" field for further get_existent_id, which will be aclled on exit from this "create" function 
             $self->create($last_parent,{%parents_temp} );
         }else{
-            my $uri = $self->test_machine->get_uri_collection($last_parent).$self->get_existent_id($last_parent);
-            $self->test_machine->request_patch([ {
-                op   => 'replace',
-                path => join('/',('',@{$parents_cycled->{$last_parent}->[1]})),
-                value => $self->get_existent_id($collection_name) } ],
+            my $uri = $test_machine->get_uri_collection($last_parent).$self->get_existent_id($last_parent);
+            $test_machine->request_patch([ {
+                    op   => 'replace',
+                    path => join('/',('',@{$parents_cycled->{$last_parent}->[1]})),
+                    value => $self->get_existent_id($collection_name) } 
+                ],
                 $uri
             );
+            undef $test_machine;
         }
         delete $self->data->{$collection_name}->{process_cycled};
     }
     return $self->get_existent_id($collection_name);
-}
-sub set_collection_data_fields{
-    my($self, $collection_name, $fields)  = @_;
-    @{ $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data} }{keys %$fields} = values %$fields;
-}
-sub get_collection_data_fields{
-    my($self, $collection_name, @fields )  = @_;
-    my $data = $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data};
-    my %res = map { $_ => $data->{$_} } @fields;
-    return wantarray ? %res : ( values %res )[0];
-}
-sub collection_id_exists{
-    my($self, $collection_name)  = @_;
-    return exists $self->loaded->{$collection_name} || exists $self->created->{$collection_name}
 }
 sub DEMOLISH{
     my($self) = @_;
@@ -561,7 +577,12 @@ sub DEMOLISH{
         print "We have test items, which can't delete through API:\n";
         print Dumper [ sort { $a cmp $b } keys %{$self->undeletable} ];
     }
+}
 
+sub get_collection_interface{
+    my($self,$collection_name,$data) = @_;
+    $data //= $self->data;
+    return $data->{$collection_name}->{collection} ?  $data->{$collection_name}->{collection} : $collection_name;
 }
 1;
 __END__
