@@ -61,7 +61,7 @@ sub ERROR {
 
 my $mode = shift @ARGV;
 my @emergency_domains = @ARGV;
-unless(($mode eq "enable" || $mode eq "disable") && @emergency_domains) {
+unless(defined $mode && ($mode eq "enable" || $mode eq "disable") && @emergency_domains) {
     ERROR "Usage: $PROGRAM_NAME <enable|disable> <all|[domain1 domain2 ...]>";
     exit 1;
 }
