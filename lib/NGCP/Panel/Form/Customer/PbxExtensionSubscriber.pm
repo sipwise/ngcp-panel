@@ -4,6 +4,12 @@ use HTML::FormHandler::Moose;
 use NGCP::Panel::Field::PosInteger;
 extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
 
+has_field 'domain' => (
+    type => '+NGCP::Panel::Field::Domain',
+    label => 'SIP Domain',
+    validate_when_empty => 0,
+);
+
 has_field 'pbx_extension' => (
     type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
@@ -17,7 +23,7 @@ has_field 'pbx_extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group_select alias_select pbx_extension display_name email webusername webpassword username password administrative status external_id profile_set profile/ ],
+    render_list => [qw/domain group_select alias_select pbx_extension display_name email webusername webpassword username password administrative status external_id profile_set profile/ ],
 );
 
 override 'field_list' => sub {

@@ -712,7 +712,6 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         'provisioning_voip_subscriber.is_pbx_pilot' => 1,
     })->first;
 
-
     my $params = {};
 
     if($c->config->{features}->{cloudpbx} && $pbx) {
@@ -745,6 +744,10 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     }
 
     $params = merge($params, $c->session->{created_objects});
+    if($c->stash->{pilot} && !$params->{domain}{id}) {
+      $params->{domain}{id} = $c->stash->{pilot}->domain_id;
+    }
+
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -775,7 +778,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 my $pbx_group_ids = [];
                 if($pbx && !$pbxadmin) {
                     my $pilot = $c->stash->{pilot};
-                    $form->params->{domain}{id} = $pilot->domain_id;
+                    $form->params->{domain}{id} ||= $pilot->domain_id;
                     if ($form->params->{group_select}) {
                         $pbx_group_ids = decode_json($form->params->{group_select});
                     }
