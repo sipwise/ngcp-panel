@@ -834,19 +834,27 @@ sub _get_notopup_expiration {
     my $notopup_expiration = undef;
     if ($notopup_discard_intervals) {
         #take the start of the latest interval where a topup occured,
-        #add the allowed number+1 of the current package' intervals.
-        #the balance is discarded  if the start of the next package
+        #add the allowed number+1 of the current package' interval units.
+        #the balance is discarded if the start of the next package
         #exceed this calculated expiration date.
-        my $last_balance_w_topup;
-        if ($last_balance) {
-            $last_balance_w_topup = $last_balance;
-        } else {
-            $last_balance_w_topup = $contract->contract_balances->search({ topup_count => { '>' => 0 } },{ order_by => { '-desc' => 'end'},})->first;
+        my $start = undef;
+        if ($last_balance) { #infinite end means its a topup interval
+            $start = $last_balance->start;
+        } else { #find last interval with topup
+            my $last_balance_w_topup = $contract->contract_balances->search({ topup_count => { '>' => 0 } },{ order_by => { '-desc' => 'end'},})->first;
             $last_balance_w_topup = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first unless $last_balance_w_topup;
-            $notopup_discard_intervals += 1;
+            if ($last_balance_w_topup) {
+                if (NGCP::Panel::Utils::DateTime::is_infinite_future($last_balance_w_topup->end)) {
+                    # if the above queries hit the most recent, open end interval:
+                    $start = $last_balance_w_topup->start;
+                } else {
+                    # count expiration from the start of the next interval:
+                    $start = $last_balance_w_topup->end->clone->add(seconds => 1);
+                }
+            }
         }
-        $notopup_expiration = _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($last_balance_w_topup->start),$interval_unit,$notopup_discard_intervals,
-            _START_MODE_PRESERVE_EOM->{$start_mode} ? NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp) : undef) if $last_balance_w_topup;
+        $notopup_expiration = _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($start),$interval_unit,$notopup_discard_intervals,
+            _START_MODE_PRESERVE_EOM->{$start_mode} ? NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp) : undef) if $start;
     }
     return $notopup_expiration;
 }
