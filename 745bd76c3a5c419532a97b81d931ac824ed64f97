@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_11db94ee",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2016-04-21T14:55:37Z",
+      "side": 1,
+      "message": "\\\"Match in Ingresso del Numero Chiamato\\\"",
+      "range": {
+        "startLine": 68,
+        "startChar": 34,
+        "endLine": 68,
+        "endChar": 36
+      },
+      "revId": "745bd76c3a5c419532a97b81d931ac824ed64f97",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_d1fbcc45",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2016-04-21T14:55:37Z",
+      "side": 1,
+      "message": "I would say: (Principale)",
+      "range": {
+        "startLine": 244,
+        "startChar": 22,
+        "endLine": 244,
+        "endChar": 34
+      },
+      "revId": "745bd76c3a5c419532a97b81d931ac824ed64f97",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b19ac812",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2016-04-21T14:55:37Z",
+      "side": 1,
+      "message": "typo: IP o hostname",
+      "range": {
+        "startLine": 764,
+        "startChar": 4,
+        "endLine": 764,
+        "endChar": 6
+      },
+      "revId": "745bd76c3a5c419532a97b81d931ac824ed64f97",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_71a46057",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 772,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2016-04-21T14:55:37Z",
+      "side": 1,
+      "message": "per definire",
+      "range": {
+        "startLine": 772,
+        "startChar": 27,
+        "endLine": 772,
+        "endChar": 49
+      },
+      "revId": "745bd76c3a5c419532a97b81d931ac824ed64f97",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_d192ecf5",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 927,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2016-04-21T14:55:37Z",
+      "side": 1,
+      "message": "numero chiamabile",
+      "range": {
+        "startLine": 927,
+        "startChar": 11,
+        "endLine": 927,
+        "endChar": 25
+      },
+      "revId": "745bd76c3a5c419532a97b81d931ac824ed64f97",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_51b6fc8b",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 4690,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2016-04-21T14:55:37Z",
+      "side": 1,
+      "message": "al",
+      "range": {
+        "startLine": 4690,
+        "startChar": 61,
+        "endLine": 4690,
+        "endChar": 65
+      },
+      "revId": "745bd76c3a5c419532a97b81d931ac824ed64f97",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_71bb0073",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 4690,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2016-04-21T14:55:37Z",
+      "side": 1,
+      "message": "proprio",
+      "range": {
+        "startLine": 4690,
+        "startChar": 66,
+        "endLine": 4690,
+        "endChar": 73
+      },
+      "revId": "745bd76c3a5c419532a97b81d931ac824ed64f97",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_11b0748a",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 4740,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2016-04-21T14:55:37Z",
+      "side": 1,
+      "message": "sola lettura",
+      "range": {
+        "startLine": 4740,
+        "startChar": 35,
+        "endLine": 4740,
+        "endChar": 43
+      },
+      "revId": "745bd76c3a5c419532a97b81d931ac824ed64f97",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
