@@ -143,7 +143,7 @@ has_field 'notopup_discard_intervals' => (
     type => 'PosInteger',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The balance will be discarded if no top-up happened for the the given number of balance intervals.']
+        title => ['The balance will be discarded if no top-up happened for the the given number of balance interval units.']
     },
 );
 
