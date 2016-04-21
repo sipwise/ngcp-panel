@@ -26,10 +26,11 @@ BEGIN {
     unshift(@INC,'../../lib');
 }
 use NGCP::Panel::Utils::DateTime qw();
-#use NGCP::Panel::Utils::ProfilePackages qw(); #since it depends on Utils::Subscribers and thus Sipwise::Base, importin it causes segfault when creating threads.. 
+#use NGCP::Panel::Utils::ProfilePackages qw(); #since it depends on Utils::Subscribers and thus Sipwise::Base, importin it causes segfault when creating threads..
 
 my $is_local_env = 0;
 my $disable_parallel_catchup = 1;
+my $disable_hourly_intervals = 1;
 #my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 #my $enable_profile_packages = 1;
 
@@ -47,7 +48,7 @@ if ($is_local_env) {
         }
     }
     $panel_config //= 'ngcp_panel.conf';
-    $catalyst_config = Config::General->new($panel_config);   
+    $catalyst_config = Config::General->new($panel_config);
 }
 my %config = $catalyst_config->getall();
 
@@ -74,12 +75,12 @@ my $infinite_future;
     my $now = NGCP::Panel::Utils::DateTime::current_local;
 
     my $dtf = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
+        pattern => '%F %T',
     );
     $infinite_future = $dtf->format_datetime($future);
     is($infinite_future,'9999-12-31 23:59:59','check if infinite future is 9999-12-31 23:59:59');
     is($dtf->format_datetime($past),'1000-01-01 00:00:00','check if infinite past is 1000-01-01 00:00:00');
-    
+
     foreach my $offset ((0,'+'. 80*365*24*60*60 .'s','-'. 80*365*24*60*60 .'s')) {
 
         my ($fake_now,$offset_label);
@@ -99,15 +100,15 @@ my $infinite_future;
 
         ok($future > $fake_now,$offset_label . 'future is greater than now');
         ok(!($future < $fake_now),$offset_label . 'future is not smaller than now');
-        
+
         ok($past < $fake_now,$offset_label . 'past is smaller than now');
         ok(!($past > $fake_now),$offset_label . 'past is not greater than now');
-        
+
         ok($future->epoch > $fake_now->epoch,$offset_label . 'future is greater than now (epoch)');
         ok(!($future->epoch < $fake_now->epoch),$offset_label . 'future is not smaller than now (epoch)');
-        
+
         ok($past->epoch < $fake_now->epoch,$offset_label . 'past is smaller than now (epoch)');
-        ok(!($past->epoch > $fake_now->epoch),$offset_label . 'past is not greater than now (epoch)');    
+        ok(!($past->epoch > $fake_now->epoch),$offset_label . 'past is not greater than now (epoch)');
     }
     _set_time();
 }
@@ -146,120 +147,122 @@ my $tb_cnt;
 my $gantt_events;
 
 if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
-    
+
     #goto SKIP;
     #goto THREADED;
     if ('Europe/Vienna' eq NGCP::Panel::Utils::DateTime::current_local()->time_zone->name) {
-        my $package = _create_profile_package('create','hour',1);
+        if (!$disable_hourly_intervals) {
+            my $package = _create_profile_package('create','hour',1);
 
-        {
-            my $dt = NGCP::Panel::Utils::DateTime::from_string('2015-03-29 01:27:00');
-            ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
-            _set_time($dt);
-            my $customer = _create_customer($package,'hourly_interval_dst_at');
-            
-            _check_interval_history($customer,[
-                { start => '2015-03-29 00:00:00', stop => '2015-03-29 00:59:59' },
-                { start => '2015-03-29 01:00:00', stop => '2015-03-29 01:59:59' },
-            ]);
-            
-            $dt = NGCP::Panel::Utils::DateTime::from_string('2015-03-29 03:27:00');
-            ok($dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is in daylight saving time (summer)");
-            _set_time($dt);
-            
-            _check_interval_history($customer,[
-                { start => '2015-03-29 00:00:00', stop => '2015-03-29 00:59:59' },
-                { start => '2015-03-29 01:00:00', stop => '2015-03-29 01:59:59' },
-                #{ start => '2015-03-29 02:00:00', stop => '2015-03-29 02:59:59' }, #a dead one
-                { start => '2015-03-29 03:00:00', stop => '2015-03-29 03:59:59' },
-            ]);        
-            
-            _set_time();
-        }
-        {
-            my $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 01:27:00');
-            ok($dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is in daylight saving time (summer)");
-            _set_time($dt);
-            my $customer = _create_customer($package,'hourly_interval_dst_at');
-            
-            _check_interval_history($customer,[
-                { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
-                { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
-            ]);
-            
-            #$dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 02:27:00');
-            #ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
-            #_set_time($dt);
-            #
-            #_check_interval_history($customer,[
-            #    { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
-            #    { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
-            #    { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
-            #]);        
-            
-            $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 03:27:00');
-            ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
-            _set_time($dt);
-           
-            _check_interval_history($customer,[
-                { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
-                { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
-                { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
-                { start => '2015-10-25 03:00:00', stop => '2015-10-25 03:59:59' },
-            ]);
-            
-            _set_time();
+            {
+                my $dt = NGCP::Panel::Utils::DateTime::from_string('2015-03-29 01:27:00');
+                ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
+                _set_time($dt);
+                my $customer = _create_customer($package,'hourly_interval_dst_at');
+
+                _check_interval_history($customer,[
+                    { start => '2015-03-29 00:00:00', stop => '2015-03-29 00:59:59' },
+                    { start => '2015-03-29 01:00:00', stop => '2015-03-29 01:59:59' },
+                ]);
+
+                $dt = NGCP::Panel::Utils::DateTime::from_string('2015-03-29 03:27:00');
+                ok($dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is in daylight saving time (summer)");
+                _set_time($dt);
+
+                _check_interval_history($customer,[
+                    { start => '2015-03-29 00:00:00', stop => '2015-03-29 00:59:59' },
+                    { start => '2015-03-29 01:00:00', stop => '2015-03-29 01:59:59' },
+                    #{ start => '2015-03-29 02:00:00', stop => '2015-03-29 02:59:59' }, #a dead one
+                    { start => '2015-03-29 03:00:00', stop => '2015-03-29 03:59:59' },
+                ]);
+
+                _set_time();
+            }
+            {
+                my $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 01:27:00');
+                ok($dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is in daylight saving time (summer)");
+                _set_time($dt);
+                my $customer = _create_customer($package,'hourly_interval_dst_at');
+
+                _check_interval_history($customer,[
+                    { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+                    { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+                ]);
+
+                #$dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 02:27:00');
+                #ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
+                #_set_time($dt);
+                #
+                #_check_interval_history($customer,[
+                #    { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+                #    { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+                #    { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
+                #]);
+
+                $dt = NGCP::Panel::Utils::DateTime::from_string('2015-10-25 03:27:00');
+                ok(!$dt->is_dst(),NGCP::Panel::Utils::DateTime::to_string($dt)." is not in daylight saving time (winter)");
+                _set_time($dt);
+
+                _check_interval_history($customer,[
+                    { start => '2015-10-25 00:00:00', stop => '2015-10-25 00:59:59' },
+                    { start => '2015-10-25 01:00:00', stop => '2015-10-25 01:59:59' },
+                    { start => '2015-10-25 02:00:00', stop => '2015-10-25 02:59:59' },
+                    { start => '2015-10-25 03:00:00', stop => '2015-10-25 03:59:59' },
+                ]);
+
+                _set_time();
+            }
         }
     } else {
         diag("time zone '" . NGCP::Panel::Utils::DateTime::current_local()->time_zone->name . "', skipping DST test");
     }
-    
-    {
+
+    if (!$disable_hourly_intervals) {
         my $package = _create_profile_package('create','hour',1);
-       
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-09-02 01:59:41'));
-       
+
         my $customer = _create_customer($package,'hourly_interval');
 
         _check_interval_history($customer,[
             { start => '2015-09-02 00:00:00', stop => '2015-09-02 00:59:59' },
             { start => '2015-09-02 01:00:00', stop => '2015-09-02 01:59:59' },
-        ]); 
-       
+        ]);
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-09-02 02:00:01'));
 
         _check_interval_history($customer,[
             { start => '2015-09-02 00:00:00', stop => '2015-09-02 00:59:59' },
             { start => '2015-09-02 01:00:00', stop => '2015-09-02 01:59:59' },
             { start => '2015-09-02 02:00:00', stop => '2015-09-02 02:59:59' },
-        ]);    
-    
+        ]);
+
         _set_time();
     }
-    
-    {
+
+    if (!$disable_hourly_intervals) {
         my $package = _create_profile_package('create','minute',1);
-       
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-09-03 00:01:41'));
-       
+
         my $customer = _create_customer($package,'minute_interval');
 
         _check_interval_history($customer,[
             { start => '2015-09-03 00:00:00', stop => '2015-09-03 00:00:59' },
             { start => '2015-09-03 00:01:00', stop => '2015-09-03 00:01:59' },
-        ]); 
-       
+        ]);
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-09-03 00:02:01'));
 
         _check_interval_history($customer,[
             { start => '2015-09-03 00:00:00', stop => '2015-09-03 00:00:59' },
             { start => '2015-09-03 00:01:00', stop => '2015-09-03 00:01:59' },
             { start => '2015-09-03 00:02:00', stop => '2015-09-03 00:02:59' },
-        ]);    
-    
+        ]);
+
         _set_time();
-    }    
-    
+    }
+
     #SKIP:
     {
         my $profile_initial = _create_billing_profile('UNDERRUN1_INITIAL',prepaid => 0);
@@ -271,35 +274,35 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
                 initial_profiles => [ { profile_id => $profile_initial->{id}, }, ],
                 topup_profiles => [ { profile_id => $profile_topup->{id}, }, ],
                 underrun_profiles => [ { profile_id => $profile_underrun->{id}, }, ],
-                );        
-        
+                );
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-14 13:00:00'));
-        
+
         my $customer = _create_customer($package,'underrun_1');
         my $subscriber = _create_subscriber($customer,'of customer underrun_1');
-        
+
         _check_interval_history($customer,[
             { start => '2015-06-01 00:00:00', stop => '2015-06-30 23:59:59', cash => 1, profile => $profile_initial->{id} },
         ]);
         is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_cash_balance($customer,0.51);
 
         _check_interval_history($customer,[
             { start => '2015-06-01 00:00:00', stop => '2015-06-30 23:59:59', cash => 0.51, profile => $profile_initial->{id} },
         ]);
         is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_cash_balance($customer,0.49);
-        
+
         _check_interval_history($customer,[
             { start => '2015-06-01 00:00:00', stop => '2015-06-30 23:59:59', cash => 0.49, profile => $profile_initial->{id} },
         ]);
         is(_get_actual_billing_profile_id($customer),$profile_underrun->{id},"check customer id " . $customer->{id} . " actual billing profile id");
         is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-14 13:00:00'));
-        
+
         _perform_topup_cash($subscriber,0.5);
 
         _check_interval_history($customer,[
@@ -308,89 +311,89 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         ]);
         is(_get_actual_billing_profile_id($customer),$profile_topup->{id},"check customer id " . $customer->{id} . " actual billing profile id");
         is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time();
-        
+
     }
-    
+
     {
         #underrun due to switching to package with lower thresholds:
         my $profile_initial_1 = _create_billing_profile('UNDERRUN2_INITIAL_1');
         my $profile_underrun_1 = _create_billing_profile('UNDERRUN2_UNDERRUN_1');
-        
+
         my $profile_initial_2 = _create_billing_profile('UNDERRUN2_INITIAL_2');
         my $profile_topup_2 = _create_billing_profile('UNDERRUN2_TOPUP_2');
         my $profile_underrun_2 = _create_billing_profile('UNDERRUN2_UNDERRUN_2');
-    
+
         my $package_1 = _create_profile_package('1st','month',1, initial_balance => 49,
                 carry_over_mode => 'discard', underrun_lock_threshold => 50, underrun_lock_level => 4, underrun_profile_threshold => 52,
                 initial_profiles => [ { profile_id => $profile_initial_1->{id}, }, ],
                 underrun_profiles => [ { profile_id => $profile_underrun_1->{id}, }, ],
                 );
-    
+
         my $package_2 = _create_profile_package('topup_interval','month',1, initial_balance => 99,
             carry_over_mode => 'carry_over', underrun_lock_threshold => 51, underrun_lock_level => 4, underrun_profile_threshold => 51,
             initial_profiles => [ { profile_id => $profile_initial_2->{id}, }, ],
             underrun_profiles => [ { profile_id => $profile_underrun_2->{id}, }, ],
         );
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-23 13:00:00'));
-    
+
         my $customer = _create_customer($package_1,'1');
         my $subscriber = _create_subscriber($customer,'of customer 1');
-                
+
         _check_interval_history($customer,[
             { start => '2015-01-01 00:00:00', stop => '2015-01-31 23:59:59', cash => 0.49, profile => $profile_underrun_1->{id} },
         ]);
         is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
-            
+
         _switch_package($customer,$package_2);
-            
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-24 13:00:00'));
-            
+
         _perform_topup_cash($subscriber,0.01);
-                           
+
         _check_interval_history($customer,[
             { start => '2015-01-01 00:00:00', stop => '~2015-01-24 13:00:00', cash => 0.49, profile => $profile_underrun_1->{id} },
             { start => '~2015-01-24 13:00:00', stop => '~2015-02-24 13:00:00', cash => 0.5, profile => $profile_underrun_2->{id} },
         ]);
         is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time();
     }
-        
+
     {
 
         my $profile_initial = _create_billing_profile('UNDERRUN3_INITIAL');
         my $profile_topup = _create_billing_profile('UNDERRUN3_TOPUP');
         my $profile_underrun = _create_billing_profile('UNDERRUN3_UNDERRUN');
-        
-        my $package = _create_profile_package('topup','month',1, 
+
+        my $package = _create_profile_package('topup','month',1,
                 carry_over_mode => 'carry_over', underrun_lock_threshold => 1000, underrun_lock_level => 4, underrun_profile_threshold => 1000,
                 topup_lock_level => 0,
                 initial_profiles => [ { profile_id => $profile_initial->{id}, }, ],
                 topup_profiles => [ { profile_id => $profile_topup->{id}, }, ],
                 underrun_profiles => [ { profile_id => $profile_underrun->{id}, }, ],
                 );
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-20 13:00:00'));
-        
+
         my $customer = _create_customer($package,'2');
         my $subscriber = _create_subscriber($customer,'of customer 2');
-        
+
         _check_interval_history($customer,[
             { start => '~2015-07-20 13:00:00', stop => $infinite_future, cash => 0, profile => $profile_underrun->{id} },
         ]);
         is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-20 13:00:10'));
-        
+
         _perform_topup_cash($subscriber,5);
         _check_interval_history($customer,[
             { start => '~2015-07-20 13:00:00', stop => '~2015-07-20 13:00:10', cash => 0, profile => $profile_underrun->{id} },
             { start => '~2015-07-20 13:00:10', stop => $infinite_future, cash => 5, profile => $profile_underrun->{id} },
         ]);
         is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-20 13:00:20'));
         _perform_topup_cash($subscriber,5);
         _check_interval_history($customer,[
@@ -399,43 +402,43 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '~2015-07-20 13:00:20', stop => $infinite_future, cash => 10, profile => $profile_topup->{id} },
         ]);
         is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time();
     }
-    
+
     {
         #_start_recording();
         my $network_x = _create_billing_network_x();
         my $network_y = _create_billing_network_y();
-        
+
         my $profile_base_any = _create_billing_profile('BASE_ANY_NETWORK');
         my $profile_base_x = _create_billing_profile('BASE_NETWORK_X');
         my $profile_base_y = _create_billing_profile('BASE_NETWORK_Y');
-        
+
         my $profile_silver_x = _create_billing_profile('SILVER_NETWORK_X');
         my $profile_silver_y = _create_billing_profile('SILVER_NETWORK_Y');
-        
+
         my $profile_gold_x = _create_billing_profile('GOLD_NETWORK_X');
-        my $profile_gold_y = _create_billing_profile('GOLD_NETWORK_Y');          
-    
+        my $profile_gold_y = _create_billing_profile('GOLD_NETWORK_Y');
+
         my $base_package = _create_base_profile_package($profile_base_any,$profile_base_x,$profile_base_y,$network_x,$network_y);
         my $silver_package = _create_silver_profile_package($base_package,$profile_silver_x,$profile_silver_y,$network_x,$network_y);
         my $extension_package = _create_extension_profile_package($base_package,$profile_silver_x,$profile_silver_y,$network_x,$network_y);
         my $gold_package = _create_gold_profile_package($base_package,$profile_gold_x,$profile_gold_y,$network_x,$network_y);
-    
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_A = _create_customer($base_package,'A');
         my $subscriber_A = _create_subscriber($customer_A,'of customer A');
         #_start_recording();
         my $v_silver_1 = _create_voucher(10,'SILVER_1_'.$t,undef,$silver_package);
         #print _stop_recording();
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-21 13:00:00'));
-        
+
         _perform_topup_voucher($subscriber_A,$v_silver_1);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-10-01 13:00:00'));
-        
+
         _check_interval_history($customer_A,[
             { start => '~2015-06-05 13:00:00', stop => '~2015-06-21 13:00:00', cash => 0, profile => $profile_base_y->{id} },
             { start => '~2015-06-21 13:00:00', stop => '~2015-07-21 13:00:00', cash => 8, profile => $profile_silver_y->{id} },
@@ -443,23 +446,23 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '~2015-08-21 13:00:00', stop => '~2015-09-21 13:00:00', cash => 0, profile => $profile_silver_y->{id} },
             { start => '~2015-09-21 13:00:00', stop => '~2015-10-21 13:00:00', cash => 0, profile => $profile_silver_y->{id} },
         ]);
-    
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_B = _create_customer($base_package,'B');
         my $subscriber_B = _create_subscriber($customer_B,'of customer B');
         my $v_silver_2 = _create_voucher(10,'SILVER_2_'.$t,undef,$silver_package);
         my $v_extension_1 = _create_voucher(2,'EXTENSION_1_'.$t,undef,$extension_package);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-27 13:00:00'));
-        
+
         _perform_topup_voucher($subscriber_B,$v_silver_2);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-27 12:00:00'));
-        
-        _perform_topup_voucher($subscriber_B,$v_extension_1);        
-        
+
+        _perform_topup_voucher($subscriber_B,$v_extension_1);
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-10-01 13:00:00'));
-        
+
         _check_interval_history($customer_B,[
             { start => '~2015-06-05 13:00:00', stop => '~2015-06-27 13:00:00', cash => 0, profile => $profile_base_y->{id} },
             { start => '~2015-06-27 13:00:00', stop => '~2015-07-27 13:00:00', cash => 8, profile => $profile_silver_y->{id} },
@@ -467,23 +470,23 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '~2015-08-27 13:00:00', stop => '~2015-09-27 13:00:00', cash => 0, profile => $profile_silver_y->{id} },
             { start => '~2015-09-27 13:00:00', stop => '~2015-10-27 13:00:00', cash => 0, profile => $profile_silver_y->{id} },
         ]);
-        
-        
+
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_C = _create_customer($base_package,'C');
         my $subscriber_C = _create_subscriber($customer_C,'of customer C');
         my $v_gold_1 = _create_voucher(20,'GOLD_1_'.$t,undef,$gold_package);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-02 13:00:00'));
-        
+
         _perform_topup_voucher($subscriber_C,$v_gold_1);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-10-01 13:00:00'));
-        
+
         _perform_topup_cash($subscriber_C,10,$silver_package);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-11-01 13:00:00'));
-        
+
         _check_interval_history($customer_C,[
             { start => '~2015-06-05 13:00:00', stop => '~2015-07-02 13:00:00', cash => 0, profile => $profile_base_y->{id} },
             { start => '~2015-07-02 13:00:00', stop => '~2015-08-02 13:00:00', cash => 15, profile => $profile_gold_y->{id} },
@@ -491,38 +494,38 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '~2015-09-02 13:00:00', stop => '~2015-10-02 13:00:00', cash => 23, profile => $profile_gold_y->{id} },
             { start => '~2015-10-02 13:00:00', stop => '~2015-11-02 13:00:00', cash => 0, profile => $profile_silver_y->{id} },
         ]);
-        
+
         _set_time();
         #print _stop_recording();
     }
 
     my $prof_package_create30d = _create_profile_package('create','day',30);
     my $prof_package_1st30d = _create_profile_package('1st','day',30);
-    
+
     my $prof_package_create1m = _create_profile_package('create','month',1);
     my $prof_package_1st1m = _create_profile_package('1st','month',1);
-    
+
     my $prof_package_create2w = _create_profile_package('create','week',2);
     my $prof_package_1st2w = _create_profile_package('1st','week',2);
-    
+
     my $prof_package_topup = _create_profile_package('topup',"month",1);
-    
-    my $prof_package_topup_interval = _create_profile_package('topup_interval',"month",1);  
-    
+
+    my $prof_package_topup_interval = _create_profile_package('topup_interval',"month",1);
+
     {
-    
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2014-12-30 13:00:00'));
-    
-        my $customer_topup = _create_customer($prof_package_topup); #create closest to now        
+
+        my $customer_topup = _create_customer($prof_package_topup); #create closest to now
         my $customer_wo = _create_customer();
         my $customer_create1m = _create_customer($prof_package_create1m);
-    
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-04-02 02:00:00'));
-    
+
         _check_interval_history($customer_topup,[
             { start => '~2014-12-30 13:00:00', stop => $infinite_future},
-        ]);  
-        
+        ]);
+
         _check_interval_history($customer_wo,[
             { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59'},
             { start => '2015-01-01 00:00:00', stop => '2015-01-31 23:59:59'},
@@ -530,58 +533,58 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2015-03-01 00:00:00', stop => '2015-03-31 23:59:59'},
             { start => '2015-04-01 00:00:00', stop => '2015-04-30 23:59:59'},
         ]); #,NGCP::Panel::Utils::DateTime::from_string('2014-11-29 13:00:00'));
-        
+
         _check_interval_history($customer_create1m,[
             { start => '2014-12-30 00:00:00', stop => '2015-01-29 23:59:59'},
             { start => '2015-01-30 00:00:00', stop => '2015-02-27 23:59:59'},
             { start => '2015-02-28 00:00:00', stop => '2015-03-29 23:59:59'},
             { start => '2015-03-30 00:00:00', stop => '2015-04-29 23:59:59'},
         ]);
-        
+
         _set_time();
     }
-    
+
     {
         my $ts = '2014-01-07 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $gantt_events = [];
-        
+
         my $cnt = 1;
         $req_identifier = $cnt . '. create customer'; diag($req_identifier); $cnt++;
         my $customer = _create_customer();
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-    
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef },
         ]);
-        
+
         $ts = '2014-03-01 13:00:00'; $gantt_events = [];
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef },
             { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef },
             { start => '2014-03-01 00:00:00', stop => '2014-03-31 23:59:59', package_id => undef },
         ]);
-        
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create30d->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_create30d);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef },
             { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef },
             { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ] },
-        ]);     
-        
+        ]);
+
         $ts = '2014-04-01 13:00:00';
         $gantt_events = [];
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef },
@@ -589,22 +592,22 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ] },
             { start => '2014-03-07 00:00:00', stop => '2014-04-05 23:59:59', package_id => $prof_package_create30d->{id} },
         ]);
-        
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st30d->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_1st30d);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
             { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef},
             { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ] },
             { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ] },
-        ]);    
-        
+        ]);
+
         $ts = '2014-05-13 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
@@ -612,12 +615,12 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ]},
             { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ]},
             { start => '2014-05-01 00:00:00', stop => '2014-05-30 23:59:59', package_id => $prof_package_1st30d->{id} },
-        ]);        
-        
+        ]);
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create1m->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_create1m);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
@@ -625,11 +628,11 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ]},
             { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ]},
             { start => '2014-05-01 00:00:00', stop => '2014-06-06 23:59:59', package_id => [ $prof_package_1st30d->{id}, $prof_package_create1m->{id} ]},
-        ]);         
-        
+        ]);
+
         $ts = '2014-05-27 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
@@ -637,12 +640,12 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ]},
             { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ]},
             { start => '2014-05-01 00:00:00', stop => '2014-06-06 23:59:59', package_id => [ $prof_package_1st30d->{id}, $prof_package_create1m->{id} ]},
-        ]);   
-        
+        ]);
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st1m->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_1st1m);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
@@ -650,59 +653,59 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ]},
             { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ]},
             { start => '2014-05-01 00:00:00', stop => '2014-05-31 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id}, $prof_package_1st1m->{id} ]},
-        ]);    
-        
+        ]);
+
         my $t1 = $ts;
         $gantt_events = [];
         $ts = '2014-08-03 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create2w->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_create2w);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-06-01 00:00:00', stop => '2014-06-30 23:59:59', package_id => $prof_package_1st1m->{id}},
             { start => '2014-07-01 00:00:00', stop => '2014-07-31 23:59:59', package_id => $prof_package_1st1m->{id}},
             { start => '2014-08-01 00:00:00', stop => '2014-08-06 23:59:59', package_id => [ $prof_package_1st1m->{id}, $prof_package_create2w->{id} ]},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));       
-        
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+
         $t1 = $ts;
         $gantt_events = [];
         $ts = '2014-09-03 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st2w->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_1st2w);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59', package_id => $prof_package_create2w->{id}},
             { start => '2014-08-21 00:00:00', stop => '2014-09-30 23:59:59', package_id => [ $prof_package_create2w->{id}, $prof_package_1st2w->{id} ]},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));     
-        
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+
         #$t1 = $ts;
         #$ts = '2014-09-03 13:00:00';
         #_set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package'; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59', package_id => $prof_package_create2w->{id}},
             { start => '2014-08-21 00:00:00', stop => '2014-09-30 23:59:59', package_id => [ $prof_package_create2w->{id}, $prof_package_1st2w->{id}, undef ]},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
-        
+
         $t1 = $ts;
         $gantt_events = [];
         #my $t1 = '2014-09-03 13:00:00';
         $ts = '2014-10-04 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_topup->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_topup);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
@@ -713,7 +716,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00', package_id => undef },
             { start => '~2014-10-04 13:00:00', stop => $infinite_future, package_id => $prof_package_topup->{id}},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
-        
+
         $req_identifier = $cnt . '. create topup_start_mode_test1 voucher'; diag($req_identifier); $cnt++;
         my $voucher1 = _create_voucher(10,'topup_start_mode_test1'.$t,$customer);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
@@ -727,55 +730,55 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $t1 = $ts;
         $ts = '2014-10-23 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-04 13:00:00', stop => $infinite_future, package_id => $prof_package_topup->{id}},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));  
-        
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+
         $req_identifier = $cnt . '. perform topup with voucher ' . $voucher1->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher1);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
            { start => '~2014-10-04 13:00:00', stop => '~2014-10-23 13:00:00', package_id => $prof_package_topup->{id}},
             { start => '~2014-10-23 13:00:00', stop => $infinite_future, package_id => $voucher1->{package_id}},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));       
-        
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+
         $t1 = $ts;
         $gantt_events = [];
         $ts = '2014-11-29 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => $infinite_future, package_id => $voucher1->{package_id}},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
-        
+
         $req_identifier = $cnt . '. perform topup with voucher ' . $voucher2->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher2);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => '2014-12-06 23:59:59', package_id => [$voucher1->{package_id}, $voucher2->{package_id}]},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));        
-        
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package'; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => '2014-11-30 23:59:59', cash => 20, package_id => [$voucher1->{package_id}, $voucher2->{package_id}, undef]},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));        
-        
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+
         $t1 = $ts;
         $gantt_events = [];
         $ts = '2015-01-19 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59', package_id => undef},
@@ -790,14 +793,14 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59', package_id => undef},
             { start => '2015-01-01 00:00:00', stop => $infinite_future, package_id => [ undef, $prof_package_topup_interval->{id}]},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
-       
+
         $req_identifier = $cnt . '. create topup_interval_start_mode_test voucher'; diag($req_identifier); $cnt++;
         my $voucher3 = _create_voucher(15,'topup_interval_start_mode_test'.$t,$customer,$prof_package_topup_interval);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
-        
+
         $ts = '2015-03-11 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         $req_identifier = $cnt . '. perform topup with voucher ' . $voucher3->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher3);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
@@ -807,56 +810,57 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59', package_id => undef},
             { start => '2015-01-01 00:00:00', stop => '~2015-03-11 13:00:00', package_id => [ undef, $prof_package_topup_interval->{id}]},
             { start => '~2015-03-11 13:00:00', stop => '~2015-04-11 13:00:00', package_id => $prof_package_topup_interval->{id}},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));    
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
 
         $ts = '2015-05-17 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-        
+
         _check_interval_history($customer,[
             { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59', package_id => undef},
             { start => '2015-01-01 00:00:00', stop => '~2015-03-11 13:00:00', package_id => [ undef, $prof_package_topup_interval->{id}]},
             { start => '~2015-03-11 13:00:00', stop => '~2015-04-11 13:00:00', package_id => $prof_package_topup_interval->{id}},
             { start => '~2015-04-11 13:00:00', stop => '~2015-05-11 13:00:00', package_id => $prof_package_topup_interval->{id}},
             { start => '~2015-05-11 13:00:00', stop => '~2015-06-11 13:00:00', cash => 35, package_id => $prof_package_topup_interval->{id}},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));         
-        
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+
         _set_time();
         undef $req_identifier;
         undef $gantt_events;
     }
 
+    #SKIP:
     {
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
-        
+
         my $profile_underrun = _create_billing_profile('UNDERRUN_NOTOPUP');
         my $profile_topup = _create_billing_profile('TOPUP_NOTOPUP');
-        my $package = _create_profile_package('create','month',1, notopup_discard_intervals => 3,
+        my $package = _create_profile_package('create','month',1, notopup_discard_intervals => 2,
             initial_balance => 0, carry_over_mode => 'carry_over',
             topup_profiles => [{ profile_id => $profile_topup->{id}, }, ],
             underrun_profile_threshold => 1, underrun_profiles => [{ profile_id => $profile_underrun->{id}, }, ],);
         my $customer = _create_customer($package);
         my $subscriber = _create_subscriber($customer);
         my $v_notopup = _create_voucher(10,'notopup'.$t);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
-        
+
         _perform_topup_voucher($subscriber,$v_notopup);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-01 13:00:00'));
-        
+
         _check_interval_history($customer,[
             { start => '2015-01-30 00:00:00', stop => '2015-02-27 23:59:59', cash => 10, topups => 1, profile => $profile_underrun->{id} }, #topup
             { start => '2015-02-28 00:00:00', stop => '2015-03-29 23:59:59', cash => 10, topups => 0, profile => $profile_topup->{id} },
             { start => '2015-03-30 00:00:00', stop => '2015-04-29 23:59:59', cash => 10, topups => 0, profile => $profile_topup->{id} },
-            { start => '2015-04-30 00:00:00', stop => '2015-05-29 23:59:59', cash => 10, topups => 0, profile => $profile_topup->{id} },
+            { start => '2015-04-30 00:00:00', stop => '2015-05-29 23:59:59', cash => 0, topups => 0, profile => $profile_underrun->{id} }, #'notopup_discard_expiry' => '2015-04-30 00:00:00'
             { start => '2015-05-30 00:00:00', stop => '2015-06-29 23:59:59', cash => 0, topups => 0, profile => $profile_underrun->{id} },
             #{ start => '2015-06-30 00:00:00', stop => '2015-07-29 23:59:59', cash => 0, topups => 0 },
-        ]);        
-        
+        ]);
+
         _set_time();
     }
-    
+
     {
 
         my $profile_underrun = _create_billing_profile('UNDERRUN_NOTOPUP_INF');
@@ -867,38 +871,38 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             underrun_lock_threshold => 1,
             underrun_lock_level => 4,
             underrun_profile_threshold => 1, underrun_profiles => [{ profile_id => $profile_underrun->{id}, }, ],);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
         my $customer = _create_customer($package);
         my $subscriber = _create_subscriber($customer);
         #my $v_notopup = _create_voucher(10,'notopup'.$t);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
-        
+
         #_perform_topup_voucher($subscriber,$v_notopup);
        _check_interval_history($customer,[
             { start => '~2015-01-30 13:00:00', stop => $infinite_future, cash => 0.01, profile => $profile_initial->{id} },
         ]);
         is(_get_customer($customer)->{billing_profile_id},$profile_initial->{id},'check customer actual billing profile id');
         is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-01 13:00:00'));
-        
+
        _check_interval_history($customer,[
             { start => '~2015-01-30 13:00:00', stop => $infinite_future, cash => 0.00, profile => $profile_initial->{id} },
         ]);
        is(_get_customer($customer)->{billing_profile_id},$profile_underrun->{id},'check customer actual billing profile id');
        is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time();
     }
-    
+
     #SKIP:
     {
 
         my $profile_underrun = _create_billing_profile('UNDERRUN_NOTOPUP_TIM');
         my $profile_initial = _create_billing_profile('INITIAL_NOTOPUP_TIM');
-        my $package = _create_profile_package('topup_interval','month',1, 
+        my $package = _create_profile_package('topup_interval','month',1,
             initial_balance => 1, carry_over_mode => 'carry_over_timely',
             initial_profiles => [{ profile_id => $profile_initial->{id}, }, ],
             timely_duration_unit => 'month',
@@ -906,45 +910,45 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             underrun_lock_threshold => 1,
             underrun_lock_level => 4,
             underrun_profile_threshold => 1, underrun_profiles => [{ profile_id => $profile_underrun->{id}, }, ],);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
         my $customer = _create_customer($package);
         my $subscriber = _create_subscriber($customer);
         #my $v_notopup = _create_voucher(10,'notopup'.$t);
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
-        
+
         #_perform_topup_voucher($subscriber,$v_notopup);
        _check_interval_history($customer,[
             { start => '~2015-01-30 13:00:00', stop => $infinite_future, cash => 0.01, profile => $profile_initial->{id} },
         ]);
         is(_get_customer($customer)->{billing_profile_id},$profile_initial->{id},'check customer actual billing profile id');
         is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-03-01 13:00:00'));
-        
+
        _check_interval_history($customer,[
             { start => '~2015-01-30 13:00:00', stop => $infinite_future, cash => 0.00, profile => $profile_initial->{id} },
         ]);
        is(_get_customer($customer)->{billing_profile_id},$profile_underrun->{id},'check customer actual billing profile id');
        is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
-        
+
         _set_time();
-    }    
+    }
 
     THREADED:
     {
-        my $package = _create_profile_package('topup','month',1, 
-                carry_over_mode => 'carry_over', 
-                );        
-        
+        my $package = _create_profile_package('topup','month',1,
+                carry_over_mode => 'carry_over',
+                );
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-08-21 13:00:00'));
-        
+
         my $customer = _create_customer($package,'multi_topup');
         my $subscriber_1 = _create_subscriber($customer,'of customer multi_topup');
         my $subscriber_2 = _create_subscriber($customer,'of customer multi_topup');
         my $subscriber_3 = _create_subscriber($customer,'of customer multi_topup');
-        
+
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-08-22 13:00:00'));
         my $delay = 5; #try 0 to provoke the concurrent action error
         my $t_a = threads->create(sub { _perform_topup_cash($subscriber_1,2); });
@@ -955,18 +959,18 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $t_a->join();
         $t_b->join();
         $t_c->join();
-        
-        
+
+
         _check_interval_history($customer,[
             { start => '~2015-08-21 13:00:00', stop => '~2015-08-22 13:00:00', cash => 0, topups => 1 },
             { start => '~2015-08-22 13:00:01', stop => '~2015-08-22 13:00:01', cash => 2, topups => 1 },
             { start => '~2015-08-22 13:00:02', stop => '~2015-08-22 13:00:02', cash => 4, topups => 1 },
             { start => '~2015-08-22 13:00:03', stop => $infinite_future, cash => 6, topups => 0 },
             ]);
-        
+
         _set_time();
     }
-    
+
     if (_get_allow_delay_commit()) {
         my $custcontact1 = _create_customer_contact();
         my $custcontact2 = _create_customer_contact();
@@ -977,7 +981,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         my $t1 = time;
         my $delay = 5; #15;
-    
+
         my $t_a = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
         my $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact2);
         #my $t_c = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact9);
@@ -1006,32 +1010,32 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $intervals_b = $t_b->join();
         #$intervals_c = $t_c->join();
         $t2 = time;
-        
+
         is($intervals_a->{total_count},3,"check total count of thread a results");
         is($intervals_b->{total_count},3,"check total count of thread b results");
         #is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
-        #is($intervals_c->{total_count},3,"check total count of thread c results");        
-        
+        #is($intervals_c->{total_count},3,"check total count of thread c results");
+
         ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;
-        
+
     } else {
         diag('allow_delay_commit not set, skipping ...');
     }
 
     if (_get_allow_delay_commit()) {
         my $custcontact1 = _create_customer_contact();
-        my $custcontact2 = _create_customer_contact();        
+        my $custcontact2 = _create_customer_contact();
         _set_time(NGCP::Panel::Utils::DateTime::current_local->subtract(months => 3));
         _create_customers_threaded(3,undef,undef,$custcontact1);
         _create_customers_threaded(3,undef,undef,$custcontact2);
         _set_time();
-        
+
         my $t1 = time;
         my $delay = 5; #15;
-    
+
         my $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact2);
         my $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact2);
-        #my $t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact9);        
+        #my $t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact9);
         my $intervals_a = $t_a->join();
         my $intervals_b = $t_b->join();
         #my $intervals_c = $t_c->join();
@@ -1052,32 +1056,32 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $t1 = time;
         $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact1);
         $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact2);
-        #$t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);                
+        #$t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);
         $intervals_a = $t_a->join();
         $intervals_b = $t_b->join();
         #$intervals_c = $t_c->join();
         $t2 = time;
-        
+
         is($intervals_a->{total_count},3,"check total count of thread a results");
         is($intervals_b->{total_count},3,"check total count of thread b results");
         #is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
-        #is($intervals_c->{total_count},3,"check total count of thread c results");        
-        
-        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were perfomed in parallel') if !$disable_parallel_catchup;      
-        
-        
+        #is($intervals_c->{total_count},3,"check total count of thread c results");
+
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were perfomed in parallel') if !$disable_parallel_catchup;
+
+
     } else {
         diag('allow_delay_commit not set, skipping ...');
     }
 
     if (_get_allow_delay_commit()) {
         my $custcontact1 = _create_customer_contact();
-        my $custcontact2 = _create_customer_contact();               
+        my $custcontact2 = _create_customer_contact();
         my $package = _create_profile_package('create','month',1,initial_balance => 1, carry_over_mode => 'discard', underrun_lock_threshold => 1, underrun_lock_level => 4);
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-05-17 13:00:00'));
         _create_customers_threaded(3,2,$package,$custcontact1);
         _create_customers_threaded(3,2,$package,$custcontact2);
-        
+
         my $t1 = time;
         my $delay = 5.0; #15.0; #10.0; #2.0;
         my $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact2);
@@ -1089,7 +1093,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         my $t2 = time;
         is($prefs_a->{total_count},2*3,"check total count of thread a results");
         is($prefs_b->{total_count},2*3,"check total count of thread b results");
-        #is($prefs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");        
+        #is($prefs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");
         my $got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
         my $got_desc = $prefs_b->{_embedded}->{'ngcp:subscriberpreferences'};
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber preference collection results of threaded requests deeply')) {
@@ -1103,9 +1107,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         }
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-18 13:00:00'));
-        
+
         #$t1 = time;
-    
+
         #$t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
         #$t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
         ##$t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact9);
@@ -1115,7 +1119,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         #$t2 = time;
         #is($prefs_a->{total_count},2*3,"check total count of thread a results");
         ##is($prefs_b->{total_count},2*3,"check total count of thread b results");
-        #is($prefs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");                
+        #is($prefs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");
         #$got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
         #$got_desc = $prefs_b->{_embedded}->{'ngcp:subscriberpreferences'};
         #if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber preference collection results of threaded requests deeply')) {
@@ -1126,7 +1130,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         #for (my $i = 0; $i < 2*3; $i++) {
         #    is($got_desc->[$i]->{lock},4,"check if subscriber is locked now");
         #}
-        
+
         $t1 = time;
         $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact1);
         $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact2);
@@ -1135,17 +1139,17 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $prefs_b = $t_b->join();
         #$prefs_c = $t_c->join();
         $t2 = time;
-        
+
         is($prefs_a->{total_count},2*3,"check total count of thread a results");
         is($prefs_b->{total_count},2*3,"check total count of thread b results");
-        #is($prefs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");                
+        #is($prefs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");
         #is($prefs_c->{total_count},2*3,"check total count of thread c results");
         $got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_asc->[$i]->{lock},4,"check if subscriber is locked now");
         }
-        
-        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;        
+
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;
 
         $t1 = time;
         $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact2);
@@ -1159,21 +1163,21 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $t_a->join();
 
         ok($t2 - $t1 >= $delay,'expected delay to assume subscriberpreferences request locks contracts and an simultaneous access to contract id ' . $last_customer_id . ' is serialized');
-        
+
         _set_time();
-        
+
     } else {
         diag('allow_delay_commit not set, skipping ...');
     }
 
     if (_get_allow_delay_commit()) {
         my $custcontact1 = _create_customer_contact();
-        my $custcontact2 = _create_customer_contact();        
+        my $custcontact2 = _create_customer_contact();
         my $package = _create_profile_package('create','month',1,initial_balance => 1, carry_over_mode => 'discard', underrun_lock_threshold => 1, underrun_lock_level => 4);
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-05-17 13:00:00'));
         _create_customers_threaded(3,2,$package,$custcontact1);
         _create_customers_threaded(3,2,$package,$custcontact2);
-        
+
         my $t1 = time;
         my $delay = 5.0; #15.0; #10.0; #2.0;
         my $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact2);
@@ -1185,7 +1189,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         my $t2 = time;
         is($subs_a->{total_count},2*3,"check total count of thread a results");
         is($subs_b->{total_count},2*3,"check total count of thread b results");
-        #is($subs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");        
+        #is($subs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");
         my $got_asc = $subs_a->{_embedded}->{'ngcp:subscribers'};
         my $got_desc = $subs_b->{_embedded}->{'ngcp:subscribers'};
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber collection results of threaded requests deeply')) {
@@ -1199,7 +1203,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         }
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-18 13:00:00'));
-        
+
         #$t1 = time;
         #
         #$t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact5);
@@ -1211,7 +1215,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         #$t2 = time;
         #is($subs_a->{total_count},2*3,"check total count of thread a results");
         #is($subs_b->{total_count},2*3,"check total count of thread b results");
-        #is($subs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");                
+        #is($subs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread c results");
         #$got_asc = $subs_a->{_embedded}->{'ngcp:subscribers'};
         #$got_desc = $subs_b->{_embedded}->{'ngcp:subscribers'};
         #if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber collection results of threaded requests deeply')) {
@@ -1222,7 +1226,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         #for (my $i = 0; $i < 2*3; $i++) {
         #    is($got_desc->[$i]->{lock},4,"check if subscriber is locked now");
         #}
-        
+
         $t1 = time;
         $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact1);
         $t_b = threads->create(\&_fetch_subscribers_worker,$delay,'id','desc',$custcontact2);
@@ -1231,7 +1235,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $subs_b = $t_b->join();
         #$subs_c = $t_c->join();
         $t2 = time;
-        
+
         is($subs_a->{total_count},2*3,"check total count of thread a results");
         is($subs_b->{total_count},2*3,"check total count of thread b results");
         #is($subs_b->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact9->{id} } values %subscriber_map),"check total count of thread b results");
@@ -1239,8 +1243,8 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $got_asc = $subs_a->{_embedded}->{'ngcp:subscribers'};
         for (my $i = 0; $i < 2*3; $i++) {
             is($got_asc->[$i]->{lock},4,"check if subscriber is locked now");
-        }        
-        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;      
+        }
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;
 
         $t1 = time;
         $t_a = threads->create(\&_fetch_subscribers_worker,$delay,'id','asc',$custcontact2);
@@ -1254,12 +1258,12 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         $t_a->join();
 
         ok($t2 - $t1 >= $delay,'expected delay to assume subscribers request locks contracts and an simultaneous access to contract id ' . $last_customer_id . ' is serialized');
-        
+
         _set_time();
-        
+
     } else {
         diag('allow_delay_commit not set, skipping ...');
-    }    
+    }
 
 } else {
     diag('allow_fake_client_time not set, skipping ...');
@@ -1268,7 +1272,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 for my $custcontact (values %$customer_contact_map) { #$default_custcontact,$custcontact2,$custcontact3,$custcontact4,$custcontact9) {
     { #test balanceintervals root collection and item
         _create_customers_threaded(3,undef,undef,$custcontact); # unless _get_allow_fake_client_time() && $enable_profile_packages;
-        
+
         my $total_count = scalar grep { $_->{contact_id} == $custcontact->{id} } values %customer_map; #(scalar keys %customer_map);
         my $nexturi = $uri.'/api/balanceintervals/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1) . '&contact_id='.$custcontact->{id};
         do {
@@ -1282,9 +1286,9 @@ for my $custcontact (values %$customer_contact_map) { #$default_custcontact,$cus
             my $selfuri = $uri . $collection->{_links}->{self}->{href};
             is($selfuri, $nexturi, "balanceintervals root collection: check _links.self.href of collection");
             my $colluri = URI->new($selfuri);
-    
+
             ok(defined $total_count ? ($collection->{total_count} == $total_count) : ($collection->{total_count} > 0), "balanceintervals root collection: check 'total_count' of collection");
-    
+
             my %q = $colluri->query_form;
             ok(exists $q{page} && exists $q{rows}, "balanceintervals root collection: check existence of 'page' and 'row' in 'self'");
             my $page = int($q{page});
@@ -1299,30 +1303,30 @@ for my $custcontact (values %$customer_contact_map) { #$default_custcontact,$cus
             } else {
                 ok(exists $collection->{_links}->{next}->{href}, "balanceintervals root collection: check existence of 'next'");
             }
-    
+
             if($collection->{_links}->{next}->{href}) {
                 $nexturi = $uri . $collection->{_links}->{next}->{href};
             } else {
                 $nexturi = undef;
             }
-    
+
             # TODO: I'd expect that to be an array ref in any case!
             ok(ref $collection->{_links}->{'ngcp:balanceintervals'} eq "ARRAY", "balanceintervals root collection: check if 'ngcp:balanceintervals' is array");
-            
+
             my $page_items = {};
-    
+
             foreach my $interval_link (@{ $collection->{_links}->{'ngcp:balanceintervals'} }) {
                 #delete $customers{$c->{href}};
                 #ok(exists $journals->{$journal->{href}},"check page journal item link");
-                
+
                 $req = HTTP::Request->new('GET',$uri . $interval_link->{href});
                 $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
                 $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
-                
+
                 $res = $ua->request($req);
                 is($res->code, 200, "balanceintervals root collection: fetch page balance interval item");
                 my $interval = JSON::from_json($res->decoded_content);
-                
+
                 $page_items->{$interval->{id}} = $interval;
             }
             foreach my $interval (@{ $collection->{_embedded}->{'ngcp:balanceintervals'} }) {
@@ -1332,16 +1336,16 @@ for my $custcontact (values %$customer_contact_map) { #$default_custcontact,$cus
                 is_deeply($interval,$fetched,"balanceintervals root collection: compare fetched and embedded item deeply");
             }
             ok((scalar keys %{ $page_items }) == 0,"balanceintervals root collection: check if all embedded items are linked");
-                 
+
         } while($nexturi);
-        
+
     }
 }
-    
+
 done_testing;
 
 sub _check_interval_history {
-    
+
     my ($customer,$expected_interval_history,$limit_dt,$record_label) = @_;
     my $total_count = (scalar @$expected_interval_history);
     #my @got_interval_history = ();
@@ -1359,7 +1363,7 @@ sub _check_interval_history {
         $req = HTTP::Request->new('GET',$nexturi);
         $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
-        $res = $ua->request($req);        
+        $res = $ua->request($req);
         #$res = $ua->get($nexturi);
         is($res->code, 200, $label . "fetch balance intervals collection page");
         push(@requests,_req_to_debug($req));
@@ -1393,20 +1397,20 @@ sub _check_interval_history {
 
         # TODO: I'd expect that to be an array ref in any case!
         ok(ref $collection->{_links}->{'ngcp:balanceintervals'} eq "ARRAY", $label . "check if 'ngcp:balanceintervals' is array");
-        
+
         my $page_items = {};
 
         #foreach my $interval_link (@{ $collection->{_links}->{'ngcp:balanceintervals'} }) {
         #    #delete $customers{$c->{href}};
         #    #ok(exists $journals->{$journal->{href}},"check page journal item link");
-        #    
+        #
         #    $req = HTTP::Request->new('GET',$uri . $interval_link->{href});
         #    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         #    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
         #    $res = $ua->request($req);
         #    is($res->code, 200, $label . "fetch page balance interval item");
         #    my $interval = JSON::from_json($res->decoded_content);
-        #    
+        #
         #    $page_items->{$interval->{id}} = $interval;
         #}
         foreach my $interval (@{ $collection->{_embedded}->{'ngcp:balanceintervals'} }) {
@@ -1420,20 +1424,20 @@ sub _check_interval_history {
             $i++
         }
         #ok((scalar keys $page_items) == 0,$label . "check if all embedded items are linked");
-        
+
         _record_request("view contract balances" . ($record_label ? ' of ' . $record_label : ''),$req,undef,$collection);
-             
+
     } while($nexturi);
-    
+
     ok($i == $total_count,$label . "check if all expected items are listed");
     _create_gantt($customer,$expected_interval_history);
     diag(Dumper({last_request => $last_request, collection_requests => \@requests, result_intervals => \@intervals})) if !$ok;
-    
+
 }
 
 sub _compare_interval {
     my ($got,$expected,$label) = @_;
-    
+
     my $ok = 1;
     if ($expected->{start}) {
         #is(NGCP::Panel::Utils::DateTime::from_string($got->{start}),NGCP::Panel::Utils::DateTime::from_string($expected->{start}),$label . "check interval " . $got->{id} . " start timestmp");
@@ -1451,7 +1455,7 @@ sub _compare_interval {
             $ok = is($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestmp") && $ok;
         }
     }
-    
+
     if ($expected->{cash}) {
         $ok = is($got->{cash_balance},$expected->{cash},$label . "check interval " . $got->{id} . " cash balance") && $ok;
     }
@@ -1459,17 +1463,17 @@ sub _compare_interval {
     if ($expected->{profile}) {
         $ok = is($got->{billing_profile_id},$expected->{profile},$label . "check interval " . $got->{id} . " billing profile") && $ok;
     }
-    
+
     if ($expected->{topups}) {
         $ok = is($got->{topup_count},$expected->{topups},$label . "check interval " . $got->{id} . " topup count") && $ok;
     }
-    
+
     if ($expected->{timely_topups}) {
         $ok = is($got->{timely_topup_count},$expected->{timely_topups},$label . "check interval " . $got->{id} . " timely topup count") && $ok;
-    }    
-    
+    }
+
     return $ok;
-    
+
 }
 
 sub _is_ts_approx {
@@ -1541,7 +1545,7 @@ sub _create_customer_contact {
     my $n = (scalar keys %$customer_contact_map);
     $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
     $req->header('Content-Type' => 'application/json');
-    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;    
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $req->content(JSON::to_json({
         firstname => "cust_contact_".$n."_first",
         lastname  => "cust_contact_".$n."_last",
@@ -1556,11 +1560,11 @@ sub _create_customer_contact {
     my $custcontact = JSON::from_json($res->decoded_content);
     $customer_contact_map->{$custcontact->{id}} = $custcontact;
     return $custcontact;
-    
+
 }
 
 sub _create_customer {
-    
+
     my ($package,$record_label,$custcontact) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/customers/');
     $req->header('Content-Type' => 'application/json');
@@ -1590,7 +1594,7 @@ sub _create_customer {
     $customer_map{$customer->{id}} = threads::shared::shared_clone($customer);
     _record_request("create customer" . ($record_label ? ' ' . $record_label : ''),$request,$req_data,$customer);
     return $customer;
-    
+
 }
 
 sub _get_customer {
@@ -1606,7 +1610,7 @@ sub _get_customer {
 }
 
 sub _switch_package {
-    
+
     my ($customer,$package) = @_;
     $req = HTTP::Request->new('PATCH', $uri.'/api/customers/'.$customer->{id});
     $req->header('Prefer' => 'return=representation');
@@ -1623,21 +1627,21 @@ sub _switch_package {
     $customer = JSON::from_json($res->decoded_content);
     $customer_map{$customer->{id}} = threads::shared::shared_clone($customer);
     return $customer;
-    
+
 }
 
 sub _set_time {
     my ($o) = @_;
     my $dtf = DateTime::Format::Strptime->new(
-            pattern => '%F %T', 
-        );      
+            pattern => '%F %T',
+        );
     if (defined $o) {
         NGCP::Panel::Utils::DateTime::set_fake_time($o);
-        my $now = NGCP::Panel::Utils::DateTime::current_local;  
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         diag("applying fake time offset '$o' - current time: " . $dtf->format_datetime($now));
     } else {
         NGCP::Panel::Utils::DateTime::set_fake_time();
-        my $now = NGCP::Panel::Utils::DateTime::current_local;  
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         diag("resetting fake time - current time: " . $dtf->format_datetime($now));
     }
 }
@@ -1684,7 +1688,7 @@ sub _create_profile_package {
 }
 
 sub _create_billing_network_x {
-    
+
     $req = HTTP::Request->new('POST', $uri.'/api/billingnetworks/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
@@ -1709,7 +1713,7 @@ sub _create_billing_network_x {
 }
 
 sub _create_billing_network_y {
-    
+
     $req = HTTP::Request->new('POST', $uri.'/api/billingnetworks/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
@@ -1735,7 +1739,7 @@ sub _create_billing_network_y {
 }
 
 sub _create_base_profile_package {
-    
+
     my ($profile_base_any,$profile_base_x,$profile_base_b,$network_x,$network_b) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
@@ -1765,12 +1769,12 @@ sub _create_base_profile_package {
     my $package = JSON::from_json($res->decoded_content);
     $package_map->{$package->{id}} = $package;
     _record_request("create BASE profile package",$request,$req_data,$package);
-    return $package;        
-    
+    return $package;
+
 }
 
 sub _create_silver_profile_package {
-    
+
     my ($base_package,$profile_silver_x,$profile_silver_y,$network_x,$network_y) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
@@ -1786,11 +1790,11 @@ sub _create_silver_profile_package {
         carry_over_mode => 'carry_over_timely',
         timely_duration_value => 1,
         timely_duration_unit => 'month',
-        
+
         service_charge => 200,
         topup_profiles => [ #{ profile_id => $profile_silver_any->{id}, },
-                             { profile_id => $profile_silver_x->{id}, network_id => $network_x->{id} } ,        
-                             { profile_id => $profile_silver_y->{id}, network_id => $network_y->{id} } ],        
+                             { profile_id => $profile_silver_x->{id}, network_id => $network_x->{id} } ,
+                             { profile_id => $profile_silver_y->{id}, network_id => $network_y->{id} } ],
     };
     $req->content(JSON::to_json($req_data));
     $res = $ua->request($req);
@@ -1803,12 +1807,12 @@ sub _create_silver_profile_package {
     my $package = JSON::from_json($res->decoded_content);
     $package_map->{$package->{id}} = $package;
     _record_request("create SILVER profile package",$request,$req_data,$package);
-    return $package;        
-    
+    return $package;
+
 }
 
 sub _create_extension_profile_package {
-    
+
     my ($base_package,$profile_silver_x,$profile_silver_y,$network_x,$network_y) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
@@ -1824,11 +1828,11 @@ sub _create_extension_profile_package {
         carry_over_mode => 'carry_over_timely',
         timely_duration_value => 1,
         timely_duration_unit => 'month',
-        
+
         service_charge => 200,
         topup_profiles => [ #{ profile_id => $profile_silver_any->{id}, },
-                             { profile_id => $profile_silver_x->{id}, network_id => $network_x->{id} } ,        
-                             { profile_id => $profile_silver_y->{id}, network_id => $network_y->{id} } ],      
+                             { profile_id => $profile_silver_x->{id}, network_id => $network_x->{id} } ,
+                             { profile_id => $profile_silver_y->{id}, network_id => $network_y->{id} } ],
     };
     $req->content(JSON::to_json($req_data));
     $res = $ua->request($req);
@@ -1841,12 +1845,12 @@ sub _create_extension_profile_package {
     my $package = JSON::from_json($res->decoded_content);
     $package_map->{$package->{id}} = $package;
     _record_request("create EXTENSION profile package",$request,$req_data,$package);
-    return $package;        
-    
+    return $package;
+
 }
 
 sub _create_gold_profile_package {
-    
+
     my ($base_package,$profile_gold_x,$profile_gold_y,$network_x,$network_y) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
@@ -1862,11 +1866,11 @@ sub _create_gold_profile_package {
         carry_over_mode => 'carry_over',
         #timely_duration_value => 1,
         #timely_duration_unit => 'month',
-        
+
         service_charge => 500,
         topup_profiles => [ #{ profile_id => $profile_gold_any->{id}, },
-                             { profile_id => $profile_gold_x->{id}, network_id => $network_x->{id} } ,        
-                             { profile_id => $profile_gold_y->{id}, network_id => $network_y->{id} } ],       
+                             { profile_id => $profile_gold_x->{id}, network_id => $network_x->{id} } ,
+                             { profile_id => $profile_gold_y->{id}, network_id => $network_y->{id} } ],
     };
     $req->content(JSON::to_json($req_data));
     $res = $ua->request($req);
@@ -1879,16 +1883,16 @@ sub _create_gold_profile_package {
     my $package = JSON::from_json($res->decoded_content);
     $package_map->{$package->{id}} = $package;
     _record_request("create GOLD profile package",$request,$req_data,$package);
-    return $package;        
-    
+    return $package;
+
 }
 
 sub _create_voucher {
-    
+
     my ($amount,$code,$customer,$package,$valid_until_dt) = @_;
     my $dtf = DateTime::Format::Strptime->new(
-            pattern => '%F %T', 
-        );        
+            pattern => '%F %T',
+        );
     $req = HTTP::Request->new('POST', $uri.'/api/vouchers/');
     $req->header('Content-Type' => 'application/json');
     my $req_data = {
@@ -1911,7 +1915,7 @@ sub _create_voucher {
     $voucher_map->{$voucher->{id}} = $voucher;
     _record_request("create $amount € voucher (code $code)",$request,$req_data,$voucher);
     return $voucher;
-    
+
 }
 
 sub _create_subscriber {
@@ -1921,7 +1925,7 @@ sub _create_subscriber {
     $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     {
-        lock %subscriber_map; 
+        lock %subscriber_map;
         my $req_data = {
             domain_id => $domain->{id},
             username => 'cust_subscriber_' . (scalar keys %subscriber_map) . '_'.$t,
@@ -1935,7 +1939,7 @@ sub _create_subscriber {
         my $request = $req;
         $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
         $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
-        $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;        
+        $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
         $res = $ua->request($req);
         is($res->code, 200, "fetch POSTed test subscriber");
         my $subscriber = JSON::from_json($res->decoded_content);
@@ -1947,7 +1951,7 @@ sub _create_subscriber {
 }
 
 sub _perform_topup_voucher {
-    
+
     my ($subscriber,$voucher) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/topupvouchers/');
     $req->header('Content-Type' => 'application/json');
@@ -1961,11 +1965,11 @@ sub _perform_topup_voucher {
     $res = $ua->request($req);
     is($res->code, 204, "perform topup with voucher " . $voucher->{code});
     _record_request("topup by " . $subscriber_map{$subscriber->{id}}->{_label} . " using " . $voucher->{amount} / 100.0 . " € voucher (code $voucher->{code})",$req,$req_data,undef);
-    
+
 }
 
 sub _perform_topup_cash {
-    
+
     my ($subscriber,$amount,$package) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/topupcash/');
     $req->header('Content-Type' => 'application/json');
@@ -1980,7 +1984,7 @@ sub _perform_topup_cash {
     $res = $ua->request($req);
     is($res->code, 204, "perform topup with amount " . $amount * 100.0 . " cents, " . ($package ? 'package id ' . $package->{id} : 'no package'));
     _record_request("topup by " . $subscriber_map{$subscriber->{id}}->{_label} . " with " . $amount / 100.0 . " €, " . ($package ? 'package id ' . $package->{id} : 'no package'),$req,$req_data,undef);
-    
+
 }
 
 sub _create_billing_profile {
@@ -2063,7 +2067,7 @@ sub _record_request {
     my ($label,$request,$req_data,$res_data) = @_;
     if ($tb) {
         my $dtf = DateTime::Format::Strptime->new(
-            pattern => '%F %T', 
+            pattern => '%F %T',
         );
         $tb->add(wrap('',"\t",$tb_cnt . ".\t" . $label . ":"),'');
         my $http_cmd = $request->method . " " . $request->uri;
@@ -2082,7 +2086,7 @@ sub _record_request {
 }
 
 sub _set_cash_balance {
-    
+
     my ($customer,$new_cash_balance) = @_;
     $req = HTTP::Request->new('PATCH', $uri.'/api/customerbalances/' . $customer->{id});
     $req->header('Prefer' => 'return=representation');
@@ -2095,7 +2099,7 @@ sub _set_cash_balance {
     ));
     $res = $ua->request($req);
     is($res->code, 200, "setting customer id " . $customer->{id} . " cash_balance to " . $new_cash_balance * 100.0 . ' cents');
-    
+
 }
 
 sub _start_recording {
@@ -2141,13 +2145,13 @@ sub _get_allow_fake_client_time {
 #    my ($customer,$expected_interval_history) = @_;
 #
 #    if (defined $gantt_events && (scalar @$gantt_events > 0)) {
-#    
+#
 #        use Project::Gantt;
 #        use Project::Gantt::Skin;
-#    
+#
 #        my $skin= new Project::Gantt::Skin(
 #            doTitle         =>      0);
-#     
+#
 #        my $filename = $req_identifier;
 #        $filename =~ s/[^a-z0-9_\-]/_/i;
 #        $filename = '/home/rkrenn/test/gantt/' . $filename . '.png';
@@ -2155,10 +2159,10 @@ sub _get_allow_fake_client_time {
 #            file            =>      $filename,
 #            skin            =>      $skin,
 #            mode            =>      'months',
-#            description     =>      $req_identifier);       
+#            description     =>      $req_identifier);
 #
 #        my $dtf = DateTime::Format::Strptime->new(
-#            pattern => '%F %T', 
+#            pattern => '%F %T',
 #        );
 #        foreach my $balance_interval (@$expected_interval_history) {
 #            my $start = $balance_interval->{start};
@@ -2167,7 +2171,7 @@ sub _get_allow_fake_client_time {
 #            if ('9999-12-31 23:59:59' eq $end) {
 #                $end = $dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($start)->add(years => 1));
 #            } else {
-#                $end =~ s/~//;   
+#                $end =~ s/~//;
 #            }
 #            my @packages = ();
 #            if ('ARRAY' eq ref $balance_interval->{package_id}) {
@@ -2209,17 +2213,17 @@ sub _get_allow_fake_client_time {
 #        return 1;
 #    }
 #    return 0;
-#    
+#
 #}
 
 sub _create_gantt {
-    
+
     my ($customer,$expected_interval_history) = @_;
-    
+
     #uncomment and adjust this, if you want to create gantt charts of
     #contract_balances resulting from a test case. this is a only a
     #proof-of-concept and requires to have ChartDirector library installed.
-    
+
     #use lib "/opt/ChartDirector/lib/";
     #use perlchartdir;
     #
@@ -2228,20 +2232,20 @@ sub _create_gantt {
     #    my $filename = $req_identifier;
     #    $filename =~ s/[^a-z0-9_\-]/_/i;
     #    $filename = '/home/rkrenn/test/gantt/' . $filename . '.png';
-    #    
+    #
     #    my @startDate = ();
     #    my @endDate = ();
     #    my @labels = ();
     #    my @colors = ();
     #    my @taskNo = ();
-    #    
+    #
     #    my $firstDate = undef;
     #    my $lastDate = undef;
-    #    
+    #
     #    my $dtf = DateTime::Format::Strptime->new(
-    #        pattern => '%F %T', 
-    #    );        
-    #    
+    #        pattern => '%F %T',
+    #    );
+    #
     #    my $inf_end = 0;
     #    foreach my $balance_interval (@$expected_interval_history) {
     #        my $start = $balance_interval->{start};
@@ -2251,7 +2255,7 @@ sub _create_gantt {
     #            $end = $dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($start)->add(months => 1));
     #            $inf_end = 1;
     #        } else {
-    #            $end =~ s/~//;   
+    #            $end =~ s/~//;
     #        }
     #        my @packages = ();
     #        if ('ARRAY' eq ref $balance_interval->{package_id}) {
@@ -2277,47 +2281,47 @@ sub _create_gantt {
     #        push(@colors,0xa0a0a0);
     #        push(@taskNo,scalar @taskNo);
     #    }
-    #    
+    #
     #    $firstDate = perlchartdir::chartTime(split(/[^0-9]+/,$dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($firstDate)->subtract(days => 3)->truncate(to => 'day'))));
     #    $lastDate = perlchartdir::chartTime(split(/[^0-9]+/,($inf_end ? $lastDate : $dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($lastDate)->add(days => 4)->truncate(to => 'day')))));
-    #    
+    #
     #    # Create a XYChart object of size 620 x 280 pixels. Set background color to light blue (ccccff),
     #    # with 1 pixel 3D border effect.
     #    #my $c = new XYChart(700, 365, 0xccccff, 0x000000, 1);
     #    my $c = new XYChart(1300, 700, 0xccccff, 0x000000, 1);
-    #    
+    #
     #    # Set the plotarea at (140, 55) and of size 460 x 200 pixels. Use alternative white/grey background.
     #    # Enable both horizontal and vertical grids by setting their colors to grey (c0c0c0). Set vertical
     #    # major grid (represents month boundaries) 2 pixels in width
     #    #$c->setPlotArea(180, 55, 500, 200, 0xffffff, 0xeeeeee, $perlchartdir::LineColor, 0xc0c0c0, 0xc0c0c0
     #    $c->setPlotArea(180, 55, 1000, 400, 0xffffff, 0xeeeeee, $perlchartdir::LineColor, 0xc0c0c0, 0xc0c0c0
     #        )->setGridWidth(2, 1, 1, 1);
-    #    
+    #
     #    # swap the x and y axes to create a horziontal box-whisker chart
     #    $c->swapXY();
-    #    
+    #
     #    # Set the y-axis scale to be date scale from Aug 16, 2004 to Nov 22, 2004, with ticks every 7 days
     #    # (1 week)
     #    $c->yAxis()->setDateScale($firstDate, $lastDate, 86400 * 7, 86400 * 1);
-    #    
+    #
     #    # Set multi-style axis label formatting. Month labels are in Arial Bold font in "mmm d" format.
     #    # Weekly labels just show the day of month and use minor tick (by using '-' as first character of
     #    # format string).
     #    $c->yAxis()->setMultiFormat(perlchartdir::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|mmm d}",
     #        perlchartdir::StartOfDayFilter(), "-{value|d}");
-    #    
+    #
     #    # Set the y-axis to shown on the top (right + swapXY = top)
     #    $c->setYAxisOnRight();
-    #    
+    #
     #    # Set the labels on the x axis
     #    $c->xAxis()->setLabels(\@labels);
-    #    
+    #
     #    # Reverse the x-axis scale so that it points downwards.
     #    $c->xAxis()->setReverse();
-    #    
+    #
     #    # Set the horizontal ticks and grid lines to be between the bars
     #    $c->xAxis()->setTickOffset(0.5);
-    #    
+    #
     #    # Add some symbols to the chart to represent milestones. The symbols are added using scatter layers.
     #    # We need to specify the task index, date, name, symbol shape, size and color.
     #    #$c->addScatterLayer([1], [perlchartdir::chartTime(2004, 9, 13)], "Milestone 1",
@@ -2338,22 +2342,22 @@ sub _create_gantt {
     #        $c->addScatterLayer([$#taskNo], [perlchartdir::chartTime(split(/[^0-9]+/, $event->{t}))], $title,
     #            $perlchartdir::TriangleSymbol, 13, 0xff9933) if $event_count % 3 == 2;
     #        $event_count++;
-    #    }  
+    #    }
     #
     #    # Add a title to the chart using 15 points Times Bold Itatic font, with white (ffffff) text on a
     #    # deep blue (000080) background
     #    $c->addTitle($title, "timesbi.ttf", 15, 0xffffff)->setBackground(0x000080);
-    #    
+    #
     #    # Add a multi-color box-whisker layer to represent the gantt bars
     #    my $layer = $c->addBoxWhiskerLayer2(\@startDate, \@endDate, undef, undef, undef, \@colors);
     #    $layer->setXData(\@taskNo);
     #    $layer->setBorderColor($perlchartdir::SameAsMainColor);
-    #    
+    #
     #    # Divide the plot area height ( = 200 in this chart) by the number of tasks to get the height of
     #    # each slot. Use 80% of that as the bar height.
     #    #$layer->setDataWidth(int(200 * 4 / 5 / scalar(@labels)));
     #    $layer->setDataWidth(int(400 * 4 / 5 / scalar(@labels)));
-    #    
+    #
     #    # Add a legend box at (140, 265) - bottom of the plot area. Use 8pt Arial Bold as the font with
     #    # auto-grid layout. Set the width to the same width as the plot area. Set the backgorund to grey
     #    # (dddddd).
@@ -2362,17 +2366,17 @@ sub _create_gantt {
     #    my $legendBox = $c->addLegend2(180, 465, $perlchartdir::AutoGrid, "arialbd.ttf", 8);
     #    $legendBox->setWidth(1001);
     #    $legendBox->setBackground(0xdddddd);
-    #    
+    #
     #    # The keys for the scatter layers (milestone symbols) will automatically be added to the legend box.
     #    # We just need to add keys to show the meanings of the bar colors.
     #    $legendBox->addKey("Balance Intervals", 0xa0a0a0);
     #    #$legendBox->addKey("Planning Team", 0x0000cc);
     #    #$legendBox->addKey("Development Team", 0xcc0000);
-    #    
+    #
     #    # Output the chart
     #    $c->makeChart($filename);
     #    return 1;
     #}
     return 0;
-    
+
 }
