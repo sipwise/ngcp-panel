@@ -310,7 +310,7 @@ sub get_item_hal{
         if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
             $resitem = $self->get_created_first;
         }
-        if($self->DATA_LOADED->{$name} && @{$self->DATA_LOADED->{$name}}){
+        if(!$resitem && $self->DATA_LOADED->{$name} && @{$self->DATA_LOADED->{$name}}){
             $resitem = $self->DATA_LOADED->{$name}->[0];
         }
     }

@@ -169,17 +169,17 @@ my $remote_config = $test_machine->init_catalyst_config;
     diag("1. Check that member will return empty groups after put groups empty");
     my($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
 
-    $members->[0]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (1,0,2)];
+    $members->[0]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (2,1)];
     diag("2. Check that member will return groups as they were specified");
     ($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
     
-    $groups->[0]->{content}->{pbx_groupmember_ids} = [map { $members->[$_]->{content}->{id} } (2,1,0)];
+    $groups->[1]->{content}->{pbx_groupmember_ids} = [map { $members->[$_]->{content}->{id} } (2,1,0)];
     diag("3. Check that group will return members as they were specified");
-    my($group_put,$group_get) = $test_machine->check_put2get($groups->[0]);
+    my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
     
-    $groups->[0]->{content}->{pbx_groupmember_ids} = [];
+    $groups->[1]->{content}->{pbx_groupmember_ids} = [];
     diag("4. Check that group will return empty members after put members empty");
-    my($group_put,$group_get) = $test_machine->check_put2get($groups->[0]);
+    my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
 
     $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 }
