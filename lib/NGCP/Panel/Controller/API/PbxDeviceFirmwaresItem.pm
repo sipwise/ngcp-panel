@@ -107,11 +107,12 @@ sub PUT :Allow {
             media_type => 'application/octet-stream',
         );
         last unless $recording;
+
         my $resource = $c->req->query_params;
         $resource->{data} = $recording;
-        my $form = $self->get_form($c);
         my $old_resource = $self->resource_from_item($c, $item, $form);
 
+        my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
