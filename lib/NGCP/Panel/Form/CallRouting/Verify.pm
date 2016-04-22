@@ -145,5 +145,21 @@ has_field 'verify' => (
     label => '',
 );
 
+sub validate_caller {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_number_uri(c => $c, field => $field);
+}
+
+sub validate_callee {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_number_uri(c => $c, field => $field);
+}
+
 1;
 # vim: set tabstop=4 expandtab:

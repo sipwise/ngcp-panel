@@ -48,8 +48,11 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
     # TODO: relocate the logic to a common module that can be centralised and
     # reused by other components
 
-    $data->{caller} =~ s/(^\s+|\s+$)//g;
-    $data->{callee} =~ s/(^\s+|\s+$)//g;
+    # caller/callee general parsing
+    # remove leading/trailing spaces
+    foreach my $type (qw(caller callee)) {
+        $data->{$type} =~ s/(^\s+|\s+$)//g;
+    }
 
     # caller lookup
     if ($data->{caller_subscriber_id}) {
@@ -144,11 +147,11 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                         } @{$usr_prefs{allowed_clis}};
         if ($match) {
             push @log, sprintf
-                "caller %d is accepted as it matches subscriber's 'allowed_clis'",
+                "caller %s is accepted as it matches subscriber's 'allowed_clis'",
                     $data->{caller};
         } else {
             push @log, sprintf
-                "caller %d is rejected as it does not match subscriber's 'allowed_clis'",
+                "caller %s is rejected as it does not match subscriber's 'allowed_clis'",
                     $data->{caller};
             if (defined $usr_prefs{allowed_clis_reject_policy}) {
                 SWITCH: for ($usr_prefs{allowed_clis_reject_policy}[0]) {
@@ -164,7 +167,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                         foreach my $cli (qw(user_cli cli)) {
                             if (defined $usr_prefs{$cli}) {
                                 $data->{caller} = $usr_prefs{$cli}[0];
-                                $log[-1] .= sprintf ", taken from '$cli' %d",
+                                $log[-1] .= sprintf ", taken from '$cli' %s",
                                     $usr_prefs{$cli}[0];
                                 last;
                             }
@@ -314,7 +317,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                         $sub, $data->{callee_subscriber_id};
         } else {
             push @log,
-                sprintf "no callee subscriber found, performing a peer lookup with caller %d and callee %d",
+                sprintf "no callee subscriber found, performing a peer lookup with caller %s and callee %s",
                     @{$data}{qw(caller_in callee_in)};
             $data->{callee_peers} =
                 NGCP::Panel::Utils::Peering::lookup(

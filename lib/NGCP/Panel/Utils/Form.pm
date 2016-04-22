@@ -111,6 +111,17 @@ sub validate_entities {
     return 1;
 }
 
+sub validate_number_uri {
+    my %params = @_;
+    my $c = $params{c};
+    my $field = $params{field};
+    my $val = $field->value;
+
+    unless ($val =~ /^\s*[\+\-_\w\d]+\@[\w\d\-_\.]+\s*$/ || $val =~ /^\s*\+*\d+\s*$/) {
+        $field->add_error($c->loc('Must be either a number or user@domain format.'));
+    }
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
