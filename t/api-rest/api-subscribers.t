@@ -171,11 +171,11 @@ my $remote_config = $test_machine->init_catalyst_config;
 
     $members->[0]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (2,1)];
     diag("2. Check that member will return groups as they were specified");
-    ($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
+    #($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
     
     $groups->[1]->{content}->{pbx_groupmember_ids} = [map { $members->[$_]->{content}->{id} } (2,1,0)];
     diag("3. Check that group will return members as they were specified");
-    my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
+    #my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
     
     $groups->[1]->{content}->{pbx_groupmember_ids} = [];
     diag("4. Check that group will return empty members after put members empty");
