@@ -6,6 +6,9 @@ use DateTime qw();
 use DateTime::Format::Strptime qw();
 use DateTime::Format::ISO8601 qw();
 use Getopt::Long;
+use File::Temp qw();
+use File::Copy qw();
+use Fcntl qw(LOCK_EX LOCK_NB);
 
 #constants;
 use constant CHMOD_UMASK => '0777';
@@ -16,11 +19,12 @@ use constant TOPUPLOG_MODE => 'topuplog';
 use constant THIS_WEEK_PERIOD => 'this_week';
 use constant TODAY_PERIOD => 'today';
 use constant THIS_MONTH_PERIOD => 'this_month';
+use constant LAST_DAY_PERIOD => 'last_day';
 use constant LAST_WEEK_PERIOD => 'last_week';
 use constant LAST_MONTH_PERIOD => 'last_month';
 
 use constant MODE_STRINGS => (BALANCEINTERVALS_MODE,TOPUPLOG_MODE);
-use constant PERIOD_STRINGS => (THIS_WEEK_PERIOD,TODAY_PERIOD,THIS_MONTH_PERIOD,LAST_WEEK_PERIOD,LAST_MONTH_PERIOD);
+use constant PERIOD_STRINGS => (THIS_WEEK_PERIOD,TODAY_PERIOD,THIS_MONTH_PERIOD,LAST_DAY_PERIOD,LAST_WEEK_PERIOD,LAST_MONTH_PERIOD);
 
 #default option values and parameters:
 my $host = '127.0.0.1'; #db01a
@@ -32,13 +36,17 @@ my $output_dir = '/tmp';
 my $output_filename;
 my $verbose = 0;
 my $period = ''; #'topuplog' mode only
-    
+
+my $use_tempfile = 1;
 my $print_colnames = 1;
 my $linebreak = "\n";
 my $col_separator = ";";
-    
+my $output_file_suffix = ".txt";
+
 my %row_value_escapes = ( quotemeta($linebreak) => ' ',
                           quotemeta($col_separator) => ' ');
+
+fatal("$0 already running") unless flock DATA, LOCK_EX | LOCK_NB; # not tested on windows yet
 
 #runtime globals:
 my ($mode,$ua,$uri) = init();
@@ -50,7 +58,7 @@ exit(main());
 sub init {
 
     umask oct(CHMOD_UMASK);
-   
+
     GetOptions ("host=s" => \$host,
                 "port=i" => \$port,
                 "file=s" => \$output_filename,
@@ -66,7 +74,7 @@ sub init {
 
     $output_dir .= '/' if $output_dir && '/' ne substr($output_dir,-1);
     makedir($output_dir) if $output_dir && not -e $output_dir;
-    $output_filename =  "api_dump_" . $mode . "_results_" . datetime_to_string(current_local()) . ".txt" unless $output_filename;
+    $output_filename =  "api_dump_" . $mode . "_results_" . datetime_to_string(current_local()) . $output_file_suffix unless $output_filename;
     $output_filename = $output_dir . $output_filename;
 
     my $uri = 'https://'.$host.':'.$port;
@@ -78,15 +86,15 @@ sub init {
         SSL_verify_mode => 0,
     );
     $ua->credentials($netloc, "api_admin_http", $user, $pass);
-    
+
     return ($mode,$ua,$uri);
-    
+
 }
 
 sub main {
-    
+
     if (BALANCEINTERVALS_MODE eq $mode) {
-        
+
         my @cols = (
             'subscriber_id',
             'subscriber_status',
@@ -99,19 +107,19 @@ sub main {
             'cash_balance',
             'notopup_discard_expiry',
         );
-        
+
         my $rowcount = 0;
-        my $fh = prepare_file($mode,$output_filename,\@cols);
-        
+        my ($fh,$filename) = prepare_file($mode,$output_filename,\@cols);
+
         process_collection($uri.'/api/subscribers',50,'ngcp:subscribers',sub {
             my ($subscriber,$total_count,$customer_map,$package_map,$intervals_map) = @_;
             my $primary_number = get_primary_number($subscriber);
-            log_info("processing subscriber ID $subscriber->{id}: " . $primary_number);        
+            log_info("processing subscriber ID $subscriber->{id}: " . $primary_number);
             my ($customer,$interval,$package) = ({},{},{});
-            
+
             $customer = get_item($subscriber->{_links},'ngcp:customers',$customer_map,$subscriber->{customer_id});
             $package = get_item($subscriber->{_links},'ngcp:profilepackages',$package_map,$customer->{profile_package_id});
-            
+
             if (exists $intervals_map->{$customer->{id}}) {
                 $interval = $intervals_map->{$customer->{id}};
             } else {
@@ -123,8 +131,8 @@ sub main {
                         return 0;
                     });
                 $intervals_map->{$customer->{id}} = $interval;
-            }    
-        
+            }
+
             my %row = (
                 'subscriber_id' => $subscriber->{id},
                 'subscriber_status' => $subscriber->{status},
@@ -137,29 +145,29 @@ sub main {
                 'cash_balance' => $interval->{cash_balance},
                 'notopup_discard_expiry' => $interval->{notopup_discard_expiry},
             );
-    
+
             $rowcount++;
-            
+
             log_row($rowcount,$total_count,\%row,\@cols);
             print $fh join($col_separator,map { escape_row_value($_); } @row{@cols}) . $linebreak;
-            
+
             return 1;
         },3);
-        
-        close_file($fh,$output_filename,$rowcount);
-        
+
+        close_file($fh,$filename,$output_filename,$rowcount);
+
     } elsif (TOPUPLOG_MODE eq $mode) {
-        
+
         my @cols = (
             'username',
             'timestamp',
             'request_token',
             'subscriber_id',
             'primary_number',
-            'contract_id',        
+            'contract_id',
             'outcome',
             'message',
-            'type',        
+            'type',
             'voucher_id',
             'voucher_code',
             'amount',
@@ -172,26 +180,26 @@ sub main {
             'profile_before',
             'profile_after',
         );
-        
+
         my $rowcount = 0;
-        my $fh = prepare_file($mode,$output_filename,\@cols);
-        
+        my ($fh,$filename) = prepare_file($mode,$output_filename,\@cols);
+
         my ($from,$to) = get_period_dts();
         my $query_string = (defined $from && defined $to ? '?timestamp_from=' . $from . '&timestamp_to=' . $to : '');
-        
+
         process_collection($uri.'/api/topuplogs'.$query_string,100,'ngcp:topuplogs',sub {
             my ($topuplog,$total_count,$subscriber_map,$voucher_map,$package_map,$profile_map) = @_;
             log_info("processing topup log entry ID $topuplog->{id}");
-            
+
             my ($subscriber,$voucher,$package_before,$package_after,$profile_before,$profile_after) = ({},{},{},{},{},{});
-            
+
             $subscriber = get_item($topuplog->{_links},'ngcp:subscribers',$subscriber_map,$topuplog->{subscriber_id});
             $voucher = get_item($topuplog->{_links},'ngcp:vouchers',$voucher_map,$topuplog->{voucher_id});
             $package_before = get_item($topuplog->{_links},'ngcp:profilepackages',$package_map,$topuplog->{package_before_id});
             $package_after = get_item($topuplog->{_links},'ngcp:profilepackages',$package_map,$topuplog->{package_after_id});
             $profile_before = get_item($topuplog->{_links},'ngcp:billingprofiles',$profile_map,$topuplog->{profile_before_id});
             $profile_after = get_item($topuplog->{_links},'ngcp:billingprofiles',$profile_map,$topuplog->{profile_after_id});
-    
+
             my %row = (
                 'username' => $topuplog->{username},
                 'timestamp' => $topuplog->{timestamp},
@@ -200,7 +208,7 @@ sub main {
                 'primary_number' => get_primary_number($subscriber),
                 'contract_id' => $topuplog->{contract_id},
                 'outcome' => $topuplog->{outcome},
-                'message' => $topuplog->{message},            
+                'message' => $topuplog->{message},
                 'type' => $topuplog->{type},
                 'voucher_id' => $topuplog->{voucher_id},
                 'voucher_code' => $voucher->{code},
@@ -214,21 +222,21 @@ sub main {
                 'profile_after' => $profile_after->{name},
                 'profile_before' => $profile_before->{name},
             );
-    
+
             $rowcount++;
-            
+
             log_row($rowcount,$total_count,\%row,\@cols);
             print $fh join($col_separator,map { escape_row_value($_); } @row{@cols}) . $linebreak;
-            
+
             return 1;
         },4);
-        
-        close_file($fh,$output_filename,$rowcount);
-        
+
+        close_file($fh,$filename,$output_filename,$rowcount);
+
     } else {
         fatal("Mode argument '$mode' not implemented");
     }
-    
+
     return 0;
 }
 
@@ -250,14 +258,14 @@ sub process_collection {
         foreach my $item (@{ $collection->{_embedded}->{$item_rel} }) {
             return unless &$process_item($item,$collection->{total_count},@helper_maps);
         }
-                     
+
     } while($nexturi);
 }
 
 sub get_item {
-    
+
     my ($_links,$item_rel,$map,$id) = @_;
-    
+
     if (defined $id) {
         if (exists $map->{$id}) {
             return $map->{$id};
@@ -273,14 +281,14 @@ sub get_item {
                     $link_map{$link->{href}} = 1;
                 }
                 return $map->{$id};
-            } elsif ('HASH' eq ref $links) {                
+            } elsif ('HASH' eq ref $links) {
                 my $item = get_request($uri.$links->{href});
                 $map->{$id} = $item;
                 return $item;
             }
         }
     }
-    
+
     return {};
 }
 
@@ -302,7 +310,7 @@ sub get_request {
         $result = {};
     }
     return $result;
-}      
+}
 
 sub get_primary_number {
     my $subscriber = shift;
@@ -324,6 +332,10 @@ sub get_period_dts {
         $from = $now->truncate(to => 'month');
         $to = $from->clone->add('months' => 1)->subtract(seconds => 1);
         $label = 'this month';
+    } elsif (LAST_DAY_PERIOD eq $period) {
+        $from = $now->subtract('days' => 1)->truncate(to => 'day');
+        $to = $from->clone->add('days' => 1)->subtract(seconds => 1);
+        $label = 'last day';
     } elsif (LAST_WEEK_PERIOD eq $period) {
         $from = $now->truncate(to => 'week')->subtract(seconds => 1)->truncate(to => 'week');
         $to = $from->clone->add('weeks' => 1)->subtract(seconds => 1);
@@ -331,7 +343,7 @@ sub get_period_dts {
     } elsif (LAST_MONTH_PERIOD eq $period) {
         $from = $now->truncate(to => 'month')->subtract(seconds => 1)->truncate(to => 'month');
         $to = $from->clone->add('months' => 1)->subtract(seconds => 1);
-        $label = 'last month';          
+        $label = 'last month';
     } else {
         fatal("Unknown period '$period' specified, valid periods are [" . join(', ',(PERIOD_STRINGS)). "]") if $period;
         return ($from,$to);
@@ -351,7 +363,7 @@ sub datetime_from_string {
 sub datetime_to_string {
     my $dt = shift;
     my $dtf = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
+        pattern => '%F %T',
     );
     return $dtf->format_datetime($dt);
 }
@@ -364,21 +376,38 @@ sub current_local {
 
 sub prepare_file {
     my ($mode,$output_filename,$cols) = @_;
-    log_info("dumping $mode into file $output_filename ...");
-    my $fh;
-    open($fh, '>', $output_filename) or fatal("Could not open file '$output_filename' $!");
-    
+
+    my ($fh, $filename) = (undef, undef);
+    if ($use_tempfile) {
+        log_info("dumping $mode into temporary file ...");
+        ($fh, $filename) = File::Temp::tempfile('api_dump_XXXX', UNLINK => 1, TMPDIR => 1, SUFFIX => $output_file_suffix);
+        fatal("Could not create temporary file $!") unless $fh;
+    } else {
+        log_info("dumping $mode into file $output_filename ...");
+        open($fh, '>', $output_filename) or fatal("Could not open file '$output_filename' $!");
+        $filename = $output_filename;
+    }
+
     if ($print_colnames) {
         print $fh join($col_separator,@$cols) . $linebreak;
     }
-    return $fh;
+    return ($fh,$filename);
 }
 
 sub close_file {
-    my ($fh,$output_filename,$rowcount) = @_;
+    my ($fh,$filename,$output_filename,$rowcount) = @_;
     close $fh;
+    if ($use_tempfile) {
+        fatal("temp file $filename lost") unless -e $filename;
+        log_info("$rowcount rows written to temp file '$filename', moving to output file '$output_filename'");
+        # atomic rename if /tmp and output directory reside on same filesystem,
+        # to ensure polling via ftp sees completed files only:
+        File::Copy::move($filename,$output_filename) or fatal("Error when moving temp file $filename to output file $output_filename $!");
+    } else {
+        log_info("$rowcount rows written to file '$output_filename'");
+    }
     chmod(oct(CHMOD_UMASK),$output_filename);
-    log_info("$rowcount rows written to file '$output_filename'");
+
 }
 
 sub makedir {
@@ -405,7 +434,7 @@ sub log_row {
 
 sub log_info {
     my $msg = shift;
-    print $msg . "\n" if $verbose > 0;    
+    print $msg . "\n" if $verbose > 0;
 }
 
 sub log_debug {
@@ -417,3 +446,7 @@ sub fatal {
     my $msg = shift;
     die($msg . "\n");
 }
+
+__DATA__
+This exists to allow the locking code at the beginning of the file to work.
+DO NOT REMOVE THESE LINES!
