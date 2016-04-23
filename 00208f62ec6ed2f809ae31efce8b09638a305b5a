@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_ecd5d643",
+        "filename": "lib/NGCP/Panel/Utils/Form.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-04-23T13:27:05Z",
+      "side": 1,
+      "message": "escape really needed for plus inside cahracter class?",
+      "range": {
+        "startLine": 120,
+        "startChar": 26,
+        "endLine": 120,
+        "endChar": 28
+      },
+      "revId": "00208f62ec6ed2f809ae31efce8b09638a305b5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
