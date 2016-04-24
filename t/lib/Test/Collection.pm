@@ -21,7 +21,7 @@ use Data::Dumper;
 has 'local_test' => (
     is => 'rw',
     isa => 'Str',
-    default => $ENV{LOCAL_TEST} // '',
+    default => sub {$ENV{LOCAL_TEST} // ''},
 );
 
 has 'DEBUG' => (
@@ -53,9 +53,10 @@ has 'ua' => (
 has 'base_uri' => (
     is => 'ro',
     isa => 'Str',
+    lazy => 1,
     default => sub {
-        $_[0]->{local_test}
-        ? ( length($_[0]->{local_test})>1 ? $_[0]->{local_test} : 'https://127.0.0.1:4443' )
+        $_[0]->local_test
+        ? ( length($_[0]->local_test)>1 ? $_[0]->local_test : 'https://127.0.0.1:1443' )
         : $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
     },
 );
@@ -319,11 +320,11 @@ sub get_item_hal{
         $uri //= $self->get_uri_collection($name)."?page=1&rows=1";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
         ($reshal,$location) = $self->get_hal_from_collection($list_collection,$name);
-        #if($reshal->{content}->{total_count}){
+        if($reshal->{content}->{total_count}){
             $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location };
             $self->DATA_LOADED->{$name} ||= [];
             push @{$self->DATA_LOADED->{$name}}, $resitem;
-        #}
+        }
     }
     return $resitem;
 }
