@@ -144,44 +144,46 @@ my $remote_config = $test_machine->init_catalyst_config;
 }
 {
 #18601
-    diag("18601");
-    my $groups = $test_machine->check_create_correct( 3, sub{
-        my $num = $_[1]->{i};
-        $_[0]->{username} .= time().'_18601_'.$num ;
-        $_[0]->{webusername} .= time().'_'.$num;
-        $_[0]->{pbx_extension} .= '18601'.$num;
-        $_[0]->{primary_number}->{ac} .= $num;
-        $_[0]->{is_pbx_group} = 1;
-        $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
-        delete $_[0]->{alias_numbers};
-    } );
-    my $members = $test_machine->check_create_correct( 3, sub{
-        my $num = 3 + $_[1]->{i};
-        $_[0]->{username} .= time().'_18601_'.$num ;
-        $_[0]->{webusername} .= time().'_'.$num;
-        $_[0]->{pbx_extension} .= '18601'.$num;
-        $_[0]->{primary_number}->{ac} .= $num;
-        $_[0]->{is_pbx_pilot} = 0;
-        $_[0]->{is_pbx_group} = 0;
-        delete $_[0]->{alias_numbers};
-    });
-    $members->[0]->{content}->{pbx_group_ids} = [];
-    diag("1. Check that member will return empty groups after put groups empty");
-    my($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
+    diag("18601: config->features->cloudpbx: ".$remote_config->{config}->{features}->{cloudpbx}.";\n");
+    if($remote_config->{config}->{features}->{cloudpbx}){
+        my $groups = $test_machine->check_create_correct( 3, sub{
+            my $num = $_[1]->{i};
+            $_[0]->{username} .= time().'_18601_'.$num ;
+            $_[0]->{webusername} .= time().'_'.$num;
+            $_[0]->{pbx_extension} .= '18601'.$num;
+            $_[0]->{primary_number}->{ac} .= $num;
+            $_[0]->{is_pbx_group} = 1;
+            $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
+            delete $_[0]->{alias_numbers};
+        } );
+        my $members = $test_machine->check_create_correct( 3, sub{
+            my $num = 3 + $_[1]->{i};
+            $_[0]->{username} .= time().'_18601_'.$num ;
+            $_[0]->{webusername} .= time().'_'.$num;
+            $_[0]->{pbx_extension} .= '18601'.$num;
+            $_[0]->{primary_number}->{ac} .= $num;
+            $_[0]->{is_pbx_pilot} = 0;
+            $_[0]->{is_pbx_group} = 0;
+            delete $_[0]->{alias_numbers};
+        });
+        $members->[0]->{content}->{pbx_group_ids} = [];
+        diag("1. Check that member will return empty groups after put groups empty");
+        my($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
 
-    $members->[0]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (2,1)];
-    diag("2. Check that member will return groups as they were specified");
-    ($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
-    
-    $groups->[1]->{content}->{pbx_groupmember_ids} = [map { $members->[$_]->{content}->{id} } (2,1,0)];
-    diag("3. Check that group will return members as they were specified");
-    my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
-    
-    $groups->[1]->{content}->{pbx_groupmember_ids} = [];
-    diag("4. Check that group will return empty members after put members empty");
-    my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
+        $members->[0]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (2,1)];
+        diag("2. Check that member will return groups as they were specified");
+        ($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
+        
+        $groups->[1]->{content}->{pbx_groupmember_ids} = [map { $members->[$_]->{content}->{id} } (2,1,0)];
+        diag("3. Check that group will return members as they were specified");
+        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
+        
+        $groups->[1]->{content}->{pbx_groupmember_ids} = [];
+        diag("4. Check that group will return empty members after put members empty");
+        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
 
-    $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
+        $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
+    }
 }
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 done_testing;
