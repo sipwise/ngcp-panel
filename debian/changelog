@@ -1,3 +1,32 @@
+ngcp-panel (1.8.6.1+0~mr3.8.6.1) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [e699549] MT#17887 Properly update captagent on X1 PUT/PATCH
+
+  [ Irina Peshinskaya ]
+  * [8083061] MT#17727 Use http format for last-modified
+  * [e9f829a] MT#14659 Move calls from subscribers master to separate interface
+  * [2f9d1a9] MT#18637 Don't show zone name and detail in zonecost API values
+
+  [ Gerhard Jungwirth ]
+  * [590574b] MT#17491 improve speeddials api documentation
+  * [f59a200] MT#17507 add better errors on peaktime edits
+  * [f269c15] MT#17309 show interval values in customerbalances api
+  * [7272dc1] MT#17805 captured dialogs process callid
+  * [479babb] MT#18977 compatible plaintext error dialogic page
+
+  [ Rene Krenn ]
+  * [fa40995] MT#16121 PUT /api/callforwards/id json-hal response broken
+  * [37506aa] MT#16855 backport 17323 (union_all for call lists) to 3.8
+  * [d1e0197] MT#18395 lazy load dashboard values
+
+  [ Kirill Solomko ]
+  * [9abe1af] MT#16955 API added NULL query params macro
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Apr 2016 13:58:34 +0200
+
 ngcp-panel (1.8.6.0+0~mr3.8.6.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
