@@ -1,3 +1,41 @@
+ngcp-panel (1.11.3.0+0~mr4.2.3.0) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [6b85f44] MT#17465 Fix 'undefined subroutine is_int' for 'allowed_ips' adding missed NGCP::Panel::Utils::Generic
+
+  [ Irina Peshinskaya ]
+  * [b6d3c1a] MT#17415 Remove using experimental feature of the perl
+  * [f7872b1] MT#16983 Don't display pbxgroups and subscribers if there is no linked
+  * [6046416] MT#17727 Use http format for last-modified
+  * [0d9df41] MT#18515 Check zone name against empty value on fees CSV upload
+  * [fd3a8ae] MT#18439 Fix API doc examples alignment
+  * [3d77368] MT#18637 Don't show zone name and detail in zonecost API values
+
+  [ Gerhard Jungwirth ]
+  * [84dca53] MT#17473 fix repeatableJs regex
+  * [66c7c3f] MT#17487 remove the use of capture
+  * [d6ee590] MT#17491 improve speeddials api documentation
+  * [7ad556f] MT#17507 add better errors on peaktime edits
+  * [77bf890] MT#17309 show interval values in customerbalances api
+  * [b54b677] MT#17805 captured dialogs process callid
+  * [8d96b58] MT#18977 compatible plaintext error dialogic page
+  * [fc26aed] MT#17461 validate max_subscribers with sipaccount
+
+  [ Andreas Granig ]
+  * [afebd27] MT#17623 Reload dialplan cache on rwr changes
+  * [94a77ba] MT#17887 Properly update captagent on X1 PUT/PATCH
+
+  [ Rene Krenn ]
+  * [1491ba7] MT#17855 terminating a contract by edit AND term. button
+  * [687a91f] MT#16121 PUT /api/callforwards/id json-hal response broken
+  * [b5d1a4d] MT#16855 UNION ALL for panel UI call lists
+  * [16938f1] MT#18515 delete fee entries with zone (UI)
+  * [a54939d] MT#18699 control if datatable columns can be sorted
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Apr 2016 09:25:54 +0200
+
 ngcp-panel (1.11.2.0+0~mr4.2.2.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
