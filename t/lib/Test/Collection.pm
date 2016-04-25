@@ -26,9 +26,9 @@ has 'data_cache_file' => (
 );
 has 'cache_data' => (
     is => 'ro',
-    isa => 'Str',
+    isa => 'Bool',
     lazy => 1,
-    default => $ENV{API_CACHE_FAKE_DATA} // '1',
+    default => $ENV{API_CACHE_FAKE_DATA} // 0,
 );
 has 'local_test' => (
     is => 'rw',
@@ -1073,18 +1073,7 @@ sub replace_cached_data{
     store $restored,$self->data_cache_file;
     return $restored;
 }
-sub get_cached_data{
-    my($self) = @_;
-    return (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
-}
 
-sub replace_cached_data{
-    my($self,$data_callback,$restored) = @_;
-    $restored //= $self->get_cached_data;
-    $data_callback->($restored);
-    store $restored,$self->data_cache_file;
-    return $restored;
-}
 sub clear_cache{
     my($self) = @_;
     if(-e $self->data_cache_file){
