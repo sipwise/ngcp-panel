@@ -5399,7 +5399,8 @@ msgstr ""
 msgid "LNP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -5933,6 +5934,10 @@ msgstr ""
 #. ($minlen)
 #: lib/NGCP/Panel/Utils/Form.pm
 msgid "Must be at minimum %1 characters long"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Must be either a number or user@domain format."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm
@@ -11600,8 +11605,7 @@ msgstr ""
 msgid "noanswer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-#: share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "none"
 msgstr "ninguno"
 

@@ -5090,6 +5090,10 @@ msgid "Must be at minimum %1 characters long"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm
+msgid "Must be either a number or user@domain format."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm
 msgid "Must contain digits"
 msgstr ""
 
