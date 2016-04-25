@@ -71,10 +71,9 @@ if( !$remote_config->{config}->{features}->{faxserver} ){
 #$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'faxfile' =>  $test_machine->DATA_ITEM_STORE->{faxfile} }; } );
 
 $test_machine->clear_test_data_all();
-
-done_testing;
-
 undef $fake_data;
 undef $test_machine;
+
+done_testing;
 
 # vim: set tabstop=4 expandtab:
