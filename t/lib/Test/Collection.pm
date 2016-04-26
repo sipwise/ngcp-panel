@@ -43,6 +43,11 @@ has 'DEBUG' => (
     isa => 'Bool',
     default => 0,
 );
+has 'NO_ITEM_MODULE' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0,
+);
 has 'ALLOW_EMPTY_COLLECTION' => (
     is => 'rw',
     isa => 'Bool',
