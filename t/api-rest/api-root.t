@@ -86,6 +86,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         lnpnumbers => 1,
         mailtofaxsettings => 1,
         maliciouscalls => 1,
+        metaconfigdefs => 1,
         ncoslevels => 1,
         ncoslnpcarriers => 1,
         ncospatterns => 1,
