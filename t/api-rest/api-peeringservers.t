@@ -49,6 +49,7 @@ $test_machine->check_get2put();
 $test_machine->check_bundle();
 $test_machine->clear_test_data_all();
 
+undef $test_machine;
+undef $fake_data;
 done_testing;
-
 # vim: set tabstop=4 expandtab:
