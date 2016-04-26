@@ -11,6 +11,7 @@ use HTTP::Status qw(:constants);
 use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
+use NGCP::Panel::Utils::API;
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -57,10 +58,11 @@ sub GET : Allow {
         "CustomerPreferenceDefs" => 1,
         "ProfilePreferenceDefs" => 1,
         "PeeringServerPreferenceDefs" => 1,
+        "MetaConfigDefs" => 1,
     };
 
-    my @colls = $self->get_collections;
-    foreach my $coll(@colls) {
+    my $colls = NGCP::Panel::Utils::API::get_collections_files;
+    foreach my $coll(@$colls) {
         my $mod = $coll;
         $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
         next if(exists $blacklist->{$mod});
@@ -222,36 +224,14 @@ sub OPTIONS : Allow {
     return;
 }
 
-sub get_collections {
-    my ($self) = @_;
-
-    # figure out base path of our api modules
-    my $libpath = $INC{"NGCP/Panel/Controller/API/Root.pm"};
-    $libpath =~ s/Root\.pm$//;
-
-    # find all modules not called Root.pm and *Item.pm
-    # (which should then be just collections)
-    my $rootrule = File::Find::Rule->new->name('Root.pm');
-    my $itemrule = File::Find::Rule->new->name('*Item.pm');
-    my $rule = File::Find::Rule->new
-        ->mindepth(1)
-        ->maxdepth(1)
-        ->name('*.pm')
-        ->not($rootrule)
-        ->not($itemrule);
-    my @colls = $rule->in($libpath);
-
-    return @colls;
-}
-
 sub collections_link_headers : Private {
     my ($self) = @_;
 
-    my @colls = $self->get_collections;
+    my $colls = NGCP::Panel::Utils::API::get_collections_files;
 
     # create Link header for each of the collections
     my @links = ();
-    foreach my $mod(@colls) {
+    foreach my $mod(@$colls) {
         # extract file base from path (e.g. Foo from lib/something/Foo.pm)
         $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
         my $rel = lc $mod;
