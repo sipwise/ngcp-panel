@@ -1,6 +1,7 @@
 <script>
 enqueLists.push([{
     res: 'voicemails_slice',
+    widgetName: "SubscriberVmOverview",
     cb: function(data) {
         console.log(data);
         var voicemails = data.widget_data;
@@ -28,6 +29,7 @@ enqueLists.push([{
     }
 },{
     res: 'voicemails_count',
+    widgetName: "SubscriberVmOverview",
     cb: function(data) {
         console.log(data);
         $("#subscriber_voicemail_overview_lazy_loading").remove();
