@@ -1,5 +1,4 @@
 package NGCP::Panel::Widget;
-use Sipwise::Base;
 use Moose;
 with 'MooseX::Object::Pluggable';
 
@@ -15,7 +14,7 @@ sub filter {
 
 sub instantiate_plugins {
     my ($self, $c, $type_filter) = @_;
-    my @plugins = map { s/^.*:://; $_; } $self->_plugin_locator->plugins;
+    my @plugins = map { s/^.*:://r; } $self->_plugin_locator->plugins;
 
     my @instances = ();
     foreach(@plugins) {
@@ -25,7 +24,8 @@ sub instantiate_plugins {
             push @instances, { instance => $inst, name => $_ };
         }
     }
-    return sort {$a->{instance}->priority <=> $b->{instance}->priority} @instances;
+    my @sorted_instances = sort {$a->{instance}->priority <=> $b->{instance}->priority} @instances;
+    return @sorted_instances;
 }
 
 no Moose;

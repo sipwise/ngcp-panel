@@ -1,28 +1,14 @@
 package NGCP::Panel::Controller::Dashboard;
-use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
+
+use warnings;
+use strict;
+
 use parent 'Catalyst::Controller';
+
+use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Widget;
 
-=head1 NAME
-
-NGCP::Panel::Controller::Dashboard - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
-=head1 METHODS
-
-=cut
-
-=head2 index
-
-Dashboard index
-
-=cut
-
-sub index :Path :Args(0) {
+sub dashb_index :Path :Args(0) {
     my ($self, $c) = @_;
 
     my $plugin_finder = NGCP::Panel::Widget->new;
@@ -59,17 +45,6 @@ sub ajax :Path('ajax') :Args(1) {
 
     $c->detach( $c->view("JSON") );
 }
-
-=head1 AUTHOR
-
-Andreas Granig,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 __PACKAGE__->meta->make_immutable;
 
