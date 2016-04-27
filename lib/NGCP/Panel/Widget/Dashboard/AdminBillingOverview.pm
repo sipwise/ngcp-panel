@@ -1,27 +1,14 @@
-package NGCP::Panel::Widget::Plugin::AdminBillingOverview;
-use Moose::Role;
+package NGCP::Panel::Widget::Dashboard::AdminBillingOverview;
+use Moo;
 use NGCP::Panel::Utils::DateTime;
 
 has 'template' => (
     is  => 'ro',
-    isa => 'Str',
     default => 'widgets/admin_billing_overview.tt'
 );
 
-has 'type' => (
-    is  => 'ro',
-    isa => 'Str',
-    default => 'dashboard_widgets',
-);
-
-has 'priority' => (
-    is  => 'ro',
-    isa => 'Int',
-    default => 11,
-);
-
-around handle => sub {
-    my ($foo, $self, $c) = @_;
+sub handle {
+    my ($self, $c) = @_;
 
     # add queries used in tt here ...
 
@@ -29,12 +16,10 @@ around handle => sub {
 };
 
 sub filter {
-    my ($self, $c, $type) = @_;
+    my ($self, $c) = @_;
 
-    return $self if(
-        $type eq $self->type &&
-        $c->user->roles eq 'admin' &&
-        ref $c->controller eq 'NGCP::Panel::Controller::Dashboard'
+    return 1 if(
+        $c->user->roles eq 'admin'
     );
     return;
 }
