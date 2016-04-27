@@ -11,7 +11,7 @@ $(document).ready(function () {
         while (widgetDone < enqueLists.length) {
             var ajaxCall = enqueLists[i].shift();
             if (ajaxCall) {
-                queue.getJSON('[% c.uri_for('/dashboard/ajax') %]/' + ajaxCall.res, ajaxCall.cb);
+                queue.getJSON('[% c.uri_for('/dashboard/ajax') %]/' + ajaxCall.res, {"widget":ajaxCall.widgetName}, ajaxCall.cb);
             } else {
                 widgetDone++;
             }

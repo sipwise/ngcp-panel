@@ -1,26 +1,13 @@
-package NGCP::Panel::Widget::Plugin::SubscriberRegisterOverview;
-use Moose::Role;
+package NGCP::Panel::Widget::Dashboard::SubscriberRegisterOverview;
+use Moo;
 
 has 'template' => (
     is  => 'ro',
-    isa => 'Str',
     default => 'widgets/subscriber_reg_overview.tt'
 );
 
-has 'type' => (
-    is  => 'ro',
-    isa => 'Str',
-    default => 'dashboard_widgets',
-);
-
-has 'priority' => (
-    is  => 'ro',
-    isa => 'Int',
-    default => 40,
-);
-
-around handle => sub {
-    my ($foo, $self, $c) = @_;
+sub handle {
+    my ($self, $c) = @_;
 
     unless ($c->stash->{subscriber}) {
         $c->stash(
@@ -31,15 +18,13 @@ around handle => sub {
     }
 
     return;
-};
+}
 
 sub filter {
-    my ($self, $c, $type) = @_;
+    my ($self, $c) = @_;
 
-    return $self if(
-        $type eq $self->type &&
-        ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') &&
-        ref $c->controller eq 'NGCP::Panel::Controller::Dashboard'
+    return 1 if(
+        ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin')
     );
     return;
 }

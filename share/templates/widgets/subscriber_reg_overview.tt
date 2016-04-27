@@ -1,6 +1,7 @@
 <script>
 enqueLists.push([{
     res: 'registrations_slice',
+    widgetName: "SubscriberRegisterOverview",
     cb: function(data) {
         console.log(data);
         var registrations = data.widget_data;
@@ -23,6 +24,7 @@ enqueLists.push([{
     }
 },{
     res: 'registrations_count',
+    widgetName: "SubscriberRegisterOverview",
     cb: function(data) {
         console.log(data);
         $("#subscriber_registration_overview_lazy_loading").remove();

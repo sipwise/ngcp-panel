@@ -1,6 +1,7 @@
 <script>
 enqueLists.push([{
     res: 'calls_slice',
+    widgetName: "SubscriberCallsOverview",
     cb: function(data) {
         console.log(data);
         var calls = data.widget_data;
@@ -39,6 +40,7 @@ enqueLists.push([{
     }
 },{
     res: 'calls_count',
+    widgetName: "SubscriberCallsOverview",
     cb: function(data) {
         console.log(data);
         $("#subscriber_call_overview_lazy_loading").remove();
