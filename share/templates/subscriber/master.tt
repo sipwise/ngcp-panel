@@ -156,7 +156,7 @@
     -%]
 
 
-
+<script type="text/javascript" src="/js/background.js"></script>
 <script>
 function process_pbx_items(moveId,direction){
     var uri = '[%c.uri_for_action('/subscriber/order_pbx_items', [subscriber.id], 'move'=> 'moveId', 'where' => 'direction')%]';
