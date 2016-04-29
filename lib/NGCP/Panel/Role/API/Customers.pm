@@ -3,7 +3,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use parent 'NGCP::Panel::Role::API';
 
-
+use feature 'state';
 use boolean qw(true);
 use TryCatch;
 use Data::HAL qw();
@@ -30,7 +30,9 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Contract::CustomerAPI->new;
+    state $form = NGCP::Panel::Form::Contract::CustomerAPI->new;
+    $form->clear;
+    return $form;
 }
 
 sub hal_from_customer {

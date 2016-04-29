@@ -3,7 +3,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use parent 'NGCP::Panel::Role::API';
 
-
+use feature 'state';
 use boolean qw(true);
 use TryCatch;
 use Data::HAL qw();
@@ -33,9 +33,14 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::Contact::Admin->new;
+        state $forma = NGCP::Panel::Form::Contact::Admin->new;
+        $forma->clear;
+        return $forma;
     } elsif($c->user->roles eq "reseller") {
         return NGCP::Panel::Form::Contact::Reseller->new;
+        state $formr = NGCP::Panel::Form::Contact::Reseller->new;
+        $formr->clear;
+        return $formr;
     }
 }
 

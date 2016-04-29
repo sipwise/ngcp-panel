@@ -3,7 +3,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use parent 'NGCP::Panel::Role::API';
 
-
+use feature 'state';
 use boolean qw(true);
 use TryCatch;
 use Data::HAL qw();
@@ -20,7 +20,17 @@ use NGCP::Panel::Utils::Events;
 sub get_form {
     my ($self, $c) = @_;
 
-    return NGCP::Panel::Form::Subscriber::SubscriberAPI->new(ctx => $c);
+    state $form;
+    if ($form) {
+        $c->log->debug("gjungwirth: Resusing subscriber form");
+    } else {
+        $c->log->debug("gjungwirth: Creating subscriber form the first time");
+        $form = NGCP::Panel::Form::Subscriber::SubscriberAPI->new;
+    }
+
+    $form->clear;
+    $form->ctx($c);
+    return $form;
 }
 
 sub resource_from_item {
