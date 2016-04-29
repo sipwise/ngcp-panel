@@ -10,7 +10,6 @@ use NGCP::Panel::Utils::Statistics qw();
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
-use NGCP::Panel::Widget;
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -183,11 +182,15 @@ sub auto :Private {
     }
 
     # load top menu widgets
-    my $plugin_finder = NGCP::Panel::Widget->new;
     my $topmenu_templates = [];
-    foreach($plugin_finder->instantiate_plugins($c, 'topmenu_widgets')) {
-        $_->{instance}->handle($c);
-        push @{ $topmenu_templates }, $_->{instance}->template;
+    if ($c->user->roles eq 'admin') {
+        $topmenu_templates = ['widgets/admin_topmenu_settings.tt'];
+    } elsif ($c->user->roles eq 'reseller') {
+        $topmenu_templates = ['widgets/reseller_topmenu_settings.tt'];
+    } elsif ($c->user->roles eq 'subscriberadmin') {
+        $topmenu_templates = ['widgets/subscriberadmin_topmenu_settings.tt'];
+    } elsif ($c->user->roles eq 'subscriber') {
+        $topmenu_templates = ['widgets/subscriber_topmenu_settings.tt'];
     }
     $c->stash(topmenu => $topmenu_templates);
 
