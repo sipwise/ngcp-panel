@@ -52,7 +52,7 @@ sub process_hal_resource {
     return $resource;
 }
 
-sub update {
+sub update_item_model {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
     $item->update($resource);
     NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);

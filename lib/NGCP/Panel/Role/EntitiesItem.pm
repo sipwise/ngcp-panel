@@ -24,24 +24,19 @@ sub set_config {
                 Does => [qw(ACL RequireSSL)],
                 Method => $_,
                 Path => $self->dispatch_path,
+                %{$self->_set_config($_)},
             } } @{ $self->allowed_methods }
         },
         action_roles => [qw(HTTPMethods)],
+        %{$self->_set_config()},
     );
-}
-sub auto :Private {
-    my ($self, $c) = @_;
-
-    $self->set_body($c);
-    $self->log_request($c);
 }
 
 sub get {
     my ($self, $c, $id) = @_;
     {
-        last unless $self->valid_id($c, $id);
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, $self->item_name => $item);
+        my $item = $self->item_by_id_valid($c, $id);
+        last unless $item;
 
         my $hal = $self->hal_from_item($c, $item);
 
@@ -59,6 +54,88 @@ sub get {
     return;
 }
 
+sub patch {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $json = $self->get_valid_patch_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json-patch+json',
+        );
+        last unless $json;
+
+        my $item = $self->item_by_id_valid($c, $id);
+        last unless $item;
+        my $old_resource = { $item->get_inflated_columns };
+        my $resource = $self->apply_patch($c, $old_resource, $json);
+        last unless $resource;
+
+        my $form;
+        ($item,$form) = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
+
+        $guard->commit;
+        $self->return_representation($c, $item, $form, $preference);
+    }
+    return;
+}
+
+sub put {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $item = $self->item_by_id_valid($c, $id);
+        last unless $item;
+
+        my $resource = $self->get_valid_put_data(
+            c => $c,
+            id => $id,
+            media_type => $self->config->{action}->{OPTIONS}->{PUT}->{ContentType} // 'application/json',
+        );
+        last unless $resource;
+        my $old_resource = { $item->get_inflated_columns };
+        my $form;
+        
+        ($item, $form) = $self->update_item($c, $item, $old_resource, $resource, $form );
+        last unless $item;
+
+        $guard->commit;
+
+        $self->return_representation($c, $item, $form, $preference);
+    }
+    return;
+}
+
+
+sub delete {
+    my ($self, $c, $id) = @_;
+
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $item = $self->item_by_id_valid($c, $id);
+        last unless $item;
+
+        $self->delete_item($c, $item );
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
+    }
+    return;
+}
+sub auto :Private {
+    my ($self, $c) = @_;
+
+    $self->set_body($c);
+    $self->log_request($c);
+}
 sub head {
     my ($self, $c, $id) = @_;
     $c->forward(qw(GET));
@@ -75,80 +152,6 @@ sub options {
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
-
-sub patch {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
-
-        my $json = $self->get_valid_patch_data(
-            c => $c,
-            id => $id,
-            media_type => 'application/json-patch+json',
-        );
-        last unless $json;
-
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, $self->item_name => $item);
-        my $old_resource = { $item->get_inflated_columns };
-        my $resource = $self->apply_patch($c, $old_resource, $json);
-        last unless $resource;
-
-        my $form = $self->get_form($c);
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
-        last unless $item;
-
-        $guard->commit;
-        $self->return_representation($c, $item, $form, $preference);
-    }
-    return;
-}
-
-sub put {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
-
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, $self->item_name => $item);
-        my $resource = $self->get_valid_put_data(
-            c => $c,
-            id => $id,
-            media_type => 'application/json',
-        );
-        last unless $resource;
-        my $old_resource = { $item->get_inflated_columns };
-
-        my $form = $self->get_form($c);
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
-        last unless $item;
-
-        $guard->commit;
-
-        $self->return_representation($c, $item, $form, $preference);
-    }
-    return;
-}
-
-sub delete {
-    my ($self, $c, $id) = @_;
-
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, $self->item_name => $item);
-        $self->delete_item($c, $item );
-        $guard->commit;
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
-    }
     return;
 }
 
