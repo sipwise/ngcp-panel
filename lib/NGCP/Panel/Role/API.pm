@@ -739,6 +739,25 @@ sub relation {
     return 'http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name;
 }
 #------ /accessors ---
+sub return_representation{
+    my($self, $c, $item, $form, $preference) = @_;
 
+    $preference //= $self->require_preference($c);
+    last unless $preference;
+
+    if ('minimal' eq $preference) {
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->header(Preference_Applied => 'return=minimal');
+        $c->response->body(q());
+    } else {
+        my $hal = $self->hal_from_item($c, $item, $form);
+        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            $hal->http_headers,
+        ), $hal->as_json);
+        $c->response->headers($response->headers);
+        $c->response->header(Preference_Applied => 'return=representation');
+        $c->response->body($response->content);
+    }
+}
 1;
 # vim: set tabstop=4 expandtab:
