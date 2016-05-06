@@ -1,3 +1,12 @@
+ngcp-panel (1.12.1.7+0~mr4.3.1.7) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [1b59afc] MT#17413 simplify and fix preference edit modal
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 06 May 2016 16:23:36 +0200
+
 ngcp-panel (1.12.1.6+0~mr4.3.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
