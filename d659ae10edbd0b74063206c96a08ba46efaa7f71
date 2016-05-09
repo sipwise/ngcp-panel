@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_40407c56",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-09T15:21:31Z",
+      "side": 1,
+      "message": "the exhaustive NGCP::Panel::Widget is not used to select the top manu any more.\n\nwill positively affect loading any page (not only dashboard as i thought originally), nice!",
+      "revId": "d659ae10edbd0b74063206c96a08ba46efaa7f71",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
