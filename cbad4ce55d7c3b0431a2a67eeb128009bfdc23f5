@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_742699bc",
+        "filename": "lib/NGCP/Panel/Controller/Dashboard.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-09T15:52:39Z",
+      "side": 1,
+      "message": "ok, obtain the names from conf directly; like it avoiding constants in code",
+      "range": {
+        "startLine": 16,
+        "startChar": 10,
+        "endLine": 16,
+        "endChar": 23
+      },
+      "revId": "cbad4ce55d7c3b0431a2a67eeb128009bfdc23f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_143e35b9",
+        "filename": "lib/NGCP/Panel/Controller/Dashboard.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-09T15:52:39Z",
+      "side": 1,
+      "message": "ok, tying MooseX::Object::Pluggable logic in here",
+      "range": {
+        "startLine": 20,
+        "startChar": 12,
+        "endLine": 24,
+        "endChar": 37
+      },
+      "revId": "cbad4ce55d7c3b0431a2a67eeb128009bfdc23f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_d4474d4a",
+        "filename": "lib/NGCP/Panel/Controller/Dashboard.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-09T15:52:39Z",
+      "side": 1,
+      "message": "ok, to avoid lookup here, send the name with ajax request itself, nice",
+      "range": {
+        "startLine": 45,
+        "startChar": 17,
+        "endLine": 45,
+        "endChar": 45
+      },
+      "revId": "cbad4ce55d7c3b0431a2a67eeb128009bfdc23f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
