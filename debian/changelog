@@ -1,3 +1,12 @@
+ngcp-panel (1.8.4.11+0~mr3.8.4.11) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [875d582] MT#18601 Fix getting pbx relations
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 May 2016 12:08:30 +0200
+
 ngcp-panel (1.8.4.10+0~mr3.8.4.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
