@@ -1337,7 +1337,7 @@ msgstr "Flujo de llamada para el Call-ID %1"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Busy"
 msgstr "Desvío si ocupado"
@@ -1364,7 +1364,7 @@ msgstr "Desvío configurado"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Timeout"
 msgstr "Desvío tras timeout"
@@ -1389,7 +1389,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Unavailable"
 msgstr "Desvío si no disponible"
@@ -1412,7 +1412,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Unconditional"
 msgstr "Desvío incondicional"
@@ -5399,8 +5399,7 @@ msgstr ""
 msgid "LNP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -6650,7 +6649,8 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Patrón"
 
@@ -11276,7 +11276,7 @@ msgstr ""
 msgid "and"
 msgstr ""
 
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCallsOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCallsOverview.pm
 msgid "anonymous"
 msgstr ""
 

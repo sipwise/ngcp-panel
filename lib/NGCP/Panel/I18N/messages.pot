@@ -1041,7 +1041,7 @@ msgstr ""
 msgid "Call Flow for Call-ID %1"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
 msgid "Call Forward Busy"
 msgstr ""
 
@@ -1057,7 +1057,7 @@ msgstr ""
 msgid "Call Forward Configured"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
 msgid "Call Forward Timeout"
 msgstr ""
 
@@ -1069,7 +1069,7 @@ msgstr ""
 msgid "Call Forward Timeout, Number of Objects, each containing the keys, \"destinationset\" and \"timeset\". The values must be the name of a destination/time set which belongs to the same subscriber."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
 msgid "Call Forward Unavailable"
 msgstr ""
 
@@ -1081,7 +1081,7 @@ msgstr ""
 msgid "Call Forward Unavailable, Number of Objects, each containing the keys, \"destinationset\" and \"timeset\". The values must be the name of a destination/time set which belongs to the same subscriber."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
 msgid "Call Forward Unconditional"
 msgstr ""
 
@@ -9675,7 +9675,7 @@ msgstr ""
 msgid "and"
 msgstr ""
 
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCallsOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCallsOverview.pm
 msgid "anonymous"
 msgstr ""
 

@@ -1340,7 +1340,7 @@ msgstr "Диаграмма звонка для Call-ID %1"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Busy"
 msgstr "Перенаправлять когда занят (CFB)"
@@ -1375,7 +1375,7 @@ msgstr "Создано перенаправление звонка"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Timeout"
 msgstr "Перенаправлять когда не отвечает (CFT)"
@@ -1403,7 +1403,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Unavailable"
 msgstr "Перенаправлять когда недоступен (CFNA)"
@@ -1434,7 +1434,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCFOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Unconditional"
 msgstr "Безусловное перенаправление звонков (CFU)"
@@ -5427,8 +5427,7 @@ msgstr ""
 msgid "LNP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -6673,7 +6672,8 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Шаблон"
 
@@ -11307,7 +11307,7 @@ msgstr ""
 msgid "and"
 msgstr ""
 
-#: lib/NGCP/Panel/Widget/Plugin/SubscriberCallsOverview.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCallsOverview.pm
 msgid "anonymous"
 msgstr ""
 
