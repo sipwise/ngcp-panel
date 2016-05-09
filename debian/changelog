@@ -1,3 +1,14 @@
+ngcp-panel (1.11.1.15+0~mr4.2.1.15) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [bedb1e0] MT#18601 Fix getting pbx relations
+  * [47e982f] MT#18601 Fix tests
+  * [a1e4a0f] MT#18601 Consider cloudpbx feature configuration in tests
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 May 2016 12:10:22 +0200
+
 ngcp-panel (1.11.1.14+0~mr4.2.1.14) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
