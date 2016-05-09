@@ -22,6 +22,30 @@
       "revId": "a3e806b80d47248c2faaaae69395c9ea1a319849",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_f467e9e8",
+        "filename": "lib/NGCP/Panel/Widget/Dashboard/AdminBillingOverview.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-05-09T15:59:09Z",
+      "side": 0,
+      "message": "Yes, I left the role check, so that the admin cannot do anything stupid in the ngcp_panel.conf, otherwise that would be obsolete, too",
+      "parentUuid": "1acb0d3e_7474599c",
+      "range": {
+        "startLine": 37,
+        "startChar": 12,
+        "endLine": 37,
+        "endChar": 66
+      },
+      "revId": "a3e806b80d47248c2faaaae69395c9ea1a319849",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
