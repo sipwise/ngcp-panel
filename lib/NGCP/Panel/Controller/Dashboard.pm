@@ -15,22 +15,16 @@ sub dashb_index :Path :Args(0) {
 
     for my $widget_name (@{ $db_config->{$role} // [] }) {
         # will be resorted to something proper later instead of eval
-        my $instance;
+        my $module = "NGCP::Panel::Widget::Dashboard::$widget_name";
         eval {
-            my $module = "NGCP::Panel::Widget::Dashboard::$widget_name";
             my $file = $module =~ s|::|/|gr;
             require $file . '.pm';
             $module->import();
-            $instance = $module->new;
+            next unless ($module->filter($c));
+            push @{ $widget_templates }, $module->template;
         };
         if ($@) {
             $c->log->debug("error loading widget '$widget_name': " . $@);
-        }
-
-        if ($instance) {
-            next unless ($instance->filter($c));
-            $instance->handle($c);
-            push @{ $widget_templates }, $instance->template;
         }
     }
 
@@ -42,13 +36,18 @@ sub dashb_index :Path :Args(0) {
 sub ajax :Path('ajax') :Args(1) {
     my ($self, $c, $exec) = @_;
 
-    my $widget = $c->request->param("widget");
+    my $widget_name = $c->request->param("widget");
     my $value = undef;
 
-    $c->log->debug("calling $exec in $widget");
+    $c->log->debug("calling $exec in $widget_name");
 
+    my $module = "NGCP::Panel::Widget::Dashboard::$widget_name";
     eval {
-        $value = "NGCP::Panel::Widget::Dashboard::$widget"->$exec($c);
+        my $file = $module =~ s|::|/|gr;
+        require $file . '.pm';
+        $module->import();
+
+        $value = $module->$exec($c);
     };
     if ($@) {
         $c->log->debug("error processing widget ajax request '$exec': " . $@);

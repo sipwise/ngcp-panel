@@ -1,17 +1,10 @@
 package NGCP::Panel::Widget::Dashboard::AdminPeeringOverview;
-use Moo;
 
-has 'template' => (
-    is  => 'ro',
-    default => 'widgets/admin_peering_overview.tt'
-);
+use warnings;
+use strict;
 
-sub handle {
-    my ($self, $c) = @_;
-
-    # add queries used in tt here ...
-
-    return;
+sub template {
+    return 'widgets/admin_peering_overview.tt';
 }
 
 sub filter {

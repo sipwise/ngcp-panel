@@ -1,18 +1,12 @@
 package NGCP::Panel::Widget::Dashboard::ResellerBillingOverview;
-use Moo;
+
+use warnings;
+use strict;
+
 use NGCP::Panel::Utils::DateTime;
 
-has 'template' => (
-    is  => 'ro',
-    default => 'widgets/reseller_billing_overview.tt',
-);
-
-sub handle {
-    my ($self, $c) = @_;
-
-    # add queries used in tt here ...
-
-    return;
+sub template {
+    return 'widgets/reseller_billing_overview.tt';
 }
 
 sub _get_interval {

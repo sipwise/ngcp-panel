@@ -1,23 +1,10 @@
 package NGCP::Panel::Widget::Dashboard::SubscriberRegisterOverview;
-use Moo;
 
-has 'template' => (
-    is  => 'ro',
-    default => 'widgets/subscriber_reg_overview.tt'
-);
+use warnings;
+use strict;
 
-sub handle {
-    my ($self, $c) = @_;
-
-    unless ($c->stash->{subscriber}) {
-        $c->stash(
-            subscriber => $c->model('DB')->resultset('voip_subscribers')->find({
-                uuid => $c->user->uuid,
-            }),
-        );
-    }
-
-    return;
+sub template {
+    return 'widgets/subscriber_reg_overview.tt';
 }
 
 sub filter {

@@ -1,28 +1,15 @@
 package NGCP::Panel::Widget::Dashboard::SubscriberCallsOverview;
-use Moo;
+
+use warnings;
+use strict;
 
 use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::Strptime;
 use URI::Escape;
 
-has 'template' => (
-    is  => 'ro',
-    default => 'widgets/subscriber_calls_overview.tt'
-);
-
-sub handle {
-    my ($self, $c) = @_;
-
-    unless ($c->stash->{subscriber}) {
-        $c->stash(
-            subscriber => $c->model('DB')->resultset('voip_subscribers')->find({
-                uuid => $c->user->uuid,
-            }),
-        );
-    }
-
-    return;
-};
+sub template {
+    return 'widgets/subscriber_calls_overview.tt';
+}
 
 sub filter {
     my ($self, $c) = @_;
