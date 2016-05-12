@@ -68,6 +68,7 @@ sub auto :Private {
             $c->log->debug("++++++ Root::auto unauthenticated API request");
             my $ssl_dn = $c->request->env->{SSL_CLIENT_M_DN} // "";
             my $ssl_sn = hex ($c->request->env->{SSL_CLIENT_M_SERIAL} // 0);
+            my $ngcp_api_realm = $c->request->env->{NGCP_API_REALM} // "";
             if($ssl_sn) {
                 $c->log->debug("++++++ Root::auto API request with client auth sn '$ssl_sn'");
                 unless($ssl_dn eq "/CN=Sipwise NGCP API client certificate") {
@@ -115,8 +116,40 @@ sub auto :Private {
 
                 $self->api_apply_fake_time($c);
                 return 1;
+            } elsif ($ngcp_api_realm eq "subscriber") {
+                $c->log->debug("++++++ Root::auto API subscriber request with http auth");
+                my $realm = "api_subscriber_http";
+                my ($username,$password) = $c->req->headers->authorization_basic;
+                my ($u,$d) = split(/\@/,$username);
+                if ($d) {
+                    $c->req->headers->authorization_basic($u,$password);
+                }
+                my $res = $c->authenticate({}, $realm);
+
+                if($c->user_exists) {
+                    $d //= $c->req->uri->host;
+                    $c->log->debug("++++++ checking '".$c->user->domain->domain."' against '$d'");
+                    if ($c->user->domain->domain ne $d) {
+                        $c->user->logout;
+                        $c->log->debug("+++++ invalid api subscriber http login (domain check failed)");
+                        $c->log->warn("invalid api http login from '".$c->req->address."'");
+                        my $r = $c->get_auth_realm($realm);
+                        $r->credential->authorization_required_response($c, $r);
+                        return;
+                    }
+                    $c->log->debug("++++++ subscriber '".$c->user->webusername."' authenticated via api_subscriber_http");
+                } else {
+                    $c->user->logout if($c->user);
+                    $c->log->debug("+++++ invalid api subscriber http login");
+                    $c->log->warn("invalid api http login from '".$c->req->address."'");
+                    my $r = $c->get_auth_realm($realm);
+                    $r->credential->authorization_required_response($c, $r);
+                    return;
+                }
+                $self->api_apply_fake_time($c);
+                return 1;
             } else {
-                $c->log->debug("++++++ Root::auto API request with http auth");
+                $c->log->debug("++++++ Root::auto API admin request with http auth");
                 my $realm = "api_admin_http";
                 my $res = $c->authenticate({}, $realm);
 
