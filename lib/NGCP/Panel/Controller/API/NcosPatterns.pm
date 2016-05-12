@@ -20,7 +20,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines email templates to be send when new subscribers are created or when passwords are reset.',
+        'NCOS Patterns define rules within NCOS Levels.',
 );
 
 class_has 'query_params' => (
