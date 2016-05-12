@@ -41,7 +41,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriber subscriberadmin/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -143,7 +143,7 @@ sub POST :Allow {
         } elsif($c->user->roles eq "reseller") {
             $resource->{reseller_id} = $c->user->reseller_id;  # TODO: ?
         } else {
-            $resource->{subscriber_id} = $c->user->id;
+            $resource->{subscriber_id} = $c->user->voip_subscriber->id;
         }
 
         my $subscriber_item = $c->model('DB')->resultset('voip_subscribers')->search_rs({

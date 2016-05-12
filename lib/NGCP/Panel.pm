@@ -153,6 +153,24 @@ __PACKAGE__->config(
             },
             use_session => 0,
         },
+        api_subscriber_http => {
+            credential => {
+                class => 'HTTP',
+                #type => 'digest',
+                type => 'basic',
+                username_field => 'webusername',
+                password_field => 'webpassword',
+                password_type => 'clear',
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::provisioning_voip_subscribers',
+                id_field => 'id',
+                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                # use_userdata_from_session => 1,
+            },
+            use_session => 0,
+        },
         api_admin_system => {
             credential => {
                 class => 'HTTP',

@@ -75,6 +75,12 @@ sub item_rs {
         },{
             join => {subscriber => { voip_subscriber => { contract => 'contact' }}},
         });
+    } else {
+        $item_rs = $item_rs->search({
+            'subscriber.id' => $c->user->id,
+        },{
+            join => {subscriber},
+        });
     }
 
     return $item_rs;
