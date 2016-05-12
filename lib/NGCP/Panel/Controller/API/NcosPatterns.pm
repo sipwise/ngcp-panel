@@ -21,7 +21,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines email templates to be send when new subscribers are created or when passwords are reset.';
+    return 'NCOS Patterns define rules within NCOS Levels.';
 };
 
 sub query_params {
