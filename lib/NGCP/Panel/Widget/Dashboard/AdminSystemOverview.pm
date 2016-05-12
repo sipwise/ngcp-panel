@@ -1,16 +1,10 @@
 package NGCP::Panel::Widget::Dashboard::AdminSystemOverview;
-use Moo;
 
-has 'template' => (
-    is  => 'ro',
-    default => 'widgets/admin_system_overview.tt'
-);
+use warnings;
+use strict;
 
-sub handle {
-    my ($self, $c) = @_;
-
-    $c->log->debug("AdminSystemOverview::handle");
-    return;
+sub template {
+    return 'widgets/admin_system_overview.tt';
 }
 
 sub filter {

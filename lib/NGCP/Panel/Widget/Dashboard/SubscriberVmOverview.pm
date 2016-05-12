@@ -1,25 +1,12 @@
 package NGCP::Panel::Widget::Dashboard::SubscriberVmOverview;
-use Moo;
+
+use warnings;
+use strict;
 
 use DateTime::Format::Strptime;
 
-has 'template' => (
-    is  => 'ro',
-    default => 'widgets/subscriber_vm_overview.tt'
-);
-
-sub handle {
-    my ($self, $c) = @_;
-
-    unless ($c->stash->{subscriber}) {
-        $c->stash(
-            subscriber => $c->model('DB')->resultset('voip_subscribers')->find({
-                uuid => $c->user->uuid,
-            }),
-        );
-    }
-
-    return;
+sub template {
+    return 'widgets/subscriber_vm_overview.tt';
 }
 
 sub filter {
