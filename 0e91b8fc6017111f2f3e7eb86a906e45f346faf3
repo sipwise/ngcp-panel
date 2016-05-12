@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_3d48ed2c",
+        "filename": "lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-12T09:25:58Z",
+      "side": 0,
+      "message": "i think i left that because it was used in tt somewhere?",
+      "range": {
+        "startLine": 14,
+        "startChar": 12,
+        "endLine": 14,
+        "endChar": 22
+      },
+      "revId": "0e91b8fc6017111f2f3e7eb86a906e45f346faf3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}

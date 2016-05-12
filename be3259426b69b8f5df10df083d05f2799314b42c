@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_dd5449cc",
+        "filename": "share/templates/widgets/subscriber_calls_overview.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-12T09:25:58Z",
+      "side": 1,
+      "message": "ah, ok.",
+      "range": {
+        "startLine": 66,
+        "startChar": 66,
+        "endLine": 66,
+        "endChar": 91
+      },
+      "revId": "be3259426b69b8f5df10df083d05f2799314b42c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
