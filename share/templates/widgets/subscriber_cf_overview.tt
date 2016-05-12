@@ -38,7 +38,7 @@ enqueLists.push([{
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]" class="btn">[% c.loc('Configure Preferences') %]</a>
+            <a href="[% c.uri_for_action('/subscriber/preferences', [c.user.voip_subscriber.id]) %]" class="btn">[% c.loc('Configure Preferences') %]</a>
         </div>
     </div>
 </div>

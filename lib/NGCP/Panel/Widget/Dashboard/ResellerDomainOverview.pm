@@ -1,17 +1,10 @@
 package NGCP::Panel::Widget::Dashboard::ResellerDomainOverview;
-use Moo;
 
-has 'template' => (
-    is  => 'ro',
-    default => 'widgets/reseller_domain_overview.tt'
-);
+use warnings;
+use strict;
 
-sub handle {
-    my ($self, $c) = @_;
-
-    # add queries used in tt here ...
-
-    return;
+sub template {
+    return 'widgets/reseller_domain_overview.tt';
 }
 
 sub filter {
