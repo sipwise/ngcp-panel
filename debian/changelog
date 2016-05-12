@@ -1,3 +1,12 @@
+ngcp-panel (1.12.1.9+0~mr4.3.1.9) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [456cefe] MT#19627 do not translate pref_forms ncos and sound_set
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 May 2016 14:53:05 +0200
+
 ngcp-panel (1.12.1.8+0~mr4.3.1.8) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
