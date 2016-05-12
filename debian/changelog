@@ -1,3 +1,13 @@
+ngcp-panel (1.8.6.3+0~mr3.8.6.3) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [4917bde] MT#19627 do not translate pref_forms ncos and sound_set
+  * [bbe784a] MT#19657 fix rewrite rule form validation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 May 2016 14:53:38 +0200
+
 ngcp-panel (1.8.6.2+0~mr3.8.6.2) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
