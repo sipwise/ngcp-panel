@@ -12,7 +12,7 @@ sub roles {
                                            : return "reseller";
             }
         }
-        foreach my $auth_type (qw/subscriber api_subscriber/) {
+        foreach my $auth_type (qw/subscriber api_subscriber_http/) {
             if ($auth_type eq $self->auth_realm) {
                 $self->_user->admin ? return "subscriberadmin"
                                     : return "subscriber";
