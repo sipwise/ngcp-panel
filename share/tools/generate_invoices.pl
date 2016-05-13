@@ -41,6 +41,7 @@ my @opt_spec = (
     'man'
 );
 
+
 {
     my $config_file = "/etc/ngcp-invoice-gen/invoice-gen.conf";
     if(-e $config_file){
@@ -92,6 +93,8 @@ my @opt_spec = (
         }
         close CONFIG;
         GetOptionsFromString($opt_str, $opt_cfg, @opt_spec);
+    } else {
+        die "Program stopping, couldn't find the configuration file '$config_file'.\n";
     }
 }
 $opt_cfg->{enable} or die("Invoice generation disabled by default. Current invoice generation will damage billing records.");
@@ -105,31 +108,42 @@ require NGCP::Panel::Utils::Invoice;
 
 Log::Log4perl::init('/etc/ngcp-panel/logging.conf');
 my $logger = Log::Log4perl->get_logger('NGCP::Panel');
-my $dbh;
-{
-    my ($dbcfg);
-    foreach(qw/dbuser dbpass dbdb dbhost dbport/){
-        $opt->{$_} and $dbcfg->{$_} = $opt->{$_};
-    }
-    if((!$dbcfg->{dbuser}) || (!$dbcfg->{dbpass})){
-        my $mfile = '/etc/mysql/sipwise.cnf';
-        if(-f $mfile) {
-            open my $fh, "<", $mfile
-                or die "failed to open '$mfile': $!\n";
-            $_ = <$fh>; chomp;
-            s/^SIPWISE_DB_PASSWORD='(.+)'$/$1/;
-            $dbcfg->{dbuser} = 'sipwise';
-            $dbcfg->{dbpass} = $_;
-        } else {
-            $dbcfg->{dbuser} = 'root';
-            $dbcfg->{dbpass} = '';
-        }
-    }
-    $dbcfg->{dbdb} //= 'billing';
-    $dbcfg->{dbhost} //= 'localhost';
-    $dbh = DBI->connect('dbi:mysql:'.$dbcfg->{dbdb}.';host='.$dbcfg->{dbhost}, $dbcfg->{dbuser}, $dbcfg->{dbpass}, {mysql_enable_utf8 => 1})
-        or die "failed to connect to billing DB\n";
-}
+use NGCP::Schema;
+
+
+my $schema = NGCP::Schema->connect();
+my $dbh = $schema->storage->dbh;
+use Test::MockObject;
+my $c_mock = Test::MockObject->new();
+my $user_mock = Test::MockObject->new();
+$user_mock->set_always( 'roles' => 'reseller' );
+$c_mock->set_always( 'log' => $logger )->set_always( 'model' => $schema )->set_always( 'user' => $user_mock );
+
+#my $dbh;
+#{
+#    my ($dbcfg);
+#    foreach(qw/dbuser dbpass dbdb dbhost dbport/){
+#        $opt->{$_} and $dbcfg->{$_} = $opt->{$_};
+#    }
+#    if((!$dbcfg->{dbuser}) || (!$dbcfg->{dbpass})){
+#        my $mfile = '/etc/mysql/sipwise.cnf';
+#        if(-f $mfile) {
+#            open my $fh, "<", $mfile
+#                or die "failed to open '$mfile': $!\n";
+#            $_ = <$fh>; chomp;
+#            s/^SIPWISE_DB_PASSWORD='(.+)'$/$1/;
+#            $dbcfg->{dbuser} = 'sipwise';
+#            $dbcfg->{dbpass} = $_;
+#        } else {
+#            $dbcfg->{dbuser} = 'root';
+#            $dbcfg->{dbpass} = '';
+#        }
+#    }
+#    $dbcfg->{dbdb} //= 'billing';
+#    $dbcfg->{dbhost} //= 'localhost';
+#    $dbh = DBI->connect('dbi:mysql:'.$dbcfg->{dbdb}.';host='.$dbcfg->{dbhost}, $dbcfg->{dbuser}, $dbcfg->{dbpass}, {mysql_enable_utf8 => 1})
+#        or die "failed to connect to billing DB\n";
+#}
 
 Getopt::Long::GetOptions($opt, @opt_spec
 ) or pod2usage(2);
@@ -178,7 +192,7 @@ sub process_invoices{
     foreach my $provider_contract( @{ get_providers_contracts() } ){
 
         $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";\n" );
-
+        $user_mock->set_always( 'reseller_id' => $provider_contract->{reseller_core_id} );
         my $provider_contact = get_provider_contact($provider_contract);
 
         foreach my $client_contact (@{ get_provider_clients_contacts($provider_contract) } ){
@@ -186,21 +200,40 @@ sub process_invoices{
             $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";\n" );
 
 
-            foreach my $client_contract (@{ get_client_contracts($client_contact, $stime, $etime) }){
+            foreach my $client_contract(@{ get_client_contracts($client_contact) }){
                 $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";client_contract_id=".$client_contract->{id}.";\n" );
 
                 $invoices->{$client_contract->{id}} ||= [];
                 if(!$opt->{sendonly}){
                     $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n");
 
-                    if( my $billing_profile = get_billing_profile($client_contract, $stime, $etime) ){
-                        if(my $invoice = generate_invoice_data($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime)){
-                            $invoice->{data} = '';
-                            push @{$invoices->{$client_contract->{id}}}, $invoice;
+                    
+                    my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c_mock, contract_id => $client_contract->{id});
+                    my $customer = $customer_rs->find({ 'me.id' => $client_contract->{id} });
+                    my $balance;
+                    do {
+                        $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(
+                            c => $c_mock,
+                            contract => $customer,
+                            stime => $balance ? $balance->end : $stime,
+                            etime => $etime);
+                        my $bm_actual = NGCP::Panel::Utils::ProfilePackages::get_actual_billing_mapping(
+                            c => $c_mock, 
+                            contract => $customer, 
+                            now => $balance->start
+                        );
+                        print "etime: $etime; balance->end: ".$balance->end.";";
+                        my $billing_profile = {$bm_actual->billing_mappings->first->billing_profile->get_inflated_columns };
+
+                        if( $billing_profile ){
+                            if(my $invoice = generate_invoice_data($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $balance->start, $balance->end)){
+                                $invoice->{data} = '';
+                                push @{$invoices->{$client_contract->{id}}}, $invoice;
+                            }
+                        }else{#if billing profile
+                            $logger->debug( "No billing profile;\n");
                         }
-                    }else{#if billing profile
-                        $logger->debug( "No billing profile;\n");
-                    }
+                    } until ( $balance && ( $etime == $balance->end ) );
                 }else{
                     $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.id from invoices where invoices.generator="auto" 
                     '.ifp(' and ',
@@ -227,49 +260,58 @@ sub process_invoices{
 }
 
 sub get_providers_contracts{
-    return $dbh->selectall_arrayref('select contracts.*,resellers.id as reseller_core_id from resellers inner join contracts on resellers.contract_id=contracts.id where resellers.status != "terminated" '.ify(' and resellers.id ', @{$opt->{reseller_id}}),  { Slice => {} }, @{$opt->{reseller_id}} );
+    return $dbh->selectall_arrayref('select contracts.*,resellers.id as reseller_core_id from billing.resellers inner join billing.contracts on resellers.contract_id=contracts.id where resellers.status != "terminated" '.ify(' and resellers.id ', @{$opt->{reseller_id}}),  { Slice => {} }, @{$opt->{reseller_id}} );
 }
 sub get_provider_contact{
     my($provider_contract) = @_;
     #todo: use selectall_hashref to don't query every time
-    return $dbh->selectrow_hashref('select * from contacts where id=?', undef, $provider_contract->{contact_id} )
+    return $dbh->selectrow_hashref('select * from billing.contacts where id=?', undef, $provider_contract->{contact_id} )
 }
 sub get_provider_clients_contacts{
     my($provider_contract) = @_;
     #according to /reseller/ajax_reseller_filter
-    my $contacts = $dbh->selectall_arrayref('select contacts.* from contacts where reseller_id = ?'.ify(' and contacts.id', @{$opt->{client_contact_id}}),  { Slice => {} }, $provider_contract->{reseller_core_id}, @{$opt->{client_contact_id}} );
+    my $contacts = $dbh->selectall_arrayref('select contacts.* from billing.contacts where reseller_id = ?'.ify(' and contacts.id', @{$opt->{client_contact_id}}),  { Slice => {} }, $provider_contract->{reseller_core_id}, @{$opt->{client_contact_id}} );
     #foreach (@$contacts){
     #    $_->{country_name} = country($_->{country});
     #}
     return $contacts;
 }
 sub get_client_contracts{
-    my($client_contact,$stime,$etime) = @_;
-    my $contacts = $dbh->selectall_arrayref('select contracts.* 
-    from contracts 
-    left join invoices on contracts.id=invoices.contract_id and invoices.generator="auto" '
+    my($client_contact) = @_;
+    my $contracts = $dbh->selectall_arrayref('select contracts.* 
+    from billing.contracts 
+    where contracts.contact_id=? '
+        .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ' : '' )
+        .ify(' and contracts.id ', @{$opt->{client_contract_id}}),
+        { Slice => {} },
+        $client_contact->{id}, @{$opt->{client_contract_id}}
+    );
+    $contracts //= [];
+    return $contracts;
+}
+
+sub get_contract_period_invoices{
+    #each contract can have different stime,etime, so no query for the list is available
+    my($client_contract,$stime,$etime) = @_;
+    my $invoices = $dbh->selectall_arrayref('select invoices.* 
+    from billing.invoices 
+    where invoices.generator="auto" '
         .ifp(' and ',
             join(' and ',
                 (ifk(' date(invoices.period_start) >= ? ', v2a($stime ? $stime->ymd : undef))),
                 (ifk(' date(invoices.period_start) <= ? ', v2a($etime ? $etime->ymd : undef ))),
             )
         )
-        .' where contracts.contact_id=? '
-        .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ' : '' )
-        .ify(' and contracts.id ', @{$opt->{client_contract_id}})
-        .(( !$opt->{regenerate} && !$opt->{sendonly} )?' and invoices.contract_id is null ': '' )
-        .' group by contracts.id ',
+        .'invoices.contract_id=? '
+        .(( !$opt->{regenerate} && !$opt->{sendonly} )?' and invoices.contract_id is null ': '' ),
         { Slice => {} },
-        v2a($stime->ymd),v2a($etime->ymd),$client_contact->{id}, @{$opt->{client_contract_id}}
+        v2a($stime->ymd),v2a($etime->ymd),$client_contract->{id},
     );
-    $contacts //= [];
-    return $contacts;
 }
-
 sub get_billing_profile{
     my($client_contract, $stime, $etime) = @_;
     my $billing_profile;
-    if(my $actual_billing_mapping = $dbh->selectrow_hashref('select * FROM billing_mappings 
+    if(my $actual_billing_mapping = $dbh->selectrow_hashref('select * FROM billing.billing_mappings 
         where contract_id = ? 
             and (billing_mappings.start_date <= ? OR billing_mappings.start_date is null)
             and (billing_mappings.end_date >= ? OR billing_mappings.end_date is null)
@@ -278,10 +320,10 @@ sub get_billing_profile{
 
         #don't allow auto-generation for terminated contracts
         $billing_profile = $dbh->selectrow_hashref('select distinct billing_profiles.* 
-        from billing_mappings
-        inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
-        inner join contracts on contracts.id=billing_mappings.contract_id
-        inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
+        from billing.billing_mappings
+        inner join billing.billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
+        inner join billing.contracts on contracts.id=billing_mappings.contract_id
+        inner join billing.products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
         where billing_mappings.id=? '
             .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ':'' )
         , undef, $actual_billing_mapping->{id}
@@ -522,23 +564,23 @@ sub get_invoice{
     my $invoice;
     if($opt->{regenerate}){
         if($invoice_id){
-            $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id);
+            $invoice = $dbh->selectrow_hashref('select * from billing.invoices where id=?',undef, $invoice_id);
         }else{
-            $invoice = $dbh->selectrow_hashref('select * from invoices where contract_id=? and date(period_start)=? and date(period_end)=? and invoices.generator="auto" ',undef, $contract_id, $stime->ymd, $etime->ymd);
+            $invoice = $dbh->selectrow_hashref('select * from billing.invoices where contract_id=? and date(period_start)=? and date(period_end)=? and invoices.generator="auto" ',undef, $contract_id, $stime->ymd, $etime->ymd);
         }
     }
     if(!$invoice){
         my $serial_tmp = "tmp".time.int(rand(99999));
-        $dbh->do('insert into invoices(contract_id,period_start,period_end,serial,generator)values(?,?,?,?,?)', undef, $contract_id, $stime->ymd.' '.$stime->hms, $etime->ymd.' '.$etime->hms, $serial_tmp, 'auto' );
+        $dbh->do('insert into billing.invoices(contract_id,period_start,period_end,serial,generator)values(?,?,?,?,?)', undef, $contract_id, $stime->ymd.' '.$stime->hms, $etime->ymd.' '.$etime->hms, $serial_tmp, 'auto' );
         $invoice->{id} = $dbh->last_insert_id(undef,'billing','invoices','id');
         #are necessary here for serial generation
         @$invoice{qw/period_start period_end/} = ($stime,$etime);
         $invoice->{serial} = NGCP::Panel::Utils::Invoice::get_invoice_serial(undef,{invoice => $invoice});
-        $dbh->do('update invoices set serial=? where id=?', undef, @$invoice{qw/serial id/} );
-        $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice->{id});
+        $dbh->do('update billing.invoices set serial=? where id=?', undef, @$invoice{qw/serial id/} );
+        $invoice = $dbh->selectrow_hashref('select * from billing.invoices where id=?',undef, $invoice->{id});
     }
     if($invoice->{id} && !$invoice_id){
-        $dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice->{id},$contract_id, $stime->datetime, $etime->datetime );
+        $dbh->do('update billing.contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice->{id},$contract_id, $stime->datetime, $etime->datetime );
     }
     preprocess_invoice_date($invoice, $stime, $etime);
     return $invoice;
@@ -550,7 +592,7 @@ sub preprocess_invoice_date{
 }
 sub get_invoice_by_id{
     my ($invoice_id) =@_;
-    $dbh->selectrow_hashref('select * from invoices where id=?',undef,$invoice_id);
+    $dbh->selectrow_hashref('select * from billing.invoices where id=?',undef,$invoice_id);
 }
 
 sub get_invoice_template{
@@ -558,9 +600,9 @@ sub get_invoice_template{
 
     my $svg;
     if($opt->{backward_is_active}){
-        $svg = $dbh->selectrow_array('select data from invoice_templates where type="svg" and is_active=1 and reseller_id=?',undef,$provider_contract->{reseller_core_id});
+        $svg = $dbh->selectrow_array('select data from billing.invoice_templates where type="svg" and is_active=1 and reseller_id=?',undef,$provider_contract->{reseller_core_id});
     }else{
-        $svg = $dbh->selectrow_array('select data from invoice_templates where id=?',undef,$client_contract->{invoice_template_id});
+        $svg = $dbh->selectrow_array('select data from billing.invoice_templates where id=?',undef,$client_contract->{invoice_template_id});
     }
 
     if(!$svg){
@@ -578,12 +620,12 @@ sub get_email_template{
     state $templates;
     state $template_default;
     if(!$templates){
-        $templates = $dbh->selectall_hashref('select * from email_templates where name = ?','reseller_id',undef,"invoice_email");
-        $template_default = $dbh->selectrow_hashref('select * from email_templates where name = ?',undef,"invoice_default_email");
+        $templates = $dbh->selectall_hashref('select * from billing.email_templates where name = ?','reseller_id',undef,"invoice_email");
+        $template_default = $dbh->selectrow_hashref('select * from billing.email_templates where name = ?',undef,"invoice_default_email");
     }
     my $res = {};
     if($client_contract->{invoice_email_template_id}){
-        $res = $dbh->selectrow_hashref('select * from email_templates where id = ?',undef,$client_contract->{invoice_email_template_id});
+        $res = $dbh->selectrow_hashref('select * from billing.email_templates where id = ?',undef,$client_contract->{invoice_email_template_id});
     }else{
         $res = ( $templates->{$provider_contract->{reseller_core_id}} or $template_default );
     }
