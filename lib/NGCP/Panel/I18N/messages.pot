@@ -7729,7 +7729,7 @@ msgid "The balance threshold (in cents) for underrun profiles to come into effec
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The balance will be discarded if no top-up happened for the the given number of balance intervals."
+msgid "The balance will be discarded if no top-up happened for the the given number of balance interval units."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

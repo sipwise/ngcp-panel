@@ -9059,7 +9059,7 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The balance will be discarded if no top-up happened for the the given number "
-"of balance intervals."
+"of balance interval units."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11634,8 +11634,7 @@ msgstr ""
 msgid "noanswer"
 msgstr "без ответа"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-#: share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "none"
 msgstr "нету"
 
