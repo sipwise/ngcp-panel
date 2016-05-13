@@ -135,10 +135,10 @@ sub get_contract_rs {
 
 sub get_customer_rs {
     my %params = @_;
-    my ($c,$now,$contract_id) = @params{qw/c now contract_id/};
-
+    my ($c,$schema,$now,$contract_id) = @params{qw/c schema now contract_id/};
+    $schema //= $c->model('DB');
     my $customers = get_contract_rs(
-        schema => $c->model('DB'),
+        schema => $schema,
         include_terminated => $params{include_terminated},
         contract_id => $contract_id,
     );
@@ -149,17 +149,19 @@ sub get_customer_rs {
             join => 'contact',
     });
 
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $customers = $customers->search({
-                'contact.reseller_id' => $c->user->reseller_id,
-        });
-    } elsif($c->user->roles eq "subscriberadmin") {
-        $customers = $customers->search({
-                'contact.reseller_id' => $c->user->contract->contact->reseller_id,
-        });
-    } 
-    
+    if($c){
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
+            $customers = $customers->search({
+                    'contact.reseller_id' => $c->user->reseller_id,
+            });
+        } elsif($c->user->roles eq "subscriberadmin") {
+            $customers = $customers->search({
+                    'contact.reseller_id' => $c->user->contract->contact->reseller_id,
+            });
+        } 
+    }
+
     $customers = $customers->search({
             '-or' => [
                 'product.class' => 'sipaccount',
