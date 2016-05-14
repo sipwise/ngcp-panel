@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_c98fa622",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomersItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-05-14T14:45:43Z",
+      "side": 1,
+      "message": "Isn\u0027t this custom http necessary here?",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 40
+      },
+      "revId": "6e187fe9002384a9f09e9c18addd393156581d09",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_89999e70",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomersItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-05-14T14:45:43Z",
+      "side": 1,
+      "message": "Should confess that it isn\u0027t clear for me - maybe some comment?",
+      "range": {
+        "startLine": 64,
+        "startChar": 1,
+        "endLine": 64,
+        "endChar": 31
+      },
+      "revId": "6e187fe9002384a9f09e9c18addd393156581d09",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
