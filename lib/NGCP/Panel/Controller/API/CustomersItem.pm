@@ -14,7 +14,8 @@ use NGCP::Panel::Utils::Contract qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::HTTPMethods;
+#require NGCP::Panel::Role::HTTPMethods;
+#require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
@@ -54,15 +55,17 @@ __PACKAGE__->config(
             Does => [qw(ACL RequireSSL)],
         }) }
     },
-    action_roles => [qw(HTTPMethods)],
+    action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
 sub auto :Private {
     my ($self, $c) = @_;
 
+    $c->request->method('PUT');
+
     $self->set_body($c);
     $self->log_request($c);
-    #$self->apply_fake_time($c);    
+    #$self->apply_fake_time($c);
 }
 
 sub GET :Allow {
@@ -119,7 +122,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -133,7 +136,7 @@ sub PATCH :Allow {
         delete $old_resource->{profile_package_id};
         my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
-        $old_resource->{billing_profile_definition} = undef;          
+        $old_resource->{billing_profile_definition} = undef;
 
         my $resource = $self->apply_patch($c, $old_resource, $json, sub {
             my ($missing_field,$entity) = @_;
@@ -142,7 +145,7 @@ sub PATCH :Allow {
                 $entity->{billing_profile_definition} //= 'profiles';
             } elsif ($missing_field eq 'profile_package_id') {
                 $entity->{profile_package_id} = $customer->profile_package_id;
-                $entity->{billing_profile_definition} //= 'package';                
+                $entity->{billing_profile_definition} //= 'package';
             }
         });
         last unless $resource;
@@ -150,7 +153,7 @@ sub PATCH :Allow {
         my $form = $self->get_form($c);
         $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form, $now);
         last unless $customer;
-        
+
         my $hal = $self->hal_from_customer($c, $customer, $form, $now);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
@@ -195,7 +198,7 @@ sub PUT :Allow {
         my $form = $self->get_form($c);
         $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form, $now);
         last unless $customer;
-        
+
         my $hal = $self->hal_from_customer($c, $customer, $form,$now);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
@@ -248,7 +251,7 @@ sub DELETE :Allow {
 
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
-}   
+}
 
 sub end : Private {
     my ($self, $c) = @_;

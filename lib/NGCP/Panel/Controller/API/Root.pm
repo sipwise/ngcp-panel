@@ -14,7 +14,7 @@ use TryCatch;
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
-require Catalyst::ActionRole::HTTPMethods;
+require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 use NGCP::Panel::Utils::Journal qw();
@@ -37,12 +37,12 @@ __PACKAGE__->config(
             Path => __PACKAGE__->dispatch_path,
         } } @{ __PACKAGE__->allowed_methods },
     },
-    action_roles => [qw(HTTPMethods)],
+    action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
 sub auto :Private {
     my ($self, $c) = @_;
-    
+
     $self->set_body($c);
     $self->log_request($c);
     return 1;
@@ -176,7 +176,7 @@ sub GET : Allow {
         }
 
         $c->stash->{collections}->{$rel} = {
-            name => $mod, 
+            name => $mod,
             description => $full_mod->api_description,
             fields => $form_fields,
             uploads => $form_fields_upload,
@@ -190,7 +190,7 @@ sub GET : Allow {
             %$documentation_sample,
             journal_resource_config => $journal_resource_config,
         };
-        
+
     }
 
     $c->stash(template => 'api/root.tt');
@@ -271,11 +271,11 @@ sub invalid_user : Private {
 
 sub field_to_json : Private {
     my ($self, $field) = @_;
-    
+
     if ($field->$_isa('HTML::FormHandler::Field::Select')) {
-        return $self->field_to_select_options($field);            
+        return $self->field_to_select_options($field);
     } # elsif { ... }
-    
+
 
     SWITCH: for ($field->type) {
         /Float|Integer|Money|PosInteger|Minute|Hour|MonthDay|Year/ &&
@@ -285,7 +285,7 @@ sub field_to_json : Private {
         /Repeatable/ &&
             return "Array";
         /\+NGCP::Panel::Field::Select/ &&
-             return $self->field_to_select_options($field);            
+             return $self->field_to_select_options($field);
         /\+NGCP::Panel::Field::Regex/ &&
              return "String";
         /\+NGCP::Panel::Field::DateTime/ &&
@@ -299,7 +299,7 @@ sub field_to_json : Private {
         /\+NGCP::Panel::Field::URI/ &&
             return "String";
         /\+NGCP::Panel::Field::IPAddress/ &&
-            return "String";                    
+            return "String";
         /\+NGCP::Panel::Field::E164/ &&
             return "Object";
         /Compound/ &&
@@ -311,9 +311,9 @@ sub field_to_json : Private {
         /\+NGCP::Panel::Field::PbxGroupMemberAPI/ &&
             return "Array";
         /\+NGCP::Panel::Field::Interval/ &&
-            return "Object";            
+            return "Object";
         /\+NGCP::Panel::Field::DatePicker/ &&
-            return "String";            
+            return "String";
         # usually {xxx}{id}
         /\+NGCP::Panel::Field::/ &&
             return "Number";
@@ -335,12 +335,12 @@ sub field_to_select_options : Private {
         }
         $s;
     } @{$field->options});
-    
+
 }
 sub get_field_poperties :Private{
     my ($self, $field) = @_;
     my $name = $field->name;
-    
+
     return () if (
         $field->type eq "Hidden" ||
         $field->type eq "Button" ||
@@ -374,7 +374,7 @@ sub get_field_poperties :Private{
     }
     unless (defined $desc && length($desc) > 0) {
         $desc = 'to be described ...';
-    }    
+    }
     return { name => $name, description => $desc, types => \@types, type_original => $field->type };
 }
 sub get_collection_properties {
@@ -382,7 +382,7 @@ sub get_collection_properties {
 
     my $renderlist = $form->form->blocks->{fields}->{render_list};
     my %renderlist = defined $renderlist ? map { $_ => 1 } @{$renderlist} : ();
-    
+
     my @props = ();
     my @uploads = ();
     foreach my $f($form->fields) {
@@ -406,7 +406,7 @@ sub get_collection_properties {
 
 sub end : Private {
     my ($self, $c) = @_;
-    
+
     #$self->log_response($c);
     return 1;
 }

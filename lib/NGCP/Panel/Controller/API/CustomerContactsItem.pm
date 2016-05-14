@@ -10,7 +10,7 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::HTTPMethods;
+require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
@@ -50,7 +50,7 @@ __PACKAGE__->config(
             Does => [qw(ACL RequireSSL)],
         }) }
     },
-    action_roles => [qw(HTTPMethods)],
+    action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
 sub auto :Private {
@@ -111,7 +111,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -126,7 +126,7 @@ sub PATCH :Allow {
         my $form = $self->get_form($c);
         $contact = $self->update_contact($c, $contact, $old_resource, $resource, $form);
         last unless $contact;
-        
+
         my $hal = $self->hal_from_contact($c, $contact, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
@@ -172,7 +172,7 @@ sub PUT :Allow {
 
         my $hal = $self->hal_from_contact($c, $contact, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
-        
+
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -206,13 +206,13 @@ sub DELETE :Allow {
             $self->error($c, HTTP_LOCKED, "Contact is still in use.");
             last;
         } else {
-            
+
             last unless $self->add_delete_journal_item_hal($c,sub {
                 my $self = shift;
                 my ($c) = @_;
                 my $_form = $self->get_form($c);
                 return $self->hal_from_contact($c, $contact, $_form); });
-            
+
             $contact->delete;
         }
         $guard->commit;
