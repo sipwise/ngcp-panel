@@ -16,7 +16,7 @@ use Safe::Isa qw($_isa);
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
-require Catalyst::ActionRole::HTTPMethods;
+require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
@@ -65,7 +65,7 @@ __PACKAGE__->config(
             Path => __PACKAGE__->dispatch_path,
         } } @{ __PACKAGE__->allowed_methods }
     },
-    action_roles => [qw(HTTPMethods)],
+    action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
 sub auto :Private {
