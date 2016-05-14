@@ -52,7 +52,12 @@ has 'FLAVOUR' => (
     is => 'rw',
     isa => 'Str',
 );
-          
+#TODO: optimization - pre load and predelete should be done only for required collections and dependencies
+has 'work_collections' => (
+    is => 'rw',
+    isa => 'ArrayRef',
+    default => sub { [] },
+);
 sub build_data_default{
     return {
         'products' => [
@@ -402,6 +407,7 @@ sub clear_cached_data{
     delete @{$self->loaded}{@collections};
     delete @{$self->created}{@collections};
     delete @{$self->searched}{@collections};
+
 }
 sub set_data_from_script{
     my($self, $data_in)  = @_;
@@ -465,18 +471,14 @@ sub get_id{
 }
 sub get_existent_item{
     my($self, $collection_name)  = @_;
-    my $item = $self->created->{$collection_name}->{values}->[0]
+    my $item = $self->created->{$collection_name}->[0]
         || $self->loaded->{$collection_name}->[0];
     return $item
 }
 sub get_existent_id{
     my($self, $collection_name)  = @_;
-    my $id;
-    if(exists $self->created->{$collection_name}){
-        $id = $self->test_machine->get_id_from_created($self->created->{$collection_name}->{values}->[0]);
-    }elsif(exists $self->loaded->{$collection_name}){
-        $id = $self->test_machine->get_id_from_created($self->loaded->{$collection_name}->[0]);
-    }
+    my $id = $self->test_machine->get_id_from_created($self->created->{$collection_name}->[0])
+        || $self->test_machine->get_id_from_created($self->loaded->{$collection_name}->[0]);
     return $id
 }
 sub collection_id_exists{
@@ -535,7 +537,7 @@ sub create{
     }else{
         $test_machine->check_create_correct(1);
     }
-    $self->created->{$collection_name} = {values=>[values %{$test_machine->DATA_CREATED->{ALL}}], order => scalar keys %{$self->created}};
+    $self->created->{$collection_name} = [values %{$test_machine->DATA_CREATED->{ALL}}];
 
     if($self->data->{$collection_name}->{process_cycled}){
         #parents is a flat description of the dependency hierarchy
@@ -551,7 +553,7 @@ sub create{
             delete $parents_temp{$last_parent};
             #short note: we don't need update already created collections, because we fell in recursion before creation, 
             #so no collection keeps wrong, redundant first item reference
-            #so all we need - update "created" field for further get_existent_id, which will be called on exit from this "create" function 
+            #so all we need - update "created" field for further get_existent_id, which will be aclled on exit from this "create" function 
             $self->create($last_parent,{%parents_temp} );
         }else{
             my $uri = $test_machine->get_uri_collection($last_parent).$self->get_existent_id($last_parent);
@@ -568,27 +570,9 @@ sub create{
     }
     return $self->get_existent_id($collection_name);
 }
-sub clear_test_data_all{
-    my $self = shift;
-        ( 'HASH' eq ref $self->created ) 
-            and ( $self->test_machine->clear_test_data_all(
-                [ 
-                    map {
-                        $_->{location}
-                    } 
-                    map {
-                        @{$_->{values}}
-                    }
-                    sort{
-                        $b->{order} <=> $a->{order}
-                    } 
-                    (values %{$self->created})
-                ]
-            ) );
-}
 sub DEMOLISH{
     my($self) = @_;
-    $self->clear_test_data_all();
+    ( 'ARRAY' eq ref $self->created ) and ( $self->test_machine->clear_test_data_all([ map {$_->{location}} @$self->created ]) );
     if( keys %{$self->undeletable} ){
         print "We have test items, which can't delete through API:\n";
         print Dumper [ sort { $a cmp $b } keys %{$self->undeletable} ];
