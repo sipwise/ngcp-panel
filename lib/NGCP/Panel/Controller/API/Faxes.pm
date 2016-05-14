@@ -17,7 +17,7 @@ use NGCP::Panel::Utils::Fax;
 use Encode qw( encode_utf8 );
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
-require Catalyst::ActionRole::HTTPMethods;
+require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
@@ -75,7 +75,7 @@ __PACKAGE__->config(
             ('POST' eq $_) ? (ContentType => ['multipart/form-data']) : (),
         } } @{ __PACKAGE__->allowed_methods },
     },
-    action_roles => [qw(HTTPMethods)],
+    action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
 sub auto :Private {
