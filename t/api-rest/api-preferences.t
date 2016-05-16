@@ -96,8 +96,10 @@ foreach my $api (@apis){
     (undef, $preferences_put->{content}) = $test_machine->request_put($preferences_old,$preferences->{uri});
 }
 
+$test_machine->clear_test_data_all();
+undef $fake_data;
+undef $test_machine;
 done_testing;
-
 
 #----------------- aux
 sub get_preference_existen_value{
