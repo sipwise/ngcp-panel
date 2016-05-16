@@ -12,7 +12,22 @@ use Test::DeepHashUtils qw(reach nest deepvalue);
 use Clone qw/clone/;
 use File::Slurp qw/read_file/;
 use URI::Escape;
+use Storable;
 
+sub BUILD {
+    my $self = shift;
+    if($self->test_machine->cache_data){
+        $self->read_cached_data();
+    }
+}
+has 'data_cache_file' => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => sub {
+        return shift->test_machine->data_cache_file;
+    },
+);
 has 'test_machine' =>(
     is => 'rw',
     isa => 'Test::Collection',
@@ -568,6 +583,30 @@ sub create{
     }
     return $self->get_existent_id($collection_name);
 }
+sub read_cached_data{
+    my $self = shift;
+    if(! -e $self->data_cache_file ){
+        return;
+    }
+    my $restored = retrieve($self->data_cache_file);
+    my $clear_cached_from_deleted = sub {
+        my $cached_collections = shift;
+        foreach my $cached_collection(keys %{$cached_collections}){
+            foreach my $deleted_uri(keys %{$restored->{deleted}->{204}}){
+                if(index($cached_collections->{$cached_collection}->{location},$deleted_uri) || index($deleted_uri,$cached_collections->{$cached_collection}->{location})){
+                    delete $cached_collections->{$cached_collection};
+                }
+            }
+        }
+    };
+    $clear_cached_from_deleted->($restored->{loaded});
+    $clear_cached_from_deleted->($restored->{created});
+    $self->loaded($restored->{loaded} // {} );
+    $self->created($restored->{created} // {} );
+    #delete $restored->{deleted};
+    store {loaded => $self->loaded, created => $self->created}, $self->data_cache_file;
+}
+
 sub clear_test_data_all{
     my $self = shift;
     my($force_delete) = @_;
