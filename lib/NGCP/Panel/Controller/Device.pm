@@ -1337,6 +1337,26 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             } else {
                 $display_name = $sub->username;
             };
+            my $cc = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c,
+                prov_subscriber => $sub,
+                attribute => 'cc',
+            );
+            if($cc->first) {
+                $cc = $cc->first->value;
+            } else {
+                $cc = '';
+            }
+            my $ac = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c,
+                prov_subscriber => $sub,
+                attribute => 'ac',
+            );
+            if($ac->first) {
+                $ac = $ac->first->value;
+            } else {
+                $ac = '';
+            }
             my $t38 = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c,
                 prov_subscriber => $sub,
@@ -1362,6 +1382,8 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 keynum => $line->key_num,
                 type => $line->line_type,
                 t38 => $t38,
+                cc => $cc,
+                ac => $ac,
             };
             if(!$ldap_attr_set && $linerange->name eq "Full Keys" && $line->line_type eq "private") {
                 $vars->{ldap}->{dn} = "uid=".$sub->uuid . ",o=" . $sub->account_id . $vars->{ldap}->{dn};
