@@ -1,3 +1,13 @@
+ngcp-panel (1.12.1.10+0~mr4.3.1.10) unstable; urgency=medium
+
+  [ Michael Prokop ]
+  * [e61e860] MT#19881 Fix typo in german translation.
+    Thanks to Matthias Hohl for reporting this bug on the spce-user mailing list
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 18 May 2016 12:17:34 +0200
+
 ngcp-panel (1.12.1.9+0~mr4.3.1.9) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
