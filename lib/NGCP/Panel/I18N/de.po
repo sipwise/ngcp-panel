@@ -8860,7 +8860,7 @@ msgstr "Sprachnachrichten"
 
 #: share/templates/subscriber/preferences.tt:163
 msgid "Voicemail and Voicebox"
-msgstr "Sprachnachriten und Sprachbox"
+msgstr "Sprachnachrichten und Sprachbox"
 
 #: share/templates/subscriber/master.tt:230
 #: share/templates/subscriber/voicemail.tt:13
