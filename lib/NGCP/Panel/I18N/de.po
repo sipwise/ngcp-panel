@@ -10863,7 +10863,7 @@ msgstr "Sprachnachrichten"
 
 #: share/templates/subscriber/preferences.tt
 msgid "Voicemail and Voicebox"
-msgstr "Sprachnachriten und Sprachbox"
+msgstr "Sprachnachrichten und Sprachbox"
 
 #: share/templates/subscriber/master.tt
 #: share/templates/subscriber/voicemail.tt
