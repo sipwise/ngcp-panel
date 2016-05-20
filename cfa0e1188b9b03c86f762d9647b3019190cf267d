@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_69030510",
+        "filename": "lib/NGCP/Panel/Controller/SubscriberProfile.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-20T17:52:20Z",
+      "side": 1,
+      "message": "this is the fix here, one line.",
+      "range": {
+        "startLine": 495,
+        "startChar": 43,
+        "endLine": 495,
+        "endChar": 60
+      },
+      "revId": "cfa0e1188b9b03c86f762d9647b3019190cf267d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
