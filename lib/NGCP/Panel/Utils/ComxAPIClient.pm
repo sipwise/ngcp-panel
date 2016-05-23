@@ -37,30 +37,23 @@ sub login {
     return;
 }
 
+# outdated: only one account (with one network) for the session
 sub create_session_and_account {
-    my ($self, $appid, $network, $identifier, $accessToken, $owner, $account_config) = @_;
-    my $ua = $self->ua;
-    my $session_content = encode_json({
-        app => $appid,
-        owner => $owner,
-        });
-    my $session = $self->_create_response(
-        $ua->post($self->host . '/sessions', 'Content-Type' => 'application/json', Content => $session_content),
-        );
-    my $account_content = encode_json({
-        session => $session->{data}{id},
-        network => $network,
-        identifier => $identifier,
-        accessToken => $accessToken,
-        owner => $owner,
-        $account_config ? (config => encode_json($account_config)) : (),
-        });
-    #p $account_content;
-    my $account = $self->_create_response(
-        $ua->post($self->host . '/accounts', 'Content-Type' => 'application/json', Content => $account_content),
-        );
-    $account->{data}{session} = $session->{data};
-    return $account;
+    my ($self, $appid, $network_tag, $identifier, $access_token, $owner, $account_config) = @_;
+
+    my $session = $self->create_session($appid, $owner);
+    $session->{data}{accounts} = [] if($session->{data});
+
+    my $account = $self->create_account(
+            $session->{data}{id},
+            $owner,
+            $identifier,
+            $network_tag,
+            $access_token,
+            $account_config );
+    push @{ $session->{data}{accounts} }, $account->{data};
+
+    return $session;
 }
 
 sub create_session {
@@ -74,6 +67,24 @@ sub create_session {
         $ua->post($self->host . '/sessions', 'Content-Type' => 'application/json', Content => $session_content),
         );
     return $session;
+}
+
+sub create_account {
+    my ($self, $session_id, $owner, $identifier, $network_tag, $access_token, $account_config) = @_;
+    my $ua = $self->ua;
+
+    my $account_content = encode_json({
+        session => $session_id,
+        network => $network_tag,
+        identifier => $identifier,
+        accessToken => $access_token,
+        owner => $owner,
+        $account_config ? (config => encode_json($account_config)) : (),
+        });
+    my $account = $self->_create_response(
+        $ua->post($self->host . '/accounts', 'Content-Type' => 'application/json', Content => $account_content),
+        );
+    return $account;
 }
 
 sub create_network {

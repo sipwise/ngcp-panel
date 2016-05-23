@@ -16,10 +16,13 @@ unless ($ENV{TEST_RTC}) {
     exit 0;
 }
 
-my $domain_id = $ENV{TEST_RTC_DOMAIN_ID} // 3;
-
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
+
+my $domain_name = $ENV{TEST_RTC_DOMAIN};
+unless ($domain_name) {
+    ($domain_name) = ($uri =~ m!^https?://([^/:]*)(:[0-9]+)?/?.*$!);
+}
 
 my ($ua, $req, $res, $data);
 $ua = LWP::UserAgent->new;
@@ -32,6 +35,23 @@ my $user = $ENV{API_USER} // 'administrator';
 my $pass = $ENV{API_PASS} // 'administrator';
 $ua->credentials($netloc, "api_admin_http", $user, $pass);
 
+my ($domain_id);
+{
+    $req = HTTP::Request->new('GET', "$uri/api/domains/?domain=$domain_name");
+    $res = $ua->request($req);
+    is($res->code, 200, "GET search domain");
+    $data = JSON::from_json($res->decoded_content);
+    ok($data->{total_count}, "got at least one domain") || die "we can't continue without domain";
+
+    my $selected_domain = ( 'ARRAY' eq ref $data->{_embedded}{'ngcp:domains'} )
+            ? $data->{_embedded}{'ngcp:domains'}[0]
+            : $data->{_embedded}{'ngcp:domains'};
+
+    $domain_id = $selected_domain->{id};
+    $domain_name = $selected_domain->{domain};
+
+    diag("domain: $selected_domain->{domain} ($domain_id)");
+}
 
 my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $network_tag);
 {
@@ -57,7 +77,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
         name => 'rtc test reseller ' . time,
         enable_rtc => JSON::true,
         status => 'active',
-        rtc_networks => ['sip'],
+        rtc_networks => ['sip','xmpp','webrtc'],
     }));
     $res = $ua->request($req);
     is($res->code, 201, "POST create reseller");
@@ -77,7 +97,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
     is($data->{networks}[0]{connector}, 'sip-connector', "rtcnetwork exists");
     $network_tag = $data->{networks}[0]{tag};
 
-    diag("reseller id: $reseller_id , network_tag: $network_tag");
+    diag("reseller id: $reseller_id , first network_tag: $network_tag");
 
     $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
     $req->header('Content-Type' => 'application/json');
@@ -152,7 +172,7 @@ my ($sub1_id, $sub1_name, $sub2_id, $sub2_name);
     $res = $ua->request($req);
     is($res->code, 200, "PATCH set subscriberpreferences sub1");
 
-    diag("subscriber $sub1_name: $sub1_id");
+    diag("subscriber $sub1_name\@$domain_name (pass: $sub1_name, id: $sub1_id)");
 
     $req = HTTP::Request->new('POST', $uri.'/api/subscribers/');
     $req->header('Content-Type' => 'application/json');
@@ -179,7 +199,11 @@ my ($sub1_id, $sub1_name, $sub2_id, $sub2_name);
     $res = $ua->request($req);
     is($res->code, 200, "PATCH set subscriberpreferences sub2");
 
-    diag("subscriber $sub2_name: $sub2_id");
+    diag("subscriber $sub2_name\@$domain_name (pass: $sub2_name, id: $sub2_id)");
+    diag("you can now create new session using:");
+    my $noport_uri = ($uri =~ s/:[0-9]+//r);
+    diag("    curl -XPOST -v -k --user $sub1_name\@$domain_name:$sub1_name -H'Content-Type: application/json' $noport_uri/api/rtcsessions/ --data-binary '{}'");
+    diag("    curl -XPOST -v -k --user $sub2_name\@$domain_name:$sub2_name -H'Content-Type: application/json' $noport_uri/api/rtcsessions/ --data-binary '{}'");
 }
 
 done_testing;
