@@ -1,3 +1,137 @@
+ngcp-panel (1.13.1.0+0~mr4.4.1.0) unstable; urgency=medium
+
+  [ Jenkins Git User ]
+  * [e96687e] I18N dump: snapshot 2016-03-22 01:21:04 +0100
+  * [7e38606] I18N dump: snapshot 2016-03-23 01:14:31 +0100
+  * [059ca87] I18N dump: snapshot 2016-03-24 01:14:31 +0100
+  * [913b2ad] I18N dump: snapshot 2016-03-25 01:14:09 +0100
+  * [b7b60eb] I18N dump: snapshot 2016-03-26 01:13:57 +0100
+  * [f1951fe] I18N dump: snapshot 2016-03-27 01:13:47 +0100
+  * [40f6d75] I18N dump: snapshot 2016-03-28 01:14:17 +0200
+  * [c7def40] I18N dump: snapshot 2016-03-29 01:14:09 +0200
+  * [82ac14b] I18N dump: snapshot 2016-03-30 01:13:50 +0200
+  * [672f97e] I18N dump: snapshot 2016-03-31 01:14:01 +0200
+  * [405b488] I18N dump: snapshot 2016-04-01 01:13:47 +0200
+  * [7c957ad] I18N dump: snapshot 2016-04-02 01:13:50 +0200
+  * [95fa417] I18N dump: snapshot 2016-04-03 01:13:42 +0200
+  * [9653166] I18N dump: snapshot 2016-04-04 01:13:54 +0200
+  * [98fe651] I18N dump: snapshot 2016-04-06 01:13:47 +0200
+  * [89e8d10] I18N dump: snapshot 2016-04-07 01:13:56 +0200
+  * [95d67d6] I18N dump: snapshot 2016-04-09 01:13:40 +0200
+  * [b4a3527] I18N dump: snapshot 2016-04-09 08:27:44 +0200
+  * [3582f12] I18N dump: snapshot 2016-04-10 01:31:13 +0200
+  * [8183770] I18N dump: snapshot 2016-04-11 01:14:10 +0200
+  * [100b56b] I18N dump: snapshot 2016-04-12 01:13:48 +0200
+  * [fc5f6ee] I18N dump: snapshot 2016-04-13 01:13:41 +0200
+  * [5a164cf] I18N dump: snapshot 2016-04-14 01:14:11 +0200
+  * [945b5a5] I18N dump: snapshot 2016-04-15 01:13:53 +0200
+  * [719eb7c] I18N dump: snapshot 2016-04-16 01:14:07 +0200
+  * [a8693bb] I18N dump: snapshot 2016-04-17 01:14:39 +0200
+  * [90a0596] I18N dump: snapshot 2016-04-18 01:14:08 +0200
+  * [6dd11a8] I18N dump: snapshot 2016-04-19 01:13:58 +0200
+  * [53f59d2] I18N dump: snapshot 2016-04-20 01:14:39 +0200
+  * [0b5b525] I18N dump: snapshot 2016-04-21 01:13:32 +0200
+  * [f91105b] I18N dump: snapshot 2016-04-22 01:14:26 +0200
+  * [4308a8e] I18N dump: snapshot 2016-04-23 01:13:24 +0200
+  * [779d300] I18N dump: snapshot 2016-04-24 01:21:15 +0200
+  * [bf24085] I18N dump: snapshot 2016-04-26 01:13:55 +0200
+  * [9c1e781] I18N dump: snapshot 2016-04-27 01:13:20 +0200
+  * [565cf48] I18N dump: snapshot 2016-04-28 01:13:56 +0200
+  * [fdaf64a] I18N dump: snapshot 2016-04-29 01:13:15 +0200
+  * [af59385] I18N dump: snapshot 2016-04-30 01:20:45 +0200
+  * [86f876b] I18N dump: snapshot 2016-05-02 01:14:00 +0200
+  * [7e47c36] I18N dump: snapshot 2016-05-03 01:13:22 +0200
+  * [7fb3efe] I18N dump: snapshot 2016-05-04 01:20:49 +0200
+  * [ded5dab] I18N dump: snapshot 2016-05-05 01:14:01 +0200
+  * [9c6b7e2] I18N dump: snapshot 2016-05-06 01:14:00 +0200
+  * [61afc9d] I18N dump: snapshot 2016-05-07 01:13:44 +0200
+  * [084a3e7] I18N dump: snapshot 2016-05-08 01:13:25 +0200
+  * [a3e806b] I18N dump: snapshot 2016-05-09 01:14:15 +0200
+  * [a2ad42c] I18N dump: snapshot 2016-05-10 01:19:34 +0200
+  * [09e8b03] I18N dump: snapshot 2016-05-11 01:21:31 +0200
+  * [0e91b8f] I18N dump: snapshot 2016-05-12 01:13:41 +0200
+  * [3e0d1ab] I18N dump: snapshot 2016-05-14 01:13:45 +0200
+  * [815b9f6] I18N dump: snapshot 2016-05-15 01:14:01 +0200
+  * [e29c9d1] I18N dump: snapshot 2016-05-16 01:14:06 +0200
+  * [e564fbd] I18N dump: snapshot 2016-05-17 01:13:22 +0200
+  * [b92b127] I18N dump: snapshot 2016-05-18 01:17:03 +0200
+  * [c41164d] I18N dump: snapshot 2016-05-19 01:15:18 +0200
+  * [41a7d45] I18N dump: snapshot 2016-05-21 01:14:20 +0200
+  * [61b903b] I18N dump: snapshot 2016-05-22 01:14:33 +0200
+
+  [ Rene Krenn ]
+  * [45537f7] MT#18601 clear out pbx_group_ids testcase
+  * [3b04437] MT#18699 control if datatable columns can be sorted
+  * [d0bdbe3] MT#19267 make api_dump.pl using tempfiles and runs exclusively
+  * [9d5085a] MT#19015 correctly use notopup_interval for periodic balance intervals
+  * [3e57109] MT#19419 custom action role to support http method override
+
+  [ Gerhard Jungwirth ]
+  * [a90e97d] MT#17309 show interval values in customerbalances api
+  * [18ae2d2] MT#17805 captured dialogs process callid
+  * [1e9f832] MT#18977 compatible plaintext error dialogic page
+  * [aec9443] MT#15269 add restapi tests to stable set
+  * [651b772] MT#17461 validate max_subscribers with sipaccount
+  * [b037f14] MT#17413 simplify and fix preference edit modal
+  * [ca19961] MT#19439 non-destructive dashboard beautification
+  * [cbad4ce] MT#19439 dashboard refactoring
+  * [d659ae1] MT#19439 topmenu widget refactoring
+  * [5de9017] MT#19627 do not translate pref_forms ncos and sound_set
+  * [5ec78b3] MT#19439 dashboard always import modules
+
+  [ Andreas Granig ]
+  * [b34073d] MT#18593 Script puts system into emergency mode
+  * [82a58bd] MT#16777 Fix up/downloading CSV
+  * [e4e6f53] MT#16777 Properly set start/end time on csv upload
+  * [d0fc0b7] MT#16777 Fix csv upload date instead of time
+  * [72ce9d1] MT#18821 Add tz param to calllists api
+  * [7aecec0] MT#16777 Also fix start/end lnp handling in API
+  * [64622bf] MT#19261 Allow domain selection in pbx extensions
+  * [548d594] MT#19443 Increase prosody connect and wait timeout
+  * [f3de0c8] MT#19557 Expose ac and cc in device config
+
+  [ Guillem Jover ]
+  * [0632585] MT#18443 Use parent instead of base module
+
+  [ Kirill Solomko ]
+  * [ec16d3c] MT#18499 fixed GUI "add location" form description
+  * [d388ff2] MT#18865 adapt use of provisioning.voip_fax_journal
+  * [fd56d72] MT#19113 subscriber and peering apply_rewrite and lookup
+  * [d885675] MT#19113 add Call Routing Verification (ngcp-panel/tools)
+  * [caf342c] MT#19113 CallRoutingVerity fix wrong argument in get_dom_preference() call
+  * [f952054] MT#19113 always fill in caller/callee_in/out values in apply rewrite rules
+  * [317a429] MT#19113 fix an error when no callee peers are found
+  * [452eecd] MT#19113 fix voip_peer_hosts, javascript radio check
+  * [63dd55e] MT#19113 CallRoutingVerify: add number/uri validation for caller/callee
+
+  [ Irina Peshinskaya ]
+  * [b6d22e7] MT#18637 Don't show zone name and detail in zonecost API values
+  * [418c6ee] MT#18601 Fix getting pbx relations
+  * [fcf1f7c] MT#19035 Don't save billing_fee_raw data
+  * [694b3e0] MT#18601 Fix tests
+  * [39a12e5] MT#18601 Comment not working tests
+  * [9713936] MT#18601 Consider cloudpbx feature configuration in tests
+  * [c913e4e] MT#12939 Fix pbx group/members order control
+  * [645f606] MT#12347 Improve fake data clearance
+  * [17e7e84] MT#19697 Fix copy-pasted ncos patterns description
+  * [05c0486] MT#14253 Fast invoice generation rejecting
+  * [53feae0] MT#19937 Enable external_id editing for the pilot subscriber
+
+  [ Victor Seva ]
+  * [8bf74e6] MT#18815 debian: remove depend on ngcp-templates
+  * [3598a1d] MT#19055 tools/generate_ssl_keys.sh: add ${KEY_FILE} to ssl-cert group too
+
+  [ Alexander Lutay ]
+  * [edd6678] Revert "MT#12347 Improve fake data clearance"
+
+  [ Michael Prokop ]
+  * [78932bb] MT#19881 Fix typo in german translation.
+    Thanks to Matthias Hohl for reporting this bug on the spce-user mailing list
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 23 May 2016 18:52:40 +0200
+
 ngcp-panel (1.13.0.0+0~mr4.4.0.0) unstable; urgency=medium
 
   [ Andreas Granig ]
