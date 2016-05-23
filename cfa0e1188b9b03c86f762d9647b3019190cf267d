@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1acb0d3e_d8044080",
+        "filename": "lib/NGCP/Panel/Controller/SubscriberProfile.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-23T10:45:18Z",
+      "side": 1,
+      "message": "the point is, that\u0027s actually a separate fix - without moving this, the reseller_edit config option is without effect.",
+      "parentUuid": "1acb0d3e_2453e418",
+      "revId": "cfa0e1188b9b03c86f762d9647b3019190cf267d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1acb0d3e_69030510",
         "filename": "lib/NGCP/Panel/Controller/SubscriberProfile.pm",
         "patchSetId": 1
