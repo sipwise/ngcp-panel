@@ -116,9 +116,15 @@ sub _create_rtc_user {
 
     # 5. create related networks
     for my $n (@{ $rtc_networks }) {
+        my $connector;
+        if ($n =~ m/^(sip|xmpp)$/) {
+            $connector = "$n-connector";
+        } else {
+            $connector = $n;
+        }
         my $n_response = $comx->create_network(
-                $reseller_name . "_$n",
-                $n . '-connector',
+                $n,
+                $connector,
                 {xms => JSON::false},
                 $user->{data}{id},
             );
@@ -520,31 +526,47 @@ sub create_rtc_session {
     }
 
     my $comx_networks = $comx->get_networks_by_user_id($rtc_user->rtc_user_id);
-    my $comx_network;
-    if ($comx_networks->{data} && @{ $comx_networks->{data} }){
-        ($comx_network) = grep { $_->{tag} eq $resource->{rtc_network_tag} } @{ $comx_networks->{data} };
-    }
-    unless ($comx_network) {
+    my $comx_network_tags = [];
+    if ($comx_networks->{data} && 'ARRAY' eq ref $comx_networks->{data}) {
+        $comx_network_tags = [ map { $_->{tag} } @{ $comx_networks->{data} } ];
+    } else {
         return unless &{$err_code}(
-            'create_rtc_session: Could not find network with specified tag.');
+            'create_rtc_session: Could not fetch networks for given rtc user.');
     }
 
-    my $account = $comx->create_session_and_account(
+    my $session = $comx->create_session(
             $comx_app->{id},
-            $resource->{rtc_network_tag},
-            'sip:' . $subscriber_item->username . '@' . $subscriber_item->domain->domain,
-            $subscriber_item->provisioning_voip_subscriber->password,
             $rtc_user->rtc_user_id,
+        );
+    if ($session->{code} != 201) {
+        return unless &{$err_code}(
+            'Creating rtc session failed. Error code: ' . $session->{code});
+    }
+    for my $n (@{ $comx_networks->{data} }) {
+        my $identifier;
+        if ($n->{connector} eq "sip-connector") {
+            $identifier = 'sip:' . $subscriber_item->username . '@' . $subscriber_item->domain->domain;
+        } elsif ($n->{connector} eq "xmpp-connector") {
+            $identifier = 'xmpp:' . $subscriber_item->username . '@' . $subscriber_item->domain->domain;
+        } else { # webrtc, ...
+            $identifier = $subscriber_item->username;
+        }
+        my $account = $comx->create_account(
+            $session->{data}{id},
+            $rtc_user->rtc_user_id,
+            $identifier,
+            $n->{tag},
+            $subscriber_item->provisioning_voip_subscriber->password,
             {xms => JSON::false},
         );
-    if ($account->{code} != 201) {
-        return unless &{$err_code}(
-            'Creating rtc session and account failed. Error code: ' . $account->{code});
+        if ($account->{code} != 201) {
+            return unless &{$err_code}(
+                "Creating rtc account ($n->{tag}) failed. Error code: " . $account->{code});
+        }
     }
 
     my $rtc_session_item = $subscriber_item->provisioning_voip_subscriber->create_related('rtc_session', {
-            rtc_network_tag => $resource->{rtc_network_tag},
-            rtc_session_id => $account->{data}{session}{id},
+            rtc_session_id => $session->{data}{id},
         });
     return $rtc_session_item;
 }

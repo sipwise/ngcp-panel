@@ -25,10 +25,10 @@ has_field 'rtc_networks' => (
     required => '0',
     widget => 'CheckboxGroup',
     options => [
-        { value => 'sip', label => 'SIP Only' },
-        { value => 'xmpp', label => 'XMPP Only' },
-        { value => 'sipwise', label => 'SIP and XMPP' },
-        { value => 'webrtc', label => 'WebRTC Only' },
+        { value => 'sip', label => 'SIP' },
+        { value => 'xmpp', label => 'XMPP' },
+        { value => 'webrtc', label => 'WebRTC' },
+        { value => 'conference', label => 'Conference' },
     ],
     element_attr => {
         rel => ['tooltip'],
