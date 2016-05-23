@@ -37,8 +37,9 @@ sub login {
     return;
 }
 
-sub create_session_and_account {
-    my ($self, $appid, $network, $identifier, $accessToken, $owner, $account_config) = @_;
+# outdated: doesn't allow for different identifiers per account
+sub create_session_and_accounts {
+    my ($self, $appid, $networks, $identifier, $accessToken, $owner, $account_config) = @_;
     my $ua = $self->ua;
     my $session_content = encode_json({
         app => $appid,
@@ -47,20 +48,22 @@ sub create_session_and_account {
     my $session = $self->_create_response(
         $ua->post($self->host . '/sessions', 'Content-Type' => 'application/json', Content => $session_content),
         );
-    my $account_content = encode_json({
-        session => $session->{data}{id},
-        network => $network,
-        identifier => $identifier,
-        accessToken => $accessToken,
-        owner => $owner,
-        $account_config ? (config => encode_json($account_config)) : (),
-        });
-    #p $account_content;
-    my $account = $self->_create_response(
-        $ua->post($self->host . '/accounts', 'Content-Type' => 'application/json', Content => $account_content),
-        );
-    $account->{data}{session} = $session->{data};
-    return $account;
+    $session->{data}{accounts} = [] if($session->{data});
+    for my $n (@{ $networks }) {
+        my $account_content = encode_json({
+            session => $session->{data}{id},
+            network => $n,
+            identifier => $identifier,
+            accessToken => $accessToken,
+            owner => $owner,
+            $account_config ? (config => encode_json($account_config)) : (),
+            });
+        my $account = $self->_create_response(
+            $ua->post($self->host . '/accounts', 'Content-Type' => 'application/json', Content => $account_content),
+            );
+        push @{ $session->{data}{accounts} }, $account->{data};
+    }
+    return $session;
 }
 
 sub create_session {
@@ -74,6 +77,24 @@ sub create_session {
         $ua->post($self->host . '/sessions', 'Content-Type' => 'application/json', Content => $session_content),
         );
     return $session;
+}
+
+sub create_account {
+    my ($self, $session_id, $owner, $identifier, $network_tag, $access_token, $account_config) = @_;
+    my $ua = $self->ua;
+
+    my $account_content = encode_json({
+        session => $session_id,
+        network => $network_tag,
+        identifier => $identifier,
+        accessToken => $access_token,
+        owner => $owner,
+        $account_config ? (config => encode_json($account_config)) : (),
+        });
+    my $account = $self->_create_response(
+        $ua->post($self->host . '/accounts', 'Content-Type' => 'application/json', Content => $account_content),
+        );
+    return $account;
 }
 
 sub create_network {
