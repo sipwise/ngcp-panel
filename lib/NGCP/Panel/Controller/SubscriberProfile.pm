@@ -41,7 +41,7 @@ sub set_list :Chained('/') :PathPart('subscriberprofile') :CaptureArgs(0) {
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'description', search => 1, title => $c->loc('Description') },
     ]);
-    
+
     $c->stash(template => 'subprofile/set_list.tt');
 }
 
@@ -130,7 +130,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) :Does(ACL) :ACL
                 }
                 delete $form->values->{reseller};
                 $c->stash->{set_rs}->create($form->values);
-              
+
                 delete $c->session->{created_objects}->{reseller};
             });
             NGCP::Panel::Utils::Message->info(
@@ -193,7 +193,7 @@ sub set_edit :Chained('set_base') :PathPart('edit') :Does(ACL) :ACLDetachTo('/de
                 }
                 delete $form->values->{reseller};
                 $set->update($form->values);
-              
+
                 delete $c->session->{created_objects}->{reseller};
             });
             NGCP::Panel::Utils::Message->info(
@@ -219,7 +219,7 @@ sub set_delete :Chained('set_base') :PathPart('delete') :Does(ACL) :ACLDetachTo(
 
     $c->detach('/denied_page')
         if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
-    
+
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub{
@@ -333,7 +333,7 @@ sub profile_list :Chained('set_base') :PathPart('profile') :CaptureArgs(0) {
         { name => 'description', search => 1, title => $c->loc('Description') },
         { name => 'set_default', search => 0, title => $c->loc('Default') },
     ]);
-    
+
     $c->stash(template => 'subprofile/profile_list.tt');
 }
 
@@ -415,7 +415,7 @@ sub profile_create :Chained('profile_list') :PathPart('create') :Args(0) :Does(A
                   $form->values->{set_default} = 1;
                 }
                 my $profile = $c->stash->{set}->voip_subscriber_profiles->create($form->values);
-              
+
                 # TODO: should we rather take the name and load the id from db,
                 # instead of trusting the id coming from user input?
                 foreach my $attr(keys %{ $attributes }) {
@@ -484,20 +484,20 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
                   # no previous default profile, make this one default
                   $form->values->{set_default} = 1;
                 }
-                if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
-                    # only allow generic fields to be updated
-                    delete $form->values->{attribute};
-                }
 
                 $profile->update($form->values);
 
+                if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
+                    # only allow generic fields to be updated
+                    return;
+                }
 
-                my %old_attributes = map { $_->id => $_->attribute->attribute } 
+                my %old_attributes = map { $_->attribute->id => $_->attribute->attribute }
                     $profile->profile_attributes->all;
 
                 # TODO: reuse attributes for efficiency reasons?
                 $profile->profile_attributes->delete;
-              
+
                 # TODO: should we rather take the name and load the id from db,
                 # instead of trusting the id coming from user input?
                 foreach my $attr(keys %{ $attributes }) {
@@ -581,7 +581,7 @@ sub profile_delete :Chained('profile_base') :PathPart('delete') :Does(ACL) :ACLD
 
     $c->detach('/denied_page')
         if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
-    
+
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub{
