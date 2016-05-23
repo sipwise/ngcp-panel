@@ -7,7 +7,7 @@ extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/alias_select email webusername webpassword password profile/ ],
+    render_list => [qw/alias_select email webusername webpassword password external_id profile/ ],
 );
 
 sub update_fields {
