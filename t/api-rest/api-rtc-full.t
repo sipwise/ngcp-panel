@@ -57,7 +57,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
         name => 'rtc test reseller ' . time,
         enable_rtc => JSON::true,
         status => 'active',
-        rtc_networks => ['sip'],
+        rtc_networks => ['sip','xmpp','webrtc'],
     }));
     $res = $ua->request($req);
     is($res->code, 201, "POST create reseller");
@@ -77,7 +77,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
     is($data->{networks}[0]{connector}, 'sip-connector', "rtcnetwork exists");
     $network_tag = $data->{networks}[0]{tag};
 
-    diag("reseller id: $reseller_id , network_tag: $network_tag");
+    diag("reseller id: $reseller_id , first network_tag: $network_tag");
 
     $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
     $req->header('Content-Type' => 'application/json');

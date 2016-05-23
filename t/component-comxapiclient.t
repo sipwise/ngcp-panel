@@ -25,7 +25,7 @@ ok($user->{data}{id}, "Got a user id");
 is(length($user->{data}{id}), 20, "User id follows format");
 
 #p $c->get_sessions;
-#p $c->create_session_and_account('npa4V0YkavioQ1GW7Yob', 'sip4', 'sip:alice@192.168.51.150', 'alicepass', 'YAqON76yLVtgMgBYeg6v');
+#p $c->create_session_and_accounts('npa4V0YkavioQ1GW7Yob', ['sip4'], 'sip:alice@192.168.51.150', 'alicepass', 'YAqON76yLVtgMgBYeg6v');
 #p $c->get_networks;
 my $network = $c->create_network('gjungwirth_test', 'sip-connector', {xms => JSON::false}, 'YAqON76yLVtgMgBYeg6v');
 ok($network, "Create Network");
@@ -59,7 +59,7 @@ is($c->login_status->{code}, 200, "Login successful (as original user)");
 
 ########################
 
-#p $c->create_session_and_account('npa4V0YkavioQ1GW7Yob', 'sip', 'user1@bar.com', '123456', 'YAqON76yLVtgMgBYeg6v');
+#p $c->create_session_and_accounts('npa4V0YkavioQ1GW7Yob', ['sip'], 'user1@bar.com', '123456', 'YAqON76yLVtgMgBYeg6v');
 
 $tmp_resp = $c->delete_network($network->{data}{id});
 is($tmp_resp->{code}, 200, "Delete Network");
