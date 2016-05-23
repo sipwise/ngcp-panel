@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "1acb0d3e_2453e418",
+        "filename": "lib/NGCP/Panel/Controller/SubscriberProfile.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-05-23T07:54:24Z",
+      "side": 1,
+      "message": "alex: it\u0027s here\n\nattributes are deleted already in l 472",
+      "revId": "cfa0e1188b9b03c86f762d9647b3019190cf267d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1acb0d3e_69030510",
         "filename": "lib/NGCP/Panel/Controller/SubscriberProfile.pm",
         "patchSetId": 1
@@ -19,6 +36,40 @@
         "endLine": 495,
         "endChar": 60
       },
+      "revId": "cfa0e1188b9b03c86f762d9647b3019190cf267d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_8441783b",
+        "filename": "lib/NGCP/Panel/Controller/SubscriberProfile.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-05-23T07:54:24Z",
+      "side": 1,
+      "message": "ack",
+      "revId": "cfa0e1188b9b03c86f762d9647b3019190cf267d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_a43ef4b6",
+        "filename": "lib/NGCP/Panel/Controller/SubscriberProfile.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 503,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-05-23T07:54:24Z",
+      "side": 1,
+      "message": "ack, should be fine",
       "revId": "cfa0e1188b9b03c86f762d9647b3019190cf267d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
