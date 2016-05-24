@@ -120,6 +120,9 @@ sub update_reseller {
             return;
         }
     }
+    if($old_resource->{status} ne $resource->{status}) {
+        NGCP::Panel::Utils::Reseller::_handle_reseller_status_change($c, $reseller);
+    }
 
     $reseller->update({
             name => $resource->{name},
