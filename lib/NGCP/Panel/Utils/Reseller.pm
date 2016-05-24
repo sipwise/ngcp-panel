@@ -127,6 +127,30 @@ sub check_reseller_delete_item {
     return 1;
     
 }
+sub _handle_reseller_status_change {
+    my ($c, $reseller) = @_;
+    
+    my $contract = $reseller->contract;
+    $contract->update({ status => $reseller->status });
+    NGCP::Panel::Utils::Contract::recursively_lock_contract(
+        c => $c,
+        contract => $contract,
+    );
+    
+    if($reseller->status eq "terminated") {
+        #delete ncos_levels
+        $reseller->ncos_levels->delete_all;
+        #delete voip_number_block_resellers
+        $reseller->voip_number_block_resellers->delete_all;
+        #delete voip_sound_sets
+        $reseller->voip_sound_sets->delete_all;
+        #delete voip_rewrite_rule_sets
+        $reseller->voip_rewrite_rule_sets->delete_all;
+        #delete autoprov_devices
+        $reseller->autoprov_devices->delete_all;
+        $reseller->email_templates->delete_all;
+    }
+}
 
 1;
 

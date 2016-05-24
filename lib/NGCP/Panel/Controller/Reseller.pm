@@ -266,7 +266,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
                 $reseller->update($form->params);
 
                 if($reseller->status ne $old_status) {
-                    $self->_handle_reseller_status_change($c, $reseller);
+                    NGCP::Panel::Utils::Reseller::_handle_reseller_status_change($c, $reseller);
                 }
             });
 
@@ -313,7 +313,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
             $reseller->update({ status => 'terminated' });
 
             if($reseller->status ne $old_status) {
-                $self->_handle_reseller_status_change($c,$reseller);
+                NGCP::Panel::Utils::Reseller::_handle_reseller_status_change($c,$reseller);
             }
         });
         NGCP::Panel::Utils::Message::info(
@@ -331,30 +331,6 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
 }
 
-sub _handle_reseller_status_change {
-    my ($self, $c, $reseller) = @_;
-    
-    my $contract = $reseller->contract;
-    $contract->update({ status => $reseller->status });
-    NGCP::Panel::Utils::Contract::recursively_lock_contract(
-        c => $c,
-        contract => $contract,
-    );
-    
-    if($reseller->status eq "terminated") {
-        #delete ncos_levels
-        $reseller->ncos_levels->delete_all;
-        #delete voip_number_block_resellers
-        $reseller->voip_number_block_resellers->delete_all;
-        #delete voip_sound_sets
-        $reseller->voip_sound_sets->delete_all;
-        #delete voip_rewrite_rule_sets
-        $reseller->voip_rewrite_rule_sets->delete_all;
-        #delete autoprov_devices
-        $reseller->autoprov_devices->delete_all;
-        $reseller->email_templates->delete_all;
-    }
-}
 
 sub details :Chained('base') :PathPart('details') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
