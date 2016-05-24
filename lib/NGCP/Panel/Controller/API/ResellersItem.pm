@@ -10,6 +10,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
+use Clone qw/clone/;
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -123,6 +124,9 @@ sub PATCH :Allow {
         my $reseller = $self->reseller_by_id($c, $id);
         last unless $self->resource_exists($c, reseller => $reseller);
         my $old_resource = $self->hal_from_reseller($c, $reseller, $form)->resource;
+        #without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
+        #But really I don't understand why $old_resource is read-only. resource is rw in Data::HAL
+        $old_resource = clone($old_resource);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
