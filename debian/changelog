@@ -1,3 +1,15 @@
+ngcp-panel (1.8.5.11+0~mr3.8.5.11) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [e17983c] MT#19821 subsciber profile edit drops random voip_usr_prefs
+
+  [ Andreas Granig ]
+  * [cba82d1] MT#16443 Fix setting reseller_id for contacts
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 May 2016 14:36:06 +0200
+
 ngcp-panel (1.8.5.10+0~mr3.8.5.10) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
