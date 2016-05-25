@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1acb0d3e_c4dbf6eb",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-05-25T16:10:45Z",
+      "side": 1,
+      "message": "yeah, why not. I could rewrite this to do so... (or drop it, it is not used actually)",
+      "parentUuid": "1acb0d3e_24ed1ac4",
+      "revId": "c8e96a09269949caa658e38476ab8daa75438da6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1acb0d3e_4405c678",
         "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
         "patchSetId": 2
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "1acb0d3e_64cd6231",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-05-25T16:10:45Z",
+      "side": 1,
+      "message": "if you mean down (into create_session) I think the api library should be flexible enough to return such errors. but I\u0027ll be happy to hear suggestions about such an api-lib",
+      "parentUuid": "1acb0d3e_4405c678",
+      "range": {
+        "startLine": 541,
+        "startChar": 4,
+        "endLine": 541,
+        "endChar": 34
+      },
+      "revId": "c8e96a09269949caa658e38476ab8daa75438da6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1acb0d3e_24043a7a",
         "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
         "patchSetId": 2
@@ -53,6 +95,30 @@
       "writtenOn": "2016-05-25T15:38:43Z",
       "side": 1,
       "message": "no clear to me, is this because of ambiguity or emptyness?\nimho arbitray literals should be avoided.",
+      "range": {
+        "startLine": 569,
+        "startChar": 31,
+        "endLine": 569,
+        "endChar": 39
+      },
+      "revId": "c8e96a09269949caa658e38476ab8daa75438da6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_04d25ed2",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-05-25T16:10:45Z",
+      "side": 1,
+      "message": "you\u0027re right should be done properly right away. this is obsolete now. I\u0027ll drop the column from the db.",
+      "parentUuid": "1acb0d3e_24043a7a",
       "range": {
         "startLine": 569,
         "startChar": 31,
