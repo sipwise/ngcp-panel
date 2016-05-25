@@ -1,3 +1,13 @@
+ngcp-panel (1.11.1.16+0~mr4.2.1.16) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [a7fb4bb] MT#19035 Don't save billing_fee_raw data
+  * [cedff8d] MT#19937 Enable external_id editing for the pilot subscriber
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 May 2016 10:47:29 +0200
+
 ngcp-panel (1.11.1.15+0~mr4.2.1.15) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
