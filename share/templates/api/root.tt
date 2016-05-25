@@ -53,6 +53,7 @@
         { level = 2,    id = 'intro',         title = 'Introduction',                                   },
         { level = 2,    id = 'auth',          title = 'Authentication',                                 },
         { level = 2,    id = 'relations',     title = 'Resources',                                      },
+        { level = 2,    id = 'datatypes',     title = 'Data types',                                      },
     ];
     FOREACH col IN collections.keys.sort;
         chapters.push({ level = 3, id = col, title = collections.$col.name, uri = collections.$col.uri });
