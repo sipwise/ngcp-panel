@@ -178,6 +178,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                 if($billing_mapping->billing_profile->prepaid) {
                     $preferences->{prepaid} = 1;
                 }
+
                 my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,
@@ -185,8 +186,18 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     params => $form->params,
                     admin_default => 0,
                     preferences => $preferences,
-                );
-                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
+                ); #nested txn_do is ok.
+                $billing_subscriber->discard_changes;
+
+                if($billing_subscriber->status eq 'locked') {
+                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                        c => $c,
+                        prov_subscriber => $billing_subscriber->provisioning_voip_subscriber,
+                        level => 4,
+                    );
+                } else {
+                    NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
+                }
 
                 delete $c->session->{created_objects}->{reseller};
                 delete $c->session->{created_objects}->{contract};
@@ -342,8 +353,8 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
                 subscriber => $subscriber,
                 destination => $form->values->{destination},
                 quality => $form->values->{quality}, # opt (normal, fine,super)
-                #coverpage => $form->values->{coverpage}, 
-                pageheader => $form->values->{pageheader}, 
+                #coverpage => $form->values->{coverpage},
+                pageheader => $form->values->{pageheader},
                 #notify => $form->values->{notify}, # TODO: handle in send_fax, read from prefs!
                 #coverpage => 1,
                 upload => $form->values->{faxfile},
