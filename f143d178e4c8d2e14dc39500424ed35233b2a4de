@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_bd5d9eeb",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000019
+      },
+      "writtenOn": "2016-05-25T07:59:27Z",
+      "side": 1,
+      "message": "we will kill the sipwise connector soon, so please dont allow the user to use it.",
+      "revId": "f143d178e4c8d2e14dc39500424ed35233b2a4de",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_9d58e2fb",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 1000019
+      },
+      "writtenOn": "2016-05-25T07:59:27Z",
+      "side": 1,
+      "message": "please change the identifier to:\n  sip then sip:username@domain\n  xmpp then xmpp:username@domain (right?)\n  conference/webrtc only username",
+      "range": {
+        "startLine": 540,
+        "startChar": 13,
+        "endLine": 540,
+        "endChar": 89
+      },
+      "revId": "f143d178e4c8d2e14dc39500424ed35233b2a4de",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
