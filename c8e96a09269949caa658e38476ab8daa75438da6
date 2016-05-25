@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_24ed1ac4",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-25T15:38:43Z",
+      "side": 1,
+      "message": "maybe reuse sub create_session and sub create_session here?\nbut irrelevant if outdated means this sub is not used.",
+      "revId": "c8e96a09269949caa658e38476ab8daa75438da6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_4405c678",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-25T15:38:43Z",
+      "side": 1,
+      "message": "pull these checks into the preceeding subs?",
+      "range": {
+        "startLine": 541,
+        "startChar": 4,
+        "endLine": 541,
+        "endChar": 34
+      },
+      "revId": "c8e96a09269949caa658e38476ab8daa75438da6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_24043a7a",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-25T15:38:43Z",
+      "side": 1,
+      "message": "no clear to me, is this because of ambiguity or emptyness?\nimho arbitray literals should be avoided.",
+      "range": {
+        "startLine": 569,
+        "startChar": 31,
+        "endLine": 569,
+        "endChar": 39
+      },
+      "revId": "c8e96a09269949caa658e38476ab8daa75438da6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
