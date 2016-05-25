@@ -16,6 +16,24 @@
       "revId": "10af05a87f2b0f41e5f427b52b83bf46d5ee7812",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_84816e91",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-05-25T17:33:19Z",
+      "side": 1,
+      "message": "i place it whenever there are fields to be populated by database defaults, e.g. the status",
+      "parentUuid": "1acb0d3e_44bdc667",
+      "revId": "10af05a87f2b0f41e5f427b52b83bf46d5ee7812",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
