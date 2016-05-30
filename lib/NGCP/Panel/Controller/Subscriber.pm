@@ -6,6 +6,8 @@ use HTML::Entities;
 use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
 use Data::Dumper;
+use MIME::Base64 qw(encode_base64url decode_base64url);
+
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
@@ -3228,6 +3230,7 @@ sub _process_calls_rows {
             }
             $data{duration} = (defined $result->duration ? sprintf("%.2f s", $result->duration) : "");
             $data{total_customer_cost} = (defined $result->get_column('total_customer_cost') ? sprintf("%.2f", $result->get_column('total_customer_cost') / 100.0) : "");
+            $data{call_id_url} = encode_base64url($resource->{call_id});
             return %data;
         },
         { 'total_row_func' => sub {
@@ -3339,8 +3342,9 @@ sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
         sub {
             my $item = shift;
             my %result;
-            $result{call_id} = $item->call_id =~ s/(_b2b-1|_pbx-1)+$//rg;
+            $result{call_id} = $item->call_id =~ s/(_b2b-1|_pbx-1)+$//r;
             # similar to Utils::CallList::process_cdr_item
+            $result{call_id_url} = encode_base64url($result{call_id});
             return %result;
         }
     );
@@ -4115,8 +4119,9 @@ sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) :Does(A
     $c->detach('/denied_page')
         unless($c->config->{features}->{callflow});
 
-    my $decoder = URI::Encode->new;
-    $c->stash->{callid} = $decoder->decode($callid);
+    $c->stash->{callid} = decode_base64url($callid)
+            =~ s/(_b2b-1|_pbx-1)+$//r
+            =~ s/[^[:print:]]+//gr;  # remove non-printable chars to be sure for db-operation
 }
 
 sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
