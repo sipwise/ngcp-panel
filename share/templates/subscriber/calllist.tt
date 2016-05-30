@@ -58,7 +58,7 @@ function changeCalllist(selection) {
     IF (c.user.roles == "admin" || c.user.roles == "reseller");
         IF c.config.features.callflow;
     helper.dt_buttons = [
-        { name = c.loc('Call Flow'), uri = "/callflow/'+encodeURIComponent(full.call_id)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
+        { name = c.loc('Call Flow'), uri = "/callflow/'+encodeURIComponent(full.call_id_url)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
     ];
         END;
     details_button = { name = c.loc('Call Details'), uri = "javascript:showCallDetails(\\''+encodeURIComponent(full.id)+'\\');void(0);" , class = 'btn-small btn-primary', icon = 'icon-edit' };

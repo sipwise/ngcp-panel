@@ -9,6 +9,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Message;
 
 use HTML::Entities;
+use MIME::Base64 qw(encode_base64url decode_base64url);
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -62,6 +63,13 @@ sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
         $c,
         $calls_rs_cb,
         $c->stash->{capture_dt_columns},
+        sub {
+            my $item = shift;
+            my %result;
+            $result{call_id} = $item->call_id =~ s/(_b2b-1|_pbx-1)+$//r;
+            $result{call_id_url} = encode_base64url($result{call_id});
+            return %result;
+        },
     );
     $c->detach( $c->view("JSON") );
 }
@@ -69,9 +77,7 @@ sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
 sub callflow_base :Chained('root') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $callid) = @_;
 
-    my $decoder = URI::Encode->new;
-    $c->stash->{callid} = $decoder->decode($callid) =~ s/_b2b-1$//r;
-    $c->stash->{callid} = $decoder->decode($callid) =~ s/_pbx-1$//r;
+    $c->stash->{callid} = decode_base64url($callid) =~ s/(_b2b-1|_pbx-1)+$//r;
 }
 
 sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {

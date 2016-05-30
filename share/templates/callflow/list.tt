@@ -15,7 +15,7 @@
     helper.ajax_uri = c.uri_for('/callflow/ajax');
 
     helper.dt_buttons = [
-        { name = c.loc('Call Flow'), uri = "/callflow/'+encodeURIComponent(full.call_id)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
+        { name = c.loc('Call Flow'), uri = "/callflow/'+encodeURIComponent(full.call_id_url)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
     ];
 
     PROCESS 'helpers/datatables.tt';
