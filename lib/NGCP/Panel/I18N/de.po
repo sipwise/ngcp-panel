@@ -932,6 +932,10 @@ msgstr "August"
 msgid "Auth key"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Authoritative"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Auto Attendant"
 msgstr "Anrufmenü"
@@ -1918,6 +1922,10 @@ msgstr "Firma"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Company Reg. Number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Conference"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -4793,6 +4801,16 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"If active, and the number is not assigned to a local subscriber, calls to "
+"this number are rejected with 404 Not Found."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If active, no LNP rewrite rules will be applied after the LNP lookup."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "If active, this sound set is used for all existing and new subscribers if no "
 "specific sound set is specified for them"
 msgstr ""
@@ -7516,6 +7534,10 @@ msgstr ""
 msgid "Rules"
 msgstr "Regeln"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SIP"
+msgstr ""
+
 #: share/templates/callflow/list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "SIP Call Flows"
@@ -7524,10 +7546,6 @@ msgstr "SIP Anruf-Abläufe"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SIP Domain"
 msgstr "SIP Domain"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SIP Only"
-msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/subscriber/master.tt
@@ -7568,10 +7586,6 @@ msgstr "SIP URI"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SIP Username"
 msgstr "SIP Benutzername"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SIP and XMPP"
-msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -7986,6 +8000,10 @@ msgstr "Einfach"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Simple View"
 msgstr "Einfache Ansicht"
+
+#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Skip Rewrite"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -11066,7 +11084,7 @@ msgid "Web password successfully recovered, please re-login."
 msgstr "Web-Passwort erfolgreich wiederhergestellt, bitte neu einloggen."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "WebRTC Only"
+msgid "WebRTC"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11207,7 +11225,7 @@ msgid "X3 required"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "XMPP Only"
+msgid "XMPP"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11621,7 +11639,8 @@ msgstr ""
 msgid "noanswer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: share/templates/customer/details.tt
 msgid "none"
 msgstr "nicht"
 
