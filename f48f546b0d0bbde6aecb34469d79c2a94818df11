@@ -16,6 +16,24 @@
       "revId": "f48f546b0d0bbde6aecb34469d79c2a94818df11",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_043e0ab9",
+        "filename": "lib/NGCP/Panel/Utils/Reseller.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-05-31T19:34:50Z",
+      "side": 1,
+      "message": "From the doc:\nhttp://search.cpan.org/dist/DBIx-Class/lib/DBIx/Class/ResultSet.pm#delete_all\n\n\"delete_all will run DBIC defined triggers, while \"delete\" will not.\"\n\nFrom efficiency point of view - I think it is rather rare operation, but with high impact on data consistency, s omaybe safety is really a good choice here.",
+      "parentUuid": "fab9d9a7_bed711ed",
+      "revId": "f48f546b0d0bbde6aecb34469d79c2a94818df11",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
