@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab9d9a7_bed711ed",
+        "filename": "lib/NGCP/Panel/Utils/Reseller.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2016-05-31T13:29:42Z",
+      "side": 1,
+      "message": "Sure about the delete_all? If it\u0027s a result-set, a delete is typically more efficient, since delete_all does individual deletes on all results. I had some side-effects in some cases though, so delete_all is probably more safe.",
+      "revId": "f48f546b0d0bbde6aecb34469d79c2a94818df11",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
