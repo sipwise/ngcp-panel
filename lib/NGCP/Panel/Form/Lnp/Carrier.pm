@@ -34,6 +34,26 @@ has_field 'prefix' => (
     },
 );
 
+has_field 'authoritative' => (
+    type => 'Boolean',
+    label => 'Authoritative',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['If active, and the number is not assigned to a local subscriber, calls to this number are rejected with 404 Not Found.']
+    },
+);
+
+has_field 'skip_rewrite' => (
+    type => 'Boolean',
+    label => 'Skip Rewrite',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['If active, no LNP rewrite rules will be applied after the LNP lookup.']
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -44,7 +64,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name prefix/],
+    render_list => [qw/name prefix authoritative skip_rewrite/],
 );
 
 has_block 'actions' => (

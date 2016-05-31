@@ -25,7 +25,7 @@ sub upload_csv {
     # csv bulk upload
     my $csv = Text::CSV_XS->new({ allow_whitespace => 1, binary => 1, keep_meta_info => 1 });
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
-    my @cols = qw/carrier_name carrier_prefix number routing_number start end/;
+    my @cols = qw/carrier_name carrier_prefix number routing_number start end authoritative skip_rewrite/;
 
     my @fields ;
     my @fails = ();
@@ -45,10 +45,14 @@ sub upload_csv {
         @{$row}{@cols} = @{ $line };
         my $k = $row->{carrier_name};
         my $p = $row->{carrier_prefix};
+        my $auth = $row->{authoritative};
+        my $rw = $row->{skip_rewrite};
         unless(exists $carriers{$k}) {
             my $carrier = $schema->resultset('lnp_providers')->find_or_create({
                 name => $k,
                 prefix => $p,
+                authoritative => $auth,
+                skip_rewrite => $rw,
             });
             $carriers{$k} = $carrier->id;
         }
@@ -87,13 +91,13 @@ sub create_csv {
     my($c) = @params{qw/c/};
 
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
-    my @cols = qw/carrier_name carrier_prefix number routing_number start end/;
+    my @cols = qw/carrier_name carrier_prefix number routing_number start end authoritative skip_rewrite/;
 
     my $lnp_rs = $c->stash->{number_rs}->search_rs(
         undef,
         {
-            '+select' => ['lnp_provider.name','lnp_provider.prefix'],
-            '+as'     => ['carrier_name','carrier_prefix'],
+            '+select' => ['lnp_provider.name','lnp_provider.prefix', 'lnp_provider.authoritative', 'lnp_provider.skip_rewrite'],
+            '+as'     => ['carrier_name','carrier_prefix', 'authoritative', 'skip_rewrite'],
             'join'    => 'lnp_provider',
         }
     );

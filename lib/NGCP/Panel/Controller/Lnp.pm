@@ -30,6 +30,8 @@ sub list :Chained('/') :PathPart('lnp') :CaptureArgs(0) {
         { name => "id", "search" => 1, "title" => $c->loc("#") },
         { name => "name", "search" => 1, "title" => $c->loc("Name") },
         { name => "prefix", "search" => 1, "title" => $c->loc("Prefix") },
+        { name => "authoritative", "search" => 0, "title" => $c->loc("Authoritative") },
+        { name => "skip_rewrite", "search" => 0, "title" => $c->loc("Skip Rewrite") },
     ]);
 
     my $number_rs = $c->model('DB')->resultset('lnp_numbers');
