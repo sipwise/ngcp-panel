@@ -23,6 +23,8 @@ sub _item_rs {
         $item_rs = $item_rs->search({
             'billing_profile.reseller_id' => $c->user->reseller_id
         }, {
+            '+select' => 'billing_profile.id',
+            '+as' => 'billing_profile_id',
             join => 'billing_profile',
         });
     } else {
@@ -56,8 +58,8 @@ sub hal_from_fee {
             Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $fee->id)),
-            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $fee->billing_profile->id)),
-            Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/%d", $fee->billing_zone->id)),
+            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $fee->billing_profile_id)),
+            Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/%d", $fee->billing_zone_id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
