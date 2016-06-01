@@ -84,7 +84,7 @@ sub preprocess_svg {
     $$svg_ref = '<root>'.$$svg_ref.'</root>';
 
     my $xp = XML::XPath->new($$svg_ref);
-    
+
     my $g = $xp->find('//g[@class="page"]');
     foreach my $node($g->get_nodelist) {
         if($node->getAttribute('display')) {
@@ -92,10 +92,10 @@ sub preprocess_svg {
         }
     }
     #we can't process images on server side due to possible access restrictions
-    
+
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
     $$svg_ref =~s/^<root>|<\/root>$//;
-    
+
     #$$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+page[^"' ]*["' ]+)([^>]*)>/<$1$2$3>/gs;
     #$$svg_ref=~s/<(g .*?)(id *=["' ]+page[^"' ]*["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
 }
@@ -104,7 +104,7 @@ sub sanitize_svg {
     my ($svg_ref) = @_;
 
     my $xp = XML::XPath->new($$svg_ref);
-    
+
     my $s = $xp->find('//script');
     foreach my $node($s->get_nodelist) {
         if($node->getAttribute('display')) {
@@ -142,7 +142,7 @@ sub get_tt {
 
 sub svg_content{
     my ($c, $content) = @_;
-    
+
     if(!$content) {
         #default is the same for all - I would like to move it as something constant to itils
         my $default = 'invoice/default/invoice_template_svg.tt';
@@ -174,7 +174,7 @@ sub process_child_nodes {
             my $newy = $y + $delta;
 
             $node->removeAttribute($attr);
-            $node->appendAttribute(XML::XPath::Node::Attribute->new($attr, 
+            $node->appendAttribute(XML::XPath::Node::Attribute->new($attr,
                 $newy.(($server_process_spec ne 'none')?'mm':'')
             ));
         }
@@ -217,7 +217,7 @@ sub get_dummy_data {
         },
         customer => {
             id => int(rand(10000))+10000,
-            external_id => 'Resext1234567890',
+            external_id => 'Resext'.int(rand(100000))+100000,
             vat_rate => 20,
             add_vat => 0,
         },
@@ -269,7 +269,7 @@ sub get_dummy_data {
             amount_total => 12345+(12345*0.2),
         },
         calls => [
-            map {{ 
+            map {{
                 source_user => 'user',
                 source_domain => 'example.org',
                 source_cli => '1234567890',
@@ -285,7 +285,7 @@ sub get_dummy_data {
         zones => {
             totalcost => int(rand(10000))+10000,
             data => [
-                map {{ 
+                map {{
                     number => int(rand(200)),
                     customercost => int(rand(100000)),
                     duration => int(rand(10000)),

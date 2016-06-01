@@ -138,6 +138,50 @@ sub switch_prepaid_contract {
 
 }
 
+sub check_externalid_uniqueness {
+
+    my %params = @_;
+    my ($c,$subscriber,$schema,$err_code) = @params{qw/c subscriber schema err_code/};
+
+    my $external_id = $subscriber->external_id;
+    return 1 unless (defined $external_id and length($external_id) > 0);
+
+    $schema //= $c->model('DB');
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    my $rs = $schema->resultset('voip_subscribers')
+        ->search({ 'me.status' => { '!=' => 'terminated' },
+                   'me.external_id' => $external_id,
+                 },{
+                    for => "shared", #aquire locks
+                 }); #no joins, voip_subscribers row locks only
+    if ($rs->count > 1) {
+        #if ($per_reseller) {
+            my $reseller_id = $subscriber->contract->contact->reseller_id;
+            $rs = $schema->resultset('voip_subscribers')
+                ->search({ 'me.status' => { '!=' => 'terminated' },
+                           'me.external_id' => $external_id,
+                           'contact.reseller_id' => $reseller_id,
+                         },{
+                            join => { 'contract' => 'contact' },
+                         });
+            if ($rs->count > 1) {
+                &{$err_code}("external_id '$external_id' not unique" .
+                    (defined $reseller_id ? " for reseller id $reseller_id" : '') . '.');
+                return 0;
+            }
+        #} else {
+        #    &{$err_code}("external_id '$external_id' not unique.");
+        #    return 0;
+        #}
+    }
+
+    return 1;
+
+}
+
 sub get_lock_string {
     my $level = shift;
     return $LOCK{$level};
@@ -153,6 +197,10 @@ sub create_subscriber {
     my $preferences = $params{preferences};
 
     my $schema = $params{schema} // $c->model('DB');
+    my $err_code = $params{err_code};
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
     my $reseller = $contract->contact->reseller;
     my $billing_domain = $schema->resultset('domains')
             ->find($params->{domain}{id} // $params->{domain_id});
@@ -170,8 +218,7 @@ sub create_subscriber {
         }
         $profile_set = $profile_set_rs->find($params->{profile_set}{id});
         unless($profile_set) {
-            $c->log->error("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
-            return;
+            return 0 unless &{$err_code}("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
         }
         if($params->{profile}{id}) {
             $profile = $profile_set->voip_subscriber_profiles->find({
@@ -234,6 +281,13 @@ sub create_subscriber {
             primary_number_id => undef, # will be filled in next step
             contact_id => $contact ? $contact->id : undef,
         });
+
+        die unless check_externalid_uniqueness(
+            c => $c,
+            subscriber => $billing_subscriber,
+            err_code => $err_code,
+        );
+
         unless(exists $params->{password}) {
             my ($pass_bin, $pass_str);
             UUID::generate($pass_bin);
@@ -362,6 +416,7 @@ sub create_subscriber {
         return $billing_subscriber;
     });
 }
+
 sub update_preferences {
     my (%params) = @_;
     my $c = $params{c};
