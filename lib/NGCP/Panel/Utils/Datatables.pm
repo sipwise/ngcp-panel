@@ -19,6 +19,7 @@ sub process {
     my $displayRecords = 0;
     my $aggregate_cols = [];
     my $aggregations = {};
+    my $doConjunctSearchFlag;
 
 
     # check if we need to join more tables
@@ -166,11 +167,19 @@ sub process {
         foreach my $col(@{ $cols }) {
             # avoid amigious column names if we have the same column in different joined tables
             my $name = _get_joined_column_name_($col->{name});
+
             if($col->{search_from_epoch} && $from_date) {
-                push @searchColumns, { $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch } };
+                $rs = $rs->search({
+                    $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch },
+                });
+                $doConjunctSearchFlag = 1;
             }
+
             if($col->{search_to_epoch} && $to_date) {
-                push @searchColumns, { $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch } };
+                $rs = $rs->search({
+                    $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch },
+                });
+                $doConjunctSearchFlag = 1;
             }
         }
     }
@@ -209,7 +218,7 @@ sub process {
     }
 
     if(!$use_rs_cb){
-        if(@searchColumns){
+        if(@searchColumns || $doConjunctSearchFlag){
             $totalRecords = $totalRecords_rs->count;
             if(!@$aggregate_cols){
                 $displayRecords = $rs->count;
