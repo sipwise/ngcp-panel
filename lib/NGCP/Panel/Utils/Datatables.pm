@@ -166,11 +166,17 @@ sub process {
         foreach my $col(@{ $cols }) {
             # avoid amigious column names if we have the same column in different joined tables
             my $name = _get_joined_column_name_($col->{name});
+
             if($col->{search_from_epoch} && $from_date) {
-                push @searchColumns, { $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch } };
+                $rs = $rs->search({
+                    $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch },
+                });
             }
+
             if($col->{search_to_epoch} && $to_date) {
-                push @searchColumns, { $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch } };
+                $rs = $rs->search({
+                    $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch },
+                });
             }
         }
     }
