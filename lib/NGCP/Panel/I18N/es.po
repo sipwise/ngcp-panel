@@ -437,6 +437,7 @@ msgid "ANY"
 msgstr "CUALQUIERA"
 
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "API"
 msgstr ""
 
@@ -2994,6 +2995,7 @@ msgid "Do Not Disturb"
 msgstr "No molestar"
 
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Documentation"
 msgstr ""
 
@@ -3360,6 +3362,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/rewrite/rules_list.tt
 msgid "Enabled"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enables lawful interception for the subscriber."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
@@ -4612,6 +4618,7 @@ msgid "Groups"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Handbook"
 msgstr ""
 
@@ -5417,8 +5424,7 @@ msgstr ""
 msgid "LNP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -5512,6 +5518,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Lawful Intercept"
 msgstr "Intercepción Legal"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Lawful Interception"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Lawful intercept"
@@ -11623,8 +11633,7 @@ msgstr ""
 msgid "noanswer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-#: share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "none"
 msgstr "ninguno"
 

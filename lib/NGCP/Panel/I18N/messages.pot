@@ -284,7 +284,7 @@ msgstr ""
 msgid "ANY"
 msgstr ""
 
-#: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "API"
 msgstr ""
 
@@ -2428,7 +2428,7 @@ msgstr ""
 msgid "Do Not Disturb"
 msgstr ""
 
-#: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Documentation"
 msgstr ""
 
@@ -2693,6 +2693,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm share/templates/rewrite/rules_list.tt
 msgid "Enabled"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enables lawful interception for the subscriber."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3876,7 +3880,7 @@ msgstr ""
 msgid "Groups"
 msgstr ""
 
-#: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Handbook"
 msgstr ""
 
@@ -4710,6 +4714,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Lawful Intercept"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Lawful Interception"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
