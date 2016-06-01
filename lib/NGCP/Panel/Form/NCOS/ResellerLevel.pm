@@ -15,6 +15,7 @@ has_field 'level' => (
     type => 'Text',
     label => 'Level Name',
     required => 1,
+    maxlength => 31,
 );
 
 has_field 'mode' => (
