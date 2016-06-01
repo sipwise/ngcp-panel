@@ -288,6 +288,7 @@ sub prepare_resource {
     if(!$item && defined $customer->max_subscribers && $customer->voip_subscribers->search({
             status => { '!=' => 'terminated' },
         })->count >= $customer->max_subscribers) {
+        # count checks should be done after updating db and a rollback if required.
 
         $self->error($c, HTTP_FORBIDDEN, "Maximum number of subscribers reached.");
         return;
@@ -653,6 +654,18 @@ sub update_item {
 
     $subscriber->update($billing_res);
     $subscriber->discard_changes;
+
+    return unless NGCP::Panel::Utils::Subscriber::check_externalid_uniqueness(
+        c => $c,
+        subscriber => $subscriber,
+        err_code => sub {
+            my $err = shift;
+            $c->log->error($err);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+            return 0;
+        }
+    );
+
     $prov_subscriber->update($provisioning_res);
     $prov_subscriber->discard_changes;
 

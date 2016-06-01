@@ -186,6 +186,10 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     params => $form->params,
                     admin_default => 0,
                     preferences => $preferences,
+                    err_code => sub {
+                        my $err = shift;
+                        die ($err);
+                    }
                 ); #nested txn_do is ok.
                 $billing_subscriber->discard_changes;
 
@@ -2471,6 +2475,15 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     status => $form->params->{status},
                     external_id => $form->field('external_id')->value, # null if empty
                 });
+
+                NGCP::Panel::Utils::Subscriber::check_externalid_uniqueness(
+                    c => $c,
+                    subscriber => $subscriber,
+                    err_code => sub {
+                        my $err = shift;
+                        die($err);
+                    }
+                );
 
                 if(defined $subscriber->external_id) {
                     my $ext_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
