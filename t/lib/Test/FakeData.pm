@@ -224,7 +224,7 @@ sub build_data{
                 status             => 'active',
                 contact_id         => sub { return shift->create('customercontacts',@_); },
                 billing_profile_id => sub { return shift->create('billingprofiles',@_); },
-                external_id        => 'api_test customer sipaccount',
+                external_id        => 'api_test customer sipaccount'.time(),
                 type               => 'sipaccount',
             },
             'query' => ['external_id'],
@@ -551,16 +551,16 @@ sub create{
             nest( $self->data->{$last_parent}->{data}, @{$parents_cycled->{$last_parent}->[1]}, $self->get_existent_id($collection_name) );
             my %parents_temp = %{$parents_cycled};
             delete $parents_temp{$last_parent};
-            #short note: we don't need update already created collections, because we fell in recursion before creation, 
+            #short note: we don't need update already created collections, because we fell in recursion before creation,
             #so no collection keeps wrong, redundant first item reference
-            #so all we need - update "created" field for further get_existent_id, which will be aclled on exit from this "create" function 
+            #so all we need - update "created" field for further get_existent_id, which will be aclled on exit from this "create" function
             $self->create($last_parent,{%parents_temp} );
         }else{
             my $uri = $test_machine->get_uri_collection($last_parent).$self->get_existent_id($last_parent);
             $test_machine->request_patch([ {
                     op   => 'replace',
                     path => join('/',('',@{$parents_cycled->{$last_parent}->[1]})),
-                    value => $self->get_existent_id($collection_name) } 
+                    value => $self->get_existent_id($collection_name) }
                 ],
                 $uri
             );
@@ -593,4 +593,3 @@ Really it would be much more correct to use collection clases with ALL their own
 Optimizations:
 1.make wrapper for data creation/deletion for all tests.
 2.Load/Clear only relevant tests data
-

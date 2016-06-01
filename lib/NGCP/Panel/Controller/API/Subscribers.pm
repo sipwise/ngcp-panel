@@ -305,7 +305,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -341,7 +341,7 @@ sub POST :Allow {
     my $guard = $schema->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -368,7 +368,12 @@ sub POST :Allow {
                 params => $resource,
                 preferences => $preferences,
                 admin_default => 0,
-            );
+                err_code => sub {
+                    my $err = shift;
+                    die($err);
+                }
+            ); #nesting a txn_do within txn_scope_guard is not ideal
+            return unless $subscriber;
             if($resource->{status} eq 'locked') {
                 NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                     c => $c,
@@ -394,7 +399,6 @@ sub POST :Allow {
                 customer     => $customer,
                 subscriber   => $subscriber,
             );
-
         } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
             $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
             $c->log->error("failed to create subscriber, number $1 already exists"); # TODO: user, message, trace, ...
@@ -405,7 +409,7 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber.");
             last;
         }
-        
+
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
