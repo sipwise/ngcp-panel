@@ -1898,6 +1898,7 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
         $q = $c->req->params->{q};
     }
     if(defined $q) {
+        $q=~s/\.rom$//i; #yealink v > 80 needs filename at the end of the link. 
         $rs = $rs->search({
             version => { 'like' => $q . '%' },
         });
@@ -1929,6 +1930,7 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
         $q = $c->req->params->{q};
     }
     if(defined $q) {
+        $q=~s/\.rom$//i; #yealink v > 80 needs filename at the end of the link. 
         $rs = $rs->search({
             version => { 'like' => $q . '%' },
         });
