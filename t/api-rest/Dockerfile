@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-jessie:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2016-01-12
+ENV REFRESHED_AT 2016-06-03
 
 # TODO - the release-trunk-jessie is too dynamic yet, though required build deps
 RUN echo "deb https://deb.sipwise.com/autobuild/ release-trunk-jessie main" >>/etc/apt/sources.list
