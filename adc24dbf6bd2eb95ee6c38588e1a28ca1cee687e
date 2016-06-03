@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab9d9a7_85ff5101",
+        "filename": "lib/NGCP/Panel/Role/API/BillingZones.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-06-03T11:55:16Z",
+      "side": 1,
+      "message": "shouldn\u0027t make a difference imo, as the joined/cached data is used by dbix::class without a separate request\n\nbut doesn\u0027t hurt either",
+      "revId": "adc24dbf6bd2eb95ee6c38588e1a28ca1cee687e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
