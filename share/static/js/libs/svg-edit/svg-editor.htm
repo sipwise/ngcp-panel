@@ -11,8 +11,13 @@
 <link rel="stylesheet" href="jgraduate/css/jgraduate.css" type="text/css"/>
 <link rel="stylesheet" href="svg-editor.css" type="text/css"/>
 <link rel="stylesheet" href="spinbtn/JQuerySpinBtn.css" type="text/css"/>
-
+<link rel="stylesheet" href="custom.css" type="text/css"/>
+<!--{if jquery_release}>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<!{else}-->
 <script src="jquery.js"></script>
+<!--{endif}-->
+
 <script src="js-hotkeys/jquery.hotkeys.min.js"></script>
 <script src="jquerybbq/jquery.bbq.min.js"></script>
 <script src="svgicons/jquery.svgicons.js"></script>
@@ -20,9 +25,13 @@
 <script src="spinbtn/JQuerySpinBtn.min.js"></script>
 <script src="touch.js"></script>
 
+<!--{if svg_edit_release}>
+  <script src="svgedit.compiled.js"></script>
+<!{else}-->
   <script src="svgedit.js"></script>
   <script src="jquery-svg.js"></script>
   <script src="contextmenu/jquery.contextMenu.js"></script>
+  <script src="pathseg.js"></script>
   <script src="browser.js"></script>
   <script src="svgtransformlist.js"></script>
   <script src="math.js"></script>
@@ -30,16 +39,18 @@
   <script src="svgutils.js"></script>
   <script src="sanitize.js"></script>
   <script src="history.js"></script>
+  <script src="historyrecording.js"></script>
   <script src="coords.js"></script>
   <script src="recalculate.js"></script>
   <script src="select.js"></script>
   <script src="draw.js"></script>
+  <script src="layer.js"></script>
   <script src="path.js"></script>
   <script src="svgcanvas.js"></script>
   <script src="svg-editor.js"></script>
   <script src="locale/locale.js"></script>
   <script src="contextmenu.js"></script>
-
+<!--{endif}-->
 <!-- If you do not wish to add extensions by URL, you can load them
 by creating the following file and adding by calls to svgEditor.setConfig -->
 <script src="config.js"></script>
@@ -47,6 +58,14 @@ by creating the following file and adding by calls to svgEditor.setConfig -->
 <!-- always minified scripts -->
 <script src="jquery-ui/jquery-ui-1.8.17.custom.min.js"></script>
 <script src="jgraduate/jpicker.js"></script>
+
+<!-- If you do not wish to add extensions by URL, you can load them
+by creating the following file and adding by calls to svgEditor.setConfig -->
+<script src="config.js"></script>
+
+<!-- feeds -->
+<link rel="alternate" type="application/atom+xml" title="SVG-edit General Discussion" href="http://groups.google.com/group/svg-edit/feed/atom_v1_0_msgs.xml" />
+<link rel="alternate" type="application/atom+xml" title="SVG-edit Updates (Issues/Fixes/Commits)" href="http://code.google.com/feeds/p/svg-edit/updates/basic" />
 
 <!-- Add script with custom handlers here -->
 <title>SVG-edit</title>
@@ -148,7 +167,7 @@ by creating the following file and adding by calls to svgEditor.setConfig -->
 		</ul>
 
 		<p>
-			<a href="http://svg-edit.googlecode.com/" target="_blank">
+			<a href="https://github.com/SVG-Edit/svgedit" target="_blank">
 				SVG-edit Home Page
 			</a>
 		</p>
@@ -194,6 +213,10 @@ by creating the following file and adding by calls to svgEditor.setConfig -->
 			<label id="idLabel" title="Identify the element">
 				<span>id:</span>
 				<input id="elem_id" class="attr_changer" data-attr="id" size="10" type="text"/>
+			</label>
+			<label id="classLabel" title="Element class">
+				<span>class:</span>
+				<input id="elem_class" class="attr_changer" data-attr="class" size="10" type="text"/>
 			</label>
 		</div>
 
@@ -684,6 +707,7 @@ by creating the following file and adding by calls to svgEditor.setConfig -->
 					<option id="lang_ro" value="ro">Română</option>
 					<option id="lang_ru" value="ru">Русский</option>
 					<option id="lang_sk" value="sk">Slovenčina</option>
+					<option id="lang_sl" value="sl">Slovenščina</option>
 					<option id="lang_zh-TW" value="zh-TW">繁體中文</option>
 				</select>
 			</label>
@@ -717,9 +741,9 @@ by creating the following file and adding by calls to svgEditor.setConfig -->
 				<label>
 					<span id="svginfo_unit">Base Unit:</span>
 					<select id="base_unit">
-						<option value="mm" selected>Millimeters</option>
 						<option value="px">Pixels</option>
 						<option value="cm">Centimeters</option>
+						<option value="mm">Millimeters</option>
 						<option value="in">Inches</option>
 						<option value="pt">Points</option>
 						<option value="pc">Picas</option>

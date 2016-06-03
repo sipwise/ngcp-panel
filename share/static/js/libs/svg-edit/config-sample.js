@@ -28,7 +28,7 @@ svgEditor.setConfig({
 	// preventURLContentLoading: true,
 	/**
 	To override the ability for URLs to set other configuration (including
-	    extensions), uncomment the following:
+	    extension config), uncomment the following:
 	*/
 	// preventAllURLConfig: true,
 	/**
@@ -71,6 +71,7 @@ svgEditor.setConfig({
 	// initOpacity: 1,
 	// colorPickerCSS: null,
 	// initTool: 'select',
+	// exportWindowType: 'new', // 'same'
 	// wireframe: false,
 	// showlayers: false,
 	// no_save_warning: false,
@@ -79,12 +80,19 @@ svgEditor.setConfig({
 	// langPath: 'locale/',
 	// extPath: 'extensions/',
 	// jGraduatePath: 'jgraduate/images/',
+	/*
+	Uncomment the following to allow at least same domain (embedded) access,
+	including file:// access.
+	Setting as `['*']` would allow any domain to access but would be unsafe to
+	data privacy and integrity.
+	*/
+	// allowedOrigins: [window.location.origin || 'null'], // May be 'null' (as a string) when used as a file:// URL
 	// DOCUMENT PROPERTIES
 	// dimensions: [640, 480],
 	// EDITOR OPTIONS
 	// gridSnapping: false,
 	// gridColor: '#000',
-	baseUnit: 'mm',
+	// baseUnit: 'px',
 	// snappingStep: 10,
 	// showRulers: true,
 	// EXTENSION-RELATED (GRID)
@@ -122,7 +130,7 @@ svgEditor.setConfig(
 		*/
 		// bkgd_color: '#FFF',
 		// bkgd_url: '',
-		img_save: 'embed',
+		// img_save: 'embed',
 		// Only shows in UI as far as alert notices
 		// save_notice_done: false,
 		// export_notice_done: false

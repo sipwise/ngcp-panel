@@ -11,8 +11,9 @@
 
 // Dependencies:
 // 1) jQuery
-// 2) browser.js
-// 3) svgutils.js
+// 2) pathseg.js
+// 3) browser.js
+// 4) svgutils.js
 
 (function() {'use strict';
 
@@ -156,13 +157,13 @@ svgedit.sanitize.sanitizeSvg = function(node) {
       // Check that an attribute with the correct localName in the correct namespace is on 
       // our whitelist or is a namespace declaration for one of our allowed namespaces
       if (!(allowedAttrsNS.hasOwnProperty(attrLocalName) && attrNsURI == allowedAttrsNS[attrLocalName] && attrNsURI != NS.XMLNS) &&
-        !(attrNsURI == NS.XMLNS && REVERSE_NS[attr.nodeValue]) )
+        !(attrNsURI == NS.XMLNS && REVERSE_NS[attr.value]) )
       {
         // TODO(codedread): Programmatically add the se: attributes to the NS-aware whitelist.
         // Bypassing the whitelist to allow se: prefixes.
         // Is there a more appropriate way to do this?
         if (attrName.indexOf('se:') === 0) {
-          seAttrs.push([attrName, attr.nodeValue]);
+          seAttrs.push([attrName, attr.value]);
         }
         node.removeAttributeNS(attrNsURI, attrLocalName);
       }
@@ -173,7 +174,7 @@ svgedit.sanitize.sanitizeSvg = function(node) {
         case 'transform':
         case 'gradientTransform':
         case 'patternTransform':
-          var val = attr.nodeValue.replace(/(\d)-/g, '$1 -');
+          var val = attr.value.replace(/(\d)-/g, '$1 -');
           node.setAttribute(attrName, val);
           break;
         }
@@ -181,7 +182,7 @@ svgedit.sanitize.sanitizeSvg = function(node) {
 
       // For the style attribute, rewrite it in terms of XML presentational attributes
       if (attrName == 'style') {
-        var props = attr.nodeValue.split(';'),
+        var props = attr.value.split(';'),
           p = props.length;
         while (p--) {
           var nv = props[p].split(':');
