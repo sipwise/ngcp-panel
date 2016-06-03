@@ -119,6 +119,11 @@ sub auto :Private {
             } elsif ($ngcp_api_realm eq "subscriber") {
                 $c->log->debug("++++++ Root::auto API subscriber request with http auth");
                 my $realm = "api_subscriber_http";
+
+                $c->response->header('Access-Control-Allow-Origin' => '*');
+                $c->response->header('Access-Control-Allow-Methods' => 'GET,POST,OPTIONS'); # todo: make generic (from api resource)
+                $c->response->header('Access-Control-Allow-Headers' => 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type');
+
                 my ($username,$password) = $c->req->headers->authorization_basic;
                 my ($u,$d) = split(/\@/,$username);
                 if ($d) {
