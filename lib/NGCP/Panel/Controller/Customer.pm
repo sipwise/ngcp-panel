@@ -1004,8 +1004,7 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
                 c => $c,
                 desc => $c->loc('Account balance successfully changed!'),
             );
-        }
-        catch($e) {
+        } catch($e) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1081,8 +1080,7 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                 c => $c,
                 desc => $c->loc('Top-up using cash performed successfully!'),
             );
-        }
-        catch($e) {
+        } catch($e) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1103,8 +1101,7 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                     request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
                 );
             });
-        }
-        catch($e) {
+        } catch($e) {
             $c->log->error("failed to create topup log record: $e");
         }
 
@@ -1177,8 +1174,7 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                 c => $c,
                 desc => $c->loc('Top-up using voucher performed successfully!'),
             );
-        }
-        catch($e) {
+        } catch($e) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1199,8 +1195,7 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                     request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
                 );
             });
-        }
-        catch($e) {
+        } catch($e) {
             $c->log->error("failed to create topup log record: $e");
         }
 
