@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dabed58f_09d149cd",
+        "filename": "lib/NGCP/Panel/Role/API/Customers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-06-06T07:34:11Z",
+      "side": 1,
+      "message": "good for now but imho this particular validate_form block should be reworked so such exceptions list is auto generated as the code block is prone to errors in the future when another \"id\" is added to the schema and definitely missing in this list of exceptions.",
+      "range": {
+        "startLine": 163,
+        "startChar": 8,
+        "endLine": 163,
+        "endChar": 19
+      },
+      "revId": "8a312f66cb4e2a7554287d4f20dba2199374e4f2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
