@@ -1,3 +1,18 @@
+ngcp-panel (1.13.1.1+0~mr4.4.1.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [be6eb08] MT#19821 subsciber profile edit drops random voip_usr_prefs
+
+  [ Gerhard Jungwirth ]
+  * [7a1ae27] MT#19959 add documentation link for reseller login
+
+  [ Kirill Solomko ]
+  * [fd3bf49] MT#20325 - TryCatch syntax fix
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 06 Jun 2016 23:04:45 +0200
+
 ngcp-panel (1.13.1.0+0~mr4.4.1.0) unstable; urgency=medium
 
   [ Jenkins Git User ]
