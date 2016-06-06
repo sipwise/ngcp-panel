@@ -22,6 +22,30 @@
       "revId": "8a312f66cb4e2a7554287d4f20dba2199374e4f2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dabed58f_e9d715be",
+        "filename": "lib/NGCP/Panel/Role/API/Customers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-06-06T07:35:50Z",
+      "side": 1,
+      "message": "P.S. or implemented as a test scenario so it can be caught easily if the schema changes and the issue appears again.",
+      "parentUuid": "dabed58f_09d149cd",
+      "range": {
+        "startLine": 163,
+        "startChar": 8,
+        "endLine": 163,
+        "endChar": 19
+      },
+      "revId": "8a312f66cb4e2a7554287d4f20dba2199374e4f2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
