@@ -1,3 +1,12 @@
+ngcp-panel (1.11.1.17+0~mr4.2.1.17) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [c673283] MT#20325 - TryCatch syntax fix
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 06 Jun 2016 13:33:10 +0200
+
 ngcp-panel (1.11.1.16+0~mr4.2.1.16) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
