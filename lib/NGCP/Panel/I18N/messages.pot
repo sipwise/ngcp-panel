@@ -2405,7 +2405,15 @@ msgid "Disable NAT SIP pings"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable PRACK Method"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Disable RTP-Proxy in the selected case"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disables PRACK method (RFC3262) by filtering the 100rel tag from SIP Supported header."
 msgstr ""
 
 #: share/templates/invoice/template_editor_form.tt
