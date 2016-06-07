@@ -32,6 +32,8 @@ sub list :Chained('/') :PathPart('lnp') :CaptureArgs(0) {
         { name => "prefix", "search" => 1, "title" => $c->loc("Prefix") },
         { name => "authoritative", "search" => 0, "title" => $c->loc("Authoritative") },
         { name => "skip_rewrite", "search" => 0, "title" => $c->loc("Skip Rewrite") },
+        { name => "numbers_count", "search" => 0, "title" => $c->loc("#Numbers"),
+          literal_sql=>"select count(n.id) from `billing`.`lnp_numbers` n where n.`lnp_provider_id` = `me`.`id`" },
     ]);
 
     my $number_rs = $c->model('DB')->resultset('lnp_numbers');
@@ -196,7 +198,10 @@ sub carrier_delete :Chained('carrier_base') :PathPart('delete') :Args(0) {
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
-            $carrier->lnp_numbers->delete;
+            my $number_count = $carrier->lnp_numbers->count;
+            if ($number_count > 0) {
+                die("$number_count lnp numbers still linked to LNP carrier.");
+            }
             $carrier->delete;
         });
         NGCP::Panel::Utils::Message::info(
@@ -210,7 +215,7 @@ sub carrier_delete :Chained('carrier_base') :PathPart('delete') :Args(0) {
             c => $c,
             error => $e,
             data  => $c->stash->{carrier},
-            desc  => $c->loc('Failed to terminate LNP carrier'),
+            desc  => $c->loc('Failed to delete LNP carrier'),
         );
         $c->flash(carrier_messages => delete $c->flash->{messages});
     };
@@ -495,4 +500,3 @@ sub numbers_download :Chained('list') :PathPart('download') :Args(0) {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
