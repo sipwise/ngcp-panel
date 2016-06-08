@@ -93,7 +93,7 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
             'reseller.create' => $c->uri_for('/reseller/create'),
         },
         back_uri => $c->req->uri,
-    );    
+    );
     if($posted && $form->validated) {
         try {
             $form->values->{reseller_id} = ($c->user->is_superuser ? $form->values->{reseller}{id} : $c->user->reseller_id);
@@ -106,16 +106,16 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
             my @mappings_to_create = ();
             push(@mappings_to_create,@{delete $form->values->{initial_profiles}});
             push(@mappings_to_create,@{delete $form->values->{underrun_profiles}});
-            push(@mappings_to_create,@{delete $form->values->{topup_profiles}});            
+            push(@mappings_to_create,@{delete $form->values->{topup_profiles}});
             $c->model('DB')->schema->txn_do( sub {
                 my $profile_package = $c->model('DB')->resultset('profile_packages')->create($form->values);
                 foreach my $mapping (@mappings_to_create) {
-                    $profile_package->profiles->create($mapping); 
+                    $profile_package->profiles->create($mapping);
                 }
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{package} = { id => $profile_package->id };
             });
-            
+
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $c->loc('Profile package successfully created'),
@@ -129,7 +129,7 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/package'));
     }
-    
+
     $c->stash(
         close_target => $c->uri_for,
         create_flag => 1,
@@ -151,7 +151,7 @@ sub base :Chained('/package/package_list') :PathPart('') :CaptureArgs(1) {
         $c->detach;
         return;
     }
-    
+
     my $res = $c->stash->{package_rs}->find($package_id);
     unless(defined($res)) {
         NGCP::Panel::Utils::Message::error(
@@ -162,7 +162,7 @@ sub base :Chained('/package/package_list') :PathPart('') :CaptureArgs(1) {
         $c->detach;
         return;
     }
-    
+
     $c->stash(package        => {$res->get_inflated_columns},
               initial_profiles => [ map { { $_->get_inflated_columns }; } $res->initial_profiles->all ],
               underrun_profiles => [ map { { $_->get_inflated_columns }; } $res->underrun_profiles->all ],
@@ -182,7 +182,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $params->{reseller}{id} = delete $params->{reseller_id};
     foreach(qw/balance_interval timely_duration/){
         $params->{$_} = { unit => delete $params->{$_.'_unit'}, value => delete $params->{$_.'_value'} };
-    }    
+    }
     $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
@@ -197,7 +197,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             'reseller.create' => $c->uri_for('/reseller/create'),
         },
         back_uri => $c->req->uri,
-    );        
+    );
     if($posted && $form->validated) {
         try {
             foreach(qw/balance_interval timely_duration/){
@@ -208,19 +208,19 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             my @mappings_to_create = ();
             push(@mappings_to_create,@{delete $form->values->{initial_profiles}});
             push(@mappings_to_create,@{delete $form->values->{underrun_profiles}});
-            push(@mappings_to_create,@{delete $form->values->{topup_profiles}});            
+            push(@mappings_to_create,@{delete $form->values->{topup_profiles}});
             $c->model('DB')->schema->txn_do( sub {
 
                 my $profile_package = $c->stash->{'package_result'}->update($form->values);
-                $profile_package->profiles->delete;        
+                $profile_package->profiles->delete;
                 foreach my $mapping (@mappings_to_create) {
-                    $profile_package->profiles->create($mapping); 
+                    $profile_package->profiles->create($mapping);
                 }
             });
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Profile package successfully updated'),
-            );            
+            );
         } catch ($e) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
@@ -228,11 +228,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 desc  => $c->loc('Failed to update profile package'),
             );
         }
-    
+
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/package'));
-    
+
     }
-    
+
     $c->stash(
         close_target => $c->uri_for,
         edit_flag => 1,
@@ -247,12 +247,12 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     try {
         #todo: putting the package fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
         unless($package->get_column('contract_cnt') == 0) {
-            die('Cannnot delete profile package that is still assigned to contracts');
+            die(['Cannnot delete profile package that is still assigned to contracts', "showdetails"]);
         }
         unless($package->get_column('voucher_cnt') == 0) {
-            die('Cannnot delete profile package that is assigned to vouchers');
+            die(['Cannnot delete profile package that is assigned to vouchers', "showdetails"]);
         }
-        
+
         $package->delete;
         NGCP::Panel::Utils::Message::info(
             c => $c,
@@ -294,7 +294,7 @@ sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
 
     my $dispatch_to = '_package_resultset_' . $c->user->roles;
     my $package_rs = $self->$dispatch_to($c);
-    
+
     unless($package_id && is_int($package_id)) {
         $package_id //= '';
         NGCP::Panel::Utils::Message::error(
@@ -306,7 +306,7 @@ sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
         $c->detach;
         return;
     }
-    
+
     my $res = $package_rs->find($package_id);
     unless(defined($res)) {
         NGCP::Panel::Utils::Message::error(
@@ -328,8 +328,8 @@ sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
     ]);
     $c->stash->{voucher_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         NGCP::Panel::Utils::Voucher::get_datatable_cols($c,1)
-    ]);    
-    
+    ]);
+
     $c->stash(package_result => $res);
 }
 
