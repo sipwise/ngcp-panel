@@ -92,19 +92,14 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist");
         return;
     }
-
-=pod
-    # for now numbers can be inserted duplicated, so don't check
-    my $dup_item = $c->model('DB')->resultset('lnp_numbers')->find({
-        lnp_provider_id => $resource->{lnp_provider_id},
-        number => $resource->{number},
-    });
-    if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("lnp number with number '$$resource{number}' already exists for carrier_id '$$resource{lnp_provider_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP number with this number already exists for this carrier");
+    if ($c->model('DB')->resultset('lnp_numbers')->search({
+            lnp_provider_id => $carrier->id,
+            number => $resource->{number}
+        },undef)->count > 0) {
+        $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
         return;
     }
-=cut
 
     $resource->{start} ||= undef;
     if($resource->{start} && $resource->{start} =~ /^\d{4}-\d{2}-\d{2}$/) {
