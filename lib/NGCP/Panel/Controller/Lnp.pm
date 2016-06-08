@@ -32,6 +32,8 @@ sub list :Chained('/') :PathPart('lnp') :CaptureArgs(0) {
         { name => "prefix", "search" => 1, "title" => $c->loc("Prefix") },
         { name => "authoritative", "search" => 0, "title" => $c->loc("Authoritative") },
         { name => "skip_rewrite", "search" => 0, "title" => $c->loc("Skip Rewrite") },
+        { name => "numbers_count", "search" => 0, "title" => $c->loc("#Numbers"),
+          literal_sql=>"select count(n.id) from `billing`.`lnp_numbers` n where n.`lnp_provider_id` = `me`.`id`" },
     ]);
 
     my $number_rs = $c->model('DB')->resultset('lnp_numbers');
@@ -77,7 +79,7 @@ sub carrier_base :Chained('list') :PathPart('carrier') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $carrier_id },
-            desc  => $c->loc('Invalid lnp carrier id detected!'),
+            desc  => $c->loc('Invalid LNP carrier id detected!'),
         );
         $c->flash(carrier_messages => delete $c->flash->{messages});
         $c->response->redirect($c->uri_for());
@@ -193,10 +195,20 @@ sub carrier_delete :Chained('carrier_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
     my $carrier = $c->stash->{carrier_result};
 
+    my $number_count = $carrier->lnp_numbers->count;
+    if ($number_count > 0) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            desc  => $c->loc("$number_count lnp numbers still linked to LNP carrier."),
+        );
+        $c->flash(carrier_messages => delete $c->flash->{messages});
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
+        return;
+    }
+
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
-            $carrier->lnp_numbers->delete;
             $carrier->delete;
         });
         NGCP::Panel::Utils::Message::info(
@@ -210,7 +222,7 @@ sub carrier_delete :Chained('carrier_base') :PathPart('delete') :Args(0) {
             c => $c,
             error => $e,
             data  => $c->stash->{carrier},
-            desc  => $c->loc('Failed to terminate LNP carrier'),
+            desc  => $c->loc('Failed to delete LNP carrier'),
         );
         $c->flash(carrier_messages => delete $c->flash->{messages});
     };
@@ -224,7 +236,7 @@ sub number_base :Chained('list') :PathPart('number') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $number_id },
-            desc  => $c->loc('Invalid lnp number id detected!'),
+            desc  => $c->loc('Invalid LNP number id detected!'),
         );
         $c->flash(number_messages => delete $c->flash->{messages});
         $c->response->redirect($c->uri_for());
@@ -271,11 +283,35 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+        $form->values->{lnp_provider_id} = $form->values->{lnp_provider}{id};
+        delete $form->values->{lnp_provider};
+        my $carrier = $c->model('DB')->resultset('lnp_providers')->find($form->values->{lnp_provider_id});
+        unless($carrier) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                data => { id => $form->values->{lnp_provider_id} },
+                    desc  => $c->loc('Invalid LNP provider id detected!'),
+                );
+            $c->flash(number_messages => delete $c->flash->{messages});
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
+            return;
+        }
+        if ($c->model('DB')->resultset('lnp_numbers')->search({
+                lnp_provider_id => $carrier->id,
+                number => $form->values->{number}
+            },undef)->count > 0) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                data => { number => $form->values->{number} },
+                desc  => $c->loc("LNP number '" . $form->values->{number} . "' already defined for LNP provider '" . $carrier->name . "'!"),
+            );
+            $c->flash(number_messages => delete $c->flash->{messages});
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
+            return;
+        }
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->values->{lnp_provider_id} = $form->values->{lnp_provider}{id};
-                delete $form->values->{lnp_provider};
                 if(length $form->values->{start}) {
                     $form->values->{start} .= 'T00:00:00';
                 } else {
@@ -287,15 +323,6 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
                     $form->values->{end} = undef;
                 }
                 $form->values->{routing_number} = undef unless(length $form->values->{routing_number});
-                my $carrier = $c->model('DB')->resultset('lnp_providers')->find($form->values->{lnp_provider_id});
-                unless($carrier) {
-                    NGCP::Panel::Utils::Message::error(
-                        c => $c,
-                        data => { id => $form->values->{lnp_provider_id} },
-                        desc  => $c->loc('Invalid lnp provider id detected!'),
-                    );
-                    $c->flash(number_messages => delete $c->flash->{messages});
-                }
                 $c->stash->{number_result}->update($form->values);
             });
 
@@ -339,18 +366,33 @@ sub number_create :Chained('list') :PathPart('number_create') :Args(0) {
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+        $form->values->{lnp_provider_id} = $form->values->{lnp_provider}{id};
+        delete $form->values->{lnp_provider};
+        my $carrier = $c->model('DB')->resultset('lnp_providers')->find($form->values->{lnp_provider_id});
+        unless($carrier) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                data => { id => $form->values->{lnp_provider_id} },
+                desc  => $c->loc('Invalid LNP provider id detected!'),
+            );
+            $c->flash(number_messages => delete $c->flash->{messages});
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
+            return;
+        }
+        if ($c->model('DB')->resultset('lnp_numbers')->search({
+                lnp_provider_id => $carrier->id,
+                number => $form->values->{number}
+            },undef)->count > 0) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                data => { number => $form->values->{number} },
+                desc  => $c->loc("LNP number '" . $form->values->{number} . "' already defined for LNP provider '" . $carrier->name . "'!"),
+            );
+            $c->flash(number_messages => delete $c->flash->{messages});
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
+            return;
+        }
         try {
-            $form->values->{lnp_provider_id} = $form->values->{lnp_provider}{id};
-            delete $form->values->{lnp_provider};
-            my $carrier = $c->model('DB')->resultset('lnp_providers')->find($form->values->{lnp_provider_id});
-            unless($carrier) {
-                NGCP::Panel::Utils::Message::error(
-                    c => $c,
-                    data => { id => $form->values->{lnp_provider_id} },
-                    desc  => $c->loc('Invalid lnp provider id detected!'),
-                );
-                $c->flash(number_messages => delete $c->flash->{messages});
-            }
             if(length $form->values->{start}) {
                 $form->values->{start} .= 'T00:00:00';
             } else {
@@ -495,4 +537,3 @@ sub numbers_download :Chained('list') :PathPart('download') :Args(0) {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

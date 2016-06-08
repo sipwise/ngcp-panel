@@ -312,10 +312,10 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     try {
         #todo: putting the profile fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
         unless($profile->get_column('contract_cnt') == 0) {
-            die('Cannnot terminate billing profile that is still used in profile mappings');
+            die(['Cannnot terminate billing profile that is still used in profile mappings', "showdetails"]);
         }
         unless($profile->get_column('package_cnt') == 0) {
-            die('Cannnot terminate billing profile that is still used in profile packages');
+            die(['Cannnot terminate billing profile that is still used in profile packages', "showdetails"]);
         }
         $profile->update({
             status => 'terminated',
