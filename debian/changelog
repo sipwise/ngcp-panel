@@ -1,3 +1,12 @@
+ngcp-panel (1.8.4.14+0~mr3.8.4.14) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [11b9a46] MT#20235 Allow to add fw filename to the latest firmware url
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 08 Jun 2016 16:03:45 +0200
+
 ngcp-panel (1.8.4.13+0~mr3.8.4.13) unstable; urgency=medium
 
   [ Andreas Granig ]
