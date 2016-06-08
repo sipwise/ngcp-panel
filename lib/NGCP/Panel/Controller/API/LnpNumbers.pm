@@ -128,7 +128,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -164,7 +164,7 @@ sub POST :Allow {
         my $schema = $c->model('DB');
         my $resource;
         my $data = $self->get_valid_raw_post_data(
-            c => $c, 
+            c => $c,
             media_type => [qw#application/json text/csv#],
         );
         last unless $data;
@@ -233,27 +233,20 @@ sub POST :Allow {
 
             my $carrier = $c->model('DB')->resultset('lnp_providers')->find($resource->{lnp_provider_id});
             unless($carrier) {
-                $c->log->error("invalid carrier_id '$$resource{lnp_provider_id}'"); # TODO: user, message, trace, ...
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist");
+                $c->log->error("invalid carrier_id '$$resource{lnp_provider_id}'");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp carrier_id does not exist");
                 last;
             }
-
+            if ($c->model('DB')->resultset('lnp_numbers')->search({
+                    lnp_provider_id => $carrier->id,
+                    number => $resource->{number}
+                },undef)->count > 0) {
+                $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
+                last;
+            }
 
             my $item;
-
-=pod
-            # for now numbers can be inserted duplicated, so don't check
-            $item = $c->model('DB')->resultset('lnp_numbers')->find({
-                lnp_provider_id => $resource->{lnp_provider_id},
-                number => $resource->{number},
-            });
-            if($item) {
-                $c->log->error("lnp number with number '$$resource{number}' already exists for carrier_id '$$resource{lnp_provider_id}'"); # TODO: user, message, trace, ...
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP number with this number already exists for this LNP carrier");
-                last;
-            }
-=cut
-
             try {
                 $item = $c->model('DB')->resultset('lnp_numbers')->create($resource);
             } catch($e) {
