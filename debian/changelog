@@ -1,3 +1,13 @@
+ngcp-panel (1.8.5.12+0~mr3.8.5.12) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [3fcc1e2] MT#20315 Add email templates and invoice template ids...
+  * [7158669] MT#20235 Allow to add fw filename to the latest firmware url
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 08 Jun 2016 16:04:40 +0200
+
 ngcp-panel (1.8.5.11+0~mr3.8.5.11) unstable; urgency=medium
 
   [ Rene Krenn ]
