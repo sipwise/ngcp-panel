@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "dabed58f_95d54745",
+        "filename": "lib/NGCP/Panel/Controller/Lnp.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-06-09T08:01:42Z",
+      "side": 1,
+      "message": "yes, you are right; imho the query plan will execute this subquery for visible page entries (e.g. 5 times at least).\n\nhowever, that pattern is used in a few other situations too, where sorting was disabled at least.\n\nmaybe i should better take it out.",
+      "parentUuid": "dabed58f_357c9b72",
+      "revId": "861fbd6b147c767349e2deb0e0ab3bf7d6064f49",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dabed58f_b58f2b75",
         "filename": "t/api-rest/api-lnp.t",
         "patchSetId": 5
