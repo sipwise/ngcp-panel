@@ -71,12 +71,20 @@ msgstr ""
 msgid "#"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "#Numbers"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "#Timely Top-ups"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "#Top-ups"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "$number_count lnp numbers still linked to LNP carrier."
 msgstr ""
 
 #. (mtf_pref.secret_key_renew)
@@ -3036,6 +3044,10 @@ msgstr ""
 msgid "Failed to delete Call Forward."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Failed to delete LNP carrier"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 msgid "Failed to delete Malicious call"
 msgstr ""
@@ -3261,10 +3273,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to store invoice template"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "Failed to terminate LNP carrier"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -4276,6 +4284,18 @@ msgstr ""
 msgid "Invalid Call Forward type."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Invalid LNP carrier id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Invalid LNP number id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Invalid LNP provider id detected!"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/NCOS.pm
 msgid "Invalid NCOS level id detected"
 msgstr ""
@@ -4372,18 +4392,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Invalid invoice template id detected"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "Invalid lnp carrier id detected!"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "Invalid lnp number id detected!"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Lnp.pm
-msgid "Invalid lnp provider id detected!"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
@@ -4678,6 +4686,11 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP npdi param"
+msgstr ""
+
+#. ($form->values->{number} . "' already defined for LNP provider '" . $carrier->name . "'!")
+#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Lnp.pm
+msgid "LNP number '"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm

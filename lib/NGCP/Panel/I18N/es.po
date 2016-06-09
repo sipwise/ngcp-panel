@@ -168,12 +168,20 @@ msgstr ""
 msgid "#"
 msgstr "#"
 
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "#Numbers"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "#Timely Top-ups"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "#Top-ups"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "$number_count lnp numbers still linked to LNP carrier."
 msgstr ""
 
 #. (mtf_pref.secret_key_renew)
@@ -3732,6 +3740,10 @@ msgstr ""
 msgid "Failed to delete Call Forward."
 msgstr "Fallo al borrar desvío de llamada"
 
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Failed to delete LNP carrier"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 msgid "Failed to delete Malicious call"
 msgstr ""
@@ -3962,10 +3974,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to store invoice template"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "Failed to terminate LNP carrier"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -5061,6 +5069,18 @@ msgstr ""
 msgid "Invalid Call Forward type."
 msgstr "Tipo de desvío inválido"
 
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Invalid LNP carrier id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Invalid LNP number id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Lnp.pm
+msgid "Invalid LNP provider id detected!"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/NCOS.pm
 msgid "Invalid NCOS level id detected"
 msgstr "id de nivel de NCOS inválido detectado"
@@ -5162,18 +5182,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Invalid invoice template id detected"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "Invalid lnp carrier id detected!"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "Invalid lnp number id detected!"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Lnp.pm
-msgid "Invalid lnp provider id detected!"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
@@ -5481,6 +5489,11 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP npdi param"
+msgstr ""
+
+#. ($form->values->{number} . "' already defined for LNP provider '" . $carrier->name . "'!")
+#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Lnp.pm
+msgid "LNP number '"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -6688,7 +6701,8 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Patrón"
 
@@ -11642,8 +11656,7 @@ msgstr ""
 msgid "noanswer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-#: share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "none"
 msgstr "ninguno"
 
