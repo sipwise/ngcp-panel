@@ -46,6 +46,30 @@
       "revId": "4ff05b79cd4ecdf3359a5fa3d5733cc7e877ab4a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dabed58f_d5541f23",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-06-09T12:23:53Z",
+      "side": 1,
+      "message": "IMO, conjunctSearchColumns (\"search_(lower|upper)_column\") is also broken?",
+      "parentUuid": "fab9d9a7_9430e957",
+      "range": {
+        "startLine": 218,
+        "startChar": 11,
+        "endLine": 218,
+        "endChar": 25
+      },
+      "revId": "4ff05b79cd4ecdf3359a5fa3d5733cc7e877ab4a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
