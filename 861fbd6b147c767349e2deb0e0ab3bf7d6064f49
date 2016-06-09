@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dabed58f_357c9b72",
+        "filename": "lib/NGCP/Panel/Controller/Lnp.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-06-09T07:53:11Z",
+      "side": 1,
+      "message": "performance impact (correlated subquery)?\n\nMaybe not, cause it\u0027s only executed for a relatively small slice? what about our count though?",
+      "revId": "861fbd6b147c767349e2deb0e0ab3bf7d6064f49",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dabed58f_b58f2b75",
+        "filename": "t/api-rest/api-lnp.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-06-09T07:53:11Z",
+      "side": 1,
+      "message": "could leave away if not needed :)",
+      "revId": "861fbd6b147c767349e2deb0e0ab3bf7d6064f49",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
