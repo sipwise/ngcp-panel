@@ -1379,9 +1379,9 @@ sub get_balanceinterval_datatable_cols {
     #    pattern => '%Y-%m-%d %H:%M',
     #);
     return ( #{ name => "id", search => 1, title => $c->loc("#") },
-        { name => "start", search => 1, search_lower_column => 'interval', title => $c->loc("From"), },
+        { name => "start", search => 0, search_lower_column => 'interval', title => $c->loc("From"), },
           #convert_code => sub { my $s = shift; return $s if ($parser_date->parse_datetime($s) or $parser_datetime->parse_datetime($s)); } },
-        { name => "end", search => 1, search_upper_column => 'interval', title => $c->loc('To'), },
+        { name => "end", search => 0, search_upper_column => 'interval', title => $c->loc('To'), },
           #convert_code => sub { my $s = shift; return $s if ($parser_date->parse_datetime($s) or $parser_datetime->parse_datetime($s)); } },
         { name => "balance", search => 0, title => $c->loc('Cash'), literal_sql => "FORMAT(cash_balance / 100,2)" },
         { name => "debit", search => 0, title => $c->loc('Debit'), literal_sql => "FORMAT(cash_balance_interval / 100,2)" },

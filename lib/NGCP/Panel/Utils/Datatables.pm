@@ -59,6 +59,7 @@ sub process {
     
     # generic searching
     my @searchColumns = ();
+    my %conjunctSearchColumns = ();
     #processing single search input - group1 from groups to be joined by 'AND'
     my $searchString = $c->request->params->{sSearch} // "";
     if($searchString && ! $use_rs_cb) {
@@ -89,7 +90,6 @@ sub process {
                     push @{$searchColumns[0]}, $stmt;
                 }
             } elsif( $col->{search_lower_column} || $col->{search_upper_column} ) {
-                my %conjunctSearchColumns = ();
                 # searching lower and upper limit columns
                 foreach my $search_spec (qw/search_lower_column search_upper_column/){
                     if ($col->{$search_spec}) {
@@ -102,53 +102,16 @@ sub process {
                         }
                     }
                 }
-                foreach my $conjunct_column (keys %conjunctSearchColumns) {
-                    #...things in arrays are OR'ed, and things in hashes are AND'ed
-
-                    #input: 
-#{ name => "billing_network_blocks._ipv4_net_from", search_lower_column => 'ipv4', convert_code => sub {
-#    return _prepare_query_param_value(shift,4); # <================= this form of call, the same as all below, will return us bytes or undef
-#    } },
-#{ name => "billing_network_blocks._ipv4_net_to", search_upper_column => 'ipv4', convert_code => sub {
-#    return _prepare_query_param_value(shift,4);
-#    } },
-#{ name => "billing_network_blocks._ipv6_net_from", search_lower_column => 'ipv6', convert_code => sub {
-#    return _prepare_query_param_value(shift,6);
-#    } },
-#{ name => "billing_network_blocks._ipv6_net_to", search_upper_column => 'ipv6', convert_code => sub {
-#    return _prepare_query_param_value(shift,6);
-#    } },
-                    #output: 
-                    #1. conjunctSearchColumns = {
-                        #'ipv4' => [
-                            #{ "billing_network_blocks__ipv4_net_to"   => {"<=" => $bytes}}, 
-                            #{ "billing_network_blocks__ipv4_net_from" => {"=>" => $bytes}}
-                        #],
-                        #'ipv6' => [
-                            #{ "billing_network_blocks__ipv6_net_to"   => {"<=" => $bytes}}, 
-                            #{ "billing_network_blocks__ipv6_net_from" => {"=>" => $bytes}}
-                        #]
-                    #}
-                    #2. addition into @searchColumns = (
-                        #{
-                            #"billing_network_blocks__ipv4_net_to"   => {"<=" => $bytes},
-                            #"billing_network_blocks__ipv4_net_from" => {"=>" => $bytes},
-                        #},
-                        #{
-                            #"billing_network_blocks__ipv6_net_to"   => {"<=" => $bytes},
-                            #"billing_network_blocks__ipv6_net_from" => {"=>" => $bytes},
-                        #{
-                    #)
-
-                    push @{$searchColumns[0]}, { map { %{$_} } @{$conjunctSearchColumns{$conjunct_column}} };
-                }
             }
+        }
+        foreach my $conjunct_column (keys %conjunctSearchColumns) {
+            #...things in arrays are OR'ed, and things in hashes are AND'ed
+            push @{$searchColumns[0]}, { map { %{$_} } @{$conjunctSearchColumns{$conjunct_column}} };
         }
     }
     #/processing single search input
     #processing dates search input - group2 from groups to be joined by 'AND'
     {
-        my @dateSearchColumns = ();
         # date-range searching
         my $from_date_in = $c->request->params->{sSearch_0} // "";
         my $to_date_in = $c->request->params->{sSearch_1} // "";
@@ -176,7 +139,9 @@ sub process {
     }
     #/processing dates search input
     if(@searchColumns){
-        $rs = $rs->search([@searchColumns]);
+        $rs = $rs->search({
+                "-and" => [@searchColumns],
+            });
     }
     ### /Search processing section
 
