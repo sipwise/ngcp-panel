@@ -176,7 +176,9 @@ sub process {
     }
     #/processing dates search input
     if(@searchColumns){
-        $rs = $rs->search([@searchColumns]);
+        $rs = $rs->search({
+                "-and" => [@searchColumns],
+            });
     }
     ### /Search processing section
 
