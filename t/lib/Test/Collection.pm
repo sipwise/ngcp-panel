@@ -320,7 +320,7 @@ sub get_item_hal{
         $uri //= $self->get_uri_collection($name)."?page=1&rows=1";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
         ($reshal,$location) = $self->get_hal_from_collection($list_collection,$name);
-        if($reshal->{content}->{total_count}){
+        if($reshal->{total_count} || ('HASH' eq $reshal->{content} && $reshal->{content}->{total_count})){
             $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location };
             $self->DATA_LOADED->{$name} ||= [];
             push @{$self->DATA_LOADED->{$name}}, $resitem;
@@ -1008,7 +1008,9 @@ sub http_code_msg{
     my($self,$code,$message,$res,$content) = @_;
     my $message_res;
     if ( ($res->code < 300) || ( $code >= 300 ) ) {
-        $message_res = $message;
+        my $res_message = $res->message // '';
+        my $content_message = 'HASH' eq ref $content ? $content->{message} // '' : '' ;
+        $message_res = $message.' (' . $res_message . ': ' . $content_message . ')';
     } else {
         $content //= $self->get_response_content($res);
         if (defined $content && $content && defined $content->{message}) {
