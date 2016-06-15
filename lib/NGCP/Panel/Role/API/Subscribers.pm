@@ -604,14 +604,21 @@ sub update_item {
     }
     delete $resource->{email};
 
-    NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-        c => $c,
-        schema => $schema,
-        primary_number => $resource->{e164},
-        alias_numbers => $alias_numbers,
-        reseller_id => $customer->contact->reseller_id,
-        subscriber_id => $subscriber->id,
-    );
+    try {
+        NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+            c => $c,
+            schema => $schema,
+            primary_number => $resource->{e164},
+            alias_numbers => $alias_numbers,
+            reseller_id => $customer->contact->reseller_id,
+            subscriber_id => $subscriber->id,
+        );
+    } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
+        $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
+        $c->log->error("failed to update subscriber, number $1 already exists"); # TODO: user, message, trace, ...
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '$1' already exists.");
+        last;
+    }
 
     my $billing_res = {
         external_id => $resource->{external_id},
