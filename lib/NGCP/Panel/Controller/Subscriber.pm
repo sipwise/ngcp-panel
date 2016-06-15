@@ -2622,6 +2622,14 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 c    => $c,
                 desc => $c->loc('Successfully updated subscriber'),
             );
+        } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
+            $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
+            $e =  "Failed to update subscriber. Number $1 already exists";
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc($e),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
