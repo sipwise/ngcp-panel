@@ -45,7 +45,7 @@ $fake_data->set_data_from_script({
 });
 
 my $fake_data_processed = $fake_data->process('subscribers');
-my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers?customer_id='.$fake_data_processed->{customer_id}.'&'.'is_pbx_pilot=1');
+my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$fake_data_processed->{customer_id}.'&'.'is_pbx_pilot=1');
 if($pilot->{content}->{total_count} > 0){
     $fake_data_processed->{is_pbx_pilot} = 0;
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
@@ -58,6 +58,28 @@ $test_machine->form_data_item();
 
 my $remote_config = $test_machine->init_catalyst_config;
 
+{
+#20369
+    diag("20369: informative error for the PUT method on subscriber with duplicated number;\n\n");
+    my $members = $test_machine->check_create_correct( 2, sub{
+        my $num = $_[1]->{i};
+        $_[0]->{username} .= time().'_20369_'.$num ;
+        $_[0]->{webusername} .= time().'_'.$num;
+        $_[0]->{pbx_extension} .= '20369'.$num;
+        $_[0]->{primary_number}->{ac} .= $num;
+        $_[0]->{is_pbx_group} = 0;
+        $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
+        $_[0]->{alias_numbers} = [{ ac => '111'.$num, cc=> 11, sn => 11 },{ ac => '112'.$num, cc=> 11, sn => 11 }];
+    } );
+    #$members->[1]->{content}->{primary_number} = $members->[0]->{content}->{primary_number};
+    #$members->[1]->{content}->{primary_number} = $members->[0]->{content}->{alias_numbers}->[0];
+    $members->[1]->{content}->{alias_numbers}->[0] = $members->[0]->{content}->{alias_numbers}->[0];
+    my ($res,$content,$request) = $test_machine->request_put(@{$members->[1]}{qw/content location/});
+    $test_machine->http_code_msg(422, "Check that PUT existing number will return nice error", $res, $content);
+    #Number '11-1111-11' already exists
+    ok($content->{message} =~ /Number ['\-\d]+ already exists/, "check error message in body");
+    $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
+}
 {
 # create new subscribers from DATA_ITEM. Item is not created in the fake_data->process.
     $test_machine->check_create_correct( 1, sub{ 
