@@ -1,3 +1,15 @@
+ngcp-panel (1.12.1.14+0~mr4.3.1.14) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [bc5180e] MT#16777 Also fix start/end lnp handling in API
+
+  [ Gerhard Jungwirth ]
+  * [25d3609] MT#19729 encode call_id in url
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 17 Jun 2016 01:09:35 +0200
+
 ngcp-panel (1.12.1.13+0~mr4.3.1.13) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
