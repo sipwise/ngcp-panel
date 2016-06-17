@@ -163,9 +163,9 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 my $preferences = {};
-                my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, contract_id => $form->params->{contract}{id} );
+                my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, contract_id => $form->values->{contract}{id} );
                 my $contract = $contract_rs->find({
-                    'me.id' => $form->params->{contract}{id},
+                    'me.id' => $form->values->{contract}{id},
                 });
 
 
@@ -174,8 +174,8 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                 if($contract->external_id) {
                     $preferences->{ext_contract_id} = $contract->external_id;
                 }
-                if(defined $form->params->{external_id}) {
-                    $preferences->{ext_subscriber_id} = $form->params->{external_id};
+                if(defined $form->values->{external_id}) {
+                    $preferences->{ext_subscriber_id} = $form->values->{external_id};
                 }
                 if($billing_mapping->billing_profile->prepaid) {
                     $preferences->{prepaid} = 1;
@@ -185,7 +185,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     c => $c,
                     schema => $schema,
                     contract => $contract,
-                    params => $form->params,
+                    params => $form->values,
                     admin_default => 0,
                     preferences => $preferences,
                 ); #nested txn_do is ok.

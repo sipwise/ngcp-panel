@@ -96,7 +96,6 @@ has_field 'username' => (
     type => 'Text',
     label => 'SIP Username',
     required => 1,
-    noupdate => 1,
     element_attr => { 
         rel => ['tooltip'], 
         title => ['The SIP username for the User-Agents'] 

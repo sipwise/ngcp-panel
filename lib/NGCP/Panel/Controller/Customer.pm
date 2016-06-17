@@ -716,10 +716,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     if($c->config->{features}->{cloudpbx} && $pbx) {
         $c->stash(customer_id => $c->stash->{contract}->id);
         # we need to create a pilot subscriber first
-        unless($c->stash->{pilot}) {
-            $pbxadmin = 1;
-            $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
-        } else {
+        if($c->stash->{pilot}) {
             if($c->user->roles eq "subscriberadmin") {
                 $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin->new(ctx => $c);
             } else {
@@ -737,6 +734,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 params => $params,
                 unselect => 1, # no groups assigned yet, keep selection list empty
             );
+        } else {
+            $pbxadmin = 1;
+            $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
         }
     } else {
         $form = NGCP::Panel::Form::Customer::Subscriber->new(ctx => $c);
@@ -777,34 +777,34 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 my $pbx_group_ids = [];
                 if($pbx && !$pbxadmin) {
                     my $pilot = $c->stash->{pilot};
-                    $form->params->{domain}{id} ||= $pilot->domain_id;
-                    if ($form->params->{group_select}) {
-                        $pbx_group_ids = decode_json($form->params->{group_select});
+                    $form->values->{domain}{id} ||= $pilot->domain_id;
+                    if ($form->values->{group_select}) {
+                        $pbx_group_ids = decode_json($form->values->{group_select});
                     }
                     my $base_number = $pilot->primary_number;
                     if($base_number) {
                         $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
-                        if(defined $form->params->{pbx_extension}) {
-                            $form->params->{e164}{cc} = $base_number->cc;
-                            $form->params->{e164}{ac} = $base_number->ac;
-                            $form->params->{e164}{sn} = $base_number->sn . $form->params->{pbx_extension};
+                        if(defined $form->values->{pbx_extension}) {
+                            $form->values->{e164}{cc} = $base_number->cc;
+                            $form->values->{e164}{ac} = $base_number->ac;
+                            $form->values->{e164}{sn} = $base_number->sn . $form->values->{pbx_extension};
                         }
                     }
                 }
                 if($pbx) {
-                    $form->params->{is_pbx_pilot} = 1 if $pbxadmin;
+                    $form->values->{is_pbx_pilot} = 1 if $pbxadmin;
                     $preferences->{cloud_pbx} = 1;
-                    $preferences->{cloud_pbx_ext} = $form->params->{pbx_extension};
-                    if($pbxadmin && $form->params->{e164}{cc} && $form->params->{e164}{sn}) {
-                        $preferences->{cloud_pbx_base_cli} = $form->params->{e164}{cc} .
-                                                             ($form->params->{e164}{ac} // '') .
-                                                             $form->params->{e164}{sn};
+                    $preferences->{cloud_pbx_ext} = $form->values->{pbx_extension};
+                    if($pbxadmin && $form->values->{e164}{cc} && $form->values->{e164}{sn}) {
+                        $preferences->{cloud_pbx_base_cli} = $form->values->{e164}{cc} .
+                                                             ($form->values->{e164}{ac} // '') .
+                                                             $form->values->{e164}{sn};
                     }
 
                     if($c->stash->{pilot}) {
                         my $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
                         if($profile_set) {
-                            $form->params->{profile_set}{id} = $profile_set->id;
+                            $form->values->{profile_set}{id} = $profile_set->id;
                         }
                     }
 
@@ -812,14 +812,14 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
 
                     # TODO: only if it's not a fax/conf extension:
                     $preferences->{shared_buddylist_visibility} = 1;
-                    $preferences->{display_name} = $form->params->{display_name}
-                        if($form->params->{display_name});
+                    $preferences->{display_name} = $form->values->{display_name}
+                        if($form->values->{display_name});
                 }
                 if($c->stash->{contract}->external_id) {
                     $preferences->{ext_contract_id} = $c->stash->{contract}->external_id;
                 }
-                if(defined $form->params->{external_id}) {
-                    $preferences->{ext_subscriber_id} = $form->params->{external_id};
+                if(defined $form->values->{external_id}) {
+                    $preferences->{ext_subscriber_id} = $form->values->{external_id};
                 }
                 if($c->stash->{billing_mapping}->billing_profile->prepaid) {
                     $preferences->{prepaid} = 1;
@@ -828,7 +828,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     c => $c,
                     schema => $schema,
                     contract => $c->stash->{contract},
-                    params => $form->params,
+                    params => $form->values,
                     admin_default => 0,
                     preferences => $preferences,
                 );
