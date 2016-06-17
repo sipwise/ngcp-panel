@@ -6,10 +6,6 @@ extends 'HTML::FormHandler';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
-use NGCP::Panel::Field::Domain;
-use NGCP::Panel::Field::CustomerContract;
-use NGCP::Panel::Field::PosInteger;
-use NGCP::Panel::Field::Identifier;
 use NGCP::Panel::Utils::Form;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
@@ -74,7 +70,6 @@ has_field 'username' => (
     type => '+NGCP::Panel::Field::Identifier',
     label => 'SIP Username',
     required => 1,
-    noupdate => 1,
     element_attr => { 
         rel => ['tooltip'], 
         title => ['The username for SIP and XMPP services.'] 
