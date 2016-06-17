@@ -173,6 +173,119 @@ sub _delete_rtc_user {
     return;
 }
 
+sub get_rtc_apps {
+    my %params = @_;
+    my ($rtc_user_id, $config, $include_id, $err_code) =
+        @params{qw/rtc_user_id config include_id err_code/};
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+        host => $config->{rtc}{schema}.'://'.
+        $config->{rtc}{host}.':'.$config->{rtc}{port}.
+        $config->{rtc}{path},
+    );
+    $comx->login(
+        $config->{rtc}{user},
+        $config->{rtc}{pass},
+        $config->{rtc}{host}.':'.$config->{rtc}{port});
+    if ($comx->login_status->{code} != 200) {
+        return unless &{$err_code}(
+            'Rtc Login failed. Check config settings.');
+    }
+
+    my $apps_resp = $comx->get_apps_by_user_id($rtc_user_id);
+    my $apps = $apps_resp->{data};
+    unless (defined $apps  && 'ARRAY' eq ref $apps && @{ $apps }) {
+        return unless &{$err_code}(
+            'Fetching apps failed. Code: ' . $apps_resp->{code});
+    }
+
+    my $res = [map {{
+            domain =>$_->{domain},
+            name => $_->{name},
+            secret => $_->{secret},
+            api_key => $_->{apiKey}, # todo: which spelling do we use?
+            $include_id ? (id => $_->{id}) : (),
+        }} @{ $apps }];
+
+    return $res;
+}
+
+sub modify_rtc_apps {
+    my %params = @_;
+    my ($old_resource, $resource, $config, $reseller_item, $err_code) =
+        @params{qw/old_resource resource config reseller_item err_code/};
+    #TODO: stub, to be done
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    if ((!defined $old_resource) || (!defined $resource)) { # can only modify (no create/delete) the whole resource
+        return unless &{$err_code}(
+            'Cannot Modify rtc app. Old or new resource missing.');
+    }
+
+    my $comx = NGCP::Panel::Utils::ComxAPIClient->new(
+        host => $config->{rtc}{schema}.'://'.
+        $config->{rtc}{host}.':'.$config->{rtc}{port}.
+        $config->{rtc}{path},
+    );
+    $comx->login(
+        $config->{rtc}{user},
+        $config->{rtc}{pass},
+        $config->{rtc}{host}.':'.$config->{rtc}{port});
+    if ($comx->login_status->{code} != 200) {
+        return unless &{$err_code}(
+            'Rtc Login failed. Check config settings.');
+    }
+
+    my (@deleted, @new);
+    for my $a (@{ $resource->{apps} }) {
+        my $app_name = $a->{name};
+        my ($old_app) = grep {$app_name eq $_->{name}} @{ $old_resource->{apps} };
+        if (!defined $old_app) {
+            push @new, $a;
+        } else {
+            if ($a->{domain} ne $old_app->{domain}) {
+                push @deleted, $old_app;
+                push @new, $a;
+            }
+        }
+    }
+    for my $a (@{ $old_resource->{apps} }) {
+        my $app_name = $a->{name};
+
+        my ($new_app) = grep {$app_name eq $_->{name}} @{ $resource->{apps} };
+        if (!defined $new_app) {
+            push @deleted, $a;
+        }
+    }
+
+    for my $app (@deleted) {
+        my $a_response = $comx->delete_app($app->{id});
+        if ($a_response->{code} != 200) {
+            return unless &{$err_code}(
+                'Deleting rtc app failed. Error code: ' . $a_response->{code});
+        }
+    }
+    for my $app (@new) {
+        my $a_response = $comx->create_app(
+                $app->{name},
+                $app->{domain},
+                $old_resource->{rtc_user_id},
+            );
+        if ($a_response->{code} != 201) {
+            return unless &{$err_code}(
+                'Creating rtc app failed. Error code: ' . $a_response->{code});
+        }
+    }
+    return;
+}
+
 sub get_rtc_networks {
     my %params = @_;
     my ($rtc_user_id, $config, $reseller_item, $include_id, $err_code) =
