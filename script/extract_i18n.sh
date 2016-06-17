@@ -32,7 +32,7 @@ xgettext.pl \
 
 for po in $(find lib/NGCP/Panel/I18N -name "*.po"); do
 	echo; echo "Merging $po"; echo
-	msgmerge --no-fuzzy-matching --update $po $POT
+	msgmerge --no-fuzzy-matching --add-location=file --update $po $POT
 done
 
 echo; echo "Removing line numbers"; echo
