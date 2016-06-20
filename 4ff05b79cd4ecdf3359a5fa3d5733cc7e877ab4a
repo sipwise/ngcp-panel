@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "bab3e1c7_eb3b8d36",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-06-20T10:58:55Z",
+      "side": 1,
+      "message": "According to this - conjunction columns shouldnt be broken - as hash with column names as keys \u003d\u003ewill be and-ed, but ipv4 and ipv6 will be or-ed (that is correct)",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 141,
+        "endChar": 22
+      },
+      "revId": "4ff05b79cd4ecdf3359a5fa3d5733cc7e877ab4a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab9d9a7_ff92639e",
         "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
         "patchSetId": 1
