@@ -200,7 +200,7 @@ sub carrier_delete :Chained('carrier_base') :PathPart('delete') :Args(0) {
     if ($number_count > 0) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
-            desc  => $c->loc("$number_count lnp numbers still linked to LNP carrier."),
+            desc  => $c->loc("LNP numbers still linked to LNP carrier."),
         );
         $c->flash(carrier_messages => delete $c->flash->{messages});
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
@@ -304,7 +304,7 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 data => { number => $form->values->{number} },
-                desc  => $c->loc("LNP number '" . $form->values->{number} . "' already defined for LNP provider '" . $carrier->name . "'!"),
+                desc  => $c->loc("LNP number already defined for LNP provider!"),
             );
             $c->flash(number_messages => delete $c->flash->{messages});
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
@@ -387,7 +387,7 @@ sub number_create :Chained('list') :PathPart('number_create') :Args(0) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 data => { number => $form->values->{number} },
-                desc  => $c->loc("LNP number '" . $form->values->{number} . "' already defined for LNP provider '" . $carrier->name . "'!"),
+                desc  => $c->loc("LNP number already defined for LNP provider!"),
             );
             $c->flash(number_messages => delete $c->flash->{messages});
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
