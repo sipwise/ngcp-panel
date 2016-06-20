@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_4b2bb9eb",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-06-20T10:49:28Z",
+      "side": 1,
+      "message": "I think this should be done only with dates somehow - usually we search\nid\u003d123 or external_id\u003d123 or handle\u003d123\n\netc",
+      "range": {
+        "startLine": 180,
+        "startChar": 16,
+        "endLine": 180,
+        "endChar": 43
+      },
+      "revId": "aed98a2c521041fd6a4ad350e8ac5d84e6d9c530",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
