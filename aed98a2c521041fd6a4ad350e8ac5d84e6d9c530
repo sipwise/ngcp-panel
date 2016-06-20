@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "bab3e1c7_2b3a0537",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-06-20T10:52:27Z",
+      "side": 1,
+      "message": "Looks like start to implementation of the correct date search - I don\u0027t see using of this variable below.",
+      "range": {
+        "startLine": 151,
+        "startChar": 12,
+        "endLine": 151,
+        "endChar": 29
+      },
+      "revId": "aed98a2c521041fd6a4ad350e8ac5d84e6d9c530",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bab3e1c7_4b2bb9eb",
         "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
         "patchSetId": 1
