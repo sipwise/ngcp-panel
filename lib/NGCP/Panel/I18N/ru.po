@@ -194,10 +194,6 @@ msgstr ""
 msgid "#Top-ups"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "$number_count lnp numbers still linked to LNP carrier."
-msgstr ""
-
 #. (mtf_pref.secret_key_renew)
 #: share/templates/subscriber/preferences.tt
 msgid "%1"
@@ -5470,8 +5466,7 @@ msgstr ""
 msgid "LNP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP Carrier"
 msgstr ""
 
@@ -5520,9 +5515,8 @@ msgstr ""
 msgid "LNP npdi param"
 msgstr ""
 
-#. ($form->values->{number} . "' already defined for LNP provider '" . $carrier->name . "'!")
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Lnp.pm
-msgid "LNP number '"
+msgid "LNP number already defined for LNP provider!"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -5539,6 +5533,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "LNP number successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Lnp.pm
+msgid "LNP numbers still linked to LNP carrier."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Lnp.pm
@@ -6725,8 +6723,7 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Шаблон"
 
