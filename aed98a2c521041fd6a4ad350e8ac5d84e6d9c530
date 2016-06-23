@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bab3e1c7_22e782e6",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-06-23T07:30:33Z",
+      "side": 1,
+      "message": "that is true. can be deleted then. date-search works with this approach. as stated in line 149, the first array dimension is to be joined by AND and the second one (already working) by OR.",
+      "parentUuid": "bab3e1c7_2b3a0537",
+      "range": {
+        "startLine": 151,
+        "startChar": 12,
+        "endLine": 151,
+        "endChar": 29
+      },
+      "revId": "aed98a2c521041fd6a4ad350e8ac5d84e6d9c530",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bab3e1c7_4b2bb9eb",
         "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-06-20T10:49:28Z",
       "side": 1,
       "message": "I think this should be done only with dates somehow - usually we search\nid\u003d123 or external_id\u003d123 or handle\u003d123\n\netc",
+      "range": {
+        "startLine": 180,
+        "startChar": 16,
+        "endLine": 180,
+        "endChar": 43
+      },
+      "revId": "aed98a2c521041fd6a4ad350e8ac5d84e6d9c530",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_42ecf6c7",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-06-23T07:30:33Z",
+      "side": 1,
+      "message": "the OR still works. this is because of the semantics of DBIx::Class: an arrayref is usually joined by OR and a hashref is usually joined by AND, except stated otherwise.",
+      "parentUuid": "bab3e1c7_4b2bb9eb",
       "range": {
         "startLine": 180,
         "startChar": 16,
