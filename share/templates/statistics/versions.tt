@@ -4,6 +4,7 @@
 <div class="row">
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+        <a class="btn btn-tertiary btn-large" href="[% c.uri_for('/statistics/supportstatus') %]"><i class="icon-star"></i> [% c.loc('Support Status') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
