@@ -134,6 +134,18 @@ sub versions :Chained('/') :PathPart('statistics/versions') :Args() {
     return;
 }
 
+sub supportstatus :Chained('/') :PathPart('statistics/supportstatus') :Args() {
+    my ( $self, $c ) = @_;
+    my $support_status_code = NGCP::Panel::Utils::Statistics::get_dpkg_support_status();
+    if ($support_status_code == 3) {
+        $c->log->warn("Couldn't properly determine support status");
+    }
+    $c->stash(support_status_code => $support_status_code,
+        #template => 'statistics/supportstatus.tt',
+    );
+    return;
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;

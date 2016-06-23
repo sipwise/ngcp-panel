@@ -75,6 +75,18 @@ sub get_dpkg_versions {
     return `LANG=C dpkg-query -f '\${db:Status-Abbrev} \${Package} \${Version}\\n' -W 2>/dev/null`;
 }
 
+sub get_dpkg_support_status {
+    my ($self) = @_;
+    my $packages = `LANG=C dpkg-query -l 'ngcp-support*' 2>/dev/null | grep 'ii \\+ngcp-support-\\(\\|no\\)access' 2>/dev/null`;
+    if ($packages =~ m/ngcp-support-access/i) {
+        return 1;
+    } elsif ($packages =~ m/ngcp-support-noaccess/i) {
+        return 2;
+    } else {
+        return 3;
+    }
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
