@@ -22,6 +22,30 @@
       "revId": "83993603c5e9e37ba716a533ad9496b18a136756",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_d2a67153",
+        "filename": "t/api-rest/api-root.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-06-24T15:36:51Z",
+      "side": 1,
+      "message": "But my question is, does the test still have any sense then?\n(I haven\u0027t added api-root to stable for that reason btw)",
+      "parentUuid": "bab3e1c7_12ade931",
+      "range": {
+        "startLine": 110,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 25
+      },
+      "revId": "83993603c5e9e37ba716a533ad9496b18a136756",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
