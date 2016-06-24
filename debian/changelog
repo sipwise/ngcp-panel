@@ -1,3 +1,12 @@
+ngcp-panel (1.12.1.16+0~mr4.3.1.16) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [e71a5dc] MT#20369 Catch duplicated alias error on subscriber update
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 24 Jun 2016 16:52:44 +0200
+
 ngcp-panel (1.12.1.15+0~mr4.3.1.15) unstable; urgency=medium
 
   [ Andreas Granig ]
