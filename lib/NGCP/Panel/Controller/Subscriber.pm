@@ -19,7 +19,6 @@ use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::Hylafax;
 use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
-use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::CCMapEntries;
 use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
@@ -127,82 +126,6 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
 
 sub root :Chained('sub_list') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
-}
-
-
-sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
-    my ($self, $c) = @_;
-
-    my $posted = ($c->request->method eq 'POST');
-    my $params = {};
-    $params = $params->merge($c->session->{created_objects});
-    my $form = NGCP::Panel::Form::Subscriber->new(ctx => $c);
-    $form->process(
-        posted => $posted,
-        params => $c->request->params,
-        item => $params,
-    );
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {
-            'domain.create' => $c->uri_for('/domain/create'),
-            'reseller.create' => $c->uri_for('/reseller/create'),
-            'contract.create' => $c->uri_for('/customer/create'),
-        },
-        back_uri => $c->req->uri,
-    );
-    if($form->validated) {
-        my $schema = $c->model('DB');
-        try {
-            $schema->txn_do(sub {
-                my $preferences = {};
-                my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
-                my $contract = $contract_rs->find({
-                    'me.id' => $form->params->{contract}{id},
-                });
-
-
-                my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-
-                if($contract->external_id) {
-                    $preferences->{ext_contract_id} = $contract->external_id;
-                }
-                if(defined $form->params->{external_id}) {
-                    $preferences->{ext_subscriber_id} = $form->params->{external_id};
-                }
-                if($billing_mapping->billing_profile->prepaid) {
-                    $preferences->{prepaid} = 1;
-                }
-                my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
-                    c => $c,
-                    schema => $schema,
-                    contract => $contract,
-                    params => $form->params,
-                    admin_default => 0,
-                    preferences => $preferences,
-                );
-
-                delete $c->session->{created_objects}->{reseller};
-                delete $c->session->{created_objects}->{contract};
-                delete $c->session->{created_objects}->{domain};
-            });
-            NGCP::Panel::Utils::Message->info(
-                c    => $c,
-                desc => $c->loc('Subscriber successfully created!'),
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message->error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to create subscriber'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
-    }
-
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form)
 }
 
 sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
