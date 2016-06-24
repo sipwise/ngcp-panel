@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_d202f10a",
+        "filename": "t/api-rest/api-balanceintervals.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-06-24T16:24:55Z",
+      "side": 1,
+      "message": "jftr, from chat, too lazy to translate:\n\nwas passiert bei dem testcase (\"UNDERRUN2\"): \n1. ein kunde wird erzeugt, mit einem profile package 1, das hat die profile UNDERRUN2_INITIAL_1 und UNDERRUN2_UNDERRUN_1. das package gibt eine anfängliche balance von 49 cent vor, und einen schwellwert von 52 cent, bei dem die underrun profile geschaltet werden sollen.\nd.h. nach dem erstellen soll der customer bereits UNDERRUN2_UNDERRUN_1 haben, der kunde wurde am 23.jan 13:00 erstellt, kann vorher unmöglich anrufe gemacht haben, deswegen wird ein billing mapping | 226 | 2015-01-23 13:00:00 | UNDERRUN2_UNDERRUN_1 1466776798 | erzeugt. das package ist definiert für intervalle \"1st/1 month\", d.h. contract_balance wird erzeugt from 1.jänner00:00 bis 31.jan235959, balance ist 49cent.\ndas feld \"profile\" in der json response gibt das profil zum beginnzeitpunkt des intervals wieder, also zum zeitpunkt 1.jänner00:00.\n2. gleich nach dem erstellen um \u00272015-01-23 13:00:00\u0027 wird der kunde auf package 2 umgestellt (sollte bzw. war bei mir meistens \u00272015-01-23 13:00:01++\u0027. ++wird in der realität unwahrscheinlich sein++ package 2 hat die profile UNDERRUN2_INITIAL_2 und UNDERRUN2_UNDERRUN_2, und einen schwellwert für umschalten auf udnerrunprofil von 51 cent. es wird das UNDERRUN2_INITIAL_2 package in die mappings eingetragen, und gleichzeitig auch ein mapping für UNDERRUN2_UNDERRUN_2, weil die 49cent balance nach wie vor unter den 51cent liegen. das package ist definiert für intervalle \"topup_interval/1 month\", d.h. 1monat-intervalle, die nun aber mit dem ersten topup des endkunden starten. nun wird die contract balance die bisher bis 31.jan lief \"extended\" aufs jahr 9999 - um beim ersten topup dann passend gestutzt zu werden.\n3. nun wird einen tag drauf um \u00272015-01-24 13:00:00\u0027 ein topup mit 1cent durchgeführt. die contract balance row von 1.jan bis 9999 wird gestutzt auf 1.jan bis 2015-01-24 13:00:00, und mit dem topup wir eine neue, anknüpfende contract_balance row erstellt, die nun von 2015-01-24 13:00:01 mit dem interval 1monat bis 2015-02-24 13:00:00 geht, mit der erhöhten balance von 50 cent. diese balance ist weiterhin unter dem schwellwert.\n\nder topup hier ist nur gut, um die nächste contract_balance zu erzeugen - er soll sonst nix ändern also nicht über schwellwerte springen lassen usw.\n\ndieser testcase soll iwie zeigen, dass selbst wenn ein kunde bereits unter dem schwellwert für underrunprofile ist, im falle eines *wechsel* des packages auf dessen andere underrun profile umgeschaltet wird. ansonst versucht die logik an sich immer, das wiederholte und unnötige anlegen von profile mappings für underruns zu vermeiden.\n\nder testcase hat bei mir sonst eigtl. immer funktioniert, weil bei mir der paketwechsel quasi mindesten 1 sec gedauert hat (-\u003e\u003e\u00272015-01-23 13:00:01++\u0027 oben)... bei dir aber nicht weil schnellere single thread leistung deiner cpu usw. deshalben sehen deine resultierenden billing mappings nicht so aus:\n+-----+---------------------+---------------------------------+\n| id  | start_date          | name                            |\n+-----+---------------------+---------------------------------+\n| 225 | NULL                | UNDERRUN2_INITIAL_1 1466776798  |\n| 226 | 2015-01-23 13:00:00 | UNDERRUN2_UNDERRUN_1 1466776798 |\n| 227 | 2015-01-23 13:00:01+ | UNDERRUN2_INITIAL_2 1466776798  |\n| 229 | 2015-01-23 13:00:01++ | UNDERRUN2_UNDERRUN_2 1466776798 |\n+-----+---------------------+---------------------------------+\nsondern haben alle 13:00:00, deswegen liefert bei dir die jsonresponse in der beide contract_balances rows gelistet sind, für die erste januar contract_balance auch ein profil 229 (obwohls in einem check zuvor noch 226 war), und es gab das failed result.\n\nwenn man so wie eher der realen welt entsprechend zwischen erstellung und packetwechsel bissl zeit vergehen lässt, z.b. uhr vordrehen um eine stunde, müsste es bei dir auch so eine billing mapping table geben:\n\n+-----+---------------------+---------------------------------+\n| id  | start_date          | name                            |\n+-----+---------------------+---------------------------------+\n| 225 | NULL                | UNDERRUN2_INITIAL_1 1466776798  |\n| 226 | 2015-01-23 13:00:00 | UNDERRUN2_UNDERRUN_1 1466776798 |\n| 227 | 2015-01-23 14:00:00 | UNDERRUN2_INITIAL_2 1466776798  |\n| 229 | 2015-01-23 14:00:00 | UNDERRUN2_UNDERRUN_2 1466776798 |\n+-----+---------------------+---------------------------------+\ndabei gibt dann die json response für die erste contract balance mit sicherheit profile 226 aus, und der test ist dauerhaft gefixt.",
+      "range": {
+        "startLine": 349,
+        "startChar": 8,
+        "endLine": 349,
+        "endChar": 84
+      },
+      "revId": "cf845a9f71a97f1f09715ecfee53ff3993e307c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
