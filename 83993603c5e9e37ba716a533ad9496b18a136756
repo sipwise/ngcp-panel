@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_12ade931",
+        "filename": "t/api-rest/api-root.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-06-24T15:33:22Z",
+      "side": 1,
+      "message": "can this list be generated somehow?\nI remember it is the main reason of failed test - added new one and miss it here. :-(",
+      "range": {
+        "startLine": 110,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 25
+      },
+      "revId": "83993603c5e9e37ba716a533ad9496b18a136756",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
