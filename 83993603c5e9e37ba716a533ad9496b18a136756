@@ -46,6 +46,30 @@
       "revId": "83993603c5e9e37ba716a533ad9496b18a136756",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_127409ce",
+        "filename": "t/api-rest/api-root.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-06-24T15:38:47Z",
+      "side": 1,
+      "message": "OK, maybe it will force me add docker test on review here\n\nbut can you please add api-root to fast too please, so \"fast\" developers notice it :-)",
+      "parentUuid": "bab3e1c7_d2a67153",
+      "range": {
+        "startLine": 110,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 25
+      },
+      "revId": "83993603c5e9e37ba716a533ad9496b18a136756",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
