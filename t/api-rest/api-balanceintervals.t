@@ -346,6 +346,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         ]);
         is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
 
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-23 14:00:00'));
         _switch_package($customer,$package_2);
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-24 13:00:00'));
