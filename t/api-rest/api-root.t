@@ -107,6 +107,8 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         resellers => 1,
         rewriterules => 1,
         rewriterulesets => 1,
+        rtcnetworks => 1,
+        rtcsessions => 1,
         soundfilerecordings => 1,
         soundfiles => 1,
         soundhandles => 1,
