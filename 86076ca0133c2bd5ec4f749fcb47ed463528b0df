@@ -46,6 +46,30 @@
       "revId": "86076ca0133c2bd5ec4f749fcb47ed463528b0df",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_72a1c5a8",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-06-24T14:22:27Z",
+      "side": 1,
+      "message": "sure this is why you have +2 already.\nI am not happy that reviewers didn\u0027t point it to be removed it master.",
+      "parentUuid": "bab3e1c7_12e4090c",
+      "range": {
+        "startLine": 617,
+        "startChar": 80,
+        "endLine": 617,
+        "endChar": 114
+      },
+      "revId": "86076ca0133c2bd5ec4f749fcb47ed463528b0df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
