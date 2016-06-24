@@ -22,6 +22,30 @@
       "revId": "86076ca0133c2bd5ec4f749fcb47ed463528b0df",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_12e4090c",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-06-24T14:15:33Z",
+      "side": 1,
+      "message": "I will remove it with some other commit, if you don\u0027t mind, as it is a cherry-pick, and I want to keep it as closer to the initial commit as possible.",
+      "parentUuid": "bab3e1c7_f2405537",
+      "range": {
+        "startLine": 617,
+        "startChar": 80,
+        "endLine": 617,
+        "endChar": 114
+      },
+      "revId": "86076ca0133c2bd5ec4f749fcb47ed463528b0df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
