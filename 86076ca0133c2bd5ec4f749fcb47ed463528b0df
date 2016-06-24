@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_f2405537",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-06-24T12:35:22Z",
+      "side": 1,
+      "message": "not nice",
+      "range": {
+        "startLine": 617,
+        "startChar": 80,
+        "endLine": 617,
+        "endChar": 114
+      },
+      "revId": "86076ca0133c2bd5ec4f749fcb47ed463528b0df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
