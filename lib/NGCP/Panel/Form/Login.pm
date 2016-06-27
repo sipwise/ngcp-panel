@@ -11,7 +11,7 @@ sub build_form_tags {{ error_class => 'label label-secondary'}}
 
 has_field 'username' => (
     type => 'Text',
-    required => 1,
+    required => 0,
     element_attr => { placeholder => 'Username' },
     element_class => [qw/login username-field/],
     wrapper_class => [qw/login-fields field control-group/],
@@ -19,7 +19,7 @@ has_field 'username' => (
 
 has_field 'password' => (
     type => 'Password',
-    required => 1,
+    required => 0,
     element_attr => { placeholder => 'Password' },
     element_class => [qw/login password-field/],
     wrapper_class => [qw/login-fields field control-group/],
