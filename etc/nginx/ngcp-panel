@@ -12,6 +12,6 @@ server {
 		fastcgi_pass  unix:/var/run/fastcgi/ngcp-panel.sock;
 	}
 	location /static {
-		root  /usr/share/ngcp-panel;
+		root  /media/sf_/VMHost/ngcp-panel/share;
 	}
 }
