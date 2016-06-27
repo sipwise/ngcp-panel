@@ -136,7 +136,7 @@ sub get_tt {
     my $tt = Template->new({
         ENCODING => 'UTF-8',
         RELATIVE => 1,
-        INCLUDE_PATH => './share/templates:/usr/share/ngcp-panel/templates',
+        INCLUDE_PATH => '/media/sf_/VMHost/ngcp-panel/share/templates:./share/templates:/usr/share/ngcp-panel/templates',
     });
     $tt->context->define_vmethod(
         hash => get_column => sub {
