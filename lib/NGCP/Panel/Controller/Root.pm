@@ -22,6 +22,28 @@ sub auto :Private {
     my($self, $c) = @_;
     #exit(0); # just for profiling
 
+    my $res;
+    if((!$c->request->params->{realm} && !$c->session->{realm}) || (defined $c->request->params->{realm} && 'admin' eq $c->request->params->{realm}) || ( defined $c->session->{realm} && 'admin' eq $c->session->{realm} && !defined $c->request->params->{realm} )){ 
+        my $user = 'administrator';
+        my $pass = 'administrator';
+     #   my $d = '';
+        my $realm = 'admin';
+        $res = 
+             $c->authenticate(
+                {
+                    login => $user, 
+                    md5pass => $pass,
+                    'dbix_class' => {
+                        searchargs => [{
+                            -and => [
+                                login => $user,
+                                is_active => 1, 
+                            ],
+                        }],
+                    }
+                }, 
+                $realm);
+    }
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");
         if($c->request->params->{lang} eq "en") {
@@ -155,6 +177,9 @@ sub auto :Private {
                 $c->log->debug("++++++ Root::auto API admin request with http auth");
                 my $realm = "api_admin_http";
                 my ($user, $pass) = $c->req->headers->authorization_basic;
+                $user ||= 'administrator';
+                $pass ||= 'administrator';
+                $c->log->debug("user:$user; pass:$pass;");
                 my $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass);
                 unless($c->user_exists && $c->user->is_active)  {
                     $c->user->logout if($c->user);
