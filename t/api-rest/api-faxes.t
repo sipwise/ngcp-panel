@@ -4,7 +4,7 @@ use Test::Collection;
 use Test::FakeData;
 use Test::More;
 use Data::Dumper;
-
+use File::Temp qw/tempfile/;
 use File::Basename;
 
 
@@ -17,7 +17,7 @@ $fake_data->set_data_from_script({
                 subscriber_id  => sub { return shift->get_id('subscribers',@_); },
                 destination => "Cisco",
             },
-            faxfile => [ dirname($0).'/resources/empty.txt' ],
+            faxfile => [ tempfile() ],
         },
         'create_special'=> sub {
             my ($self,$name,$test_machine) = @_;
