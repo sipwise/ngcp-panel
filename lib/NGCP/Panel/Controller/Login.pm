@@ -12,7 +12,10 @@ sub index :Path Form {
 
     $realm = 'subscriber' 
         unless($realm && $realm eq 'admin');
-
+    if($c->request->params->{realm}){
+        $realm = $c->request->params->{realm};
+    }
+    $c->session->{realm} = $realm;
     my $posted = ($c->req->method eq 'POST');
     my $form = NGCP::Panel::Form::Login->new;
     $form->process(
@@ -23,8 +26,8 @@ sub index :Path Form {
 
     if($posted && $form->validated) {
         $c->log->debug("login form validated");
-        my $user = $form->field('username')->value;
-        my $pass = $form->field('password')->value;
+        my $user = $form->field('username')->value // '';
+        my $pass = $form->field('password')->value // '';
         $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");
         my $res;
         if($realm eq 'admin') {
@@ -43,6 +46,19 @@ sub index :Path Form {
                 }, 
                 $realm);
         } elsif($realm eq 'subscriber') {
+            my $dbr = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+                'voip_subscriber.status' => 'active',
+                'contract.status'        => 'active',
+                'domain.domain'          => { '!=', undef },
+                'webpassword'            => $pass ? ( $pass ) : { '!=', undef },
+                'webusername'            => $user ? ( $user ) : { '!=', undef } ,
+            }, {
+                join => ['domain', 'contract', 'voip_subscriber'],
+            })->first;
+            use Data::Dumper;
+            $c->log->debug(Dumper({$dbr->get_inflated_columns}));
+            $user = $dbr->webusername.'@'.$dbr->domain->domain;
+            $pass = $dbr->webpassword;
             my ($u, $d, $t) = split /\@/, $user;
             if(defined $t) {
                 # in case username is an email address
