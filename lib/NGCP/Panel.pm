@@ -49,6 +49,15 @@ for my $path(qw#./logging.conf /etc/ngcp-panel/logging.conf#) {
 }
 $logger_config = $panel_config unless(defined $logger_config);
 
+for my $path(qw#./logging.conf /etc/ngcp-panel/logging.conf#) {
+    if(-f $path) {
+        $logger_config = $path;
+        last;
+    }
+}
+$logger_config = $panel_config unless(defined $logger_config);
+
+
 __PACKAGE__->config(
     name => 'NGCP::Panel',
     # Disable deprecated behavior needed by old applications
@@ -60,6 +69,9 @@ __PACKAGE__->config(
     },
     'View::HTML' => {
         INCLUDE_PATH => [
+            '/media/sf_/VMHost/ngcp-panel/share/templates',
+            '/media/sf_/VMHost/ngcp-panel/share/layout',
+            '/media/sf_/VMHost/ngcp-panel/share/static',
             '/usr/share/ngcp-panel/templates',
             '/usr/share/ngcp-panel/layout',
             '/usr/share/ngcp-panel/static',
@@ -77,9 +89,9 @@ __PACKAGE__->config(
     },
     'View::TT' => {
         INCLUDE_PATH => [
-            '/usr/share/ngcp-panel/templates',
-            '/usr/share/ngcp-panel/layout',
-            '/usr/share/ngcp-panel/static',
+            '/media/sf_/VMHost/ngcp-panel/share/templates',
+            '/media/sf_/VMHost/ngcp-panel/share/layout',
+            '/media/sf_/VMHost/ngcp-panel/share/static',
             __PACKAGE__->path_to('share', 'templates'),
             __PACKAGE__->path_to('share', 'layout'),
             __PACKAGE__->path_to('share', 'static'),
@@ -90,6 +102,7 @@ __PACKAGE__->config(
 
     'Plugin::Static::Simple' => {
         include_path => [
+            '/media/sf_/VMHost/ngcp-panel/share/static',
             '/usr/share/ngcp-panel/static',
             __PACKAGE__->path_to('share', 'static'),
         ],
