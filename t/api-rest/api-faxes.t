@@ -17,7 +17,7 @@ $fake_data->set_data_from_script({
                 subscriber_id  => sub { return shift->get_id('subscribers',@_); },
                 destination => "Cisco",
             },
-            faxfile => [ tempfile() ],
+            faxfile => [ (tempfile())[1] ],
         },
         'create_special'=> sub {
             my ($self,$name,$test_machine) = @_;
@@ -33,8 +33,6 @@ my $test_machine = Test::Collection->new(
     name => 'faxes',
     embedded_resources => [qw/subscribers/]
 );
-
-
 
 {
     my ($res, $content, $req) = $test_machine->check_item_post();

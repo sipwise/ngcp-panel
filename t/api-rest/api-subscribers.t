@@ -32,6 +32,14 @@ $fake_data->set_data_from_script({
             external_id          => undef,
             is_pbx_group         => 1,
             is_pbx_pilot         => 1,
+            #sub {
+            #    my($self) = @_;
+            #    my $pilot = $self->test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$self->data->{$collection_name}->{data}->{customer_id}.'&'.'is_pbx_pilot=1');
+            #    if($pilot->{content}->{total_count} > 0){
+            #        return 0;
+            #    }
+            #    return 1;
+            #},
             pbx_extension        => '111',
             pbx_group_ids        => [],
             pbx_groupmember_ids  => [],
@@ -41,6 +49,14 @@ $fake_data->set_data_from_script({
             pbx_hunt_timeout     => '15',
         },
         'query' => ['username'],
+        'create_special'=> sub {
+            my ($self,$collection_name,$test_machine) = @_;
+            my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$self->data->{$collection_name}->{data}->{customer_id}.'&'.'is_pbx_pilot=1');
+            if($pilot->{content}->{total_count} <= 0){
+                undef $pilot;
+            }
+            $test_machine->check_create_correct(1, sub{$_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;} );
+        },
     },
 });
 
@@ -209,7 +225,6 @@ my $remote_config = $test_machine->init_catalyst_config;
 }
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 done_testing;
-
 
 sub number_as_string{
     my ($number_row, %params) = @_;
