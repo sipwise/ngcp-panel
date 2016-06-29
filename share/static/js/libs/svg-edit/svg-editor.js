@@ -87,17 +87,18 @@ TODOS
 				allowedOrigins: []
 			},
 			defaultExtensions = [
-				'ext-overview_window.js',
-				'ext-markers.js',
-				'ext-connector.js',
-				'ext-eyedropper.js',
-				'ext-shapes.js',
-				'ext-imagelib.js',
+				//'ext-overview_window.js',
+				//'ext-markers.js',
+				//'ext-connector.js',
+				//'ext-eyedropper.js',
+				//'ext-shapes.js',
+				//'ext-imagelib.js',
+				'ext-server_opensave.js',
 				'ext-grid.js',
-				'ext-polygon.js',
-				'ext-star.js',
-				'ext-panning.js',
-				'ext-storage.js'
+				//'ext-polygon.js',
+				//'ext-star.js',
+				//'ext-panning.js',
+				//'ext-storage.js'
 			],
 			defaultConfig = {
 				// Todo: svgcanvas.js also sets and checks: show_outside_canvas, selectNew; add here?
@@ -956,10 +957,12 @@ TODOS
 				var selLayerNames = $('#selLayerNames').empty();
 				var drawing = svgCanvas.getCurrentDrawing();
 				var currentLayerName = drawing.getCurrentLayerName();
-				var layer = svgCanvas.getCurrentDrawing().getNumLayers();
+				var layersNum = svgCanvas.getCurrentDrawing().getNumLayers();
 				var icon = $.getSvgIcon('eye');
 				// we get the layers in the reverse z-order (the layer rendered on top is listed first)
-				while (layer--) {
+				var layer = 0;
+				//while (layer--) {
+				for (layer=0; layer < layersNum; layer++) {
 					var name = drawing.getLayerName(layer);
 					var layerTr = $('<tr class="layer">').toggleClass('layersel', name === currentLayerName);
 					var layerVis = $('<td class="layervis">').toggleClass('layerinvis', !drawing.getLayerVisibility(name));
@@ -978,6 +981,14 @@ TODOS
 						$('#layerlist tr.layer').removeClass('layersel');
 						$(this.parentNode).addClass('layersel');
 						svgCanvas.setCurrentLayer(this.textContent);
+						var applyLayerEyeVisibility = function(){
+							var row = $(this.parentNode).prevAll().length;
+							var name = $('#layerlist tr.layer:eq(' + row + ') td.layername').text();
+							var vis = !$(this).hasClass('layerinvis');
+							svgCanvas.setLayerVisibility(name, vis);
+						};
+						$('#layerlist td.layervis').each(applyLayerEyeVisibility);
+						svgCanvas.setLayerVisibility(this.textContent, true);
 						evt.preventDefault();
 					})
 					.mouseover(function() {
@@ -1000,6 +1011,10 @@ TODOS
 					// FIXME: there must a better way to do this
 					layerlist.append('<tr><td style="color:white">_</td><td/></tr>');
 				}
+			};
+
+			var initPopulatedLayers = function() {
+				$('#layerlist td.layername').first().mouseup();
 			};
 
 			var showSourceEditor = function(e, forSaving) {
@@ -1148,10 +1163,12 @@ TODOS
 				}
 			};
 
-			var setImageURL = editor.setImageURL = function(url) {
+			var setImageURL = editor.setImageURL = function(url, useImageData) {
 				if (!url) {
 					url = defaultImageURL;
 				}
+                useImageData = 0;
+                var setImageUrlOrData = function(url){
 				svgCanvas.setImageURL(url);
 				$('#image_url').val(url);
 
@@ -1170,6 +1187,91 @@ TODOS
 					$('#change_image_url').hide();
 				}
 			};
+                //all solution ideas are from https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data
+                //It is more reliable not to store original link and get image content on stage od saving to DB or even generation, as backend and moreover generation script may doesn't have access to the image url (which can be  accessed using cookies and so on) 
+                if(useImageData){
+                    var loadBinary = function(url,callback) {
+                        var xmlHttpReq = false;
+                        //alert(q);
+
+                        if (window.XMLHttpRequest) {
+                            xmlHttpReq = new XMLHttpRequest();
+                        } else if (window.ActiveXObject) {
+                            xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+                        }
+
+                        xmlHttpReq.open('GET', url, true);
+                        //XHR binary charset opt by Marcus Granado 2006 [http://mgran.blogspot.com]
+                        //this doesn't work - data are broken anyway
+                        //if(xmlHttpReq.overrideMimeType){
+                        //    xmlHttpReq.overrideMimeType('text\/plain; charset=x-user-defined');
+                        //}
+                        xmlHttpReq.responseType = "arraybuffer";
+                        
+                        if(callback){
+                            xmlHttpReq.onreadystatechange = function(){
+                                if (xmlHttpReq.readyState == 4) {
+                                    if(typeof callback == 'function'){
+                                        callback(xmlHttpReq);
+                                    }else{
+                                        eval(callback);
+                                    }
+                                }
+                            }
+                        }
+                        xmlHttpReq.send(null);
+                    };
+                    //two functions from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Base64_encoding_and_decoding#Solution_.232_.E2.80.93_rewriting_atob()_and_btoa()_using_TypedArrays_and_UTF-8
+                    function uint6ToB64 (nUint6) {
+                        return nUint6 < 26 ?
+                            nUint6 + 65
+                        : nUint6 < 52 ?
+                            nUint6 + 71
+                        : nUint6 < 62 ?
+                            nUint6 - 4
+                        : nUint6 === 62 ?
+                            43
+                        : nUint6 === 63 ?
+                            47
+                        :
+                            65;
+                    };
+                    function base64EncArr (aBytes) {
+                        var nMod3 = 2, sB64Enc = "";
+                        for (var nLen = aBytes.length, nUint24 = 0, nIdx = 0; nIdx < nLen; nIdx++) {
+                            nMod3 = nIdx % 3;
+                            if (nIdx > 0 && (nIdx * 4 / 3) % 76 === 0) { sB64Enc += "\r\n"; }
+                            nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24);
+                            if (nMod3 === 2 || aBytes.length - nIdx === 1) {
+                                sB64Enc += String.fromCharCode(uint6ToB64(nUint24 >>> 18 & 63), uint6ToB64(nUint24 >>> 12 & 63), uint6ToB64(nUint24 >>> 6 & 63), uint6ToB64(nUint24 & 63));
+                            nUint24 = 0;
+                            }
+                        }
+                        return sB64Enc.substr(0, sB64Enc.length - 2 + nMod3) + (nMod3 === 2 ? '' : nMod3 === 1 ? '=' : '==');
+                    };
+
+                    var imageDataCallback = function(request){
+                        var contentType = ''+request.getResponseHeader('Content-Type');
+                        contentType = contentType.replace(/image\/x\-/i,'image/');
+                        var content = '';
+                        //if(request.responseBody){//ie
+                        //    content = request.responseBody;
+                        //    url = 'data:'+contentType+';base64,'+svgedit.utilities.encode64(content);
+                        //}else if(request.response){
+                            content = request.response;
+                            var byteArray = new Uint8Array(content);
+                            url = 'data:'+contentType+';base64,'+base64EncArr(byteArray);
+                        //}else{
+                        //    content = request.responseText;
+                        //    url = 'data:'+contentType+';base64,'+svgedit.utilities.encode64(content);
+                        //}
+                        setImageUrlOrData(url);
+                    };
+                    loadBinary(url,imageDataCallback);
+                }else{
+                    setImageUrlOrData(url);
+                }                
+			};
 
 			function setBackground (color, url) {
 				// if (color == $.pref('bkgd_color') && url == $.pref('bkgd_url')) {return;}
@@ -1184,7 +1286,7 @@ TODOS
 				var curhref = svgCanvas.getHref(selectedElement);
 				curhref = curhref.indexOf('data:') === 0 ? '' : curhref;
 				$.prompt(uiStrings.notification.enterNewImgURL, curhref, function(url) {
-					if (url) {setImageURL(url);}
+					if (url) {setImageURL(url, 1);}//useImageData=1
 				});
 			}
 
@@ -1858,6 +1960,8 @@ TODOS
 					var isSvgElem = (elem && elem.tagName === 'svg');
 					if (isSvgElem || isLayer(elem)) {
 						populateLayers();
+						initPopulatedLayers();
+
 						// if the element changed was the svg, then it could be a resolution change
 						if (isSvgElem) {
 							updateCanvas();
@@ -1907,7 +2011,7 @@ TODOS
 				if (!z_info) {return;}
 				var zoomlevel = z_info.zoom,
 					bb = z_info.bbox;
-
+                //alert('zoomlevel='+zoomlevel+'; bb.width='+bb.width+';bb.height='+bb.height);
 				if (zoomlevel < 0.001) {
 					changeZoom({value: 0.1});
 					return;
@@ -1930,7 +2034,9 @@ TODOS
 			};
 
 			changeZoom = function(ctl) {
+                
 				var zoomlevel = ctl.value / 100;
+                //alert('zoomLevel='+zoomlevel);
 				if (zoomlevel < 0.001) {
 					ctl.value = 0.1;
 					return;
@@ -1947,6 +2053,7 @@ TODOS
 					zoom: zoomlevel
 				}, true);
 			};
+            //changeZoom({value: 200});
 
 			$('#cur_context_panel').delegate('a', 'click', function() {
 				var link = $(this);
@@ -2984,7 +3091,7 @@ TODOS
 			});
 
 			$('#image_url').change(function() {
-				setImageURL(this.value);
+				setImageURL(this.value, 1);//useImageData = 1
 			});
 
 			$('#link_url').change(function() {
@@ -3210,7 +3317,7 @@ TODOS
 					$('#option_lists').append(list);
 				}
 				list.find('li').bind('mouseup', callback);
-
+                //alert('binded');
 				$(window).mouseup(function(evt) {
 					if (!on_button) {
 						button.removeClass('down');
@@ -3289,6 +3396,7 @@ TODOS
 			editor.addDropDown('#zoom_dropdown', function() {
 				var item = $(this);
 				var val = item.data('val');
+                //alert('zoom_dropdown.val='+val);
 				if (val) {
 					zoomChanged(window, val);
 				} else {
@@ -3412,6 +3520,7 @@ TODOS
 				multiplier = multiplier ? res.zoom * multiplier : 1;
 				// setResolution(res.w * multiplier, res.h * multiplier, true);
 				$('#zoom').val(multiplier * 100);
+                //alert('multiplier='+multiplier);
 				svgCanvas.setZoom(multiplier);
 				zoomDone();
 				updateCanvas(true);
@@ -3765,8 +3874,10 @@ TODOS
 				var saveChanges = function() {
 					svgCanvas.clearSelection();
 					hideSourceEditor();
-					zoomImage();
+					//zoomImage();
+                    zoomChanged('', 'canvas');
 					populateLayers();
+					initPopulatedLayers();
 					updateTitle();
 					prepPaints();
 				};
@@ -3950,7 +4061,7 @@ TODOS
 				$.alert(this.title);
 			});
 
-			$('#change_image_url').click(promptImgURL);
+			//$('#change_image_url').click(promptImgURL);
 
 			// added these event handlers for all the push buttons so they
 			// behave more like buttons being pressed-in and not images
@@ -4380,6 +4491,9 @@ TODOS
 			});
 
 			populateLayers();
+			initPopulatedLayers();
+			//we need select first layer only for 
+			
 
 		//	function changeResolution(x,y) {
 		//		var zoom = svgCanvas.getResolution().zoom;
@@ -5071,6 +5185,8 @@ TODOS
 					$('#tool_pos' + this.id.substr(10))[0].title = this.title;
 				});
 			};
+            //changeZoom({value: 200});
+            
 		};
 
 		editor.ready = function (cb) {
@@ -5130,6 +5246,8 @@ TODOS
 					}
 				});
 			});
+            //changeZoom({value: 200});
+            //zoomImage(2);
 		};
 
 		editor.loadFromDataURI = function(str) {
@@ -5165,5 +5283,5 @@ TODOS
 
 	// Run init once DOM is loaded
 	$(svgEditor.init);
-
+    //$(svgEditor.init.zoomImage)(2);
 }());
