@@ -199,7 +199,9 @@ var addSvgElementFromJson = this.addSvgElementFromJson = function(data) {
 	if (!shape) {
 		shape = svgdoc.createElementNS(NS.SVG, data.element);
 		if (current_layer) {
-			(current_group || current_layer).appendChild(shape);
+			//alert(data.attr.id+'='+shape);
+			//(current_group || current_layer).appendChild(shape);
+			insertGeoChild((current_group || current_layer), shape, data.attr);
 		}
 	}
 	if (data.curStyles) {
@@ -1044,10 +1046,11 @@ var getMouseTarget = this.getMouseTarget = function(evt) {
 		// this makes it easier to indentify as being a selector grip
 		return selectorManager.selectorParentGroup;
 	}
-
-	while (mouse_target.parentNode !== (current_group || current_layer)) {
-		mouse_target = mouse_target.parentNode;
-	}
+    if(mouse_target){
+	    while (mouse_target.parentNode !== (current_group || current_layer)) {
+		    mouse_target = mouse_target.parentNode;
+	    }
+    }
 	
 //	
 //	// go up until we hit a child of a layer
@@ -2285,7 +2288,9 @@ var getMouseTarget = this.getMouseTarget = function(evt) {
 	
 	 //TODO(rafaelcastrocouto): User preference for shift key and zoom factor
 	$(container).bind('mousewheel DOMMouseScroll', function(e){
-		//if (!e.shiftKey) {return;}
+        return;
+        //shiftKey, ctrlKey, altKey
+        if (!e.shiftKey) {return;}
 		e.preventDefault();
 		var evt = e.originalEvent;
 
@@ -2303,6 +2308,7 @@ var getMouseTarget = this.getMouseTarget = function(evt) {
 		if (!delta) {return;}
 
 		bbox.factor = Math.max(3/4, Math.min(4/3, (delta)));
+		//bbox.factor = 1;
 	
 		call('zoomed', bbox);
 	});
@@ -3770,8 +3776,15 @@ this.svgToString = function(elem, indent) {
 			childs = elem.childNodes;
 		
 		for (i = 0; i < indent; i++) {out.push(' ');}
-		out.push('<'); out.push(elem.nodeName);
 		if (elem.id === 'svgcontent') {
+            //alert(svgroot.outerSvgTagStart);
+            if( svgroot.outerSvgTagStart )
+            {
+                out.push(svgroot.outerSvgTagStart);
+            }else{
+
+                out.push("<"); out.push(elem.nodeName);
+
 			// Process root element separately
 			var res = getResolution();
 			
@@ -3832,10 +3845,12 @@ this.svgToString = function(elem, indent) {
 						out.push(' '); 
 						out.push(attr.nodeName); out.push('="');
 						out.push(attrVal); out.push('"');
+                        }
 					}
 				}
 			}
 		} else {
+            out.push("<"); out.push(elem.nodeName);
 			// Skip empty defs
 			if (elem.nodeName === 'defs' && !elem.firstChild) {return;}
 		
@@ -3878,7 +3893,9 @@ this.svgToString = function(elem, indent) {
 		}
 
 		if (elem.hasChildNodes()) {
+            if( !( elem.id === 'svgcontent' && svgroot.outerSvgTagStart ) ){
 			out.push('>');
+            }
 			indent++;
 			var bOneLine = false;
 			
@@ -3917,13 +3934,102 @@ this.svgToString = function(elem, indent) {
 				out.push('\n');
 				for (i = 0; i < indent; i++) {out.push(' ');}
 			}
+            if( elem.id === 'svgcontent' && svgroot.outerSvgTagEnd )
+            {
+                out.push(svgroot.outerSvgTagEnd);
+            }else{
 			out.push('</'); out.push(elem.nodeName); out.push('>');
+            }
 		} else {
+            if( !( elem.id === 'svgcontent' && svgroot.outerSvgTagStart ) ){
 			out.push('/>');
+            }
 		}
 	}
 	return out.join('');
 }; // end svgToString()
+
+//Quite simple logic to insert new element xml string into marked up 
+//(by special comments for Template::Toolkit) xml template
+//position of elemnt xml representation now is accounted based only on y 
+//(vertical) position among other parent childs.
+function insertGeoChild(parent, element, newElemData) {
+	//alert('parent='+parent.textContent+';');
+	//alert('element='+element+';y='+element+';');
+	var collectDebug = function(arr,attr){
+		var str = '';
+		for(i=0; i < arr.length; i++) {
+			var elem = arr[i];
+			var val = getPosition(elem, attr);
+			str = str + 'i='+i+'; val='+val+';\n';
+		}
+		return str;
+	};
+	var getPosition = function(elem,attr){
+		var val_str = "", val = 0, unit;
+		switch(elem.nodeType) {
+		case 1: // element node
+		case 3: // text node
+			val_str = elem.getAttribute(attr) || elem.getAttribute(attr+'1');
+			break;
+		case 4: // cdata node
+		case 8: // comment
+			break;
+		} // switch on node type
+		if(val_str){
+			unit = val_str.match(/^-?[\d\.]+([^\d]*)$/);
+			val = parseFloat(val_str);
+		}else if((elem === element) && newElemData){
+			val = newElemData[attr] || newElemData[attr+'1'];
+		}
+		if(unit && unit !== 'px'){
+			var unit_m = svgedit.units.getTypeMap()[unit];
+			if(unit_m){
+				val = val / unit_m;
+			}
+		}
+		return val;
+	};
+	if (!parent.hasChildNodes()) {
+		parent.appendChild(element);
+		return;
+	}
+	if (!getPosition(element,'y')) {
+		parent.appendChild(element);
+		return;
+	}
+
+	var i, childs_after = [];
+	var str = '', str_sorted = '';
+	for(i=0; i < parent.childNodes.length; i++) {
+		childs_after[i] = parent.childNodes[i];
+	}
+	childs_after.push(element);
+	var str = collectDebug(childs_after,'y');
+	childs_after.sort(function(a,b){
+		var ya=0,yb=0;
+		ya = getPosition(a,'y');
+		yb = getPosition(b,'y');
+		var res = ya - yb;
+		return res;
+	});
+	var str_sorted = collectDebug(childs_after,'y');
+	//alert('str='+str+';\nstr_sorted='+str_sorted+';');
+	for( var i = 0; i < childs_after.length; i++){
+		if(childs_after[i] === element){
+			break;
+		}
+	}
+	//alert('length='+childs_after.length+';i='+i+';');
+	if(i < childs_after.length - 1){
+		parent.insertBefore(element,childs_after[i+1]);
+	}else{
+		//parent.appendChild(element);
+		//-2 because elment was added into childs_after, original childNodes size is -1
+		parent.insertBefore(element,childs_after[childs_after.length - 2]);
+	}
+	return;
+}; // end insertGeoChild()
 
 // Function: embedImage
 // Converts a given image file to a data URL when possible, then runs a given callback
@@ -4451,6 +4557,14 @@ this.setSvgString = function(xmlString) {
 		}
 		
 		svgroot.appendChild(svgcontent);
+        //var startre=;
+        //svgroot.outerSvgTag = outerSvgTag;
+        svgroot.outerSvgTagStart = xmlString.match(/^(?:[\n\r\t\s]|.)*?(?:\<svg)[^\>]*\>/);
+        svgroot.outerSvgTagEnd   = xmlString.match(/<\/svg>(?:[\n\r\t\s]|.)*$/);
+        //console.log(outerSvgTag[0]);
+        //alert(outerSvgTag[0]);
+        //alert('svgroot.innerHTML='+svgroot.outerHTML);
+        //alert('svgroot.textContent='+svgroot.parentNode.textContent);
 		var content = $(svgcontent);
 		
 		canvas.current_drawing_ = new svgedit.draw.Drawing(svgcontent, idprefix);
@@ -4915,7 +5029,8 @@ this.moveSelectedToLayer = function(layername) {
 		var oldNextSibling = elem.nextSibling;
 		// TODO: this is pretty brittle!
 		var oldLayer = elem.parentNode;
-		layer.appendChild(elem);
+		//layer.appendChild(elem);
+		insertGeoChild(layer, elem);
 		batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(elem, oldNextSibling, oldLayer));
 	}
 	
@@ -6396,7 +6511,8 @@ this.pasteElements = function(type, x, y) {
 		if (!svgedit.utilities.getElem(elem.id)) {copy.id = elem.id;}
 		
 		pasted.push(copy);
-		(current_group || drawing.getCurrentLayer()).appendChild(copy);
+		//(current_group || getCurrentDrawing().getCurrentLayer()).appendChild(copy);
+		insertGeoChild((current_group || getCurrentDrawing().getCurrentLayer()), copy);
 		batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(copy));
 
 		restoreRefElems(copy);
@@ -6935,7 +7051,8 @@ this.cloneSelectedElements = function(x, y) {
 	while (i--) {
 		// clone each element and replace it within copiedElements
 		elem = copiedElements[i] = drawing.copyElem(copiedElements[i]);
-		(current_group || drawing.getCurrentLayer()).appendChild(elem);
+		//(current_group || drawing.getCurrentLayer()).appendChild(elem);
+		insertGeoChild((current_group || drawing.getCurrentLayer()), elem);
 		batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(elem));
 	}
 	
