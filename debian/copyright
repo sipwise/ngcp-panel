@@ -21,3 +21,59 @@ License: GPL-3+
 Comment:
  On Debian systems, the full text of the GNU General Public License
  version 3 can be found in the file '/usr/share/common-licenses/GPL-3'.
+Files:
+ share/static/js/libs/svg-edit/*
+ share/static/js/libs/svg-edit-2.6/*
+Copyright:
+ Copyright © 2008 Dmitry Baranovskiy
+ Copyright © 2010 "Cowboy" Ben Alman
+ Copyright © 2010 Christopher T. Tillman
+ Copyright © 2010-2014 James Hall, https://github.com/MrRio/jsPDF
+ Copyright © 2011 Devon Govett
+ Copyright © 2011 Mozilla Foundation
+ Copyright © 2012 chick307 <chick307@gmail.com>
+ Copyright © 2012 Jason Siefken, https://github.com/siefkenj/
+ Copyright © 2012 Willow Systems Corporation, willow-systems.com
+ Copyright © 2013 Eduardo Menezes de Morais, eduardo.morais@usp.br
+ Copyright © 2013 Gildas Lormeau. All rights reserved.
+ Copyright © 2013 Youssef Beddad, youssef.beddad@gmail.com
+ Copyright © 2014 Diego Casorran
+ Copyright © 2014 James Robb, https://github.com/jamesbrobb
+ Copyright © 2001 Robert Penner
+ Copyright © 2008 George McGinley Smith
+ Copyright © 2010-2011 John Resig
+ Copyright © 2011 The Dojo Foundation
+ Copyright © 2012-2014 Florian Hülsmann <fh@cbix.de>
+ Copyright © 2014 Ben Gribaudo <www.bengribaudo.com>
+ Copyright © 2009-2011 Alexis Deveria
+ Copyright © 2010,2014 Brett Zamir
+ Copyright © 2010 Christian Tzurcanu
+ Copyright © 2010 CloudCanvas, Inc.
+ Copyright © 2010 Jacques Distler 
+ Copyright © 2010-2011 Jeff Schiller
+ Copyright © 2010 Narendra Sisodiya
+ Copyright © 2010 Pavol Rusnak
+ Copyright © 2010 Redou Mine
+ Copyright © 2010 Will Schleter 
+ Copyright © 2013 James Sacksteder
+ Copyright © 2013 Jo Segaert
+ Copyright © 2013 Luis Aguirre
+ Copyright © 2016 Flint O'Brien
+License: MIT
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
