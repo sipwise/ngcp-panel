@@ -87,7 +87,7 @@ sub _create_rtc_user {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
     my $user = $comx->create_user(
             $reseller_name . '@ngcp.com',
@@ -95,7 +95,7 @@ sub _create_rtc_user {
         );
     if ($user->{code} != 201) {
         return unless &{$err_code}(
-            'Creating rtc user failed. Error code: ' . $user->{code});
+            'Creating rtc user failed. Error code: ' . $user->{code}, $user->{debug});
     }
 
     # 3. create relation in our db
@@ -111,7 +111,7 @@ sub _create_rtc_user {
         );
     if ($app->{code} != 201) {
         return unless &{$err_code}(
-            'Creating rtc app failed. Error code: ' . $app->{code});
+            'Creating rtc app failed. Error code: ' . $app->{code}, $app->{debug});
     }
 
     # 5. create related networks
@@ -130,7 +130,7 @@ sub _create_rtc_user {
             );
         if ($n_response->{code} != 201) {
             return unless &{$err_code}(
-                'Creating rtc network failed. Error code: ' . $n_response->{code});
+                'Creating rtc network failed. Error code: ' . $n_response->{code}, $n_response->{debug});
         }
     }
     return;
@@ -152,7 +152,7 @@ sub _delete_rtc_user {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
 
     my $rtc_user = $reseller_item->rtc_user;
@@ -168,7 +168,7 @@ sub _delete_rtc_user {
         $rtc_user->delete;
     } else {
         return unless &{$err_code}(
-            'Deleting rtc user failed. Error code: ' . $delete_resp->{code});
+            'Deleting rtc user failed. Error code: ' . $delete_resp->{code}, $delete_resp->{debug});
     }
     return;
 }
@@ -193,14 +193,14 @@ sub get_rtc_networks {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
 
     my $networks_resp = $comx->get_networks_by_user_id($rtc_user_id);
     my $networks = $networks_resp->{data};
     unless (defined $networks  && 'ARRAY' eq ref $networks && @{ $networks }) {
         return unless &{$err_code}(
-            'Fetching networks failed. Code: ' . $networks_resp->{code});
+            'Fetching networks failed. Code: ' . $networks_resp->{code}, $networks_resp->{debug});
     }
 
     my $res = [map {{
@@ -238,7 +238,7 @@ sub modify_rtc_networks {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
 
     my (@deleted, @new);
@@ -269,7 +269,7 @@ sub modify_rtc_networks {
         my $n_response = $comx->delete_network($nw->{id});
         if ($n_response->{code} != 200) {
             return unless &{$err_code}(
-                'Deleting rtc network failed. Error code: ' . $n_response->{code});
+                'Deleting rtc network failed. Error code: ' . $n_response->{code}, $n_response->{debug});
         }
     }
     for my $nw (@new) {
@@ -281,7 +281,7 @@ sub modify_rtc_networks {
             );
         if ($n_response->{code} != 201) {
             return unless &{$err_code}(
-                'Creating rtc network failed. Error code: ' . $n_response->{code});
+                'Creating rtc network failed. Error code: ' . $n_response->{code}, $n_response->{debug});
         }
     }
     return;
@@ -391,7 +391,7 @@ sub _create_subscriber_rtc {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
 
     my $comx_apps = $comx->get_apps_by_user_id($rtc_user->rtc_user_id);
@@ -409,7 +409,7 @@ sub _create_subscriber_rtc {
         );
     if ($session->{code} != 201) {
         return unless &{$err_code}(
-            'Creating rtc session failed. Error code: ' . $session->{code});
+            'Creating rtc session failed. Error code: ' . $session->{code}, $session->{debug});
     }
 
     # # 3. create relation in our db
@@ -460,7 +460,7 @@ sub _delete_subscriber_rtc {
     #     $config->{rtc}{host}.':'.$config->{rtc}{port});
     # if ($comx->login_status->{code} != 200) {
     #     return unless &{$err_code}(
-    #         'Rtc Login failed. Check config settings.');
+    #         'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     # }
 
     # my $rtc_user = $reseller_item->rtc_user;
@@ -513,7 +513,7 @@ sub create_rtc_session {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
 
     my $comx_apps = $comx->get_apps_by_user_id($rtc_user->rtc_user_id);
@@ -540,7 +540,7 @@ sub create_rtc_session {
         );
     if ($session->{code} != 201) {
         return unless &{$err_code}(
-            'Creating rtc session failed. Error code: ' . $session->{code});
+            'Creating rtc session failed. Error code: ' . $session->{code}, $session->{debug});
     }
     for my $n (@{ $comx_networks->{data} }) {
         my $identifier;
@@ -561,7 +561,7 @@ sub create_rtc_session {
         );
         if ($account->{code} != 201) {
             return unless &{$err_code}(
-                "Creating rtc account ($n->{tag}) failed. Error code: " . $account->{code});
+                "Creating rtc account ($n->{tag}) failed. Error code: " . $account->{code}, $account->{debug});
         }
     }
 
@@ -591,13 +591,13 @@ sub get_rtc_session {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
 
     my $session = $comx->get_session($item->rtc_session_id);
     if ($session->{code} != 200) {
         return unless &{$err_code}(
-            "Couldn't find session. Error code: " . $session->{code});
+            "Couldn't find session. Error code: " . $session->{code}, $session->{debug});
     }
     return $session;
 }
