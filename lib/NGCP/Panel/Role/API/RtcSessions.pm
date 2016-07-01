@@ -32,7 +32,10 @@ sub hal_from_item {
         config => $c->config,
         item => $item,
         err_code => sub {
-            $c->log->warn(shift); return;
+            my ($msg, $debug) = @_;
+            $c->log->debug($debug) if $debug;
+            $c->log->warn($msg);
+            return;
         });
     if ($rtc_session) {
         $resource->{rtc_browser_token} = $rtc_session->{data}{token};

@@ -198,8 +198,11 @@ sub POST :Allow {
                 config => $c->config,
                 reseller_item => $reseller,
                 err_code => sub {
-                        $c->log->warn(shift); return;
-                    });
+                    my ($msg, $debug) = @_;
+                    $c->log->debug($debug) if $debug;
+                    $c->log->warn($msg);
+                    return;
+                });
         } catch($e) {
             $c->log->error("failed to create reseller: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reseller.");
