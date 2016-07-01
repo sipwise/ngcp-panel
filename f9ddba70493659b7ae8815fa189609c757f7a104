@@ -45,6 +45,30 @@
       "revId": "f9ddba70493659b7ae8815fa189609c757f7a104",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_dae68344",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-01T14:59:00Z",
+      "side": 0,
+      "message": "but also \"to only create cloudpbx subscribers from within the customer view\".\n\nThe thing is, here we don\u0027t have enough context information about the customer (e.g. whether the customer is cloudpbx) to show a sensible number of fields in the form. As the customer is required anyway, it\u0027s okay to always only create it from there. It would also help us reduce the complex logic in the background to only one single location.\n\nQuestion is, whether we want to keep it here, for convenience, or because there is some hidden usecase, which is not covered in the customer view.\n\n(I already commented, that the commit message is misleading/wrong :)",
+      "parentUuid": "bab3e1c7_d47df9b2",
+      "range": {
+        "startLine": 139,
+        "startChar": 4,
+        "endLine": 139,
+        "endChar": 15
+      },
+      "revId": "f9ddba70493659b7ae8815fa189609c757f7a104",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
