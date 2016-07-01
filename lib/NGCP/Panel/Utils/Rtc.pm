@@ -87,7 +87,7 @@ sub _create_rtc_user {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings.', $comx->login_status->{debug});
     }
     my $user = $comx->create_user(
             $reseller_name . '@ngcp.com',
@@ -95,7 +95,7 @@ sub _create_rtc_user {
         );
     if ($user->{code} != 201) {
         return unless &{$err_code}(
-            'Creating rtc user failed. Error code: ' . $user->{code});
+            'Creating rtc user failed. Error code: ' . $user->{code}, $user->{debug});
     }
 
     # 3. create relation in our db
@@ -152,7 +152,7 @@ sub _delete_rtc_user {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings.', $comx->login_status->{debug});
     }
 
     my $rtc_user = $reseller_item->rtc_user;
@@ -193,14 +193,14 @@ sub get_rtc_networks {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $networks_resp->{code}, $comx->login_status->{debug});
     }
 
     my $networks_resp = $comx->get_networks_by_user_id($rtc_user_id);
     my $networks = $networks_resp->{data};
     unless (defined $networks  && 'ARRAY' eq ref $networks && @{ $networks }) {
         return unless &{$err_code}(
-            'Fetching networks failed. Code: ' . $networks_resp->{code});
+            'Fetching networks failed. Code: ' . $networks_resp->{code}, $networks_resp->{debug});
     }
 
     my $res = [map {{
@@ -238,7 +238,7 @@ sub modify_rtc_networks {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings.', $comx->login_status->{debug});
     }
 
     my (@deleted, @new);

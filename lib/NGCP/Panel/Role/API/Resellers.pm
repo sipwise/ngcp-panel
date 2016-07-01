@@ -133,8 +133,11 @@ sub update_reseller {
         config => $c->config,
         reseller_item => $reseller,
         err_code => sub {
-                $c->log->warn(shift); return;
-            });
+            my ($msg, $debug) = @_;
+            $c->log->debug($debug) if $debug;
+            $c->log->warn($msg);
+            return;
+        });
 
     # TODO: should we lock reseller admin logins if reseller gets terminated?
     # or terminate all his customers and delete non-billing data?

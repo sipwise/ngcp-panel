@@ -168,9 +168,11 @@ sub POST :Allow {
             subscriber_item => $subscriber_item,
             resource => $resource,
             err_code => sub {
-            my ($err) = @_;
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
-        });
+                my ($msg, $debug) = @_;
+                $c->log->debug($debug) if $debug;
+                $c->log->warn($msg);
+                return;
+            });
         last unless $session_item;
 
         $guard->commit;
