@@ -214,6 +214,10 @@ sub auto :Private {
         $c->detach('/denied_page');
     }
 
+    if (exists $c->config->{external_documentation}{link} && 'ARRAY' ne ref $c->config->{external_documentation}{link}) {
+        $c->config->{external_documentation}{link} = [$c->config->{external_documentation}{link}];
+    }
+
     # load top menu widgets
     my $topmenu_templates = [];
     if ($c->user->roles eq 'admin') {

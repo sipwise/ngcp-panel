@@ -5,8 +5,11 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="[% c.uri_for('/api/') %]">[% c.loc('API') %]</a></li>
-        <li><a href="[% c.uri_for('/handbook/') %]">[% c.loc('Handbook') %]</a></li>
+        <li><a href="[% c.uri_for('/api/') %]" class="ngcp-noback-link">[% c.loc('API') %]</a></li>
+        <li><a href="[% c.uri_for('/handbook/') %]" class="ngcp-noback-link">[% c.loc('Handbook') %]</a></li>
+        [% FOR l IN c.config.external_documentation.link -%]
+            <li><a href="[% l.url %]" class="ngcp-noback-link">[% l.name | html %]</a></li>
+        [% END; -%]
     </ul>
 </li>
 <li class="dropdown">
