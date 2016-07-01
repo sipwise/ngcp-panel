@@ -193,14 +193,14 @@ sub get_rtc_networks {
         $config->{rtc}{host}.':'.$config->{rtc}{port});
     if ($comx->login_status->{code} != 200) {
         return unless &{$err_code}(
-            'Rtc Login failed. Check config settings.');
+            'Rtc Login failed. Check config settings. Status code: ' . $networks_resp->{code}, $comx->login_status->{debug});
     }
 
     my $networks_resp = $comx->get_networks_by_user_id($rtc_user_id);
     my $networks = $networks_resp->{data};
     unless (defined $networks  && 'ARRAY' eq ref $networks && @{ $networks }) {
         return unless &{$err_code}(
-            'Fetching networks failed. Code: ' . $networks_resp->{code});
+            'Fetching networks failed. Code: ' . $networks_resp->{code}, $networks_resp->{debug});
     }
 
     my $res = [map {{

@@ -248,7 +248,7 @@ sub _resolve_collection_fast {
         'expand=true';
     my $res = $ua->get($self->host . $rel_url);
     my @result;
-    return {code => $res->code, response => $res} unless $res->code == 200;
+    return $self->_create_response($res) unless $res->code == 200;
     my $collection = JSON::decode_json($res->content);
     return {code => $res->code, response => $res,
         error_detail => 'could not decode_json'} unless $collection;
@@ -278,13 +278,18 @@ sub _strip_host {
 sub _create_response {
     my ($self, $res) = @_;
     my $data;
+    my $debug;
     if ($res->is_success && $res->content) {
         $data = decode_json($res->content);
+    } else {
+        $debug = "RTC response: " . $res->decoded_content
+            . ", RTC request: " . $res->request->as_string;
     }
     return {
         code => $res->code,
         data => $data,
         response => $res,
+        $debug ? (debug => $debug) : (),
     };
 }
 
