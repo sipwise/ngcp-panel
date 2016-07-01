@@ -22,6 +22,29 @@
       "revId": "f9ddba70493659b7ae8815fa189609c757f7a104",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_d47df9b2",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-07-01T12:35:22Z",
+      "side": 0,
+      "message": "from andy\u0027s comment in the original ticket, i read the solution as \"prevent executing this create method here, if the contract is a pbx contract\"",
+      "range": {
+        "startLine": 139,
+        "startChar": 4,
+        "endLine": 139,
+        "endChar": 15
+      },
+      "revId": "f9ddba70493659b7ae8815fa189609c757f7a104",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
