@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_3d10f94d",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-07-02T01:21:02Z",
+      "side": 0,
+      "message": "then why not checking below here, if the contract is pbx, and reject with an error in that case.\n\nif the \"create subscriber\" button is removed from the \"settings-\u003esubscriber\" view, other guys will complain or ask for sure imho.",
+      "range": {
+        "startLine": 168,
+        "startChar": 19,
+        "endLine": 168,
+        "endChar": 28
+      },
+      "revId": "87a4ab17079b0cbd0b3422baff4e562e1d27af80",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
