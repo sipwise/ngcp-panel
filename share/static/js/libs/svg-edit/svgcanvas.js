@@ -3843,8 +3843,10 @@ this.svgToString = function(elem, indent) {
 
 					if (!attr.namespaceURI || nsMap[attr.namespaceURI]) {
 						out.push(' '); 
-						out.push(attr.nodeName); out.push('="');
 						out.push(attrVal); out.push('"');
+						var attributeName = attr.nodeName;
+						attributeName = attributeName.toLowerCase();
+						out.push(attributeName); out.push('="');
                         }
 					}
 				}
@@ -3885,7 +3887,10 @@ this.svgToString = function(elem, indent) {
 					// map various namespaces to our fixed namespace prefixes
 					// (the default xmlns attribute itself does not get a prefix)
 					if (!attr.namespaceURI || attr.namespaceURI == NS.SVG || nsMap[attr.namespaceURI]) {
-						out.push(attr.nodeName); out.push('="');
+						var attributeName = attr.nodeName;
+						attributeName = attributeName.toLowerCase();
+						out.push(attributeName); out.push('="');
+						//out.push(attr.nodeName); out.push('="');
 						out.push(attrVal); out.push('"');
 					}
 				}
