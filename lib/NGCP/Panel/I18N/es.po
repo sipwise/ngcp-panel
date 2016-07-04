@@ -912,7 +912,9 @@ msgstr "Botón BLF"
 #: share/templates/peering/preferences.tt share/templates/reseller/branding.tt
 #: share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt
 #: share/templates/security/list.tt share/templates/sound/handles_list.tt
-#: share/templates/statistics/list.tt share/templates/statistics/versions.tt
+#: share/templates/statistics/list.tt
+#: share/templates/statistics/supportstatus.tt
+#: share/templates/statistics/versions.tt
 #: share/templates/subprofile/preferences.tt
 #: share/templates/subscriber/calllist.tt
 #: share/templates/subscriber/callmap.tt
@@ -5820,6 +5822,10 @@ msgstr ""
 msgid "NFS Server"
 msgstr ""
 
+#: share/templates/statistics/supportstatus.tt
+msgid "NGCP Support Status"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
@@ -8392,6 +8398,10 @@ msgstr "Domingo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Super"
+msgstr ""
+
+#: share/templates/statistics/versions.tt
+msgid "Support Status"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
