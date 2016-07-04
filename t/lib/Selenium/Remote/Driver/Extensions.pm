@@ -4,6 +4,7 @@ use strict;
 use Moo;
 use Test::More import => [qw(diag ok is)];
 use MooseX::Method::Signatures;
+use Selenium::Remote::WDKeys;
 extends 'Selenium::Remote::Driver';
 
 sub BUILD {
@@ -55,7 +56,8 @@ method fill_element(Str $query, Str $scheme, Str $filltext) {
     my $elem = $self->find_element($query, $scheme);
     return 0 unless $elem;
     return 0 unless $elem->is_displayed;
-    $elem->clear();
+    #$elem->clear();
+    $asdf->send_keys(KEYS->{control}, "a"); # select all
     $elem->send_keys($filltext);
     return 1;
 }
