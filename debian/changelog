@@ -1,3 +1,51 @@
+ngcp-panel (1.12.3.0+0~mr4.3.3.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [be65053] MT#18637 Don't show zone name and detail in zonecost API values
+  * [9143fab] MT#18601 Fix getting pbx relations
+  * [40cebac] MT#18601 Fix tests
+  * [fb3f3e7] MT#18601 Consider cloudpbx feature configuration in tests
+  * [df31564] MT#19035 Don't save billing_fee_raw data
+  * [b6edc4a] MT#12939 Fix pbx group/members order control
+  * [c699ba3] MT#19697 Fix copy-pasted ncos patterns description
+  * [b9984de] MT#19937 Enable external_id editing for the pilot subscriber
+  * [8bde6dd] MT#20315 Add email templates and invoice template ids...
+  * [904a574] MT#20235 Allow to add fw filename to the latest firmware url
+  * [2c0b419] MT#20369 Catch duplicated alias error on subscriber update
+
+  [ Gerhard Jungwirth ]
+  * [a3c858c] MT#17805 captured dialogs process callid
+  * [43d3774] MT#18977 compatible plaintext error dialogic page
+  * [2155490] MT#15269 add restapi tests to stable set
+  * [e1d4371] MT#17461 validate max_subscribers with sipaccount
+  * [09faab0] MT#17413 simplify and fix preference edit modal
+  * [f566539] MT#19627 do not translate pref_forms ncos and sound_set
+  * [3c80bc4] MT#19729 encode call_id in url
+
+  [ Andreas Granig ]
+  * [b87d0a1] MT#16777 Also fix start/end lnp handling in API
+  * [d0e9ae1] MT#19443 Increase prosody connect and wait timeout
+
+  [ Kirill Solomko ]
+  * [7ccb6ef] MT#19113 subscriber and peering apply_rewrite and lookup
+  * [4e816dc] MT#19113 add Call Routing Verification (ngcp-panel/tools)
+  * [fb507e8] MT#19113 CallRoutingVerity fix wrong argument in get_dom_preference() call
+  * [9ef5a34] MT#19113 always fill in caller/callee_in/out values in apply rewrite rules
+  * [32039de] MT#19113 fix an error when no callee peers are found
+  * [d516773] MT#19113 fix voip_peer_hosts, javascript radio check
+  * [e4fb095] MT#20325 - TryCatch syntax fix
+
+  [ Michael Prokop ]
+  * [5384238] MT#19881 Fix typo in german translation.
+    Thanks to Matthias Hohl for reporting this bug on the spce-user mailing list
+
+  [ Rene Krenn ]
+  * [da6a372] MT#19821 subsciber profile edit drops random voip_usr_prefs
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 04 Jul 2016 13:10:43 +0200
+
 ngcp-panel (1.12.2.0+0~mr4.3.2.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
