@@ -76,12 +76,27 @@ function formSerialize(){
 
 [%initial = 'saved'%]
 <div class="ngcp-separator"></div>
-<iframe 
-    type="text/html" 
-    src="/js/libs/svg-edit/svg-editor.htm" 
-    id="svgedit" 
-    onload="init_embed();fetchSvgToEditor({});" 
-    width="1024px" height="1500px" style="border-width:0px;"></iframe>
-</div>
+<div id="svgedit_container"></div>
+<script>
+// http://stackoverflow.com/questions/17922955/how-to-detect-old-opera-via-javascript-non-webkit-non-next-version-14
+// window.opera;
+// navigator.userAgent.indexOf("Opera");
+    if(navigator.userAgent.indexOf("Opera") >= 0){
+        var svgedit_path = '/js/libs/svg-edit-2.6/svg-editor.htm';
+    }else{
+        var svgedit_path = '/js/libs/svg-edit/svg-editor.htm';
+    }
+    var iframe_svgedit =  '<iframe ' +
+'    type="text/html" ' +
+'    src="'+ svgedit_path +'" ' +
+'    id="svgedit" ' +
+'    onload="init_embed();fetchSvgToEditor({});" ' +
+'    width="1024px" height="1500px" style="border-width:0px;"></iframe>' +
+'</div>';
+    var $svgedit_container = $('#svgedit_container');
+    if ( $svgedit_container.length ) {
+        $svgedit_container.append(iframe_svgedit);
+    }
+</script>
 </form>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
