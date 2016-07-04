@@ -33,10 +33,10 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    { 'contract.contact.reseller_id' => $q };
+                    { 'contact.reseller_id' => $q };
                 },
                 second => sub {
-                    { join => 'contract.contact' };
+                    { join => { 'contract' => 'contact' } };
                 },
             },
         },
