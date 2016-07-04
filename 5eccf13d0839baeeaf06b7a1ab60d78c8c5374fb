@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_3da0f98f",
+        "filename": "ngcp_panel.conf",
+        "patchSetId": 1
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-04T08:12:22Z",
+      "side": 1,
+      "message": "Isn\u0027t this file from the templates project?",
+      "range": {
+        "startLine": 382,
+        "startChar": 0,
+        "endLine": 384,
+        "endChar": 25
+      },
+      "revId": "5eccf13d0839baeeaf06b7a1ab60d78c8c5374fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
