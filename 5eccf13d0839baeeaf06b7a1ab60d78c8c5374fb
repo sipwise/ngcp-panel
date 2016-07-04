@@ -22,6 +22,53 @@
       "revId": "5eccf13d0839baeeaf06b7a1ab60d78c8c5374fb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_9db6c5db",
+        "filename": "ngcp_panel.conf",
+        "patchSetId": 1
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-04T08:15:51Z",
+      "side": 1,
+      "message": "yes. this file is just our skeleton for manual tests and to get an idea of the syntax",
+      "parentUuid": "bab3e1c7_3da0f98f",
+      "range": {
+        "startLine": 382,
+        "startChar": 0,
+        "endLine": 384,
+        "endChar": 25
+      },
+      "revId": "5eccf13d0839baeeaf06b7a1ab60d78c8c5374fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_bdbb89c3",
+        "filename": "share/templates/widgets/admin_topmenu_settings.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-04T08:15:51Z",
+      "side": 1,
+      "message": "do we want target\u003d\"_blank\" here?",
+      "range": {
+        "startLine": 8,
+        "startChar": 12,
+        "endLine": 8,
+        "endChar": 20
+      },
+      "revId": "5eccf13d0839baeeaf06b7a1ab60d78c8c5374fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
