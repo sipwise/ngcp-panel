@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_6e5d59e9",
+        "filename": "share/static/js/libs/svg-edit/config.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-05T11:04:55Z",
+      "side": 1,
+      "message": "maybe shorten, the default will have the documentation",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_2e48c12c",
+        "filename": "share/static/js/libs/svg-edit/search.txt",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-05T11:04:55Z",
+      "side": 1,
+      "message": "maybe committed by accident?",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_0e729d7c",
+        "filename": "share/static/js/libs/svg-edit/svg-editor.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-05T11:04:55Z",
+      "side": 1,
+      "message": "could be done via config I thought",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_0ef93dc8",
+        "filename": "share/static/js/libs/svg-edit/svg-editor.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 1200,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-05T11:04:55Z",
+      "side": 1,
+      "message": "vanillajs is nice, but in this case, I think jquery would simplify a lot of these incompatibility workarounds",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_8e5e8de8",
+        "filename": "share/static/js/libs/svg-edit/svg-editor.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 2039,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-05T11:04:55Z",
+      "side": 1,
+      "message": "many debug artifacts",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
