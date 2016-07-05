@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "bab3e1c7_e9e38331",
+        "filename": "share/static/js/libs/svg-edit/config.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-05T21:40:40Z",
+      "side": 1,
+      "message": "I removed this note. I remember that I had some issues with config, but seems that this variant works fine.",
+      "parentUuid": "bab3e1c7_6e5d59e9",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bab3e1c7_2e48c12c",
         "filename": "share/static/js/libs/svg-edit/search.txt",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2016-07-05T11:04:55Z",
       "side": 1,
       "message": "maybe committed by accident?",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_2993dba4",
+        "filename": "share/static/js/libs/svg-edit/search.txt",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-05T21:40:40Z",
+      "side": 1,
+      "message": "I remember that I kept it as reference for possible further adaptations. Then I saw it as a way to save info about important points fast.",
+      "parentUuid": "bab3e1c7_2e48c12c",
       "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "bab3e1c7_c98f9f74",
+        "filename": "share/static/js/libs/svg-edit/svg-editor.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-05T21:40:40Z",
+      "side": 1,
+      "message": "I remember that config didn\u0027t work for me from the start 2 years ago, so I changed it here too. LaterI fixed config, but left this too.\n\nI\u0027m not sure if we really need to clear it.",
+      "parentUuid": "bab3e1c7_0e729d7c",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bab3e1c7_0ef93dc8",
         "filename": "share/static/js/libs/svg-edit/svg-editor.js",
         "patchSetId": 4
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "bab3e1c7_89e9a71c",
+        "filename": "share/static/js/libs/svg-edit/svg-editor.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 1200,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-05T21:40:40Z",
+      "side": 1,
+      "message": "Fun thing that we really don\u0027t use this code. I left it as a evidence of attempt to use this approach. \n\nAlthough I spent few hard days with this code and it started to work in some browsers, it still didn\u0027t work in IE, if I remember right, due to security policy.\n\nInstead of this way to load image, we use now opensave extension.",
+      "parentUuid": "bab3e1c7_0ef93dc8",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bab3e1c7_8e5e8de8",
         "filename": "share/static/js/libs/svg-edit/svg-editor.js",
         "patchSetId": 4
@@ -81,6 +153,24 @@
       "writtenOn": "2016-07-05T11:04:55Z",
       "side": 1,
       "message": "many debug artifacts",
+      "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_e98ce381",
+        "filename": "share/static/js/libs/svg-edit/svg-editor.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 2039,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-05T21:40:40Z",
+      "side": 1,
+      "message": "Left all of them intentionally, as a mark of important points. Some of these points were important as a places where changes didn\u0027t have effect I expected.",
+      "parentUuid": "bab3e1c7_8e5e8de8",
       "revId": "cd5273f1399d111dbf9f0e154cc8fe3efdecebe3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
