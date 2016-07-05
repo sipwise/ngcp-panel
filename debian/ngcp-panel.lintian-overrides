@@ -2,3 +2,12 @@ ngcp-panel: source-is-missing share/static/js/libs/d3.v2.min-2.8.1.js
 ngcp-panel: source-is-missing share/static/js/libs/svg-edit/jquery.js
 ngcp-panel: source-is-missing share/static/js/libs/svg-edit/svgedit.compiled.js
 ngcp-panel: source-is-missing share/static/js/plugins/hoverIntent/jquery.hoverIntent.minified.js
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit/embedapi.js *
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit/jspdf/jspdf.min.js
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit/jspdf/underscore-min.js
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit-2.6/extensions/ext-shapes.js *
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit-2.6/extensions/ext-star.js *
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit-2.6/jquery.js *
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit-2.6/sanitize.js *
+ngcp-panel: source-is-missing share/static/js/plugins/flot/jquery.flot.pie.js *
+ngcp-panel: source-is-missing share/static/js/plugins/msgbox/jquery.msgbox.js *
