@@ -1,3 +1,12 @@
+ngcp-panel (1.12.2.2+0~mr4.3.2.2) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [8cb1fce] MT#21011 subscriberapi fix reseller_id search
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Jul 2016 13:19:50 +0200
+
 ngcp-panel (1.12.2.1+0~mr4.3.2.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
