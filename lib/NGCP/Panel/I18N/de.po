@@ -5688,6 +5688,10 @@ msgid "Minute"
 msgstr "Minute"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "MoH sendonly"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Mobile Number"
 msgstr "Handynummer"
 
@@ -8213,6 +8217,10 @@ msgstr "Subscriber-Profil erfolgreich gelöscht"
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Subscriber profile successfully updated"
 msgstr "Subscriber-Profil erfolgreich aktualisiert"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Subscriber put on hold is notified with a=sendonly in reINVITE."
+msgstr ""
 
 #. (subscriber.status)
 #: share/templates/subscriber/master.tt

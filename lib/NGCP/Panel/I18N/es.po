@@ -5654,6 +5654,10 @@ msgid "Minute"
 msgstr "Minuto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "MoH sendonly"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Mobile Number"
 msgstr ""
 
@@ -8195,6 +8199,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Subscriber profile successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Subscriber put on hold is notified with a=sendonly in reINVITE."
 msgstr ""
 
 #. (subscriber.status)
