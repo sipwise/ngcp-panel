@@ -581,6 +581,10 @@ msgid "An array of objects with keys \"config\", \"connector\" and \"tag\" to cr
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An array of objects with keys \"name\", \"domain\", \"secret\" and \"api_key\" to create RTC apps for this reseller"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An array of objects with keys \"profile_id\" and \"network_id\" to create profile mappings from when a customer top-ups with a voucher associated with this profile package."
 msgstr ""
 
@@ -621,6 +625,10 @@ msgid "Answer Timeout"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Api key"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Applications"
 msgstr ""
 
@@ -629,11 +637,19 @@ msgid "Applications <strong>Ok</strong>"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Apps"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "April"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Arbitrary text."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Arbitrary text. Name of the app."
 msgstr ""
 
 #: share/layout/body.tt
@@ -2475,6 +2491,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Domain.pm
 msgid "Domain successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Domain where the cdk is included."
 msgstr ""
 
 #: share/templates/domain/list.tt share/templates/reseller/details.tt share/templates/widgets/admin_reseller_overview.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_domain_overview.tt share/templates/widgets/reseller_domain_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
@@ -6665,6 +6685,10 @@ msgid "Seconds to wait for pick-up until engaging Call Forward (e.g. &ldquo;10&r
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Secret"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Secret Key"
 msgstr ""
 
@@ -7633,6 +7657,10 @@ msgid "The 'weekday' peak-time schedule for this billing profile. It is represen
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The API key (readonly)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The BIC (Business Identifier Code) of the contact bank details."
 msgstr ""
 
@@ -8593,6 +8621,10 @@ msgid "The reminder recurrence (one of never, weekdays, always)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id this app belong to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id this billing network belongs to."
 msgstr ""
 
@@ -8658,6 +8690,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The routing prefix assigned to this LNP carrier."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The secret (readonly)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

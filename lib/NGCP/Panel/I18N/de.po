@@ -754,6 +754,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"An array of objects with keys \"name\", \"domain\", \"secret\" and \"api_key"
+"\" to create RTC apps for this reseller"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "An array of objects with keys \"profile_id\" and \"network_id\" to create "
 "profile mappings from when a customer top-ups with a voucher associated with "
 "this profile package."
@@ -808,6 +814,10 @@ msgid "Answer Timeout"
 msgstr "Antwortzeit-Überschreitung"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Api key"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Applications"
 msgstr ""
 
@@ -816,12 +826,20 @@ msgid "Applications <strong>Ok</strong>"
 msgstr "Anwendungen <strong>Ok</strong>"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Apps"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "April"
 msgstr "April"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Arbitrary text."
 msgstr "Beliebiger Text."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Arbitrary text. Name of the app."
+msgstr ""
 
 #: share/layout/body.tt
 msgid "Are you sure?"
@@ -2920,6 +2938,10 @@ msgstr "Domain erfolgreich gelöscht"
 #: lib/NGCP/Panel/Controller/Domain.pm
 msgid "Domain successfully updated"
 msgstr "Domain erfolgreich aktualisiert"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Domain where the cdk is included."
+msgstr ""
 
 #: share/templates/domain/list.tt share/templates/reseller/details.tt
 #: share/templates/widgets/admin_reseller_overview.tt
@@ -7446,6 +7468,10 @@ msgstr ""
 "wird (z.B. &ldquo;10&rdquo;)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Secret"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Secret Key"
 msgstr ""
 
@@ -8533,6 +8559,10 @@ msgid ""
 "by an array of objects, each containing the keys \"weekday\" (0 .. Monday, "
 "6 .. Sunday), \"start\" (HH:mm:ss) and \"stop\" (HH:mm:ss). Each time range "
 "provided determines when to use a fee's offpeak rates."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The API key (readonly)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9716,6 +9746,10 @@ msgid "The reminder recurrence (one of never, weekdays, always)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id this app belong to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id this billing network belongs to."
 msgstr ""
 
@@ -9781,6 +9815,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The routing prefix assigned to this LNP carrier."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The secret (readonly)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
