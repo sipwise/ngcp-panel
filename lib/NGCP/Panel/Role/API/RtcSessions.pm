@@ -36,6 +36,7 @@ sub hal_from_item {
         });
     if ($rtc_session) {
         $resource->{rtc_browser_token} = $rtc_session->{data}{token};
+        $resource->{rtc_app_name} = $rtc_session->{data}{app}{name} if $rtc_session->{data}{app}{name};
     } else {
         # here either delete our DB entry, or recreate it accordingly
         $item->delete;

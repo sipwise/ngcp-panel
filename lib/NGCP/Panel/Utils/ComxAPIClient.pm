@@ -171,9 +171,16 @@ sub get_session {
     my ($self, $session_id) = @_;
     my $ua = $self->ua;
 
-    return $self->_create_response(
+    my $session = $self->_create_response(
         $ua->get($self->host . "/sessions/id/$session_id"),
     );
+    if ($session->{data}) {
+        my ($app_id) = $session->{data}{app}{href} =~ m!apps/id/(.*)$!;
+        my $item_res = $ua->get($self->host . "/apps/id/$app_id");
+        my $item_data = decode_json($item_res->content);
+        $session->{data}{app} = $item_data;
+    }
+    return $session;
 }
 
 sub delete_all_sessions {

@@ -105,8 +105,8 @@ sub _create_rtc_user {
 
     # 4. create related app
     my $app = $comx->create_app(
-            $reseller_name . '_app',
-            $reseller_name . 'www.sipwise.com',
+            $reseller_name . '_default_app',
+            $reseller_name . '.www.sipwise.com',
             $user->{data}{id},
         );
     if ($app->{code} != 201) {
@@ -632,8 +632,13 @@ sub create_rtc_session {
     my $comx_apps = $comx->get_apps_by_user_id($rtc_user->rtc_user_id);
     my $comx_app;
     if ($comx_apps->{data} && @{ $comx_apps->{data} }){
-        $comx_app = $comx_apps->{data}[0];
-    } else {
+        if ($resource->{rtc_app_name}) {
+            ($comx_app) = grep {$_->{name} eq $resource->{rtc_app_name}} @{ $comx_apps->{data} };
+        } else { # default app
+            ($comx_app) = grep {$_->{name} =~ m/_default_app$/;} @{ $comx_apps->{data} };
+        }
+    }
+    unless ($comx_app) {
         return unless &{$err_code}(
             'create_rtc_session: Could not find app.');
     }
