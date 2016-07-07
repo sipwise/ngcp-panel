@@ -1,3 +1,32 @@
+ngcp-panel (1.8.8.0+0~mr3.8.8.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [5f7c12e] MT#18601 Fix getting pbx relations
+  * [6e96b66] MT#12939 Fix pbx group/members order control
+  * [853e553] MT#19697 Fix copy-pasted ncos patterns description
+  * [68d7b8d] MT#20315 Add email templates and invoice template ids...
+  * [f202ff3] MT#20235 Allow to add fw filename to the latest firmware url
+  * [32c12cd] MT#20369 Catch duplicated alias error on subscriber update
+
+  [ Gerhard Jungwirth ]
+  * [a5d3226] MT#19627 do not translate pref_forms ncos and sound_set
+  * [f07b280] MT#19657 fix rewrite rule form validation
+  * [e00c5ed] MT#16985 update config-file for InterceptDB
+
+  [ Michael Prokop ]
+  * [eaecfa5] MT#19881 Fix typo in german translation.
+    Thanks to Matthias Hohl for reporting this bug on the spce-user mailing list
+
+  [ Rene Krenn ]
+  * [8d0b81a] MT#19821 subsciber profile edit drops random voip_usr_prefs
+
+  [ Andreas Granig ]
+  * [eaa1bd5] MT#16443 Fix setting reseller_id for contacts
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Jul 2016 14:12:02 +0200
+
 ngcp-panel (1.8.7.0+0~mr3.8.7.0) unstable; urgency=medium
 
   [ Andreas Granig ]
