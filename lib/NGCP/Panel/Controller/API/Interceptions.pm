@@ -1,4 +1,5 @@
 package NGCP::Panel::Controller::API::Interceptions;
+use NGCP::Panel::Utils::Generic qw(:all);
 no Moose;
 use boolean qw(true);
 use Data::HAL qw();
@@ -203,6 +204,11 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
             last;
         }
+        if (defined $resource->{x3_port} && !is_int($resource->{x3_port})) {
+            $c->log->error("Parameter 'x3_port' should be an integer");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Parameter 'x3_port' should be an integer");
+            last;
+        }
 
         my ($uuid_bin, $uuid_string);
         UUID::generate($uuid_bin);
@@ -216,7 +222,6 @@ sub POST :Allow {
         my $dbresource = { %{ $resource } };
         $dbresource = $self->resnames_to_dbnames($dbresource);
         $dbresource->{reseller_id} = $resource->{reseller_id};
-	
         try {
             $item = $c->model('InterceptDB')->resultset('voip_intercept')->create($dbresource);
             my $res = NGCP::Panel::Utils::Interception::request($c, 'POST', undef, {

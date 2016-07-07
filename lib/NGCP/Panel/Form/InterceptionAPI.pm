@@ -94,6 +94,9 @@ has_field 'x3_port' => (
     required => 0,
     range_start => 1,
     range_end => 65535,
+    #validate_when_empty => 1,
+    #not ok 25 - create test item 'interceptions' 1 (Unprocessable Entity: Validation failed. field='x3_port', input='', 
+    #errors='Use of uninitialized value $value in substitution (s///) at /usr/share/perl5/HTML/FormHandler/Field/Integer.pm line 29, <$fh> line 1.
     element_attr => {
         rel => ['tooltip'],
         title => ['The port of the X-3 interface.']

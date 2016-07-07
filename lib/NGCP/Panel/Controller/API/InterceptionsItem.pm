@@ -116,29 +116,9 @@ sub PATCH :Allow {
 
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
-        my ($sub, $reseller) = $self->subres_from_number($c, $resource->{number});
-        last unless($sub && $reseller);
-
-        my $res = NGCP::Panel::Utils::Interception::request($c, 'PUT', $item->uuid, {
-            number => $resource->{number},
-            sip_username => $sub->username,
-            sip_domain => $sub->domain->domain,
-            delivery_host => $resource->{delivery_host},
-            delivery_port => $resource->{delivery_port},
-            delivery_user => $resource->{delivery_user},
-            delivery_password => $resource->{delivery_password},
-            cc_required => $resource->{cc_required},
-            cc_delivery_host => $resource->{cc_delivery_host},
-            cc_delivery_port => $resource->{cc_delivery_port},
-        });
-        unless($res) {
-            $c->log->error("failed to update capture agents");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update capture agents");
-            last;
-        }
-       
-	$cguard->commit; 
+    
         $guard->commit;
+        $cguard->commit; 
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -178,28 +158,9 @@ sub PUT :Allow {
 
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
-        my ($sub, $reseller) = $self->subres_from_number($c, $resource->{number});
-        last unless($sub && $reseller);
-
-        my $res = NGCP::Panel::Utils::Interception::request($c, 'PUT', $item->uuid, {
-            number => $resource->{number},
-            sip_username => $sub->username,
-            sip_domain => $sub->domain->domain,
-            delivery_host => $resource->{delivery_host},
-            delivery_port => $resource->{delivery_port},
-            delivery_user => $resource->{delivery_user},
-            delivery_password => $resource->{delivery_password},
-            cc_required => $resource->{cc_required},
-            cc_delivery_host => $resource->{cc_delivery_host},
-            cc_delivery_port => $resource->{cc_delivery_port},
-        });
-        unless($res) {
-            $c->log->error("failed to update capture agents");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update capture agents");
-            last;
-        }
 
         $guard->commit; 
+        $cguard->commit; 
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
