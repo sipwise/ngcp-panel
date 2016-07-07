@@ -300,7 +300,7 @@ sub get_uri_item{
     my($self,$name,$item) = @_;
     my $resuri;
     $item ||= $self->get_item_hal($name);
-    $resuri = $self->normalize_uri('/'.$item->{location});
+    $resuri = $self->normalize_uri('/'.( $item->{location} // '' ));
     return $resuri;
 }
 sub get_item_hal{
