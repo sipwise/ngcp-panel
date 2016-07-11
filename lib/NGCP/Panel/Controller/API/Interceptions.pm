@@ -1,4 +1,8 @@
 package NGCP::Panel::Controller::API::Interceptions;
+
+use warnings;
+use strict;
+
 no Moose;
 use boolean qw(true);
 use Data::HAL qw();

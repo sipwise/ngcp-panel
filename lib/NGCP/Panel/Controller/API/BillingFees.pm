@@ -1,5 +1,9 @@
 package NGCP::Panel::Controller::API::BillingFees;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use warnings;
+use strict;
+
 no Moose;
 use boolean qw(true);
 use Data::HAL qw();

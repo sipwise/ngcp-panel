@@ -1,6 +1,9 @@
 package NGCP::Panel::Controller::API::Root;
-
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use warnings;
+use strict;
+
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();

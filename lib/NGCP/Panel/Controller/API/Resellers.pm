@@ -1,5 +1,9 @@
 package NGCP::Panel::Controller::API::Resellers;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use warnings;
+use strict;
+
 no Moose;
 use JSON qw();
 use boolean qw(true);

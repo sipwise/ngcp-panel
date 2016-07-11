@@ -1,6 +1,9 @@
 package NGCP::Panel::Role::API::SoundSets;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use warnings;
+use strict;
+
 use parent 'NGCP::Panel::Role::API';
 
 

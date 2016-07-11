@@ -1,6 +1,10 @@
 package NGCP::Panel::Controller::API::RtcSessions;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use warnings;
+use strict;
+
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();

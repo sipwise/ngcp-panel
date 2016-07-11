@@ -1,6 +1,9 @@
 package NGCP::Panel::Role::API::CallForwards;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use warnings;
+use strict;
+
 use parent 'NGCP::Panel::Role::API';
 
 

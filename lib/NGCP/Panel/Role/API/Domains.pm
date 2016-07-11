@@ -1,8 +1,10 @@
 package NGCP::Panel::Role::API::Domains;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use parent 'NGCP::Panel::Role::API';
+use warnings;
+use strict;
 
+use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use TryCatch;

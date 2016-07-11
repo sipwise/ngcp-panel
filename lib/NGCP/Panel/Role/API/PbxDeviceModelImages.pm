@@ -1,5 +1,9 @@
 package NGCP::Panel::Role::API::PbxDeviceModelImages;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use warnings;
+use strict;
+
 use parent 'NGCP::Panel::Role::API';
 
 sub get_form {

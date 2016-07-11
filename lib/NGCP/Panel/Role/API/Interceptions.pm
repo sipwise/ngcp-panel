@@ -1,5 +1,8 @@
 package NGCP::Panel::Role::API::Interceptions;
 
+use warnings;
+use strict;
+
 use parent 'NGCP::Panel::Role::API';
 
 

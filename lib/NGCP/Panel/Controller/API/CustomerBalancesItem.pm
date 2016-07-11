@@ -1,5 +1,9 @@
 package NGCP::Panel::Controller::API::CustomerBalancesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use warnings;
+use strict;
+
 no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);

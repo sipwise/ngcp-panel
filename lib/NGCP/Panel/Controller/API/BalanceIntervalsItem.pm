@@ -1,5 +1,9 @@
 package NGCP::Panel::Controller::API::BalanceIntervalsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use warnings;
+use strict;
+
 no Moose;
 use boolean qw(true);
 use HTTP::Headers qw();

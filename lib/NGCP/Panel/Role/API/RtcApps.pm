@@ -1,5 +1,9 @@
 package NGCP::Panel::Role::API::RtcApps;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use warnings;
+use strict;
+
 use parent 'NGCP::Panel::Role::API';
 use boolean qw(true);
 use TryCatch;

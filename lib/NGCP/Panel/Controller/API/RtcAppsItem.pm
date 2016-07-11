@@ -1,5 +1,9 @@
 package NGCP::Panel::Controller::API::RtcAppsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use warnings;
+use strict;
+
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();

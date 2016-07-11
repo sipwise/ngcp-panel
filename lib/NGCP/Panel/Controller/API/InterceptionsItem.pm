@@ -1,4 +1,8 @@
 package NGCP::Panel::Controller::API::InterceptionsItem;
+
+
+use warnings;
+use strict;
 no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
