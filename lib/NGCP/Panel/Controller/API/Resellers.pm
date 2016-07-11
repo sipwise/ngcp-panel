@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::Resellers;
 use NGCP::Panel::Utils::Generic qw(:all);
-no Moose;
+
+use Sipwise::Base;
+
 use JSON qw();
 use boolean qw(true);
 use Data::HAL qw();
@@ -8,7 +10,6 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller;
 use NGCP::Panel::Utils::Rtc;
@@ -227,7 +228,6 @@ sub end : Private {
     $self->log_response($c);
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

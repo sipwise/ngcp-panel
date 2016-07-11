@@ -1,8 +1,10 @@
 package NGCP::Panel::Controller::API::CustomerFraudEventsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
@@ -104,7 +106,6 @@ sub end : Private {
     $self->log_response($c);
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

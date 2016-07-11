@@ -1,13 +1,14 @@
 package NGCP::Panel::Controller::API::TopupVouchers;
 use NGCP::Panel::Utils::Generic qw(:all);
-no Moose;
+
+use Sipwise::Base;
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use TryCatch;
 use NGCP::Panel::Utils::Voucher;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ProfilePackages;
@@ -181,7 +182,6 @@ sub get_form {
     return NGCP::Panel::Form::Topup::VoucherAPI->new(ctx => $c);
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

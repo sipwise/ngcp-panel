@@ -1,11 +1,12 @@
 package NGCP::Panel::Role::API::Faxes;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use Sipwise::Base;
+
 use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
@@ -73,7 +74,7 @@ sub resource_from_item {
 
     my %resource = ();
     $resource{id} = int($item->id);
-    $resource->{time} = $datetime_fmt->format_datetime($item->time);
+    $resource{time} = $datetime_fmt->format_datetime($item->time);
     $resource{subscriber_id} = int($item->provisioning_voip_subscriber->voip_subscriber->id);
     foreach(qw/direction caller callee reason status quality filename/){
         $resource{$_} = $item->$_;

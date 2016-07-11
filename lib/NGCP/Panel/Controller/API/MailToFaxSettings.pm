@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::MailToFaxSettings;
 use NGCP::Panel::Utils::Generic qw(:all);
-use TryCatch;
+
+use Sipwise::Base;
+
 
 use boolean qw(true);
 use Data::HAL qw();
@@ -170,7 +172,6 @@ sub end : Private {
     return 1;
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

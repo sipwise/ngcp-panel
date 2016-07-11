@@ -1,13 +1,14 @@
 package NGCP::Panel::Controller::API::CFTimeSetsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-no Moose;
+
+use Sipwise::Base;
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use TryCatch;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
@@ -233,7 +234,6 @@ sub end : Private {
     return 1;
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

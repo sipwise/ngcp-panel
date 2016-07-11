@@ -1,10 +1,11 @@
 package NGCP::Panel::Controller::API::ProfilePackagesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-no Moose;
+
+use Sipwise::Base;
+
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use TryCatch;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
@@ -233,7 +234,6 @@ sub end : Private {
     $self->log_response($c);
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

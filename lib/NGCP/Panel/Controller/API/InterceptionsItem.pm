@@ -1,9 +1,11 @@
 package NGCP::Panel::Controller::API::InterceptionsItem;
+
+use Sipwise::Base;
 no Moose;
+
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Interception;
@@ -265,7 +267,6 @@ sub end : Private {
     $self->log_response($c);
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

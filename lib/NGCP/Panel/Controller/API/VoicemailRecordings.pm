@@ -1,13 +1,14 @@
 package NGCP::Panel::Controller::API::VoicemailRecordings;
 use NGCP::Panel::Utils::Generic qw(:all);
-no Moose;
+
+use Sipwise::Base;
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
@@ -77,7 +78,6 @@ sub end : Private {
     return;
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

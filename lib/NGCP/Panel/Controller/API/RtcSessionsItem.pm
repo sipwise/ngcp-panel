@@ -1,6 +1,9 @@
 package NGCP::Panel::Controller::API::RtcSessionsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use Sipwise::Base;
+
+
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
@@ -116,7 +119,6 @@ sub end : Private {
     return 1;
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

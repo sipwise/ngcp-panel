@@ -1,10 +1,11 @@
 package NGCP::Panel::Role::API::PeeringGroups;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use Sipwise::Base;
+
 use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
-use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);

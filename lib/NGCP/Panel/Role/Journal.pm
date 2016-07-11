@@ -1,5 +1,7 @@
 package NGCP::Panel::Role::Journal;
 
+use Sipwise::Base;
+
 use NGCP::Panel::Utils::Journal;
 
 sub add_create_journal_item_hal {

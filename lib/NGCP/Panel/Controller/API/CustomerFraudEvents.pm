@@ -1,12 +1,14 @@
 package NGCP::Panel::Controller::API::CustomerFraudEvents;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 #use namespace::sweep;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
 use Path::Tiny qw(path);
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -149,7 +151,6 @@ sub end : Private {
     $self->log_response($c);
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

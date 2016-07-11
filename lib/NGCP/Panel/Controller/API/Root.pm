@@ -1,16 +1,16 @@
 package NGCP::Panel::Controller::API::Root;
-
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();
 use HTTP::Response qw();
 use HTTP::Status qw(:constants);
-use MooseX::ClassAttribute qw(class_has);
 use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
-use TryCatch;
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -411,6 +411,5 @@ sub end : Private {
     return 1;
 }
 
-no Moose;
 
 # vim: set tabstop=4 expandtab:

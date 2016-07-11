@@ -1,17 +1,17 @@
 package NGCP::Panel::Controller::API::PeeringGroups;
 use NGCP::Panel::Utils::Generic qw(:all);
-no Moose;
+
+use Sipwise::Base;
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 #
-use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Peering;
 use Path::Tiny qw(path);
-use TryCatch;
 use Safe::Isa qw($_isa);
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
 require Catalyst::ActionRole::ACL;
@@ -196,7 +196,6 @@ sub end : Private {
     $self->log_response($c);
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

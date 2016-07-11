@@ -1,6 +1,8 @@
 package NGCP::Panel::Role::API::CustomerZoneCosts;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use Sipwise::Base;
+
 use parent 'NGCP::Panel::Role::API';
 
 
@@ -10,7 +12,6 @@ use Data::HAL qw();
 use DateTime::Format::Strptime;
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use TryCatch;
 use NGCP::Panel::Utils::Contract;
 
 sub datetime_format {

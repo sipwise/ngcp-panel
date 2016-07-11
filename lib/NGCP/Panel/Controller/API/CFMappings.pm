@@ -1,13 +1,14 @@
 package NGCP::Panel::Controller::API::CFMappings;
 use NGCP::Panel::Utils::Generic qw(:all);
-no Moose;
+
+use Sipwise::Base;
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use TryCatch;
 use NGCP::Panel::Utils::DateTime;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -150,7 +151,6 @@ sub end : Private {
     return 1;
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

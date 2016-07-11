@@ -1,5 +1,6 @@
 package NGCP::Panel::Role::API;
-no Moose;
+
+use Sipwise::Base;
 
 use NGCP::Panel::Utils::Generic qw(:all);
 use boolean qw(true);
@@ -10,7 +11,6 @@ use JSON::Pointer;
 use JSON::Pointer::Exception qw();
 use HTTP::Status qw(:constants);
 use Scalar::Util qw/blessed/;
-use TryCatch;
 use DateTime::Format::HTTP qw();
 use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
