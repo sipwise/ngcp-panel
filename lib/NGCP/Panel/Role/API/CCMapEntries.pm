@@ -1,6 +1,8 @@
 package NGCP::Panel::Role::API::CCMapEntries;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use Sipwise::Base;
+
 use parent 'NGCP::Panel::Role::API';
 
 

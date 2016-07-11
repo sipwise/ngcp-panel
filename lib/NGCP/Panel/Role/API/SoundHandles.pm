@@ -1,6 +1,8 @@
 package NGCP::Panel::Role::API::SoundHandles;
 use NGCP::Panel::Utils::Generic qw(:all);
 
+use Sipwise::Base;
+
 use parent 'NGCP::Panel::Role::API';
 
 

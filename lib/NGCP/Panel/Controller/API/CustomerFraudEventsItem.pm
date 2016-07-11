@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::CustomerFraudEventsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);

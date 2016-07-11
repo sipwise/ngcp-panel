@@ -1,8 +1,9 @@
 package NGCP::Panel::Role::API::Domains;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use parent 'NGCP::Panel::Role::API';
+use Sipwise::Base;
 
+use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use TryCatch;

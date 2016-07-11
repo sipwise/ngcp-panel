@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::VoicemailRecordingsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);

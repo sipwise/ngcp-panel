@@ -1,6 +1,8 @@
 package NGCP::Panel::Controller::API::Root;
-
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 use Encode qw(encode);
 use Clone qw/clone/;
 use HTTP::Headers qw();

@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::RtcNetworksItem;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();

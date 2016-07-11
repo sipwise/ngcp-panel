@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::DomainsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 no Moose;
 use boolean qw(true);
 use Data::HAL qw();

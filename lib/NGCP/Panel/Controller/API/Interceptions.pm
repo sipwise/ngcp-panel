@@ -1,4 +1,7 @@
 package NGCP::Panel::Controller::API::Interceptions;
+
+use Sipwise::Base;
+
 no Moose;
 use boolean qw(true);
 use Data::HAL qw();

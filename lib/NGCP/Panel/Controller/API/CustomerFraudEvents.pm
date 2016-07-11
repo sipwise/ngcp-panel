@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::CustomerFraudEvents;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 #use namespace::sweep;
 use boolean qw(true);
 use Data::HAL qw();

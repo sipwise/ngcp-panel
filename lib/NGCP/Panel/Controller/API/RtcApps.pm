@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::RtcApps;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 use TryCatch;
 use boolean qw(true);
 use Data::HAL qw();

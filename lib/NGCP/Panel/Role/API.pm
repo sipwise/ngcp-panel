@@ -1,6 +1,8 @@
 package NGCP::Panel::Role::API;
 no Moose;
 
+use Sipwise::Base;
+
 use NGCP::Panel::Utils::Generic qw(:all);
 use boolean qw(true);
 use Safe::Isa qw($_isa);

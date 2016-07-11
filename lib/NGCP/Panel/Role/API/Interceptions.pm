@@ -1,5 +1,7 @@
 package NGCP::Panel::Role::API::Interceptions;
 
+use Sipwise::Base;
+
 use parent 'NGCP::Panel::Role::API';
 
 

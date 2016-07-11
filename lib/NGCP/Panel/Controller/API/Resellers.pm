@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::Resellers;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 no Moose;
 use JSON qw();
 use boolean qw(true);

@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::PeeringGroupsItem;
 
+
+use Sipwise::Base;
+
 use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);

@@ -1,4 +1,7 @@
 package NGCP::Panel::Controller::API::InterceptionsItem;
+
+
+use Sipwise::Base;
 no Moose;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);

@@ -1,5 +1,8 @@
 package NGCP::Panel::Controller::API::MailToFaxSettings;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
 use TryCatch;
 
 use boolean qw(true);
