@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "bab3e1c7_705a0b85",
+        "filename": "lib/NGCP/Panel/Controller/API/Admins.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-07-11T14:27:35Z",
+      "side": 1,
+      "message": "Why is the strict + warnings after this use?",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 41
+      },
+      "revId": "40f2e967154ec4a3cef6f3e8fdcf80f867b1f61a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bab3e1c7_f0335bf4",
         "filename": "lib/NGCP/Panel/Role/API/Faxes.pm",
         "patchSetId": 1
