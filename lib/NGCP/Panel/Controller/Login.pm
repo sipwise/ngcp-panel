@@ -1,16 +1,15 @@
 package NGCP::Panel::Controller::Login;
-use NGCP::Panel::Utils::Generic qw(:all);
 
-use Moose;
+use warnings;
+use strict;
 
-BEGIN { extends 'Catalyst::Controller'; }
+use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::Login;
 
 sub index :Path Form {
     my ( $self, $c, $realm ) = @_;
 
-    $c->log->debug("*** Login::index");
     $realm = 'subscriber' 
         unless($realm && $realm eq 'admin');
 
@@ -77,6 +76,7 @@ sub index :Path Form {
             # auth ok
             my $target = $c->session->{'target'} || '/';
             delete $c->session->{target};
+            $target =~ s!^https?://[^/]+/!/!;
             $c->log->debug("*** Login::index auth ok, redirecting to $target");
             $c->response->redirect($target);
             return;
