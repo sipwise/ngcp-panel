@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_f0335bf4",
+        "filename": "lib/NGCP/Panel/Role/API/Faxes.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-11T11:27:11Z",
+      "side": 1,
+      "message": "this is why strict should always be enabled",
+      "revId": "40f2e967154ec4a3cef6f3e8fdcf80f867b1f61a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
