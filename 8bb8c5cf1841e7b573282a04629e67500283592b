@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_5a3cc82f",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-11T06:42:02Z",
+      "side": 1,
+      "message": "renamed the default app to ensure easier recognition, when no app is chosen",
+      "revId": "8bb8c5cf1841e7b573282a04629e67500283592b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bab3e1c7_fa481cce",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-11T06:42:02Z",
+      "side": 1,
+      "message": "also changing domain of the default app",
+      "revId": "8bb8c5cf1841e7b573282a04629e67500283592b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
