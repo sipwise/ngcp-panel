@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab3e1c7_f5334df4",
+        "filename": "lib/NGCP/Panel/Controller/Login.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-11T08:16:59Z",
+      "side": 1,
+      "message": "the actual fix",
+      "revId": "631e19323a75d22e8da7ac0c1bd9f215560df9c1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
