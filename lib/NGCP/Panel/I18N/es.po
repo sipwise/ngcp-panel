@@ -793,6 +793,16 @@ msgstr ""
 msgid "An optional routing number replacing the ported number."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Anonymize From User"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Anonymize the From-Username in addition to From-Displayname in case of CLIR "
+"call to this peer."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Anonymous"
 msgstr ""
