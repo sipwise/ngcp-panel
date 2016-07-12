@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "bab3e1c7_e6f16596",
+        "filename": "lib/NGCP/Panel/Controller/API/Admins.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-07-12T10:47:40Z",
+      "side": 1,
+      "message": "BTW, this is very minor I guess, but the prevalent order elsewhere seems to be strict then warnings. I don\u0027t think that makes any difference though (although it feels more right to me, don\u0027t ask me why :)-",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 11
+      },
+      "revId": "40f2e967154ec4a3cef6f3e8fdcf80f867b1f61a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bab3e1c7_f0335bf4",
         "filename": "lib/NGCP/Panel/Role/API/Faxes.pm",
         "patchSetId": 1
