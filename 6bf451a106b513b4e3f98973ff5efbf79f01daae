@@ -16,6 +16,24 @@
       "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_eacdc75e",
+        "filename": "lib/NGCP/Panel/Form/InterceptionAPI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-13T09:33:02Z",
+      "side": 1,
+      "message": "It didn\u0027t return error on value \u0027\u0027.\nWith this flag set it worked, but also failed on missed parameter, as shown in the comment.",
+      "parentUuid": "9ab8dda7_aa8caf80",
+      "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
