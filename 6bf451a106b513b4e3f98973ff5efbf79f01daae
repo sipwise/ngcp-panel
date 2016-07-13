@@ -34,6 +34,24 @@
       "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_8a48cbcd",
+        "filename": "lib/NGCP/Panel/Form/InterceptionAPI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-13T09:40:39Z",
+      "side": 1,
+      "message": "that\u0027s not its purpose. you need \"required \u003d\u003e 1\" then, as above",
+      "parentUuid": "9ab8dda7_eacdc75e",
+      "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
