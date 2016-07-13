@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab8dda7_aa8caf80",
+        "filename": "lib/NGCP/Panel/Form/InterceptionAPI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-13T08:29:46Z",
+      "side": 1,
+      "message": "you don\u0027t need this to check for valid numbers.",
+      "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
