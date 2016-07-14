@@ -1,11 +1,11 @@
 package NGCP::Panel::Utils::Preferences;
-use strict;
-use warnings;
 
+use Sipwise::Base;
+
+use Data::Validate::IP qw/is_ipv4 is_ipv6/;
 use NGCP::Panel::Form::Preferences;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-use Data::Validate::IP qw/is_ipv4 is_ipv6/;
+use NGCP::Panel::Utils::Sems;
 
 sub validate_ipnet {
     my ($field) = @_;
@@ -870,6 +870,28 @@ sub get_contract_preference_rs {
         });
 }
 
+sub update_sems_peer_auth {
+    my ($c, $prov_subscriber, $old_auth_prefs, $new_auth_prefs) = @_;
+
+    if(!_is_peer_auth_active($c, $old_auth_prefs) &&
+        _is_peer_auth_active($c, $new_auth_prefs)) {
+
+        NGCP::Panel::Utils::Sems::create_peer_registration(
+            $c, $prov_subscriber, $new_auth_prefs);
+    } elsif( _is_peer_auth_active($c, $old_auth_prefs) &&
+            !_is_peer_auth_active($c, $new_auth_prefs)) {
+
+        NGCP::Panel::Utils::Sems::delete_peer_registration(
+            $c, $prov_subscriber, $old_auth_prefs);
+    } elsif(_is_peer_auth_active($c, $old_auth_prefs) &&
+            _is_peer_auth_active($c, $new_auth_prefs)){
+
+        NGCP::Panel::Utils::Sems::update_peer_registration(
+            $c, $prov_subscriber, $new_auth_prefs, $old_auth_prefs);
+    }
+
+    return;
+}
 
 sub get_peer_auth_params {
     my ($c, $prov_subscriber, $prefs) = @_;
@@ -885,7 +907,7 @@ sub get_peer_auth_params {
     }
 }
 
-sub is_peer_auth_active {
+sub _is_peer_auth_active {
     my ($c, $prefs) = @_;
     if(defined $prefs->{peer_auth_register} && $prefs->{peer_auth_register} == 1 &&
        defined $prefs->{peer_auth_user} &&
