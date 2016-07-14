@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab8dda7_2120e29a",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-14T16:51:47Z",
+      "side": 1,
+      "message": "IMPORTANT: never use \"*\" on a production machine! we have an authentication cookie, so in theory, any malicious website could in that case send cross-origin-requests with a browser that is logged in on the panel and do anything!",
+      "range": {
+        "startLine": 123,
+        "startChar": 70,
+        "endLine": 123,
+        "endChar": 73
+      },
+      "revId": "12db6ddd7c3ba7104f94d5ea389c4febc8412147",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
