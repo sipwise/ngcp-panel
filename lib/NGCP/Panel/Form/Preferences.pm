@@ -1,6 +1,10 @@
 package NGCP::Panel::Form::Preferences;
+
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
+use NGCP::Panel::Utils::Generic qw(:all);
+use NGCP::Panel::Utils::Preferences;
+
 extends 'HTML::FormHandler';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
@@ -25,12 +29,12 @@ sub field_list {
     my $self = shift;
 
     return [] unless $self->ctx;
-    my $is_subscriber = ($self->ctx->user->roles eq 'subscriber' || 
+    my $is_subscriber = ($self->ctx->user->roles eq 'subscriber' ||
                          $self->ctx->user->roles eq 'subscriberadmin');
-    
+
     my @field_list;
     my $fields_data = $self->fields_data;
-   
+
     foreach my $row (@$fields_data) {
         my $meta = $row->{meta};
         my $enums = $row->{enums};
@@ -79,9 +83,9 @@ sub field_list {
             };
         } elsif($meta->data_type eq "enum") {
             my @options = map {{label => $_->label, value => $_->value}} @{ $enums };
-            $field = { 
-                name => $meta->attribute, 
-                type => 'Select', 
+            $field = {
+                name => $meta->attribute,
+                type => 'Select',
                 options => \@options,
             };
         } elsif($meta->data_type eq "boolean") {
@@ -116,8 +120,41 @@ sub field_list {
         $field->{label} = $is_subscriber ? $meta->label : $meta->attribute;
         push @field_list, $field;
     }
-    
+
     return \@field_list;
+}
+
+sub validate {
+    my ($self) = @_;
+    my $c = $self->ctx;
+    return unless $c;
+
+    my $res = 1;
+
+    my $attribute = 'codecs_list';
+    if(my $field = $self->field( $attribute )){
+        if( my $value = $field->value ){
+            #my $enum_rs = NGCP::Panel::Utils::Preferences::preference_attribute_enum($c, $attribute);#preferences_group - ?
+            #my $enum = get_inflated_columns_all($enum_rs, 'hash' => 'value');
+            my $enum = {map{$_=>1} qw/G722 PCMU PCMA speex GSM G723 DVI4 L16 QCELP CN MPA G728 DVI4 G729 AMR opus/ };
+            my @codecs = split(/\W+/, $value);
+            my %codecs_dup;
+            foreach my $codec( @codecs){
+                if( !exists $enum->{$codec} ){
+                    my $err_msg = 'Value should be a comma separated list of the valid codecs.';
+                    $field->add_error($err_msg);
+                    $res = 0;
+                }
+                if($codecs_dup{$codec}){
+                    my $err_msg = 'Value should not contain duplicates.';
+                    $field->add_error($err_msg);
+                    $res = 0;
+                }
+                $codecs_dup{$codec} = 1;
+            }
+        }
+    }
+    return $res;
 }
 
 has_field 'save' => (
@@ -144,7 +181,7 @@ has_block 'actions' => (
 sub create_structure {
     my $self = shift;
     my $field_list = shift;
-   
+
     $self->block('fields')->render_list($field_list);
 }
 
