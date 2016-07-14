@@ -1,3 +1,12 @@
+ngcp-panel (1.12.2.3+0~mr4.3.2.3) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [fcf9c76] MT#21141 fix login redirect between realms
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Jul 2016 19:19:26 +0200
+
 ngcp-panel (1.12.2.2+0~mr4.3.2.2) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
