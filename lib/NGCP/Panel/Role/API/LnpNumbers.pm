@@ -55,8 +55,8 @@ sub hal_from_item {
 
     $resource{id} = int($item->id);
     $resource{carrier_id} = delete $resource{lnp_provider_id};
-    $resource{start} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$//;
-    $resource{end} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$//;
+    $resource{start} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $resource{start};
+    $resource{end} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $resource{end};
     $hal->resource({%resource});
     return $hal;
 }
@@ -65,8 +65,8 @@ sub resource_from_item {
     my ($self, $c, $item) = @_;
     my $r = { $item->get_inflated_columns };
     $r->{carrier_id} = delete $r->{lnp_provider_id};
-    $r->{start} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$//;
-    $r->{end} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$//;
+    $r->{start} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $r->{start};
+    $r->{end} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $r->{end};
     return $r;
 }
 

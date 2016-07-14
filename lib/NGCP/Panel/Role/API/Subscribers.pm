@@ -625,7 +625,7 @@ sub update_item {
         $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
         $c->log->error("failed to update subscriber, number $1 already exists"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '$1' already exists.");
-        last;
+        return;
     }
 
     my $billing_res = {
