@@ -1,6 +1,5 @@
 use strict;
 
-#use Moose;
 use Test::Collection;
 use Test::FakeData;
 use Test::More;

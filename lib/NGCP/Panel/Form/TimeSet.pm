@@ -1,7 +1,6 @@
 package NGCP::Panel::Form::TimeSet;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
-#use Moose::Util::TypeConstraints;
 extends 'HTML::FormHandler';
 
 with 'NGCP::Panel::Render::RepeatableJs';

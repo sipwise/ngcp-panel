@@ -1,7 +1,6 @@
 package NGCP::Panel::Controller::Invoice;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-#use namespace::sweep;
 use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Utils::Message;

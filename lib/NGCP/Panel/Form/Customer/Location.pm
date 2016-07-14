@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Customer::Location;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 
 use NGCP::Panel::Utils::ContractLocations qw();
 use Storable qw();

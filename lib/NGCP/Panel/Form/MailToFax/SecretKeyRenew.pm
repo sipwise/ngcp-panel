@@ -2,7 +2,6 @@ package NGCP::Panel::Form::MailToFax::SecretKeyRenew;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 use NGCP::Panel::Utils::Form;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;

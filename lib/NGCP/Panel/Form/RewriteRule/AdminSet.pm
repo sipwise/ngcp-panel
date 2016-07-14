@@ -2,7 +2,6 @@ package NGCP::Panel::Form::RewriteRule::AdminSet;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::RewriteRule::ResellerSet';
-#use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',

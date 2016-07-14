@@ -2,7 +2,6 @@ package NGCP::Panel::Form::MailToFax::ACL;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 

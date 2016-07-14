@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Peering::Server;
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 use NGCP::Panel::Field::PosInteger;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;

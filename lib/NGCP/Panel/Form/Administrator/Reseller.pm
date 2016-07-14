@@ -1,7 +1,6 @@
 package NGCP::Panel::Form::Administrator::Reseller;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
-#use Moose::Util::TypeConstraints;
 use NGCP::Panel::Utils::Form;
 extends 'HTML::FormHandler';
 

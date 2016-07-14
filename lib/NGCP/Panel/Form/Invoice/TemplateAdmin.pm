@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Invoice::TemplateAdmin;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Invoice::TemplateReseller';
-#use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',

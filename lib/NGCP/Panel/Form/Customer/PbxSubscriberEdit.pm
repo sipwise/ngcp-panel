@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Customer::PbxSubscriberEdit;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
-#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 

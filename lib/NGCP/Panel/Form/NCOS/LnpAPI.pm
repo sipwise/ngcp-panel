@@ -2,7 +2,6 @@ package NGCP::Panel::Form::NCOS::LnpAPI;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::NCOS::Lnp';
-#use Moose::Util::TypeConstraints;
 
 has_field 'ncos_level_id' => (
     type => 'PosInteger',
