@@ -3,7 +3,6 @@ package NGCP::Panel::Form::Subscriber::TrustedSource;
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Data::Validate::IP qw/is_ipv4 is_ipv6/;

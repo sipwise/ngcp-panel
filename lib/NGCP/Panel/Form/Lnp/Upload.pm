@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Lnp::Upload;
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Field::BillingZone;

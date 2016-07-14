@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Subscriber::SpeedDialAPI;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 
 has_field 'speeddials' => (
     type => 'Repeatable',

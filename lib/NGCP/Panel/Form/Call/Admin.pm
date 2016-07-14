@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Call::Admin;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Call::Reseller';
-#use Moose::Util::TypeConstraints;
 
 has_field 'source_carrier_cost' => (
     type => 'Float',

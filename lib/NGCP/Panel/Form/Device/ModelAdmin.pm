@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Device::ModelAdmin;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Device::Model';
-#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 

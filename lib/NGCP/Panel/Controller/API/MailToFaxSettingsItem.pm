@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::API::MailToFaxSettingsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
-#use namespace::sweep;
 use TryCatch;
 
 

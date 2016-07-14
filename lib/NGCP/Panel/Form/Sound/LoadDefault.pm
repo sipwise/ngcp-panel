@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Sound::LoadDefault;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 use File::Find::Rule;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;

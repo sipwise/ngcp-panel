@@ -1,7 +1,6 @@
 package NGCP::Panel::Form::SubscriberCFTAdvanced;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
-#use Moose::Util::TypeConstraints;
 use NGCP::Panel::Field::PosInteger;
 extends 'NGCP::Panel::Form::SubscriberCFAdvanced';
 

@@ -1,7 +1,6 @@
 package NGCP::Panel::Form::DestinationSet;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
-#use Moose::Util::TypeConstraints;
 use NGCP::Panel::Field::PosInteger;
 use NGCP::Panel::Field::URI;
 extends 'HTML::FormHandler';

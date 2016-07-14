@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Faxserver::API;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 
 
 has_field 'name' => (
