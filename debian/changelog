@@ -1,3 +1,13 @@
+ngcp-panel (1.13.1.6+0~mr4.4.1.6) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [d0b64cc] MT#21141 fix login redirect between realms
+  * [0bbb686] MT#21293 API fix peer auth sems update
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Jul 2016 19:18:54 +0200
+
 ngcp-panel (1.13.1.5+0~mr4.4.1.5) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
