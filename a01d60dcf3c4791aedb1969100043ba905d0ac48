@@ -22,6 +22,30 @@
       "revId": "a01d60dcf3c4791aedb1969100043ba905d0ac48",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_f6c60e49",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 670,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-14T15:45:00Z",
+      "side": 1,
+      "message": "the thing is, preferences handling is quite different in panel vs api. also this is a quick fix, which should be ready by tomorrow.\n\nwhat is possible, I can extract lines 679-694 to a separate method.",
+      "parentUuid": "9ab8dda7_76bbfec4",
+      "range": {
+        "startLine": 670,
+        "startChar": 3,
+        "endLine": 670,
+        "endChar": 31
+      },
+      "revId": "a01d60dcf3c4791aedb1969100043ba905d0ac48",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
