@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab8dda7_01e4be0b",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 739,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-14T21:21:26Z",
+      "side": 1,
+      "message": "Although personally I don\u0027t like unless, I prefer short block first - then it still is easy to see what condition is.",
+      "range": {
+        "startLine": 737,
+        "startChar": 0,
+        "endLine": 739,
+        "endChar": 84
+      },
+      "revId": "69d02490013f25806ce1ff18b8d0a0e10f7be416",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
