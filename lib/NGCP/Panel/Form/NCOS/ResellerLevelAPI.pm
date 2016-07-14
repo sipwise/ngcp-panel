@@ -2,7 +2,6 @@ package NGCP::Panel::Form::NCOS::ResellerLevelAPI;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-#use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 

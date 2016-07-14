@@ -3,9 +3,6 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-#use namespace::sweep;
-
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();

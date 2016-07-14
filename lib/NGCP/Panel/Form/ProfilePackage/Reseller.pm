@@ -1,7 +1,6 @@
 package NGCP::Panel::Form::ProfilePackage::Reseller;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
-#use Moose::Util::TypeConstraints;
 use Storable qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 extends 'HTML::FormHandler';

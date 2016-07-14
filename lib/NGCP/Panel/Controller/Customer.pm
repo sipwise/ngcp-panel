@@ -1,7 +1,6 @@
 package NGCP::Panel::Controller::Customer;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-#use namespace::sweep;
 use parent 'Catalyst::Controller';
 use JSON qw(decode_json encode_json);
 use IPC::System::Simple qw/capturex EXIT_ANY $EXITVAL/;

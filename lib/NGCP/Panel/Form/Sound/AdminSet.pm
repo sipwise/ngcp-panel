@@ -2,7 +2,6 @@ package NGCP::Panel::Form::Sound::AdminSet;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Sound::ResellerSet';
-#use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',

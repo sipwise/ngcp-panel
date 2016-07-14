@@ -2,7 +2,6 @@ package NGCP::Panel::Form::BillingFee::API;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::BillingFee';
-#use Moose::Util::TypeConstraints;
 
 has_field 'billing_profile_id' => (
     type => 'PosInteger',

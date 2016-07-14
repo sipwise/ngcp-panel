@@ -2,7 +2,6 @@ package NGCP::Panel::Form::NCOS::AdminLevel;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::NCOS::ResellerLevel';
-#use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',

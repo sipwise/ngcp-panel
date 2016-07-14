@@ -1,7 +1,6 @@
 package NGCP::Panel::Form::CFMappingsAPI;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
-#use Moose::Util::TypeConstraints;
 extends 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
