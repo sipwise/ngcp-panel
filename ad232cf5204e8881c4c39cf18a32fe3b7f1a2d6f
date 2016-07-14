@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab8dda7_81942e38",
+        "filename": "debian/copyright",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-14T22:15:43Z",
+      "side": 1,
+      "message": "Fixed ending space",
+      "range": {
+        "startLine": 34,
+        "startChar": 26,
+        "endLine": 34,
+        "endChar": 33
+      },
+      "revId": "ad232cf5204e8881c4c39cf18a32fe3b7f1a2d6f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
