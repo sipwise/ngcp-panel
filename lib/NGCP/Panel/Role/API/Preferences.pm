@@ -12,8 +12,10 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use Safe::Isa qw($_isa);
 use Data::Validate::IP qw/is_ipv4 is_ipv6/;
-use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Prosody;
+use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::XMLDispatcher;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -344,6 +346,7 @@ sub update_item {
     my $pref_type;
     my $reseller_id;
     my $full_rs;
+    my $old_auth_prefs = {};
 
     if($type eq "domains") {
         delete $resource->{domain_id};
@@ -400,6 +403,12 @@ sub update_item {
     } else {
         return;
     }
+
+    if ($type eq "subscribers" && grep {/^peer_auth_/} keys %{ $resource }) {
+        $c->log->debug("Fetching old peer_auth_params for future comparison");
+        NGCP::Panel::Utils::Preferences::get_peer_auth_params(
+            $c, $elem, $old_auth_prefs);
+    };
 
     # make sure to not clear any internal prefs, except for those defined
     # in extra:
@@ -655,6 +664,41 @@ sub update_item {
             $c->log->error("failed to update preference for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
+        }
+    }
+
+    if($type eq "subscribers") {
+        if(keys %{ $old_auth_prefs }) {
+            my $new_auth_prefs = {};
+            my $prov_subscriber = $elem;
+            NGCP::Panel::Utils::Preferences::get_peer_auth_params(
+                $c, $prov_subscriber, $new_auth_prefs);
+            unless(compare($old_auth_prefs, $new_auth_prefs)) {
+                $c->log->debug("peer_auth_params changed. Updating sems.");
+                try {
+                    if(!NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) &&
+                        NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)) {
+
+                        NGCP::Panel::Utils::Sems::create_peer_registration(
+                            $c, $prov_subscriber, $new_auth_prefs);
+                    } elsif(NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) &&
+                            !NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)) {
+
+                        NGCP::Panel::Utils::Sems::delete_peer_registration(
+                            $c, $prov_subscriber, $old_auth_prefs);
+                    } elsif(NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) &&
+                            NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)){
+
+                        NGCP::Panel::Utils::Sems::update_peer_registration(
+                            $c, $prov_subscriber, $new_auth_prefs, $old_auth_prefs);
+                    }
+
+                } catch($e) {
+                    $c->log->error("Failed to set peer registration: $e");
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
+                    return;
+                }
+            }
         }
     }
 
