@@ -18,7 +18,6 @@ use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::Fax;
 use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
@@ -865,24 +864,8 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             $c, $prov_subscriber, $new_auth_prefs);
         unless(compare($old_auth_prefs, $new_auth_prefs)) {
             try {
-
-                if(!NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) &&
-                    NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)) {
-
-                    NGCP::Panel::Utils::Sems::create_peer_registration(
-                        $c, $prov_subscriber, $new_auth_prefs);
-                } elsif(NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) &&
-                        !NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)) {
-
-                    NGCP::Panel::Utils::Sems::delete_peer_registration(
-                        $c, $prov_subscriber, $old_auth_prefs);
-                } elsif(NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) &&
-                        NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)){
-
-                    NGCP::Panel::Utils::Sems::update_peer_registration(
-                        $c, $prov_subscriber, $new_auth_prefs, $old_auth_prefs);
-                }
-
+                NGCP::Panel::Utils::Preferences::update_sems_peer_auth(
+                    $c, $prov_subscriber, $old_auth_prefs, $new_auth_prefs);
             } catch($e) {
                 NGCP::Panel::Utils::Message::error(
                     c     => $c,
