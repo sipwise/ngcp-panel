@@ -44,7 +44,7 @@ sub load_preference_list {
 
     my $customer_view = $params{customer_view} // 0;
     my $cloudpbx_enabled = $c->config->{features}{cloudpbx};
-    
+
     my $pref_rs = $c->model('DB')
         ->resultset('voip_preference_groups')
         ->search({ 'voip_preferences.internal' => { '<=' => 0 },
@@ -81,7 +81,7 @@ sub load_preference_list {
 
     foreach my $group(@pref_groups) {
         my @group_prefs = $group->voip_preferences->all;
-        
+
         foreach my $pref(@group_prefs) {
 
             my @values = @{
@@ -129,7 +129,7 @@ sub load_preference_list {
                 $pref->{man_allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
                     ->search_rs({ group_id => $pref_values->{man_allowed_ips_grp} });
             }
-            elsif($c->stash->{subscriber} && 
+            elsif($c->stash->{subscriber} &&
                   ($pref->attribute eq "block_in_list" || $pref->attribute eq "block_out_list")) {
                 foreach my $v(@values) {
                     my $prefix = "";
@@ -486,7 +486,7 @@ sub create_preference_form {
                 return 1;
             }
         } elsif ($c->stash->{preference_meta}->max_occur != 1) {
-            if($c->stash->{subscriber} && 
+            if($c->stash->{subscriber} &&
                ($c->stash->{preference_meta}->attribute eq "block_in_list" || $c->stash->{preference_meta}->attribute eq "block_out_list")) {
                 my $v = $form->values->{$c->stash->{preference_meta}->attribute};
 
@@ -666,7 +666,7 @@ sub create_preference_form {
                     $c->response->redirect($base_uri);
                     return 1;
                 }
-            } elsif($c->stash->{preference_meta}->data_type eq 'boolean' && 
+            } elsif($c->stash->{preference_meta}->data_type eq 'boolean' &&
                     $form->field($attribute)->value == 0) {
                 try {
                     my $preference = $pref_rs->find($preference_id);
@@ -899,8 +899,8 @@ sub get_peer_auth_params {
     foreach my $attribute (qw/peer_auth_user peer_auth_realm peer_auth_pass peer_auth_register/){
         my $rs;
         $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c, 
-            attribute => $attribute, 
+            c => $c,
+            attribute => $attribute,
             prov_subscriber => $prov_subscriber
         );
         $prefs->{$attribute} = $rs->first ? $rs->first->value : undef;
@@ -930,8 +930,8 @@ sub set_provisoning_voip_subscriber_first_int_attr_value {
     return unless $prov_subscriber;
 
     my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, 
-        prov_subscriber => $prov_subscriber, 
+        c => $c,
+        prov_subscriber => $prov_subscriber,
         attribute => $attribute,
     );
     try {
@@ -960,8 +960,8 @@ sub get_provisoning_voip_subscriber_first_int_attr_value {
     return undef unless $prov_subscriber;
 
     my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, 
-        prov_subscriber => $prov_subscriber, 
+        c => $c,
+        prov_subscriber => $prov_subscriber,
         attribute => $attribute,
     );
     try {
@@ -971,6 +971,7 @@ sub get_provisoning_voip_subscriber_first_int_attr_value {
         $e->rethrow;
     }
 }
+
 sub api_preferences_defs{
     my %params = @_;
 
@@ -998,9 +999,7 @@ sub api_preferences_defs{
             $fields->{enum_values} = [];
             foreach my $enum(@enums) {
                 my $efields = { $enum->get_inflated_columns };
-                for my $del(qw/id preference_id usr_pref prof_pref dom_pref peer_pref contract_pref contract_location_pref/) {
-                    delete $efields->{$del};
-                }
+                delete @{$efields}{qw/id preference_id usr_pref prof_pref dom_pref peer_pref contract_pref contract_location_pref/};
                 $efields->{default_val} = JSON::Types::bool($efields->{default_val});
                 push @{ $fields->{enum_values} }, $efields;
             }
@@ -1012,6 +1011,26 @@ sub api_preferences_defs{
     }
     return $resource;
 }
+
+sub preference_attribute_enum{
+    my ($c,$attribute,%params) = @_;
+
+    my $schema = $params{schema} // $c->model('DB');
+    my $preferences_group = $params{preferences_group};
+
+    my $pref_rs = $schema->resultset('voip_preferences_enum')->search({
+        'preference.attribute' => $attribute,
+        'preference.internal' => { '!=' => 1 }, # also fetch -1 for ncos, rwr
+        $preferences_group ? (
+            'me.'.$preferences_group => 1,
+            'preference.'.$preferences_group => 1,
+        ):(),
+    },{
+        join => 'preference',
+    });
+    return $pref_rs;
+}
+
 1;
 
 =head1 NAME
