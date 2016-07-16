@@ -22,6 +22,30 @@
       "revId": "69d02490013f25806ce1ff18b8d0a0e10f7be416",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_d35197d9",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 739,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-16T12:38:06Z",
+      "side": 1,
+      "message": "the reason was indeed that unless-else is quite tricky to follow. but I can revert that, as it has no functional change",
+      "parentUuid": "9ab8dda7_01e4be0b",
+      "range": {
+        "startLine": 737,
+        "startChar": 0,
+        "endLine": 739,
+        "endChar": 84
+      },
+      "revId": "69d02490013f25806ce1ff18b8d0a0e10f7be416",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
