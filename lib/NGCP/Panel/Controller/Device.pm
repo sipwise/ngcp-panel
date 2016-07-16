@@ -1327,46 +1327,26 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         };
         foreach my $line($linerange->autoprov_field_device_lines->search({ device_id => $dev->id })->all) {
             my $sub = $line->provisioning_voip_subscriber;
-            my $display_name = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            my %sub_preferences_vars = (
+                display_name               => $sub->username,
+                enable_t38                 => 0,
+                concurrent_max             => 0,
+                concurrent_max_per_account => 0,
+                cc                         => '',
+                ac                         => '',
+            );
+            my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preferences_rs(
                 c => $c,
                 prov_subscriber => $sub,
-                attribute => 'display_name',
+                attribute => [keys %sub_preferences_vars],
             );
-            if($display_name->first) {
-                $display_name = $display_name->first->value;
-            } else {
-                $display_name = $sub->username;
-            };
-            my $cc = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c,
-                prov_subscriber => $sub,
-                attribute => 'cc',
-            );
-            if($cc->first) {
-                $cc = $cc->first->value;
-            } else {
-                $cc = '';
+            my $preferences = get_inflated_columns_all($pref_rs, 'hash' => 'attribute' );
+            foreach my $key (keys %sub_preferences_vars){
+                if(exists $preferences->{$key}){
+                    $sub_preferences_vars{$key} = $preferences->{$key}->{value};
+                }
             }
-            my $ac = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c,
-                prov_subscriber => $sub,
-                attribute => 'ac',
-            );
-            if($ac->first) {
-                $ac = $ac->first->value;
-            } else {
-                $ac = '';
-            }
-            my $t38 = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c,
-                prov_subscriber => $sub,
-                attribute => 'enable_t38',
-            );
-            if($t38->first) {
-                $t38 = $t38->first->value;
-            } else {
-                $t38 = 0;
-            };
+            $sub_preferences_vars{displayname} = delete $sub_preferences_vars{display_name};
             # TODO: only push password for private/shared line?
             my $aliases = [ $sub->voip_dbaliases->search({ is_primary => 0 })->get_column("username")->all ];
             my $primary = $sub->voip_dbaliases->search({ is_primary => 1 })->get_column("username")->first;
@@ -1378,12 +1358,9 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 username => $sub->username,
                 domain => $sub->domain->domain,
                 password => $sub->password,
-                displayname => $display_name,
                 keynum => $line->key_num,
                 type => $line->line_type,
-                t38 => $t38,
-                cc => $cc,
-                ac => $ac,
+                %sub_preferences_vars,
             };
             if(!$ldap_attr_set && $linerange->name eq "Full Keys" && $line->line_type eq "private") {
                 $vars->{ldap}->{dn} = "uid=".$sub->uuid . ",o=" . $sub->account_id . $vars->{ldap}->{dn};
