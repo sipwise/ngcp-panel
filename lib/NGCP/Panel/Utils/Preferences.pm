@@ -775,6 +775,28 @@ sub set_rewrite_preferences {
 
 }
 
+sub get_usr_preferences_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $prov_subscriber = $params{prov_subscriber};
+    my $schema = $params{schema} // $c->model('DB');
+    my $get_rows = $params{get_rows};
+    
+    my $pref_rs = $schema->resultset('voip_usr_preferences')->search({
+            'attribute.usr_pref' => 1,
+            'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute) ,
+            $prov_subscriber ? ('me.subscriber_id' => $prov_subscriber->id) : (),
+        },{
+            '+select' => ['attribute.attribute'],
+            '+as' => ['attribute'],
+            'join' => 'attribute',
+    });
+
+    return $pref_rs;
+}
+
 sub get_usr_preference_rs {
     my %params = @_;
 
