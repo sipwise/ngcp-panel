@@ -417,6 +417,7 @@ sub generate_invoice_data{
     my($contract_balance_data) = get_invoice_data_raw($client_contract, $stime, $etime,{count_contract_balance => 1});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$contract_balance_data,$invoice,$stime,$etime);
     #$logger->debug( Dumper $contract_balance );
+    NGCP::Panel::Utils::Invoice::prepare_contact_data($billing_profile);
     NGCP::Panel::Utils::Invoice::prepare_contact_data($client_contact);
     NGCP::Panel::Utils::Invoice::prepare_contact_data($provider_contact);
     #TODO: if not a full month, calculate fraction?
