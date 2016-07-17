@@ -30,20 +30,42 @@ sub svg_pdf {
         $pagenum++;
     }
 
-    # For whatever reason, the pdf looks ok with zoom of 1.0 when
-    # generated via rsvg-convert, but the print result is too big,
-    # so we need to scale it down by 0.8 to get a mediabox of 595,842
-    # when using 90dpi.
-    # (it doesn't happen with inkscape, no idea what rsvg does)
-    #-z 0.8 , --dpi-x 72 --dpi-y 72
-    my @cmd_args = (qw/-a -f pdf -z 0.8/, @pagefiles);
-    my $cmd = 'rsvg-convert';
-    my $cmd_full = $cmd.' '.join(' ', @cmd_args);
-    $c and $c->log->debug( $cmd_full );
-    print  $cmd_full.";\n";
-    #`$cmd_full >./VMHost/data/ngcp-panel/invoice/pdf/pdf1.pdf`;
-    $$pdf_ref = capturex([0], $cmd, @cmd_args);
+    nsvg_pdf($c,25,\@pagefiles,$tempdir,$pdf_ref);
 
+    return 1;
+}
+sub nsvg_pdf {
+    my ($c,$pagesnum,$pagefiles,$tempdir,$pdf_ref) = @_;
+    my $join_necessary = @$pagefiles > $pagesnum;
+    my $pdf_file_number = 0;
+    while (my @next_pages = splice @$pagefiles, 0, $pagesnum) {
+        # For whatever reason, the pdf looks ok with zoom of 1.0 when
+        # generated via rsvg-convert, but the print result is too big,
+        # so we need to scale it down by 0.8 to get a mediabox of 595,842
+        # when using 90dpi.
+        # (it doesn't happen with inkscape, no idea what rsvg does)
+        #-z 0.8 , --dpi-x 72 --dpi-y 72
+        my @cmd_args = (qw/-a -f pdf -z 0.8/, @next_pages);
+        my $cmd = 'rsvg-convert';
+        my $cmd_full = $cmd.' '.join(' ', @cmd_args);
+        $c and $c->log->debug( $cmd_full );
+        print  $cmd_full.";\n";
+        if($join_necessary){
+            $pdf_file_number ++;
+            `$cmd_full > $tempdir/$pdf_file_number.pdf`;
+        }else{
+            $$pdf_ref = capturex([0], $cmd, @cmd_args);
+        }
+    }
+    if($join_necessary){
+        #gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile=- mine1.pdf mine2.pdf
+        my @cmd_args = ('-dBATCH', '-dNOPAUSE', '-q', '-sDEVICE=pdfwrite', '-dPDFSETTINGS=/prepress', '-sOutputFile=-', map { $tempdir.'/'.$_.'.pdf'} ( 1..$pdf_file_number ));
+        my $cmd = 'gs';
+        my $cmd_full = $cmd.' '.join(' ', @cmd_args);
+        $c and $c->log->debug( $cmd_full );
+        print  $cmd_full.";\n";
+        $$pdf_ref = capturex([0], $cmd, @cmd_args);
+    }
     return 1;
 }
 
