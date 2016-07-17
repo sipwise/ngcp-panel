@@ -219,7 +219,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     delete $form->values->{period}
                 )->truncate(to => 'month');
                 my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
-                
+
                 #this has to be refactored  - select a contract balance instead of a "period"
                 my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                         contract => $customer,
@@ -228,7 +228,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 $stime = $balance->start;
                 $etime = $balance->end;
                 my $bm_actual = NGCP::Panel::Utils::ProfilePackages::get_actual_billing_mapping(c => $c, contract => $customer, now => $balance->start);
-                my $billing_profile = $bm_actual->billing_mappings->first->billing_profile;                
+                my $billing_profile = $bm_actual->billing_mappings->first->billing_profile;
 
                 my $zonecalls = NGCP::Panel::Utils::Contract::get_contract_zonesfees(
                     c => $c,
@@ -245,7 +245,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     stime => $stime,
                     etime => $etime,
                 );
-                my $calllist = [ map { 
+                my $calllist = [ map {
                     my $call = {$_->get_inflated_columns};
                     $call->{start_time} = $call->{start_time}->epoch;
                     $call->{source_customer_cost} += 0.0; # make sure it's a number
@@ -281,7 +281,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 # generate tmp serial here, derive one from after insert
                 $form->values->{serial} = "tmp".time.int(rand(99999));
                 $form->values->{data} = undef;
-                
+
                 #maybe inflation should be applied? Generation failed here, although the latest schema applied.
                 $form->values->{period_start} = $stime->ymd.' '. $stime->hms;
                 $form->values->{period_end} = $etime->ymd.' '. $etime->hms;
@@ -317,11 +317,12 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 $vars->{rescontact} = { $customer->contact->reseller->contract->contact->get_inflated_columns };
                 $vars->{customer} = { $customer->get_inflated_columns };
                 $vars->{custcontact} = { $customer->contact->get_inflated_columns };
-                
+                $vars->{billprof} = { $billing_profile->get_inflated_columns };
+
+                NGCP::Panel::Utils::Invoice::prepare_contact_data($vars->{billprof});
                 NGCP::Panel::Utils::Invoice::prepare_contact_data($vars->{custcontact});
                 NGCP::Panel::Utils::Invoice::prepare_contact_data($vars->{rescontact});
-                
-                $vars->{billprof} = { $billing_profile->get_inflated_columns };
+
                 $vars->{invoice} = {
                     period_start => $stime,
                     period_end => $etime,
