@@ -17,7 +17,7 @@ has_field 'pbx_extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group_select pbx_extension display_name email webusername webpassword username password status profile/ ],
+    render_list => [qw/group_select alias_select pbx_extension display_name email webusername webpassword username password status profile/ ],
 );
 
 sub field_list {
@@ -25,6 +25,20 @@ sub field_list {
     my $c = $self->ctx;
     return unless $c;
 
+    if($self->field('alias_select')) {
+        my $sub;
+        if($c->stash->{pilot}) {
+            $sub = $c->stash->{pilot};
+        } elsif($c->stash->{subscriber} && $c->stash->{subscriber}->provisioning_voip_subscriber->is_pbx_pilot) {
+            $sub = $c->stash->{subscriber};
+        }
+
+        if($sub) {
+            $self->field('alias_select')->ajax_src(
+                    $c->uri_for_action("/subscriber/aliases_ajax", [$sub->id])->as_string
+                );
+        }
+    }
     my $group = $self->field('group_select');
     if ($group) {
         $group->ajax_src(
