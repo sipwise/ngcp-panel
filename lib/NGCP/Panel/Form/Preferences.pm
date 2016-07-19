@@ -1,4 +1,5 @@
 package NGCP::Panel::Form::Preferences;
+
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -25,12 +26,12 @@ sub field_list {
     my $self = shift;
 
     return [] unless $self->ctx;
-    my $is_subscriber = ($self->ctx->user->roles eq 'subscriber' || 
+    my $is_subscriber = ($self->ctx->user->roles eq 'subscriber' ||
                          $self->ctx->user->roles eq 'subscriberadmin');
-    
+
     my @field_list;
     my $fields_data = $self->fields_data;
-   
+
     foreach my $row (@$fields_data) {
         my $meta = $row->{meta};
         my $enums = $row->{enums};
@@ -89,9 +90,9 @@ sub field_list {
             };
         } elsif($meta->data_type eq "enum") {
             my @options = map {{label => $_->label, value => $_->value}} @{ $enums };
-            $field = { 
-                name => $meta->attribute, 
-                type => 'Select', 
+            $field = {
+                name => $meta->attribute,
+                type => 'Select',
                 options => \@options,
             };
         } elsif($meta->data_type eq "boolean") {
@@ -126,8 +127,45 @@ sub field_list {
         $field->{label} = $is_subscriber ? $meta->label : $meta->attribute;
         push @field_list, $field;
     }
-    
+
     return \@field_list;
+}
+
+sub validate {
+    my ($self) = @_;
+    my $c = $self->ctx;
+    return unless $c;
+
+    my $res = 1;
+
+    my $attribute = 'codecs_list';
+    if(my $field = $self->field( $attribute )){
+        if( my $value = $field->value ){
+            #todo: 1.Should we allow only some particular separator? 
+            #todo: 2.Lengths of the provisioning.voip_usr_preferences.value and kamailio.usr_preferences.value =128,all available values length is 141. We can't insert all codecs.
+            my $enum = { map { lc( $_ ) => 1 } qw/AMR CelB CN DVI4 G722 G723 G728 G729 GSM H261 H263 H263-1998 h264 
+                JPEG L16 MP2T MPA MPV nv opus PCMA PCMU QCELP speex telephone-event vp8 vp9/ };
+            my @codecs = split(/,/, $value);
+            my %codecs_dup;
+            foreach my $codec( @codecs){
+                $codec = lc($codec);
+                if( !exists $enum->{$codec} ){
+                    my $err_msg = 'Value should be a comma separated list of the valid codecs.';
+                    $field->add_error($err_msg);
+                    $res = 0;
+                    last;
+                }
+                if($codecs_dup{$codec}){
+                    my $err_msg = 'Value should not contain duplicates.';
+                    $field->add_error($err_msg);
+                    $res = 0;
+                    last;
+                }
+                $codecs_dup{$codec} = 1;
+            }
+        }
+    }
+    return $res;
 }
 
 has_field 'save' => (
@@ -154,7 +192,7 @@ has_block 'actions' => (
 sub create_structure {
     my $self = shift;
     my $field_list = shift;
-   
+
     $self->block('fields')->render_list($field_list);
 }
 
