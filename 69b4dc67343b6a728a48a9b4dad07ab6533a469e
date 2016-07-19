@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab8dda7_d9bd3104",
+        "filename": "lib/NGCP/Panel/Role/API/BillingFees.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-19T20:31:55Z",
+      "side": 1,
+      "message": "otherwise missing here",
+      "revId": "69b4dc67343b6a728a48a9b4dad07ab6533a469e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_39c1ed80",
+        "filename": "lib/NGCP/Panel/Role/API/BillingFees.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-19T20:31:55Z",
+      "side": 1,
+      "message": "not needed, already in billing_fees",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 42
+      },
+      "revId": "69b4dc67343b6a728a48a9b4dad07ab6533a469e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_f9ba7509",
+        "filename": "lib/NGCP/Panel/Role/API/BillingFees.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-19T20:31:55Z",
+      "side": 1,
+      "message": "and here",
+      "revId": "69b4dc67343b6a728a48a9b4dad07ab6533a469e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_19c42991",
+        "filename": "lib/NGCP/Panel/Role/API/BillingZones.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-19T20:31:55Z",
+      "side": 1,
+      "message": "billing_zones already has a field billing_profile_id",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 46
+      },
+      "revId": "69b4dc67343b6a728a48a9b4dad07ab6533a469e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
