@@ -10,7 +10,7 @@ use NGCP::Panel::Utils::Statistics qw();
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
-
+use JSON;
 #
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in MyApp.pm
@@ -20,7 +20,8 @@ __PACKAGE__->config(namespace => '');
 sub auto :Private {
     my($self, $c) = @_;
     #exit(0); # just for profiling
-
+    $c->log->debug(JSON::to_json($c->request->params));
+    
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");
         if($c->request->params->{lang} eq "en") {
