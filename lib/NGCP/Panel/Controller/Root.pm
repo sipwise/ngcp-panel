@@ -5,9 +5,9 @@ BEGIN { extends 'Catalyst::Controller' }
 use DateTime qw();
 use DateTime::Format::RFC3339 qw();
 use NGCP::Panel::Widget;
+use JSON;
 use Scalar::Util qw(blessed);
 use Time::HiRes qw();
-
 #
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in MyApp.pm
@@ -16,7 +16,8 @@ __PACKAGE__->config(namespace => '');
 
 sub auto :Private {
     my($self, $c) = @_;
-
+    $c->log->debug(JSON::to_json($c->request->params));
+    
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");
         if($c->request->params->{lang} eq "en") {
