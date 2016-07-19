@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab8dda7_b9d5dd44",
+        "filename": "lib/NGCP/Panel/Form/InterceptionAPI.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-07-19T20:23:11Z",
+      "side": 1,
+      "message": "at least delete the comment then :)",
+      "revId": "cc8d13c22d9114be43f95ffa4caa143da08c925e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
