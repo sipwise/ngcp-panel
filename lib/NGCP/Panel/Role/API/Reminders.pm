@@ -93,23 +93,9 @@ sub update_item {
         resource => $resource,
         exceptions => [ "subscriber_id" ],
     );
+    my $sub = $self->get_subscriber_by_id($c, $resource->{subscriber_id} );
+    return unless $sub;
 
-    my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
-        'me.id' => $resource->{subscriber_id},
-    });
-    if($c->user->roles eq "reseller") {
-        $sub_rs = $sub_rs->search({
-            'contact.reseller_id' => $c->user->reseller_id,
-        },{
-            join => { contract => 'contact' },
-        });
-    }
-    my $sub = $sub_rs->first;
-    unless($sub && $sub->provisioning_voip_subscriber) {
-        $c->log->error("invalid subscriber_id '$$resource{subscriber_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist");
-        return;
-    }
     $resource->{subscriber_id} = $sub->provisioning_voip_subscriber->id;
 
     my $dup = $c->model('DB')->resultset('voip_reminder')->search({
@@ -127,5 +113,26 @@ sub update_item {
     return $item;
 }
 
+sub get_subscriber_by_id{
+    my ($self, $c, $subscriber_id) = @_;
+
+    my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+        'me.id' =>  $subscriber_id,
+    });
+    if($c->user->roles eq "reseller") {
+        $sub_rs = $sub_rs->search({
+            'contact.reseller_id' => $c->user->reseller_id,
+        },{
+            join => { contract => 'contact' },
+        });
+    }
+    my $sub = $sub_rs->first;
+    unless($sub && $sub->provisioning_voip_subscriber) {
+        $c->log->error("invalid subscriber_id '$subscriber_id'"); # TODO: user, message, trace, ...
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist");
+        return;
+    }
+    return $sub;
+}
 1;
 # vim: set tabstop=4 expandtab:
