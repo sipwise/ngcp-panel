@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab8dda7_9c5ec7e8",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2016-07-20T10:32:56Z",
+      "side": 1,
+      "message": "I\u0027m wondering whether we could just expose all preferences in a line.preferences hash? That way, we don\u0027t have to selectively put new preferences there when needed. Old ones should still be kept for backward compatibility reasons though.",
+      "revId": "e0d0af672fb7c4ed4aeee4986ea28f753b54d800",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
