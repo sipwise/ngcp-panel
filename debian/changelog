@@ -1,3 +1,12 @@
+ngcp-panel (1.13.1.7+0~mr4.4.1.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [1fde262] MT#21459 ncos "level" filter for api
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 20 Jul 2016 16:58:34 +0200
+
 ngcp-panel (1.13.1.6+0~mr4.4.1.6) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
