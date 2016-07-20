@@ -26,7 +26,7 @@ $fake_data->set_data_from_script({
     },
 });
 
-$test_machine->runas('reseller');
+#$test_machine->runas('reseller');
 $test_machine->DATA_ITEM_STORE($fake_data->process('reminders'));
 $test_machine->form_data_item();
 $test_machine->check_create_correct( 1,  );
