@@ -86,9 +86,12 @@ sub _item_rs {
 
     if($c->user->roles eq "admin") {
     } elsif ($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
+        $item_rs = $item_rs->search({ 
+            'device.reseller_id' => $c->user->reseller_id 
+        },{
+            'join' => { 'profile' => { 'config' => 'device' } },
+        });
     }
-
     return $item_rs;
 }
 
