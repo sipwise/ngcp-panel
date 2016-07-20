@@ -59,7 +59,7 @@ sub GET :Allow {
     {
         last unless $self->valid_id($c, $id);
         my $field_dev = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, field_dev => $field_dev);
+        last unless $self->resource_exists($c, pbxdevice => $field_dev);
 
         my $hal = $self->hal_from_item($c, $field_dev);
 
