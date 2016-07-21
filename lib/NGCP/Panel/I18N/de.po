@@ -1844,6 +1844,14 @@ msgstr ""
 msgid "Code"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Codecs filter"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Codecs list"
+msgstr ""
+
 #: share/layout/body.tt
 msgid "Collapse Groups"
 msgstr "Alle einklappen"
@@ -5407,6 +5415,14 @@ msgstr ""
 "verwendet werden. Der Wert ist in der Konfiguration via phone.lineranges[]."
 "lines[].can_shared ansprechbar."
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"List of audio and video codecs to whitelist or blacklist. Valid codecs names "
+"are G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, "
+"DVI4, G729, AMR, opus, telephone-event, CelB, JPEG, H261, H263, H263-1998, "
+"MPV, MP2T, nv, vp8, vp9 and h264."
+msgstr ""
+
 #: share/templates/sound/handles_list.tt
 msgid "Load Default Files"
 msgstr ""
@@ -8479,6 +8495,12 @@ msgstr "Unterstützt private Leitung"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Supports Shared Line"
 msgstr "Unterstützt geteilte Leitung"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Switch between blacklisting (bl) or whitelisting (wl) of codecs listed in "
+"codecs_list (1 for wl, 0 bl)."
+msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "Sync Device"
