@@ -16,6 +16,24 @@
       "revId": "e0d0af672fb7c4ed4aeee4986ea28f753b54d800",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_c8c79963",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-21T08:27:14Z",
+      "side": 1,
+      "message": "I added preferences variable",
+      "parentUuid": "9ab8dda7_9c5ec7e8",
+      "revId": "e0d0af672fb7c4ed4aeee4986ea28f753b54d800",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
