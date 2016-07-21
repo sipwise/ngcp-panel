@@ -52,6 +52,24 @@
       "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_8ae44bad",
+        "filename": "lib/NGCP/Panel/Form/InterceptionAPI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-07-21T08:31:03Z",
+      "side": 1,
+      "message": "Field is not a required one. I wanted to check that it is always number, when parameter is present. As for me - it shouldn\u0027t allow empty string value.\nAnd validation module shouldn\u0027t fail on absent field exactly because it isn\u0027t required.\n\nSo I just wanted to show by this comment why I didn\u0027t use it.",
+      "parentUuid": "9ab8dda7_8a48cbcd",
+      "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
