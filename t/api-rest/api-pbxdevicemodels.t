@@ -35,6 +35,8 @@ $fake_data->set_data_from_script({
                 bootstrap_config_redirect_polycom_user       => "",
                 bootstrap_config_redirect_yealink_password   => "",
                 bootstrap_config_redirect_yealink_user       => "",
+                bootstrap_config_redirect_snom_password      => "",
+                bootstrap_config_redirect_snom_user          => "",
                 #TODO:implement checking against this number in the controller and api
                 #/3.7relative tests
                 "linerange"=>[
