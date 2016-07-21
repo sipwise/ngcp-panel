@@ -176,6 +176,12 @@ sub bootstrap_uri_conf{
     };
     return $cfg;
 }
+
+sub unknown_error{
+    my ($self) = @_;
+    my $c = $self->params->{c};
+    return $c->loc('Unknown error');
+}
 1;
 
 =head1 NAME
