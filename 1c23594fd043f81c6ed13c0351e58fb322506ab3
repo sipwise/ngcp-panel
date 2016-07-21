@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab8dda7_8da1b3ab",
+        "filename": "lib/NGCP/Panel/Form/Preferences.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000017
+      },
+      "writtenOn": "2016-07-21T06:29:38Z",
+      "side": 1,
+      "message": "It has to be comma separated, will not work with other separator in Kamailio.",
+      "range": {
+        "startLine": 134,
+        "startChar": 21,
+        "endLine": 134,
+        "endChar": 68
+      },
+      "revId": "1c23594fd043f81c6ed13c0351e58fb322506ab3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab8dda7_ada6f7bf",
+        "filename": "lib/NGCP/Panel/Form/Preferences.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1000017
+      },
+      "writtenOn": "2016-07-21T06:29:38Z",
+      "side": 1,
+      "message": "This should not be an issue- it would not make much sense to whitelist all possibilities. I would say whitelisting and blacklisting create perfect complement- it should not be required to enter long lists. But to be sure, will discuss this with Anreas.",
+      "range": {
+        "startLine": 135,
+        "startChar": 11,
+        "endLine": 135,
+        "endChar": 20
+      },
+      "revId": "1c23594fd043f81c6ed13c0351e58fb322506ab3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
