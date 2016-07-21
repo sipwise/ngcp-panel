@@ -253,11 +253,12 @@ has_field 'bootstrap_method' => (
         { label => 'Panasonic', value => 'redirect_panasonic' },
         { label => 'Yealink', value => 'redirect_yealink' },
         { label => 'Polycom', value => 'redirect_polycom' },
+        { label => 'Snom', value => 'redirect_snom' },
     ],
     default => 'http',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom.'],
+        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom.'],
         javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
     },
 );
@@ -267,7 +268,7 @@ has_field 'bootstrap_uri' => (
     label => 'Bootstrap URI',
     default => '',
     #we don't show this field for polycom, because polycom doesn't support now any possibility to configure provisioning url via API
-    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http ngcp-bootstrap-config-redirect_panasonic ngcp-bootstrap-config-redirect_yealink/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http ngcp-bootstrap-config-redirect_panasonic ngcp-bootstrap-config-redirect_yealink ngcp-bootstrap-config-redirect_snom/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Custom provisioning server URI.'],
@@ -389,6 +390,28 @@ has_field 'bootstrap_config_redirect_polycom_profile' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Preliminary created in ZeroTouch Provisioning console Polycom ZTP profile. Refer to documentation.'],
+    },
+);
+has_field 'bootstrap_config_redirect_snom_user' => (
+    type => 'Text',
+    required => 0,
+    label => 'Snom username',
+    default => '',
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_snom/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Username used to configure bootstrap url on Snom redirect server. Obtained from Snom.'],
+    },
+);
+has_field 'bootstrap_config_redirect_snom_password' => (
+    type => 'Text',
+    required => 0,
+    label => 'Snom password',
+    default => '',
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_snom/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Password used to configure bootstrap url on Snom redirect server. Obtained from Snom.'],
     },
 );
 
