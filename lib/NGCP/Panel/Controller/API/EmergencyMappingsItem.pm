@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::LnpNumbersItem;
+package NGCP::Panel::Controller::API::EmergencyMappingsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
@@ -18,23 +18,23 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::LnpNumbers/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::EmergencyMappings/;
 
 sub resource_name{
-    return 'lnpnumbers';
+    return 'emergencymappings';
 }
 sub dispatch_path{
-    return '/api/lnpnumbers/';
+    return '/api/emergencymappings/';
 }
 sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-lnpnumbers';
+    return 'http://purl.org/sipwise/ngcp-api/#rel-emergencymappings';
 }
 
 __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin/],
+            AllowedRole => [qw/admin reseller/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
@@ -56,7 +56,7 @@ sub GET :Allow {
     {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, lnpnumber => $item);
+        last unless $self->resource_exists($c, emergencymapping => $item);
 
         my $hal = $self->hal_from_item($c, $item);
 
@@ -108,7 +108,7 @@ sub PATCH :Allow {
         last unless $json;
 
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, lnpnumber => $item);
+        last unless $self->resource_exists($c, emergencymapping => $item);
         my $old_resource = $self->resource_from_item($c, $item);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
@@ -144,7 +144,7 @@ sub PUT :Allow {
         last unless $preference;
 
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, lnpnumber => $item);
+        last unless $self->resource_exists($c, emergencymapping => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
@@ -182,7 +182,7 @@ sub DELETE :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, lnpnumber => $item);
+        last unless $self->resource_exists($c, emergencymapping => $item);
         $item->delete;
 
         $guard->commit;

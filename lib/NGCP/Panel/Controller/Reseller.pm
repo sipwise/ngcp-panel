@@ -352,6 +352,8 @@ sub _handle_reseller_status_change {
         #delete autoprov_devices
         $reseller->autoprov_devices->delete_all;
         $reseller->email_templates->delete_all;
+        $reseller->emergency_containers->emergency_mappings->delete_all;
+        $reseller->emergency_containers->delete_all;
     }
 }
 

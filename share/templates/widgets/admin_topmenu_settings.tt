@@ -73,6 +73,7 @@
         <li><a href="[% c.uri_for('/maliciouscall') %]">[% c.loc('Malicious Calls') %]</a></li>
         [% END -%]
         <li><a href="[% c.uri_for('/lnp') %]">[% c.loc('Number Porting') %]</a></li>
+        <li><a href="[% c.uri_for('/emergencymapping') %]">[% c.loc('Emergency Mappings') %]</a></li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
