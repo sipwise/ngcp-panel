@@ -113,6 +113,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm lib/NGCP/Panel/Controller/Domain.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 #: lib/NGCP/Panel/Controller/Invoice.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/MaliciousCall.pm
@@ -187,7 +188,7 @@ msgid "(Base) IP Address"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Voucher.pm lib/NGCP/Panel/Utils/Billing.pm
-#: lib/NGCP/Panel/Utils/Lnp.pm
+#: lib/NGCP/Panel/Utils/EmergencyMapping.pm lib/NGCP/Panel/Utils/Lnp.pm
 msgid ", but skipped the following line numbers: "
 msgstr ", aber folgende Zeilen wurden ignoriert: "
 
@@ -327,6 +328,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A human readable name of the LNP carrier."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A human readable name of the emergency mapping container."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -802,6 +807,10 @@ msgstr ""
 "bereitgestellt."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An optional emergency prefix the emergency code is mapped to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An optional routing number replacing the ported number."
 msgstr ""
 
@@ -947,6 +956,7 @@ msgstr "BLF Taste"
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
 #: share/templates/device/list.tt share/templates/domain/preferences.tt
+#: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
 #: share/templates/lnp/list.tt share/templates/package/details.tt
 #: share/templates/peering/preferences.tt share/templates/reseller/branding.tt
@@ -1959,6 +1969,10 @@ msgstr "Kontakt erfolgreich gelöscht"
 msgid "Contacts"
 msgstr "Kontakte"
 
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Container"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., "
@@ -2129,6 +2143,18 @@ msgstr "Neue Domain"
 #: share/templates/emailtemplate/list.tt
 msgid "Create Email Template"
 msgstr "Email Vorlage erstellen"
+
+#: share/templates/emergencymapping/list.tt
+msgid "Create Emergency Container"
+msgstr ""
+
+#: share/templates/emergencymapping/list.tt
+msgid "Create Emergency Mapping"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Create Emergency Mapping Container"
+msgstr ""
 
 #: share/templates/billing/fees.tt
 msgid "Create Fee Entry"
@@ -2497,6 +2523,7 @@ msgstr ""
 #: share/templates/billing/zones.tt share/templates/contact/list.tt
 #: share/templates/customer/details.tt share/templates/device/list.tt
 #: share/templates/domain/list.tt share/templates/emailtemplate/list.tt
+#: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/datatables.tt
 #: share/templates/invoice/invoice_list.tt
 #: share/templates/invoice/template_list.tt share/templates/lnp/list.tt
@@ -2994,7 +3021,7 @@ msgstr "CA Zertifikat runterladen"
 msgid "Download CA Certificate"
 msgstr "CA Zertifikat runterladen"
 
-#: share/templates/lnp/list.tt
+#: share/templates/emergencymapping/list.tt share/templates/lnp/list.tt
 msgid "Download CSV"
 msgstr ""
 
@@ -3057,6 +3084,7 @@ msgstr "E164 Bereich hinzufügen"
 #: share/templates/contact/list.tt share/templates/contract/list.tt
 #: share/templates/customer/details.tt share/templates/customer/list.tt
 #: share/templates/device/list.tt share/templates/emailtemplate/list.tt
+#: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/pref_table.tt share/templates/lnp/list.tt
 #: share/templates/ncos/list.tt share/templates/ncos/pattern_list.tt
 #: share/templates/network/list.tt share/templates/numberblock/block_list.tt
@@ -3159,8 +3187,34 @@ msgstr ""
 msgid "Emergency CLI"
 msgstr "Notrufnummer"
 
+#: share/templates/emergencymapping/list.tt
+msgid "Emergency Containers"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency Mapping Container"
+msgstr ""
+
+#: share/templates/emergencymapping/list.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/reseller_topmenu_settings.tt
+msgid "Emergency Mappings"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/EmergencyMapping.pm
+msgid "Emergency Mappings successfully uploaded"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Mode Enabled"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency Number"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency Prefix"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3174,6 +3228,55 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Suffix variable"
 msgstr "Notruf-Suffix variable"
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency code already defined for emergency mapping container!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping already exists for this emergency mapping container!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping container does not exist!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping container still linked to emergency mappings."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping container successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping container successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping container successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid ""
+"Emergency mapping container with this name already exists for this reseller!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping does not exist!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency mapping successfully updated"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Apple/Google Mobile Push"
@@ -3475,6 +3578,14 @@ msgstr "Domain erstellen fehlgeschlagen."
 msgid "Failed to create email template"
 msgstr "Email-Vorlage erstellen fehlgeschlagen"
 
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Failed to create emergency mapping"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Failed to create emergency mapping container"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to create invoice template"
 msgstr ""
@@ -3644,6 +3755,14 @@ msgstr "Domain löschen fehlgeschlagen."
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Failed to delete email template"
 msgstr "Löschen der Email-Vorlage fehlgeschlagen"
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Failed to delete emergency mapping"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Failed to delete emergency mapping container"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Failed to delete invoice ."
@@ -3944,6 +4063,14 @@ msgstr "Domain aktualisieren fehlgeschlagen."
 msgid "Failed to update email template"
 msgstr "Email-Vorlage aktualisieren fehlgeschlagen."
 
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Failed to update emergency mapping"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Failed to update emergency mapping container"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update fax setting"
 msgstr ""
@@ -4067,6 +4194,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Failed to upload LNP numbers"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Failed to upload emergency mappings"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -4959,6 +5090,18 @@ msgstr "Ungültige Geräte-Profil ID"
 #: lib/NGCP/Panel/Controller/Domain.pm
 msgid "Invalid domain id detected"
 msgstr "Ungültige Domain ID"
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Invalid emergency container id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Invalid emergency mapping container id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Invalid emergency mapping id detected!"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Invalid fax setting."
@@ -5915,6 +6058,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Network.pm
 #: lib/NGCP/Panel/Controller/Package.pm lib/NGCP/Panel/Controller/Peering.pm
@@ -6017,6 +6161,10 @@ msgstr "Noch keine Anrufe"
 #: share/templates/widgets/subscriber_reg_overview.tt
 msgid "No devices registered"
 msgstr "Keine Endgeräte registriert"
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "No emergency mapping file specified!"
+msgstr ""
 
 #: share/templates/widgets/subscriber_vm_overview.tt
 msgid "No new messages"
@@ -7043,6 +7191,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/Domain.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Network.pm
@@ -9297,6 +9446,14 @@ msgid "The email template used to notify users about subscriber creation."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The emergency code."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The emergency mapping container this mapping entry belongs to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The end of the invoice period."
 msgstr "Das Ende der Rechnungs-Periode."
 
@@ -9816,6 +9973,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id to assign this domain to."
 msgstr "Die Reseller-Id, zu der die Domain gehört."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id to assign this emergency mapping container to."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id to assign this invoice template to."
@@ -10461,7 +10622,7 @@ msgstr ""
 msgid "Upload"
 msgstr "Hochladen"
 
-#: share/templates/lnp/list.tt
+#: share/templates/emergencymapping/list.tt share/templates/lnp/list.tt
 msgid "Upload CSV"
 msgstr ""
 
@@ -10483,6 +10644,10 @@ msgstr "Gebühren hochladen"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Upload lnp"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Upload mapping"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
