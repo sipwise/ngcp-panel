@@ -1,0 +1,68 @@
+[% site_config.title = c.loc('Emergency Mappings') -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/emergencymapping/download') %]"><i class="icon-star"></i> [% c.loc('Download CSV') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/emergencymapping/upload') %]"><i class="icon-star"></i> [% c.loc('Upload CSV') %]</a>
+    </span>
+</div>
+
+[% back_created = 1 -%]
+
+<h3>[% c.loc('Emergency Containers') %]</h3>
+[%
+    helper.name = c.loc('Emergency Containers');
+    helper.identifier = 'emergency_containers';
+    helper.messages = emergency_container_messages;
+    helper.dt_columns = emergency_container_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = emergency_container_close_target;
+    helper.create_flag = emergency_container_create_flag;
+    helper.edit_flag = emergency_container_edit_flag;
+    helper.form_object = emergency_container_form;
+    helper.ajax_uri = c.uri_for('emergency_container_ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Delete'), uri = "/emergencymapping/emergency_container/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Edit'), uri = "/emergencymapping/emergency_container/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Emergency Container'), uri = c.uri_for('/emergencymapping/emergency_container_create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+
+<div class="ngcp-separator"></div>
+
+<h3>[% c.loc('Emergency Mappings') %]</h3>
+[%
+    helper.name = c.loc('Emergency Mappings');
+    helper.identifier = 'emergency_mappings';
+    helper.messages = emergency_mapping_messages;
+    helper.dt_columns = emergency_mapping_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = emergency_mapping_close_target;
+    helper.create_flag = emergency_mapping_create_flag;
+    helper.edit_flag = emergency_mapping_edit_flag;
+    helper.form_object = emergency_mapping_form;
+    helper.ajax_uri = c.uri_for('emergency_mapping_ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Delete'), uri = "/emergencymapping/emergency_mapping/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Edit'), uri = "/emergencymapping/emergency_mapping/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Emergency Mapping'), uri = c.uri_for('/emergencymapping/emergency_mapping_create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
