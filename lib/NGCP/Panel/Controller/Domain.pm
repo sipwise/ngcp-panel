@@ -383,6 +383,12 @@ sub load_preference_list :Private {
     $c->stash(ncos_levels_rs => $ncos_levels_rs,
               ncos_levels    => [$ncos_levels_rs->all]);
 
+    my $emergency_mapping_containers_rs = $c->model('DB')
+        ->resultset('emergency_containers')
+        ->search_rs({ reseller_id => $correct_reseller_id, });
+    $c->stash(emergency_mapping_containers_rs => $emergency_mapping_containers_rs,
+              emergency_mapping_containers    => [$emergency_mapping_containers_rs->all]);
+
     my $sound_sets_rs = $c->model('DB')
         ->resultset('voip_sound_sets')
         ->search_rs({ reseller_id => $correct_reseller_id, contract_id => undef, });

@@ -36,6 +36,7 @@ sub field_list {
         my $enums = $row->{enums};
         my $rwrs_rs = $row->{rwrs_rs};
         my $ncos_rs = $row->{ncos_rs};
+        my $emergency_mapping_containers_rs = $row->{emergency_mapping_containers_rs};
         my $sound_rs = $row->{sound_rs};
         my $contract_sound_rs = $row->{contract_sound_rs};
         my $field;
@@ -53,6 +54,15 @@ sub field_list {
                  $meta->attribute eq "adm_cf_ncos") {
             my @options = map {{label => $_->level, value => $_->id}}
                 defined $ncos_rs ? $ncos_rs->all : ();
+            unshift @options, {label => '', value => ''};
+            $field = {
+                name => $meta->attribute,
+                type => 'Select',
+                options => \@options,
+            };
+        } elsif ($meta->attribute eq "emergency_mapping_container") {
+            my @options = map {{label => $_->name, value => $_->id}}
+                defined $emergency_mapping_containers_rs ? $emergency_mapping_containers_rs->all : ();
             unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,

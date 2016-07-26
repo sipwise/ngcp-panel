@@ -2217,6 +2217,12 @@ sub load_preference_list :Private {
     $c->stash(ncos_levels_rs => $ncos_levels_rs,
               ncos_levels    => [$ncos_levels_rs->all]);
 
+    my $emergency_mapping_containers_rs = $c->model('DB')
+        ->resultset('emergency_containers')
+        ->search_rs({ reseller_id => $reseller_id, });
+    $c->stash(emergency_mapping_containers_rs => $emergency_mapping_containers_rs,
+              emergency_mapping_containers    => [$emergency_mapping_containers_rs->all]);
+
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         contract_pref => 1,
