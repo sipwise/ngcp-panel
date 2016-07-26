@@ -17,7 +17,20 @@ use File::Basename;
 use Test::HTTPRequestAsCurl;
 use Data::Dumper;
 use File::Slurp qw/write_file/;
+use Storable;
 
+has 'data_cache_file' => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => sub {'/tmp/ngcp-api-test-data-cache';},
+);
+has 'cache_data' => (
+    is => 'ro',
+    isa => 'Bool',
+    lazy => 1,
+    default => $ENV{API_CACHE_FAKE_DATA} // 0,
+);
 has 'local_test' => (
     is => 'rw',
     isa => 'Str',
@@ -501,6 +514,21 @@ sub request_delete{
     my $req = HTTP::Request->new('DELETE', $self->normalize_uri($uri));
     my $res = $self->request($req);
     my $content = $self->get_response_content($res);
+    if($self->cache_data){
+        #my $restored = (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
+        #if('204' eq $res->code){
+        #    $restored->{deleted}->{204}->{$uri} = 1;
+        #}
+        #$restored->{deleted}->{all}->{$uri} = [$res->code,$res->message];
+        #store $restored, $self->data_cache_file;
+        $self->replace_cached_data(sub{
+            my $restored = shift;
+            if('204' eq $res->code){
+                $restored->{deleted}->{204}->{$uri} = 1;
+            }
+            $restored->{deleted}->{all}->{$uri} = [$res->code,$res->message];
+        });
+    }
     return($req,$res,$content);
 }
 
@@ -904,6 +932,7 @@ sub clear_test_data_all{
         $self->http_code_msg(204, "check delete item $del_uri",$res,$content);
     }
     $self->clear_data_created();
+    return \@uris;
 }
 sub clear_test_data_dependent{
     my($self,$uri) = @_;
@@ -1044,5 +1073,29 @@ sub http_code_msg{
         }
     }
     $code and is($res->code, $code, $message_res);
+}
+sub get_cached_data{
+    my($self) = @_;
+    return (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
+}
+
+sub replace_cached_data{
+    my($self,$data_callback,$restored) = @_;
+    $restored //= $self->get_cached_data;
+    $data_callback->($restored);
+    store $restored,$self->data_cache_file;
+    return $restored;
+}
+sub get_cached_data{
+    my($self) = @_;
+    return (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
+}
+
+sub replace_cached_data{
+    my($self,$data_callback,$restored) = @_;
+    $restored //= $self->get_cached_data;
+    $data_callback->($restored);
+    store $restored,$self->data_cache_file;
+    return $restored;
 }
 1;
