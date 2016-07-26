@@ -74,6 +74,8 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         domainpreferences => 1,
         domains => 1,
         emailtemplates => 1,
+        emergencymappingcontainers => 1,
+        emergencymappings => 1,
         faxes => 1,
         faxrecordings => 1,
         faxserversettings => 1,
