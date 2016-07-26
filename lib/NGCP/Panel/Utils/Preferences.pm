@@ -119,6 +119,13 @@ sub load_preference_list {
                     $pref->{adm_cf_ncos_id} = $tmp->id;
                 }
             }
+            elsif($pref->attribute eq "emergency_mapping_container") {
+                if ($pref_values->{emergency_mapping_container_id} &&
+                    (my $tmp = $c->stash->{emergency_mapping_containers_rs}
+                        ->find($pref_values->{emergency_mapping_container_id}) )) {
+                    $pref->{emergency_mapping_container_id} = $tmp->id;
+                }
+            }
             elsif($pref->attribute eq "allowed_ips") {
                 $pref->{allowed_ips_group_id} = $pref_values->{allowed_ips_grp};
                 $pref->{allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
@@ -241,6 +248,15 @@ sub create_preference_form {
         if (defined $ncos_id_preference) {
             $preselected_value = $ncos_id_preference->value;
         }
+    } elsif ($c->stash->{preference_meta}->attribute eq "emergency_mapping_container") {
+        my $container_id_preference = $pref_rs->search({
+                'attribute.attribute' => 'emergency_mapping_container_id'
+            },{
+                join => 'attribute'
+            })->first;
+        if (defined $container_id_preference) {
+            $preselected_value = $container_id_preference->value;
+        }
     } elsif ($c->stash->{preference_meta}->attribute eq "allowed_ips") {
         my $allowed_ips_grp = $pref_rs->search({
                 'attribute.attribute' => 'allowed_ips_grp'
@@ -308,6 +324,7 @@ sub create_preference_form {
             enums => $enums,
             rwrs_rs => $c->stash->{rwr_sets_rs},
             ncos_rs => $c->stash->{ncos_levels_rs},
+            emergency_mapping_containers_rs => $c->stash->{emergency_mapping_containers_rs},
             sound_rs => $c->stash->{sound_sets_rs},
             contract_sound_rs => $c->stash->{contract_sound_sets_rs},
         }],
@@ -560,6 +577,39 @@ sub create_preference_form {
                     $preference->first->update({ value => $selected_level->id });
                 } else {
                     $preference->create({ value => $selected_level->id });
+                }
+                NGCP::Panel::Utils::Message::info(
+                    c => $c,
+                    data => \%log_data,
+                    desc => $c->loc('Preference [_1] successfully updated', $attribute),
+                );
+            } catch($e) {
+                NGCP::Panel::Utils::Message::error(
+                    c => $c,
+                    error => $e,
+                    data  => \%log_data,
+                    desc  => $c->loc('Failed to update preference [_1]', $attribute),
+                );
+                $c->response->redirect($base_uri);
+                return 1;
+            }
+            $c->response->redirect($base_uri);
+            return 1;
+        } elsif ($attribute eq "emergency_mapping_container") {
+            my $selected_container = $c->stash->{emergency_mapping_containers_rs}->find(
+                $form->field($attribute)->value
+            );
+            my $attribute_id = $c->model('DB')->resultset('voip_preferences')
+                ->find({attribute => $attribute."_id"})->id;
+
+            try {
+                my $preference = $pref_rs->search({ attribute_id => $attribute_id });
+                if(!defined $selected_container) {
+                    $preference->first->delete if $preference->first;
+                } elsif($preference->first) {
+                    $preference->first->update({ value => $selected_container->id });
+                } else {
+                    $preference->create({ value => $selected_container->id });
                 }
                 NGCP::Panel::Utils::Message::info(
                     c => $c,
@@ -1024,7 +1074,7 @@ sub api_preferences_defs{
                 push @{ $fields->{enum_values} }, $efields;
             }
         }
-        if ($pref->attribute =~ m/^(rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|sound_set|contract_sound_set)$/) {
+        if ($pref->attribute =~ m/^(rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|emergency_mapping_container|sound_set|contract_sound_set)$/) {
             $fields->{data_type} = 'string';
         }
         $resource->{$pref->attribute} = $fields;
@@ -1094,6 +1144,14 @@ check which rewrite_rule_set is currently set.
 Very similar to rewrite_rule_set (see above). The stashed variables are
 ncos_levels_rs and ncos_levels. In the template helper.ncos_levels needs to
 be set.
+
+The updated preferences are called ncos_id and adm_ncos_id.
+
+=head3 Special case emergency_mapping_container
+
+Very similar to ncos (see above). The stashed variables are
+emergency_mapping_containers_rs and emergency_mapping_containers. In the template
+helper.ncos_levels needs to be set.
 
 The updated preferences are called ncos_id and adm_ncos_id.
 

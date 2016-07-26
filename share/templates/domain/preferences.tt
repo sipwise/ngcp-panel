@@ -14,6 +14,7 @@
     helper.base_uri = c.uri_for(domain.id,'preferences');
     helper.rewrite_rule_sets = rwr_sets;
     helper.ncos_levels = ncos_levels;
+    helper.emergency_mapping_containers = emergency_mapping_containers;
     helper.sound_sets = sound_sets;
     helper.man_aip_grp_rs = man_aip_grp_rs;
 

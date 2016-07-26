@@ -131,6 +131,25 @@ sub get_resource {
                 $processed = 1;
                 last SWITCH;
             };
+            /^emergency_mapping_container_id$/ && do {
+                my $pref_name = $pref->attribute->attribute;
+                $pref_name =~ s/_id$//;
+
+                do { $processed = 1; last SWITCH; } 
+                    if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
+
+                my $container = $c->model('DB')->resultset('emergency_containers')->find({
+                    id => $pref->value,
+                });
+                if($container) {
+                    $resource->{$pref_name} = $container->name;
+                } else {
+                    $c->log->error("no emergency mapping container for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
+                    # let it slip through
+                }
+                $processed = 1;
+                last SWITCH;
+            };
             /^(contract_)?sound_set$/ && do {
                 # TODO: not applicable for domains, but for subs, check for contract_id!
                 do { $processed = 1; last SWITCH; } 
@@ -417,6 +436,7 @@ sub update_item {
         rewrite_callee_in_dpid rewrite_callee_out_dpid
         rewrite_caller_lnp_dpid rewrite_callee_lnp_dpid
         ncos_id adm_ncos_id adm_cf_ncos_id
+        emergency_mapping_container_id
         sound_set contract_sound_set
         allowed_ips_grp man_allowed_ips_grp
     /];
@@ -458,6 +478,14 @@ sub update_item {
                         last SWITCH;
                     };
                     /^(adm_)?ncos$/ && do {
+                        unless(exists $resource->{$k}) {
+                            my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_id');
+                            last SWITCH unless $rs; # unknown resource, just ignore
+                            $rs->delete;
+                        }
+                        last SWITCH;
+                    };
+                    /^emergency_mapping_container$/ && do {
                         unless(exists $resource->{$k}) {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_id');
                             last SWITCH unless $rs; # unknown resource, just ignore
@@ -573,6 +601,25 @@ sub update_item {
                         $rs->first->update({ value => $ncos->id });
                     } else {
                         $rs->create({ value => $ncos->id });
+                    }
+                    last SWITCH;
+                };
+                /^emergency_mapping_container$/ && do {
+                    my $pref_name = $pref . "_id";
+                    my $container = $c->model('DB')->resultset('emergency_containers')->find({
+                        name => $resource->{$pref},
+                        reseller_id => $reseller_id,
+                    });
+                    unless($container) {
+                        $c->log->error("no emergency mapping container '".$resource->{$pref}."' for reseller id $reseller_id found");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown emergency mapping container '".$resource->{$pref}."'");
+                        return;
+                    }
+                    my $rs = $self->get_preference_rs($c, $type, $elem, $pref_name);
+                    if($rs->first) {
+                        $rs->first->update({ value => $container->id });
+                    } else {
+                        $rs->create({ value => $container->id });
                     }
                     last SWITCH;
                 };

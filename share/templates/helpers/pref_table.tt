@@ -91,6 +91,13 @@
                             <option [% (r.adm_cf_ncos_id.defined && r.adm_cf_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
                         [% END -%]
                         </select>
+                    [% ELSIF r.attribute == "emergency_mapping_container" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR container IN helper.emergency_mapping_containers -%]
+                            <option [% (r.emergency_mapping_container_id.defined && r.emergency_mapping_container_id == container.id) ? 'selected="selected"' : '' %]>[% container.name %]</option>
+                        [% END -%]
+                        </select>
                     [% ELSIF r.attribute == "sound_set" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
@@ -161,7 +168,7 @@
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
                  m.name = c.loc("Preference '") _ c.loc(helper.preference_meta.label) _"'");
-    IF ! helper.preference_meta.attribute.match('(ncos|sound_set)$');
+    IF ! helper.preference_meta.attribute.match('(ncos|sound_set|emergency_mapping_container)$');
         helper.form = translate_form(helper.form);
     END;
 -%]
