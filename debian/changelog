@@ -1,3 +1,24 @@
+ngcp-panel (1.13.1.8+0~mr4.4.1.8) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [f45a0f4] MT#21435 Fix resellers join for pbxdevices
+  * [670ec3b] MT#21401 Fix query for the reseller reminder creation
+  * [816b9c1] MT#19623 Fix generation of the big invoices
+  * [3281c8b] MT#18999 Escape billing profile values for the invoice generation
+  * [d5f7ac8] MT#16623 Save 2.6 version of the svg-edit for the Presto Opera
+  * [8651950] MT#16623 svg-edit trunk version
+  * [20c50ae] MT#16623 Adapt new svg-edit for the NGCP
+  * [8e39b49] MT#16623 Remove lintian warnings
+  * [39b7dfe] MT#16623 Fix attributes for the edge (lower case attributes)
+  * [2b14e06] MT#16623 Send old opera to the old svg-edit
+  * [19f61fd] MT#18561 Change of the LIID is forbidden
+  * [047df2e] MT#20971 Add concurrent_max* preferences to device config variables
+  * [f800738] MT#21317 Add aliases select to new subscriber creation by subscriber admin
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 26 Jul 2016 12:44:30 +0200
+
 ngcp-panel (1.13.1.7+0~mr4.4.1.7) unstable; urgency=medium
 
   [ Rene Krenn ]
