@@ -4935,6 +4935,10 @@ msgid "Internal Contract #"
 msgstr "Внутренний Контракт #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal Emergency Mapping Container #"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal NCOS Level #"
 msgstr "Внутренний NCOS Список #"
 
@@ -8160,6 +8164,12 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the NCOS level that applies to the user."
 msgstr "Укажите NCOS список применяемый этому пользователю."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Specifies the emergency mapping container to be used for this subscriber to "
+"map emergency numbers to emergency prefixes."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
