@@ -59,13 +59,27 @@ sub GET :Allow {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, faxrecording => $item);
-        my $content = '';
-        if( -e $item->filename ){
+        last unless $item && $item->status && $item->filename;
+        my $spool = $c->config->{faxserver}{spool_dir} || last;
+        $spool .= $item->status eq 'SUCCESS' ? '/done/' : '/failed/';
+        my $filepath = $spool.$item->filename;
+        if( -e $filepath ){
             my $ft = File::Type->new();
+            my $content = '';
+            eval { $content = read_file($filepath, binmode => ':raw'); };
+            if ($@) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                    sprintf "Error processing fax recording %d (%s)",
+                                $item->id, $item->filename);
+                last;
+            }
             $c->response->header ('Content-Disposition' => 'attachment; filename="' . $item->id . '-' . $item->filename);
-            $content = read_file($item->filename, binmode => ':raw');
             $c->response->content_type($ft->mime_type($content));
             $c->response->body($content);
+        } else {
+            $self->error($c, HTTP_NOT_FOUND,
+                sprintf "Fax recording %d (%s) was not found.", $item->id, $item->filename);
+            last;
         }
     }
     return;
