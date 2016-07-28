@@ -1893,7 +1893,7 @@ msgstr ""
 msgid "Create Special Off-Peak Date"
 msgstr ""
 
-#: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/subscriber/list.tt
+#: share/templates/customer/details.tt share/templates/customer/details.tt
 msgid "Create Subscriber"
 msgstr ""
 
@@ -3156,7 +3156,7 @@ msgstr ""
 msgid "Failed to create speed dial slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to create subscriber"
 msgstr ""
 
@@ -4213,11 +4213,19 @@ msgid "If enabled, an LNP lookup is performed for calls from this peer using the
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, any vertical service codes, e.g. *99*1234, are rejected by the system to disable the possibility of provisioning features via phones ."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, npdi parameter will be added if there is a LNP query."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If fees are uploaded via text/csv bulk upload, this option defines whether to purge any existing fees for the given billing profile before inserting the new ones."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If set, the UPN of the calling party is not checked against the allowed CLIs provisioned for this subscriber if a Diversion or History-Info header is provided in an incoming call. This can be used to allow diversion on the subscriber device and transporting the originally calling party number on the second leg. Use with caution as it might allow for number spoofing."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5248,7 +5256,7 @@ msgid "Method"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom."
+msgid "Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5965,6 +5973,10 @@ msgid "Password used to configure bootstrap url on Polycom redirect server."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Password used to configure bootstrap url on Snom redirect server. Obtained from Snom."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Password used to configure bootstrap url on Yealink redirect server. Obtained from Yealink."
 msgstr ""
 
@@ -6449,6 +6461,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject Emergency Calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject Vertical Service Codes sent by subscriber"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7053,6 +7069,10 @@ msgstr ""
 msgid "Skip Rewrite"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Skip UPN check on Diversion"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Slot"
 msgstr ""
@@ -7071,6 +7091,18 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Snlength"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Snom"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Snom password"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Snom username"
 msgstr ""
 
 #: share/templates/error_page.tt
@@ -7541,10 +7573,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Subscriber successfully created"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Subscriber successfully created!"
 msgstr ""
 
 #: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/subscriber/list.tt share/templates/widgets/admin_reseller_overview.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_customer_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
@@ -9449,6 +9477,10 @@ msgstr ""
 msgid "Unit"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm
+msgid "Unknown error"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/sound/handles_list.tt
 msgid "Upload"
 msgstr ""
@@ -9600,6 +9632,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Username used to configure bootstrap url on Polycom redirect server."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Username used to configure bootstrap url on Snom redirect server. Obtained from Snom."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
