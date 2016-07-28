@@ -56,14 +56,18 @@ sub auto :Private {
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
-        last unless $self->valid_id($c, $id);
+        return unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, faxrecording => $item);
+        return unless $self->resource_exists($c, faxrecording => $item);
+        return unless $item || $item->status || $item->filename;
         my $content = '';
-        if( -e $item->filename ){
+        my $spool = $c->config->{faxserver}{spool_dir} || return;
+        $spool .= $item->status eq 'SUCCESS' ? '/done/' : '/failed/';
+        my $filepath = $spool.$item->filename;
+        if( -e $filepath ){
             my $ft = File::Type->new();
             $c->response->header ('Content-Disposition' => 'attachment; filename="' . $item->id . '-' . $item->filename);
-            $content = read_file($item->filename, binmode => ':raw');
+            $content = read_file($filepath, binmode => ':raw');
             $c->response->content_type($ft->mime_type($content));
             $c->response->body($content);
         }
