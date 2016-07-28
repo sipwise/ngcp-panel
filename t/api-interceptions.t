@@ -22,8 +22,13 @@ $fake_data->set_data_from_script({
             number      => sub { 
                 my $self = shift; 
                 $self->get_id('subscribers',@_);
-                my $subscriber = $self->created->{subscribers}->[0] ? $self->created->{subscribers}->[0] : $self->loaded->{subscribers}->[0];
-                return join('',@{$subscriber->{content}->{primary_number}}{qw/cc ac sn/});
+                my $data;
+                if($self->loaded->{subscribers}->[0]){
+                    $data = $self->loaded->{subscribers}->[0]->{content};
+                }else{
+                    (undef, $data, undef) = $self->test_machine->request_get($self->created->{subscribers}->[0]->{location});
+                }
+                return join('',@{$data->{primary_number}}{qw/cc ac sn/});
             },
             x2_host     => '127.0.0.1',
             x2_password => '',
@@ -55,7 +60,9 @@ $test_machine->form_data_item();
     ok($content->{message} =~ /liid can not be changed/, "check error message in body");
     $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 }
+
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
+undef $fake_data;
 done_testing;
 
 
