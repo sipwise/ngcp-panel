@@ -8,10 +8,11 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Utils::Fax;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
+use File::Basename;
 use File::Type;
-use File::Slurp;
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -55,18 +56,44 @@ sub auto :Private {
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
+    my $rc = 1;
     {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, faxrecording => $item);
-        my $content = '';
-        if( -e $item->filename ){
-            my $ft = File::Type->new();
-            $c->response->header ('Content-Disposition' => 'attachment; filename="' . $item->id . '-' . $item->filename);
-            $content = read_file($item->filename, binmode => ':raw');
-            $c->response->content_type($ft->mime_type($content));
-            $c->response->body($content);
+        unless ($self->resource_exists($c, faxrecording => $item)) {
+            $self->error($c, HTTP_NOT_FOUND,
+                sprintf "Fax recording %d was not found.", $id);
+            $rc = 0;
+            last;
         }
+        last unless $item && $item->status && $item->filename;
+
+        my $format = $c->request->param('format') || '';
+        if ($format && $format !~ /^(ps|pdf|pdf14)$/) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                sprintf "Unknown fax recording format");
+            $rc = 0;
+            last;
+        }
+
+        my ($content, $ext) = NGCP::Panel::Utils::Fax::get_fax(
+                                c => $c,
+                                filename => $item->filename,
+                                format => $format,
+                              );
+        last unless $content && $ext;
+
+        my $filename = sprintf "%s.%s", (fileparse($item->filename))[0], $ext;
+        my $ft = File::Type->new();
+        $c->response->header ('Content-Disposition' => 'attachment; filename="' . $item->id . '-' . $filename);
+        $c->response->content_type($ft->mime_type($content));
+        $c->response->body($content);
+        $rc = 0;
+    }
+    if ($rc) {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
+            sprintf "Error processing fax recording %d", $id);
+
     }
     return;
 }

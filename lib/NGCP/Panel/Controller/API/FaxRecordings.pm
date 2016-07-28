@@ -22,7 +22,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines the actual recording of fax messages. It is referred to by the <a href="#faxes">Faxes</a> relation. A GET on an item returns the fax in the binary format as it was sent: tiff, ps or pdf.';
+    return 'Defines the actual recording of fax messages. It is referred to by the <a href="#faxes">Faxes</a> relation. A GET on an item returns the fax in the binary format as image/tif. Additional formats are also supported for download (see: the query_params option).';
 };
 
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::FaxRecordings/;
