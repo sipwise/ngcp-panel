@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_fd7b4227",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-07-29T01:34:58Z",
+      "side": 1,
+      "message": "minor, but what about loading this string literal from the config yaml - both here and by the actual (comx) http service?",
+      "range": {
+        "startLine": 34,
+        "startChar": 30,
+        "endLine": 34,
+        "endChar": 41
+      },
+      "revId": "2195d34b415445984d2d82cd996eda615784599e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_1d797e2f",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-07-29T01:34:58Z",
+      "side": 1,
+      "message": "shouldn\u0027t _create_response be used here too, to have uniform results in any case?",
+      "range": {
+        "startLine": 253,
+        "startChar": 4,
+        "endLine": 253,
+        "endChar": 11
+      },
+      "revId": "2195d34b415445984d2d82cd996eda615784599e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_bd75ca33",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-07-29T01:34:58Z",
+      "side": 1,
+      "message": "theoretically, if you manage to pass $c into this sub, you could place that\n\n$c-\u003elog-\u003edebug($debug) if $debug;\n\ndirectly in here, once and for all.",
+      "range": {
+        "startLine": 285,
+        "startChar": 8,
+        "endLine": 285,
+        "endChar": 14
+      },
+      "revId": "2195d34b415445984d2d82cd996eda615784599e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
