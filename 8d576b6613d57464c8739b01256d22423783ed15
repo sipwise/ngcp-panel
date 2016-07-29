@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_9d948e38",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-07-29T01:47:27Z",
+      "side": 1,
+      "message": "is it possible to use a query param for filtering here?",
+      "revId": "8d576b6613d57464c8739b01256d22423783ed15",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_3d99da6e",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-07-29T01:47:27Z",
+      "side": 1,
+      "message": "how many can there be? if too many, it might be better to filter using a http query param here..",
+      "range": {
+        "startLine": 632,
+        "startChar": 7,
+        "endLine": 632,
+        "endChar": 70
+      },
+      "revId": "8d576b6613d57464c8739b01256d22423783ed15",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
