@@ -62,11 +62,15 @@ sub get_log_params {
                       ? $c->request->query_params
                       : $c->request->parameters;
     if ($data_ref) {
+        my $log_passwords = $c->config->{security}{log_passwords} || 0;
         my %parsed_data_ref = map { $_ => defined $data_ref->{$_}
-                                            ? length($data_ref->{$_}) > 500
-                                                ? '*too big*'
-                                                : $data_ref->{$_}
-                                            : 'undef'
+                                    ? length($data_ref->{$_}) > 500
+                                        ? '*too big*'
+                                        : (!$log_passwords && $_ =~ /password/i
+                                                && $data_ref->{$_})
+                                            ? '*' x length($data_ref->{$_})
+                                            : $data_ref->{$_}
+                                    : 'undef'
                                   } keys %$data_ref;
         $data_str = Data::Dumper->new([ \%parsed_data_ref ])
                                 ->Terse(1)
@@ -86,8 +90,6 @@ sub get_log_params {
         $data_str = "{ data => 'Msg size is too big' }";
     }
 
-    unless ($c->config->{logging}->{clear_passwords}) {
-    }
 
     return {
                 tx_id  => $log_tx_id,
