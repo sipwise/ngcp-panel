@@ -68,6 +68,13 @@ sub get_log_params {
                                                 : $data_ref->{$_}
                                             : 'undef'
                                   } keys %$data_ref;
+        unless ($c->config->{log_passwords}) {
+            foreach $key (keys %$data_ref) {
+                if ($data_ref->{key} && $key =~ /password/i) {
+                    $data_ref->{$key} = '*' x length($data_ref->{$key});
+                }
+            }
+        }
         $data_str = Data::Dumper->new([ \%parsed_data_ref ])
                                 ->Terse(1)
                                 ->Maxdepth(1)
@@ -86,8 +93,6 @@ sub get_log_params {
         $data_str = "{ data => 'Msg size is too big' }";
     }
 
-    unless ($c->config->{logging}->{clear_passwords}) {
-    }
 
     return {
                 tx_id  => $log_tx_id,
