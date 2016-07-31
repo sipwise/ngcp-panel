@@ -26,6 +26,12 @@ sub send_fax {
 
     my %sendfax_args = ();
 
+    if (defined $c->config->{faxserver}{hosts}) {
+        my @hosts = split(/,\s*/, $c->config->{faxserver}{hosts});
+        $sendfax_args{host} = $hosts[rand @hosts];
+        $sendfax_port{port} = $c->config->{faxserver}{port};
+    }
+
     my $sender = 'webfax';
     my $number;
     if($subscriber->primary_number) {
