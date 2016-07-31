@@ -6,6 +6,7 @@ use File::Slurp;
 use TryCatch;
 use IPC::System::Simple qw/capture/;
 use Data::Dumper;
+use Net::Ping;
 
 sub send_fax {
     my (%args) = @_;
@@ -25,6 +26,22 @@ sub send_fax {
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
     my %sendfax_args = ();
+
+    if (defined $c->config->{faxserver}{hosts}) {
+        my @hosts = split(/,\s*/, $c->config->{faxserver}{hosts});
+        my $port = $c->config->{faxserver}{port};
+        my $ping = new Net::Ping('tcp', 1);
+        $ping->port_number($port);
+        do {
+            my $host = $hosts[rand @hosts];
+            if ($ping->ping($host)) {
+                $sendfax_args{host} = $host;
+                $sendfax_port{port} = $port;
+            }
+            @hosts = grep { $_ ne $host } @hosts;
+        } while (!$sendfax_args{host} && @hosts);
+        die "No alive proxy hosts to queue the send fax to" unless @hosts;
+    }
 
     my $sender = 'webfax';
     my $number;
