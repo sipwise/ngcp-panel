@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "5aaae553_ad3caf94",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-01T13:17:11Z",
+      "side": 1,
+      "message": "yes, that would indeed be nice. as far as i can remember, I just didn\u0027t want to stuff all the error logic into this response function. minor style issue, but i\u0027ll see what i can do next time :)",
+      "parentUuid": "5aaae553_1d797e2f",
+      "range": {
+        "startLine": 253,
+        "startChar": 4,
+        "endLine": 253,
+        "endChar": 11
+      },
+      "revId": "2195d34b415445984d2d82cd996eda615784599e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5aaae553_bd75ca33",
         "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
         "patchSetId": 6
@@ -59,6 +83,30 @@
       "writtenOn": "2016-07-29T01:34:58Z",
       "side": 1,
       "message": "theoretically, if you manage to pass $c into this sub, you could place that\n\n$c-\u003elog-\u003edebug($debug) if $debug;\n\ndirectly in here, once and for all.",
+      "range": {
+        "startLine": 285,
+        "startChar": 8,
+        "endLine": 285,
+        "endChar": 14
+      },
+      "revId": "2195d34b415445984d2d82cd996eda615784599e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_4d417b0a",
+        "filename": "lib/NGCP/Panel/Utils/ComxAPIClient.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-01T13:17:11Z",
+      "side": 1,
+      "message": "passing $c everywhere like we do decreases encapsulation and makes testing terribly difficult. it also creates the opportunity for memory leaks (circular reference).\n\non the other hand, a proper blessed response object could be considered for this module (instead of the hashref).",
+      "parentUuid": "5aaae553_bd75ca33",
       "range": {
         "startLine": 285,
         "startChar": 8,
