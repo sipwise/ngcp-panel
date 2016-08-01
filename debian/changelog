@@ -1,3 +1,119 @@
+ngcp-panel (1.15.0.0+0~mr5.0.0.0) unstable; urgency=medium
+
+  [ Jenkins Git User ]
+  * [bb4f87e] I18N dump: snapshot 2016-05-24 01:51:56 +0200
+  * [37b306c] I18N dump: snapshot 2016-05-25 01:22:08 +0200
+  * [98ac442] I18N dump: snapshot 2016-05-26 01:14:44 +0200
+  * [5e100b5] I18N dump: snapshot 2016-05-29 01:14:13 +0200
+  * [1a5218b] I18N dump: snapshot 2016-05-30 01:14:04 +0200
+  * [4188ff8] I18N dump: snapshot 2016-05-31 01:21:21 +0200
+  * [ee12195] I18N dump: snapshot 2016-06-01 01:14:12 +0200
+  * [feeb218] I18N dump: snapshot 2016-06-02 01:14:40 +0200
+  * [208f976] I18N dump: snapshot 2016-06-03 01:21:50 +0200
+  * [0cdb05f] I18N dump: snapshot 2016-06-06 01:14:22 +0200
+  * [dce7bbf] I18N dump: snapshot 2016-06-07 01:16:25 +0200
+  * [f6b5e80] I18N dump: snapshot 2016-06-08 01:14:28 +0200
+  * [6f99aa4] I18N dump: snapshot 2016-06-09 01:14:27 +0200
+  * [f47421a] I18N dump: snapshot 2016-06-10 01:21:39 +0200
+  * [ee7a98e] I18N dump: snapshot 2016-06-11 01:14:50 +0200
+  * [be40c6e] I18N dump: snapshot 2016-06-14 01:13:56 +0200
+  * [bcff69c] I18N dump: snapshot 2016-06-15 01:14:18 +0200
+  * [e37fec0] I18N dump: snapshot 2016-06-16 01:22:09 +0200
+  * [6b67ad9] I18N dump: snapshot 2016-06-17 01:14:12 +0200
+  * [dbec88a] I18N dump: snapshot 2016-06-19 01:15:06 +0200
+  * [5fab6c5] I18N dump: snapshot 2016-06-20 01:15:36 +0200
+  * [71ace93] I18N dump: snapshot 2016-06-21 01:14:15 +0200
+  * [8e8112c] I18N dump: snapshot 2016-06-22 01:22:29 +0200
+  * [3501eeb] I18N dump: snapshot 2016-06-23 01:14:18 +0200
+  * [b8b39b8] I18N dump: snapshot 2016-06-24 01:14:11 +0200
+  * [cac5eba] I18N dump: snapshot 2016-07-05 01:15:28 +0200
+  * [98b6d75] I18N dump: snapshot 2016-07-06 10:20:30 +0200
+  * [c6fcdb0] I18N dump: snapshot 2016-07-07 01:15:18 +0200
+  * [36371aa] I18N dump: snapshot 2016-07-12 02:40:18 +0200
+  * [919be10] I18N dump: snapshot 2016-07-22 01:22:33 +0200
+  * [607f6a0] I18N dump: snapshot 2016-07-26 01:21:47 +0200
+  * [8985f4a] I18N dump: snapshot 2016-07-27 01:14:28 +0200
+  * [2010b14] I18N dump: snapshot 2016-07-29 01:16:10 +0200
+
+  [ Gerhard Jungwirth ]
+  * [1c2c8cf] MT#19765 add subscriberlogin for API
+  * [13e5e31] MT#19795 API improvements RTC sessions and networks
+  * [0897518] MT#19959 add documentation link for reseller login
+  * [a2e2ed4] MT#19625 specify maxlength of ncos level name
+  * [8fbc59d] MT#19729 encode call_id in url
+  * [5ed5a2e] MT#20387 remove noise of I18N job
+  * [cf845a9] MT#15269 increase stable tests, small fixes
+  * [5eccf13] MT#20797 additional configurable documentation links
+  * [4515337] MT#18993 provide info about ngcp-support-access in panel
+  * [9d2bbda] MT#19509 fix datetime filtering with datatables
+  * [4d8d5e8] MT#19795 create rtcapps REST api endpoint
+  * [95179f1] MT#21011 subscriberapi fix reseller_id search
+  * [6d883c6] MT#21141 fix login redirect between realms
+  * [b34a7df] MT#21193 use Sipwise::Base in api modules
+  * [01c24b5] MT#21193 fix internal server errors 500 from usage of strict
+  * [c46f1c4] MT#21293 API fix peer auth sems update
+  * [5c5adb5] MT#19795 rtc change apiclient login realm
+  * [25792a1] MT#19795 rtc api consider app id for sessions
+
+  [ Rene Krenn ]
+  * [e8ab903] MT#19821 subsciber profile edit drops random voip_usr_prefs
+  * [10af05a] MT#19783 set lock level when creating subscriber
+  * [2912808] MT#20023 MT#20027 lnp unique number and lnp provider delete checks
+  * [400d038] MT#20257 filter subscriber collection by subscriber's external_id
+  * [930115c] MT#20023 MT#20027 fix using constant error msgs with c->loc
+  * [5c3f35f] MT#21459 ncos "level" filter for api
+
+  [ Andreas Granig ]
+  * [9f892f5] MT#19457 Add lnp authoritative and skip_rewrite
+  * [e8f441e] MT#18593 Fix usage if no mode is given
+  * [a6264ed] MT#21543 Implement emergency mapping
+  * [ab7a753] MT#21543 Add emergency resources to test.
+  * [c6e03b7] MT#21543 Implement emergency mapping preference
+  * [d086b79] MT#21533 Add proxy controller for grafana.
+
+  [ Irina Peshinskaya ]
+  * [b226c4d] MT#20315 Add email templates and invoice template ids...
+  * [0dbcfd6] MT#20235 Allow to add fw filename to the latest firmware url
+  * [53c815d] MT#20369 Catch duplicated alias error on subscriber update
+  * [4056de2] MT#12347 Use temp file for fax file send test
+  * [87a4ab1] MT#12347 Fix faxes and subscribers EOL changed occasionally
+  * [2b48c4c] MT#16623 Save 2.6 version of the svg-edit for the Presto Opera
+  * [a982d0d] MT#16623 svg-edit trunk version
+  * [747804f] MT#16623 Adapt new svg-edit for the NGCP
+  * [f44ac57] MT#16623 Remove lintian warnings
+  * [f350db0] MT#16623 Fix attributes for the edge (lower case attributes)
+  * [3124e2c] MT#16623 Send old opera to the old svg-edit
+  * [3c4672c] MT#19623 Fix generation of the big invoices
+  * [ea507b7] MT#21401 Fix query for the reseller reminder creation
+  * [739162a] MT#21435 Fix resellers join for pbxdevices
+  * [4fa92a0] MT#18999 Escape billing profile values for the invoice generation
+  * [2b430bd] MT#18561 Change of the LIID is forbidden
+  * [5415d6e] MT#20971 Add concurrent_max* preferences to device config variables
+  * [9264a41] MT#21317 Add aliases select to new subscriber creation by subscriber admin
+  * [1d10d26] MT#12637 Reseller termination via API PATCH should process reseller resources
+  * [7ad8784] MT#21269 Implement Snom redirect service
+  * [2350208] MT#15189 Send Location header after subscriberregistration item update
+  * [e1bce43] MT#19997 Fix FaxRecordings description
+  * [e2865cb] MT#17417 Remove possibility to create subscriber out of the customer view
+
+  [ Kirill Solomko ]
+  * [30ecb6a] MT#20325 TryCatch syntax fix
+  * [075a950] MT#18171 use spool_dir+filename for faxrecordings retrieval
+  * [b821f24] MT#21683 respect log_password config option and hide passwords if disabled
+  * [4bc81ed] MT#21685 send fax support for carrier environment
+  * [e065633] MT#21683 no password length expose in the hidden form
+
+  [ Alexander Lutay ]
+  * [684db52] MT#19795 Fix 4d8d5e8: add 'rtcapps' to test api-rest/api-root.t
+
+  [ Guillem Jover ]
+  * [a6d859c] MT#21193 Remove unused dependencies and imports
+  * [b6ac9c0] MT#21193 Add missing dependencies on MooseX modules
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 01 Aug 2016 16:30:59 +0200
+
 ngcp-panel (1.14.0.0+0~mr4.5.0.0) unstable; urgency=medium
 
   [ Jenkins Git User ]
