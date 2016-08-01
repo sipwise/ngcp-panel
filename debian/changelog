@@ -1,3 +1,15 @@
+ngcp-panel (1.8.7.2+0~mr3.8.7.2) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [210295a] MT#18561 Change of the LIID is forbidden
+  * [038fd57] MT#21435 Fix resellers join for pbxdevices
+  * [98f1be1] MT#21401 Fix query for the reseller reminder creation
+  * [4b043de] MT#21401 Add reminders API test
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 01 Aug 2016 13:57:11 +0200
+
 ngcp-panel (1.8.7.1+0~mr3.8.7.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
