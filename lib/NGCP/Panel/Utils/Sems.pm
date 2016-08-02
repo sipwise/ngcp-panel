@@ -12,6 +12,11 @@ sub create_peer_registration {
         return 1;
     }
 
+    my $all = 1;
+    if($c->config->{sems}->{single_host_registration}) {
+        $all = 0;
+    }
+
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
 
     $c->log->debug("creating peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
@@ -20,7 +25,7 @@ sub create_peer_registration {
     my $uuid = $prov_subscriber->uuid;
     my $contact = $c->config->{sip}->{lb_ext};
 
-    my @ret = $dispatcher->dispatch($c, "appserver", 1, 1, <<EOF);
+    my @ret = $dispatcher->dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
     <methodName>db_reg_agent.createRegistration</methodName>
@@ -33,6 +38,10 @@ sub create_peer_registration {
     </params>
   </methodCall>
 EOF
+
+    if (!$all && @ret && $ret[-1][1] == 1 && $ret[-1][2] =~ m#<value>OK</value>#) { # single host okay
+        return 1;
+    }
 
     if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
@@ -63,6 +72,11 @@ sub update_peer_registration {
         return 1;
     }
 
+    my $all = 1;
+    if($c->config->{sems}->{single_host_registration}) {
+        $all = 0;
+    }
+
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
 
     $c->log->debug("trying to update peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
@@ -78,7 +92,7 @@ sub update_peer_registration {
     $c->log->debug("+++++++++++++++++++ uuid=$uuid");
     $c->log->debug("+++++++++++++++++++ contact=$contact");
 
-    my @ret = $dispatcher->dispatch($c, "appserver", 1, 1, <<EOF);
+    my @ret = $dispatcher->dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
     <methodName>db_reg_agent.updateRegistration</methodName>
@@ -91,6 +105,10 @@ sub update_peer_registration {
     </params>
   </methodCall>
 EOF
+
+    if (!$all && @ret && $ret[-1][1] == 1 && $ret[-1][2] =~ m#<value>OK</value>#) { # single host okay
+        return 1;
+    }
 
     if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
@@ -125,6 +143,11 @@ sub delete_peer_registration {
         return 1;
     }
 
+    my $all = 1;
+    if($c->config->{sems}->{single_host_registration}) {
+        $all = 0;
+    }
+
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
 
     $c->log->debug("trying to delete peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
@@ -133,7 +156,7 @@ sub delete_peer_registration {
     my $uuid = $prov_subscriber->uuid;
     my $contact = $c->config->{sip}->{lb_ext};
 
-    my @ret = $dispatcher->dispatch($c, "appserver", 1, 1, <<EOF);
+    my @ret = $dispatcher->dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
       <methodCall>
         <methodName>db_reg_agent.removeRegistration</methodName>
@@ -142,6 +165,10 @@ sub delete_peer_registration {
         </params>
       </methodCall>
 EOF
+
+    if (!$all && @ret && $ret[-1][1] == 1 && $ret[-1][2] =~ m#<value>OK</value>#) { # single host okay
+        return 1;
+    }
 
     if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
