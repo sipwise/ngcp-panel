@@ -68,7 +68,7 @@ sub get_log_params {
                                         ? '*too big*'
                                         : (!$log_passwords && $_ =~ /password/i
                                                 && $data_ref->{$_})
-                                            ? '*' x 5)
+                                            ? '*' x 5
                                             : $data_ref->{$_}
                                     : 'undef'
                                   } keys %$data_ref;
