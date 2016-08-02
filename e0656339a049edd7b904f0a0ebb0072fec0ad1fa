@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_28ad0d32",
+        "filename": "lib/NGCP/Panel/Utils/Message.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-02T15:08:23Z",
+      "side": 1,
+      "message": "syntax error at /usr/share/perl5/NGCP/Panel/Utils/Message.pm line 72, near \"5)\n\nmissing bracket?",
+      "range": {
+        "startLine": 71,
+        "startChar": 44,
+        "endLine": 71,
+        "endChar": 54
+      },
+      "revId": "e0656339a049edd7b904f0a0ebb0072fec0ad1fa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
