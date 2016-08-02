@@ -70,6 +70,24 @@
       "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_48b089dd",
+        "filename": "lib/NGCP/Panel/Form/InterceptionAPI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-02T14:13:02Z",
+      "side": 1,
+      "message": "I don\u0027t really understand, because if it\u0027s not required, then \u0027\u0027 is okay. If it is required, then \u0027\u0027 will return the desired error. But anyway, your solution works, so lets leave it like this. :)",
+      "parentUuid": "9ab8dda7_8ae44bad",
+      "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
