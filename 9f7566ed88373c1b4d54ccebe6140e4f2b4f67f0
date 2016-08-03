@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_d22bc780",
+        "filename": "lib/NGCP/Panel/Utils/XMLDispatcher.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-03T14:25:01Z",
+      "side": 1,
+      "message": "This is new. It supposedly means, that if only one host is addressed, it is done in a deterministic way, such that the one with the lowest id is preferred (prioritized)",
+      "revId": "9f7566ed88373c1b4d54ccebe6140e4f2b4f67f0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
