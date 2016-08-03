@@ -1,3 +1,13 @@
+ngcp-panel (1.12.2.4+0~mr4.3.2.4) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [545642f] MT#21435 Fix resellers join for pbxdevices
+  * [17797ca] MT#21401 Fix query for the reseller reminder creation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 03 Aug 2016 23:05:51 +0200
+
 ngcp-panel (1.12.2.3+0~mr4.3.2.3) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
