@@ -88,6 +88,24 @@
       "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_b505d5c3",
+        "filename": "lib/NGCP/Panel/Form/InterceptionAPI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-08-03T22:12:50Z",
+      "side": 1,
+      "message": "I\u0027m sorry for the late response. \n\u003e if it\u0027s not required, then \u0027\u0027 is okay\n\nAs for me \u0027\u0027 is a valueand not an absence. \"not required\" can allow field absence (!exists). If field marked as number - value should be a number, not an empty string, specially if validation requested for empty value. \nSo I left comment why I didn\u0027t use this correct way.",
+      "parentUuid": "5aaae553_48b089dd",
+      "revId": "6bf451a106b513b4e3f98973ff5efbf79f01daae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
