@@ -10,6 +10,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Kamailio;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
@@ -186,6 +187,7 @@ sub POST :Allow {
         my $item;
         try {
             $item = $c->model('DB')->resultset('voip_trusted_sources')->create($resource);
+            NGCP::Panel::Utils::Kamailio::address_reload($c);
         } catch($e) {
             $c->log->error("failed to create trusted source: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create trusted source.");
