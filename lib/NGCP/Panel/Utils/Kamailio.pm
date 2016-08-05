@@ -86,6 +86,18 @@ sub flush {
 EOF
 }
 
+sub address_reload {
+    my ($c) = @_;
+
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+    my $ret = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>permissions.addressReload</methodName>
+</methodCall>
+EOF
+}
+
 sub get_aor{
     my ($c, $prov_subscriber) = @_;
     return $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
