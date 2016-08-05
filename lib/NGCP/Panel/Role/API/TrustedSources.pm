@@ -11,6 +11,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Subscriber::TrustedSourceAPI;
+use NGCP::Panel::Utils::Kamailio;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -115,6 +116,7 @@ sub update_item {
     $resource->{uuid} = $sub->uuid;
 
     $item->update($resource);
+    NGCP::Panel::Utils::Kamailio::address_reload($c);
 
     return $item;
 }
