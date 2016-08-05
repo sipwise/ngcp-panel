@@ -1,3 +1,12 @@
+ngcp-panel (1.13.1.9+0~mr4.4.1.9) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [17b01d1] MT#21609 add possibility to register peer_auth at only one instance
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 05 Aug 2016 13:13:56 +0200
+
 ngcp-panel (1.13.1.8+0~mr4.4.1.8) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
