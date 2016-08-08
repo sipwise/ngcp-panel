@@ -6,6 +6,7 @@ use DateTime qw();
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use File::Type;
 use NGCP::Panel::Form::Reseller;
+use NGCP::Panel::Form::ResellerRtc;
 use NGCP::Panel::Form::Reseller::Branding;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::DateTime;
@@ -26,6 +27,8 @@ sub auto :Private {
 sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
+    my $can_rtc = exists $c->config->{rtc};
+
     $c->stash(
         resellers => $c->model('DB')
             ->resultset('resellers')->search({
@@ -39,6 +42,7 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
         { name => "contract_id", search => 1, title => $c->loc("Contract #") },
         { name => "name", search => 1, title => $c->loc("Name") },
         { name => "status", search => 1, title => $c->loc("Status") },
+        $can_rtc ? { name => "enable_rtc", search => 0, title => $c->loc("RTC") } : (),
     ]);
 
     # we need this in ajax_contracts also
@@ -58,7 +62,10 @@ sub root :Chained('list_reseller') :PathPart('') :Args(0) :Does(ACL) :ACLDetachT
 sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     my $resellers = $c->stash->{resellers};
-    NGCP::Panel::Utils::Datatables::process($c, $resellers, $c->stash->{reseller_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $resellers, $c->stash->{reseller_dt_columns}, sub {
+            my ($item) = @_;
+            return (enable_rtc => ( $item->rtc_user ? $c->loc("yes") : $c->loc("no") ));
+        });
     $c->detach($c->view('JSON'));
     return;
 }
@@ -73,7 +80,13 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
     $params = merge($params, $c->session->{created_objects});
 
     my $posted = $c->request->method eq 'POST';
-    my $form = NGCP::Panel::Form::Reseller->new;
+    my $can_rtc = exists $c->config->{rtc};
+    my $form;
+    if ($can_rtc) {
+        $form = NGCP::Panel::Form::ResellerRtc->new;
+    } else {
+        $form = NGCP::Panel::Form::Reseller->new;
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -88,10 +101,25 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
 
     if($form->validated) {
         try {
-            $form->params->{contract_id} = delete $form->params->{contract}->{id};
-            delete $form->params->{contract};
-            my $reseller = $c->model('DB')->resultset('resellers')->create($form->params);
+            my $reseller = $c->model('DB')->resultset('resellers')->create({
+                    contract_id => $form->values->{contract}{id},
+                    name => $form->values->{name},
+                    status => $form->values->{status},
+                });
             NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
+            my $resource = $form->values;
+            $resource->{rtc_networks} = [qw/sip xmpp webrtc conference/];
+            NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+                resource => $resource,
+                config => $c->config,
+                reseller_item => $reseller,
+                err_code => sub {
+                    my ($msg, $debug) = @_;
+                    $c->log->debug($debug) if $debug;
+                    $c->log->warn($msg);
+                    # TODO: abort reseller creation with error?
+                    return;
+                });
             delete $c->session->{created_objects}->{contract};
             $c->session->{created_objects}->{reseller} = { id => $reseller->id };
 
@@ -236,7 +264,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
     my $reseller = $c->stash->{reseller}->first;
 
     my $posted = $c->request->method eq 'POST';
-    my $form = NGCP::Panel::Form::Reseller->new;
+    my $can_rtc = exists $c->config->{rtc};
+    my $form;
+    if ($can_rtc) {
+        $form = NGCP::Panel::Form::ResellerRtc->new;
+    } else {
+        $form = NGCP::Panel::Form::Reseller->new;
+    }
 
     # we need this in the ajax call to not filter it as used contract
     $c->session->{edit_contract_id} = $reseller->contract_id;
@@ -244,6 +278,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
     my $params = { $reseller->get_inflated_columns };
     $params->{contract}{id} = delete $params->{contract_id};
     $params = merge($params, $c->session->{created_objects});
+    $params->{enable_rtc} = !!$reseller->rtc_user;
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -262,7 +297,25 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
                 $form->params->{contract_id} = delete $form->params->{contract}{id};
                 delete $form->params->{contract};
                 my $old_status = $reseller->status;
-                $reseller->update($form->params);
+                $reseller->update({
+                        contract_id => $form->values->{contract}{id},
+                        name => $form->values->{name},
+                        status => $form->values->{status},
+                    });
+                my $resource = $form->values;
+                $resource->{rtc_networks} = [qw/sip xmpp webrtc conference/];
+                NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+                    old_resource => $params,
+                    resource => $resource,
+                    config => $c->config,
+                    reseller_item => $reseller,
+                    err_code => sub {
+                        my ($msg, $debug) = @_;
+                        $c->log->debug($debug) if $debug;
+                        $c->log->warn($msg);
+                        # TODO: abort reseller creation with error?
+                        return;
+                    });
 
                 if($reseller->status ne $old_status) {
                     NGCP::Panel::Utils::Reseller::_handle_reseller_status_change($c, $reseller);
@@ -309,7 +362,20 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
     try {
         $c->model('DB')->txn_do(sub {
             my $old_status = $reseller->status;
+            my $old_enable_rtc = !!$reseller->rtc_user;
             $reseller->update({ status => 'terminated' });
+            NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+                old_resource => {status => $old_status, enable_rtc => $old_enable_rtc},
+                resource => {status => 'terminated'},
+                config => $c->config,
+                reseller_item => $reseller,
+                err_code => sub {
+                    my ($msg, $debug) = @_;
+                    $c->log->debug($debug) if $debug;
+                    $c->log->warn($msg);
+                    # TODO: abort reseller creation with error?
+                    return;
+                });
 
             if($reseller->status ne $old_status) {
                 NGCP::Panel::Utils::Reseller::_handle_reseller_status_change($c,$reseller);
