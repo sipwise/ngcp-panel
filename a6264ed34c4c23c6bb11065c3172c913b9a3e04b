@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_4c5f330f",
+        "filename": "lib/NGCP/Panel/Controller/Reseller.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-08T13:23:15Z",
+      "side": 1,
+      "message": "sure, this worked? emergency_containers gives you a resultset",
+      "range": {
+        "startLine": 355,
+        "startChar": 19,
+        "endLine": 355,
+        "endChar": 59
+      },
+      "revId": "a6264ed34c4c23c6bb11065c3172c913b9a3e04b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
