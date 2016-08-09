@@ -16,6 +16,24 @@
       "revId": "8fffcc24b9224436fac8f0fcb0d9ea8c5890cd30",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_3d58e355",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 659,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-08-09T13:10:56Z",
+      "side": 1,
+      "message": "ah, yes, thx a lot!!",
+      "parentUuid": "5aaae553_7d02db3f",
+      "revId": "8fffcc24b9224436fac8f0fcb0d9ea8c5890cd30",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
