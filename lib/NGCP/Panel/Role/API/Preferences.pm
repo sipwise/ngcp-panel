@@ -96,7 +96,7 @@ sub get_resource {
                     $processed = 1;
                     last SWITCH;
                 }
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, 'rewrite_rule_set', \%profile_attrs));
                 my $col = $pref->attribute->attribute;
                 $col =~ s/^rewrite_//;
@@ -116,7 +116,7 @@ sub get_resource {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
 
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
 
                 my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
@@ -135,7 +135,7 @@ sub get_resource {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
 
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
 
                 my $container = $c->model('DB')->resultset('emergency_containers')->find({
@@ -152,7 +152,7 @@ sub get_resource {
             };
             /^(contract_)?sound_set$/ && do {
                 # TODO: not applicable for domains, but for subs, check for contract_id!
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, $_, \%profile_attrs));
 
                 my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
@@ -170,7 +170,7 @@ sub get_resource {
             /^(man_)?allowed_ips_grp$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_grp$//;
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
                 my $sets = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
                     group_id => $pref->value,
@@ -291,7 +291,7 @@ sub _item_rs {
         }
     } elsif($type eq "contracts") {
         if($c->user->roles eq "admin") {
-            $item_rs = $c->model('DB')->resultset('contracts')->search({ 
+            $item_rs = $c->model('DB')->resultset('contracts')->search({
                 status => { '!=' => 'terminated' },
                 'contact.reseller_id' => { '!=' => undef },
 
@@ -655,6 +655,8 @@ sub update_item {
                     } else {
                         my $aig_seq = $c->model('DB')->resultset('voip_aig_sequence')->search({},{
                             for => 'update',
+                        },{
+                            order_by => { -desc => 'id' },
                         });
                         unless($aig_seq->first) {
                             $seq = 1;
