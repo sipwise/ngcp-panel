@@ -145,7 +145,6 @@ sub update_customer {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id", "invoice_email_template_id", "invoice_template_id", "passreset_email_template_id", "subscriber_email_template_id" ],
     );
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
