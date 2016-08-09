@@ -22,6 +22,7 @@ use NGCP::Panel::Utils::Fax;
 use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::Rtc;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::CCMapEntries;
 use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
@@ -51,6 +52,7 @@ use NGCP::Panel::Form::MailToFax::ACL;
 use NGCP::Panel::Form::MailToFax::SecretKey;
 use NGCP::Panel::Form::MailToFax::SecretKeyRenew;
 use NGCP::Panel::Form::MailToFax::SecretRenewNotify;
+use NGCP::Panel::Form::Rtc::Sessions;
 use NGCP::Panel::Form::Subscriber::Webfax;
 use NGCP::Panel::Form::Subscriber::ResetPassword;
 use NGCP::Panel::Form::Subscriber::RecoverPassword;
@@ -2014,6 +2016,12 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "cseq_method", search => 1, title => $c->loc('Method') },
     ]);
 
+    $c->stash->{rtc_sessions_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "rtc_browser_token", search => 0, title => $c->loc('Browser Token') },
+        { name => "rtc_app_name", search => 0, title => $c->loc('App Name') },
+    ]);
+
     $c->stash(
         template => 'subscriber/master.tt',
     );
@@ -3259,6 +3267,82 @@ sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
         }
     );
     $c->detach( $c->view("JSON") );
+}
+
+sub ajax_rtc_sessions :Chained('master') :PathPart('rtcsessions/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $session_rs = $c->stash->{subscriber}->provisioning_voip_subscriber->search_related('rtc_session');
+    NGCP::Panel::Utils::Datatables::process($c, $session_rs, $c->stash->{rtc_sessions_dt_columns}, sub {
+            my ($item) = @_;
+            my $rtc_session = NGCP::Panel::Utils::Rtc::get_rtc_session(
+                config => $c->config,
+                item => $item,
+                err_code => sub {
+                    my ($msg, $debug) = @_;
+                    $c->log->debug($debug) if $debug;
+                    $c->log->warn($msg);
+                    return;
+                });
+            if ($rtc_session) {
+                return (
+                    rtc_browser_token => $rtc_session->{data}{token},
+                    rtc_app_name => $rtc_session->{data}{app}{name} // '',
+                );
+            }
+            return;
+        });
+
+    $c->detach( $c->view("JSON") );
+}
+
+sub rtc_sessions_create :Chained('master') :PathPart('rtcsessions/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+
+    my $form = NGCP::Panel::Form::Rtc::Sessions->new;
+    $form->process(
+        posted => $posted,
+        params => $c->request->params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $session_item = NGCP::Panel::Utils::Rtc::create_rtc_session(
+                config => $c->config,
+                subscriber_item => $c->stash->{subscriber},
+                resource => $form->values,
+                err_code => sub {
+                    my ($msg, $debug) = @_;
+                    $c->log->debug($debug) if $debug;
+                    die $msg;
+                });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully created RTC session'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create RTC session'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        rtc_create_flag => 1,
+        description => $c->loc('RTC Session'),
+        form => $form,
+    );
 }
 
 sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {

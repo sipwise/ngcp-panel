@@ -288,6 +288,40 @@ function process_pbx_items(moveId,direction){
     </div>
 [% END -%]
 
+[% IF contract.contact.reseller && contract.contact.reseller.rtc_user -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_rtc">[% c.loc('RTC Sessions') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_rtc">
+            <div class="accordion-inner">
+
+                [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only -%]
+                    <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/rtc_sessions_create', [c.req.captures.0]) %]"><i class="icon-star"></i> [% c.loc('Create RTC Session') %]</a>
+                [% END -%]
+
+[%
+    helper.name = c.loc('RTC Session');
+    helper.identifier = 'rtc_sessions';
+    #helper.column_sort = 'origtime';
+    helper.dt_columns = rtc_sessions_dt_columns;
+
+    helper.close_target = close_target;
+    helper.create_flag = rtc_create_flag;
+    helper.edit_flag = 0;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_rtc_sessions', [c.req.captures.0]);
+
+    helper.dt_buttons = [
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
+[% END -%]
+
 
 </div>
 
