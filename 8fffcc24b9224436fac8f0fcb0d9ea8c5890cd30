@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_7d02db3f",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 659,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-09T13:04:59Z",
+      "side": 1,
+      "message": "shouldn\u0027t be \n\n    { for \u003d\u003e \u0027update\u0027, order_by \u003d\u003e ... }\n\n?",
+      "revId": "8fffcc24b9224436fac8f0fcb0d9ea8c5890cd30",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
