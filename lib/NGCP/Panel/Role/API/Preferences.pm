@@ -96,7 +96,7 @@ sub get_resource {
                     $processed = 1;
                     last SWITCH;
                 }
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, 'rewrite_rule_set', \%profile_attrs));
                 my $col = $pref->attribute->attribute;
                 $col =~ s/^rewrite_//;
@@ -116,7 +116,7 @@ sub get_resource {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
 
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
 
                 my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
@@ -135,7 +135,7 @@ sub get_resource {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
 
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
 
                 my $container = $c->model('DB')->resultset('emergency_containers')->find({
@@ -152,7 +152,7 @@ sub get_resource {
             };
             /^(contract_)?sound_set$/ && do {
                 # TODO: not applicable for domains, but for subs, check for contract_id!
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, $_, \%profile_attrs));
 
                 my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
@@ -170,7 +170,7 @@ sub get_resource {
             /^(man_)?allowed_ips_grp$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_grp$//;
-                do { $processed = 1; last SWITCH; } 
+                do { $processed = 1; last SWITCH; }
                     if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
                 my $sets = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
                     group_id => $pref->value,
@@ -291,7 +291,7 @@ sub _item_rs {
         }
     } elsif($type eq "contracts") {
         if($c->user->roles eq "admin") {
-            $item_rs = $c->model('DB')->resultset('contracts')->search({ 
+            $item_rs = $c->model('DB')->resultset('contracts')->search({
                 status => { '!=' => 'terminated' },
                 'contact.reseller_id' => { '!=' => undef },
 
@@ -645,27 +645,23 @@ sub update_item {
                 /^(man_)?allowed_ips$/ && do {
                     my $pref_name = $pref . "_grp";
                     my $aig_rs;
-                    my $seq;
+                    my $aig_group_id;
                     my $rs = $self->get_preference_rs($c, $type, $elem, $pref_name);
                     if($rs->first) {
+                        $aig_group_id = $rs->first->value;
                         $aig_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
-                            group_id => $rs->first->value
+                            group_id => $aig_group_id
                         });
                         $aig_rs->delete;
                     } else {
-                        my $aig_seq = $c->model('DB')->resultset('voip_aig_sequence')->search({},{
-                            for => 'update',
-                        });
-                        unless($aig_seq->first) {
-                            $seq = 1;
-                            $aig_seq->create({ id => $seq });
-                        } else {
-                            $seq = $aig_seq->first->id + 1;
-                            $aig_seq->first->update({ id => $seq });
-                        }
+                        my $new_group = $c->model('DB')->resultset('voip_aig_sequence')->create({});
+                        $aig_group_id = $new_group->id;
                         $aig_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
-                            group_id => $seq
+                            group_id => $aip_group_id
                         });
+                        $c->model('DB')->resultset('voip_aig_sequence')->search_rs({
+                                id => { '<' => $aig_group_id },
+                            })->delete_all;
                     }
                     foreach my $ip(@{ $resource->{$pref} }) {
                         unless($self->validate_ipnet($c, $pref, $ip)) {
@@ -675,8 +671,9 @@ sub update_item {
                         $aig_rs->create({ ipnet => $ip });
                     }
                     unless($rs->first) {
-                        $rs->create({ value => $seq });
+                        $rs->create({ value => $aig_group_id });
                     }
+                    # in contrast to panel, it does not drop the allowed_ips_grp pref, if empty ipnets.
                     last SWITCH;
                 };
                 # default
