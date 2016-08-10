@@ -1,3 +1,12 @@
+ngcp-panel (1.13.1.10+0~mr4.4.1.10) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [5984145] MT#21871 setting the allowed_ips via api and panel corrupts the db
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 10 Aug 2016 12:56:28 +0200
+
 ngcp-panel (1.13.1.9+0~mr4.4.1.9) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
