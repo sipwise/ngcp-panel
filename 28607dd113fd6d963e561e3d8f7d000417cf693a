@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_32bb2d10",
+        "filename": "lib/NGCP/Panel/Utils/Reseller.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-08-10T09:09:00Z",
+      "side": 1,
+      "message": "not into it but what about adding the relationship in the ngcp-schema?",
+      "range": {
+        "startLine": 152,
+        "startChar": 41,
+        "endLine": 152,
+        "endChar": 80
+      },
+      "revId": "28607dd113fd6d963e561e3d8f7d000417cf693a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
