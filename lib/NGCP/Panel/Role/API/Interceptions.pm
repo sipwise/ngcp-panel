@@ -145,7 +145,7 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
         return;
     }
-    if (defined $resource->{x3_port} && !is_int($resource->{x3_port})) {
+    if (defined $resource->{x3_port} && !$resource->{x3_port}->is_integer) {
         $c->log->error("Parameter 'x3_port' should be an integer");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Parameter 'x3_port' should be an integer");
         last;

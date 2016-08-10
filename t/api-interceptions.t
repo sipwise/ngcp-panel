@@ -35,7 +35,7 @@ $fake_data->set_data_from_script({
             x2_port     => '1443',
             x2_user     => '',
             x3_host     => '',
-            #x3_port     => '',#todo: empty makes 500, should be fixed
+            x3_port     => 1,#todo: empty makes 500, should be fixed
             x3_required => 0,
         },
         'query' => ['liid'],
