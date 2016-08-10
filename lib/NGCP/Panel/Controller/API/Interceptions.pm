@@ -22,7 +22,7 @@ require Catalyst::ActionRole::RequireSSL;
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
-    default => 
+    default =>
         'Defines lawful interceptions of subscribers.',
 );
 
@@ -126,7 +126,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -160,7 +160,7 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -188,7 +188,7 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
             last;
         }
-        $resource->{sip_username} = $sub->username;
+        $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($num_rs->first,$sub->username);
         $resource->{sip_domain} = $sub->domain->domain;
 
         if($resource->{x3_required} && (!defined $resource->{x3_host} || !defined $resource->{x3_port})) {
@@ -196,7 +196,7 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
             last;
         }
-        if (defined $resource->{x3_port} && !is_int($resource->{x3_port})) {
+        if (defined $resource->{x3_port} && !is_integer($resource->{x3_port})) {
             $c->log->error("Parameter 'x3_port' should be an integer");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Parameter 'x3_port' should be an integer");
             last;
@@ -219,7 +219,7 @@ sub POST :Allow {
                 liid => $resource->{liid},
                 uuid => $resource->{uuid},
                 number => $resource->{number},
-                sip_username => $sub->username,
+                sip_username => NGCP::Panel::Utils::Interception::username_to_regexp_pattern($num_rs->first,$sub->username),
                 sip_domain => $sub->domain->domain,
                 delivery_host => $resource->{x2_host},
                 delivery_port => $resource->{x2_port},
