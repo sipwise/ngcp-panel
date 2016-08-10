@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_920c6196",
+        "filename": "t/api-reminders.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-10T09:35:15Z",
+      "side": 1,
+      "message": "i would add warnings, usually",
+      "revId": "3672e7756eef8ddba9ffdd69d5dd4da901d45d0f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
