@@ -1,7 +1,6 @@
 package NGCP::Panel::Controller::API::Interceptions;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -131,7 +130,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -166,7 +165,7 @@ sub POST :Allow {
     my $cguard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -196,7 +195,7 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
             last;
         }
-        $resource->{sip_username} = $sub->username;
+        $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($num_rs->first,$sub->username);
         $resource->{sip_domain} = $sub->domain->domain;
 
         if($resource->{x3_required} && (!defined $resource->{x3_host} || !defined $resource->{x3_port})) {
@@ -228,7 +227,7 @@ sub POST :Allow {
                 liid => $resource->{liid},
                 uuid => $resource->{uuid},
                 number => $resource->{number},
-                sip_username => $sub->username,
+                sip_username => NGCP::Panel::Utils::Interception::username_to_regexp_pattern($num_rs->first,$sub->username);
                 sip_domain => $sub->domain->domain,
                 delivery_host => $resource->{x2_host},
                 delivery_port => $resource->{x2_port},
