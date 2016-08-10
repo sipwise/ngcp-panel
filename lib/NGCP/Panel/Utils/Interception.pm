@@ -82,4 +82,19 @@ sub _init {
     return { ua => \@ua, url => \@url };
 }
 
+sub username_to_regexp_pattern {
+
+    my ($voip_number,$username) = @_;
+    my @pattern_elements = ();
+    #1. "local format": concat(concat('0',ac),sn):
+    push(@pattern_elements,'0' . $voip_number->ac . $voip_number->sn);
+    #2. "e164 format": concat(cc,ac,sn):
+    push(@pattern_elements,$voip_number->cc . $voip_number->ac . $voip_number->sn);
+    #3. "international format": concat(concat('00',cc),ac,sn):
+    push(@pattern_elements,'00' . $voip_number->cc . $voip_number->ac . $voip_number->sn);
+    push(@pattern_elements,quotemeta($username));
+    return '(' . join('|',@pattern_elements) . ')';
+
+}
+
 1;
