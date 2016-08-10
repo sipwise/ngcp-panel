@@ -1,15 +1,15 @@
 package NGCP::Panel::Role::API::Interceptions;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
-
 use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
+use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::InterceptionAPI;
+use NGCP::Panel::Utils::Interception qw();
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -126,11 +126,11 @@ sub update_item {
         resource => $resource,
     );
 
-    my ($sub, $reseller) = $self->subres_from_number($c, $resource->{number});
+    my ($sub, $reseller, $voip_number) = $self->subresnum_from_number($c, $resource->{number});
     return unless($sub && $reseller);
-    
+
     $resource->{reseller_id} = $reseller->id;
-    $resource->{sip_username} = $sub->username;
+    $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($voip_number,$sub->username);
     $resource->{sip_domain} = $sub->domain->domain;
 
     if($resource->{liid} && ($old_resource->{liid} ne $resource->{liid})) {
@@ -158,7 +158,7 @@ sub update_item {
 
     my $res = NGCP::Panel::Utils::Interception::request($c, 'PUT', $item->uuid, {
         number => $resource->{number},
-        sip_username => $sub->username,
+        sip_username => NGCP::Panel::Utils::Interception::username_to_regexp_pattern($voip_number,$sub->username),
         sip_domain => $sub->domain->domain,
         delivery_host => $resource->{delivery_host},
         delivery_port => $resource->{delivery_port},
@@ -177,7 +177,7 @@ sub update_item {
     return $item;
 }
 
-sub subres_from_number {
+sub subresnum_from_number {
     my ($self, $c, $number) = @_;
     my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
         \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
@@ -206,7 +206,7 @@ sub subres_from_number {
 	}
     }
 
-    return ($sub, $res);
+    return ($sub, $res, $num_rs->first);
 }
 
 1;
