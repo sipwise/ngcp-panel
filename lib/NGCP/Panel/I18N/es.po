@@ -7045,6 +7045,10 @@ msgstr ""
 msgid "Quality"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Reseller.pm
+msgid "RTC"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "RTP interface"
 msgstr ""
@@ -11513,7 +11517,7 @@ msgstr ""
 msgid "new interval for each top-up"
 msgstr ""
 
-#: share/templates/rewrite/rules_list.tt
+#: lib/NGCP/Panel/Controller/Reseller.pm share/templates/rewrite/rules_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "no"
 msgstr "no"
@@ -11756,7 +11760,7 @@ msgstr ""
 msgid "y"
 msgstr ""
 
-#: share/templates/rewrite/rules_list.tt
+#: lib/NGCP/Panel/Controller/Reseller.pm share/templates/rewrite/rules_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
