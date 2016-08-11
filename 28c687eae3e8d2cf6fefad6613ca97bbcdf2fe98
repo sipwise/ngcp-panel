@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_4bd150fa",
+        "filename": "lib/NGCP/Panel/Controller/API/Interceptions.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-08-11T10:53:12Z",
+      "side": 1,
+      "message": "here: !$resource-\u003e{x3_port}-\u003eis_integer",
+      "range": {
+        "startLine": 199,
+        "startChar": 56,
+        "endLine": 199,
+        "endChar": 76
+      },
+      "revId": "28c687eae3e8d2cf6fefad6613ca97bbcdf2fe98",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_6bce8c5c",
+        "filename": "lib/NGCP/Panel/Role/API/Interceptions.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-08-11T10:53:12Z",
+      "side": 1,
+      "message": "!$resource-\u003e{x3_port}-\u003eis_integer",
+      "range": {
+        "startLine": 149,
+        "startChar": 41,
+        "endLine": 149,
+        "endChar": 72
+      },
+      "revId": "28c687eae3e8d2cf6fefad6613ca97bbcdf2fe98",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
