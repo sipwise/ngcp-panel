@@ -1,3 +1,15 @@
+ngcp-panel (1.8.6.10+0~mr3.8.6.10) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [07ccd2d] MT#21775 regexp pattern for interception's sip_username
+
+  [ Irina Peshinskaya ]
+  * [bf5f2d1] MT#18561 Fix incorrect backporting. There isn't is_int in 3.8 yet.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 11 Aug 2016 16:15:51 +0200
+
 ngcp-panel (1.8.6.9+0~mr3.8.6.9) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
