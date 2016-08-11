@@ -1,3 +1,12 @@
+ngcp-panel (1.8.7.4+0~mr3.8.7.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [11de21f] MT#21775 regexp pattern for interception's sip_username
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 11 Aug 2016 14:21:19 +0200
+
 ngcp-panel (1.8.7.3+0~mr3.8.7.3) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
