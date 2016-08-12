@@ -1,3 +1,13 @@
+ngcp-panel (1.13.1.11+0~mr4.4.1.11) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [ec6b133] MT#20257 filter subscriber collection by subscriber's external_id
+  * [0ede39d] MT#21969 cf_ ncos attributes not considered in PATCH
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 12 Aug 2016 15:29:28 +0200
+
 ngcp-panel (1.13.1.10+0~mr4.4.1.10) unstable; urgency=medium
 
   [ Rene Krenn ]
