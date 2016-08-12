@@ -456,7 +456,7 @@ sub update_item {
                         }
                         last SWITCH;
                     };
-                    /^(adm_)?ncos$/ && do {
+                    /^(adm_)?(cf_)?ncos$/ && do {
                         unless(exists $resource->{$k}) {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_id');
                             last SWITCH unless $rs; # unknown resource, just ignore
@@ -556,7 +556,7 @@ sub update_item {
                     }
                     last SWITCH;
                 };
-                /^(adm_)?ncos$/ && do {
+                /^(adm_)?(cf_)?ncos$/ && do {
                     my $pref_name = $pref . "_id";
                     my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
                         level => $resource->{$pref},
