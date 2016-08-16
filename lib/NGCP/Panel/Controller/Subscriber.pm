@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::Subscriber;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
 use parent 'Catalyst::Controller';
 
 use HTML::Entities;
@@ -70,12 +69,17 @@ Catalyst Controller.
 
 =cut
 
+my $stuff = "foobar";
+$_ = "something";
+s/some/this/;
+my @array = grep "thing";
+
 #sub auto :Does(ACL) :ACLDetachTo('/denied_page') {
 sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
-    return 1;
+    return 2;
 }
 
 sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
