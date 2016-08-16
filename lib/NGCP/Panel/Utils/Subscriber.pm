@@ -1,4 +1,5 @@
 package NGCP::Panel::Utils::Subscriber;
+
 use strict;
 use warnings;
 

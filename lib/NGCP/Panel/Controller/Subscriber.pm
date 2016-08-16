@@ -75,7 +75,7 @@ sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
-    return 1;
+    return 2;
 }
 
 sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
