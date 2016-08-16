@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa7f18b_07ddb842",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 904,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-16T15:26:03Z",
+      "side": 1,
+      "message": "Variable declared in conditional statement (5)",
+      "revId": "96a69d2726c4e3016f886b52ce43a18b23388ce9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
