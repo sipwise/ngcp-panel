@@ -9,6 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
+use JSON qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
@@ -32,6 +33,14 @@ sub query_params {
             description => 'Fetch preferences for a specific location otherwise default preferences (location_id=null) are shown.',
         },
     ];
+}
+
+sub documentation_sample {
+    return {
+        block_in_mode  => JSON::true,
+        block_in_list  => [ "1234" ],
+        concurrent_max => 5,
+    };
 }
 
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;

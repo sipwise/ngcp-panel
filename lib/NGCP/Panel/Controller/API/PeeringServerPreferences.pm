@@ -25,6 +25,14 @@ sub api_description {
     return 'Specifies certain properties (preferences) for a <a href="#peeringservers">Peering servers</a>. The full list of properties can be obtained via <a href="/api/peeringserverpreferencedefs/">PeeringSserverPreferenceDefs</a>.';
 };
 
+sub documentation_sample {
+    return {
+        force_outbound_calls_to_peer => "never",
+        transport_protocol => "transparent",
+        use_rtpproxy => "ice_strip_candidates",
+    };
+}
+
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
 
 sub resource_name{

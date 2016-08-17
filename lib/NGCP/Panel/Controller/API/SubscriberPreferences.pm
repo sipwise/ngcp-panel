@@ -9,6 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
+use JSON qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
@@ -53,6 +54,16 @@ sub query_params {
             },
         },
     ];
+}
+
+sub documentation_sample {
+    return {
+        block_in_mode  => JSON::true,
+        block_in_list  => [ "1234" ],
+        concurrent_max => 5,
+        music_on_hold  => JSON::true,
+        peer_auth_user => "mypeer",
+    };
 }
 
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
