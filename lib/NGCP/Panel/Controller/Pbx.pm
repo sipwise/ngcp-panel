@@ -123,18 +123,7 @@ sub spa_directory_list :Chained('base') :PathPart('pbx/directory/spa') :Args(1) 
     my $page = $c->req->params->{page} // 1;
     my $rows = 10;
 
-    my $rs = $customer->voip_subscribers->search({
-        'status' => 'active',
-        'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
-        'voip_usr_preferences.value' => { '!=' => undef },
-        'attribute.attribute' => 'display_name',
-        defined $q ? ('voip_usr_preferences.value' => { like => "%$q%" }) : (),
-    },{
-        join => { provisioning_voip_subscriber => { voip_usr_preferences => 'attribute'  } },
-        '+select' => [qw/voip_usr_preferences.value/],
-        '+as' => [qw/display_name/],
-        order_by => { '-asc' => 'voip_usr_preferences.value' },
-    });
+    my $rs = $self->_get_dirsearch_rs($customer, $q);
     my $total = $rs->count;
     my ($nextpage, $prevpage);
 
@@ -217,19 +206,7 @@ sub panasonic_directory_list :Chained('base') :PathPart('pbx/directory/panasonic
     my $port = $c->stash->{port};
 
     my $customer = $dev->contract;
-
-    my $rs = $customer->voip_subscribers->search({
-        'status' => 'active',
-        'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
-        'voip_usr_preferences.value' => { '!=' => undef },
-        'attribute.attribute' => 'display_name',
-        defined $q ? ('voip_usr_preferences.value' => { like => "%$q%" }) : (),
-    },{
-        join => { provisioning_voip_subscriber => { voip_usr_preferences => 'attribute'  } },
-        '+select' => [qw/voip_usr_preferences.value/],
-        '+as' => [qw/display_name/],
-        order_by => { '-asc' => 'voip_usr_preferences.value' },
-    });
+	my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
     foreach my $sub($rs->all) {
@@ -309,19 +286,7 @@ sub yealink_directory_list :Chained('base') :PathPart('pbx/directory/yealink') :
     my $port = $c->stash->{port};
 
     my $customer = $dev->contract;
-
-    my $rs = $customer->voip_subscribers->search({
-        'status' => 'active',
-        'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
-        'voip_usr_preferences.value' => { '!=' => undef },
-        'attribute.attribute' => 'display_name',
-        defined $q ? ('voip_usr_preferences.value' => { like => "%$q%" }) : (),
-    },{
-        join => { provisioning_voip_subscriber => { voip_usr_preferences => 'attribute'  } },
-        '+select' => [qw/voip_usr_preferences.value/],
-        '+as' => [qw/display_name/],
-        order_by => { '-asc' => 'voip_usr_preferences.value' },
-    });
+	my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
     foreach my $sub($rs->all) {
@@ -392,19 +357,7 @@ sub polycom_directory_list :Chained('base') :PathPart('pbx/directory/polycom') :
     my $port = $c->stash->{port};
 
     my $customer = $dev->contract;
-
-    my $rs = $customer->voip_subscribers->search({
-        'status' => 'active',
-        'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
-        'voip_usr_preferences.value' => { '!=' => undef },
-        'attribute.attribute' => 'display_name',
-        defined $q ? ('voip_usr_preferences.value' => { like => "%$q%" }) : (),
-    },{
-        join => { provisioning_voip_subscriber => { voip_usr_preferences => 'attribute'  } },
-        '+select' => [qw/voip_usr_preferences.value/],
-        '+as' => [qw/display_name/],
-        order_by => { '-asc' => 'voip_usr_preferences.value' },
-    });
+	my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
     foreach my $sub($rs->all) {
@@ -457,6 +410,31 @@ bb  buddy block
     $c->response->content_type('text/xml');
     $c->response->body($data);
 }
+
+sub _get_dirsearch_rs :Private {
+    my ($self, $customer, $q) = @_;
+    
+    my $rs = $customer->voip_subscribers->search({
+        'status' => 'active',
+        'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
+        'voip_usr_preferences.value' => { '!=' => undef },
+        'attribute.attribute' => 'display_name',
+        defined $q ? (
+          -or => [
+            'voip_usr_preferences.value' => { like => "%$q%" },
+            'provisioning_voip_subscriber.pbx_extension' => { like => "$q%" }
+          ]
+        ) : (),
+    },{
+        join => { provisioning_voip_subscriber => { voip_usr_preferences => 'attribute'  } },
+        '+select' => [qw/voip_usr_preferences.value/],
+        '+as' => [qw/display_name/],
+        order_by => { '-asc' => 'voip_usr_preferences.value' },
+    });
+
+	return $rs;
+}
+
 
 __PACKAGE__->meta->make_immutable;
 1;
