@@ -129,7 +129,7 @@ sub update_item {
     return unless($sub && $reseller);
 
     $resource->{reseller_id} = $reseller->id;
-    $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($voip_number,$sub->username);
+    $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$voip_number,$sub->username);
     $resource->{sip_domain} = $sub->domain->domain;
 
     if($resource->{liid} && ($old_resource->{liid} ne $resource->{liid})) {
@@ -157,7 +157,7 @@ sub update_item {
 
     my $res = NGCP::Panel::Utils::Interception::request($c, 'PUT', $item->uuid, {
         number => $resource->{number},
-        sip_username => NGCP::Panel::Utils::Interception::username_to_regexp_pattern($voip_number,$sub->username),
+        sip_username => NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$voip_number,$sub->username),
         sip_domain => $sub->domain->domain,
         delivery_host => $resource->{delivery_host},
         delivery_port => $resource->{delivery_port},
