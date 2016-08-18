@@ -84,15 +84,28 @@ sub _init {
 
 sub username_to_regexp_pattern {
 
-    my ($voip_number,$username) = @_;
+    my ($c,$voip_number,$username) = @_;
+
+    # $c is intended to use $c->config vars here.
+    # vsc.clir_code is not part of the panel conf, so
+    # the global conf would be required to load to get it.
+    # as this is not done elsewhere in panel code yet, we leave
+    # that as todo for now, and capture any vsc codes.
+    my $vsc_pattern = '(\*\d+\*)?';
+    #my $vsc_pattern = '(\*31\*)?';
+
     my @pattern_elements = ();
-    #1. "local format": concat(concat('0',ac),sn):
-    push(@pattern_elements,'0' . $voip_number->ac . $voip_number->sn);
-    #2. "e164 format": concat(cc,ac,sn):
-    push(@pattern_elements,$voip_number->cc . $voip_number->ac . $voip_number->sn);
-    #3. "international format": concat(concat('00',cc),ac,sn):
-    push(@pattern_elements,'00' . $voip_number->cc . $voip_number->ac . $voip_number->sn);
-    push(@pattern_elements,quotemeta($username));
+    # longest to shortest:
+
+    #1. the sip username itself:
+    push(@pattern_elements,$vsc_pattern . quotemeta($username));
+    #2. "international format": concat(concat('00',cc),ac,sn):
+    push(@pattern_elements,$vsc_pattern . '00' . $voip_number->cc . $voip_number->ac . $voip_number->sn);
+    #3. "e164 format": concat(cc,ac,sn):
+    push(@pattern_elements,$vsc_pattern . $voip_number->cc . $voip_number->ac . $voip_number->sn);
+    #4. "local format": concat(concat('0',ac),sn):
+    push(@pattern_elements,$vsc_pattern . '0' . $voip_number->ac . $voip_number->sn);
+
     return '^(' . join('|',@pattern_elements) . ')$';
 
 }
