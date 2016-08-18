@@ -3,7 +3,7 @@
 set -e
 set -u
 
-if ! [ -f /.dockerinit ] ; then
+if ! [ -f /.dockerenv ] ; then
   echo "Not running inside docker, exiting to avoid data damage." >&2
   exit 1
 fi
