@@ -191,7 +191,7 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
             last;
         }
-        $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($num_rs->first,$sub->username);
+        $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$num_rs->first,$sub->username);
         $resource->{sip_domain} = $sub->domain->domain;
 
         if($resource->{x3_required} && (!defined $resource->{x3_host} || !defined $resource->{x3_port})) {
@@ -223,7 +223,7 @@ sub POST :Allow {
                 liid => $resource->{liid},
                 uuid => $resource->{uuid},
                 number => $resource->{number},
-                sip_username => NGCP::Panel::Utils::Interception::username_to_regexp_pattern($num_rs->first,$sub->username),
+                sip_username => NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$num_rs->first,$sub->username),
                 sip_domain => $sub->domain->domain,
                 delivery_host => $resource->{x2_host},
                 delivery_port => $resource->{x2_port},
