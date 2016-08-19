@@ -1,3 +1,12 @@
+ngcp-panel (1.8.7.5+0~mr3.8.7.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [a09ccf7] MT#21775 tune the "username" interception regexp to tolerate vsc codes
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 19 Aug 2016 09:45:32 +0200
+
 ngcp-panel (1.8.7.4+0~mr3.8.7.4) unstable; urgency=medium
 
   [ Rene Krenn ]
