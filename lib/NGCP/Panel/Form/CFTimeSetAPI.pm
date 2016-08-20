@@ -60,7 +60,8 @@ has_field 'times.mday' => (
 has_field 'times.wday' => (
     type => '+NGCP::Panel::Field::NumRangeAPI',
     min_start => 1,
-    max_end => 8,
+    max_end => 7,
+    cyclic => 1,
     label => 'Weekday',
     empty_select => '',
 );
