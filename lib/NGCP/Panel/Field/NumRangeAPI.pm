@@ -5,6 +5,7 @@ extends 'HTML::FormHandler::Field::Text';
 
 has 'min_start' => (isa => 'Int', default => 0, is => 'rw');
 has 'max_end' => (isa => 'Int', default => 999_999, is => 'rw');
+has 'cyclic' => (isa => 'Bool', default => 0, is => 'rw');
 
 sub validate {
     my ( $self ) = @_;
@@ -14,7 +15,7 @@ sub validate {
         $self->add_error('Invalid format');
         return;
     }
-    if ($end < $start) {
+    if ( (!$self->cyclic) && ($end < $start) ) {
         $self->add_error('Second value smaller than first');
         return;
     }
