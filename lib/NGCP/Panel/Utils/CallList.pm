@@ -67,6 +67,11 @@ sub process_cdr_item {
         # for pbx out calls, use extension as own cli
         if($src_sub && $src_sub->pbx_extension) {
             $resource->{own_cli} = $src_sub->pbx_extension;
+        # for termianted subscribers if there is an alias field (e.g. gpp0), use this
+        } elsif($item->source_account_id && $c->req->param('intra_alias_field')) {
+            my $alias = $item->get_column('source_'.$c->req->param('intra_alias_field'));
+            $resource->{own_cli} = $alias // $item->source_cli;
+            $own_normalize = 0;
         # if there is an alias field (e.g. gpp0), use this
         } elsif($item->source_account_id && $c->req->param('alias_field')) {
             my $alias = $item->get_column('source_'.$c->req->param('alias_field'));
@@ -81,6 +86,11 @@ sub process_cdr_item {
         # for intra pbx out calls, use extension as other cli
         if($intra && $dst_sub && $dst_sub->pbx_extension) {
             $resource->{other_cli} = $dst_sub->pbx_extension;
+        # for termianted subscribers if there is an alias field (e.g. gpp0), use this
+        } elsif($intra && $item->destination_account_id && $c->req->param('intra_alias_field')) {
+            my $alias = $item->get_column('destination_'.$c->req->param('intra_alias_field'));
+            $resource->{other_cli} = $alias // $item->destination_user_in;
+            $other_normalize = 0;
         # if there is an alias field (e.g. gpp0), use this
         } elsif($item->destination_account_id && $c->req->param('alias_field')) {
             my $alias = $item->get_column('destination_'.$c->req->param('alias_field'));
@@ -95,6 +105,11 @@ sub process_cdr_item {
         # for pbx in calls, use extension as own cli
         if($dst_sub && $dst_sub->pbx_extension) {
             $resource->{own_cli} = $dst_sub->pbx_extension;
+        # for termianted subscribers if there is an alias field (e.g. gpp0), use this
+        } elsif($item->destination_account_id && $c->req->param('intra_alias_field')) {
+            my $alias = $item->get_column('destination_'.$c->req->param('intra_alias_field'));
+            $resource->{own_cli} = $alias // $item->destination_user_in;
+            $own_normalize = 0;
         # if there is an alias field (e.g. gpp0), use this
         } elsif($item->destination_account_id && $c->req->param('alias_field')) {
             my $alias = $item->get_column('destination_'.$c->req->param('alias_field'));
@@ -130,6 +145,11 @@ sub process_cdr_item {
         # for intra pbx in calls, use extension as other cli
         } elsif($intra && $src_sub && $src_sub->pbx_extension) {
             $resource->{other_cli} = $src_sub->pbx_extension;
+        # for termianted subscribers if there is an alias field (e.g. gpp0), use this
+        } elsif($intra && $item->source_account_id && $c->req->param('intra_alias_field')) {
+            my $alias = $item->get_column('source_'.$c->req->param('intra_alias_field'));
+            $resource->{other_cli} = $alias // $item->source_cli;
+            $other_normalize = 0;
         # if there is an alias field (e.g. gpp0), use this
         } elsif($item->source_account_id && $c->req->param('alias_field')) {
             my $alias = $item->get_column('source_'.$c->req->param('alias_field'));
