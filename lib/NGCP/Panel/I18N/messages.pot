@@ -2091,7 +2091,7 @@ msgstr ""
 msgid "Default Files"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Default LNP prefix"
 msgstr ""
 
@@ -2108,7 +2108,7 @@ msgid "Define an action to be executed if User-Provided Number doesn't match the
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Defines a default LNP prefix which is written into CDRs if no LNP entry is found in the LNP database. This prefix is NOT usable for routing purposes like rewrite rules, only for CDR tagging."
+msgid "Defines a default caller LNP prefix which is written into CDRs if no LNP entry is found for the caller number in the LNP database. This prefix is NOT used for routing purposes like rewrite rules, only for CDR tagging."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2797,6 +2797,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Call Deflection"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable Caller LNP lookup"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
