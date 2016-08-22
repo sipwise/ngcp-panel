@@ -22,6 +22,30 @@
       "revId": "93c91acd243ff9bf1ea73a9e981d79847c2a23fb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa7f18b_44816349",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-08-22T13:02:00Z",
+      "side": 1,
+      "message": "it is a query param, and something that UPC-HPBX guys use (was requested and implemented for them to track pbx numbers for terminated subscribers). But can be reused by other customers if they need something similar, so good to have that in the code.",
+      "parentUuid": "3aa7f18b_a4b8572b",
+      "range": {
+        "startLine": 71,
+        "startChar": 60,
+        "endLine": 71,
+        "endChar": 77
+      },
+      "revId": "93c91acd243ff9bf1ea73a9e981d79847c2a23fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
