@@ -63,6 +63,24 @@
       "revId": "93c91acd243ff9bf1ea73a9e981d79847c2a23fb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa7f18b_c4ba330a",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-08-22T13:31:55Z",
+      "side": 1,
+      "message": "basically yes, except they need to fetch pbx numbers for terminated subscribers",
+      "parentUuid": "3aa7f18b_64e9ff19",
+      "revId": "93c91acd243ff9bf1ea73a9e981d79847c2a23fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
