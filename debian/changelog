@@ -1,3 +1,19 @@
+ngcp-panel (1.14.1.1+0~mr4.5.1.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [c5318e2] MT#21683 fix a typo in log_passwords
+
+  [ Gerhard Jungwirth ]
+  * [46cfccb] MT#21609 add possibility to register peer_auth at only one instance
+  * [f4e81b6] MT#21195 call kamailio xmlrpc addressReload
+  * [f2d99ed] MT#20655 fix subscribercreate form
+  * [1f1860d] MT#21543 fix reseller terminate emergency mapping
+  * [1bc38e1] MT#19795 editing of reseller rtc status via web
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 22 Aug 2016 12:54:32 +0200
+
 ngcp-panel (1.14.1.0+0~mr4.5.1.0) unstable; urgency=medium
 
   [ Jenkins Git User ]
