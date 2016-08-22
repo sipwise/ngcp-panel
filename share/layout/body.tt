@@ -95,6 +95,10 @@
 <script src="/js/Theme.js"></script>
 
 <script>
+var isIE = /(MSIE|Trident\/|Edge\/)/i.test(navigator.userAgent);
+if(isIE){
+	$.ajaxSetup({ cache: false });
+}
 var addConsoleNoOp =  function (window) {
     var names = ["log", "debug", "info", "warn", "error",
         "assert", "dir", "dirxml", "group", "groupEnd", "time",
