@@ -95,6 +95,7 @@
 <script src="/js/Theme.js"></script>
 
 <script>
+$.ajaxSetup({ cache: false });
 var addConsoleNoOp =  function (window) {
     var names = ["log", "debug", "info", "warn", "error",
         "assert", "dir", "dirxml", "group", "groupEnd", "time",
