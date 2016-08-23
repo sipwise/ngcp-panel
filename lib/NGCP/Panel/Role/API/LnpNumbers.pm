@@ -93,14 +93,6 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist");
         return;
     }
-    if ($c->model('DB')->resultset('lnp_numbers')->search({
-            lnp_provider_id => $carrier->id,
-            number => $resource->{number}
-        },undef)->count > 0) {
-        $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
-        return;
-    }
 
     $resource->{start} ||= undef;
     if($resource->{start} && $resource->{start} =~ /^\d{4}-\d{2}-\d{2}$/) {
