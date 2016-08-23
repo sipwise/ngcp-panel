@@ -563,6 +563,11 @@
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_reminder", [c.req.captures.0]) %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
+                                    [% IF subscriber.provisioning_voip_subscriber.voip_reminder -%]
+                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/delete_reminder", [c.req.captures.0]) %]">
+                                        <i class="icon-trash"></i> [% c.loc('Delete') %]
+                                    </a>
+                                    [% END -%]
                                     [% END -%]
                                 </div>
 
