@@ -3404,6 +3404,34 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
     );
 }
 
+
+sub delete_reminder :Chained('base') :PathPart('preferences/reminder/delete') {
+    my ($self, $c, $attribute) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    my $reminder = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_reminder;
+    if($reminder){
+        try {
+            $reminder->delete;
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully cleared reminder setting'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to clear reminder setting.'),
+            );
+        }
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c,
+        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+}
+
+
 sub _process_calls_rows {
     my ($c,$rs) = @_;
     my $owner = {
