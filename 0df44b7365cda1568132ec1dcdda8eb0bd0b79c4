@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa7f18b_3f355046",
+        "filename": "t/api-rest/api-cftimesets.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-08-23T07:55:34Z",
+      "side": 1,
+      "message": "shouldn\u0027t this be the new format, like 5-1 or so?",
+      "range": {
+        "startLine": 24,
+        "startChar": 16,
+        "endLine": 24,
+        "endChar": 40
+      },
+      "revId": "0df44b7365cda1568132ec1dcdda8eb0bd0b79c4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
