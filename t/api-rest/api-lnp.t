@@ -40,8 +40,8 @@ my %number_map = ();
 
 { #regular case
     my $carrier1 = _create_lnp_provider();
-    my $number1 = _create_lnp_number($carrier1, number => '123');
-    my $number2 = _create_lnp_number($carrier1, number => '456');
+    my $number1 = _create_lnp_number($carrier1, number => '123'.$t);
+    my $number2 = _create_lnp_number($carrier1, number => '456'.$t);
     _delete_lnp_number($number1);
     _delete_lnp_number($number2);
     _delete_lnp_provider($carrier1);
@@ -49,22 +49,22 @@ my %number_map = ();
 
 { #delete provider with numbers left:
     my $carrier1 = _create_lnp_provider();
-    my $number1 = _create_lnp_number($carrier1, number => '123');
+    my $number1 = _create_lnp_number($carrier1, number => '1234'.$t);
     _delete_lnp_provider($carrier1, 500);
 }
 
 { #unique number - insert:
     my $carrier1 = _create_lnp_provider();
-    my $number1 = _create_lnp_number($carrier1, number => '123');
-    my $number2 = _create_lnp_number($carrier1, number => '123', expected_code => 422);
+    my $number1 = _create_lnp_number($carrier1, number => '12345'.$t);
+    my $number2 = _create_lnp_number($carrier1, number => '12345'.$t, expected_code => 422);
     #_delete_lnp_provider($carrier1, expected_code => 500);
 }
 
 { #unique number - update:
     my $carrier1 = _create_lnp_provider();
-    my $number1 = _create_lnp_number($carrier1, number => '123');
-    my $number2 = _create_lnp_number($carrier1, number => '1234');
-    _update_lnp_number($number2, number => '123', expected_code => 422);
+    my $number1 = _create_lnp_number($carrier1, number => '123456'.$t);
+    my $number2 = _create_lnp_number($carrier1, number => '1234567'.$t);
+    _update_lnp_number($number2, number => '123456'.$t, expected_code => 422);
 }
 
 #todo: multithread insert testcase

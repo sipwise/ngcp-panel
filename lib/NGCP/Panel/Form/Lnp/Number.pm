@@ -26,7 +26,7 @@ has_field 'number' => (
     maxlength => 31,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The ported number.']
+        title => ['The ported number. Must be unique across LNP carriers.']
     },
 );
 
