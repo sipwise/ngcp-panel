@@ -22,6 +22,30 @@
       "revId": "0df44b7365cda1568132ec1dcdda8eb0bd0b79c4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa7f18b_55ecabc7",
+        "filename": "t/api-rest/api-cftimesets.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-08-24T10:10:59Z",
+      "side": 1,
+      "message": "I first tryied it cyclic, after that normal. Now I just added separated request with cyclic wday",
+      "parentUuid": "3aa7f18b_3f355046",
+      "range": {
+        "startLine": 24,
+        "startChar": 16,
+        "endLine": 24,
+        "endChar": 40
+      },
+      "revId": "0df44b7365cda1568132ec1dcdda8eb0bd0b79c4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
