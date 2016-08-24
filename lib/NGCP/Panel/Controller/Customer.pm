@@ -1062,7 +1062,7 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                     entities => $entities,
                     err_code => sub {
                         my ($err) = @_;
-                        die([$err, "showdetails"]);
+                        die($err);
                         },
                     );
 
@@ -1154,7 +1154,7 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                     entities => $entities,
                     err_code => sub {
                         my ($err) = @_;
-                        die([$err, "showdetails"]);
+                        die($err);
                         },
                     );
 

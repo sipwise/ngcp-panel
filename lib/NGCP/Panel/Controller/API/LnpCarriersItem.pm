@@ -100,7 +100,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c,
+            c => $c, 
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -115,7 +115,7 @@ sub PATCH :Allow {
         my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
-
+        
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -156,7 +156,7 @@ sub PUT :Allow {
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
-        $guard->commit;
+        $guard->commit; 
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -182,12 +182,6 @@ sub DELETE :Allow {
     {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, lnpcarrier => $item);
-        my $number_count = $item->lnp_numbers->count;
-        if ($number_count > 0) {
-            $c->log->error("failed to delete lnp carrier, there are still $number_count lnp numbers linked to it.");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete lnp carrier.");
-            last;
-        }
         $item->delete;
 
         $guard->commit;

@@ -92,7 +92,7 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
             'reseller.create' => $c->uri_for('/reseller/create'),
         },
         back_uri => $c->req->uri,
-    );
+    );    
     if($posted && $form->validated) {
         try {
             my $reseller_id = ($c->user->is_superuser ? $form->values->{reseller}{id} : $c->user->reseller_id);
@@ -108,7 +108,7 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{network} = { id => $bn->id };
             });
-
+            
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $c->loc('Billing Network successfully created'),
@@ -179,7 +179,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
         try {
             $c->model('DB')->schema->txn_do( sub {
-
+                
                 $c->stash->{'network_result'}->update({
                     name => $form->values->{name},
                     description => $form->values->{description},
@@ -192,7 +192,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Billing network successfully updated'),
-            );
+            );            
         } catch ($e) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
@@ -219,10 +219,10 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     try {
         #todo: putting the network fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
         unless($network->get_column('contract_cnt') == 0) {
-            die(['Cannnot terminate billing network that is still used in profile mappings', "showdetails"]);
+            die('Cannnot terminate billing network that is still used in profile mappings');
         }
         unless($network->get_column('package_cnt') == 0) {
-            die(['Cannnot terminate billing network that is still used in profile packages', "showdetails"]);
+            die('Cannnot terminate billing network that is still used in profile packages');
         }
         $network->update({
             status => 'terminated',
