@@ -57,6 +57,7 @@ sub GET : Allow {
         "CustomerPreferenceDefs" => 1,
         "ProfilePreferenceDefs" => 1,
         "PeeringServerPreferenceDefs" => 1,
+        "PbxDevicePreferenceDefs" => 1,
     };
 
     my @colls = $self->get_collections;
