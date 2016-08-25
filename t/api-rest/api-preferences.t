@@ -35,7 +35,7 @@ $fake_data->set_data_from_script({
 $test_machine->DATA_ITEM_STORE($fake_data->process('preferences'));
 $test_machine->form_data_item( );
 
-my @apis = qw/subscriber domain peeringserver customer profile/;
+my @apis = qw/subscriber domain peeringserver customer profile pbxdevice/;
 #my @apis = qw/peeringserver/;
 
 foreach my $api (@apis){
