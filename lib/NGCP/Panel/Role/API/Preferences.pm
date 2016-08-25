@@ -78,6 +78,8 @@ sub get_resource {
         $prefs = $item->voip_contract_preferences->search(
                     { location_id => $c->request->param('location_id') || undef },
                     undef);
+    } elsif($type eq "pbxdevicemodels") {
+        $prefs = $item->voip_dev_preferences;
     }
     $prefs = $prefs->search({
     }, {
@@ -231,6 +233,9 @@ sub get_resource {
     } elsif($type eq "peerings") {
         $resource->{peering_id} = int($item->id);
         $resource->{id} = int($item->id);
+    } elsif($type eq "pbxdevicemodels") {
+        $resource->{device_id} = int($item->id);
+        $resource->{id} = int($item->id);
     } elsif($type eq "contracts") {
         $resource->{customer_id} = int($item->id);
         $resource->{id} = int($item->id);
@@ -289,6 +294,20 @@ sub _item_rs {
         } else {
             return;
         }
+    } elsif($type eq "pbxdevicemodels") {
+        if($c->user->roles eq "admin") {
+            $item_rs = $c->model('DB')->resultset('autoprov_devices');
+            #don't select images
+            #$item_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs(
+            #    undef,
+            #    {
+            #        'columns' 
+            #            => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri extensions_num/]
+            #    }
+            #);
+        } else {
+            $item_rs = $c->model('DB')->resultset('autoprov_devices')->search({'reseller_id' => $c->user->reseller_id});
+        }
     } elsif($type eq "contracts") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('contracts')->search({
@@ -344,6 +363,12 @@ sub get_preference_rs {
             c => $c,
             attribute => $attr,
             peer_host => $elem,
+        );
+    } elsif($type eq "pbxdevicemodels") {
+        $rs = NGCP::Panel::Utils::Preferences::get_dev_preference_rs(
+            c => $c,
+            attribute => $attr,
+            device => $elem,
         );
     } elsif($type eq "contracts") {
         $rs = NGCP::Panel::Utils::Preferences::get_contract_preference_rs(
@@ -419,6 +444,16 @@ sub update_item {
                     undef);
         $pref_type = 'contract_pref';
         $reseller_id = $item->contact->reseller_id;
+    } elsif($type eq "pbxdevicemodels") {
+        delete $resource->{device_id};
+        delete $old_resource->{device_id};
+        delete $resource->{pbxdevicepreferences_id};
+        delete $old_resource->{pbxdevicepreferences_id};
+        $accessor = $item->id;
+        $elem = $item;
+        $full_rs = $elem->voip_dev_preferences->search_rs();
+        $pref_type = 'dev_pref';
+        $reseller_id = $item->reseller_id;
     } else {
         return;
     }
