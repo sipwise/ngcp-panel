@@ -96,6 +96,8 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         pbxdevicefirmwares => 1,
         pbxdevicemodelimages => 1,
         pbxdevicemodels => 1,
+        pbxdevicepreferencedefs => 1,
+        pbxdevicepreferences => 1,
         pbxdeviceprofiles => 1,
         pbxdevices => 1,
         peeringgroups => 1,
