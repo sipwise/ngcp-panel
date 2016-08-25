@@ -23,6 +23,7 @@ $fake_data->set_data_from_script({
             subscriber_id  =>  sub { return shift->get_id('subscribers',@_); },
             domain_id  =>  sub { return shift->get_id('domains',@_); },
             profile_id  =>  sub { return shift->get_id('subscriberprofiles',@_); },
+            pbxdevice_id  =>  sub { return shift->get_id('pbxdevicemodels',@_); },
 
             rewriteruleset_id  =>  sub { return shift->get_id('rewriterulesets',@_); },
             soundset_id  =>  sub { return shift->get_id('soundsets',@_); },
@@ -35,8 +36,8 @@ $fake_data->set_data_from_script({
 $test_machine->DATA_ITEM_STORE($fake_data->process('preferences'));
 $test_machine->form_data_item( );
 
-my @apis = qw/subscriber domain peeringserver customer profile/;
-#my @apis = qw/peeringserver/;
+my @apis = qw/subscriber domain peeringserver customer profile pbxdevice/;
+#my @apis = qw/pbxdevice/;
 
 foreach my $api (@apis){
     my $preferences_old;
