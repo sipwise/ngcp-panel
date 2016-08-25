@@ -69,13 +69,18 @@ sub compare {
 
 sub get_inflated_columns_all{
     my ($rs,%params) = @_;
+    #params = {
+    #    hash   => result will be hash, with key, taken from the column with name, stored in this param,
+    #    column => if hash param exists, value of the hash will be taken from the column with, stored in the param "column"
+    #    force_array => hash values always will be an array ref
+    #}
     my ($res);
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
     if(my $hashkey_column = $params{hash}){
         my %lres;
         my $register_value = sub {
             my($hash,$key,$value) = @_;
-            if(exists $hash->{$key}){
+            if(exists $hash->{$key} || $params{force_array}){
                 if('ARRAY' eq ref $hash->{$key}){
                     push @{$hash->{$key}}, $value;
                 }else{
