@@ -122,6 +122,7 @@ $( document ).ready(function() {
         helper.dt_buttons = helper.dt_buttons.merge([
             { name = c.loc('Delete'), uri = "/device/model/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
             { name = c.loc('Edit'), uri = "/device/model/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Preferences'), uri = "/device/model/'+full.id+'/preferences", class = 'btn-small btn-primary', icon = 'icon-list' },
         ]);
     END;
 
