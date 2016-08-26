@@ -68,6 +68,7 @@
                             <th>[% c.loc('Answer Timeout') %]</th>
                             <th>[% c.loc('Destinations') %]</th>
                             <th>[% c.loc('Timeset') %]</th>
+                            <th>[% c.loc('Sources') %]</th>
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
                         </tr>
@@ -86,10 +87,13 @@
                                 [% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size %]
                             </td>
                             <td>
+                                [% BLOCK print_destination;
+                                    c.loc('[_1] for [_2]s',d.as_string _' <span class="pull-right">', d.timeout) _ '</span>';
+                                END; -%]
                                 [% idx = 0 -%]
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
                                     [% IF maps.dset_name.search('^quickset_') && maps.destinations.size == 1 %]
-                                        [% maps.destinations.0.as_string %] <span class="pull-right">for [% maps.destinations.0.timeout %]s</span>
+                                        [% PROCESS print_destination d=maps.destinations.0; -%]
                                     [% ELSE %]
                                         [% jdx = 0 -%]
                                         [% maps.dset_name -%]
@@ -99,7 +103,7 @@
                                         [% modal_header_dynamic(m.header = c.loc('Destination Set "[_1]" Details', maps.dset_name), m.id=dset_unique_id) %]
                                         <div class="modal-body">
                                             [% FOR d IN maps.destinations -%]
-                                                [% d.as_string %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                                                [% PROCESS print_destination d=d; %]<br/>
                                                 [% jdx = jdx + 1 -%]
                                             [% END -%]
                                         </div>
@@ -117,15 +121,38 @@
                                     [% UNLESS maps.tset_name.defined -%]
                                         always
                                         [% jdx = jdx + 1 %]
-                                    [% END -%]
-                                    [% maps.tset_name -%]
-                                    [% IF maps.tset_name.defined -%]
+                                    [% ELSE -%]
+                                        [% maps.tset_name -%]
                                         [% tset_unique_id = cf.type _ idx _ jdx _ maps.id -%]
                                         <a href="#" data-toggle="modal" data-target="#[% tset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
                                         [% modal_header_dynamic(m.header = c.loc('Timeset "[_1]" Details', maps.tset_name), m.id=tset_unique_id) %]
                                         <div class="modal-body">
                                         [% FOR p IN maps.periods -%]
                                             [% p.as_string %]<br/>
+                                        [% END -%]
+                                        </div>
+                                        [% modal_footer() %]
+                                    [% END %]
+                                    [% idx = idx + 1 -%]
+                                    <br/>
+                                [% END -%]
+                            </td>
+                            <td>
+                                [% idx = 0 -%]
+                                [% FOR maps IN cf_destinations.${cf.type} -%]
+                                    [% jdx = 0 -%]
+                                    [% UNLESS maps.sset_name.defined -%]
+                                        <!-- empty or no source_set -->
+                                        [% c.loc('all sources'); %]
+                                        [% jdx = jdx + 1 %]
+                                    [% ELSE -%]
+                                        [% maps.sset_name -%]
+                                        [% sset_unique_id = cf.type _ idx _ jdx _ maps.id _ 's' -%]
+                                        <a href="#" data-toggle="modal" data-target="#[% sset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
+                                        [% modal_header_dynamic(m.header = c.loc('Sourceset "[_1]" Details', maps.sset_name), m.id=sset_unique_id) %]
+                                        <div class="modal-body">
+                                        [% FOR s IN maps.sources -%]
+                                            [% s.as_string %]<br/>
                                         [% END -%]
                                         </div>
                                         [% modal_footer() %]
@@ -747,6 +774,56 @@
                             <i class="icon-edit"></i> [% c.loc('Edit') %]
                         </a>
                         <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% c.uri_for_action('/subscriber/preferences_callforward_timeset_delete', [ c.req.captures.0, set.id ], cf_type) %]">
+                            <i class="icon-trash"></i> [% c.loc('Delete') %]
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        [% END -%]
+        </tbody>
+    </table>
+    [% END -%]
+    </div>
+
+[%
+    modal_footer();
+    modal_script(m.close_target = close_target ? close_target : c.uri_for_action('/subscriber/preferences', [c.req.captures.0]));
+-%]
+[% ELSIF edit_sourceset_flag -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = c.loc("Source Sets"));
+-%]
+
+    <div class="modal-body">
+    <div class="row" style="margin-left: 10px">
+        <a class="btn btn-primary btn-medium" href="[% c.uri_for_action('/subscriber/preferences_callforward_sourceset_create', [c.req.captures.0], cf_type) %]"><i class="icon-star"></i>[% c.loc('Create New') %]</a>
+    </div>
+    <div class="ngcp-separator"></div>
+    [% IF cf_source_sets.size -%]
+    <table class="table table-bordered table-striped table-highlight table-hover">
+        <thead>
+            <tr>
+                <th>[% c.loc('Name') %]</th>
+                <th>[% c.loc('Values') %]</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        [% FOREACH set IN cf_source_sets -%]
+            <tr class="sw_action_row">
+                <td>[% set.name %]</td>
+                <td>
+                    [% FOREACH source IN set.sources -%]
+                        [% source.as_string %]<br/>
+                    [% END -%]
+                </td>
+                <td class="ngcp-actions-column">
+                    <div class="sw_actions pull-right">
+                        <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/subscriber/preferences_callforward_sourceset_edit', [ c.req.captures.0, set.id ], cf_type) %]">
+                            <i class="icon-edit"></i> [% c.loc('Edit') %]
+                        </a>
+                        <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% c.uri_for_action('/subscriber/preferences_callforward_sourceset_delete', [ c.req.captures.0, set.id ], cf_type) %]">
                             <i class="icon-trash"></i> [% c.loc('Delete') %]
                         </a>
                     </div>
