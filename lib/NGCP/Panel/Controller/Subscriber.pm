@@ -23,6 +23,7 @@ use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Form::SubscriberEdit;
+use NGCP::Panel::Form::CallforwardSourceSet;
 use NGCP::Panel::Form::CCMapEntries;
 use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin;
@@ -650,7 +651,22 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
                 }
                 $tset_name = $map->time_set->name;
             }
-            push @{ $cfs->{$type} }, { destinations => \@dset, periods => \@tset, tset_name => $tset_name , dset_name => $dset_name };
+            my @sources = ();
+            my $sset_name = undef;
+            if($map->source_set) {
+                @sources = map { { $_->get_columns } } $map->source_set->voip_cf_sources->all;
+                foreach my $s(@sources) {
+                    $s->{as_string} = $s->{source};  # = NGCP::Panel::Utils::Subscriber::period_as_string($t);
+                }
+                $sset_name = $map->source_set->name;
+            }
+            push @{ $cfs->{$type} }, {
+                destinations => \@dset,
+                dset_name => $dset_name,
+                periods => \@tset,
+                tset_name => $tset_name,
+                sources => \@sources,
+                sset_name => $sset_name };
         }
     }
     $c->stash(cf_destinations => $cfs);
@@ -1099,6 +1115,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     $c->stash->{cf_destination_sets} = $prov_subscriber->voip_cf_destination_sets
         ->search_rs(undef,{order_by => 'name'});
     $c->stash->{cf_time_sets} = $prov_subscriber->voip_cf_time_sets;
+    $c->stash->{cf_source_sets} = $prov_subscriber->voip_cf_source_sets;
 
     my $posted = ($c->request->method eq 'POST');
 
@@ -1114,6 +1131,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
         push @maps, {
             destination_set => $map->destination_set ? $map->destination_set->id : undef,
             time_set => $map->time_set ? $map->time_set->id : undef,
+            source_set => $map->source_set ? $map->source_set->id : undef,
         };
     }
     my $params = {
@@ -1141,6 +1159,10 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 ),
             'cf_actions.edit_time_sets' =>
                 $c->uri_for_action('/subscriber/preferences_callforward_timeset',
+                    [$c->req->captures->[0]], $cf_type,
+                ),
+            'cf_actions.edit_source_sets' =>
+                $c->uri_for_action('/subscriber/preferences_callforward_sourceset',
                     [$c->req->captures->[0]], $cf_type,
                 ),
         },
@@ -1179,6 +1201,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         type => $cf_type,
                         destination_set_id => $map->field('destination_set')->value,
                         time_set_id => $map->field('time_set')->value,
+                        source_set_id => $map->field('source_set')->value,
                     });
                     $cf_preference->create({ value => $m->id });
                     $autoattendant_count -= NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($m->destination_set);
@@ -1601,6 +1624,271 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences_callforward_destinationset',
+            [$c->req->captures->[0]], $cf_type)
+    );
+}
+
+sub preferences_callforward_sourceset :Chained('base') :PathPart('preferences/sourceset') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
+    my @sets;
+    if($prov_subscriber->voip_cf_source_sets) {
+        foreach my $set($prov_subscriber->voip_cf_source_sets->all) {
+            if($set->voip_cf_sources) {
+                my @sources = map { { $_->get_columns } } $set->voip_cf_sources->all;
+                foreach my $s(@sources) {
+                    $s->{as_string} = $s->{source};  # NGCP::Panel::Utils::Subscriber::destination_as_string($c, $d);
+                }
+                push @sets, { name => $set->name, id => $set->id, sources => \@sources };
+            }
+        }
+    }
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+    $c->stash(
+        edit_sourceset_flag => 1,
+        cf_form => undef,
+        cf_type => $cf_type,
+        cf_source_sets => \@sets,
+    );
+}
+
+sub preferences_callforward_sourceset_create :Chained('base') :PathPart('preferences/sourceset/create') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
+    my $form = NGCP::Panel::Form::CallforwardSourceSet->new; # ctx => $c
+
+    my $posted = ($c->request->method eq 'POST');
+
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my @fields = $form->field('source')->fields;
+                if(@fields) {
+                    my $set = $prov_subscriber->voip_cf_source_sets->create({
+                        name => $form->field('name')->value,
+                    });
+                    foreach my $src(@fields) {
+                        my $s = $src->field('source')->value;
+
+                        $set->voip_cf_sources->create({
+                            source => $s,
+                        });
+                    }
+                }
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                type => 'internal',
+                desc => $c->loc('Successfully created new source set'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                type  => 'internal',
+                desc  => $c->loc('Failed to create new source set'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences_callforward_sourceset',
+                    [$c->req->captures->[0]], $cf_type)
+            );
+    }
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+    $c->stash(
+        edit_cf_flag => 1,
+        cf_description => $c->loc('Destination Set'),
+        cf_form => $form,
+        cf_type => $cf_type,
+    );
+}
+
+sub preferences_callforward_sourceset_base :Chained('base') :PathPart('preferences/sourceset') :CaptureArgs(1) {
+    my ($self, $c, $set_id) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    $c->stash->{source_set} = $c->stash->{subscriber}
+        ->provisioning_voip_subscriber
+        ->voip_cf_source_sets
+        ->find($set_id);
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+}
+
+sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sourceset_base') :PathPart('edit') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+    my $fallback = $c->uri_for_action('/subscriber/preferences_callforward_sourceset',
+                    [$c->req->captures->[0]], $cf_type);
+
+    my $posted = ($c->request->method eq 'POST');
+
+    my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        attribute => $cf_type,
+    );
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        attribute => 'ringtimeout',
+    );
+
+    my $set =  $c->stash->{source_set};
+    my $params;
+    unless($posted) {
+        $params->{name} = $set->name;
+        my @sources;
+        for my $src($set->voip_cf_sources->all) {
+            push @sources, {
+                source => $src->source,
+                id => $src->id,
+            };
+        }
+        $params->{source} = \@sources;
+    }
+
+    my $form = NGCP::Panel::Form::CallforwardSourceSet->new;  # (ctx => $c);
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                # delete whole set and mapping if empty
+                my @fields = $form->field('source')->fields;
+                unless(@fields) {
+                    foreach my $mapping($set->voip_cf_mappings->all) {
+                        my $cf = $cf_preference->find({ value => $mapping->id });
+                        $cf->delete if $cf;
+                        $ringtimeout_preference->first->delete
+                            if($cf_type eq "cft" && $ringtimeout_preference->first);
+                        $mapping->delete;
+                    }
+                    $set->delete;
+                    NGCP::Panel::Utils::Navigation::back_or($c, $fallback, 1);
+                    return;
+                }
+                if($form->field('name')->value ne $set->name) {
+                    $set->update({name => $form->field('name')->value});
+                }
+                $set->voip_cf_sources->delete_all;
+
+                foreach my $src(@fields) {
+                    my $s = $src->field('source')->value;
+
+                    $set->voip_cf_sources->create({
+                        source => $s,
+                    });
+                }
+                $set->discard_changes; # reload (sources may be cached)
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                type => 'internal',
+                desc => $c->loc('Successfully updated source set'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                type  => 'internal',
+                desc  => $c->loc('Failed to update source set'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $fallback);
+    }
+
+    $c->stash(
+        edit_cf_flag => 1,
+        cf_description => "Source Set",
+        cf_form => $form,
+    );
+
+}
+
+sub preferences_callforward_sourceset_delete :Chained('preferences_callforward_sourceset_base') :PathPart('delete') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        attribute => $cf_type,
+    );
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        attribute => 'ringtimeout',
+    );
+    my $set =  $c->stash->{source_set};
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
+    try {
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            foreach my $map($set->voip_cf_mappings->all) {
+                my $cf = $cf_preference->find({ value => $map->id });
+                $cf->delete if $cf;
+                $map->delete;
+            }
+            if($cf_type eq "cft" &&
+               $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type})->count == 0) {
+                $ringtimeout_preference->first->delete;
+            }
+            $set->delete;
+        });
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { $set->get_inflated_columns },
+            type => 'internal',
+            desc => $c->loc('Successfully deleted source set'),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            error => $e,
+            data  => { $set->get_inflated_columns },
+            type  => 'internal',
+            desc  => $c->loc('Failed to delete source set'),
+        );
+    }
+
+    NGCP::Panel::Utils::Navigation::back_or($c,
+        $c->uri_for_action('/subscriber/preferences_callforward_sourceset',
             [$c->req->captures->[0]], $cf_type)
     );
 }

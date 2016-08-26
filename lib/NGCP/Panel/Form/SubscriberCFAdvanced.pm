@@ -34,6 +34,12 @@ has_field 'active_callforward.time_set' => (
     wrapper_class => [qw/hfh-rep-field/],
 );
 
+has_field 'active_callforward.source_set' => (
+    type => '+NGCP::Panel::Field::SubscriberSourceSet',
+    label => 'from Source Set',
+    wrapper_class => [qw/hfh-rep-field/],
+);
+
 has_field 'active_callforward.rm' => (
     type => 'RmElement',
     value => 'Remove',
@@ -93,6 +99,14 @@ has_field 'cf_actions.edit_destination_sets' => (
     type => 'Button', 
     do_label => 0,
     value => 'Manage Destination Sets',
+    element_class => [qw(btn btn-tertiary)],
+    wrapper_class => [qw(pull-right)],
+);
+
+has_field 'cf_actions.edit_source_sets' => (
+    type => 'Button',
+    do_label => 0,
+    value => 'Manage Source Sets',
     element_class => [qw(btn btn-tertiary)],
     wrapper_class => [qw(pull-right)],
 );
