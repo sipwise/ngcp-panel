@@ -4865,6 +4865,11 @@ msgstr ""
 "\"Ограничения идентификации вызываемой стороны\" )"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Indication of the costs announcement from SEMS for calls to this subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Init time"
 msgstr "Время начала"
 
@@ -6895,6 +6900,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Postcode"
 msgstr "Почтовый индекс"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Pre-call cost announcements"
+msgstr ""
 
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm

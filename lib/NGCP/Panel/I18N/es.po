@@ -4841,6 +4841,11 @@ msgid ""
 msgstr "Las llamadas anónimas entrantes son bloqueadas si seleccionado"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Indication of the costs announcement from SEMS for calls to this subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Init time"
 msgstr ""
 
@@ -6871,6 +6876,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Postcode"
 msgstr "Código Postal"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Pre-call cost announcements"
+msgstr ""
 
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm
