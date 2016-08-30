@@ -36,11 +36,12 @@ sub send_fax {
             my $host = $hosts[rand @hosts];
             if ($ping->ping($host)) {
                 $sendfax_args{host} = $host;
-                $sendfax_port{port} = $port;
+                $sendfax_args{port} = $port;
             }
             @hosts = grep { $_ ne $host } @hosts;
         } while (!$sendfax_args{host} && @hosts);
-        die "No alive proxy hosts to queue the send fax to" unless @hosts;
+        die "No alive proxy hosts to queue the send fax to"
+            unless $sendfax_args{host} && $sendfax_args{port};
     }
 
     my $sender = 'webfax';
