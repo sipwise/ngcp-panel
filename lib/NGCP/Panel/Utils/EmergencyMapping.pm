@@ -4,6 +4,7 @@ use warnings;
 
 use Text::CSV_XS;
 use NGCP::Panel::Utils::MySQL;
+use NGCP::Panel::Utils::CSVSeparator;
 
 sub _insert_batch {
     my ($c, $schema, $mappings, $chunk_size) = @_;
@@ -19,13 +20,28 @@ sub _insert_batch {
 
 sub upload_csv {
     my(%params) = @_;
-    my ($c,$data,$schema) = @params{qw/c data schema/};
+    my ($c,$data,$schema, $reseller_id) = @params{qw/c data schema reseller_id/};
     my ($start, $end);
 
+    my $separator = NGCP::Panel::Utils::CSVSeparator::get_separator(
+        path => $data,
+        lucky => 1,
+    );
+    unless(defined $separator) {
+        my $text = $c->loc("Failed to detect CSV separator");
+        return ([], [], \$text );
+    }
+
     # csv bulk upload
-    my $csv = Text::CSV_XS->new({ allow_whitespace => 1, binary => 1, keep_meta_info => 1 });
+    my $csv = Text::CSV_XS->new({ 
+        allow_whitespace => 1,
+        binary => 1,
+        keep_meta_info => 1,
+        sep_char => $separator,
+    });
+
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
-    my @cols = qw/name reseller_id code prefix/;
+    my @cols = qw/name code prefix/;
 
     my @fields ;
     my @fails = ();
@@ -44,13 +60,15 @@ sub upload_csv {
         my $row = {};
         @{$row}{@cols} = @{ $line };
         my $k = $row->{name};
-        my $r = $row->{reseller_id};
         unless(exists $containers{$k}) {
             my $container = $schema->resultset('emergency_containers')->find_or_create({
                 name => $k,
-                reseller_id => $r,
+                reseller_id => $reseller_id,
             });
             $containers{$k} = $container->id;
+        }
+        unless(length $row->{prefix}) {
+            $row->{prefix} = undef;
         }
         push @mappings, [$containers{$k}, $row->{code}, $row->{prefix}];
 
@@ -76,16 +94,17 @@ sub upload_csv {
 
 sub create_csv {
     my(%params) = @_;
-    my($c) = @params{qw/c/};
+    my($c, $reseller_id) = @params{qw/c reseller_id/};
 
     #my @cols = @{ $c->config->{emergency_mapping_csv}->{element_order} };
-    my @cols = qw/name reseller_id code prefix/;
+    my @cols = qw/name code prefix/;
 
-    my $mapping_rs = $c->stash->{emergency_mapping_rs}->search_rs(
-        undef,
+    my $mapping_rs = $c->stash->{emergency_mapping_rs}->search_rs({
+            'emergency_container.reseller_id' => $reseller_id,
+        },
         {
-            '+select' => ['emergency_container.name', 'emergency_container.reseller_id'],
-            '+as'     => ['name', 'reseller_id'],
+            '+select' => ['emergency_container.name'],
+            '+as'     => ['name'],
             'join'    => 'emergency_container',
         }
     );

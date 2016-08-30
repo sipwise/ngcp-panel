@@ -14,6 +14,8 @@ use NGCP::Panel::Form::EmergencyMapping::Container;
 use NGCP::Panel::Form::EmergencyMapping::ContainerAdmin;
 use NGCP::Panel::Form::EmergencyMapping::Mapping;
 use NGCP::Panel::Form::EmergencyMapping::Upload;
+use NGCP::Panel::Form::EmergencyMapping::UploadAdmin;
+use NGCP::Panel::Form::EmergencyMapping::Download;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -481,14 +483,20 @@ sub emergency_mapping_delete :Chained('emergency_mapping_base') :PathPart('delet
 sub emergency_mappings_upload :Chained('list') :PathPart('upload') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::EmergencyMapping::Upload->new(ctx => $c);
+    my $form;
+    if($c->user->roles eq "reseller") {
+        $form = NGCP::Panel::Form::EmergencyMapping::Upload->new(ctx => $c);
+    } else {
+        $form = NGCP::Panel::Form::EmergencyMapping::UploadAdmin->new(ctx => $c);
+    }
     my $upload = $c->req->upload('upload_mapping');
     my $posted = $c->req->method eq 'POST';
-    my @params = ( upload_mapping => $posted ? $upload : undef, );
+    $c->request->params->{upload_mapping} = $posted ? $upload : undef;
+    my $params = {};
     $form->process(
         posted => $posted,
-        params => { @params },
-        action => $c->uri_for('/emergencymapping/upload'),
+        params => $c->request->params,
+        item => $params,
     );
     if($form->validated) {
 
@@ -510,13 +518,10 @@ sub emergency_mappings_upload :Chained('list') :PathPart('upload') :Args(0) {
                 if($c->req->params->{purge_existing}) {
                     my ($start, $end);
                     $start = time;
-                    NGCP::Panel::Utils::MySQL::truncate_table(
-                         c => $c,
-                         schema => $schema,
-                         do_transaction => 0,
-                         table => 'provisioning.emergency_mappings',
-                    );
-                    $c->stash->{emergency_container_rs}->delete;
+                    my $rs = $c->stash->{emergency_container_rs}->search({
+                        reseller_id => $form->params->{reseller}->{id}
+                    });
+                    $rs->delete;
                     $end = time;
                     $c->log->debug("Purging emergency mappings took " . ($end - $start) . "s");
                 }
@@ -524,6 +529,7 @@ sub emergency_mappings_upload :Chained('list') :PathPart('upload') :Args(0) {
                     c       => $c,
                     data    => \$data,
                     schema  => $schema,
+                    reseller_id => $form->params->{reseller}->{id},
                 );
             });
 
@@ -551,13 +557,44 @@ sub emergency_mappings_upload :Chained('list') :PathPart('upload') :Args(0) {
 
 sub emergency_mappings_download :Chained('list') :PathPart('download') :Args(0) {
     my ($self, $c) = @_;
-    my $schema = $c->model('DB');
-    $c->response->header ('Content-Disposition' => 'attachment; filename="emergency_mapping_list.csv"');
-    $c->response->content_type('text/csv');
-    $c->response->status(200);
-    NGCP::Panel::Utils::EmergencyMapping::create_csv(
-        c => $c,
-    );
+
+    my $form;
+    my $reseller_id;
+    if($c->user->roles eq "reseller") {
+        $reseller_id = $c->user->reseller_id;
+    } else {
+        $form = NGCP::Panel::Form::EmergencyMapping::Download->new(ctx => $c);
+    }
+    my $posted = $c->req->method eq 'POST';
+    my $params = {};
+
+    if(defined $form) {
+        $form->process(
+            posted => $posted,
+            params => $c->request->params,
+            item => $params,
+        );
+        if($form->validated) {
+            $reseller_id = $form->params->{reseller}{id};
+        }
+    }
+
+    if(!$posted || !defined $reseller_id) { 
+        $c->stash(emergency_container_create_flag => 1);
+        $c->stash(emergency_container_form => $form);
+    } else {
+        my $schema = $c->model('DB');
+        $c->response->header ('Content-Disposition' => "attachment; filename=\"emergency_mapping_list_reseller_$reseller_id.csv\"");
+        $c->response->content_type('text/csv');
+        $c->response->status(200);
+        NGCP::Panel::Utils::EmergencyMapping::create_csv(
+            c => $c,
+            reseller_id => $reseller_id,
+        );
+    }
+
+
+
     return;
 }
 
