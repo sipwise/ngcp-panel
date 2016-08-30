@@ -35,6 +35,7 @@ sub documentation_sample {
         cfb => [{
             "destinationset" => "quickset_cfb",
             "timeset" => undef,
+            "sourceset" => undef,
         }],
         cfna => [],
         cft => [],
