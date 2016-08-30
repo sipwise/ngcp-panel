@@ -27,7 +27,7 @@ sub allowed_methods{
 
 
 sub api_description {
-    return 'Defines emergency mappings for an <a href="#emergencymappingscontainer">Emergency Mapping Container</a>. You can POST mappings individually one-by-one using json. To bulk-upload mappings, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/emergencymappings/?purge_existing=true"';
+    return 'Defines emergency mappings for an <a href="#emergencymappingscontainer">Emergency Mapping Container</a>. You can POST mappings individually one-by-one using json. To bulk-upload mappings, specify the Content-Type as "text/csv", pass a reseller_id URL parameter and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/emergencymappings/?reseller_id=123&purge_existing=true"';
 };
 
 sub query_params {
@@ -181,16 +181,27 @@ sub POST :Allow {
         if ($data) {
             my($mappings, $fails, $text_success);
             try {
+                if($c->user->roles eq "reseller") {
+                    $resource->{reseller_id} = $c->user->reseller_id;
+                } else {
+                    unless(defined $resource->{reseller_id}) {
+                        $c->log->error("Missing reseller_id");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "missing reseller_id parameter");
+                        last;
+                    }
+                    unless($schema->resultset('resellers')->find($resource->{reseller_id})) {
+                        $c->log->error("Invalid reseller_id '$$resource{reseller_id}'");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "invalid reseller_id '$$resource{reseller_id}'");
+                        last;
+                    }
+                }
                 if ($resource->{purge_existing} eq 'true') {
                     my ($start, $end);
                     $start = time;
-                    NGCP::Panel::Utils::MySQL::truncate_table(
-                         c => $c,
-                         schema => $schema,
-                         do_transaction => 0,
-                         table => 'provisioning.emergency_mappings',
-                    );
-                    $schema->resultset('emergency_containers')->delete;
+                    my $rs = $schema->resultset('emergency_containers')->search({
+                        reseller_id => $resource->{reseller_id},
+                    });
+                    $rs->delete;
                     $end = time;
                     $c->log->debug("API Purging emergency mappings entries took " . ($end - $start) . "s");
                 }
@@ -199,6 +210,7 @@ sub POST :Allow {
                     c       => $c,
                     data    => \$data,
                     schema  => $schema,
+                    reseller_id => $resource->{reseller_id},
                 );
 
                 $c->log->info( $$text_success );
