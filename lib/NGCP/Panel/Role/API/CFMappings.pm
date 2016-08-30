@@ -35,9 +35,11 @@ sub hal_from_item {
     for my $mapping ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
         my $dset = $mapping->destination_set ? $mapping->destination_set->name : undef;
         my $tset = $mapping->time_set ? $mapping->time_set->name : undef;
+        my $sset = $mapping->source_set ? $mapping->source_set->name : undef;
         push @{ $resource->{$mapping->type} }, {
                 destinationset => $dset,
                 timeset => $tset,
+                sourceset => $sset,
             };
     }
 
@@ -121,6 +123,7 @@ sub update_item {
     my %cf_preferences;
     my $dsets_rs = $c->model('DB')->resultset('voip_cf_destination_sets');
     my $tsets_rs = $c->model('DB')->resultset('voip_cf_time_sets');
+    my $ssets_rs = $c->model('DB')->resultset('voip_cf_source_sets');
 
     for my $type ( qw/cfu cfb cft cfna/) {
         if (ref $resource->{$type} ne "ARRAY") {
@@ -148,9 +151,18 @@ sub update_item {
                     return;
                 }
             }
+            my $sset;
+            if ($mapping->{sourceset}) {
+                $sset = $ssets_rs->find({subscriber_id => $p_subs_id, name => $mapping->{sourceset}, });
+                unless ($sset) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'sourceset'. Could not be found.");
+                    return;
+                }
+            }
             push @new_mappings, $mappings_rs->new_result({
                     destination_set_id => $dset->id,
                     time_set_id => $tset ? $tset->id : undef,
+                    source_set_id => $sset ? $sset->id : undef,
                     type => $type,
                 });
         }

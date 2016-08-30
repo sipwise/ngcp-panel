@@ -22,8 +22,9 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Specifies basic callforwards of a subscriber, where a number of destinations and times can be specified for each type (cfu, cfb, cft cfna). '.
-        'For more complex configurations with multiple combinations of Timesets and Destinationsets see <a href="#cfmappings">CFMappings</a>.';
+    return 'Specifies basic callforwards of a subscriber, where a number of destinations, times and sources ' .
+           ' can be specified for each type (cfu, cfb, cft cfna). For more complex configurations with ' .
+           ' multiple combinations of Timesets, Destinationsets and SourceSets see <a href="#cfmappings">CFMappings</a>.';
 };
 
 sub query_params {
@@ -39,6 +40,7 @@ sub documentation_sample {
                     "timeout" => "300",
                 }],
             "times" => [],
+            "sources" => [],
         },
         cfna => {},
         cft => { "ringtimeout" => "199" },
