@@ -161,6 +161,11 @@ msgstr "Iniciar sesión %1"
 msgid "%1 as %2"
 msgstr "%1 como %2"
 
+#. (d.as_string _' <span class="pull-right">', d.timeout)
+#: share/templates/subscriber/preferences.tt
+msgid "%1 for %2s"
+msgstr ""
+
 #. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt
@@ -3103,6 +3108,10 @@ msgid "Edit destination sets"
 msgstr "Editar Grupos de destinos"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Edit source sets"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Edit time sets"
 msgstr "Editar Grupos de Tiempos"
 
@@ -3580,6 +3589,10 @@ msgid "Failed to create new destination set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to create new source set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to create new time set"
 msgstr ""
 
@@ -3788,6 +3801,10 @@ msgstr "Fallo al borrar el manejador de sonido"
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Failed to delete sound set"
 msgstr "Fallo al borrar grupo de locuciones"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete source set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to delete special offpeak entry"
@@ -4112,6 +4129,10 @@ msgstr "Failed to update sound handle"
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Failed to update sound set"
 msgstr "Fallo al actualizar grupo de locuciones"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to update source set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to update special offpeak entry"
@@ -5696,6 +5717,10 @@ msgstr "Gestionar Grupos de destinos"
 #: share/templates/sound/handles_list.tt
 msgid "Manage Sound Set %1"
 msgstr "Gestionar Grupo de Locuciones %1"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Manage Source Sets"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Manage Time Sets"
@@ -8041,7 +8066,19 @@ msgid "Source Pattern"
 msgstr "Patrón de origen"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Source Set"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "Source Sets"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Source UUID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Source add"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8170,6 +8207,15 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Source uuid"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "Sources"
+msgstr ""
+
+#. (maps.sset_name)
+#: share/templates/subscriber/preferences.tt
+msgid "Sourceset \"%1\" Details"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
@@ -8523,6 +8569,10 @@ msgid "Successfully created new destination set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully created new source set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully created new time set"
 msgstr ""
 
@@ -8553,6 +8603,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted registered device"
 msgstr "Dispositivo registrado eliminado con éxito"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted source set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted speed dial slot"
@@ -8643,6 +8697,10 @@ msgstr "Suscriptor modificado con éxito"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated reminder setting"
 msgstr "Alarma modificada con éxito"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully updated source set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated speed dial slot"
@@ -11217,6 +11275,10 @@ msgstr "todas las llamadas salientes"
 msgid "all rights reserved"
 msgstr "todos los derechos reservados"
 
+#: share/templates/subscriber/preferences.tt
+msgid "all sources"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/Preferences.pm
 msgid "allowed_ip_grp successfully created"
 msgstr ""
@@ -11433,6 +11495,10 @@ msgstr "gasto diario de detección de fraude, en céntimos"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "fraud detection threshold per month, specifying cents"
 msgstr "gasto mensual de detección de fraude, en céntimos"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "from Source Set"
+msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "from_email"

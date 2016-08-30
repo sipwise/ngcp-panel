@@ -175,6 +175,11 @@ msgstr "Вход %1"
 msgid "%1 as %2"
 msgstr "%1 как %2"
 
+#. (d.as_string _' <span class="pull-right">', d.timeout)
+#: share/templates/subscriber/preferences.tt
+msgid "%1 for %2s"
+msgstr ""
+
 #. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt
@@ -3133,6 +3138,10 @@ msgid "Edit destination sets"
 msgstr "Редактировать наборы назначения"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Edit source sets"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Edit time sets"
 msgstr "Редактировать наборы периодов"
 
@@ -3608,6 +3617,10 @@ msgid "Failed to create new destination set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to create new source set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to create new time set"
 msgstr ""
 
@@ -3816,6 +3829,10 @@ msgstr "Не удалось удалить запись"
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Failed to delete sound set"
 msgstr "Не удалось удалить набор звуков"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete source set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to delete special offpeak entry"
@@ -4139,6 +4156,10 @@ msgstr "Не удалось обновить звуковой указатель
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Failed to update sound set"
 msgstr "Не удалось обновить набор звуков"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to update source set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to update special offpeak entry"
@@ -5727,6 +5748,10 @@ msgstr "Редактировать набор направлений"
 #: share/templates/sound/handles_list.tt
 msgid "Manage Sound Set %1"
 msgstr "Редактировать набор звуков %1"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Manage Source Sets"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Manage Time Sets"
@@ -8061,7 +8086,19 @@ msgid "Source Pattern"
 msgstr "Исходный шаблон"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Source Set"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "Source Sets"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Source UUID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Source add"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8190,6 +8227,15 @@ msgstr "Исходный идентификатор пользователя"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Source uuid"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "Sources"
+msgstr ""
+
+#. (maps.sset_name)
+#: share/templates/subscriber/preferences.tt
+msgid "Sourceset \"%1\" Details"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
@@ -8545,6 +8591,10 @@ msgid "Successfully created new destination set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully created new source set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully created new time set"
 msgstr ""
 
@@ -8575,6 +8625,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted registered device"
 msgstr "Зарегистрированное устройство успешно удалено"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted source set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted speed dial slot"
@@ -8664,6 +8718,10 @@ msgstr "Пароль успешно обновлен"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated reminder setting"
 msgstr "Настройки напоминания успешно обновлена"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully updated source set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated speed dial slot"
@@ -11248,6 +11306,10 @@ msgstr "все исходящие звонки"
 msgid "all rights reserved"
 msgstr "Все права защищены"
 
+#: share/templates/subscriber/preferences.tt
+msgid "all sources"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/Preferences.pm
 msgid "allowed_ip_grp successfully created"
 msgstr ""
@@ -11464,6 +11526,10 @@ msgstr "дневной порог определения мошенничест�
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "fraud detection threshold per month, specifying cents"
 msgstr "месячный порог определения мошенничества, указывается в центах"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "from Source Set"
+msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "from_email"
