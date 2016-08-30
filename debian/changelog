@@ -1,3 +1,12 @@
+ngcp-panel (1.14.1.2+0~mr4.5.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [cb34f1d] MT#21685 - fix fax remote host/port check
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 30 Aug 2016 16:45:41 +0200
+
 ngcp-panel (1.14.1.1+0~mr4.5.1.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
