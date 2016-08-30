@@ -47,7 +47,7 @@ sub hal_from_item {
         relation => 'ngcp:'.$self->resource_name,
     );
     @resource{qw/cfu cfb cft cfna/} = ({}) x 4;
-    for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all){
+    for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
         $resource{$item_cf->type} = $self->_contents_from_cfm($c, $item_cf, $item);
     }
     if(keys %{$resource{cft}}){
@@ -130,7 +130,7 @@ sub update_item {
         my $mapping_count = $mapping->count;
         my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, prov_subscriber => $prov_subs, attribute => $type);
-        my ($dset, $tset);
+        my ($dset, $tset, $sset);
         if ($mapping_count == 0) {
             next unless (defined $resource->{$type});
             $mapping = $c->model('DB')->resultset('voip_cf_mappings')->create({
@@ -145,6 +145,7 @@ sub update_item {
             $mapping = $mapping->first;
             $dset = $mapping->destination_set;
             $tset = $mapping->time_set;
+            $sset = $mapping->source_set;
         }
 
         try {
@@ -191,6 +192,21 @@ sub update_item {
                     $mapping->update({time_set_id => $tset->id});
                 }
             }
+            if ($sset) {
+                if ((defined $resource->{$type}{sources}) && @{ $resource->{$type}{sources}}) {
+                    $sset->voip_cf_sources->delete; #empty sset
+                } else {
+                    $mapping_count && $mapping->update({source_set_id => undef});
+                    if ($sset->name =~ m/^quickset_/) {
+                        $tset->delete; # delete sset
+                    }
+                }
+            } else {
+                if ((defined $resource->{$type}{times}) && @{ $resource->{$type}{times}}) {
+                    $sset = $mapping->create_related('source_set', {'name' => "quickset_$type", subscriber_id => $prov_subscriber_id,} );
+                    $mapping->update({source_set_id => $sset->id});
+                }
+            }
             for my $d (@{ $resource->{$type}{destinations} }) {
                 delete $d->{destination_set_id};
                 delete $d->{simple_destination};
@@ -206,6 +222,10 @@ sub update_item {
             for my $t (@{ $resource->{$type}{times} }) {
                 delete $t->{time_set_id};
                 $tset->voip_cf_periods->update_or_create($t);
+            }
+            for my $s (@{ $resource->{$type}{sources} }) {
+                delete $s->{source_set_id};
+                $sset->voip_cf_sources->update_or_create($s);
             }
 
             $dset->discard_changes if $dset; # update destinations
@@ -249,9 +269,10 @@ sub update_item {
 
 sub _contents_from_cfm {
     my ($self, $c, $cfm_item, $sub) = @_;
-    my (@times, @destinations);
+    my (@times, @destinations, @sources);
     my $timeset_item = $cfm_item->time_set;
     my $dset_item = $cfm_item->destination_set;
+    my $sourceset_item = $cfm_item->source_set;
     for my $time ($timeset_item ? $timeset_item->voip_cf_periods->all : () ) {
         push @times, {$time->get_inflated_columns};
         delete @{$times[-1]}{'time_set_id', 'id'};
@@ -269,7 +290,11 @@ sub _contents_from_cfm {
             };
         delete @{$destinations[-1]}{'destination_set_id', 'id'};
     }
-    return {times => \@times, destinations => \@destinations};
+    for my $source ($sourceset_item ? $sourceset_item->voip_cf_sources->all : () ) {
+        push @sources, {$source->get_inflated_columns};
+        delete @{$sources[-1]}{'source_set_id', 'id'};
+    }
+    return {times => \@times, destinations => \@destinations, sources => \@sources};
 }
 
 1;

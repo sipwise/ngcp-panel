@@ -60,6 +60,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         ccmapentries => 1,
         cfdestinationsets => 1,
         cfmappings => 1,
+        cfsourcesets => 1,
         cftimesets => 1,
         contracts => 1,
         customerbalances => 1,

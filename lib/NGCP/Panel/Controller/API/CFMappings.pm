@@ -21,8 +21,8 @@ sub allowed_methods{
 
 sub api_description {
     return 'Specifies callforward mappings of a subscriber, where multiple mappings can be specified per type (cfu, cfb, cft cfna) ' . 
-        'One mapping consists of destinationset name (see <a href="#cfdestinationsets">CFDestinationSets</a>) and a timeset name ' .
-        '(see <a href="#cftimesets">CFTimeSets</a>).';
+        'Each mapping consists of a destinationset name (see <a href="#cfdestinationsets">CFDestinationSets</a>), a timeset name ' .
+        '(see <a href="#cftimesets">CFTimeSets</a>) and a sourceset name (see <a href="#cfsourcesets">CFSourceSets</a>).';
 }
 
 sub query_params {
@@ -35,6 +35,7 @@ sub documentation_sample {
         cfb => [{
             "destinationset" => "quickset_cfb",
             "timeset" => undef,
+            "sourceset" => undef,
         }],
         cfna => [],
         cft => [],

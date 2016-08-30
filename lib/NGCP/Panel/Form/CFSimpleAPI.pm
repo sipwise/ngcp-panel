@@ -19,9 +19,10 @@ has_field 'cfu' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Unconditional, Contains the keys "destinations" and "times". "destinations" is an Array of Objects ' .
+        title => ['Call Forward Unconditional, Contains the keys "destinations", "times" and "sources". "destinations" is an Array of Objects ' .
                   'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
-                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.'],
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always. ' .
+                  '"sources" is an Array of Objects having one field "source". "sources" can be empty.'],
     },
 );
 
@@ -32,9 +33,10 @@ has_field 'cfb' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Busy, Contains the keys "destinations" and "times". "destinations" is an Array of Objects ' .
+        title => ['Call Forward Busy, Contains the keys "destinations", "times" and "sources". "destinations" is an Array of Objects ' .
                   'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
-                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.'],
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always. ' .
+                  '"sources" is an Array of Objects having one field "source". "sources" can be empty.'],
     },
 );
 
@@ -45,9 +47,10 @@ has_field 'cft' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Timeout, Contains the keys "destinations", "times" and "ringtimeout". "destinations" is an Array of Objects ' .
+        title => ['Call Forward Timeout, Contains the keys "destinations", "times", "sources" and "ringtimeout". "destinations" is an Array of Objects ' .
                   'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
-                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.'.
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always. ' .
+                  '"sources" is an Array of Objects having one field "source". "sources" can be empty.' .
                   '"ringtimeout" is a numeric ringing time value in seconds before call forward will be applied.'],
     },
 );
@@ -59,9 +62,10 @@ has_field 'cfna' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Unavailable, Contains the keys "destinations" and "times". "destinations" is an Array of Objects ' .
+        title => ['Call Forward Unavailable, Contains the keys "destinations", "times" and "sources". "destinations" is an Array of Objects ' .
                   'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
-                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.'],
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always. ' .
+                  '"sources" is an Array of Objects having one field "source". "sources" can be empty.'],
     },
 );
 
@@ -85,6 +89,16 @@ has_field 'cfu.times' => (
     do_label => 0,
 );
 
+has_field 'cfu.sources' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfu.sources.source' => (
+    type => 'Text',
+);
+
 has_field 'cfb.destinations' => (
     type => 'Repeatable',
     do_wrapper => 1,
@@ -103,6 +117,16 @@ has_field 'cfb.times' => (
     type => 'Repeatable',
     do_wrapper => 1,
     do_label => 0,
+);
+
+has_field 'cfb.sources' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfb.sources.source' => (
+    type => 'Text',
 );
 
 has_field 'cft.destinations' => (
@@ -125,6 +149,16 @@ has_field 'cft.times' => (
     do_label => 0,
 );
 
+has_field 'cft.sources' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cft.sources.source' => (
+    type => 'Text',
+);
+
 has_field 'cfna.destinations' => (
     type => 'Repeatable',
     do_wrapper => 1,
@@ -143,6 +177,16 @@ has_field 'cfna.times' => (
     type => 'Repeatable',
     do_wrapper => 1,
     do_label => 0,
+);
+
+has_field 'cfna.sources' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfna.sources.source' => (
+    type => 'Text',
 );
 
 has_field 'cft.ringtimeout' => (
