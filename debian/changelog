@@ -1,3 +1,13 @@
+ngcp-panel (1.8.7.7+0~mr3.8.7.7) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [e5e00f0] MT#22063 Allow cyclic number ranges
+  * [797534c] MT#19295 Disable ajax caching in the IE11
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 31 Aug 2016 15:18:31 +0200
+
 ngcp-panel (1.8.7.6+0~mr3.8.7.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
