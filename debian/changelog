@@ -1,3 +1,17 @@
+ngcp-panel (1.13.1.12+0~mr4.4.1.12) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [41ce40b] MT#20023 MT#20027 lnp unique number and lnp provider delete checks
+
+  [ Irina Peshinskaya ]
+  * [0db9868] MT#22063 Allow cyclic number ranges
+  * [739ea18] MT#19295 Disable ajax caching in the IE11
+  * [4cd597b] MT#21501 Add delete button for the subscriber's reminder
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 31 Aug 2016 15:19:14 +0200
+
 ngcp-panel (1.13.1.11+0~mr4.4.1.11) unstable; urgency=medium
 
   [ Rene Krenn ]
