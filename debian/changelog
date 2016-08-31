@@ -1,3 +1,14 @@
+ngcp-panel (1.14.1.3+0~mr4.5.1.3) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [95b463f] MT#22063 Allow cyclic number ranges
+  * [0230fad] MT#19295 Disable ajax caching in the IE11
+  * [382e1bd] MT#21501 Add delete button for the subscriber's reminder
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 31 Aug 2016 15:20:11 +0200
+
 ngcp-panel (1.14.1.2+0~mr4.5.1.2) unstable; urgency=medium
 
   [ Kirill Solomko ]
