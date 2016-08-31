@@ -789,6 +789,13 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"An array of sources, each containing the key \"source\" which will be "
+"matched against the call's anumber to determine whether to apply the "
+"callforward or not."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "An array of time definitions with keys \"year\", \"month\", \"mday\", \"wday"
 "\", \"hour\", \"minute\", where each value can be a number like \"10\" or a "
 "range like \"10-20\"."
@@ -955,7 +962,8 @@ msgstr "BLF ключ"
 #: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
-#: share/templates/device/list.tt share/templates/domain/preferences.tt
+#: share/templates/device/list.tt share/templates/device/preferences.tt
+#: share/templates/domain/preferences.tt
 #: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
 #: share/templates/lnp/list.tt share/templates/package/details.tt
@@ -1328,27 +1336,20 @@ msgstr "Перенаправлять когда занят (CFB)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Busy, Contains the keys \"destinations\" and \"times\". "
-"\"destinations\" is an Array of Objects having a \"destination\", \"priority"
-"\" and \"timeout\" field. \"times\" is an Array of Objects having the fields "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" can "
-"be empty, then the CF is applied always."
+"Call Forward Busy, Contains the keys \"destinations\", \"times\" and "
+"\"sources\". \"destinations\" is an Array of Objects having a \"destination"
+"\", \"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+"having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year"
+"\". \"times\" can be empty, then the CF is applied always. \"sources\" is an "
+"Array of Objects having one field \"source\". \"sources\" can be empty."
 msgstr ""
-"Переадресация когда занят, содержит ключи \"destinations\" и \"times\". "
-"\"destinations\" это массив объектов содержащий поля \"destination\", "
-"\"priority\" и \"timeout\". \"times\" это массив объектов содержащий поля "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" "
-"может быть пустым, что означает переадресация всегда активна."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Busy, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Busy, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
-"Переадресация когда занят, Количество объектов, каждый содержит ключи, "
-"\"destinationset\" и \"timeset\". Значения должны быть именами destination/"
-"time set которые принадлежат этому же абоненту."
 
 #: share/templates/widgets/subscriber_cf_overview.tt
 msgid "Call Forward Configured"
@@ -1362,24 +1363,22 @@ msgstr "Перенаправлять когда не отвечает (CFT)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Timeout, Contains the keys \"destinations\", \"times\" and "
-"\"ringtimeout\". \"destinations\" is an Array of Objects having a "
-"\"destination\", \"priority\" and \"timeout\" field. \"times\" is an Array "
-"of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday\", "
-"\"month\", \"year\". \"times\" can be empty, then the CF is applied always."
-"\"ringtimeout\" is a numeric ringing time value in seconds before call "
-"forward will be applied."
+"Call Forward Timeout, Contains the keys \"destinations\", \"times\", "
+"\"sources\" and \"ringtimeout\". \"destinations\" is an Array of Objects "
+"having a \"destination\", \"priority\" and \"timeout\" field. \"times\" is "
+"an Array of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday"
+"\", \"month\", \"year\". \"times\" can be empty, then the CF is applied "
+"always. \"sources\" is an Array of Objects having one field \"source\". "
+"\"sources\" can be empty.\"ringtimeout\" is a numeric ringing time value in "
+"seconds before call forward will be applied."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Timeout, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Timeout, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
-"Переадресация по истечению времени, Количество объектов, каждый содержит "
-"ключи, \"destinationset\" и \"timeset\". Значения должны быть именами "
-"destination/time set которые принадлежат этому же абоненту."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
@@ -1389,27 +1388,20 @@ msgstr "Перенаправлять когда недоступен (CFNA)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unavailable, Contains the keys \"destinations\" and \"times\". "
-"\"destinations\" is an Array of Objects having a \"destination\", \"priority"
-"\" and \"timeout\" field. \"times\" is an Array of Objects having the fields "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" can "
-"be empty, then the CF is applied always."
+"Call Forward Unavailable, Contains the keys \"destinations\", \"times\" and "
+"\"sources\". \"destinations\" is an Array of Objects having a \"destination"
+"\", \"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+"having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year"
+"\". \"times\" can be empty, then the CF is applied always. \"sources\" is an "
+"Array of Objects having one field \"source\". \"sources\" can be empty."
 msgstr ""
-"Переадресация когда недоступен, содержит ключи \"destinations\" и \"times\". "
-"\"destinations\" это массив объектов содержащий поля \"destination\", "
-"\"priority\" и \"timeout\". \"times\" это массив объектов содержащий поля "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" "
-"может быть пустым, что означает переадресация всегда активна."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unavailable, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Unavailable, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
-"Переадресация когда недоступен, Количество объектов, каждый содержит ключи, "
-"\"destinationset\" и \"timeset\". Значения должны быть именами destination/"
-"time set которые принадлежат этому же абоненту."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
@@ -1419,27 +1411,21 @@ msgstr "Безусловное перенаправление звонков (CF
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unconditional, Contains the keys \"destinations\" and \"times"
-"\". \"destinations\" is an Array of Objects having a \"destination\", "
-"\"priority\" and \"timeout\" field. \"times\" is an Array of Objects having "
-"the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". "
-"\"times\" can be empty, then the CF is applied always."
+"Call Forward Unconditional, Contains the keys \"destinations\", \"times\" "
+"and \"sources\". \"destinations\" is an Array of Objects having a "
+"\"destination\", \"priority\" and \"timeout\" field. \"times\" is an Array "
+"of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday\", "
+"\"month\", \"year\". \"times\" can be empty, then the CF is applied always. "
+"\"sources\" is an Array of Objects having one field \"source\". \"sources\" "
+"can be empty."
 msgstr ""
-"Безусловная переадресация, содержит ключи \"destinations\" и \"times\". "
-"\"destinations\" это массив объектов содержащий поля \"destination\", "
-"\"priority\" и \"timeout\". \"times\" это массив объектов содержащий поля "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" "
-"может быть пустым, что означает переадресация всегда активна."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unconditional, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Unconditional, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
-"Безусловная переадресация, Количество объектов, каждый содержит ключи, "
-"\"destinationset\" и \"timeset\". Значения должны быть именами destination/"
-"time set которые принадлежат этому же абоненту."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 #: share/templates/widgets/subscriber_cf_overview.tt
@@ -2856,6 +2842,11 @@ msgstr "Прошивка устройства не найдена"
 msgid "Device firmware successfully deleted"
 msgstr "Прошивка устройства успешно удалена"
 
+#. (devmod.vendor _ " " _ devmod.model, devmod.reseller_id)
+#: share/templates/device/preferences.tt
+msgid "Device model \"%1\" for reseller #%2 - Preferences"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model not found"
 msgstr "Модель устройства не найдена"
@@ -3492,6 +3483,10 @@ msgstr "Не удалось очистить аудио кэш."
 msgid "Failed to clear fraud interval"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to clear reminder setting."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Failed to clone rewrite rule set."
 msgstr "Не удалось создать набора правил перезаписи."
@@ -3860,6 +3855,10 @@ msgstr "Ошибка удаления IP авторизации."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete voicemail message"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/EmergencyMapping.pm
+msgid "Failed to detect CSV separator"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -6949,8 +6948,8 @@ msgstr ""
 msgid "Preference '"
 msgstr "Настройка '"
 
-#: share/templates/customer/details.tt share/templates/domain/list.tt
-#: share/templates/peering/servers_rules.tt
+#: share/templates/customer/details.tt share/templates/device/list.tt
+#: share/templates/domain/list.tt share/templates/peering/servers_rules.tt
 #: share/templates/reseller/details.tt
 #: share/templates/subprofile/profile_list.tt
 #: share/templates/subscriber/master.tt
@@ -8229,8 +8228,12 @@ msgstr "Исходный идентификатор пользователя"
 msgid "Source uuid"
 msgstr ""
 
-#: share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 msgid "Sources"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Sourceset"
 msgstr ""
 
 #. (maps.sset_name)
@@ -8569,6 +8572,10 @@ msgstr "Перенаправление звонков успешно очище�
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Successfully cleared fraud interval!"
 msgstr "Интервал мошенничества успешно очищен!"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully cleared reminder setting"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully created device configuration"
@@ -9875,6 +9882,10 @@ msgid "The name of the sound set"
 msgstr "Имя набора звуков"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The name of the source set"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The name to display on the device (usually the name of the person this "
 "device belongs to)."
@@ -10060,6 +10071,14 @@ msgstr "Зарегистрированное устройство определ
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reminder recurrence (one of never, weekdays, always)."
 msgstr "Частота напоминаний (одно из никогда, по будням, всегда)"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id for which to download the CSV."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id this CSV upload belongs to."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id this app belong to."
@@ -10268,6 +10287,10 @@ msgstr "ID абонента которому принадлежит сообще
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber id this destination set belongs to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber id this source set belongs to"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11870,6 +11893,81 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "да"
+
+#~ msgid ""
+#~ "Call Forward Busy, Contains the keys \"destinations\" and \"times\". "
+#~ "\"destinations\" is an Array of Objects having a \"destination\", "
+#~ "\"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+#~ "having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", "
+#~ "\"year\". \"times\" can be empty, then the CF is applied always."
+#~ msgstr ""
+#~ "Переадресация когда занят, содержит ключи \"destinations\" и \"times\". "
+#~ "\"destinations\" это массив объектов содержащий поля \"destination\", "
+#~ "\"priority\" и \"timeout\". \"times\" это массив объектов содержащий поля "
+#~ "\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" "
+#~ "может быть пустым, что означает переадресация всегда активна."
+
+#~ msgid ""
+#~ "Call Forward Busy, Number of Objects, each containing the keys, "
+#~ "\"destinationset\" and \"timeset\". The values must be the name of a "
+#~ "destination/time set which belongs to the same subscriber."
+#~ msgstr ""
+#~ "Переадресация когда занят, Количество объектов, каждый содержит ключи, "
+#~ "\"destinationset\" и \"timeset\". Значения должны быть именами "
+#~ "destination/time set которые принадлежат этому же абоненту."
+
+#~ msgid ""
+#~ "Call Forward Timeout, Number of Objects, each containing the keys, "
+#~ "\"destinationset\" and \"timeset\". The values must be the name of a "
+#~ "destination/time set which belongs to the same subscriber."
+#~ msgstr ""
+#~ "Переадресация по истечению времени, Количество объектов, каждый содержит "
+#~ "ключи, \"destinationset\" и \"timeset\". Значения должны быть именами "
+#~ "destination/time set которые принадлежат этому же абоненту."
+
+#~ msgid ""
+#~ "Call Forward Unavailable, Contains the keys \"destinations\" and \"times"
+#~ "\". \"destinations\" is an Array of Objects having a \"destination\", "
+#~ "\"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+#~ "having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", "
+#~ "\"year\". \"times\" can be empty, then the CF is applied always."
+#~ msgstr ""
+#~ "Переадресация когда недоступен, содержит ключи \"destinations\" и \"times"
+#~ "\". \"destinations\" это массив объектов содержащий поля \"destination\", "
+#~ "\"priority\" и \"timeout\". \"times\" это массив объектов содержащий поля "
+#~ "\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" "
+#~ "может быть пустым, что означает переадресация всегда активна."
+
+#~ msgid ""
+#~ "Call Forward Unavailable, Number of Objects, each containing the keys, "
+#~ "\"destinationset\" and \"timeset\". The values must be the name of a "
+#~ "destination/time set which belongs to the same subscriber."
+#~ msgstr ""
+#~ "Переадресация когда недоступен, Количество объектов, каждый содержит "
+#~ "ключи, \"destinationset\" и \"timeset\". Значения должны быть именами "
+#~ "destination/time set которые принадлежат этому же абоненту."
+
+#~ msgid ""
+#~ "Call Forward Unconditional, Contains the keys \"destinations\" and \"times"
+#~ "\". \"destinations\" is an Array of Objects having a \"destination\", "
+#~ "\"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+#~ "having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", "
+#~ "\"year\". \"times\" can be empty, then the CF is applied always."
+#~ msgstr ""
+#~ "Безусловная переадресация, содержит ключи \"destinations\" и \"times\". "
+#~ "\"destinations\" это массив объектов содержащий поля \"destination\", "
+#~ "\"priority\" и \"timeout\". \"times\" это массив объектов содержащий поля "
+#~ "\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" "
+#~ "может быть пустым, что означает переадресация всегда активна."
+
+#~ msgid ""
+#~ "Call Forward Unconditional, Number of Objects, each containing the keys, "
+#~ "\"destinationset\" and \"timeset\". The values must be the name of a "
+#~ "destination/time set which belongs to the same subscriber."
+#~ msgstr ""
+#~ "Безусловная переадресация, Количество объектов, каждый содержит ключи, "
+#~ "\"destinationset\" и \"timeset\". Значения должны быть именами "
+#~ "destination/time set которые принадлежат этому же абоненту."
 
 #~ msgid "Subscriber successfully created!"
 #~ msgstr "Абонент успешно создан!"

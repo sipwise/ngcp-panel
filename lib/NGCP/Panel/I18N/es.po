@@ -777,6 +777,13 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"An array of sources, each containing the key \"source\" which will be "
+"matched against the call's anumber to determine whether to apply the "
+"callforward or not."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "An array of time definitions with keys \"year\", \"month\", \"mday\", \"wday"
 "\", \"hour\", \"minute\", where each value can be a number like \"10\" or a "
 "range like \"10-20\"."
@@ -948,7 +955,8 @@ msgstr "Botón BLF"
 #: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
-#: share/templates/device/list.tt share/templates/domain/preferences.tt
+#: share/templates/device/list.tt share/templates/device/preferences.tt
+#: share/templates/domain/preferences.tt
 #: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
 #: share/templates/lnp/list.tt share/templates/package/details.tt
@@ -1325,18 +1333,19 @@ msgstr "Desvío si ocupado"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Busy, Contains the keys \"destinations\" and \"times\". "
-"\"destinations\" is an Array of Objects having a \"destination\", \"priority"
-"\" and \"timeout\" field. \"times\" is an Array of Objects having the fields "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" can "
-"be empty, then the CF is applied always."
+"Call Forward Busy, Contains the keys \"destinations\", \"times\" and "
+"\"sources\". \"destinations\" is an Array of Objects having a \"destination"
+"\", \"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+"having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year"
+"\". \"times\" can be empty, then the CF is applied always. \"sources\" is an "
+"Array of Objects having one field \"source\". \"sources\" can be empty."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Busy, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Busy, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
 
 #: share/templates/widgets/subscriber_cf_overview.tt
@@ -1351,20 +1360,21 @@ msgstr "Desvío tras timeout"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Timeout, Contains the keys \"destinations\", \"times\" and "
-"\"ringtimeout\". \"destinations\" is an Array of Objects having a "
-"\"destination\", \"priority\" and \"timeout\" field. \"times\" is an Array "
-"of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday\", "
-"\"month\", \"year\". \"times\" can be empty, then the CF is applied always."
-"\"ringtimeout\" is a numeric ringing time value in seconds before call "
-"forward will be applied."
+"Call Forward Timeout, Contains the keys \"destinations\", \"times\", "
+"\"sources\" and \"ringtimeout\". \"destinations\" is an Array of Objects "
+"having a \"destination\", \"priority\" and \"timeout\" field. \"times\" is "
+"an Array of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday"
+"\", \"month\", \"year\". \"times\" can be empty, then the CF is applied "
+"always. \"sources\" is an Array of Objects having one field \"source\". "
+"\"sources\" can be empty.\"ringtimeout\" is a numeric ringing time value in "
+"seconds before call forward will be applied."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Timeout, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Timeout, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -1375,18 +1385,19 @@ msgstr "Desvío si no disponible"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unavailable, Contains the keys \"destinations\" and \"times\". "
-"\"destinations\" is an Array of Objects having a \"destination\", \"priority"
-"\" and \"timeout\" field. \"times\" is an Array of Objects having the fields "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" can "
-"be empty, then the CF is applied always."
+"Call Forward Unavailable, Contains the keys \"destinations\", \"times\" and "
+"\"sources\". \"destinations\" is an Array of Objects having a \"destination"
+"\", \"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+"having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year"
+"\". \"times\" can be empty, then the CF is applied always. \"sources\" is an "
+"Array of Objects having one field \"source\". \"sources\" can be empty."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unavailable, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Unavailable, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -1397,18 +1408,20 @@ msgstr "Desvío incondicional"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unconditional, Contains the keys \"destinations\" and \"times"
-"\". \"destinations\" is an Array of Objects having a \"destination\", "
-"\"priority\" and \"timeout\" field. \"times\" is an Array of Objects having "
-"the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". "
-"\"times\" can be empty, then the CF is applied always."
+"Call Forward Unconditional, Contains the keys \"destinations\", \"times\" "
+"and \"sources\". \"destinations\" is an Array of Objects having a "
+"\"destination\", \"priority\" and \"timeout\" field. \"times\" is an Array "
+"of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday\", "
+"\"month\", \"year\". \"times\" can be empty, then the CF is applied always. "
+"\"sources\" is an Array of Objects having one field \"source\". \"sources\" "
+"can be empty."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unconditional, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Unconditional, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
@@ -2824,6 +2837,11 @@ msgstr "Firmware de Dispositivo no encontrado"
 msgid "Device firmware successfully deleted"
 msgstr "Firmware de Dispositivo eliminado con éxito"
 
+#. (devmod.vendor _ " " _ devmod.model, devmod.reseller_id)
+#: share/templates/device/preferences.tt
+msgid "Device model \"%1\" for reseller #%2 - Preferences"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model not found"
 msgstr "Modelo de Dispositivo no encontrado"
@@ -3464,6 +3482,10 @@ msgstr "Fallo al limpiar el cache de audio."
 msgid "Failed to clear fraud interval"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to clear reminder setting."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Failed to clone rewrite rule set."
 msgstr "Fallo al clonar el grupo de reglas de reescritura."
@@ -3832,6 +3854,10 @@ msgstr "Fallo al borrar origen de confianza."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete voicemail message"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/EmergencyMapping.pm
+msgid "Failed to detect CSV separator"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -6925,8 +6951,8 @@ msgstr ""
 msgid "Preference '"
 msgstr "Preferencia '"
 
-#: share/templates/customer/details.tt share/templates/domain/list.tt
-#: share/templates/peering/servers_rules.tt
+#: share/templates/customer/details.tt share/templates/device/list.tt
+#: share/templates/domain/list.tt share/templates/peering/servers_rules.tt
 #: share/templates/reseller/details.tt
 #: share/templates/subprofile/profile_list.tt
 #: share/templates/subscriber/master.tt
@@ -8209,8 +8235,12 @@ msgstr ""
 msgid "Source uuid"
 msgstr ""
 
-#: share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 msgid "Sources"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Sourceset"
 msgstr ""
 
 #. (maps.sset_name)
@@ -8547,6 +8577,10 @@ msgstr "Desvío de llamada eliminado con éxito"
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Successfully cleared fraud interval!"
 msgstr "Intervalo antifraude eliminado con éxito"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully cleared reminder setting"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully created device configuration"
@@ -9846,6 +9880,10 @@ msgid "The name of the sound set"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The name of the source set"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The name to display on the device (usually the name of the person this "
 "device belongs to)."
@@ -10028,6 +10066,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reminder recurrence (one of never, weekdays, always)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id for which to download the CSV."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The reseller id this CSV upload belongs to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10234,6 +10280,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber id this destination set belongs to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber id this source set belongs to"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
