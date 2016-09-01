@@ -1,3 +1,12 @@
+ngcp-panel (1.14.1.5+0~mr4.5.1.5) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [46cdfdf] MT#22405 Fix html doc in emergencymappings
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 01 Sep 2016 16:09:33 +0200
+
 ngcp-panel (1.14.1.4+0~mr4.5.1.4) unstable; urgency=medium
 
   [ Andreas Granig ]
