@@ -27,7 +27,7 @@ sub allowed_methods{
 
 
 sub api_description {
-    return 'Defines emergency mappings for an <a href="#emergencymappingscontainer">Emergency Mapping Container</a>. You can POST mappings individually one-by-one using json. To bulk-upload mappings, specify the Content-Type as "text/csv", pass a reseller_id URL parameter and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/emergencymappings/?reseller_id=123&purge_existing=true"';
+    return 'Defines emergency mappings for an <a href="#emergencymappingscontainer">Emergency Mapping Container</a>. You can POST mappings individually one-by-one using json. To bulk-upload mappings, specify the Content-Type as "text/csv", pass a reseller_id URL parameter and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/emergencymappings/?reseller_id=123&amp;purge_existing=true"';
 };
 
 sub query_params {
