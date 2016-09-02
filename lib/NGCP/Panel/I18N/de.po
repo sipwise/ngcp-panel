@@ -968,6 +968,7 @@ msgstr "BLF Taste"
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
 #: share/templates/device/list.tt share/templates/device/preferences.tt
+#: share/templates/device/profilepreferences.tt
 #: share/templates/domain/preferences.tt
 #: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
@@ -2853,6 +2854,11 @@ msgstr "Geräte-Modell nicht gefunden"
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model successfully deleted"
+msgstr ""
+
+#. (devprof.config.device.vendor _ " " _ devprof.config.device.model _ " " _ devprof.name)
+#: share/templates/device/profilepreferences.tt
+msgid "Device profile \"%1\" - Preferences"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm

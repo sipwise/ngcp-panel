@@ -765,7 +765,7 @@ msgstr ""
 msgid "BLF Key"
 msgstr ""
 
-#: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt share/templates/callrouting/verify.tt share/templates/customer/details.tt share/templates/customer/preferences.tt share/templates/denied_page.tt share/templates/device/list.tt share/templates/device/preferences.tt share/templates/domain/preferences.tt share/templates/emergencymapping/list.tt share/templates/helpers/datatables.tt share/templates/invoice/template.tt share/templates/lnp/list.tt share/templates/package/details.tt share/templates/peering/preferences.tt share/templates/reseller/branding.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/security/list.tt share/templates/sound/handles_list.tt share/templates/statistics/list.tt share/templates/statistics/supportstatus.tt share/templates/statistics/versions.tt share/templates/subprofile/preferences.tt share/templates/subscriber/calllist.tt share/templates/subscriber/callmap.tt share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/reglist.tt share/templates/subscriber/voicemail.tt share/templates/subscriber/webphone.tt
+#: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt share/templates/callrouting/verify.tt share/templates/customer/details.tt share/templates/customer/preferences.tt share/templates/denied_page.tt share/templates/device/list.tt share/templates/device/preferences.tt share/templates/device/profilepreferences.tt share/templates/domain/preferences.tt share/templates/emergencymapping/list.tt share/templates/helpers/datatables.tt share/templates/invoice/template.tt share/templates/lnp/list.tt share/templates/package/details.tt share/templates/peering/preferences.tt share/templates/reseller/branding.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/security/list.tt share/templates/sound/handles_list.tt share/templates/statistics/list.tt share/templates/statistics/supportstatus.tt share/templates/statistics/versions.tt share/templates/subprofile/preferences.tt share/templates/subscriber/calllist.tt share/templates/subscriber/callmap.tt share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/reglist.tt share/templates/subscriber/voicemail.tt share/templates/subscriber/webphone.tt
 msgid "Back"
 msgstr ""
 
@@ -2432,6 +2432,11 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model successfully deleted"
+msgstr ""
+
+#. (devprof.config.device.vendor _ " " _ devprof.config.device.model _ " " _ devprof.name)
+#: share/templates/device/profilepreferences.tt
+msgid "Device profile \"%1\" - Preferences"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
@@ -6294,7 +6299,7 @@ msgstr ""
 msgid "Preference '"
 msgstr ""
 
-#: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/domain/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subscriber/master.tt
+#: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/domain/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subscriber/master.tt
 msgid "Preferences"
 msgstr ""
 
