@@ -239,6 +239,7 @@ $( document ).ready(function() {
         helper.dt_buttons = [
             { name = c.loc('Delete'), uri = "/device/profile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
             { name = c.loc('Edit'), uri = "/device/profile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Preferences'), uri = "/device/profile/'+full.id+'/preferences", class = 'btn-small btn-primary', icon = 'icon-list' },
         ];
     END;
 

@@ -80,6 +80,8 @@ sub get_resource {
                     undef);
     } elsif($type eq "pbxdevicemodels") {
         $prefs = $item->voip_dev_preferences;
+    } elsif($type eq "pbxdeviceprofiles") {
+        $prefs = $item->voip_devprof_preferences;
     }
     $prefs = $prefs->search({
     }, {
@@ -236,6 +238,9 @@ sub get_resource {
     } elsif($type eq "pbxdevicemodels") {
         $resource->{device_id} = int($item->id);
         $resource->{id} = int($item->id);
+    } elsif($type eq "pbxdeviceprofiles") {
+        $resource->{profile_id} = int($item->id);
+        $resource->{id} = int($item->id);
     } elsif($type eq "contracts") {
         $resource->{customer_id} = int($item->id);
         $resource->{id} = int($item->id);
@@ -308,6 +313,16 @@ sub _item_rs {
         } else {
             $item_rs = $c->model('DB')->resultset('autoprov_devices')->search({'reseller_id' => $c->user->reseller_id});
         }
+    } elsif($type eq "pbxdeviceprofiles") {
+        if($c->user->roles eq "admin") {
+            $item_rs = $c->model('DB')->resultset('autoprov_profiles');
+        } else {
+            $item_rs = $c->model('DB')->resultset('autoprov_profiles')->search({
+                    'device.reseller_id' => $c->user->reseller_id
+                },{
+                    'join' => {'config' => 'device'},
+            });
+        }
     } elsif($type eq "contracts") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('contracts')->search({
@@ -369,6 +384,12 @@ sub get_preference_rs {
             c => $c,
             attribute => $attr,
             device => $elem,
+        );
+    } elsif($type eq "pbxdeviceprofiles") {
+        $rs = NGCP::Panel::Utils::Preferences::get_devprof_preference_rs(
+            c => $c,
+            attribute => $attr,
+            profile => $elem,
         );
     } elsif($type eq "contracts") {
         $rs = NGCP::Panel::Utils::Preferences::get_contract_preference_rs(
@@ -454,6 +475,16 @@ sub update_item {
         $full_rs = $elem->voip_dev_preferences->search_rs();
         $pref_type = 'dev_pref';
         $reseller_id = $item->reseller_id;
+    } elsif($type eq "pbxdeviceprofiles") {
+        delete $resource->{profile_id};
+        delete $old_resource->{prof};
+        delete $resource->{pbxdeviceprofilepreferences_id};
+        delete $old_resource->{pbxdeviceprofilepreferences_id};
+        $accessor = $item->id;
+        $elem = $item;
+        $full_rs = $elem->voip_devprof_preferences->search_rs();
+        $pref_type = 'devprof_pref';
+        $reseller_id = $item->config->device->reseller_id;
     } else {
         return;
     }
