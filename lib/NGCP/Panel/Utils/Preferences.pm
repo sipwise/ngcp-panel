@@ -37,6 +37,7 @@ sub load_preference_list {
     my $peer_pref = $params{peer_pref};
     my $dom_pref = $params{dom_pref};
     my $dev_pref = $params{dev_pref};
+    my $devprof_pref = $params{devprof_pref};
     my $prof_pref = $params{prof_pref};
     my $usr_pref = $params{usr_pref};
     my $contract_pref = $params{contract_pref};
@@ -64,6 +65,9 @@ sub load_preference_list {
            $dev_pref ? ('voip_preferences.dev_pref' => 1,
                 -or => ['voip_preferences_enums.dev_pref' => 1,
                     'voip_preferences_enums.dev_pref' => undef]) : (),
+           $devprof_pref ? ('voip_preferences.devprof_pref' => 1,
+                -or => ['voip_preferences_enums.devprof_pref' => 1,
+                    'voip_preferences_enums.devprof_pref' => undef]) : (),
             $prof_pref ? ('voip_preferences.prof_pref' => 1,
                 -or => ['voip_preferences_enums.prof_pref' => 1,
                     'voip_preferences_enums.prof_pref' => undef]) : (),
@@ -387,6 +391,13 @@ sub create_preference_form {
                       device_vendor   => $c->stash->{devmod}->{vendor},
                       device_model    => $c->stash->{devmod}->{model},
                       reseller_id     => $c->stash->{devmod}->{reseller_id},
+                    );
+    } elsif ($c->stash->{devprof}) {
+        %log_data = ( %log_data,
+                      type            => 'devprof',
+                      device_id       => $c->stash->{devprof}->{id},
+                      device_vendor   => $c->stash->{devprof}->{config_id},
+                      device_model    => $c->stash->{devprof}->{name},
                     );
     }
 
@@ -874,6 +885,7 @@ sub get_preferences_rs {
         'prof'     => [qw/voip_prof_preferences prof_pref profile_id/],
         'peer'     => [qw/voip_peer_preferences peer_pref peer_host_id/],
         'dev'      => [qw/voip_dev_preferences dev_pref device_id/],
+        'devprof'  => [qw/voip_devprof_preferences devprof_pref profile_id/],
         'contract' => [qw/voip_contract_preferences contract_pref contract_id/],
         'contract_location' => [qw/voip_contract_preferences contract_location_pref location_id/],
     );
@@ -977,6 +989,21 @@ sub get_dev_preference_rs {
     return unless($preference);
     return $preference->voip_dev_preferences->search_rs({
            device_id => $device->id,
+        });
+}
+sub get_devprof_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $profile = $params{profile};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'devprof_pref' => 1,
+        });
+    return unless($preference);
+    return $preference->voip_devprof_preferences->search_rs({
+           profile_id => $profile->id,
         });
 }
 sub get_contract_preference_rs {
