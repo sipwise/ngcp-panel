@@ -1,0 +1,22 @@
+[% site_config.title = c.loc('Device profile "[_1]" - Preferences', devprof.config.device.vendor _ " " _ devprof.config.device.model _ " " _ devprof.name) -%]
+
+[%
+    helper.messages = messages;
+    
+    helper.edit_preference = edit_preference;
+    helper.preference = preference;
+    helper.preference_meta = preference_meta;
+    helper.preference_values = preference_values;
+    helper.pref_groups = pref_groups;
+    helper.form = form;
+    helper.base_uri = c.uri_for_action("/device/profile_preferences_root", [c.req.captures.0]);
+ 
+    helper.top_buttons = [
+        { name = c.loc('Back'), uri = c.uri_for(""), icon = 'icon-arrow-left' },
+    ];
+
+    PROCESS 'helpers/pref_table.tt';
+%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
