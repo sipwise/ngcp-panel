@@ -80,18 +80,21 @@ sub get_inflated_columns_all{
         my %lres;
         my $register_value = sub {
             my($hash,$key,$value) = @_;
-            if(exists $hash->{$key} || $params{force_array}){
+            if( $params{force_array} || exists $hash->{$key} ){
                 if('ARRAY' eq ref $hash->{$key}){
                     push @{$hash->{$key}}, $value;
                 }else{
-                    $hash->{$key} = [$hash->{$key}, $value];
+                    if( exists $hash->{$key}){
+                        $hash->{$key} = [$hash->{$key}, $value];
+                    }else{
+                        $hash->{$key} = [$value];
+                    }
                 }
             }else{
                 $hash->{$key} = $value;
             }
         };
-        my $hashvalue_column = $params{column};
-        foreach($rs->all){
+        my $hashvalue_column = $params{column};        foreach($rs->all){
             $register_value->(\%lres,$_->{$hashkey_column}, $hashvalue_column ? $_->{$hashvalue_column} : $_);
         }
         $res = \%lres;

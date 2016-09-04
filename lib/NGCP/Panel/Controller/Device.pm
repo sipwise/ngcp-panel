@@ -1372,6 +1372,22 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         }
         push @{ $vars->{phone}->{lineranges} }, $range;
     }
+    my $pref_rs_model = NGCP::Panel::Utils::Preferences::get_preferences_rs(
+        c => $c,
+        id => $model->id,
+        type => 'dev',
+    );
+    my $pref_rs_profile = NGCP::Panel::Utils::Preferences::get_preferences_rs(
+        c => $c,
+        id => $dev->profile->id,
+        type => 'devprof',
+    );
+    my %preferences_device = (
+        'model' => get_inflated_columns_all($pref_rs_model, c => $c, 'hash' => 'attribute', 'column' => 'value' ),
+        'profile' => get_inflated_columns_all($pref_rs_profile, c => $c, 'hash' => 'attribute', 'column' => 'value' ),
+    );
+    $vars->{preferences} //= {};
+    $vars->{preferences}->{device} = \%preferences_device;
 
     my $data = $dev->profile->config->data;
 
@@ -1930,29 +1946,13 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
 
 sub devices_preferences_list :Chained('devmod_base') :PathPart('preferences') :CaptureArgs(0) {
     my ($self, $c) = @_;
-
-    my $dev_pref_rs = $c->model('DB')
-        ->resultset('voip_preferences')
-        ->search({
-            'device.id' => $c->stash->{devmod}->id,
-        },{
-            prefetch => {'voip_dev_preferences' => 'device'},
-    });
-    my %pref_values;
-    foreach my $value($dev_pref_rs->all) {
-        $pref_values{$value->attribute} =
-            [ map {$_->value} $value->voip_dev_preferences->all ];
-    }
-    my $pref_values = \%pref_values;
     
-    #my $dev_pref_rs = NGCP::Panel::Utils::Preferences::get_preferences_rs(
-    #    c => $c,
-    #    type => 'dev',
-    #    id => $c->stash->{devmod}->id,
-    #);
-    #my $pref_values = get_inflated_columns_all($dev_pref_rs,'hash' => 'attribute', 'column' => 'value', 'force_array' => 1);
-    #use Data::Dumper;
-    #$c->log->debug(Dumper(["pref_values",$pref_values]));
+    my $dev_pref_rs = NGCP::Panel::Utils::Preferences::get_preferences_rs(
+        c => $c,
+        type => 'dev',
+        id => $c->stash->{devmod}->id,
+    );
+    my $pref_values = get_inflated_columns_all($dev_pref_rs,'hash' => 'attribute', 'column' => 'value', 'force_array' => 1);
 
     NGCP::Panel::Utils::Preferences::load_preference_list( 
         c => $c,
@@ -2013,19 +2013,12 @@ sub devices_preferences_edit :Chained('devices_preferences_base') :PathPart('edi
 sub profile_preferences_list :Chained('devprof_base') :PathPart('preferences') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $devprof_pref_rs = $c->model('DB')
-        ->resultset('voip_preferences')
-        ->search({
-            'profile.id' => $c->stash->{devprof}->id,
-        },{
-            prefetch => {'voip_devprof_preferences' => 'profile'},
-    });
-    my %pref_values;
-    foreach my $value($devprof_pref_rs->all) {
-        $pref_values{$value->attribute} =
-            [ map {$_->value} $value->voip_devprof_preferences->all ];
-    }
-    my $pref_values = \%pref_values;
+    my $devprof_pref_rs = NGCP::Panel::Utils::Preferences::get_preferences_rs(
+        c => $c,
+        type => 'devprof',
+        id => $c->stash->{devprof}->id,
+    );
+    my $pref_values = get_inflated_columns_all($devprof_pref_rs,'hash' => 'attribute', 'column' => 'value', 'force_array' => 1);
 
     NGCP::Panel::Utils::Preferences::load_preference_list( 
         c => $c,
