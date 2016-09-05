@@ -7178,6 +7178,10 @@ msgid "Recent Calls"
 msgstr "Llamadas recientes"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Recent Calls by UPN"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Recover"
 msgstr ""
 
@@ -10824,6 +10828,11 @@ msgstr "Usar primero el Número en vez de Contacto para llamadas salientes"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use Regex"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Use User-Provided-Number instead of Subscriber UUID when storing recent calls"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
