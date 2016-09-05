@@ -6,6 +6,7 @@ use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::Peering::Group;
 use NGCP::Panel::Form::Peering::Rule;
+use NGCP::Panel::Form::Peering::InboundRule;
 use NGCP::Panel::Form::Peering::Server;
 use NGCP::Panel::Utils::DialogicImg;
 use NGCP::Panel::Utils::Message;
@@ -95,6 +96,15 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'description', search => 1, title => $c->loc('Description') },
         { name => 'enabled', search => 1, title => $c->loc('Enabled') },
     ]);
+    $c->stash->{inbound_rules_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'priority', search => 0, title => $c->loc('Priority') },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'field', search => 1, title => $c->loc('Field') },
+        { name => 'pattern', search => 1, title => $c->loc('Pattern') },
+        { name => 'reject_code', search => 1, title => $c->loc('Reject Code') },
+        { name => 'reject_reason', search => 1, title => $c->loc('Reject Reason') },
+        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
+    ]);
 
 
     $c->stash(group => {$res->get_columns});
@@ -107,7 +117,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Group->new;
+    my $form = NGCP::Panel::Form::Peering::Group->new(ctx => $c);
     my $params = { $c->stash->{group_result}->get_inflated_columns };
     $params->{contract}{id} = delete $params->{peering_contract_id};
     $params = merge($params, $c->session->{created_objects});
@@ -176,7 +186,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Group->new;
+    my $form = NGCP::Panel::Form::Peering::Group->new(ctx => $c);
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     $form->process(
@@ -568,7 +578,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
    
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Rule->new;
+    my $form = NGCP::Panel::Form::Peering::Rule->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -640,7 +650,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Rule->new;
+    my $form = NGCP::Panel::Form::Peering::Rule->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -698,6 +708,230 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+    return;
+}
+
+sub inbound_rules_list :Chained('base') :PathPart('inboundrules') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+
+    my $sr_list_uri = $c->uri_for_action(
+        '/peering/servers_root', [$c->req->captures->[0]]);
+    $c->stash(sr_list_uri => $sr_list_uri);
+    $c->stash(template => 'peering/servers_rules.tt');
+    return;
+}
+
+sub inbound_rules_ajax :Chained('inbound_rules_list') :PathPart('r_ajax') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $resultset = $c->stash->{group_result}->voip_peer_inbound_rules->search(undef, {
+        order_by => {'-asc' => 'priority'},
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{inbound_rules_dt_columns});
+    $c->detach( $c->view("JSON") );
+    return;
+}
+
+sub inbound_rules_create :Chained('inbound_rules_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+   
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Peering::InboundRule->new(ctx => $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $last_priority = $c->stash->{group_result}->voip_peer_inbound_rules->get_column('priority')->max() || 49;
+            $form->values->{priority} = $last_priority + 1;
+            $c->stash->{group_result}->voip_peer_inbound_rules->create($form->values);
+            $c->stash->{group_result}->update({has_inbound_rules => 1});
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc  => $c->loc('Inbound peering rule successfully created'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create inbound peering rule'),
+            );
+        };
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]),
+        inbound_rules_create_flag => 1,
+        inbound_rules_form => $form,
+    );
+    return;
+}
+
+sub inbound_rules_base :Chained('inbound_rules_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $rule_id) = @_;
+
+    unless($rule_id && is_int($rule_id)) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'Invalid inbound peering rule id detected',
+            desc  => $c->loc('Invalid inbound peering rule id detected'),
+        );
+        $c->response->redirect($c->stash->{sr_list_uri});
+        $c->detach;
+        return;
+    }
+
+    my $res = $c->stash->{group_result}->voip_peer_inbound_rules->find($rule_id);
+    unless(defined($res)) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'Inbound Peering Rule does not exist',
+            desc  => $c->loc('Inbound Peering Rule does not exist'),
+        );
+        $c->response->redirect($c->stash->{sr_list_uri});
+        $c->detach;
+        return;
+    }
+    $c->stash(inbound_rule => {$res->get_columns});
+    $c->stash(inbound_rule_result => $res);
+    return;
+}
+
+sub inbound_rules_edit :Chained('inbound_rules_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Peering::InboundRule->new(ctx => $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $c->stash->{inbound_rule},
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->stash->{inbound_rule_result}->update($form->values);
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Inbound peering rule successfully changed'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update inbound peering rule'),
+            );
+        };
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]),
+        inbound_rules_form => $form,
+        inbound_rules_edit_flag => 1,
+    );
+    return;
+}
+
+sub inbound_rules_delete :Chained('inbound_rules_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+    
+    try {
+        $c->stash->{inbound_rule_result}->delete;
+        unless($c->stash->{group_result}->voip_peer_inbound_rules->count)
+        {
+            $c->stash->{group_result}->update({has_inbound_rules => 0});
+        }
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { $c->stash->{inbound_rule_result}->get_inflated_columns },
+            desc => $c->loc('Inbound peering rule successfully deleted'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete inbound peering rule'),
+        );
+    };
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+    return;
+}
+
+sub inbound_rules_up :Chained('inbound_rules_base') :PathPart('up') :Args(0) {
+    my ($self, $c) = @_;
+   
+    my $elem = $c->stash->{inbound_rule_result};
+
+    my $swap_elem = $c->stash->{group_result}->voip_peer_inbound_rules->search({
+        priority => { '<' => $elem->priority },
+    },{
+        order_by => {'-desc' => 'priority'},
+    })->first;
+    try {
+        if ($swap_elem) {
+            my $tmp_priority = $swap_elem->priority;
+            $swap_elem->priority($elem->priority);
+            $elem->priority($tmp_priority);
+            $swap_elem->update;
+            $elem->update;
+        } else {
+            my $last_priority = $c->stash->{group_result}->voip_peer_inbound_rules->get_column('priority')->min() || 1;
+            $elem->priority(int($last_priority) - 1);
+            $elem->update;
+        }
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to move inbound peering rule up.'),
+        );
+    }
+    return;
+}
+
+sub inbound_rules_down :Chained('inbound_rules_base') :PathPart('down') :Args(0) {
+    my ($self, $c) = @_;
+   
+    my $elem = $c->stash->{inbound_rule_result};
+
+    my $swap_elem = $c->stash->{group_result}->voip_peer_inbound_rules->search({
+        priority => { '>' => $elem->priority },
+    },{
+        order_by => {'-asc' => 'priority'},
+    })->first;
+    try {
+        if ($swap_elem) {
+            my $tmp_priority = $swap_elem->priority;
+            $swap_elem->priority($elem->priority);
+            $elem->priority($tmp_priority);
+            $swap_elem->update;
+            $elem->update;
+        } else {
+            my $last_priority = $c->stash->{group_result}->voip_peer_inbound_rules->get_column('priority')->max() || 49;
+            $elem->priority(int($last_priority) + 1);
+            $elem->update;
+        }
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to move inbound peering rule down.'),
+        );
+    }
     return;
 }
 

@@ -5,6 +5,7 @@
     helper.identifier = 'peering_servers';
     helper.messages = messages;
     helper.dt_columns = server_dt_columns;
+    helper.length_change = 1;
 
     helper.close_target = close_target;
     helper.create_flag = servers_create_flag;
@@ -32,9 +33,10 @@
 -%]
 
 <div class="ngcp-separator"></div>
-<h3>[% c.loc('Peering Rules') %]</h3>
+<h3>[% c.loc('Outbound Peering Rules') %]</h3>
+<p>ANY of the rules must match to choose the peering group for outbound calls.</p>
 [%
-    helper.name = c.loc('Peering Rule');
+    helper.name = c.loc('Outbound Peering Rule');
     helper.identifier = 'PeeringRules';
     helper.messages = rules_messages;
     helper.dt_columns = rules_dt_columns;
@@ -42,6 +44,7 @@
     helper.create_flag = rules_create_flag;
     helper.edit_flag = rules_edit_flag;
     helper.form_object = rules_form;
+    helper.length_change = 1;
     helper.ajax_uri = c.uri_for_action( "/peering/rules_ajax", [c.req.captures.0] );
 
     helper.tmpuri = c.uri_for(group.id, "rules");
@@ -51,7 +54,41 @@
             { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
-            { name = c.loc('Create Peering Rule'), uri = helper.tmpuri _ "/create", icon = 'icon-star' },
+            { name = c.loc('Create Outbound Peering Rule'), uri = helper.tmpuri _ "/create", icon = 'icon-star' },
+        ];
+    ELSE;
+        helper.dt_buttons = [];
+        helper.top_buttons = [];
+    END;
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+
+<div class="ngcp-separator"></div>
+<h3>[% c.loc('Inbound Peering Rules') %]</h3>
+<p>ALL of the rules must match to choose the peering group for inbound calls.</p>
+[%
+    helper.name = c.loc('Inbound Peering Rule');
+    helper.identifier = 'InboundPeeringRules';
+    helper.messages = inbound_rules_messages;
+    helper.dt_columns = inbound_rules_dt_columns;
+    helper.close_target = close_target;
+    helper.create_flag = inbound_rules_create_flag;
+    helper.edit_flag = inbound_rules_edit_flag;
+    helper.form_object = inbound_rules_form;
+    helper.length_change = 1;
+    helper.ajax_uri = c.uri_for_action( "/peering/inbound_rules_ajax", [c.req.captures.0] );
+
+    helper.tmpuri = c.uri_for(group.id, "inboundrules");
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Up'), uri = helper.tmpuri _ "/'+full[\"id\"]+'/up", class = 'btn-small btn-primary', icon = 'icon-arrow-up' },
+            { name = c.loc('Down'), uri = helper.tmpuri _ "/'+full[\"id\"]+'/down", class = 'btn-small btn-primary', icon = 'icon-arrow-down' },
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Inbound Peering Rule'), uri = helper.tmpuri _ "/create", icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [];
