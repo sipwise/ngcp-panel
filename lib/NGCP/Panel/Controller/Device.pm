@@ -1952,12 +1952,19 @@ sub devices_preferences_list :Chained('devmod_base') :PathPart('preferences') :C
         type => 'dev',
         id => $c->stash->{devmod}->id,
     );
+    
     my $pref_values = get_inflated_columns_all($dev_pref_rs,'hash' => 'attribute', 'column' => 'value', 'force_array' => 1);
 
     NGCP::Panel::Utils::Preferences::load_preference_list( 
         c => $c,
         pref_values => $pref_values,
         dev_pref => 1,
+        search_conditions => {
+            '-or' => [
+                {'attribute' => {'like' => 'vnd_'.lc($c->stash->{devmod}->vendor).'%' } },
+                {'attribute' => {'-not_like' => 'vnd_%' }}
+            ],
+        }
     );
 
     $c->stash(template => 'device/preferences.tt');
@@ -2024,6 +2031,12 @@ sub profile_preferences_list :Chained('devprof_base') :PathPart('preferences') :
         c => $c,
         pref_values => $pref_values,
         'devprof_pref' => 1,
+        search_conditions => {
+            '-or' => [
+                {'attribute' => {'like' => 'vnd_'.lc($c->stash->{devprof}->config->device->vendor).'%' } },
+                {'attribute' => {'-not_like' => 'vnd_%' }}
+            ],
+        }
     );
 
     $c->stash(template => 'device/profilepreferences.tt');

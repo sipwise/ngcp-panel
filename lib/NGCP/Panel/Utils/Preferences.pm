@@ -47,6 +47,8 @@ sub load_preference_list {
     my $customer_view = $params{customer_view} // 0;
     my $cloudpbx_enabled = $c->config->{features}{cloudpbx};
 
+    my $search_conditions = $params{search_conditions};
+
     my $pref_rs = $c->model('DB')
         ->resultset('voip_preference_groups')
         ->search({ 'voip_preferences.internal' => { '<=' => 0 },
@@ -84,6 +86,13 @@ sub load_preference_list {
         $pref_rs = $pref_rs->search({
             'voip_preferences.id' => { in => \@prof_attributes }
         });
+    }
+    if($search_conditions) {
+        if('ARRAY' eq $search_conditions){
+            $pref_rs = $pref_rs->search(@$search_conditions);
+        }else{
+            $pref_rs = $pref_rs->search($search_conditions);
+        }
     }
     my @pref_groups = $pref_rs->all;
 
