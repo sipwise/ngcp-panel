@@ -52,6 +52,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
     # remove leading/trailing spaces
     foreach my $type (qw(caller callee)) {
         $data->{$type} =~ s/(^\s+|\s+$)//g;
+        $data->{$type} =~ s/^sip://;
     }
 
     # caller lookup

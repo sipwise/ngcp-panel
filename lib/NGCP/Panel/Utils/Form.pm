@@ -117,7 +117,7 @@ sub validate_number_uri {
     my $field = $params{field};
     my $val = $field->value;
 
-    unless ($val =~ /^\s*[\+\-_\w\d]+\@[\w\d\-_\.]+\s*$/ || $val =~ /^\s*\+*\d+\s*$/) {
+    unless ($val =~ /^\s*(sip:)*[\+\-_\w\d]+\@[\w\d\-_\.]+\s*$/ || $val =~ /^\s*\+*\d+\s*$/) {
         $field->add_error($c->loc('Must be either a number or user@domain format.'));
     }
 }
