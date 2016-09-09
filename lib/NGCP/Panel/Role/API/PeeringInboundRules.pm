@@ -1,37 +1,33 @@
-package NGCP::Panel::Role::API::PeeringGroups;
+package NGCP::Panel::Role::API::PeeringInboundRules;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Peering::Group;
+use NGCP::Panel::Form::Peering::InboundRuleAPI;
 use NGCP::Panel::Utils::Peering;
-
-sub resource_name{return 'peeringgroups';}
-sub dispatch_path{return '/api/peeringgroups/';}
-sub relation{return 'http://purl.org/sipwise/ngcp-api/#rel-peeringgroups';}
-
 
 sub _item_rs {
     my ($self, $c) = @_;
-    my $item_rs = $c->model('DB')->resultset('voip_peer_groups');
+    my $item_rs = $c->model('DB')->resultset('voip_peer_inbound_rules');
     return $item_rs;
 }
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Peering::Group->new(ctx => $c);
+    return NGCP::Panel::Form::Peering::InboundRuleAPI->new(ctx => $c);
 }
 
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
     my %resource = $item->get_inflated_columns;
-    $resource{contract_id} = delete $resource{peering_contract_id};
+
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -43,9 +39,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:peeringservers', href => sprintf("/api/peeringservers/?group_id=%d", $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:peeringrules', href => sprintf("/api/peeringrules/?group_id=%d", $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:peeringinboundrules', href => sprintf("/api/peeringinboundrules/?group_id=%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:peeringgroups', href => sprintf("/api/peeringgroups/%d", $resource{group_id})),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -56,6 +50,7 @@ sub hal_from_item {
         c => $c,
         resource => \%resource,
         form => $form,
+        exceptions => [qw/group_id/],
         run => 0,
     );
 
@@ -78,21 +73,40 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
+        exceptions => [qw/group_id/],
     );
-    $resource = $form->custom_get_values;
-    last unless $resource;
-
-    my $dup_item = $c->model('DB')->resultset('voip_peer_groups')->find({
-        name => $resource->{name},
+    unless($c->model('DB')->resultset('voip_peer_groups')->find($resource->{group_id})) {
+        $c->log->error("peering group $$resource{group_id} does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering group $$resource{group_id} does not exist");
+        return;
+    }
+    my $dup_item = $c->model('DB')->resultset('voip_peer_inbound_rules')->find({
+        group_id => $resource->{group_id},
+        field => $resource->{field},
+        pattern => $resource->{pattern},
+        reject_code => $resource->{reject_code},
+        reject_reason => $resource->{reject_reason},
+        enabled => $resource->{enabled},
+        priority => $resource->{priority},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("peering group with name '$$resource{name}' already exists"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering group with this name already exists");
+        $c->log->error("peering rule already exists"); # TODO: user, message, trace, ...
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule already exists");
+        return;
+    }
+    if($c->model('DB')->resultset('voip_peer_inbound_rules')->search({
+            id => { '!=' => $item->id },
+            group_id => $resource->{group_id},
+            priority => $resource->{priority},
+        },
+        {}
+    )->count) {
+        $c->log->error("peering rule priority $$resource{priority} already exists for this group");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule priority $$resource{priority} already exists for this group");
         return;
     }
 
     $item->update($resource);
-    NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
     return $item;
 }
 
