@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::PeeringRules;
+package NGCP::Panel::Controller::API::PeeringInboundRules;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
@@ -23,7 +23,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines outbound peering rules.';
+    return 'Defines inbound peering rules.';
 };
 
 sub query_params {
@@ -40,12 +40,12 @@ sub query_params {
             },
         },
         {
-            param => 'description',
-            description => 'Filter for peering rules description',
+            param => 'field',
+            description => 'Filter for peering rules field (wildcards possible)',
             query => {
                 first => sub {
                     my $q = shift;
-                    { description => { like => $q } };
+                    { field => { like => $q } };
                 },
                 second => sub {},
             },
@@ -64,16 +64,16 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringRules/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringInboundRules/;
 
 sub resource_name{
-    return 'peeringrules';
+    return 'peeringinboundrules';
 }
 sub dispatch_path{
-    return '/api/peeringrules/';
+    return '/api/peeringinboundrules/';
 }
 sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-peeringrules';
+    return 'http://purl.org/sipwise/ngcp-api/#rel-peeringinboundrules';
 }
 
 __PACKAGE__->config(
@@ -182,21 +182,42 @@ sub POST :Allow {
             form => $form,
             exceptions => [qw/group_id/],
         );
-        my $dup_item = $c->model('DB')->resultset('voip_peer_rules')->find({
+        unless($c->model('DB')->resultset('voip_peer_groups')->find($resource->{group_id})) {
+            $c->log->error("peering group $$resource{group_id} does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering group $$resource{group_id} does not exist");
+            last;
+        }
+        my $dup_item = $c->model('DB')->resultset('voip_peer_inbound_rules')->find({
             group_id => $resource->{group_id},
-            callee_pattern => $resource->{callee_pattern},
-            caller_pattern => $resource->{caller_pattern},
-            callee_prefix => $resource->{callee_prefix},
+            field => $resource->{field},
+            pattern => $resource->{pattern},
+            reject_code => $resource->{reject_code},
+            reject_reason => $resource->{reject_reason},
+            enabled => $resource->{enabled},
+            priority => $resource->{priority},
         });
         if($dup_item) {
             $c->log->error("peering rule already exists"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule already exists");
-            return;
+            last;
+        }
+        my $prio_rs = $c->model('DB')->resultset('voip_peer_inbound_rules')->search({
+                group_id => $resource->{group_id},
+                priority => $resource->{priority},
+            },
+            {}
+        );
+        if($prio_rs->count) {
+            $c->log->error("peering rule priority $$resource{priority} already exists for this group");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule priority $$resource{priority} already exists for this group");
+            last;
         }
 
         try {
-            $item = $c->model('DB')->resultset('voip_peer_rules')->create($resource);
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            $item = $c->model('DB')->resultset('voip_peer_inbound_rules')->create($resource);
+            $item->group->update({
+                has_inbound_rules => 1
+            });
         } catch($e) {
             $c->log->error("failed to create peering rule: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering rule.");
