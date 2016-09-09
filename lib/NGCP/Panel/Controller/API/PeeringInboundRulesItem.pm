@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::PeeringRulesItem;
+package NGCP::Panel::Controller::API::PeeringInboundRulesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
@@ -18,16 +18,16 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringRules/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringInboundRules/;
 
 sub resource_name{
-    return 'peeringrules';
+    return 'peeringinboundrules';
 }
 sub dispatch_path{
-    return '/api/peeringrules/';
+    return '/api/peeringinboundrules/';
 }
 sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-peeringrules';
+    return 'http://purl.org/sipwise/ngcp-api/#rel-peeringinboundrules';
 }
 
 __PACKAGE__->config(
@@ -56,7 +56,7 @@ sub GET :Allow {
     {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, peeringrule => $item);
+        last unless $self->resource_exists($c, peeringinboundrule => $item);
 
         my $hal = $self->hal_from_item($c, $item);
 
@@ -108,7 +108,7 @@ sub PATCH :Allow {
         last unless $json;
 
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, peeringrule => $item);
+        last unless $self->resource_exists($c, peeringinboundrule => $item);
         my $old_resource = { $item->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
@@ -144,7 +144,7 @@ sub PUT :Allow {
         last unless $preference;
 
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, peeringrule => $item);
+        last unless $self->resource_exists($c, peeringinboundrule => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
@@ -182,9 +182,13 @@ sub DELETE :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, peeringrule => $item);
+        last unless $self->resource_exists($c, peeringinboundrule => $item);
+        if($item->group->voip_peer_inbound_rules->count <= 1) {
+            $item->group->update({
+                has_inbound_rules => 0
+            });
+        }
         $item->delete;
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
