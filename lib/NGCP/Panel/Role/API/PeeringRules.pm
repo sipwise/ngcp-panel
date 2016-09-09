@@ -21,7 +21,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Peering::RuleAPI->new;
+    return NGCP::Panel::Form::Peering::RuleAPI->new(ctx => $c);
 }
 
 sub hal_from_item {
