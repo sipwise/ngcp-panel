@@ -44,7 +44,7 @@ $d->move_to(element => $row);
 $edit_link->click();
 
 diag("Create a Peering Rule");
-$d->find_element('//a[contains(text(),"Create Peering Rule")]')->click();
+$d->find_element('//a[contains(text(),"Create Outbound Peering Rule")]')->click();
 $d->fill_element('callee_prefix', 'id', '43');
 $d->fill_element('callee_pattern', 'id', '^sip');
 $d->fill_element('caller_pattern', 'id', '999');
