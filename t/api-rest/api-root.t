@@ -104,6 +104,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         pbxdevices => 1,
         peeringgroups => 1,
         peeringrules => 1,
+        peeringinboundrules => 1,
         peeringserverpreferencedefs => 1,
         peeringserverpreferences => 1,
         peeringservers => 1,
