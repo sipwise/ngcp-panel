@@ -252,6 +252,12 @@ msgstr ""
 "vergleicht (z.B. '^sip:.+@example\\.org$' oder '^sip:431')"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"A POSIX regex matching against the specified field (e.g. '^sip:.+@example\\."
+"org$' or '^sip:431') when matching against a full URI"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A POSIX regular expression to match the called number (e.g. ^431.+$)."
 msgstr ""
 "Ein POSIX Regulärer Ausdruck (regex) zum Prüfen der Angerufenen Nummer (z."
@@ -2149,6 +2155,10 @@ msgstr ""
 msgid "Create Fee Entry"
 msgstr "Neuer Verrechnungs-Eintrag"
 
+#: share/templates/peering/servers_rules.tt
+msgid "Create Inbound Peering Rule"
+msgstr ""
+
 #: share/templates/invoice/invoice_list.tt
 msgid "Create Invoice"
 msgstr "Rechnung erstellen"
@@ -2182,6 +2192,10 @@ msgstr "Erstellen"
 msgid "Create Number Block"
 msgstr "Neuer Nummernblock"
 
+#: share/templates/peering/servers_rules.tt
+msgid "Create Outbound Peering Rule"
+msgstr ""
+
 #: share/templates/customer/details.tt
 msgid "Create PBX Device"
 msgstr "Neues PBX-Endgerät"
@@ -2201,10 +2215,6 @@ msgstr "Neuer Peering-Vertrag"
 #: share/templates/peering/list.tt
 msgid "Create Peering Group"
 msgstr "Neue Peering-Gruppe"
-
-#: share/templates/peering/servers_rules.tt
-msgid "Create Peering Rule"
-msgstr "Neue Peering-Regel"
 
 #: share/templates/peering/servers_rules.tt
 msgid "Create Peering Server"
@@ -3007,6 +3017,10 @@ msgstr ""
 msgid "Don't have an account?"
 msgstr "Sie haben keinen Zugang?"
 
+#: share/templates/peering/servers_rules.tt
+msgid "Down"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 #: share/templates/device/list.tt share/templates/invoice/invoice_list.tt
 msgid "Download"
@@ -3597,6 +3611,10 @@ msgstr ""
 msgid "Failed to create emergency mapping container"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Failed to create inbound peering rule"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to create invoice template"
 msgstr ""
@@ -3778,6 +3796,10 @@ msgstr ""
 msgid "Failed to delete emergency mapping container"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Failed to delete inbound peering rule"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Failed to delete invoice ."
 msgstr "Löschen der Rechnung fehlgschlagen."
@@ -3901,6 +3923,14 @@ msgstr "Präferenz aktualisieren fehlgeschlagen"
 
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Failed to load default sound files."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Failed to move inbound peering rule down."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Failed to move inbound peering rule up."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm
@@ -4097,6 +4127,10 @@ msgstr ""
 msgid "Failed to update fax setting"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Failed to update inbound peering rule"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to update invoice template"
 msgstr ""
@@ -4262,7 +4296,7 @@ msgstr "Februar"
 msgid "Fees"
 msgstr "Gebühren"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Field"
 msgstr "Feld"
 
@@ -4437,9 +4471,21 @@ msgstr "Anrufer-Pattern"
 msgid "From email"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "From-Domain"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "From-Pattern"
 msgstr "Anrufer-Pattern"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "From-URI"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "From-User"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/device/list.tt
 msgid "Front Image"
@@ -4812,6 +4858,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"If reject code is specified and the call is rejected, the reason in the "
+"response is taken from this value"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "If set, the UPN of the calling party is not checked against the allowed CLIs "
 "provisioned for this subscriber if a Diversion or History-Info header is "
 "provided in an incoming call. This can be used to allow diversion on the "
@@ -4823,6 +4875,13 @@ msgstr ""
 msgid ""
 "If set, will be played as Number of the voicebox owner. Otherwise the number "
 "of the preference \"cli\" is used."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"If specified, the call is rejected if the source IP of the request is found "
+"in a peering server of the group, but the given pattern does not match; "
+"Range of 400-699"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -4860,6 +4919,18 @@ msgstr ""
 msgid "Inbound Network-Provided Number"
 msgstr "Eingehende Network-Provided Nummer"
 
+#: share/templates/peering/servers_rules.tt
+msgid "Inbound Peering Rule"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Inbound Peering Rule does not exist"
+msgstr ""
+
+#: share/templates/peering/servers_rules.tt
+msgid "Inbound Peering Rules"
+msgstr ""
+
 #: share/templates/rewrite/rules_list.tt
 msgid "Inbound Rewrite Rules for Callee"
 msgstr "Eingehende Übersetzungsregeln für Angerufenen"
@@ -4875,6 +4946,18 @@ msgstr "Eingehende User-Provided Nummer"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Inbound User-Provided Redirecting Number"
 msgstr "Eingehende User-Provided Redirecting Nummer"
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Inbound peering rule successfully changed"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Inbound peering rule successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Inbound peering rule successfully deleted"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/ncos/pattern_list.tt
 msgid "Include local area code"
@@ -5169,6 +5252,10 @@ msgstr "Ungültiger Missbrauchs-Intervall '%1'!"
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Invalid group id detected"
 msgstr "Ungültige Gruppen ID"
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Invalid inbound peering rule id detected"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Invalid invoice id detected"
@@ -5800,6 +5887,10 @@ msgstr "Stamm-Daten"
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Match Direction"
 msgstr "Vergleichts-Richtung"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Match Field"
+msgstr ""
 
 #: share/templates/rewrite/rules_list.tt
 msgid "Match Pattern"
@@ -6484,6 +6575,14 @@ msgstr "Ausgehendes PAI-Username Feld"
 msgid "Outbound PPI-Username Field"
 msgstr "Ausgehendes PPI-Username Feld"
 
+#: share/templates/peering/servers_rules.tt
+msgid "Outbound Peering Rule"
+msgstr ""
+
+#: share/templates/peering/servers_rules.tt
+msgid "Outbound Peering Rules"
+msgstr ""
+
 #: share/templates/rewrite/rules_list.tt
 msgid "Outbound Rewrite Rules for Callee"
 msgstr "Ausgehende Übersetzungsregeln für Angerufenen"
@@ -6506,6 +6605,18 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Own cli"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "PAI-Domain"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "PAI-URI"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "PAI-User"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6684,7 +6795,8 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Pattern"
 
@@ -6769,7 +6881,6 @@ msgstr "Peering-Gruppe erfolgreich gelöscht"
 msgid "Peering Groups"
 msgstr "Peering-Gruppen"
 
-#: share/templates/peering/servers_rules.tt
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Rule"
 msgstr "Peering-Regel"
@@ -6778,7 +6889,6 @@ msgstr "Peering-Regel"
 msgid "Peering Rule does not exist"
 msgstr "Peering-Regel existiert nicht"
 
-#: share/templates/peering/servers_rules.tt
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Rules"
 msgstr "Peering-Regeln"
@@ -7124,6 +7234,18 @@ msgid "RTP-Proxy Mode"
 msgstr "RTP-Proxy Modus"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "RURI-Domain"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "RURI-URI"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "RURI-User"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Random Ringing"
 msgstr ""
 
@@ -7205,17 +7327,33 @@ msgstr "Registrierte Endgeräte für %1@%2"
 msgid "Reject"
 msgstr "Ablehnen"
 
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Reject Code"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject Emergency Calls"
 msgstr "Notrufe ablehnen"
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Reject Reason"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject Vertical Service Codes sent by subscriber"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject emergency calls from this user or domain."
 msgstr "Notrufe für diesen Subscriber oder diese Domain ablehnen."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 msgid "Reminder"
@@ -9627,6 +9765,10 @@ msgid "The fax number of the contact."
 msgstr "Die Fax-Nummer des Kontakts."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The field of the inbound SIP message to match the pattern against"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The filename of the sound file (for informational purposes only)."
 msgstr "Der Dateiname der Sound-Datei (nur zu Informationszwecken)."
 
@@ -10575,6 +10717,18 @@ msgstr "Zeitstempel"
 msgid "To"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "To-Domain"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "To-URI"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "To-User"
+msgstr ""
+
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Tools"
 msgstr ""
@@ -10771,6 +10925,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm
 msgid "Unknown error"
+msgstr ""
+
+#: share/templates/peering/servers_rules.tt
+msgid "Up"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/sound/handles_list.tt
@@ -11752,6 +11910,14 @@ msgstr "angemeldet."
 msgid "registration failed:"
 msgstr "Anmeldung fehlgeschlagen:"
 
+#: lib/NGCP/Panel/Form/Peering/InboundRule.pm
+msgid "reject code must be filled if reject reason is filled"
+msgstr ""
+
+#: lib/NGCP/Panel/Form/Peering/InboundRule.pm
+msgid "reject reason must be filled if reject code is filled"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "reseller"
 msgstr ""
@@ -11892,6 +12058,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Create Peering Rule"
+#~ msgstr "Neue Peering-Regel"
 
 #~ msgid ""
 #~ "Call Forward Busy, Contains the keys \"destinations\" and \"times\". "
