@@ -50,8 +50,13 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
 
     # caller/callee general parsing
     # remove leading/trailing spaces
+    # save the domain part
     foreach my $type (qw(caller callee)) {
         $data->{$type} =~ s/(^\s+|\s+$)//g;
+        $data->{$type} =~ s/^sip://;
+        if ($data->{$type} =~ s/\@(.+)$//) {
+            $data->{$type.'_domain'} = $1;
+        }
     }
 
     # caller lookup
@@ -82,12 +87,15 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
         }
         $data->{caller_peer_host} = $data->{caller_peer}->voip_peer_hosts->first;
     } else {
+        my $caller_uri = $data->{caller_domain}
+                            ? $data->{caller}.'@'.$data->{caller_domain}
+                            : $data->{caller};
         push @log, sprintf "no caller subscriber/peer was specified, using subscriber lookup based on caller %s",
-            $data->{caller};
+            $caller_uri;
         $data->{caller_subscriber} =
             NGCP::Panel::Utils::Subscriber::lookup(
                                     c => $c,
-                                    lookup => $data->{caller},
+                                    lookup => $caller_uri
                                  );
         if ($data->{caller_subscriber}) {
             $data->{caller_subscriber_id} = $data->{caller_subscriber}->id;
@@ -118,71 +126,6 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                         $data->{caller_peer_host}->name,
                         $data->{caller_peer_host}->ip,
                         $data->{caller_peer_host}->id;
-    }
-
-    # subscriber allowed_cli checks
-    if ($data->{caller_subscriber}) {
-        my %usr_prefs;
-        foreach my $pref (qw(allowed_clis allowed_clis_reject_policy cli user_cli)) {
-            my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c, attribute => $pref,
-                prov_subscriber =>
-                    $data->{caller_subscriber}->provisioning_voip_subscriber,
-            );
-            if ($rs->first) {
-                @{$usr_prefs{$pref}} = map { $_->value } $rs->all;
-            } else {
-                $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                    c => $c, attribute => $pref,
-                    prov_domain =>
-                        $data->{caller_subscriber}->provisioning_voip_subscriber->domain,
-                );
-                if ($rs->first) {
-                    @{$usr_prefs{$pref}} = map { $_->value } $rs->all;
-                }
-            }
-        }
-        my $match = map { $_ =~ s/\*/.*/g;
-                          $data->{caller} =~ /^$_$/;
-                        } @{$usr_prefs{allowed_clis}};
-        if ($match) {
-            push @log, sprintf
-                "caller %s is accepted as it matches subscriber's 'allowed_clis'",
-                    $data->{caller};
-        } else {
-            push @log, sprintf
-                "caller %s is rejected as it does not match subscriber's 'allowed_clis'",
-                    $data->{caller};
-            if (defined $usr_prefs{allowed_clis_reject_policy}) {
-                SWITCH: for ($usr_prefs{allowed_clis_reject_policy}[0]) {
-                    /^override_by_clir$/ && do {
-                        push @log,
-                            "'allowed_cli' reject policy is 'override_by_clir', anonymising caller";
-                        $data->{caller} = 'anonymous';
-                        last SWITCH;
-                    };
-                    /^override_by_usernpn$/ && do {
-                        push @log,
-                            "'allowed_cli' reject policy is 'override_by_usernpn'";
-                        foreach my $cli (qw(user_cli cli)) {
-                            if (defined $usr_prefs{$cli}) {
-                                $data->{caller} = $usr_prefs{$cli}[0];
-                                $log[-1] .= sprintf ", taken from '$cli' %s",
-                                    $usr_prefs{$cli}[0];
-                                last;
-                            }
-                        }
-                        last SWITCH;
-                    };
-                    /^reject$/ && do {
-                        push @log,
-                            "'allowed_cli' reject policy is 'reject', terminating the call";
-                        goto RESULT;
-                        last SWITCH;
-                    };
-                }
-            }
-        }
     }
 
     # caller inbound rewrite rules lookup
@@ -283,6 +226,71 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
         $data->{$type.'_in'} = $new || $data->{$type};
     }
 
+    # subscriber allowed_cli checks
+    if ($data->{caller_subscriber}) {
+        my %usr_prefs;
+        foreach my $pref (qw(allowed_clis allowed_clis_reject_policy cli user_cli)) {
+            my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => $pref,
+                prov_subscriber =>
+                    $data->{caller_subscriber}->provisioning_voip_subscriber,
+            );
+            if ($rs->first) {
+                @{$usr_prefs{$pref}} = map { $_->value } $rs->all;
+            } else {
+                $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                    c => $c, attribute => $pref,
+                    prov_domain =>
+                        $data->{caller_subscriber}->provisioning_voip_subscriber->domain,
+                );
+                if ($rs->first) {
+                    @{$usr_prefs{$pref}} = map { $_->value } $rs->all;
+                }
+            }
+        }
+        my $match = map { $_ =~ s/\*/.*/g;
+                          $data->{caller} =~ /^$_$/;
+                        } @{$usr_prefs{allowed_clis}};
+        if ($match) {
+            push @log, sprintf
+                "caller %s is accepted as it matches subscriber's 'allowed_clis'",
+                    $data->{caller};
+        } else {
+            push @log, sprintf
+                "caller %s is rejected as it does not match subscriber's 'allowed_clis'",
+                    $data->{caller};
+            if (defined $usr_prefs{allowed_clis_reject_policy}) {
+                SWITCH: for ($usr_prefs{allowed_clis_reject_policy}[0]) {
+                    /^override_by_clir$/ && do {
+                        push @log,
+                            "'allowed_cli' reject policy is 'override_by_clir', anonymising caller";
+                        $data->{caller} = 'anonymous';
+                        last SWITCH;
+                    };
+                    /^override_by_usernpn$/ && do {
+                        push @log,
+                            "'allowed_cli' reject policy is 'override_by_usernpn'";
+                        foreach my $cli (qw(user_cli cli)) {
+                            if (defined $usr_prefs{$cli}) {
+                                $data->{caller} = $usr_prefs{$cli}[0];
+                                $log[-1] .= sprintf ", taken from '$cli' %s",
+                                    $usr_prefs{$cli}[0];
+                                last;
+                            }
+                        }
+                        last SWITCH;
+                    };
+                    /^reject$/ && do {
+                        push @log,
+                            "'allowed_cli' reject policy is 'reject', terminating the call";
+                        goto RESULT;
+                        last SWITCH;
+                    };
+                }
+            }
+        }
+    }
+
     # callee lookup
     if ($data->{callee_peer_id}) {
         my $rs = $c->model('DB')->resultset('voip_peer_groups')->search({
@@ -316,14 +324,21 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
             push @log, sprintf "found callee subscriber '%s' with id %d",
                         $sub, $data->{callee_subscriber_id};
         } else {
+            foreach my $type (qw(caller callee)) {
+                $data->{$type.'_uri'} = $data->{$type};
+                if ($data->{$type.'_domain'}) {
+                    $data->{$type.'_uri'} .= '@' . $data->{$type.'_domain'};
+                }
+            }
             push @log,
-                sprintf "no callee subscriber found, performing a peer lookup with caller %s and callee %s",
-                    @{$data}{qw(caller_in callee_in)};
+                sprintf "no callee subscriber found, performing a peer lookup with caller uri %s and callee uri %s and callee %s",
+                    @{$data}{qw(caller_uri callee_uri callee_in)};
             $data->{callee_peers} =
                 NGCP::Panel::Utils::Peering::lookup(
                                         c => $c,
-                                        caller => $data->{caller_in},
-                                        callee => $data->{callee_in},
+                                        prefix => $data->{callee_in},
+                                        caller => $data->{caller_uri},
+                                        callee => $data->{callee_uri},
                                     );
             unless ($data->{callee_peers} && scalar @{$data->{callee_peers}}) {
                 push @log, sprintf "no callee peers found";
