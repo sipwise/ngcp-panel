@@ -103,16 +103,16 @@ sub apply_rewrite {
 sub lookup {
     my (%params) = @_;
 
-    my ($c, $caller, $callee) = @{params}{qw(c caller callee)};
+    my ($c, $caller, $callee, $prefix) = @{params}{qw(c caller callee prefix)};
 
-    return unless $caller && $callee;
+    return unless $caller && $callee && $prefix;
 
     my $rs = $c->model('DB')->resultset('voip_peer_rules')->search({
         enabled => 1,
     },{
         '+columns' => {
                     rule_match => \do {
-                        "'$callee' LIKE CONCAT(callee_prefix,'%') as rule_match"
+                        "'$prefix' LIKE CONCAT(callee_prefix,'%') as rule_match"
                     },
         },
         having => { rule_match => 1 },
