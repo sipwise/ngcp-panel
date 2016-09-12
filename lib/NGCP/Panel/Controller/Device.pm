@@ -1424,11 +1424,26 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->body($cipher->encrypt($processed_data));
     } else {
 =cut
-        $c->response->content_type($dev->profile->config->content_type);
-        $c->response->body($processed_data);
-=pod
+    my $result = $self->dev_field_encrypt( $c, $dev, $processed_data, $vars);
+    $c->response->content_type($result->{content_type});
+    $c->response->body(${$result->{content}});
+}
+sub dev_field_encrypt :Private{
+    my ($self, $c, $dev, $processed_data, $vars) = @_;
+
+    my $result = {'content' => \$processed_data };
+
+    my $model = $dev->profile->config->device;
+
+    my $module = 'NGCP::Panel::Utils::Device';
+    my $method = $module->can(lc($model->vendor.'_fielddev_config_process'));
+    if ( $method ) {
+        $result->{content_type} //= 'application/octet-stream';
+        $method->(\$processed_data, $result, 'field_device' => $dev, 'vars' => $vars );
+    }else{
+        $result->{content_type} //= $dev->profile->config->content_type;
     }
-=cut
+    return $result;
 }
 
 sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Args() {
@@ -1547,8 +1562,9 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
     $c->log->debug("providing config to $id");
     $c->log->debug($processed_data);
 
-    $c->response->content_type($dev->profile->config->content_type);
-    $c->response->body($processed_data);
+    my $result = $self->dev_field_encrypt( $c, $dev, $processed_data, $vars);
+    $c->response->content_type($result->{content_type});
+    $c->response->body(${$result->{content}});
 }
 
 sub dev_servercert :Chained('/') :PathPart('device/autoprov/servercert') :Args(0) {
@@ -1946,16 +1962,16 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
 
 sub devices_preferences_list :Chained('devmod_base') :PathPart('preferences') :CaptureArgs(0) {
     my ($self, $c) = @_;
-    
+
     my $dev_pref_rs = NGCP::Panel::Utils::Preferences::get_preferences_rs(
         c => $c,
         type => 'dev',
         id => $c->stash->{devmod}->id,
     );
-    
+
     my $pref_values = get_inflated_columns_all($dev_pref_rs,'hash' => 'attribute', 'column' => 'value', 'force_array' => 1);
 
-    NGCP::Panel::Utils::Preferences::load_preference_list( 
+    NGCP::Panel::Utils::Preferences::load_preference_list(
         c => $c,
         pref_values => $pref_values,
         dev_pref => 1,
@@ -2007,7 +2023,7 @@ sub devices_preferences_edit :Chained('devices_preferences_base') :PathPart('edi
         ->all;
 
     my $pref_rs = $c->stash->{devmod}->voip_dev_preferences;
-    NGCP::Panel::Utils::Preferences::create_preference_form( 
+    NGCP::Panel::Utils::Preferences::create_preference_form(
         c => $c,
         pref_rs => $pref_rs,
         enums   => \@enums,
@@ -2027,7 +2043,7 @@ sub profile_preferences_list :Chained('devprof_base') :PathPart('preferences') :
     );
     my $pref_values = get_inflated_columns_all($devprof_pref_rs,'hash' => 'attribute', 'column' => 'value', 'force_array' => 1);
 
-    NGCP::Panel::Utils::Preferences::load_preference_list( 
+    NGCP::Panel::Utils::Preferences::load_preference_list(
         c => $c,
         pref_values => $pref_values,
         'devprof_pref' => 1,
@@ -2079,7 +2095,7 @@ sub profile_preferences_edit :Chained('profile_preferences_base') :PathPart('edi
         ->all;
 
     my $pref_rs = $c->stash->{devprof}->voip_devprof_preferences;
-    NGCP::Panel::Utils::Preferences::create_preference_form( 
+    NGCP::Panel::Utils::Preferences::create_preference_form(
         c => $c,
         pref_rs => $pref_rs,
         enums   => \@enums,
