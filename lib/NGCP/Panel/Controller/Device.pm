@@ -1424,11 +1424,17 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->body($cipher->encrypt($processed_data));
     } else {
 =cut
+    my $module = 'NGCP::Panel::Utils::Device';
+    my $method = $module->can(lc($model->vendor.'_fielddev_config_process'));
+    if ( $method ) {
+        my $result = {'content' => \$processed_data, 'content_type'=>'application/octet-stream'};
+        $method->(\$processed_data, $result, 'field_device' => $dev, 'vars' => $vars );
+        $c->response->content_type($result->{content_type});
+        $c->response->body(${$result->{content}});
+    } else {
         $c->response->content_type($dev->profile->config->content_type);
         $c->response->body($processed_data);
-=pod
     }
-=cut
 }
 
 sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Args() {
