@@ -10194,6 +10194,10 @@ msgid "The priority (q-value) of the registration."
 msgstr "Приоритет (q-value) регистрации."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The priority of this rule. Lower values mean higher priority."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The profile defining the actual feature set for this subscriber."
 msgstr "Профиль определяющий фактический набор функций для этого абонента."
 
