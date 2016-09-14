@@ -23,14 +23,14 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines peering groups.';
+    return 'Defines peering servers.';
 };
 
 sub query_params {
     return [
         {
             param => 'group_id',
-            description => 'Filter for peering server group',
+            description => 'Filter for peering group',
             query => {
                 first => sub {
                     my $q = shift;
@@ -101,7 +101,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
