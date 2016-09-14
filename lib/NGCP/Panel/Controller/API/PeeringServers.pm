@@ -23,7 +23,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines peering groups.';
+    return 'Defines peering servers.';
 };
 
 sub query_params {
