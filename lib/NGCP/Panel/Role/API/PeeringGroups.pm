@@ -24,7 +24,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Peering::Group->new;
+    return NGCP::Panel::Form::Peering::Group->new(ctx => $c);
 }
 
 sub hal_from_item {
@@ -42,6 +42,8 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:peeringservers', href => sprintf("/api/peeringservers/?group_id=%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:peeringrules', href => sprintf("/api/peeringrules/?group_id=%d", $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
