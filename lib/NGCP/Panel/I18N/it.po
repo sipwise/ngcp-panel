@@ -6986,11 +6986,21 @@ msgid "Play"
 msgstr "Riproduci"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Play announcement before routing to CFU/CFNA"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play file in a loop."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play in Loop"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Playback announcement as early media before Call Forward Unconditional or "
+"Unavailable."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
