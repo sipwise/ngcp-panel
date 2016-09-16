@@ -797,7 +797,9 @@ msgstr ""
 msgid ""
 "An array of sources, each containing the key \"source\" which will be "
 "matched against the call's anumber to determine whether to apply the "
-"callforward or not."
+"callforward or not. \"source\" is the calling party number in E164 format to "
+"match. Shell patterns like 431* or 49123[1-5]67 are possible. Use \"anonymous"
+"\" to match suppressed numbers."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9330,6 +9332,13 @@ msgstr "Номер абонента оставившего сообщение."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"The calling party number in E164 format to match. Shell patterns like 431* "
+"or 49123~~[1-5~~]67 are possible. Use &quot;anonymous&quot; to match "
+"suppressed numbers."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "The chosen Codecs will be used from the IMG to transcode to, in the given "
 "order of priority."
 msgstr ""
@@ -10606,6 +10615,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The unique name of the profile package."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The unique name of the source set. Arbitrary text"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
