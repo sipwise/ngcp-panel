@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba3841fe_27b9192f",
+        "filename": "lib/NGCP/Panel/Controller/API/PeeringServers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-09-19T09:51:45Z",
+      "side": 1,
+      "message": "maybe \"peering group\" here too?",
+      "range": {
+        "startLine": 32,
+        "startChar": 47,
+        "endLine": 32,
+        "endChar": 53
+      },
+      "revId": "95c550e848de0973dfc8473dbaaa06797bd712a9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba3841fe_07b6953d",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringGroups.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-09-19T09:51:45Z",
+      "side": 1,
+      "message": "should be no need",
+      "revId": "95c550e848de0973dfc8473dbaaa06797bd712a9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba3841fe_67820154",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringRules.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-09-19T09:51:45Z",
+      "side": 1,
+      "message": "should be no need",
+      "revId": "95c550e848de0973dfc8473dbaaa06797bd712a9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba3841fe_4787fd61",
+        "filename": "lib/NGCP/Panel/Role/API/PeeringServers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-09-19T09:51:45Z",
+      "side": 1,
+      "message": "should be no need",
+      "revId": "95c550e848de0973dfc8473dbaaa06797bd712a9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
