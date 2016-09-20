@@ -175,6 +175,10 @@ sub process_cdr_item {
     my $own_sub = ($resource->{direction} eq "out")
         ? $billing_src_sub
         : $billing_dst_sub;
+    my $other_sub = ($resource->{direction} eq "out")
+        ? $billing_dst_sub
+        : $billing_src_sub;
+
     if($resource->{own_cli} !~ /^\d+$/) {
         $resource->{own_cli} .= '@'.$own_domain;
     } elsif($own_normalize) {
@@ -199,6 +203,10 @@ sub process_cdr_item {
     if ( (!($sub // $own_sub)) || (($sub // $own_sub)->status eq "terminated") ) {
         $resource->{own_cli} .= " (terminated)";
     }
+    if ($other_sub && $other_sub->status eq "terminated") {
+        $resource->{other_cli} .= " (terminated)";
+    }
+
     $resource->{status} = $item->call_status;
     $resource->{rating_status} = $item->rating_status;
     $resource->{type} = $item->call_type;
