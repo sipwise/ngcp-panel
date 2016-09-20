@@ -1157,28 +1157,44 @@ sub apply_rewrite {
     my $subscriber = $params{subscriber};
     my $callee = $params{number};
     my $dir = $params{direction};
+    my $sub_type = 'provisioning';
+    my $rwr_rs = undef;
+
     return $callee unless $dir =~ /^(caller_in|callee_in|caller_out|callee_out)$/;
 
     my ($field, $direction) = split /_/, $dir;
     $dir = "rewrite_".$dir."_dpid";
 
-    unless ($subscriber && $subscriber->provisioning_voip_subscriber) {
-        $c->log->warn('could not apply rewrite: subscriber might have been terminated.');
+    unless ($subscriber) {
+        $c->log->warn('could not apply rewrite: no subscriber found.');
         return $callee;
-    }
-
-    my $rwr_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => $dir,
-        prov_subscriber => $subscriber->provisioning_voip_subscriber,
-    );
-    unless($rwr_rs->count) {
-        $rwr_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+    } elsif ($subscriber->provisioning_voip_subscriber) {
+        $rwr_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => $dir,
-            prov_domain => $subscriber->provisioning_voip_subscriber->domain,
+            prov_subscriber => $subscriber->provisioning_voip_subscriber,
         );
-    }
-    unless($rwr_rs->count) {
-        return $callee;
+        unless($rwr_rs->count) {
+            $rwr_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                c => $c, attribute => $dir,
+                prov_domain => $subscriber->provisioning_voip_subscriber->domain,
+            );
+        }
+        unless($rwr_rs->count) {
+            return $callee;
+        }
+    } else {
+        $sub_type = 'billing';
+        if ($subscriber->domain && $subscriber->domain->provisioning_voip_domain) {
+            $rwr_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                c => $c, attribute => $dir,
+                prov_domain => $subscriber->domain->provisioning_voip_domain,
+            );
+            unless($rwr_rs->count) {
+                return $callee;
+            }
+        } else {
+            return $callee;
+        }
     }
 
     my $rule_rs = $c->model('DB')->resultset('voip_rewrite_rules')->search({
@@ -1214,14 +1230,22 @@ sub apply_rewrite {
                             }
                         }
                     } else {
-                        my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                            c => $c, attribute => $avp,
-                            prov_subscriber => $subscriber->provisioning_voip_subscriber,
-                        );
-                        unless($pref_rs && $pref_rs->count) {
+                        my $pref_rs = undef;
+                        if ($sub_type eq 'provisioning') {
+                            $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                c => $c, attribute => $avp,
+                                prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                            );
+                            unless($pref_rs && $pref_rs->count) {
+                                $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                                    c => $c, attribute => $avp,
+                                    prov_domain => $subscriber->provisioning_voip_subscriber->domain,
+                                );
+                            }
+                        } elsif ($sub_type eq 'billing') {
                             $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
                                 c => $c, attribute => $avp,
-                                prov_domain => $subscriber->provisioning_voip_subscriber->domain,
+                                prov_domain => $subscriber->domain->provisioning_voip_domain,
                             );
                         }
                         next unless($pref_rs);
