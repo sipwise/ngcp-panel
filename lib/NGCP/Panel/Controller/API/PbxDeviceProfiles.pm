@@ -181,7 +181,7 @@ sub POST :Allow {
             last;
         }
         my $config_rs = $c->model('DB')->resultset('autoprov_configs')->search({
-            id => $resource->{config_id},
+            'me.id' => $resource->{config_id},
         });
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
