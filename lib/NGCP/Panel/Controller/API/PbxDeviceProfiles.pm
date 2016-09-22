@@ -124,7 +124,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -158,7 +158,7 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -181,7 +181,7 @@ sub POST :Allow {
             last;
         }
         my $config_rs = $c->model('DB')->resultset('autoprov_configs')->search({
-            id => $resource->{config_id},
+            'me.id' => $resource->{config_id},
         });
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
