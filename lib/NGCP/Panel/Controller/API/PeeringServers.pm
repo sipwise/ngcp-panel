@@ -29,7 +29,7 @@ sub query_params {
     return [
         {
             param => 'group_id',
-            description => 'Filter for peering server group',
+            description => 'Filter for peering group',
             query => {
                 first => sub {
                     my $q = shift;
