@@ -20,6 +20,9 @@ msgstr ""
 msgid " Outbound To-Username Field "
 msgstr ""
 
+msgid "en_en"
+msgstr "de_de"
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "\"Auto Attendant\" - An internal flag for the auto_attendant pseudo-"
@@ -36,6 +39,8 @@ msgid ""
 msgstr ""
 "\"Rufnummern-Unterdrückung\" - wenn gesetzt, wird die Rufnummer bei "
 "ausgehenden Anrufen innerhalb des eigenen PBX Bereichs nicht angezeigt."
+
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
