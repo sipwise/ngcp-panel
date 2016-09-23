@@ -49,6 +49,7 @@ sub auto :Private {
         $c->session->{lang} = $c->language;
         $c->log->debug("lang set by browser or config: " . $c->language);
     }
+    $ENV{LANGUAGE_HANDLE} = $c->loc("en_en");  ## no critic
 
     if (
         __PACKAGE__ eq $c->controller->catalyst_component_name
