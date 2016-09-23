@@ -24,6 +24,9 @@ msgstr ""
 msgid " Outbound To-Username Field "
 msgstr ""
 
+msgid "en_en"
+msgstr "es_es"
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "\"Auto Attendant\" - An internal flag for the auto_attendant pseudo-"

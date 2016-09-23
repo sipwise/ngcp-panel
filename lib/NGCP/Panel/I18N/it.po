@@ -21,6 +21,12 @@ msgstr ""
 msgid " Outbound To-Username Field "
 msgstr ""
 
+msgid "en_en"
+msgstr "it_it"
+
+msgid "%1 field is required"
+msgstr "Il campo %1 è obbligatorio (gjungwirth)"
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "\"Auto Attendant\" - An internal flag for the auto_attendant pseudo-"
@@ -2966,7 +2972,7 @@ msgstr ""
 #: share/templates/widgets/admin_reseller_overview.tt
 #: share/templates/widgets/reseller_domain_overview.tt
 msgid "Domain"
-msgstr "Dominio"
+msgstr "Dominio (gjungwirth)"
 
 #. (domain.domain)
 #: share/templates/domain/preferences.tt
