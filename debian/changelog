@@ -1,3 +1,13 @@
+ngcp-panel (1.14.1.7+0~mr4.5.1.7) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [b92727d] MT#22657 Close peering API for the reseller role and small texts fixes
+  * [ba75036] MT#22804 Fix reseller query in the form data validation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 23 Sep 2016 15:30:12 +0200
+
 ngcp-panel (1.14.1.6+0~mr4.5.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
