@@ -740,6 +740,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         }
     } else {
         $form = NGCP::Panel::Form::Customer::Subscriber->new(ctx => $c);
+        my $lh = NGCP::Panel::I18N->get_handle( @{ $c->languages } );
+        use DDP; p $lh;
+        $form = NGCP::Panel::Form::Customer::Subscriber->new(ctx => $c, language_handle => $lh);
     }
 
     $params = merge($params, $c->session->{created_objects});
