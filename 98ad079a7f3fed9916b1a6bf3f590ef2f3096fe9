@@ -22,6 +22,30 @@
       "revId": "98ad079a7f3fed9916b1a6bf3f590ef2f3096fe9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba3841fe_d883e3ca",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-09-26T15:58:30Z",
+      "side": 1,
+      "message": "imho that is a little redundant because we always have a billing subscriber and if its status terminated there is no provisioning one left (read: mysql triggers :) )",
+      "parentUuid": "ba3841fe_98795bff",
+      "range": {
+        "startLine": 203,
+        "startChar": 9,
+        "endLine": 203,
+        "endChar": 30
+      },
+      "revId": "98ad079a7f3fed9916b1a6bf3f590ef2f3096fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
