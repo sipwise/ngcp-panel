@@ -1,0 +1,7 @@
+Verified+1: Jenkins Jenkins
+Code-Review+2: Alexander Lutay <alutay@sipwise.com>
+Submitted-by: Kirill Solomko <ksolomko@sipwise.com>
+Submitted-at: Tue, 27 Sep 2016 11:28:56 +0200
+Reviewed-on: http://gerrit.mgm.sipwise.com/8419
+Project: ngcp-panel
+Branch: refs/heads/mr3.8.7
