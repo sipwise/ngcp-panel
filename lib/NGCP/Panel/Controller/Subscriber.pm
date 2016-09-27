@@ -39,11 +39,12 @@ use NGCP::Panel::Form::Voicemail::Email;
 use NGCP::Panel::Form::Voicemail::Attach;
 use NGCP::Panel::Form::Voicemail::Delete;
 use NGCP::Panel::Form::Reminder;
+use NGCP::Panel::Form::Subscriber::AutoAttendant;
 use NGCP::Panel::Form::Subscriber::EditWebpass;
-use NGCP::Panel::Form::Subscriber::TrustedSource;
 use NGCP::Panel::Form::Subscriber::Location;
 use NGCP::Panel::Form::Subscriber::SpeedDial;
-use NGCP::Panel::Form::Subscriber::AutoAttendant;
+use NGCP::Panel::Form::Subscriber::TrustedSource;
+use NGCP::Panel::Form::Subscriber::UpnRewriteSet;
 use NGCP::Panel::Form::Faxserver::Active;
 use NGCP::Panel::Form::Faxserver::Destination;
 use NGCP::Panel::Form::Faxserver::Name;
@@ -675,6 +676,10 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subscriber)
         ->first;
     $c->stash(cf_ringtimeout => $ringtimeout_preference ? $ringtimeout_preference->value : undef);
+
+    my @upn_rewrite_sets = $c->stash->{subscriber}->provisioning_voip_subscriber
+                            ->upn_rewrite_sets_rs->all;
+    $c->stash->{upn_rw_sets} = \@upn_rewrite_sets;
 
     if($prov_subscriber->profile_id && (
        $c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
@@ -3897,6 +3902,172 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete trusted source.'),
+        );
+    }
+
+    NGCP::Panel::Utils::Navigation::back_or($c,
+        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+}
+
+sub create_upn_rewrite :Chained('base') :PathPart('preferences/upnrewrite/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $upn_rws_rs = $c->stash->{subscriber}->provisioning_voip_subscriber->upn_rewrite_sets_rs;
+    my $params = {};
+
+    my $form = NGCP::Panel::Form::Subscriber::UpnRewriteSet->new;
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $new_upnr_set = $upn_rws_rs->create({
+                new_cli => $form->values->{new_cli},
+                upn_rewrite_sources => [
+                    map { { pattern => $_->{pattern} }; } @{ $form->values->{upn_rewrite_sources} },
+                    ],
+            });
+            my $upnr_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'upn_rewrite_id',
+                prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber);
+            $upnr_pref_rs->create({ value => $new_upnr_set->id });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully created UPN rewrite set'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create UPN rewrite set'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => $c->loc('UPN rewrite set'),
+        cf_form => $form,
+    );
+}
+
+sub upn_rewrite_base :Chained('base') :PathPart('preferences/upnrewrite') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c, $rws_id) = @_;
+
+    $c->stash->{upn_rws} = $c->stash->{subscriber}->provisioning_voip_subscriber
+                            ->upn_rewrite_sets_rs->find($rws_id);
+
+    unless($c->stash->{upn_rws}) {
+        NGCP::Panel::Utils::Message::error(
+            c    => $c,
+            log  => "rewrite set id '$rws_id' not found for subscriber uuid ".$c->stash->{subscriber}->uuid,
+            desc => $c->loc('Rewrite Set entry not found'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+}
+
+sub edit_upn_rewrite :Chained('upn_rewrite_base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    my $posted = ($c->request->method eq 'POST');
+    my $upn_rws = $c->stash->{upn_rws};
+    my $params = $posted ? {} : {
+        $upn_rws->get_inflated_columns,
+        upn_rewrite_sources => [ $upn_rws->upn_rewrite_sources->all ],
+    };
+
+    my $form = NGCP::Panel::Form::Subscriber::UpnRewriteSet->new;
+    $form->process(
+        params => $c->req->params,
+        posted => $posted,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            if ($upn_rws->new_cli ne $form->values->{new_cli}) {
+                $upn_rws->update({ new_cli => $form->values->{new_cli}});
+            }
+            $upn_rws->upn_rewrite_sources->delete_all;
+            for my $s (@{ $form->values->{upn_rewrite_sources} }) {
+                $upn_rws->upn_rewrite_sources->create({
+                        pattern => $s->{pattern},
+                    });
+            }
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully updated UPN rewrite set'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update UPN rewrite set'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => $c->loc('UPN rewrite set'),
+        cf_form => $form,
+    );
+}
+
+sub delete_upn_rewrite :Chained('upn_rewrite_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    try {
+        my $upnr_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => 'upn_rewrite_id',
+            prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber);
+        my $upnr_pref = $upnr_pref_rs->find({value => $c->stash->{upn_rws}->id});
+        if ($upnr_pref) {
+            $upnr_pref->delete;
+        } else {
+            $c->log->warn("UPN rewrite preferences: upn_rewrite_sets and preferences are out of sync!");
+        }
+        $c->stash->{upn_rws}->delete;
+
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { $c->stash->{upn_rws} ? $c->stash->{upn_rws}->get_inflated_columns : () },
+            desc => $c->loc('Successfully deleted UPN rewrite set'),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete UPN rewrite set.'),
         );
     }
 
