@@ -1,3 +1,14 @@
+ngcp-panel (1.14.1.8+0~mr4.5.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a60e154] MT#19263 add optional "sip:" prefix for caller/callee input
+  * [851048d] MT#22229 CallRoutingVerify accept chars in input numbers
+  * [103eb35] MT#13573 CallList: add (terminated) suffix for other numbers
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 27 Sep 2016 12:24:10 +0200
+
 ngcp-panel (1.14.1.7+0~mr4.5.1.7) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
