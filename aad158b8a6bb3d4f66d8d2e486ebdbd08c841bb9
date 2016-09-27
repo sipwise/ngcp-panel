@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_53822453",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/UpnRewriteSet.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-09-27T14:26:30Z",
+      "side": 1,
+      "message": "currently no validation. what format is required here?",
+      "range": {
+        "startLine": 17,
+        "startChar": 11,
+        "endLine": 17,
+        "endChar": 18
+      },
+      "revId": "aad158b8a6bb3d4f66d8d2e486ebdbd08c841bb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_3387a063",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/UpnRewriteSet.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-09-27T14:26:30Z",
+      "side": 1,
+      "message": "also no validation currently",
+      "range": {
+        "startLine": 46,
+        "startChar": 12,
+        "endLine": 46,
+        "endChar": 18
+      },
+      "revId": "aad158b8a6bb3d4f66d8d2e486ebdbd08c841bb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
