@@ -674,6 +674,66 @@
 [% END -%]
 
 
+[% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_upnr">[% c.loc('UPN Rewrite') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_upnr">
+            <div class="accordion-inner">
+
+                [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action("/subscriber/create_upn_rewrite", [c.req.captures.0]) %]">
+                    <i class="icon-star"></i> [% c.loc('Create') %]
+                </a>
+                [% END -%]
+                <div class="ngcp-separator"></div>
+
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_upnr">
+                    <thead>
+                        <tr>
+                            <th>[% c.loc('#') %]</th>
+                            <th>[% c.loc('New CLI') %]</th>
+                            <th>[% c.loc('Patterns') %]</th>
+                            [% # one for actions -%]
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOR set IN upn_rw_sets -%]
+                        <tr class="sw_action_row">
+                            <td>
+                                [% set.id %]
+                            </td>
+                            <td>
+                                [% set.new_cli %]
+                            </td>
+                            <td>
+                                [%
+                                    FOR s IN set.upn_rewrite_sources.all;
+                                        s.pattern _ "<br/>";
+                                    END;
+                                %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_upn_rewrite", [c.req.captures.0, set.id]) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/delete_upn_rewrite", [c.req.captures.0, set.id]) %]" data-confirm="Delete"><i class="icon-trash"></i> [% c.loc('Delete') %]</a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
+                        [% END %]
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+[% END -%]
+
 
 [% 
     PROCESS 'helpers/pref_table.tt';
