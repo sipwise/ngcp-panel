@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::NCOS::LocalAC;
+package NGCP::Panel::Form::NCOS::Extra;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -15,6 +15,12 @@ has_field 'local_ac' => (
     label => 'Include local area code',
 );
 
+has_field 'intra_pbx' => (
+    type => 'Boolean',
+    label => 'Include Intra PBX Calls within same Customer',
+);
+
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -25,7 +31,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/local_ac/],
+    render_list => [qw/local_ac intra_pbx/],
 );
 
 has_block 'actions' => (
