@@ -8,7 +8,7 @@ use NGCP::Panel::Form::NCOS::ResellerLevel;
 use NGCP::Panel::Form::NCOS::AdminLevel;
 use NGCP::Panel::Form::NCOS::Pattern;
 use NGCP::Panel::Form::NCOS::Lnp;
-use NGCP::Panel::Form::NCOS::LocalAC;
+use NGCP::Panel::Form::NCOS::Extra;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
@@ -253,6 +253,7 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
     }
     
     $c->stash(local_ac_checked => $c->stash->{level_result}->local_ac,
+              intra_pbx_checked  => $c->stash->{level_result}->intra_pbx,
               template         => 'ncos/pattern_list.tt');
 }
 
@@ -405,11 +406,11 @@ sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
     );
 }
 
-sub pattern_edit_local_ac :Chained('pattern_list') :PathPart('edit_local_ac') :Args(0) {
+sub pattern_edit_extra :Chained('pattern_list') :PathPart('edit_extra') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::NCOS::LocalAC->new;
+    my $form = NGCP::Panel::Form::NCOS::Extra->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,

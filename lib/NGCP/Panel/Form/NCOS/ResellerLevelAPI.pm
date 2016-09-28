@@ -51,6 +51,15 @@ has_field 'local_ac' => (
     },
 );
 
+has_field 'intra_pbx' => (
+    type => 'Boolean',
+    label => 'Include Intra PBX Calls within same Customer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether to include check for intra pbx calls within same customer']
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
