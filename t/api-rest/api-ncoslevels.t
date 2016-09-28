@@ -21,7 +21,8 @@ $fake_data->set_data_from_script({
             level       => 'api_test ncos '.time(),
             mode        => 'whitelist',#blacklist
             description => 'api_test ncos level description',
-            local_ac    => '1',#out
+            local_ac    => '1',
+            intra_pbx   => '1',
         },
     },
 });
