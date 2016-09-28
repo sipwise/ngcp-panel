@@ -1,3 +1,12 @@
+ngcp-panel (1.14.1.9+0~mr4.5.1.9) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [61c296b] MT#13573 CallList intra_alias_field_param for gpp* fields
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 28 Sep 2016 11:51:44 +0200
+
 ngcp-panel (1.14.1.8+0~mr4.5.1.8) unstable; urgency=medium
 
   [ Kirill Solomko ]
