@@ -13,109 +13,116 @@ our @EXPORT_OK = qw(get_separator);
 
 
 sub get_separator {
-    
+
     my %options = @_;
-    
+
     my $file_path = $options{path};
-    
+    my $c = $options{c};
+
     # check options
     my $echo;
     if ($options{echo}) {
         $echo = 1;
         print "\nDetecting field separator of $file_path\n";
+        $c->log->debug("Detecting field separator of $file_path") if $c;
     }
-    
+
     my (@excluded, @included);
     if (exists $options{exclude}) {
         @excluded = @{$options{exclude}};
     }
-    
+
     if (exists $options{include}) {
         @included = @{$options{include}};
     }
-    
+
     my ($lucky, $colon_timecol, $comma_decsep, $comma_groupsep);
     if (exists $options{lucky} && $options{lucky} == 1) {
         $lucky = 1;
         print "Scalar context...\n\n" if $echo;
+        $c->log->debug("Scalar context...") if $c;
     } else {
         $colon_timecol = $comma_decsep = $comma_groupsep = 1;
         print "List context...\n\n" if $echo;
+        $c->log->debug("List context...") if $c;
     }
-    
+
     # options checked
-    
+
     # Default set of candidates
     my @candidates = (',', ';', ':', '|', "\t");
-    
+
     my %survivors;
     $survivors{$_} = [] foreach (@candidates);
-    
+
     if (@excluded > 0) {
         foreach (@excluded) {
             delete $survivors{$_};
-            _message('deleted', $_) if $echo; 
+            _message('deleted', $_, $c) if $echo;
         }
     }
-    
+
     if (@included > 0) {
         foreach (@included) {
             if (length($_) == 1) {
                 $survivors{$_} = [];
             }
-            _message('added', $_) if $echo;
+            _message('added', $_, $c) if $echo;
         }
     }
-    
+
     if (keys %survivors == 0) {
         carp "No candidates left!";
         return;
     }
-    
+
     my $csv;
     open ($csv, "<:crlf", $file_path) || croak "Couldn't open $file_path: $!";
-    
+
     my $record_count = 0; # if $echo
     while (<$csv>) {
         my $record = $_;
         chomp $record;
-        
+
         if ($echo) {
             $record_count++;
             print "\nRecord #$record_count\n";
+            $c->log->debug("Record #$record_count: $record...") if $c;
         }
-        
+
         foreach my $candidate (keys %survivors) {
-            _message('candidate', $candidate) if $echo;
-            
+            _message('candidate', $candidate, $c) if $echo;
+
             my $rex = qr/\Q$candidate\E/;
-            
+
             my $count = 0;
             $count++ while ($record =~ /$rex/g);
-            
+
             print "Count: $count\n" if $echo;
-            
+            $c->log->debug("Count: $count") if $c;
+
             if ($count > 0 && !$lucky) {
                 push @{$survivors{$candidate}}, $count;
             } elsif ($count == 0) {
                 delete $survivors{$candidate};
             }
-            
+
         }
-        
+
         if (!$lucky) {
             $colon_timecol = _regularity($record, 'timecol') if $colon_timecol;
             $comma_decsep = _regularity($record, 'decsep') if $comma_decsep;
             $comma_groupsep = _regularity($record, 'groupsep') if $comma_groupsep;
         }
-        
-        
+
+
         my @alive = keys %survivors;
         my $survivors_count = @alive;
         if ($survivors_count == 1) {
             if ($echo) {
-                _message('detected', $alive[0]);
+                _message('detected', $alive[0], $c);
                 print "Returning control to caller...\n\n";
+                $c->log->debug("Returning control to caller...") if $c;
             }
             close $csv;
             if (!$lucky) {
@@ -128,53 +135,62 @@ sub get_separator {
                 return;
         }
     }
-    
+
     #  More than 1 survivor. 2nd pass to determine count variability
     if ($lucky) {
         print "\nSeveral candidates left\n" if $echo;
+        $c->log->debug("Several candidates left") if $c;
         carp "\nBad luck. Couldn't determine the separator of $file_path.\n";
+        $c->log->debug("Bad luck. Couldn't determine the separator of $file_path.") if $c;
         return;
     } else {
         print "\nVariability:\n\n" if $echo;
+        $c->log->debug("Variability:") if $c;
         my %std_dev;
         foreach my $candidate (keys %survivors) {
             my $mean = _mean(@{$survivors{$candidate}});
             $std_dev{$candidate} = _std_dev($mean, @{$survivors{$candidate}});
             if ($echo) {
-                _message('candidate', $candidate);
+                _message('candidate', $candidate, $c);
+                $c->log->debug("Mean: $mean\tStd Dev: $std_dev{$candidate}") if $c;
                 print "Mean: $mean\tStd Dev: $std_dev{$candidate}\n\n";
             }
         }
-    
+        $c->log->debug("Couldn't determine the separator") if $c;
         print "Couldn't determine the separator\n" if $echo;
-            
+
         close $csv;
-        
+
         my @penalized;
         if ($colon_timecol) {
+            $c->log->debug("Detected time column") if $c;
             print "Detected time column\n" if $echo;
             delete $survivors{':'};
             push @penalized, ':';
         }
-        
+
         if ($comma_decsep || $comma_groupsep) {
             delete $survivors{','};
             push @penalized, ',';
             if ($echo && $comma_decsep) {
+                $c->log->debug("Detected comma-separated decimal numbers column") if $c;
                 print "\nDetected comma-separated decimal numbers column\n";
             }
             if ($echo && $comma_groupsep) {
+                $c->log->debug("Detected comma-grouped numbers column") if $c;
                 print "\nDetected comma-grouped numbers column\n";
             }
         }
-        
+
         my @alive = sort {$std_dev{$a} <=> $std_dev{$b}} keys %survivors;
         push @alive, sort {$std_dev{$a} <=> $std_dev{$b}} @penalized;
         if ($echo) {
+            $c->log->debug("Remaining candidates: ") if $c;
             print "Remaining candidates: ";
             foreach my $left (@alive) {
-                _message('left', $left);
+                _message('left', $left, $c);
             }
+            $c->log->debug("Returning control to caller...") if $c;
             print "\n\nReturning control to caller...\n\n";
         }
         return @alive;
@@ -183,34 +199,34 @@ sub get_separator {
 
 sub _mean {
     my @array = @_;
-    
+
     my $sum = 0;
     $sum += $_ foreach (@array);
-    
+
     my $mean = $sum / scalar(@array);
-    
+
     return $mean;
 }
 
 sub _std_dev {
     my ($mean, @array) = @_;
-    
+
     my $sum = 0;
     $sum += ($_ - $mean)**2 foreach (@array);
-    
+
     my $std_dev = sqrt( $sum / scalar(@array) );
-    
+
     return $std_dev;
 }
 
 sub _regularity {
     my ($string, $kind) = @_;
-    
+
     my $time_rx = qr/
                         (?:^|(?<=\s|[T,;|\t]))
                         (?:[01]?[0-9]|2[0-3])   # hours
                         :
-                        (?:[0-5][0-9])          # minutes  
+                        (?:[0-5][0-9])          # minutes
                         (?::[0-5][0-9])?        # seconds
                         (?:
                             Z
@@ -224,7 +240,7 @@ sub _regularity {
                         )?
                         (?=$|\s|[,;|\t])
                     /x;
-    
+
     my $commadecsep_rx = qr/
                                 (?:^|(?<=[^\d,.]))
                                 (?:
@@ -238,7 +254,7 @@ sub _regularity {
                                 )
                                 (?=$|[^\d,.])
                             /x;
-    
+
     my $commagroupsep_rx = qr/
                                 (?:^|(?<=[^\d,.]))
                                 (?:
@@ -248,25 +264,25 @@ sub _regularity {
                                 )
                                 (?=$|[^\d,.])
                              /x;
-                             
-    
+
+
     return 0 if ($kind eq 'timecol' && $string !~ /$time_rx/);
     return 0 if ($kind eq 'decsep' && $string !~ /$commadecsep_rx/);
     return 0 if ($kind eq 'groupsep' && $string !~ /$commagroupsep_rx/);
-    
+
     return 1;
 }
 
 sub _message {
-    my ($type, $candidate) = @_;
-    
+    my ($type, $candidate, $c) = @_;
+
     my $char;
     if (ord $candidate == 9) { # tab character
         $char = "\\t";
     } else {
         $char = $candidate;
     }
-    
+
     my %message = (
                    deleted => "Deleted $char from candidates list\n",
                    added => "Added $char to candidates list\n",
@@ -274,7 +290,8 @@ sub _message {
                    detected => "\nSeparator detected: $char\n",
                    left => " $char ",
                   );
-    
+
+    $c->log->debug($message{$type}) if $c;
     print $message{$type};
 }
 
@@ -294,14 +311,14 @@ Version 0.20 - November 2, 2008
 =head1 SYNOPSIS
 
     use Text::CSV::Separator qw(get_separator);
-    
+
     my @char_list = get_separator(
                                     path    => $csv_path,
                                     exclude => $array1_ref, # optional
                                     include => $array2_ref, # optional
                                     echo    => 1,           # optional
                                  );
-    
+
     my $separator;
     if (@char_list) {
         if (@char_list == 1) {           # successful detection
@@ -311,19 +328,19 @@ Version 0.20 - November 2, 2008
     } else {                             # no candidate passed the tests
         # Some code here
     }
-    
-    
+
+
     # "I'm Feeling Lucky" alternative interface
     # Don't forget to include the 'lucky' parameter
-    
+
     my $separator = get_separator(
                                     path    => $csv_path,
-                                    lucky   => 1, 
+                                    lucky   => 1,
                                     exclude => $array1_ref, # optional
                                     include => $array2_ref, # optional
                                     echo    => 1,           # optional
                                  );
-    
+
 
 
 =head1 DESCRIPTION
@@ -332,7 +349,7 @@ This module provides a fast detection of the field separator character (also
 called field delimiter) of a CSV file, or more generally, of a character
 separated text file (also called delimited text file), and returns it ready
 to use in a CSV parser (e.g., Text::CSV_XS, Tie::CSV_File, or
-Text::CSV::Simple). 
+Text::CSV::Simple).
 This may be useful to the vulnerable -and often ignored- population of
 programmers who need to process automatically CSV files from different sources.
 
@@ -340,7 +357,7 @@ The default set of candidates contains the following characters:
 ','  ';'  ':'  '|'  '\t'
 
 The only required parameter is the CSV file path. Optionally, the user can
-specify characters to be excluded or included in the list of candidates. 
+specify characters to be excluded or included in the list of candidates.
 
 The routine returns an array containing the list of candidates that passed
 the tests. If it succeeds, this array will contain only one value: the field
@@ -456,25 +473,25 @@ default candidate not considered, the pipe character):
                                     path    => $csv_path,
                                     exclude => [':', '|'],
                                  );
-    
+
     if (@char_list) {
         my $separator;
-        if (@char_list == 1) {       
+        if (@char_list == 1) {
             $separator = $char_list[0];
-        } else { 
+        } else {
             # Some code here
         }
     }
-    
-    
+
+
     # Using the "I'm Feeling Lucky" interface:
-    
+
     my $separator = get_separator(
                                     path    => $csv_path,
                                     lucky   => 1,
                                     exclude => [':', '|'],
                                   );
-    
+
 
 =head1 MOTIVATION
 
