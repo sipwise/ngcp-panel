@@ -583,7 +583,6 @@ sub emergency_mappings_download :Chained('list') :PathPart('download') :Args(0) 
         $c->stash(emergency_container_create_flag => 1);
         $c->stash(emergency_container_form => $form);
     } else {
-        my $schema = $c->model('DB');
         $c->response->header ('Content-Disposition' => "attachment; filename=\"emergency_mapping_list_reseller_$reseller_id.csv\"");
         $c->response->content_type('text/csv');
         $c->response->status(200);
