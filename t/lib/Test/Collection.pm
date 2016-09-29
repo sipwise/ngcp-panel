@@ -16,7 +16,7 @@ use Clone qw/clone/;
 use File::Basename;
 use Test::HTTPRequestAsCurl;
 use Data::Dumper;
-
+use File::Slurp qw/write_file/;
 
 has 'local_test' => (
     is => 'rw',
@@ -316,12 +316,12 @@ sub get_item_hal{
         }
     }
     if(!$resitem){
-        my ($reshal, $location);
+        my ($reshal, $location,$total_count);
         $uri //= $self->get_uri_collection($name)."?page=1&rows=1";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
-        ($reshal,$location) = $self->get_hal_from_collection($list_collection,$name);
-        if($reshal->{total_count} || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
-            $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location };
+        ($reshal,$location,$total_count) = $self->get_hal_from_collection($list_collection,$name);
+        if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
+            $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location, total_count => $total_count };
             $self->DATA_LOADED->{$name} ||= [];
             push @{$self->DATA_LOADED->{$name}}, $resitem;
         }
@@ -332,20 +332,27 @@ sub get_hal_from_collection{
     my($self,$list_collection,$name) = @_;
     $name ||= $self->name;
     my $hal_name = $self->get_hal_name($name);
-    my($reshal,$location);
-    if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
+    my($reshal,$location,$total_count);
+    if( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
+        $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
+        $location = $reshal->{_links}->{self}->{href};
+        $total_count = $reshal->{total_count};
+    } elsif( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'HASH') {
+        $reshal = $list_collection->{_embedded}->{$hal_name};
+        $location = $reshal->{_links}->{self}->{href};
+        $total_count = $list_collection->{total_count};
+    } elsif(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
 #found first subscriber
         $reshal = $list_collection;
         $location = $reshal->{_links}->{$hal_name}->{href};
-    } elsif( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
-        $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
-        $location = $reshal->{_links}->{self}->{href};
-    }elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
+         $total_count = $reshal->{total_count};
+    } elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
 #preferencedefs collection
         $reshal = $list_collection;
         $location = $reshal->{_links}->{self}->{href};
+        $total_count = $reshal->{total_count};
     }
-    return ($reshal,$location);
+    return ($reshal,$location,$total_count);
 }
 sub get_created_first{
     my($self) = @_;
@@ -404,6 +411,12 @@ sub request_process{
     my $res = $self->ua->request($req);
     my $rescontent = $self->get_response_content($res);
     return ($res,$rescontent,$req);
+}
+sub get_request_get{
+    my($self, $uri) = @_;
+    $uri = $self->normalize_uri($uri);
+    my $req = HTTP::Request->new('GET', $uri);
+    return $req ;
 }
 sub get_request_put{
     my($self,$content,$uri) = @_;
@@ -480,9 +493,11 @@ sub request_delete{
     my $content = $self->get_response_content($res);
     return($req,$res,$content);
 }
+
 sub request_get{
-    my($self,$uri) = @_;
-    my $req = HTTP::Request->new('GET', $self->normalize_uri($uri));
+    my($self,$uri,$req) = @_;
+    $uri = $self->normalize_uri($uri);
+    $req //= $self->get_request_get($uri);
     my $res = $self->request($req);
     my $content = $self->get_response_content($res);
     return wantarray ? ($res, $content, $req) : $res;
@@ -983,10 +998,9 @@ sub hash2params{
     return join '&', map {$_.'='.uri_escape($hash->{$_})} keys %{ $hash };
 }
 sub resource_fill_file{
-    #$_[0]->{faxfile}->[0]
-    my $cmd = "echo 'aaa' > $_[1]";
-    print "cmd=$cmd;\n";
-    `$cmd`;
+    my($self,$filename,$data) = @_;
+    $data //= 'aaa';
+    write_file($filename,$data);
 }
 sub resource_clear_file{
     my $cmd = "echo -n '' > $_[1]";
