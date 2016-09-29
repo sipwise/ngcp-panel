@@ -29,6 +29,11 @@ has 'DEBUG' => (
     isa => 'Bool',
     default => 0,
 );
+has 'DEBUG_ONLY' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0,
+);
 has 'catalyst_config' => (
     is => 'rw',
     isa => 'HashRef',
@@ -384,7 +389,6 @@ sub encode_content{
 sub request{
     my($self,$req) = @_;
 
-
     my $credentials = {};
     (@$credentials{qw/user password/},undef,undef) = $self->get_role_credentials();
     my $curl = Test::HTTPRequestAsCurl::as_curl($req, credentials => $credentials );
@@ -392,17 +396,19 @@ sub request{
         print $req->as_string;
         print "$curl\n\n";
     }
-    my $res = $self->ua->request($req);
-    #draft of the debug mode
-    if($self->DEBUG){
-        if($res->code >= 400){
-            print Dumper $req;
-            print Dumper $res;
-            print Dumper $self->get_response_content($res);
-            #die;
+    if(!$self->DEBUG_ONLY){
+        my $res = $self->ua->request($req);
+        #draft of the debug mode
+        if($self->DEBUG){
+            if($res->code >= 400){
+                print Dumper $req;
+                print Dumper $res;
+                print Dumper $self->get_response_content($res);
+                #die;
+            }
         }
+        return $res;
     }
-    return $res;
 }
 
 sub request_process{
@@ -445,8 +451,10 @@ sub request_put{
     $uri ||= $self->get_uri_current;
     my $req = $self->get_request_put( $content, $self->normalize_uri($uri) );
     my $res = $self->request($req);
-    my $rescontent = $self->get_response_content($res);
-    return wantarray ? ($res,$rescontent,$req) : $res;
+    if($res){
+        my $rescontent = $self->get_response_content($res);
+        return wantarray ? ($res,$rescontent,$req) : $res;
+    }
 }
 sub request_patch{
     my($self,$content, $uri, $req) = @_;
@@ -456,9 +464,11 @@ sub request_patch{
     $content = $self->encode_content($content, $self->content_type->{PATCH});
     $content and $req->content($content);
     my $res = $self->request($req);
-    my $rescontent = $self->get_response_content($res);
-    #print Dumper [$res,$rescontent,$req];
-    return wantarray ? ($res,$rescontent,$req) : $res;
+    if($res){
+        my $rescontent = $self->get_response_content($res);
+        #print Dumper [$res,$rescontent,$req];
+        return wantarray ? ($res,$rescontent,$req) : $res;
+    }
 }
 
 sub request_post{
