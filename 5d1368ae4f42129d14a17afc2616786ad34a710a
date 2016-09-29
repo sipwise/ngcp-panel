@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_979e4f55",
+        "filename": "lib/NGCP/Panel/Controller/API/EmergencyMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-09-29T12:43:23Z",
+      "side": 1,
+      "message": "I didn\u0027t complete this error yet. All this needs tests.",
+      "parentUuid": "9a3d3df0_572b2782",
+      "revId": "5d1368ae4f42129d14a17afc2616786ad34a710a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_77262bbc",
         "filename": "lib/NGCP/Panel/Controller/API/LnpNumbers.pm",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-09-29T11:46:39Z",
       "side": 1,
       "message": "Same here: is this actually used? Why is it different from the emergency mapping logic?",
+      "revId": "5d1368ae4f42129d14a17afc2616786ad34a710a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_57bb27c4",
+        "filename": "lib/NGCP/Panel/Controller/API/LnpNumbers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-09-29T12:43:23Z",
+      "side": 1,
+      "message": "As I saw from the WEB implementation - we don\u0027t need any special conditions and there is nothing to check here.  I may change this after tests implementation. \n\nAs for now I sin split checking and creation because creation writes to http output and should be the last method. In the same time I didn\u0027t want to copy-paste headers. \n\nBut I should confess that I don\u0027t like these rwo methods too.",
+      "parentUuid": "9a3d3df0_77262bbc",
       "revId": "5d1368ae4f42129d14a17afc2616786ad34a710a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
