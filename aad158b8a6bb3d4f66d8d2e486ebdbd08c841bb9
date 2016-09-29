@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "9a3d3df0_52bb35c4",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-09-29T15:37:30Z",
+      "side": 1,
+      "message": "is the import order relevant here?",
+      "range": {
+        "startLine": 46,
+        "startChar": 35,
+        "endLine": 46,
+        "endChar": 48
+      },
+      "revId": "aad158b8a6bb3d4f66d8d2e486ebdbd08c841bb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_d2f46589",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3935,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-09-29T15:37:30Z",
+      "side": 1,
+      "message": "implicit relation records created, dbix can that?",
+      "range": {
+        "startLine": 3935,
+        "startChar": 16,
+        "endLine": 3935,
+        "endChar": 35
+      },
+      "revId": "aad158b8a6bb3d4f66d8d2e486ebdbd08c841bb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_b2356148",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 4014,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-09-29T15:37:30Z",
+      "side": 1,
+      "message": "delete+recreate, consistent, like it.",
+      "range": {
+        "startLine": 4014,
+        "startChar": 43,
+        "endLine": 4014,
+        "endChar": 53
+      },
+      "revId": "aad158b8a6bb3d4f66d8d2e486ebdbd08c841bb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_53822453",
         "filename": "lib/NGCP/Panel/Form/Subscriber/UpnRewriteSet.pm",
         "patchSetId": 1
@@ -36,6 +105,30 @@
       "writtenOn": "2016-09-27T14:26:30Z",
       "side": 1,
       "message": "also no validation currently",
+      "range": {
+        "startLine": 46,
+        "startChar": 12,
+        "endLine": 46,
+        "endChar": 18
+      },
+      "revId": "aad158b8a6bb3d4f66d8d2e486ebdbd08c841bb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_7212b9b5",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/UpnRewriteSet.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-09-29T15:37:30Z",
+      "side": 1,
+      "message": "eventually, to test, try to compile the regexp",
+      "parentUuid": "9a3d3df0_3387a063",
       "range": {
         "startLine": 46,
         "startChar": 12,
