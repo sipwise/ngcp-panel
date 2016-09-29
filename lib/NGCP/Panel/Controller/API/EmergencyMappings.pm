@@ -90,8 +90,31 @@ sub auto :Private {
     $self->log_request($c);
 }
 
+sub check_create_csv :Private {
+    my ($self, $c) = @_;
+    my $reseller_id = $c->request->params->{reseller_id};
+    if(!$reseller_id){
+        $self->error($c, HTTP_BAD_REQUEST, 'reseller_id  parameter is necessary to download csv data.');
+        return;
+    }
+    return 'emergency_mapping_list_reseller_'.$reseller_id.'.csv';
+}
+
+sub create_csv :Private {
+    my ($self, $c) = @_;
+    NGCP::Panel::Utils::EmergencyMapping::create_csv(
+        c => $c,
+        reseller_id => $c->request->params->{reseller_id},
+    );
+}
+
 sub GET :Allow {
     my ($self, $c) = @_;
+    my $header_accept = $c->request->header('Accept');
+    if(defined $header_accept && $header_accept eq 'text/csv') {
+        $self->return_csv($c);
+        return;
+    }
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
