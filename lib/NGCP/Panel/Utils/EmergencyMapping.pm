@@ -94,12 +94,14 @@ sub upload_csv {
 
 sub create_csv {
     my(%params) = @_;
-    my($c, $reseller_id) = @params{qw/c reseller_id/};
+    my($c, $reseller_id, $emergency_mapping_rs) = @params{qw/c reseller_id emergency_mapping_rs/};
+    $emergency_mapping_rs //= $c->stash->{emergency_mapping_rs} // $c->model('DB')->resultset('emergency_mappings');
 
     #my @cols = @{ $c->config->{emergency_mapping_csv}->{element_order} };
     my @cols = qw/name code prefix/;
 
-    my $mapping_rs = $c->stash->{emergency_mapping_rs}->search_rs({
+    
+    my $mapping_rs = $emergency_mapping_rs->search_rs({
             'emergency_container.reseller_id' => $reseller_id,
         },
         {
