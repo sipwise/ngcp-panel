@@ -27,5 +27,12 @@ sub innovaphone_pwdgen {
 	return $hexcipher;	
 }
 
+sub getValue {
+  my $self = shift;
+  foreach my $v(@_) {
+    return $v if $v;
+  }
+  return;
+}
 
 1;
