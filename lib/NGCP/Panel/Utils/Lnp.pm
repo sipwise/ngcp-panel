@@ -88,12 +88,12 @@ sub upload_csv {
 
 sub create_csv {
     my(%params) = @_;
-    my($c) = @params{qw/c/};
-
+    my($c, $number_rs) = @params{qw/c number_rs/};
+    $number_rs //= $c->stash->{number_rs} // $c->model('DB')->resultset('lnp_numbers');
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
     my @cols = qw/carrier_name carrier_prefix number routing_number start end authoritative skip_rewrite/;
 
-    my $lnp_rs = $c->stash->{number_rs}->search_rs(
+    my $lnp_rs = $number_rs->search_rs(
         undef,
         {
             '+select' => ['lnp_provider.name','lnp_provider.prefix', 'lnp_provider.authoritative', 'lnp_provider.skip_rewrite'],

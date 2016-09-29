@@ -719,5 +719,19 @@ sub update{
     return $item;
 }
 
+sub return_csv(){
+    my($self,$c) = @_;
+    try{
+        my $filename = $self->check_create_csv($c);
+        return unless $filename;
+        $c->response->header ('Content-Disposition' => "attachment; filename=\"$filename\"");
+        $c->response->content_type('text/csv');
+        $c->response->status(200);
+        $self->create_csv($c);
+        $c->response->body(q());
+    }catch($e){
+        $self->error($c, HTTP_BAD_REQUEST, $e);   
+    }
+} 
 1;
 # vim: set tabstop=4 expandtab:
