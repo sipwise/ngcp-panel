@@ -1,3 +1,47 @@
+ngcp-panel (1.13.3.0+0~mr4.4.3.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [9ecf3dc] MT#20315 Add email templates and invoice template ids...
+  * [a41b0c0] MT#20235 Allow to add fw filename to the latest firmware url
+  * [449e707] MT#20369 Catch duplicated alias error on subscriber update
+  * [37fa987] MT#21435 Fix resellers join for pbxdevices
+  * [e245467] MT#21401 Fix query for the reseller reminder creation
+  * [ec1369f] MT#19623 Fix generation of the big invoices
+  * [0803401] MT#18999 Escape billing profile values for the invoice generation
+  * [14610da] MT#16623 Save 2.6 version of the svg-edit for the Presto Opera
+  * [09e3e39] MT#16623 svg-edit trunk version
+  * [47ce2d7] MT#16623 Adapt new svg-edit for the NGCP
+  * [2dea42b] MT#16623 Remove lintian warnings
+  * [c5b4f7e] MT#16623 Fix attributes for the edge (lower case attributes)
+  * [00d1b84] MT#16623 Send old opera to the old svg-edit
+  * [222a44e] MT#18561 Change of the LIID is forbidden
+  * [b79c64a] MT#20971 Add concurrent_max* preferences to device config variables
+  * [7cbe1c7] MT#21317 Add aliases select to new subscriber creation by subscriber admin
+  * [1486a79] MT#22063 Allow cyclic number ranges
+  * [0c2a476] MT#19295 Disable ajax caching in the IE11
+  * [25cb1e7] MT#21501 Add delete button for the subscriber's reminder
+  * [4b4d121] MT#22657 Close peering API for the reseller role and small texts fixes
+  * [dd08d6e] MT#22804 Fix reseller query in the form data validation
+
+  [ Gerhard Jungwirth ]
+  * [cb72a60] MT#19625 specify maxlength of ncos level name
+  * [7e677d4] MT#19729 encode call_id in url
+  * [cb8cf6d] MT#21011 subscriberapi fix reseller_id search
+  * [b3bcc46] MT#21141 fix login redirect between realms
+  * [0e17026] MT#21293 API fix peer auth sems update
+  * [48f139c] MT#21609 add possibility to register peer_auth at only one instance
+  * [e8c3965] MT#20655 fix subscribercreate form
+
+  [ Rene Krenn ]
+  * [3b5f879] MT#21459 ncos "level" filter for api
+
+  [ Kirill Solomko ]
+  * [c94b958] MT#13573 CallList intra_alias_field_param for gpp* fields
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 30 Sep 2016 13:13:31 +0200
+
 ngcp-panel (1.13.2.0+0~mr4.4.2.0) unstable; urgency=medium
 
   [ Rene Krenn ]
