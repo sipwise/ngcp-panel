@@ -234,6 +234,30 @@
       "revId": "aad158b8a6bb3d4f66d8d2e486ebdbd08c841bb9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_edaf0c2a",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/UpnRewriteSet.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-09-30T00:29:10Z",
+      "side": 1,
+      "message": "i guess finally sql is used to run the regexp, so this limits to posix regexpes. but a perl re test is fine, since mariadb should support perl re finally. same with rewrite rules etc.",
+      "parentUuid": "9a3d3df0_92401d58",
+      "range": {
+        "startLine": 46,
+        "startChar": 12,
+        "endLine": 46,
+        "endChar": 18
+      },
+      "revId": "aad158b8a6bb3d4f66d8d2e486ebdbd08c841bb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
