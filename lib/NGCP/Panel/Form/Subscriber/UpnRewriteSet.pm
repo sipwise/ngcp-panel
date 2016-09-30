@@ -39,6 +39,11 @@ has_field 'upn_rewrite_sources' => (
     },
 );
 
+has_field 'subscriber_id' => (
+    type => 'Hidden',
+    required => 0,
+);
+
 has_field 'upn_rewrite_sources.id' => (
     type => 'Hidden',
 );
@@ -74,7 +79,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/new_cli upn_rewrite_sources upn_rewrite_sources_add/],
+    render_list => [qw/new_cli upn_rewrite_sources upn_rewrite_sources_add subscriber_id/],
 );
 
 has_block 'actions' => (
