@@ -203,7 +203,8 @@ sub process_cdr_item {
     if ( (!($sub // $own_sub)) || (($sub // $own_sub)->status eq "terminated") ) {
         $resource->{own_cli} .= " (terminated)";
     }
-    if ($other_sub && $other_sub->status eq "terminated") {
+    if ($other_sub && $other_sub->status eq "terminated" &&
+            $own_sub && $own_sub->contract_id == $other_sub->contract_id) {
         $resource->{other_cli} .= " (terminated)";
     }
 
