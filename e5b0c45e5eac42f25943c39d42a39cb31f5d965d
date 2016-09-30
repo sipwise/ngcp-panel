@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_91265ab9",
+        "filename": "t/api-rest/api-emergencymappings.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2016-09-30T07:26:31Z",
+      "side": 1,
+      "message": "Can you please add to the test the scenario to download a csv as well?",
+      "revId": "e5b0c45e5eac42f25943c39d42a39cb31f5d965d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
