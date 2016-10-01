@@ -2,6 +2,7 @@ package NGCP::Panel::Widget::Dashboard::AdminResellerOverview;
 
 use warnings;
 use strict;
+use NGCP::Panel::Utils::DateTime qw();
 
 sub template {
     return 'widgets/admin_reseller_overview.tt';
@@ -34,12 +35,19 @@ sub _prepare_domains_count {
 
 sub _prepare_customers_count {
     my ($self, $c) = @_;
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $dtf = $c->model('DB')->storage->datetime_parser;
     $c->stash(
-        customers => $c->model('DB')->resultset('contracts')->search_rs({
-            status => { '!=' => 'terminated' },
-            'product.class' => { 'not in' => [ 'reseller', 'sippeering', 'pstnpeering' ] },
-        }, {
-            join => { 'billing_mappings' => 'product' },
+        customers => $c->model('DB')->resultset('contracts')->search({
+            'me.status' => { '!=' => 'terminated' },
+            'contact.reseller_id' => { '-not' => undef },
+            '-or' => [
+                'product.class' => 'sipaccount',
+                'product.class' => 'pbxaccount',
+            ],
+        },{
+            bind => [ ( $dtf->format_datetime($now) ) x 2, undef, undef ],
+            'join' => [ 'contact', { 'billing_mappings_actual' => { 'billing_mappings' => 'product'}} ],
         }),
     );
 }
