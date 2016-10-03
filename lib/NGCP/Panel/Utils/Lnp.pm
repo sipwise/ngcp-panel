@@ -4,6 +4,32 @@ use warnings;
 
 use Text::CSV_XS;
 use NGCP::Panel::Utils::MySQL;
+use NGCP::Panel::Utils::DateTime qw();
+use Scalar::Util qw(blessed);
+
+sub get_lnpnumber_rs {
+    my ($c, $now, $number) = @_;
+    my $schema = $c->model('DB');
+    my $item_rs = $schema->resultset('lnp_numbers'); #test env: 35sec for a 100 items page with 200k
+    if (defined $now) {
+        if(!(blessed($now) && $now->isa('DateTime'))) {
+            eval {
+                $now = NGCP::Panel::Utils::DateTime::from_string($now);
+            };
+            if ($@) {
+                $c->log->debug($@);
+                $now = NGCP::Panel::Utils::DateTime::current_local();
+                $c->log->debug("lnp history - using current timestamp " . $now);
+            }
+        }
+        my $dtf = $schema->storage->datetime_parser;
+        $item_rs = $item_rs->search({},{
+            bind => [ ( $dtf->format_datetime($now) ) x 2, $number, $number ],
+            'join' => [ 'lnp_numbers_actual' ],
+        }); #test env: 50sec (6.5 sec raw query time)
+    }
+    return $item_rs;
+}
 
 sub _insert_batch {
     my ($c, $schema, $numbers, $chunk_size) = @_;
