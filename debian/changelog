@@ -1,3 +1,40 @@
+ngcp-panel (1.8.9.0+0~mr3.8.9.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [8cc6bd6] MT#21435 Fix resellers join for pbxdevices
+  * [4d23e6f] MT#21401 Fix query for the reseller reminder creation
+  * [8c30458] MT#19623 Fix generation of the big invoices
+  * [eb00d0c] MT#18999 Escape billing profile values for the invoice generation
+  * [09c6fc6] MT#16623 Save 2.6 version of the svg-edit for the Presto Opera
+  * [c089187] MT#16623 svg-edit trunk version
+  * [265e664] MT#16623 Adapt new svg-edit for the NGCP
+  * [e5b05e5] MT#16623 Remove lintian warnings
+  * [dc58544] MT#16623 Fix attributes for the edge (lower case attributes)
+  * [6334ddf] MT#16623 Send old opera to the old svg-edit
+  * [e561ffb] MT#18561 Change of the LIID is forbidden
+  * [bd89cfa] MT#18561 Fix interceptions api test on 3.8
+  * [df43500] Revert "MT#20315 Add email templates and invoice template ids..."
+  * [d34ff0f] MT#21401 Add reminders API test
+  * [edc640f] MT#18561 Fix incorrect backporting. There isn't is_int in 3.8 yet.
+  * [ac82337] MT#22063 Allow cyclic number ranges
+  * [a99f528] MT#19295 Disable ajax caching in the IE11
+  * [3fe1f7a] MT#22804 Fix reseller query in the form data validation
+
+  [ Rene Krenn ]
+  * [7a05a1c] MT#21775 regexp pattern for interception's sip_username
+  * [3b20ad4] MT#21775 tune the "username" interception regexp to tolerate vsc codes
+  * [c214187] MT#21871 setting the allowed_ips via api and panel corrupts the db
+
+  [ Kirill Solomko ]
+  * [e5664d4] MT#13573 CallList intra_alias_field_param for gpp* fields
+  * [57a1b4a] MT#13573 CallList: backport of rewrite rules apply to terminated subscribers
+  * [59daccf] MT#13573 CallList: add (terminated) suffix for other numbers
+  * [21cd8f9] TT#3996 show (terminated) prefix for other_cli change
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Oct 2016 18:13:17 +0200
+
 ngcp-panel (1.8.8.0+0~mr3.8.8.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
