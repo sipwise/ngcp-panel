@@ -54,6 +54,14 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'actual',
+            description => 'Filter for LNP numbers valid at the given timestamp (YYYY-MM-DD HH:mm:ss) or the current time',
+            query => {
+                first => undef, #dummy param
+                second => undef,
+            },
+        },
     ];
 }
 
@@ -106,14 +114,18 @@ sub GET :Allow {
     my ($self, $c) = @_;
     my $header_accept = $c->request->header('Accept');
     if(defined $header_accept && $header_accept eq 'text/csv') {
-        $self->return_csv($c);
+        $self->return_csv($c); #,$self->item_rs($c,$c->request->params->{'actual'});
         return;
     }
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $items = $self->item_rs($c);
+        my $items = $self->item_rs($c,$c->request->params->{'actual'});
+        #my $t1 = time;
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        #my $t2 = time; print(($t2 - $t1) . "secs\n"); $t1 = time;
+        #my @test = $items->all;
+        #$t2 = time; print("page: " . ($t2 - $t1) . "secs\n"); $t1 = time;
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $item ($items->all) {
@@ -255,14 +267,7 @@ sub POST :Allow {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp carrier_id does not exist");
                 last;
             }
-            if ($c->model('DB')->resultset('lnp_numbers')->search({
-                    lnp_provider_id => $carrier->id,
-                    number => $resource->{number}
-                },undef)->count > 0) {
-                $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
-                last;
-            }
+            # revert MT#20027: the actual lnp number must be unique across lnp_providers:
 
             my $item;
             try {

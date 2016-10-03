@@ -32,6 +32,8 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
 #    print $response->decoded_content . "\n" if $response->code != 401;
 #    return undef;
 #});
+use NGCP::Panel::Utils::DateTime;
+NGCP::Panel::Utils::DateTime::from_string("2016-03-21 00:00:00");
 
 my $t = time;
 
