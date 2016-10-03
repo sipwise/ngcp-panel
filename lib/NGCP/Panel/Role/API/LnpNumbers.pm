@@ -11,22 +11,21 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Lnp::Number;
+use NGCP::Panel::Utils::Lnp qw();
 
 sub _item_rs {
-    my ($self, $c) = @_;
-
-    my $item_rs = $c->model('DB')->resultset('lnp_numbers');
-    return $item_rs;
+    my ($self, $c, $now, $number) = @_;
+    return NGCP::Panel::Utils::Lnp::get_lnpnumber_rs($c, $now, $number);
 }
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Lnp::Number->new(ctx => $c);
+    return NGCP::Panel::Form::Lnp::Number->new(ctx => $c); #no bottleneck
 }
 
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
-    my %resource = $item->get_inflated_columns;
+    my %resource = $item->get_inflated_columns; #no bottleneck
 
     my $hal = Data::HAL->new(
         links => [
@@ -72,7 +71,7 @@ sub resource_from_item {
 
 sub item_by_id {
     my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
+    my $item_rs = $self->item_rs($c); #no bottleneck
     return $item_rs->find($id);
 }
 
@@ -93,15 +92,6 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist");
         return;
     }
-    my $existing_number = $c->model('DB')->resultset('lnp_numbers')->search({
-            lnp_provider_id => $carrier->id,
-            number => $resource->{number}
-        },undef)->first;
-    if ($existing_number && $existing_number->id != $item->id) {
-        $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
-        return;
-    }
 
     $resource->{start} ||= undef;
     if($resource->{start} && $resource->{start} =~ /^\d{4}-\d{2}-\d{2}$/) {
@@ -113,7 +103,7 @@ sub update_item {
     }
 
     $item->update($resource);
-    $item->discard_changes; # agranig: otherwise start/end is not updated!?
+    $item->discard_changes;
 
     return $item;
 }

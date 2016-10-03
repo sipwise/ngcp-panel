@@ -4,6 +4,74 @@ use warnings;
 
 use Text::CSV_XS;
 use NGCP::Panel::Utils::MySQL;
+use NGCP::Panel::Utils::DateTime qw();
+use Scalar::Util qw(blessed);
+
+sub terminate_lnpnumbers {
+    my ($c, $now, $number) = @_;
+    my ($items,$now) = _get_lnpnumber_rs($c, $now, $number);
+    my $schema = $c->model('DB');
+    my $dtf = $schema->storage->datetime_parser;
+    my $now_str = $dtf->format_datetime($now);
+    $items = $items->search({
+        'me.number' => $number,
+        -or => [
+            'me.end' => undef,
+            'me.end' => { '>=' => $now_str },
+        ],
+    }, {
+        order_by => "me.id", # deadlock prevention
+    });
+    my @ids = ();
+    my $item_rs = $schema->resultset('lnp_numbers');
+    for my $item ($items->all) {
+        $c->log->debug("terminating LNP number ID " . $item->id . " (" . $item->number . "): end = " . $now);
+        if ($item_rs->search({
+                "me.id" => $item->id
+            },undef)->update({ 'end' => $now_str })) {
+            push(@ids,$item->id);
+        }
+    }
+    return @ids;
+}
+
+sub _get_lnpnumber_rs {
+    my ($c, $now, $number) = @_;
+    my $current_ts = NGCP::Panel::Utils::DateTime::current_local();
+    my $schema = $c->model('DB');
+    my $item_rs = $schema->resultset('lnp_numbers'); #test env: 35sec for a 100 items page with 200k
+    if (defined $now) {
+        if(!(blessed($now) && $now->isa('DateTime'))) {
+            eval {
+                $now = NGCP::Panel::Utils::DateTime::from_string($now);
+            };
+            if ($@) {
+                $c->log->debug($@);
+                $now = $current_ts;
+                $c->log->debug("lnp history - using current timestamp " . $now);
+            } else {
+                $c->log->debug("lnp history - using specified timestamp " . $now);
+            }
+        } else {
+            $c->log->debug("lnp history - using specified timestamp " . $now);
+        }
+        my $dtf = $schema->storage->datetime_parser;
+        #undef $number if defined $number && length($number) == 0;
+        $item_rs = $item_rs->search({},{
+            bind => [ ( $dtf->format_datetime($now) ) x 2, $number, $number ],
+            'join' => [ 'lnp_numbers_actual' ],
+        }); #test env: 50sec (6.5 sec raw query time)
+    } else {
+        $now = $current_ts;
+    }
+    return ($item_rs,$now);
+}
+
+sub get_lnpnumber_rs {
+    my ($c, $now, $number) = @_;
+    my ($rs,$now) = _get_lnpnumber_rs($c, $now, $number);
+    return $rs;
+}
 
 sub _insert_batch {
     my ($c, $schema, $numbers, $chunk_size) = @_;
