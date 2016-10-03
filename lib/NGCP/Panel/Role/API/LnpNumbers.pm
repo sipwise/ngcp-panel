@@ -11,21 +11,42 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Lnp::Number;
+use NGCP::Panel::Utils::DateTime qw();
 
 sub _item_rs {
-    my ($self, $c) = @_;
+    my ($self, $c, $now) = @_;
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
+    my $schema = $c->model('DB');
+    my $dtf = $schema->storage->datetime_parser;
 
-    my $item_rs = $c->model('DB')->resultset('lnp_numbers');
+    my $item_rs = $schema->resultset('lnp_numbers');
+    if ($c->request->params->{'actual'}) {
+        # 50sec for a 100 items page with 200k lnpnumbers:
+        $item_rs = $item_rs->search({},{
+            bind => [ ( $dtf->format_datetime($now) ) x 2, undef, undef ],
+            'join' => [ 'lnp_numbers_actual' ],
+        });
+    }
+    #my $item_rs = $schema->resultset('lnp_numbers');
+    #if ($c->request->params->{'actual'}) {
+    #    # 50sec for a 100 items page with 200k lnpnumbers:
+    #    $item_rs = $schema->resultset('lnp_numbers_actual')->search({},{
+    #        bind => [ ( $dtf->format_datetime($now) ) x 2, undef, undef ],
+    #        'join' => [ 'lnp_numbers' ],
+    #    });
+    #}
     return $item_rs;
 }
 
 sub get_form {
     my ($self, $c) = @_;
+    #return NGCP::Panel::Form::Lnp::NumberApi->new(ctx => $c);
     return NGCP::Panel::Form::Lnp::Number->new(ctx => $c);
 }
 
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
+    #$item = $self->item_by_id($c,$item->id);
     my %resource = $item->get_inflated_columns;
 
     my $hal = Data::HAL->new(
@@ -72,6 +93,7 @@ sub resource_from_item {
 
 sub item_by_id {
     my ($self, $c, $id) = @_;
+    #my $item_rs = $c->model('DB')->resultset('lnp_numbers');
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
 }
@@ -91,14 +113,6 @@ sub update_item {
     unless($carrier) {
         $c->log->error("invalid carrier_id '$$resource{lnp_provider_id}'"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist");
-        return;
-    }
-    if ($c->model('DB')->resultset('lnp_numbers')->search({
-            lnp_provider_id => $carrier->id,
-            number => $resource->{number}
-        },undef)->count > 0) {
-        $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
         return;
     }
 

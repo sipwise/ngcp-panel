@@ -297,19 +297,6 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
             return;
         }
-        if ($c->model('DB')->resultset('lnp_numbers')->search({
-                lnp_provider_id => $carrier->id,
-                number => $form->values->{number}
-            },undef)->count > 0) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                data => { number => $form->values->{number} },
-                desc  => $c->loc("LNP number already defined for LNP provider!"),
-            );
-            $c->flash(number_messages => delete $c->flash->{messages});
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
-            return;
-        }
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
@@ -375,19 +362,6 @@ sub number_create :Chained('list') :PathPart('number_create') :Args(0) {
                 c => $c,
                 data => { id => $form->values->{lnp_provider_id} },
                 desc  => $c->loc('Invalid LNP provider id detected!'),
-            );
-            $c->flash(number_messages => delete $c->flash->{messages});
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
-            return;
-        }
-        if ($c->model('DB')->resultset('lnp_numbers')->search({
-                lnp_provider_id => $carrier->id,
-                number => $form->values->{number}
-            },undef)->count > 0) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                data => { number => $form->values->{number} },
-                desc  => $c->loc("LNP number already defined for LNP provider!"),
             );
             $c->flash(number_messages => delete $c->flash->{messages});
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
