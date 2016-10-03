@@ -39,6 +39,19 @@
 
 <div class="ngcp-separator"></div>
 
+[% BLOCK lnp_numbers_filter %]
+<label>History: <select onChange="changeLnpNumbers(this);" id="lnp_numbers_filter">
+<option value="[% c.uri_for_action('/lnp/number_ajax') -%]">Total history</option>
+<option value="[% c.uri_for_action('/lnp/number_actual_ajax',,{ lnp_lookup = 0 }) -%]">Actual portings</option>
+<option value="[% c.uri_for_action('/lnp/number_actual_ajax',,{ lnp_lookup = 1 }) -%]">Lookup actual porting</option>
+</select></label>
+[% END %]
+<script>
+function changeLnpNumbers(selection) {
+    $('#lnp_numbers_table').dataTable().fnSettings().sAjaxSource = selection.value;
+    $('#lnp_numbers_table').dataTable().api().ajax.reload();
+}
+</script>
 <h3>[% c.loc('LNP Numbers') %]</h3>
 [%
     helper.name = c.loc('Ported Numbers');
@@ -47,6 +60,8 @@
     helper.dt_columns = number_dt_columns;
     helper.length_change = 1;
     helper.no_sort = 1;
+
+    helper.custom_filter = PROCESS lnp_numbers_filter;
 
     helper.close_target = number_close_target;
     helper.create_flag = number_create_flag;
