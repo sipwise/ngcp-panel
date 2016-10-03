@@ -9,6 +9,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::Lnp;
 use NGCP::Panel::Utils::MySQL;
+use NGCP::Panel::Utils::DateTime;
 
 use NGCP::Panel::Form::Lnp::Carrier;
 use NGCP::Panel::Form::Lnp::Number;
@@ -68,6 +69,18 @@ sub number_ajax :Chained('list') :PathPart('number_ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{number_rs};
+
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{number_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
+sub number_actual_ajax :Chained('list') :PathPart('number_actual_ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = NGCP::Panel::Utils::Lnp::get_lnpnumber_rs($c, NGCP::Panel::Utils::DateTime::current_local(),
+        $c->request->params->{lnp_lookup} ? $c->request->params->{sSearch} : undef); #speedup
+
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{number_dt_columns});
 
     $c->detach( $c->view("JSON") );
@@ -297,19 +310,6 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
             return;
         }
-        if ($c->model('DB')->resultset('lnp_numbers')->search({
-                lnp_provider_id => $carrier->id,
-                number => $form->values->{number}
-            },undef)->count > 0) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                data => { number => $form->values->{number} },
-                desc  => $c->loc("LNP number already defined for LNP provider!"),
-            );
-            $c->flash(number_messages => delete $c->flash->{messages});
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
-            return;
-        }
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
@@ -375,19 +375,6 @@ sub number_create :Chained('list') :PathPart('number_create') :Args(0) {
                 c => $c,
                 data => { id => $form->values->{lnp_provider_id} },
                 desc  => $c->loc('Invalid LNP provider id detected!'),
-            );
-            $c->flash(number_messages => delete $c->flash->{messages});
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
-            return;
-        }
-        if ($c->model('DB')->resultset('lnp_numbers')->search({
-                lnp_provider_id => $carrier->id,
-                number => $form->values->{number}
-            },undef)->count > 0) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                data => { number => $form->values->{number} },
-                desc  => $c->loc("LNP number already defined for LNP provider!"),
             );
             $c->flash(number_messages => delete $c->flash->{messages});
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));

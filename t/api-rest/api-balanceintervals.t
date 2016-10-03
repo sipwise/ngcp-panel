@@ -1453,7 +1453,7 @@ sub _compare_interval {
         if (substr($expected->{stop},0,1) eq '~') {
             $ok = _is_ts_approx($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestamp") && $ok;
         } else {
-            $ok = is($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestmp") && $ok;
+            $ok = is($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestamp") && $ok;
         }
     }
 
