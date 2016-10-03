@@ -238,14 +238,7 @@ sub POST :Allow {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp carrier_id does not exist");
                 last;
             }
-            if ($c->model('DB')->resultset('lnp_numbers')->search({
-                    lnp_provider_id => $carrier->id,
-                    number => $resource->{number}
-                },undef)->count > 0) {
-                $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
-                last;
-            }
+            # revert MT#20027: the actual lnp number must be unique across lnp_providers:
 
             my $item;
             try {
