@@ -11,22 +11,40 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Lnp::Number;
+use NGCP::Panel::Utils::DateTime qw();
+use Scalar::Util qw(blessed);
 
 sub _item_rs {
-    my ($self, $c) = @_;
-
-    my $item_rs = $c->model('DB')->resultset('lnp_numbers');
+    my ($self, $c, $now, $number) = @_;
+    my $schema = $c->model('DB');
+    my $item_rs = $schema->resultset('lnp_numbers'); #test env: 35sec for a 100 items page with 200k
+    if (defined $now) {
+        if(!(blessed($now) && $now->isa('DateTime'))) {
+            try {
+                $now = NGCP::Panel::Utils::DateTime::from_string($now);
+            } catch($e) {
+                $c->log->debug($e);
+                $now = NGCP::Panel::Utils::DateTime::current_local();
+                $c->log->debug("using current timestamp " . $now);
+            };
+        }
+        my $dtf = $schema->storage->datetime_parser;
+        $item_rs = $item_rs->search({},{
+            bind => [ ( $dtf->format_datetime($now) ) x 2, $number, $number ],
+            'join' => [ 'lnp_numbers_actual' ],
+        }); #test env: 50sec (6.5 sec raw query time)
+    }
     return $item_rs;
 }
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Lnp::Number->new(ctx => $c);
+    return NGCP::Panel::Form::Lnp::Number->new(ctx => $c); #no bottleneck
 }
 
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
-    my %resource = $item->get_inflated_columns;
+    my %resource = $item->get_inflated_columns; #no bottleneck
 
     my $hal = Data::HAL->new(
         links => [
@@ -72,7 +90,7 @@ sub resource_from_item {
 
 sub item_by_id {
     my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
+    my $item_rs = $self->item_rs($c); #no bottleneck
     return $item_rs->find($id);
 }
 
@@ -93,14 +111,6 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist");
         return;
     }
-    if ($c->model('DB')->resultset('lnp_numbers')->search({
-            lnp_provider_id => $carrier->id,
-            number => $resource->{number}
-        },undef)->count > 0) {
-        $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
-        return;
-    }
 
     $resource->{start} ||= undef;
     if($resource->{start} && $resource->{start} =~ /^\d{4}-\d{2}-\d{2}$/) {
@@ -112,7 +122,7 @@ sub update_item {
     }
 
     $item->update($resource);
-    $item->discard_changes; # agranig: otherwise start/end is not updated!?
+    $item->discard_changes;
 
     return $item;
 }
