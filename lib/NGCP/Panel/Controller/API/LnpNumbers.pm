@@ -22,7 +22,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET POST DELETE OPTIONS HEAD/];
 }
 
 
@@ -49,10 +49,15 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    { number => { like => $q } };
+                    { 'me.number' => { like => $q } };
                 },
                 second => sub {},
             },
+        },
+        {
+            param => 'actual',
+            description => 'Filter for LNP numbers valid at the given timestamp (YYYY-MM-DD HH:mm:ss) or the current time',
+            query => undef, #dummy param
         },
     ];
 }
@@ -106,14 +111,20 @@ sub GET :Allow {
     my ($self, $c) = @_;
     my $header_accept = $c->request->header('Accept');
     if(defined $header_accept && $header_accept eq 'text/csv') {
-        $self->return_csv($c);
+        $self->return_csv($c); #,$self->item_rs($c,$c->request->params->{'actual'});
         return;
     }
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $items = $self->item_rs($c);
+        my $items = $self->item_rs($c,
+            $c->request->params->{'actual'},
+            $c->request->params->{'number'});
+        #my $t1 = time;
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        #my $t2 = time; print(($t2 - $t1) . "secs\n"); $t1 = time;
+        #my @test = $items->all;
+        #$t2 = time; print("page: " . ($t2 - $t1) . "secs\n"); $t1 = time;
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $item ($items->all) {
@@ -255,14 +266,7 @@ sub POST :Allow {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp carrier_id does not exist");
                 last;
             }
-            if ($c->model('DB')->resultset('lnp_numbers')->search({
-                    lnp_provider_id => $carrier->id,
-                    number => $resource->{number}
-                },undef)->count > 0) {
-                $c->log->error("LNP number '$$resource{number}' already defined for carrier_id '$$resource{lnp_provider_id}'");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp number already exists for lnp carrier");
-                last;
-            }
+            # revert "MT#20027: the actual lnp number must be unique across lnp_providers"
 
             my $item;
             try {
@@ -281,6 +285,34 @@ sub POST :Allow {
         }
     }
     return;
+}
+
+sub DELETE :Allow {
+    my ($self, $c) = @_;
+    #my $page = $c->request->params->{page} // 1;
+    #my $rows = $c->request->params->{rows} // 10;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $number = $c->request->params->{'number'};
+        unless ($number) {
+            $c->log->error("number query parameter required"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "number query parameter required.");
+            last;
+        }
+        my $items = $self->item_rs($c,
+            $c->request->params->{'actual'},
+            $number);
+        #(my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        last unless $self->resource_exists($c, lnpnumber => $items->first);
+        $items->delete_all;
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
+
+    }
+    return;
+
 }
 
 sub end : Private {
