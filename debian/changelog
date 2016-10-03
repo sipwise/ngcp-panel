@@ -1,3 +1,12 @@
+ngcp-panel (1.14.1.11+0~mr4.5.1.11) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [ba27c5f] TT#3994 Add download csv to LNP and EmergencyMapping API
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Oct 2016 23:05:57 +0200
+
 ngcp-panel (1.14.1.10+0~mr4.5.1.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
