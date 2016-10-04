@@ -44,6 +44,19 @@ sub query_params {
             },
         },
         {
+            param => 'reseller_id',
+            description => 'Filter for emergency mappings belonging to a specific reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'emergency_container.reseller_id' => $q };
+                },
+                second => sub {
+                    return { join => 'emergency_container' };
+                },
+            },
+        },
+        {
             param => 'code',
             description => 'Filter for mappings with a specific code (wildcards possible)',
             query => {
