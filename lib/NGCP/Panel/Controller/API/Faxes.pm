@@ -178,7 +178,7 @@ sub POST :Allow {
         my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
         last unless $prov_subscriber;
         my $faxpref = $prov_subscriber->voip_fax_preference;
-        unless ($faxpref && $faxpref->active && $faxpref->password){
+        unless ($faxpref && $faxpref->active){
             $c->log->error("invalid subscriber fax preferences");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid  subscriber fax preferences");
             last;
