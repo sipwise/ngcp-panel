@@ -116,11 +116,11 @@ sub post {
 
         $guard->commit;
 
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
-        $c->response->body(q());
+        $self->return_representation_post($c, $item, $form);
+    }
     return;
 }
+
 sub auto :Private {
     my ($self, $c) = @_;
 
