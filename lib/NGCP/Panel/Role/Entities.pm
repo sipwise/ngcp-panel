@@ -111,11 +111,18 @@ sub post {
 
         $guard->commit;
 
+        my $preference = $self->require_preference($c) // 'minimal';
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
-        $c->response->body(q());
+        if ('minimal' eq $preference) {
+            $c->response->body(q());
+        }else{
+            $c->response->body($response->content);
+        }
+    }
     return;
 }
+
 sub auto :Private {
     my ($self, $c) = @_;
 
