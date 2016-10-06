@@ -8,6 +8,12 @@ use HTTP::Status qw(:constants);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 #use Path::Tiny qw(path);
+#use TryCatch;
+#require Catalyst::ActionRole::ACL;
+#require Catalyst::ActionRole::CheckTrailingSlash;
+#require Catalyst::ActionRole::HTTPMethods;
+#require Catalyst::ActionRole::RequireSSL;
+
 
 sub set_config {
     my $self = shift;
@@ -20,17 +26,17 @@ sub set_config {
                 Does => [qw(ACL CheckTrailingSlash RequireSSL)],
                 Method => $_,
                 Path => $self->dispatch_path,
+                %{$self->_set_config($_)},
             } } @{ $self->allowed_methods }
         },
         action_roles => [qw(HTTPMethods)],
+        %{$self->_set_config()},
     );
 }
 
-sub auto :Private {
+sub get_list{
     my ($self, $c) = @_;
-
-    $self->set_body($c);
-    $self->log_request($c);
+    return $self->item_rs($c);
 }
 
 sub get {
@@ -38,15 +44,16 @@ sub get {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $items = $self->item_rs($c);
+        my $items = $self->get_list($c);
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
+        my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
+        for my $item (@items) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
+                href     => sprintf('/%s%s', $c->request->path, $self->get_item_id($c, $item)),
             );
         }
         push @links,
@@ -81,6 +88,46 @@ sub get {
     return;
 }
 
+sub post {
+    my ($self) = shift;
+    my ($c) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $resource = $self->get_valid_post_data(
+            c => $c,
+            media_type =>  $self->config->{action}->{OPTIONS}->{POST}->{ContentType} // 'application/json',
+        );
+        last unless $resource;
+        my ($form, $exceptions) = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+            $exceptions ? (exceptions => $exceptions) : (),
+        );
+
+        my $process_extras= {};
+        last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
+        last unless $resource;
+        last unless $self->check_duplicate($c, undef, undef, $resource, $form, $process_extras);
+        last unless $self->check_resource($c, undef, undef, $resource, $form, $process_extras);
+
+        my $item = $self->create_item($c, $resource, $form, $process_extras);
+
+        $guard->commit;
+
+        $c->response->status(HTTP_CREATED);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+        $c->response->body(q());
+    return;
+}
+sub auto :Private {
+    my ($self, $c) = @_;
+
+    $self->set_body($c);
+    $self->log_request($c);
+}
+
 sub head {
     my ($self, $c) = @_;
     $c->forward(qw(GET));
@@ -97,37 +144,6 @@ sub options {
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
-
-sub post {
-    my ($self) = shift;
-    my ($c) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $resource = $self->get_valid_post_data(
-            c => $c,
-            media_type => 'application/json',
-        );
-        last unless $resource;
-        my $form = $self->get_form($c);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        $resource = $self->process_form_resource($c, undef, undef, $resource, $form);
-        last unless $resource;
-        last unless $self->check_duplicate($c, undef, undef, $resource, $form);
-
-        my $item = $self->create_item($c, $resource, $form);
-
-        $guard->commit;
-
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
-        $c->response->body(q());
-    }
     return;
 }
 
