@@ -831,6 +831,38 @@ sub relation {
     return 'http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name;
 }
 #------ /accessors ---
+sub return_representation{
+    my($self, $c, $item, $form, $preference) = @_;
+
+    $preference //= $self->require_preference($c);
+    return unless $preference;
+
+    if ('minimal' eq $preference) {
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->header(Preference_Applied => 'return=minimal');
+        $c->response->body(q());
+    } else {
+        my $hal = $self->hal_from_item($c, $item, $form);
+        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            $hal->http_headers,
+        ), $hal->as_json);
+        $c->response->headers($response->headers);
+        $c->response->header(Preference_Applied => 'return=representation');
+        $c->response->body($response->content);
+    }
+}
+sub return_representation_post{
+    my($self, $c, $item, $form, $preference) = @_;
+
+    $preference //= $self->require_preference($c) // 'minimal';
+    $c->response->status(HTTP_CREATED);
+    $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+    if ('minimal' eq $preference) {
+        $c->response->body(q());
+    }else{
+        $c->response->body($response->content);
+    }
+}
 
 sub return_csv(){
     my($self,$c) = @_;
