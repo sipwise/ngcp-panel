@@ -8,6 +8,12 @@ use HTTP::Status qw(:constants);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 #use Path::Tiny qw(path);
+#use TryCatch;
+#require Catalyst::ActionRole::ACL;
+#require Catalyst::ActionRole::CheckTrailingSlash;
+#require Catalyst::ActionRole::HTTPMethods;
+#require Catalyst::ActionRole::RequireSSL;
+
 
 sub set_config {
     my $self = shift;
@@ -20,18 +26,14 @@ sub set_config {
                 Does => [qw(ACL CheckTrailingSlash RequireSSL)],
                 Method => $_,
                 Path => $self->dispatch_path,
+                %{$self->_set_config($_)},
             } } @{ $self->allowed_methods }
         },
         action_roles => [qw(HTTPMethods)],
+        %{$self->_set_config()},
     );
 }
 
-sub auto :Private {
-    my ($self, $c) = @_;
-
-    $self->set_body($c);
-    $self->log_request($c);
-}
 
 sub get {
     my ($self, $c) = @_;
@@ -81,6 +83,46 @@ sub get {
     return;
 }
 
+sub post {
+    my ($self) = shift;
+    my ($c) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $resource = $self->get_valid_post_data(
+            c => $c,
+            media_type =>  $self->config->{action}->{OPTIONS}->{POST}->{ContentType} // 'application/json',
+        );
+        last unless $resource;
+        my ($form, $exceptions) = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+            $exceptions ? (exceptions => $exceptions) : (),
+        );
+
+        my $process_extras= {};
+        last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
+        last unless $resource;
+        last unless $self->check_duplicate($c, undef, undef, $resource, $form, $process_extras);
+        last unless $self->check_resource($c, undef, undef, $resource, $form, $process_extras);
+
+        my $item = $self->create_item($c, $resource, $form, $process_extras);
+
+        $guard->commit;
+
+        $c->response->status(HTTP_CREATED);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+        $c->response->body(q());
+    return;
+}
+sub auto :Private {
+    my ($self, $c) = @_;
+
+    $self->set_body($c);
+    $self->log_request($c);
+}
+
 sub head {
     my ($self, $c) = @_;
     $c->forward(qw(GET));
@@ -97,37 +139,6 @@ sub options {
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
-
-sub post {
-    my ($self) = shift;
-    my ($c) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $resource = $self->get_valid_post_data(
-            c => $c,
-            media_type => 'application/json',
-        );
-        last unless $resource;
-        my $form = $self->get_form($c);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        $resource = $self->process_form_resource($c, undef, undef, $resource, $form);
-        last unless $resource;
-        last unless $self->check_duplicate($c, undef, undef, $resource, $form);
-
-        my $item = $self->create_item($c, $resource, $form);
-
-        $guard->commit;
-
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
-        $c->response->body(q());
-    }
     return;
 }
 
