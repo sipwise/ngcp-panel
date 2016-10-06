@@ -34,17 +34,22 @@ sub set_config {
     );
 }
 
+sub get_list{
+    my ($self, $c) = @_;
+    return $self->item_rs($c);
+}
 
 sub get {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $items = $self->item_rs($c);
+        my $items = $self->get_list($c);
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
+        my @items = 'ARRAY' eq ref $items ? @items : $items->all;
+        for my $item (@items) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
