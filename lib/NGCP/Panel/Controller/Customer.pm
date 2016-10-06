@@ -59,10 +59,13 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.reseller.name", search => 1, title => $c->loc("Reseller") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
+        { name => "contact.firstname", search => 1, title => '' },
+        { name => "contact.lastname", search => 1, title => $c->loc("Name"),
+            custom_renderer => 'function ( data, type, full ) { return full.contact_firstname + " " + full.contact_lastname; }' },
         { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
         { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
         { name => "status", search => 1, title => $c->loc("Status") },
-        { name => "max_subscribers", search => 1, title => $c->loc("Max Number of Subscribers") },
+        { name => "max_subscribers", search => 1, title => $c->loc("Max. Subscribers") },
     ]);
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
@@ -87,7 +90,12 @@ sub root :Chained('list_customer') :PathPart('') :Args(0) :Does(ACL) :ACLDetachT
 sub ajax :Chained('list_customer') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     my $res = $c->stash->{contract_select_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns}, sub {
+        my $item = shift;
+        my %contact = $item->contact->get_inflated_columns;
+        my %result = map { (ref $contact{$_}) ? () : ('contact_'.$_ => $contact{$_}); } keys %contact;
+        return %result;
+    },);
     $c->detach( $c->view("JSON") );
 }
 
@@ -146,7 +154,12 @@ sub ajax_package_filter :Chained('list_customer') :PathPart('ajax/package') :Arg
 sub ajax_pbx_only :Chained('list_customer') :PathPart('ajax_pbx_only') :Args(0) {
     my ($self, $c) = @_;
     my $res = $c->stash->{contract_select_rs}->search_rs({'product.class' => 'pbxaccount'});
-    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns}, sub {
+        my $item = shift;
+        my %contact = $item->contact->get_inflated_columns;
+        my %result = map { (ref $contact{$_}) ? () : ('contact_'.$_ => $contact{$_}); } keys %contact;
+        return %result;
+    },);
     $c->detach( $c->view("JSON") );
 }
 

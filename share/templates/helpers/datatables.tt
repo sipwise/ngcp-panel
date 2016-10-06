@@ -3,6 +3,7 @@
         helper.column_titles = [];
         helper.column_fields = [];
         helper.column_sortable_map = {};
+        helper.custom_renderers = {};
         FOR col IN helper.dt_columns;
             IF !col.accessor;
                 col.accessor = col.name;
@@ -12,6 +13,9 @@
             helper.column_titles.push(col.title);
             helper.column_fields.push(col.accessor);
             helper.column_sortable_map.${col.accessor} = (col.sortable.defined ? col.sortable : 1);
+            IF col.custom_renderer.defined;
+                helper.custom_renderers.${col.accessor} = col.custom_renderer;
+            END;
         END;
     END;
     backuri = c.req.uri;
@@ -89,8 +93,8 @@ $(document).ready(function() {
                 "mRender": function ( data, type, full ) {
                     if(data == null)
                         return '';
-                    [% IF custom_renderers.${f} -%]
-                        var renderCustom = [% custom_renderers.${f} -%];
+                    [% IF helper.custom_renderers.${f} -%]
+                        var renderCustom = [% helper.custom_renderers.${f} -%];
                     [% ELSE -%]
                         var renderCustom = function(data, type, full) { return data; };
                     [% END -%]
