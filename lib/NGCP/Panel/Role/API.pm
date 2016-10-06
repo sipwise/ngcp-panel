@@ -375,7 +375,13 @@ sub require_valid_patch {
 
     return 1;
 }
-
+sub item_by_id_valid {
+    my ($self, $c, $id) = @_;
+    return unless $self->valid_id($c, $id);
+    my $item = $self->item_by_id($c, $id);
+    return unless $self->resource_exists($c, $self->item_name => $item);
+    return $item;
+}
 sub resource_exists {
     my ($self, $c, $entity_name, $resource) = @_;
     return 1 if $resource;
@@ -596,7 +602,9 @@ sub apply_query_params {
 
     foreach my $param(keys %{ $c->req->query_params }) {
         my @p = grep { $_->{param} eq $param } @{ $query_params };
-        next unless($p[0]->{query} || $p[0]->{new_rs}); # skip "dummy" query parameters
+        #todo: we can generate default filters for all item_rs fields here
+        #the only reason not to do this is a security
+        next unless($p[0]->{query} || $p[0]->{query_type} || $p[0]->{new_rs}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
         $q = undef if $q eq "NULL"; # IS NULL translation
@@ -604,7 +612,7 @@ sub apply_query_params {
             if (defined $p[0]->{new_rs}) {
                 #compose fresh rs based on current, to support set operations with filters:
                 $item_rs = $p[0]->{new_rs}($c,$q,$item_rs);
-            } elsif (defined $p[0]->{query}) {
+            } elsif (defined $p[0]->{query} || defined $p[0]->{query_type}) {
                 #regular chaining:
                 my($sub_where,$sub_attributes) = $self->get_query_callbacks(\@p);
                 $item_rs = $item_rs->search($sub_where->($q,$c), $sub_attributes->($q,$c));
@@ -649,8 +657,11 @@ sub delay_commit {
     $guard->commit();
 }
 
+#---------------- Entities staff
+#---------------- default methods
 sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
+    my ($self, $c, $item, $form, $params) = @_;
+    my ($form_exceptions) = @$params{qw/form_exceptions/};
     my $resource = {$item->get_inflated_columns};
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
     my $links = $self->hal_links($c, $item, $resource, $form) // [];
@@ -669,16 +680,17 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
-
-    $form //= $self->get_form($c);
-
-    $self->validate_form(
-        c => $c,
-        resource => $resource,
-        form => $form,
-        run => 0,
-    );
-
+    if(!$form){
+        ($form,$form_exceptions) = $self->get_form($c);
+    }
+    if($form){
+        $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+            run => 0,
+        );
+    }
     $resource->{id} = int($item->id);
     $hal->resource({%$resource});
     return $hal;
@@ -696,22 +708,59 @@ sub item_by_id {
 }
 
 sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+    my ($self, $c, $item, $old_resource, $resource, $form, $params) = @_;
+    my ($form_exceptions, $process_extras);
+    ($form, $form_exceptions, $process_extras) = @{$params}{qw/form form_exceptions process_extras/};
+    
+    if(!$form){
+        ($form, $form_exceptions) = $self->get_form($c);
+    }
+    
+    if($form){
+        return unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+            $form_exceptions ? (exceptions => $form_exceptions) : (),
+        );
+        return unless $resource;
+    }
 
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-    );
-    last unless $resource;
-    $resource = $self->process_form_resource($c, $item, $old_resource, $resource, $form);
-    last unless $resource;
-    last unless $self->check_duplicate($c, $item, $old_resource, $resource, $form);
-    $item = $self->update($c, $item, $old_resource, $resource, $form);
+    $old_resource //= $self->resource_from_item($c, $item, $form);
+
+    $process_extras //= {};
+    
+    return unless $self->process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
+    return unless $resource;
+    return unless $self->check_duplicate($c, $item, $old_resource, $resource, $form, $process_extras);
+    return unless $self->check_resource($c, $item, $old_resource, $resource, $form, $process_extras);
+
+    $item = $self->update_item_model($c, $item, $old_resource, $resource, $form, $process_extras);
+
+    return $item, $form;
+
+}
+sub resource_from_item{
+    my($self, $c, $item) = @_;
+    return { $item->get_inflated_columns };
+}
+sub update_item_model{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    $item->update($resource);
     return $item;
 }
-
+#------ dummy methods
+sub _set_config{
+    return {};
+}
+sub check_duplicate{
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    return 1;
+}
+sub check_resource{
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    return 1;
+}
 sub process_form_resource {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
     return $resource;
@@ -722,11 +771,6 @@ sub process_hal_resource {
     return $resource;
 }
 
-sub update {
-    my($self, $c, $item, $old_resource, $resource, $form) = @_;
-    $item->update($resource);
-    return $item;
-}
 
 #------ accessors --- 
 sub dispatch_path {
