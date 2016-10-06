@@ -390,12 +390,32 @@ sub resource_exists {
 }
 
 sub paginate_order_collection {
-    my ($self, $c, $item_rs) = @_;
+    my ($self, $c, $items) = @_;
+    my $params = {}
+        page => $c->request->params->{page} // 1,
+        rows => $c->request->params->{rows} // 10,
+        order_by => $c->request->params->{order_by},
+        direction => $c->request->params->{order_by_direction} // "asc",
+    }
+    my($total_count, $item_rs);
+    if('ARRAY' eq ref $items){
+        ($total_count, $item_rs) = $self->paginate_order_collection_array($c, $items, $params);
+    }else{
+        ($total_count, $item_rs) = $self->paginate_order_collection_array($c, $items, $params);
+    }
+    return ($total_count, $item_rs);
+}
 
-    my $page = $c->request->params->{page} // 1;
-    my $rows = $c->request->params->{rows} // 10;
-    my $order_by = $c->request->params->{order_by};
-    my $direction = $c->request->params->{order_by_direction} // "asc";
+sub paginate_order_collection_array {
+    my ($self, $c, $items, $params) = @_;
+    my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
+    my $total_count = scalar @$items;
+}
+
+sub paginate_order_collection_rs {
+    my ($self, $c, $item_rs, $params) = @_;
+    my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
+
     my $total_count = int($item_rs->count);
     $item_rs = $item_rs->search(undef, {
         page => $page,
@@ -662,7 +682,7 @@ sub delay_commit {
 sub hal_from_item {
     my ($self, $c, $item, $form, $params) = @_;
     my ($form_exceptions) = @$params{qw/form_exceptions/};
-    my $resource = {$item->get_inflated_columns};
+    my $resource = $self->resource_from_item($c, $item, $form);
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
     my $links = $self->hal_links($c, $item, $resource, $form) // [];
     my $hal = Data::HAL->new(
@@ -675,7 +695,7 @@ sub hal_from_item {
             ),
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $self->get_item_id($c, $item))),
             @$links
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -691,7 +711,7 @@ sub hal_from_item {
             run => 0,
         );
     }
-    $resource->{id} = int($item->id);
+    $resource->{id} = int($self->get_item_id($c, $item));
     $hal->resource({%$resource});
     return $hal;
 }
@@ -699,6 +719,11 @@ sub hal_from_item {
 sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
     return [];
+}
+
+sub get_item_id{
+    my($self, $c, $item, $resource, $form) = @_;
+    return {$item->id};
 }
 
 sub item_by_id {
