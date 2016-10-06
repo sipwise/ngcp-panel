@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_8fd8e11e",
+        "filename": "lib/NGCP/Panel/Role/API/LnpNumbers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-06T14:01:13Z",
+      "side": 1,
+      "message": "do you mean existing_number?",
+      "range": {
+        "startLine": 96,
+        "startChar": 8,
+        "endLine": 96,
+        "endChar": 22
+      },
+      "revId": "a14b58bbc97c90ad41de8a78dabde0f50da98805",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
