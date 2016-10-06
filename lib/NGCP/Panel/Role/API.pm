@@ -862,6 +862,46 @@ sub relation {
 }
 
 #------ /accessors ---
+sub return_representation{
+    my($self, $c, %params) = @_;
+    my($hal, $response, $item, $form, $preference) = @params{qw/hal response item form preference/};
+
+    $preference //= $self->require_preference($c);
+    return unless $preference;
+    $hal //= $self->hal_from_item($c, $item, $form);
+    $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+        $hal->http_headers,
+    ), $hal->as_json);
+
+    if ('minimal' eq $preference) {
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->header(Preference_Applied => 'return=minimal');
+        $c->response->body(q());
+    } else {
+        $c->response->headers($response->headers);
+        $c->response->header(Preference_Applied => 'return=representation');
+        $c->response->body($response->content);
+    }
+}
+sub return_representation_post{
+    my($self, $c, %params) = @_;
+    my($hal, $response, $item, $form, $preference) = @params{qw/hal response item form preference/};
+
+    $preference //= $self->require_preference($c);
+    return unless $preference;
+    $hal //= $self->hal_from_item($c, $item, $form);
+    $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+        $hal->http_headers,
+    ), $hal->as_json);
+
+    $c->response->status(HTTP_CREATED);
+    $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+    if ('minimal' eq $preference) {
+        $c->response->body(q());
+    }else{
+        $c->response->body($response->content);
+    }
+}
 
 
 sub return_csv(){
