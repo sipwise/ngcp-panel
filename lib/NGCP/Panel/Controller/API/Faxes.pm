@@ -175,6 +175,11 @@ sub POST :Allow {
             exceptions => [qw/subscriber_id/],
         );
         my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});
+        unless($billing_subscriber) {
+            $c->log->error("invalid subscriber id $$resource{subscriber_id} for fax send");
+            $self->error($c, HTTP_NOT_FOUND, "Fax subscriber not found.");
+            last;
+        }
         my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
         last unless $prov_subscriber;
         my $faxpref = $prov_subscriber->voip_fax_preference;
