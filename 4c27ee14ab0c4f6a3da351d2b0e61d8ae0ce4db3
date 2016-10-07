@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_c024a0c8",
+        "filename": "lib/NGCP/Panel/Role/API/LnpNumbers.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-10-07T13:01:28Z",
+      "side": 1,
+      "message": "first is bettern than count, yes, but this whole check and the underlying unique constraint for concurrent operations will be dropped in https://gerrit.mgm.sipwise.com/#/c/8599/",
+      "range": {
+        "startLine": 96,
+        "startChar": 4,
+        "endLine": 104,
+        "endChar": 5
+      },
+      "revId": "4c27ee14ab0c4f6a3da351d2b0e61d8ae0ce4db3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
