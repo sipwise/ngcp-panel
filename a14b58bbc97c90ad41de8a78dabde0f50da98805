@@ -22,6 +22,30 @@
       "revId": "a14b58bbc97c90ad41de8a78dabde0f50da98805",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_fe198123",
+        "filename": "lib/NGCP/Panel/Role/API/LnpNumbers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-07T02:59:55Z",
+      "side": 1,
+      "message": "I meant \"existent\", but let it be existing. Thank you. And I\u0027m going to merge this commit into 4.5.1, mainly because of the reseller_id filter in the emergencymappings. \n\nI hesitated about this fix, I supposed that old behavior might be intentional.",
+      "parentUuid": "9a3d3df0_8fd8e11e",
+      "range": {
+        "startLine": 96,
+        "startChar": 8,
+        "endLine": 96,
+        "endChar": 22
+      },
+      "revId": "a14b58bbc97c90ad41de8a78dabde0f50da98805",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
