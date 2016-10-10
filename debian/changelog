@@ -1,3 +1,38 @@
+ngcp-panel (1.14.3.0+0~mr4.5.3.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [1ae9ef4] MT#13573 CallList intra_alias_field_param for gpp* fields
+  * [c443677] MT#21685 - fix fax remote host/port check
+  * [8308076] MT#19113 CallRoutingVerify adjustments, Peering lookup
+  * [1f2a0cd] MT#19263 add optional "sip:" prefix for caller/callee input
+  * [c49982a] MT#22229 CallRoutingVerify accept chars in input numbers
+  * [f26b64a] MT#13573 CallList: add (terminated) suffix for other numbers
+  * [995c222] TT#3996 show (terminated) prefix for other_cli change
+  * [1f799dd] MT#22913 Faxes API remove deprecated preference check
+  * [8e6e7ba] MT#22913 Faxes API add check for non existing/terminated subscriber
+
+  [ Irina Peshinskaya ]
+  * [25f5c9b] MT#22063 Allow cyclic number ranges
+  * [eaac6e2] MT#19295 Disable ajax caching in the IE11
+  * [2fe41fb] MT#21501 Add delete button for the subscriber's reminder
+  * [b7a3fbf] MT#22657 Close peering API for the reseller role and small texts fixes
+  * [06b8761] MT#22804 Fix reseller query in the form data validation
+  * [e90a050] TT#3994 Add download csv to LNP and EmergencyMapping API
+
+  [ Andreas Granig ]
+  * [5f05e3c] TT#2757 Rework emergemcy mapping CSV up/download
+  * [18b2405] MT#22405 Fix html doc in emergencymappings
+  * [559153c] TT#3991 Add ncos level flag for intra-pbx calls
+
+  [ Rene Krenn ]
+  * [e02cba8] MT#21871 setting the allowed_ips via api and panel corrupts the db
+  * [0499009] MT#21969 cf_ ncos attributes not considered in PATCH
+  * [de36810] MT#20939 display/search customer contact full name
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 Oct 2016 16:15:53 +0200
+
 ngcp-panel (1.14.2.0+0~mr4.5.2.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
