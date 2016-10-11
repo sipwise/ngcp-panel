@@ -45,17 +45,39 @@ sub index :Chained('root') :PathPart('') :Args(0) {
 sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
     my ( $self, $c ) = @_;
 
+    use DDP; p $c->req->params;
+    # use utf8::all;
+    use Encode qw(decode);
+
     my $calls_rs_cb = sub {
         my %params = @_;
         my $total_count =  $c->model('DB')->resultset('messages')->search(undef,{group_by => 'call_id'})->count;
         my $base_rs =  $c->model('DB')->resultset('messages_custom');
-        my $searchstring = $params{searchstring} ? $params{searchstring}.'%' : '';
+        my $searchstring = $params{searchstring} ? $params{searchstring}.'' : '';
 
-        my @bind_vals = (($searchstring) x 3, $params{offset}, $params{rows});
+        my @bind_vals = ($searchstring, $params{offset}, $params{rows});
+        my $bind_final = [map {
+            my $x = $_;
+            #my $y = decode('UTF-8', $x, Encode::FB_CROAK);
+            p $x;
+            p( Encode::is_utf8($x) );
+            # utf8::upgrade($_);
+                [{
+                    dbd_attrs => {
+                        # 'field.mysql_charset' => 'utf8_unicode_ci',
+                        # 'mysql_charset' => 'utf8_unicode_ci',
+                        # mysql_enable_utf8 => 1,
+                        # mysql_bind_type_guessing => 1,
+                        },
+                } => $x]
+            } @bind_vals];
+        p $bind_final;
 
-        my $new_rs = $base_rs->search(undef,{
-            bind => \@bind_vals,
+        my $new_rs = $base_rs->search_rs(undef,{
+            bind => $bind_final,
         });
+        p $new_rs;
+        p $new_rs->as_query;
         return ($new_rs, $total_count, $total_count);
     };
 

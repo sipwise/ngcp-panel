@@ -67,6 +67,7 @@ sub root :Chained('list_admin') :PathPart('') :Args(0) {
 sub ajax :Chained('list_admin') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     my $admins = $c->stash->{admins};
+    use DDP; p $c->req->params;
     NGCP::Panel::Utils::Datatables::process($c, $admins, $c->stash->{admin_dt_columns});
     $c->detach($c->view('JSON'));
     return;
