@@ -22,6 +22,30 @@
       "revId": "0fba777844ba358f148c94c63e0bcb5e9a4d5380",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_dfc3d688",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-12T11:57:24Z",
+      "side": 1,
+      "message": "Yes, sure, good idea. I\u0027m preparing one more \"common\" commit, will add it there.",
+      "parentUuid": "5a3f45e8_7cb0d0f4",
+      "range": {
+        "startLine": 415,
+        "startChar": 45,
+        "endLine": 415,
+        "endChar": 48
+      },
+      "revId": "0fba777844ba358f148c94c63e0bcb5e9a4d5380",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
