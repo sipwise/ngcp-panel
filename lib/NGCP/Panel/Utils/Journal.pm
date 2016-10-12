@@ -62,8 +62,8 @@ sub add_journal_item_hal {
                     @hal_from_item = ( $h );
                 }
             }
-            $id_name = $params->{id_name} if defined $params->{id_name}; 
-            $id = $params->{id} if defined $params->{id};             
+            $id_name = $params->{id_name} if defined $params->{id_name};
+            $id = $params->{id} if defined $params->{id};
         } elsif (ref $arg eq 'ARRAY') {
             $params = {};
             @hal_from_item = @$arg;
@@ -79,7 +79,7 @@ sub add_journal_item_hal {
         $params->{operation} = $operation;
         $params->{resource_name} //= $controller->resource_name;
         $params->{format} //= $cfg->{format};
-        
+
         my $resource = shift @hal_from_item;
         my $hal;
         if (ref $resource eq 'CODE') {
@@ -105,62 +105,62 @@ sub add_journal_item_hal {
 sub get_api_journal_action_config {
     my ($path_part,$action_template,$journal_methods) = @_;
     my %journal_actions_found = map { $_ => 1 } @$journal_methods;
-    if (exists $journal_actions_found{'item_base_journal'}) {
+    if (exists $journal_actions_found{'handle_item_base_journal'}) {
         my @result = ();
-        if (exists $journal_actions_found{'journals_get'}) {
+        if (exists $journal_actions_found{'handle_journals_get'}) {
             my $action_config = Storable::dclone($action_template);
-            $action_config->{Chained} = 'item_base_journal';
+            $action_config->{Chained} = 'handle_item_base_journal';
             $action_config->{PathPart} //= API_JOURNAL_RESOURCE_NAME;
             $action_config->{Args} = 0;
             $action_config->{Method} = 'GET';
-            push(@result,$action_config,'journals_get');
+            push(@result,$action_config,'handle_journals_get');
         }
-        if (exists $journal_actions_found{'journals_options'}) {
+        if (exists $journal_actions_found{'handle_journals_options'}) {
             my $action_config = Storable::dclone($action_template);
-            $action_config->{Chained} = 'item_base_journal';
+            $action_config->{Chained} = 'handle_item_base_journal';
             $action_config->{PathPart} //= API_JOURNAL_RESOURCE_NAME;
             $action_config->{Args} = 0;
             $action_config->{Method} = 'OPTIONS';
-            push(@result,$action_config,'journals_options');
+            push(@result,$action_config,'handle_journals_options');
         }
-        if (exists $journal_actions_found{'journals_head'}) {
+        if (exists $journal_actions_found{'handle_journals_head'}) {
             my $action_config = Storable::dclone($action_template);
-            $action_config->{Chained} = 'item_base_journal';
+            $action_config->{Chained} = 'handle_item_base_journal';
             $action_config->{PathPart} //= API_JOURNAL_RESOURCE_NAME;
             $action_config->{Args} = 0;
             $action_config->{Method} = 'HEAD';
-            push(@result,$action_config,'journals_head');
-        }        
-        if (exists $journal_actions_found{'journalsitem_get'}) {
+            push(@result,$action_config,'handle_journals_head');
+        }
+        if (exists $journal_actions_found{'handle_journalsitem_get'}) {
             my $action_config = Storable::dclone($action_template);
-            $action_config->{Chained} = 'item_base_journal';
+            $action_config->{Chained} = 'handle_item_base_journal';
             $action_config->{PathPart} //= API_JOURNAL_RESOURCE_NAME;
             $action_config->{Args} = 1;
             $action_config->{Method} = 'GET';
-            push(@result,$action_config,'journalsitem_get');
+            push(@result,$action_config,'handle_journalsitem_get');
         }
-        if (exists $journal_actions_found{'journalsitem_options'}) {
+        if (exists $journal_actions_found{'handle_journalsitem_options'}) {
             my $action_config = Storable::dclone($action_template);
-            $action_config->{Chained} = 'item_base_journal';
+            $action_config->{Chained} = 'handle_item_base_journal';
             $action_config->{PathPart} //= API_JOURNAL_RESOURCE_NAME;
             $action_config->{Args} = 1;
             $action_config->{Method} = 'OPTIONS';
-            push(@result,$action_config,'journalsitem_options');
+            push(@result,$action_config,'handle_journalsitem_options');
         }
-        if (exists $journal_actions_found{'journalsitem_head'}) {
+        if (exists $journal_actions_found{'handle_journalsitem_head'}) {
             my $action_config = Storable::dclone($action_template);
-            $action_config->{Chained} = 'item_base_journal';
+            $action_config->{Chained} = 'handle_item_base_journal';
             $action_config->{PathPart} //= API_JOURNAL_RESOURCE_NAME;
             $action_config->{Args} = 1;
             $action_config->{Method} = 'HEAD';
-            push(@result,$action_config,'journalsitem_head');
+            push(@result,$action_config,'handle_journalsitem_head');
         }
         if ((scalar @result) > 0) {
             push(@result,{
                 Chained => '/',
                 PathPart => $path_part,
                 CaptureArgs => 1,
-            },'item_base_journal');
+            },'handle_item_base_journal');
             @result = reverse @result;
             return \@result;
         }
@@ -181,6 +181,38 @@ sub get_api_journal_query_params {
                     },
                     second => sub { },
                 },
+            },{
+                param => 'username',
+                description => 'Filter for journal items by the name of the user who performed the operation',
+                query => {
+                    first => sub {
+                        my $q = shift;
+                        { 'username' => $q };
+                    },
+                    second => sub { },
+                },
+            },{
+                param => 'from',
+                description => 'Filter for journal items recorded after or at the specified time stamp',
+                query => {
+                    first => sub {
+                        my $q = shift;
+                        my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                        return { 'timestamp' => { '>=' => $dt->epoch  } };
+                    },
+                    second => sub { },
+                },
+            },{
+                param => 'to',
+                description => 'Filter for journal items recorded before or at the specified time stamp',
+                query => {
+                    first => sub {
+                        my $q = shift;
+                        my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                        return { 'timestamp' => { '<=' => $dt->epoch  } };
+                    },
+                    second => sub { },
+                },
             });
     return \@params;
 }
@@ -198,7 +230,7 @@ sub handle_api_journals_get {
     {
         my $item_id = $c->stash->{item_id_journal};
         last unless $controller->valid_id($c, $item_id);
-        
+
         my $journals = get_journal_rs($controller,$c,$item_id);
         (my $total_count, $journals) = $controller->paginate_order_collection($c,$journals);
 
@@ -229,12 +261,12 @@ sub handle_api_journals_get {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
         return;
-        
+
     }
     return;
 }
@@ -255,9 +287,9 @@ sub handle_api_journalsitem_get {
         } else {
             last;
         }
-        
+
         last unless $controller->resource_exists($c, journal => $journal);
-        
+
         if ($journal->resource_id != $item_id) {
             $c->log->error("Journal item '" . $id . "' does not belong to '" . $controller->resource_name . '/' . $item_id . "'");
             $controller->error($c, HTTP_NOT_FOUND, "Entity 'journal' not found.");
@@ -289,7 +321,7 @@ sub handle_api_journals_options {
         push(@allowed_methods,'GET');
         if (exists $journal_actions_found{'journals_head'}) {
             push(@allowed_methods,'HEAD');
-        }    
+        }
     }
     $c->response->headers(HTTP::Headers->new(
         Allow => join(', ',@allowed_methods),
@@ -307,7 +339,7 @@ sub handle_api_journalsitem_options {
         push(@allowed_methods,'GET');
         if (exists $journal_actions_found{'journalsitem_head'}) {
             push(@allowed_methods,'HEAD');
-        }    
+        }
     }
     $c->response->headers(HTTP::Headers->new(
         Allow => join(', ',@allowed_methods),
@@ -322,7 +354,7 @@ sub _has_journal_method {
     my ($controller, $action) = @_;
     my %journal_actions_found = map { $_ => 1 } @{ $controller->get_journal_methods };
     return exists $journal_actions_found{$action};
-    
+
 }
 
 sub handle_api_journals_head {
@@ -363,11 +395,11 @@ sub get_journal_rs {
             columns => JOURNAL_FIELDS,
             #alias => 'me',
         }));
-        
+
     if ($controller->can('journal_query_params')) {
         return $controller->apply_query_params($c,$controller->journal_query_params,$rs);
     }
-    
+
     return $rs;
 }
 
@@ -395,7 +427,7 @@ sub get_top_n_journalitems {
     })->all;
     return \@journals;
 }
-            
+
 sub hal_from_journal {
     my ($controller,$c,$journal) = @_;
 
@@ -414,7 +446,7 @@ sub hal_from_journal {
             #delta stuff...
         }
     }
-    
+
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -431,22 +463,22 @@ sub hal_from_journal {
         ],
         relation => API_JOURNAL_RELATION, #API_JOURNALITEM_RELATION,
     );
-    
+
     my $datetime_fmt = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
+        pattern => '%F %T',
     );
-    
+
     $resource{timestamp} = $datetime_fmt->format_datetime($resource{timestamp});
     delete $resource{resource_name};
     delete $resource{resource_id};
     delete $resource{content_format};
     $hal->resource({%resource});
-    
+
     return $hal;
 }
 
 sub get_journal_relation_link {
-    
+
     my ($resource,$item_id,$id,$relation) = @_;
     my $resource_name = undef;
     if (ref $resource eq 'HASH') {
@@ -512,7 +544,7 @@ sub _get_journal_op_config {
         }
     }
     return { format => $format, operation_enabled => $operation_enabled};
-    
+
 }
 
 sub get_journal_resource_config {
@@ -532,7 +564,7 @@ sub get_journal_resource_config {
         }
     }
     return { journal_resource_enabled => $journal_resource_enabled };
-    
+
 }
 
 sub _serialize_content { #run this in eval only, deflate somehow inflicts a segfault in subsequent catalyst action when not consuming all args there.
@@ -598,7 +630,7 @@ sub _create_journal {
                 $journal{username} = $c->user->login;
             } elsif($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
                 $journal{username} = $c->user->webusername . '@' . $c->user->domain->domain;
-            } 
+            }
         }
         try {
             $journal{content} = _serialize_content($content_format,$resource);
