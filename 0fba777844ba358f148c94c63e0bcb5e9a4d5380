@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_7cb0d0f4",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-10-12T10:13:04Z",
+      "side": 1,
+      "message": "maybe the compare method (string vs int) should be passed as well, derived from another query param (\"order_by_method\" or the like)",
+      "range": {
+        "startLine": 415,
+        "startChar": 45,
+        "endLine": 415,
+        "endChar": 48
+      },
+      "revId": "0fba777844ba358f148c94c63e0bcb5e9a4d5380",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
