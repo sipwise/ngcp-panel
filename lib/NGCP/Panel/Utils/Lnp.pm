@@ -9,7 +9,7 @@ use Scalar::Util qw(blessed);
 
 sub terminate_lnpnumbers {
     my ($c, $now, $number) = @_;
-    my ($items,$now) = _get_lnpnumber_rs($c, $now, $number);
+    (my $items,$now) = _get_lnpnumber_rs($c, $now, $number);
     my $schema = $c->model('DB');
     my $dtf = $schema->storage->datetime_parser;
     my $now_str = $dtf->format_datetime($now);
@@ -69,7 +69,7 @@ sub _get_lnpnumber_rs {
 
 sub get_lnpnumber_rs {
     my ($c, $now, $number) = @_;
-    my ($rs,$now) = _get_lnpnumber_rs($c, $now, $number);
+    (my $rs,$now) = _get_lnpnumber_rs($c, $now, $number);
     return $rs;
 }
 
