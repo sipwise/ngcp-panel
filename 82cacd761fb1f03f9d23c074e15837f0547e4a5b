@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_502b3582",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-13T11:17:35Z",
+      "side": 1,
+      "message": "difference between process_form_resource and process_hal_resource?\n\nI am thinking what could be a clearer naming for them so it\u0027s easier to understand",
+      "range": {
+        "startLine": 715,
+        "startChar": 4,
+        "endLine": 715,
+        "endChar": 25
+      },
+      "revId": "82cacd761fb1f03f9d23c074e15837f0547e4a5b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
