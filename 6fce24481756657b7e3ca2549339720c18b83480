@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_2be558a8",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-13T13:58:47Z",
+      "side": 1,
+      "message": "to improve reusability (and encapsulation), I would pass $hal instead of $item and $form (there might be occasions, where $form or $item is not available)",
+      "range": {
+        "startLine": 835,
+        "startChar": 18,
+        "endLine": 835,
+        "endChar": 30
+      },
+      "revId": "6fce24481756657b7e3ca2549339720c18b83480",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_cbd794be",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-13T13:58:47Z",
+      "side": 1,
+      "message": "to reduce code paths and improve coherence, I would call require_preference only here and remove that param.",
+      "range": {
+        "startLine": 835,
+        "startChar": 32,
+        "endLine": 835,
+        "endChar": 43
+      },
+      "revId": "6fce24481756657b7e3ca2549339720c18b83480",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_0be21c9f",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-13T13:58:47Z",
+      "side": 1,
+      "message": "not defined IMO",
+      "range": {
+        "startLine": 863,
+        "startChar": 27,
+        "endLine": 863,
+        "endChar": 36
+      },
+      "revId": "6fce24481756657b7e3ca2549339720c18b83480",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
