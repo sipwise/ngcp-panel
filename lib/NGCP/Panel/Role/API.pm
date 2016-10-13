@@ -688,10 +688,11 @@ sub delay_commit {
 
 #---------------- Entities staff
 #---------------- default methods
+
 sub hal_from_item {
     my ($self, $c, $item, $form, $params) = @_;
     my ($form_exceptions) = @$params{qw/form_exceptions/};
-    my $resource = {$item->get_inflated_columns};
+    my $resource = $self->resource_from_item($c, $item, $form);
 
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
     my $links = $self->hal_links($c, $item, $resource, $form) // [];
@@ -705,7 +706,7 @@ sub hal_from_item {
             ),
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $self->get_item_id($c, $item))),
             @$links
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -721,20 +722,9 @@ sub hal_from_item {
             run => 0,
         );
     }
-    $resource->{id} = int($item->id);
+    $resource->{id} = $self->get_item_id($c, $item);
     $hal->resource({%$resource});
     return $hal;
-}
-
-sub hal_links {
-    my($self, $c, $item, $resource, $form) = @_;
-    return [];
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
 }
 
 sub update_item {
@@ -770,27 +760,28 @@ sub update_item {
     return $item, $form;
 
 }
-sub resource_from_item{
-    my($self, $c, $item) = @_;
-    return { $item->get_inflated_columns };
+
+#------ dummy & default methods
+
+sub query_params {
+    return [
+    ];
 }
-sub update_item_model{
-    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
-    $item->update($resource);
-    return $item;
-}
-#------ dummy methods
+
 sub _set_config{
     return {};
 }
+
 sub check_duplicate{
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
     return 1;
 }
+
 sub check_resource{
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
     return 1;
 }
+
 #process_form_resource - added as method for custom preparation form data,like:
 #   my $ft = File::Type->new();
 #   my $content_type = $ft->mime_type(${$process_extras->{binary_ref}});
@@ -819,8 +810,47 @@ sub process_hal_resource {
     return $resource;
 }
 
+sub hal_links {
+    my($self, $c, $item, $resource, $form) = @_;
+    return [];
+}
+
+sub get_form {
+    my($self, $c) = @_;
+    return ;
+}
+
+sub get_item_id{
+    my($self, $c, $item, $resource, $form) = @_;
+    return int($item->id);
+}
+
+sub item_by_id {
+    my ($self, $c, $id) = @_;
+    my $item_rs = $self->item_rs($c);
+    return $item_rs->find($id);
+}
+
+sub resource_from_item{
+    my($self, $c, $item) = @_;
+    my $res;
+    if('HASH' eq ref $item){
+        $res = $item;
+    }else{
+        $res = { $item->get_inflated_columns };
+    }
+    return $res;
+}
+
+sub update_item_model{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    $item->update($resource);
+    return $item;
+}
+
 
 #------ accessors ---
+
 sub dispatch_path {
     my $self = shift;
     return '/api/'.$self->resource_name.'/';
@@ -830,7 +860,9 @@ sub relation {
     my $self = shift;
     return 'http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name;
 }
+
 #------ /accessors ---
+
 sub return_representation{
     my($self, $c, $item, $form, $preference) = @_;
 
@@ -878,5 +910,6 @@ sub return_csv(){
         $self->error($c, HTTP_BAD_REQUEST, $e);
     }
 }
+
 1;
 # vim: set tabstop=4 expandtab:
