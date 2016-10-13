@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_f067e1e8",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-13T11:31:37Z",
+      "side": 1,
+      "message": "I\u0027d personally prefer if such general interface changes would be in a separate commit than mixed with individual api collections",
+      "revId": "9d52735a28100b8a6b32b71d7ed3e7ce38a3c8e6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_d06465e7",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-13T11:31:37Z",
+      "side": 1,
+      "message": "should probably go into the other review",
+      "revId": "9d52735a28100b8a6b32b71d7ed3e7ce38a3c8e6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
