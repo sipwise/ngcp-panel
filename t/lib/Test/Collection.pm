@@ -334,10 +334,10 @@ sub get_uri_item{
     return $resuri;
 }
 sub get_item_hal{
-    my($self,$name,$uri) = @_;
+    my($self,$name,$uri, $reload) = @_;
     $name ||= $self->name;
     my $resitem ;
-    if(!$uri){
+    if(!$uri && !$reload){
         if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
             $resitem = $self->get_created_first;
         }
@@ -346,14 +346,22 @@ sub get_item_hal{
         }
     }
     if(!$resitem){
-        my ($reshal, $location,$total_count);
+        my ($reshal, $location,$total_count,$reshal_collection);
         $uri //= $self->get_uri_collection($name)."?page=1&rows=1";
         #print "uri=$uri;";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
-        ($reshal,$location,$total_count) = $self->get_hal_from_collection($list_collection,$name);
+        ($reshal,$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name);
         if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
             $self->IS_EMPTY_COLLECTION(0);
-            $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location, total_count => $total_count };
+            $resitem = { 
+                num => 1, 
+                content => $reshal, 
+                res => $res, 
+                req => $req, 
+                location => $location, 
+                total_count => $total_count, 
+                content_collection => $reshal_collection,
+            };
             $self->DATA_LOADED->{$name} ||= [];
             push @{$self->DATA_LOADED->{$name}}, $resitem;
         }else{
@@ -366,7 +374,8 @@ sub get_hal_from_collection{
     my($self,$list_collection,$name) = @_;
     $name ||= $self->name;
     my $hal_name = $self->get_hal_name($name);
-    my($reshal,$location,$total_count);
+    my($reshal,$reshal_collection,$location,$total_count);
+    $reshal_collection = $list_collection;
     if( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
         $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
         $location = $reshal->{_links}->{self}->{href};
@@ -379,14 +388,14 @@ sub get_hal_from_collection{
 #found first subscriber
         $reshal = $list_collection;
         $location = $reshal->{_links}->{$hal_name}->{href};
-         $total_count = $reshal->{total_count};
+        $total_count = $reshal->{total_count};
     } elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
 #preferencedefs collection
         $reshal = $list_collection;
         $location = $reshal->{_links}->{self}->{href};
         $total_count = $reshal->{total_count};
     }
-    return ($reshal,$location,$total_count);
+    return ($reshal,$location,$total_count,$reshal_collection);
 }
 sub get_created_first{
     my($self) = @_;
