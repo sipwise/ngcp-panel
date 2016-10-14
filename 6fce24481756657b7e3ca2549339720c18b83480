@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_ee641de7",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-14T09:03:18Z",
+      "side": 1,
+      "message": "I decided to add more flexibility with adding hal parameter, without removal others. These methods are intended to be used through all collections, and it is hard to predict all needs now.",
+      "parentUuid": "5a3f45e8_cbd794be",
+      "range": {
+        "startLine": 835,
+        "startChar": 32,
+        "endLine": 835,
+        "endChar": 43
+      },
+      "revId": "6fce24481756657b7e3ca2549339720c18b83480",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_0be21c9f",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 8
