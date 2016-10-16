@@ -22,6 +22,30 @@
       "revId": "82cacd761fb1f03f9d23c074e15837f0547e4a5b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_549324fa",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-16T04:07:16Z",
+      "side": 1,
+      "message": "For now I added comments about methods purposes in the review https://gerrit.mgm.sipwise.com/#/c/8885/",
+      "parentUuid": "5a3f45e8_502b3582",
+      "range": {
+        "startLine": 715,
+        "startChar": 4,
+        "endLine": 715,
+        "endChar": 25
+      },
+      "revId": "82cacd761fb1f03f9d23c074e15837f0547e4a5b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
