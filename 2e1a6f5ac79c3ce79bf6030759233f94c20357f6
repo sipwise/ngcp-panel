@@ -22,6 +22,30 @@
       "revId": "2e1a6f5ac79c3ce79bf6030759233f94c20357f6",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_b47268e3",
+        "filename": "lib/NGCP/Panel/Utils/Security.pm",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-16T04:24:26Z",
+      "side": 1,
+      "message": "I added test scripts, but they test this functionality only if test script is located on the same station, where kamailio run.\nData, provided by this interfaces located in the memory. Although it can be edited using other rpc procedure: htable.sets, I decided not to implement new utils and API methods, which weren\u0027t required by customer only for test script.\nWith empty data, test scripts test the minimum structure of the APIs responses.",
+      "parentUuid": "5a3f45e8_cb22f400",
+      "range": {
+        "startLine": 9,
+        "startChar": 4,
+        "endLine": 9,
+        "endChar": 19
+      },
+      "revId": "2e1a6f5ac79c3ce79bf6030759233f94c20357f6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
