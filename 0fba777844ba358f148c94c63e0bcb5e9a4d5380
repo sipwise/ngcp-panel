@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a3f45e8_9463ec19",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-16T04:14:38Z",
+      "side": 1,
+      "message": "So I separated all banned* API changes into review https://gerrit.mgm.sipwise.com/#/c/8885/",
+      "revId": "0fba777844ba358f148c94c63e0bcb5e9a4d5380",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_7cb0d0f4",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 7
@@ -43,6 +60,23 @@
         "endLine": 415,
         "endChar": 48
       },
+      "revId": "0fba777844ba358f148c94c63e0bcb5e9a4d5380",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_2b00b7a9",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-16T04:14:38Z",
+      "side": 1,
+      "message": "I separated common methods changes to the review https://gerrit.mgm.sipwise.com/#/c/8885/",
       "revId": "0fba777844ba358f148c94c63e0bcb5e9a4d5380",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
