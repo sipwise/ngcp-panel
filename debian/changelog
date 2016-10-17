@@ -1,3 +1,12 @@
+ngcp-panel (1.14.2.3+0~mr4.5.2.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [6e6d140] MT#22992 journal time range query parameters
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Oct 2016 14:15:49 +0200
+
 ngcp-panel (1.14.2.2+0~mr4.5.2.2) unstable; urgency=medium
 
   [ Victor Seva ]
