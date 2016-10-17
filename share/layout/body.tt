@@ -1,3 +1,4 @@
+[% USE date %]
 <body>
 <div id="wrapper">
     <div id="topbar">
@@ -86,7 +87,7 @@
                 [% IF c.user.roles == 'admin' || c.user.roles == 'reseller'; -%]
                     <a href="[% c.uri_for("/statistics/versions") %]">[% c.config.ngcp_version %]</a>
                 [% END; -%]
-                © 2013 <a href="http://www.sipwise.com">Sipwise GmbH</a>, [% c.loc('all rights reserved') %].
+                © 2013 - [% date.format(date.now, '%Y') -%] <a href="http://www.sipwise.com">Sipwise GmbH</a>, [% c.loc('all rights reserved') %].
             </div>
         </div>
     </div>
