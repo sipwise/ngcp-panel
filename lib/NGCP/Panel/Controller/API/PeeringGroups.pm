@@ -10,7 +10,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 #
 use NGCP::Panel::Utils::Peering;
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
