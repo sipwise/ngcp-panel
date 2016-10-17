@@ -166,12 +166,6 @@ sub POST :Allow {
     return;
 }
 
-sub end : Private {
-    my ($self, $c) = @_;
-
-    $self->log_response($c);
-}
-
 1;
 
 # vim: set tabstop=4 expandtab:

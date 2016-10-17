@@ -52,14 +52,6 @@ sub gather_default_action_roles {
     push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
     return @roles;
 }
-
-sub end : Private {
-    my ($self, $c) = @_;
-
-    $self->log_response($c);
-    return;
-}
-
 1;
 
 # vim: set tabstop=4 expandtab:

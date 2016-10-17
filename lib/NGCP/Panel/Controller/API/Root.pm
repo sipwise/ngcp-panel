@@ -267,12 +267,7 @@ sub swagger :Private {
     return;
 }
 
-sub HEAD : Allow {
-    my ($self, $c) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
+
 
 sub OPTIONS : Allow {
     my ($self, $c) = @_;
