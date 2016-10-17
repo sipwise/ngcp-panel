@@ -215,12 +215,7 @@ sub GET :Allow {
     return;
 }
 
-sub HEAD :Allow {
-    my ($self, $c) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
+
 
 
 
@@ -333,14 +328,6 @@ sub POST :Allow {
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $customer->id));
         $c->response->body(q());
     }
-    return;
-}
-
-sub end : Private {
-    my ($self, $c) = @_;
-
-    #$self->reset_fake_time($c);
-    $self->log_response($c);
     return;
 }
 

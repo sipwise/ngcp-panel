@@ -66,15 +66,6 @@ sub auto :Private {
     return 1;
 }
 
-
-
-sub end : Private {
-    my ($self, $c) = @_;
-
-    $self->log_response($c);
-    return;
-}
-
 1;
 
 # vim: set tabstop=4 expandtab:

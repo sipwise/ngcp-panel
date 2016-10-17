@@ -122,11 +122,7 @@ sub POST :Allow {
 }
 
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-}
 
 1;
 
