@@ -58,15 +58,6 @@ sub gather_default_action_roles {
     push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
     return @roles;
 }
-
-sub auto :Private {
-    my ($self, $c) = @_;
-
-    $self->set_body($c);
-    $self->log_request($c);
-    return 1;
-}
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
