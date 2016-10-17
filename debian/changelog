@@ -1,3 +1,12 @@
+ngcp-panel (1.14.2.2+0~mr4.5.2.2) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [f9dbf69] MT#22163 Italian translation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Oct 2016 10:25:29 +0200
+
 ngcp-panel (1.14.2.1+0~mr4.5.2.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
