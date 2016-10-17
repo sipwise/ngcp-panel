@@ -52,16 +52,6 @@ sub gather_default_action_roles {
     push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
     return @roles;
 }
-sub OPTIONS :Allow {
-    my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
 
 sub end : Private {
     my ($self, $c) = @_;
