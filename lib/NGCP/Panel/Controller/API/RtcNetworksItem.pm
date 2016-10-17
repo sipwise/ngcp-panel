@@ -209,12 +209,7 @@ sub journalsitem_head :Journal {
     return $self->handle_journalsitem_head(@_);
 }
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-    return 1;
-}
 
 1;
 
