@@ -31,7 +31,7 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PartyCallControls/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PartyCallControls/;
 
 sub resource_name{
     return 'partycallcontrols';

@@ -15,7 +15,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SubscriberRegistrations/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SubscriberRegistrations/;
 
 sub resource_name{
     return 'subscriberregistrations';
@@ -228,11 +228,17 @@ sub DELETE :Allow {
     return;
 }
 
-sub end : Private {
-    my ($self, $c) = @_;
+sub delete_item {
+    my ($self, $c, $item) = @_;
 
-    $self->log_response($c);
+    my $sub = $self->subscriber_from_item($c, $item);
+    return unless($sub);
+    NGCP::Panel::Utils::Kamailio::delete_location_contact($c,
+        $sub, $item->contact);
+    NGCP::Panel::Utils::Kamailio::flush($c);
+    return 1;
 }
+
 
 1;
 
