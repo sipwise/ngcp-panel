@@ -71,12 +71,7 @@ sub GET :Allow {
     return;
 }
 
-sub HEAD :Allow {
-    my ($self, $c, $id) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
+
 
 
 
@@ -192,11 +187,7 @@ sub DELETE :Allow {
     return;
 }
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-}
 
 1;
 
