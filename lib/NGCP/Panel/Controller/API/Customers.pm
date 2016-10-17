@@ -129,7 +129,7 @@ sub query_params {
     return $params;
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Customers/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Customers/;
 
 sub resource_name{
     return 'customers';
