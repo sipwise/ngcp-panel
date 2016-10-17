@@ -21,7 +21,7 @@ sub allowed_methods{
     return [qw/GET PUT PATCH OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Numbers/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Numbers/;
 
 sub resource_name{
     return 'numbers';

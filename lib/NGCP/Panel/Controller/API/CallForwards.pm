@@ -46,7 +46,7 @@ sub documentation_sample {
     };
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CallForwards/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CallForwards/;
 
 sub resource_name{
     return 'callforwards';

@@ -26,7 +26,7 @@ sub query_params {
     return [];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::RtcNetworks/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::RtcNetworks/;
 
 sub resource_name{
     return 'rtcnetworks';
