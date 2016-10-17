@@ -19,7 +19,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CallLists/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CallLists/;
 
 sub resource_name{
     return 'calllists';

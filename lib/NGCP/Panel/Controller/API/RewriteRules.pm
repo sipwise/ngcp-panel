@@ -63,7 +63,7 @@ sub query_params {
 }
 
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::RewriteRules/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::RewriteRules/;
 
 sub resource_name{
     return 'rewriterules';
