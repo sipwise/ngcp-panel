@@ -21,7 +21,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use base qw/Catalyst::Controller NGCP::Panel::Role::API/;
+use base qw/NGCP::Panel::Role::API NGCP::Panel::Role::Entities/;
 
 sub resource_name{
     return 'metaconfigdefs';
