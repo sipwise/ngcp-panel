@@ -21,7 +21,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT PATCH/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SpeedDials/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SpeedDials/;
 
 sub resource_name{
     return 'speeddials';

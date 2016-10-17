@@ -12,7 +12,7 @@ use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API;
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
+use parent qw/NGCP::Panel::Role::Entities/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;

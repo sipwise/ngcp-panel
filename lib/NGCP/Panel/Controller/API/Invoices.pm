@@ -87,7 +87,7 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Invoices/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Invoices/;
 
 sub resource_name{
     return 'invoices';

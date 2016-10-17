@@ -109,7 +109,7 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::MaliciousCalls/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::MaliciousCalls/;
 
 sub resource_name{
     return 'maliciouscalls';

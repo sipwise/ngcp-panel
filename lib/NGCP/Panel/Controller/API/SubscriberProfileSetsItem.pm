@@ -18,7 +18,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SubscriberProfileSets/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SubscriberProfileSets/;
 
 sub resource_name{
     return 'subscriberprofilesets';

@@ -79,7 +79,7 @@ sub query_params {
         },    ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::ProfilePackages/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::ProfilePackages/;
 
 sub resource_name{
     return 'profilepackages';

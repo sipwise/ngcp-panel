@@ -45,7 +45,7 @@ sub documentation_sample {
     } ;
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CFMappings/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CFMappings/;
 
 sub resource_name{
     return 'cfmappings';

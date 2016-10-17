@@ -76,7 +76,7 @@ sub query_params {
         },    ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::BalanceIntervals/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::BalanceIntervals/;
 
 sub resource_name{
     return 'balanceintervals';

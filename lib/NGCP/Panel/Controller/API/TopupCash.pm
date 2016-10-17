@@ -25,7 +25,7 @@ sub allowed_methods{
 
 use NGCP::Panel::Form::Topup::CashAPI;
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
+use parent qw/NGCP::Panel::Role::Entities/;
 
 sub api_description {
     return 'Defines topup via voucher codes.';

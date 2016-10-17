@@ -18,7 +18,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Invoices/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Invoices/;
 
 sub resource_name{
     return 'invoices';

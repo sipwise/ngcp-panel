@@ -45,7 +45,7 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Reminders/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Reminders/;
 
 sub resource_name{
     return 'reminders';

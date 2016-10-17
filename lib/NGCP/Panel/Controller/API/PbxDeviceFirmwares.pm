@@ -64,7 +64,7 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceFirmwares/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PbxDeviceFirmwares/;
 
 sub resource_name{
     return 'pbxdevicefirmwares';

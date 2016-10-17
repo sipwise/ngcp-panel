@@ -18,7 +18,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::VoicemailRecordings/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::VoicemailRecordings/;
 
 sub resource_name{
     return 'voicemailrecordings';
