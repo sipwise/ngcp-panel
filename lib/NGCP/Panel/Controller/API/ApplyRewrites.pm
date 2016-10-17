@@ -21,7 +21,7 @@ sub allowed_methods{
     return [qw/POST OPTIONS/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::ApplyRewrites/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::ApplyRewrites/;
 
 sub api_description {
     return 'Applies rewrite rules to a given number according to the given direction. It can for example be used to normalize user input to E164 using callee_in direction, or to denormalize E164 to user output using caller_out.';
