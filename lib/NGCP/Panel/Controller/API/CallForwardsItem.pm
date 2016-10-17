@@ -221,12 +221,7 @@ sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-    return 1;
-}
 
 1;
 
