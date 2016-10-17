@@ -8,7 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::ValidateJSON qw();
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PeeringGroups/;
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
