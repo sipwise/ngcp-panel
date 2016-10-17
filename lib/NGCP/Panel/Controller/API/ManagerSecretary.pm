@@ -127,13 +127,6 @@ sub GET :Allow {
     return;
 }
 
-sub HEAD :Allow {
-    my ($self, $c) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
-
 sub OPTIONS :Allow {
     my ($self, $c) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
@@ -144,13 +137,6 @@ sub OPTIONS :Allow {
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
-}
-
-sub end : Private {
-    my ($self, $c) = @_;
-
-    $self->log_response($c);
-    return 1;
 }
 
 1;

@@ -69,13 +69,6 @@ sub GET :Allow {
     return;
 }
 
-sub HEAD :Allow {
-    my ($self, $c, $id) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
-
 sub OPTIONS :Allow {
     my ($self, $c, $id) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
