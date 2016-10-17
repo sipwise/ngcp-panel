@@ -41,7 +41,7 @@ sub query_params {
         {
             param => 'name',
             description => 'Filter for profile with a specific name',
-            query => {
+            query_type => {
                 first => sub {
                     my $q = shift;
                     { 'me.name' => { like => $q } };
