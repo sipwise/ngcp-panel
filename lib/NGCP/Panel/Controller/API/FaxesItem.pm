@@ -19,7 +19,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Faxes/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Faxes/;
 
 sub resource_name{
     return 'faxes';

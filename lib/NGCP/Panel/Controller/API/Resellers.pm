@@ -43,7 +43,7 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Resellers/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Resellers/;
 
 sub resource_name{
     return 'resellers';
