@@ -22,7 +22,7 @@ sub api_description {
     return 'Defines the actual recording of a recorded call stream. It is referred to by the <a href="#callrecordingstreams">CallRecordingStreams</a> relation. A GET on an item returns the binary blob of the recording with the content type depending on the output format given in the related stream.';
 };
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CallRecordingStreams/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CallRecordingStreams/;
 
 sub resource_name{
     return 'callrecordingfiles';
