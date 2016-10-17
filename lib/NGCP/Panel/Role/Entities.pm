@@ -283,6 +283,10 @@ sub post {
     return;
 }
 
+    my $post_allowed = grep { $_ eq 'POST' } @{ $allowed_methods };
+        $post_allowed 
+        ? ( 
+        ) : (),
 
 sub POST {
     my ($self) = shift;
