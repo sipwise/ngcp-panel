@@ -18,7 +18,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD DELETE/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CallRecordingStreams/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CallRecordingStreams/;
 
 sub resource_name{
     return 'callrecordingstreams';
