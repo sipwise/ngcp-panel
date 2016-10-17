@@ -56,15 +56,6 @@ sub gather_default_action_roles {
     push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
     return @roles;
 }
-
-sub auto :Private {
-    my ($self, $c) = @_;
-
-    $self->set_body($c);
-    $self->log_request($c);
-    #$self->apply_fake_time($c);    
-}
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
@@ -97,7 +88,6 @@ sub HEAD :Allow {
     $c->response->body(q());
     return;
 }
-
 sub OPTIONS :Allow {
     my ($self, $c, $id) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
@@ -109,7 +99,6 @@ sub OPTIONS :Allow {
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
-
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
