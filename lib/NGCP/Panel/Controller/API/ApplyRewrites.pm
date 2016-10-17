@@ -56,12 +56,7 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-sub auto :Private {
-    my ($self, $c) = @_;
 
-    $self->set_body($c);
-    $self->log_request($c);
-}
 
 sub OPTIONS :Allow {
     my ($self, $c) = @_;
