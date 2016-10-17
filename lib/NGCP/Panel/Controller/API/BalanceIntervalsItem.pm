@@ -17,7 +17,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::BalanceIntervals/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::BalanceIntervals/;
 
 sub resource_name{
     return 'balanceintervals';

@@ -166,7 +166,6 @@ sub update_item {
 
     my $sub = $self->subscriber_from_id($c, $resource->{subscriber_id});
     return unless $sub;
-
     unless($create) {
         $self->delete_item($c, $item);
     }
@@ -217,16 +216,6 @@ sub fetch_item {
     return $item;
 }
 
-sub delete_item {
-    my ($self, $c, $item) = @_;
-
-    my $sub = $self->subscriber_from_item($c, $item);
-    return unless($sub);
-    NGCP::Panel::Utils::Kamailio::delete_location_contact($c,
-        $sub, $item->contact);
-    NGCP::Panel::Utils::Kamailio::flush($c);
-    return 1;
-}
 
 1;
 # vim: set tabstop=4 expandtab:
