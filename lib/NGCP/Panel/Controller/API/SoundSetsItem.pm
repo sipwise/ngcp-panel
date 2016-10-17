@@ -18,7 +18,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::SoundSets/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SoundSets/;
 
 sub resource_name{
     return 'soundsets';

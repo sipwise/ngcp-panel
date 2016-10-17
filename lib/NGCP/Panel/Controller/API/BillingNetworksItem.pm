@@ -21,7 +21,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::BillingNetworks/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::BillingNetworks/;
 
 sub resource_name{
     return 'billingnetworks';

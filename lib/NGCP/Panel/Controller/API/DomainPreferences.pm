@@ -34,7 +34,7 @@ sub documentation_sample {
     };
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Preferences/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Preferences/;
 
 sub resource_name{
     return 'domainpreferences';

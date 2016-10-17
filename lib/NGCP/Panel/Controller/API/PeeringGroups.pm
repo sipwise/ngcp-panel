@@ -13,7 +13,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Peering;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;

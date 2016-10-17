@@ -85,7 +85,7 @@ sub query_params {
         },    ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringServers/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PeeringServers/;
 
 sub resource_name{
     return 'peeringservers';
