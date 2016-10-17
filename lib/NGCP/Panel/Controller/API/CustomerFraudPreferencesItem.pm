@@ -15,7 +15,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerFraudPreferences/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CustomerFraudPreferences/;
 
 sub resource_name{
     return 'customerfraudpreferences';

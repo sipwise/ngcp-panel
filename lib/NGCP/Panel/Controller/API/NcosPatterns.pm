@@ -38,7 +38,7 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::NcosPatterns/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::NcosPatterns/;
 
 sub resource_name{
     return 'ncospatterns';
