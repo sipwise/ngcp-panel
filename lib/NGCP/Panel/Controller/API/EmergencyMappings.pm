@@ -99,12 +99,7 @@ sub gather_default_action_roles {
     return @roles;
 }
 
-sub auto :Private {
-    my ($self, $c) = @_;
 
-    $self->set_body($c);
-    $self->log_request($c);
-}
 
 sub check_create_csv :Private {
     my ($self, $c) = @_;
