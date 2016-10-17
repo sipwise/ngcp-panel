@@ -23,7 +23,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
+use parent qw/NGCP::Panel::Role::Entities/;
 
 sub resource_name{
     return 'pbxdeviceprofilepreferencedefs';

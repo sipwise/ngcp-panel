@@ -15,7 +15,7 @@ require Catalyst::ActionRole::RequireSSL;
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerFraudEvents/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CustomerFraudEvents/;
 
 sub resource_name{
     return 'customerfraudevents';

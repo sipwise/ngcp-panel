@@ -50,7 +50,7 @@ sub query_params {
 }
 
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CustomerZoneCosts/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CustomerZoneCosts/;
 
 sub resource_name{
     return 'customerzonecosts';

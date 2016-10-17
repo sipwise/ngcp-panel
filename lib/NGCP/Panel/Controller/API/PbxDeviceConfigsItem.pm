@@ -18,7 +18,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceConfigs/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PbxDeviceConfigs/;
 
 sub resource_name{
     return 'pbxdeviceconfigs';
