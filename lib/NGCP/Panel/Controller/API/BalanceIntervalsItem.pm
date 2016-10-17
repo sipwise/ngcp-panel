@@ -228,10 +228,6 @@ sub item_head {
     return;
 }
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-}
 
 1;

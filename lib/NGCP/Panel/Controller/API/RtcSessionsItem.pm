@@ -96,12 +96,7 @@ sub HEAD :Allow {
 
 
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-    return 1;
-}
 
 1;
 
