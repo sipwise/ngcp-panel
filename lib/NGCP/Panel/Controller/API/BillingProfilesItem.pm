@@ -54,16 +54,14 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile);
+        my $item = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $item);
 
-        my $hal = $self->hal_from_profile($c, $profile);
+        my $hal = $self->hal_from_profile($c, $item);
 
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -80,10 +78,6 @@ sub GET :Allow {
     return;
 }
 
-
-
-
-
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
@@ -99,18 +93,18 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile);
-        my $old_resource = { $profile->get_inflated_columns };
+        my $item = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $item);
+        my $old_resource = { $item->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
-        last unless $profile;
+        $item = $self->update_profile($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_profile($c, $profile, $form);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_profile($c, $item, $form);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
@@ -139,22 +133,22 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile );
+        my $item = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $item );
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $profile->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
-        last unless $profile;
+        $item = $self->update_profile($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_profile($c, $profile, $form);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_profile($c, $item, $form);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
@@ -177,12 +171,9 @@ sub PUT :Allow {
 
 # we don't allow to DELETE a billing profile
 
-
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
-
-
 
 1;
 
