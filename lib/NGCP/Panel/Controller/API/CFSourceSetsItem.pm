@@ -63,10 +63,10 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $sset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, sourceset => $sset);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, sourceset => $item);
 
-        my $hal = $self->hal_from_item($c, $sset, "cfsourcesets");
+        my $hal = $self->hal_from_item($c, $item, "cfsourcesets");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -100,17 +100,17 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $sset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, sourceset => $sset);
-        my $old_resource = $self->hal_from_item($c, $sset, "cfsourcesets")->resource;
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, sourceset => $item);
+        my $old_resource = $self->hal_from_item($c, $item, "cfsourcesets")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $sset = $self->update_item($c, $sset, $old_resource, $resource, $form);
-        last unless $sset;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_item($c, $sset, "cfsourcesets");
+        my $hal = $self->hal_from_item($c, $item, "cfsourcesets");
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -139,21 +139,21 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $sset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, sourceset => $sset);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, sourceset => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $sset->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $sset = $self->update_item($c, $sset, $old_resource, $resource, $form);
-        last unless $sset;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_item($c, $sset, "cfsourcesets");
+        my $hal = $self->hal_from_item($c, $item, "cfsourcesets");
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -179,16 +179,16 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $sset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, sourceset => $sset);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, sourceset => $item);
 
         last unless $self->add_delete_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
-            return $self->hal_from_item($c, $sset, "cfsourcesets"); });
+            return $self->hal_from_item($c, $item, "cfsourcesets"); });
 
         try {
-            $sset->delete;
+            $item->delete;
         } catch($e) {
             $c->log->error("Failed to delete cfsourceset with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
