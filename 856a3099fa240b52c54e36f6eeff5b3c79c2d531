@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_573161eb",
+        "filename": "share/layout/body.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2016-10-18T13:23:09Z",
+      "side": 1,
+      "message": "Perhaps use something like the equivalent of 2013-\"NOW()\" so that the range is more accurate but still always up-to-date?",
+      "revId": "856a3099fa240b52c54e36f6eeff5b3c79c2d531",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
