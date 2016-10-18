@@ -54,16 +54,14 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $zone = $self->zone_by_id($c, $id);
-        last unless $self->resource_exists($c, billingzone => $zone);
+        my $item = $self->zone_by_id($c, $id);
+        last unless $self->resource_exists($c, billingzone => $item);
 
-        my $hal = $self->hal_from_zone($c, $zone);
+        my $hal = $self->hal_from_zone($c, $item);
 
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -80,10 +78,6 @@ sub GET :Allow {
     return;
 }
 
-
-
-
-
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
@@ -98,17 +92,17 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $zone = $self->zone_by_id($c, $id);
-        last unless $self->resource_exists($c, billingzone => $zone);
-        my $old_resource = { $zone->get_inflated_columns };
+        my $item = $self->zone_by_id($c, $id);
+        last unless $self->resource_exists($c, billingzone => $item);
+        my $old_resource = { $item->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $zone = $self->update_zone($c, $zone, $old_resource, $resource, $form);
-        last unless $zone;
+        $item = $self->update_zone($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_zone($c, $zone, $form);
+        my $hal = $self->hal_from_zone($c, $item, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
         
         $guard->commit;
@@ -137,22 +131,22 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $zone = $self->zone_by_id($c, $id);
-        last unless $self->resource_exists($c, billingzone => $zone);
+        my $item = $self->zone_by_id($c, $id);
+        last unless $self->resource_exists($c, billingzone => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $zone->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $zone = $self->update_zone($c, $zone, $old_resource, $resource, $form);
-        last unless $zone;
+        $item = $self->update_zone($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_zone($c, $zone, $form);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_zone($c, $item, $form);
+        last unless $self->add_update_journal_item_hal($c, $hal);
         
         $guard->commit;
 
@@ -177,18 +171,18 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $zone = $self->zone_by_id($c, $id);
-        last unless $self->resource_exists($c, billingzone => $zone);
+        my $item = $self->zone_by_id($c, $id);
+        last unless $self->resource_exists($c, billingzone => $item);
         
         last unless $self->add_delete_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
             my $_form = $self->get_form($c);
-            return $self->hal_from_zone($c, $zone, $_form); });
+            return $self->hal_from_zone($c, $item, $_form); });
         
         try {
-            $zone->billing_fees->delete_all;
-            $zone->delete;
+            $item->billing_fees->delete_all;
+            $item->delete;
         } catch($e) {
             $c->log->error("Failed to delete billing zone with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
