@@ -39,7 +39,6 @@ foreach (@users){
 }
 
 $test_machine->check_bundle();
-print "is_empty:".$test_machine->IS_EMPTY_COLLECTION.";";
 if(!$test_machine->IS_EMPTY_COLLECTION){
     $test_machine->clear_test_data_all([map {"/api/bannedusers/$_\@domain.com"} @users]);
 }
