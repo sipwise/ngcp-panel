@@ -101,20 +101,7 @@ sub PATCH :Allow {
         last unless $fee;
 
         $guard->commit;
-
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            my $hal = $self->hal_from_fee($c, $fee, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'item' => $fee, 'form' => $form, 'preference' => $preference );
     }
     return;
 }
@@ -141,20 +128,7 @@ sub PUT :Allow {
         last unless $fee;
 
         $guard->commit;
-
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            my $hal = $self->hal_from_fee($c, $fee, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'item' => $fee, 'form' => $form, 'preference' => $preference );
     }
     return;
 }
