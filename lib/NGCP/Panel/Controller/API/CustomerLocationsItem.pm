@@ -57,16 +57,14 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $cl = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, customerlocation => $cl);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, customerlocation => $item);
 
-        my $hal = $self->hal_from_item($c, $cl, $self->resource_name);
+        my $hal = $self->hal_from_item($c, $item, $self->resource_name);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -80,10 +78,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -100,18 +94,18 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $cl = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, customerlocation => $cl);
-        my $old_resource = $self->hal_from_item($c, $cl, $self->resource_name)->resource;
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, customerlocation => $item);
+        my $old_resource = $self->hal_from_item($c, $item, $self->resource_name)->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $cl = $self->update_item($c, $cl, $old_resource, $resource, $form);
-        last unless $cl;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_item($c, $cl, $self->resource_name);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_item($c, $item, $self->resource_name);
+        last unless $self->add_update_journal_item_hal($c, $hal);
         
         $guard->commit; 
 
@@ -139,22 +133,22 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $cl = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, customerlocation => $cl);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, customerlocation => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $cl->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $cl = $self->update_item($c, $cl, $old_resource, $resource, $form);
-        last unless $cl;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
         
-        my $hal = $self->hal_from_item($c, $cl, $self->resource_name);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_item($c, $item, $self->resource_name);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
@@ -178,10 +172,10 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $cl = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, customerlocation => $cl);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, customerlocation => $item);
         try {
-            $cl->delete;
+            $item->delete;
         } catch($e) {
             $c->log->error("Failed to delete customre location with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
@@ -198,8 +192,6 @@ sub DELETE :Allow {
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
-
-
 
 1;
 
