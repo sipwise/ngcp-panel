@@ -57,16 +57,14 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $customer = $self->item_by_id($c, $id, "contracts");
-        last unless $self->resource_exists($c, customerpreference => $customer);
+        my $item = $self->item_by_id($c, $id, "contracts");
+        last unless $self->resource_exists($c, customerpreference => $item);
 
-        my $hal = $self->hal_from_item($c, $customer, "contracts");
+        my $hal = $self->hal_from_item($c, $item, "contracts");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -80,10 +78,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -100,18 +94,18 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $customer = $self->item_by_id($c, $id, "contracts");
-        last unless $self->resource_exists($c, customerpreferences => $customer);
-        my $old_resource = $self->get_resource($c, $customer, "contracts");
+        my $item = $self->item_by_id($c, $id, "contracts");
+        last unless $self->resource_exists($c, customerpreferences => $item);
+        my $old_resource = $self->get_resource($c, $item, "contracts");
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         # last param is "no replace" to NOT delete existing prefs
         # for proper PATCH behavior
-        $customer = $self->update_item($c, $customer, $old_resource, $resource, 0, "contracts");
-        last unless $customer;
+        $item = $self->update_item($c, $item, $old_resource, $resource, 0, "contracts");
+        last unless $item;
         
-        my $hal = $self->hal_from_item($c, $customer, "contracts");
+        my $hal = $self->hal_from_item($c, $item, "contracts");
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit; 
@@ -140,23 +134,23 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $customer = $self->item_by_id($c, $id, "contracts");
-        last unless $self->resource_exists($c, customerpreference => $customer);
+        my $item = $self->item_by_id($c, $id, "contracts");
+        last unless $self->resource_exists($c, customerpreference => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = $self->get_resource($c, $customer, "contracts");
+        my $old_resource = $self->get_resource($c, $item, "contracts");
 
         # last param is "replace" to delete all existing prefs
         # for proper PUT behavior
-        $customer = $self->update_item($c, $customer, $old_resource, $resource, 1, "contracts");
-        last unless $customer;
+        $item = $self->update_item($c, $item, $old_resource, $resource, 1, "contracts");
+        last unless $item;
         
-        my $hal = $self->hal_from_item($c, $customer, "contracts");
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_item($c, $item, "contracts");
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit; 
 

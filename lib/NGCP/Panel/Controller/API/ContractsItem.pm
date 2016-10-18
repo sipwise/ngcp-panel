@@ -73,10 +73,10 @@ sub GET :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         last unless $self->valid_id($c, $id);
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $item = $self->contract_by_id($c, $id);
+        last unless $self->resource_exists($c, contract => $item);
 
-        my $hal = $self->hal_from_contract($c, $contract, undef, NGCP::Panel::Utils::DateTime::current_local);
+        my $hal = $self->hal_from_contract($c, $item, undef, NGCP::Panel::Utils::DateTime::current_local);
         $guard->commit; #potential db write ops in hal_from
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -112,11 +112,11 @@ sub PATCH :Allow {
         last unless $json;
 
         my $now = NGCP::Panel::Utils::DateTime::current_local;
-        my $contract = $self->contract_by_id($c, $id, $now);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $item = $self->contract_by_id($c, $id, $now);
+        last unless $self->resource_exists($c, contract => $item);
         
-        my $old_resource = { $contract->get_inflated_columns };
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        my $old_resource = { $item->get_inflated_columns };
+        my $billing_mapping = $item->billing_mappings->find($item->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
         $old_resource->{billing_profile_definition} = undef;
         delete $old_resource->{profile_package_id};
@@ -124,18 +124,18 @@ sub PATCH :Allow {
         my $resource = $self->apply_patch($c, $old_resource, $json, sub {
             my ($missing_field,$entity) = @_;
             if ($missing_field eq 'billing_profiles') {
-                $entity->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_future_mappings($contract);
+                $entity->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_future_mappings($item);
                 $entity->{billing_profile_definition} //= 'profiles';
             }
         });
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
-        last unless $contract;
+        $item = $self->update_contract($c, $item, $old_resource, $resource, $form, $now);
+        last unless $item;
 
-        my $hal = $self->hal_from_contract($c, $contract, $form, $now);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_contract($c, $item, $form, $now);
+        last unless $self->add_update_journal_item_hal($c, $hal);
         
         $guard->commit;
 
@@ -165,24 +165,24 @@ sub PUT :Allow {
         last unless $preference;
 
         my $now = NGCP::Panel::Utils::DateTime::current_local;
-        my $contract = $self->contract_by_id($c, $id, $now);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $item = $self->contract_by_id($c, $id, $now);
+        last unless $self->resource_exists($c, contract => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $contract->get_inflated_columns };
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        my $old_resource = { $item->get_inflated_columns };
+        my $billing_mapping = $item->billing_mappings->find($item->get_column('bmid'));
         $old_resource->{type} = $billing_mapping->product->class;
 
         my $form = $self->get_form($c);
-        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
-        last unless $contract;
+        $item = $self->update_contract($c, $item, $old_resource, $resource, $form, $now);
+        last unless $item;
         
-        my $hal = $self->hal_from_contract($c, $contract, $form, $now);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_contract($c, $item, $form, $now);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
@@ -210,8 +210,8 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $item = $self->contract_by_id($c, $id);
+        last unless $self->resource_exists($c, contract => $item);
 
         # TODO: do we want to prevent deleting used contracts?
         #my $contract_count = $c->model('DB')->resultset('contracts')->search({
@@ -221,7 +221,7 @@ sub DELETE :Allow {
         #    $self->error($c, HTTP_LOCKED, "Contact is still in use.");
         #    last;
         #} else {
-            $contract->delete;
+            $item->delete;
         #}
         $guard->commit;
 
