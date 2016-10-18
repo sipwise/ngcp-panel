@@ -60,10 +60,10 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $contact = $self->contact_by_id($c, $id);
-        last unless $self->resource_exists($c, systemcontact => $contact);
+        my $item = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, systemcontact => $item);
 
-        my $hal = $self->hal_from_contact($c, $contact);
+        my $hal = $self->hal_from_contact($c, $item);
 
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -98,17 +98,17 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $contact = $self->contact_by_id($c, $id);
-        last unless $self->resource_exists($c, systemcontact => $contact);
-        my $old_resource = { $contact->get_inflated_columns };
+        my $item = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, systemcontact => $item);
+        my $old_resource = { $item->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $contact = $self->update_contact($c, $contact, $old_resource, $resource, $form);
-        last unless $contact;
+        $item = $self->update_contact($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_contact($c, $contact, $form);
+        my $hal = $self->hal_from_contact($c, $item, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -137,22 +137,22 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $contact = $self->contact_by_id($c, $id);
-        last unless $self->resource_exists($c, systemcontact => $contact);
+        my $item = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, systemcontact => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $contact->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $contact = $self->update_contact($c, $contact, $old_resource, $resource, $form);
-        last unless $contact;
+        $item = $self->update_contact($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_contact($c, $contact, $form);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_contact($c, $item, $form);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
@@ -177,8 +177,8 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $contact = $self->contact_by_id($c, $id);
-        last unless $self->resource_exists($c, systemcontact => $contact);
+        my $item = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, systemcontact => $item);
         my $contract_rs = $c->model('DB')->resultset('contracts')->search({
             contact_id => $id,
             status => { '!=' => 'terminated' },
@@ -220,9 +220,9 @@ sub DELETE :Allow {
                     my $self = shift;
                     my ($c) = @_;
                     my $_form = $self->get_form($c);
-                    return $self->hal_from_contact($c, $contact, $_form); });
-                $c->log->debug("delete contact id ".$contact->id);
-                $contact->delete;
+                return $self->hal_from_contact($c, $item, $_form); });
+                $c->log->debug("delete contact id ".$item->id);
+            $item->delete;
             }
         }
         $guard->commit;

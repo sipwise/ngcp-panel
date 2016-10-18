@@ -57,16 +57,14 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $tset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, timeset => $tset);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, timeset => $item);
 
-        my $hal = $self->hal_from_item($c, $tset, "cftimesets");
+        my $hal = $self->hal_from_item($c, $item, "cftimesets");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -80,10 +78,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -100,17 +94,17 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $tset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, timeset => $tset);
-        my $old_resource = $self->hal_from_item($c, $tset, "cftimesets")->resource;
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, timeset => $item);
+        my $old_resource = $self->hal_from_item($c, $item, "cftimesets")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $tset = $self->update_item($c, $tset, $old_resource, $resource, $form);
-        last unless $tset;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_item($c, $tset, "cftimesets");
+        my $hal = $self->hal_from_item($c, $item, "cftimesets");
         last unless $self->add_update_journal_item_hal($c,$hal);
         
         $guard->commit;
@@ -139,21 +133,21 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $tset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, timeset => $tset);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, timeset => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = undef; #unused: { $tset->get_inflated_columns };
+        my $old_resource = undef; #unused: { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $tset = $self->update_item($c, $tset, $old_resource, $resource, $form);
-        last unless $tset;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
         
-        my $hal = $self->hal_from_item($c, $tset, "cftimesets");
+        my $hal = $self->hal_from_item($c, $item, "cftimesets");
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -179,16 +173,16 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $tset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, timeset => $tset);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, timeset => $item);
         
         last unless $self->add_delete_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
-            return $self->hal_from_item($c, $tset, "cftimesets"); });
+            return $self->hal_from_item($c, $item, "cftimesets"); });
         
         try {
-            $tset->delete;
+            $item->delete;
         } catch($e) {
             $c->log->error("Failed to delete cftimeset with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
@@ -206,8 +200,5 @@ sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
 
-
-
 1;
-
 # vim: set tabstop=4 expandtab:

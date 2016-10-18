@@ -63,10 +63,10 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $bn = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, billingnetwork => $bn);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingnetwork => $item);
 
-        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
+        my $hal = $self->hal_from_item($c, $item, "billingnetworks");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -80,10 +80,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -100,18 +96,18 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $bn = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, billingnetwork => $bn);
-        my $old_resource = $self->hal_from_item($c, $bn, "billingnetworks")->resource;
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingnetwork => $item);
+        my $old_resource = $self->hal_from_item($c, $item, "billingnetworks")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $bn = $self->update_item($c, $bn, $old_resource, $resource, $form);
-        last unless $bn;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_item($c, $item, "billingnetworks");
+        last unless $self->add_update_journal_item_hal($c, $hal);
         
         $guard->commit; 
 
@@ -139,22 +135,22 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $bn = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, billingnetwork => $bn);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingnetwork => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $bn->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $bn = $self->update_item($c, $bn, $old_resource, $resource, $form);
-        last unless $bn;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
         
-        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_item($c, $item, "billingnetworks");
+        last unless $self->add_update_journal_item_hal($c, S$hal);
 
         $guard->commit;
 
@@ -179,14 +175,14 @@ sub PUT :Allow {
 #    my ($self, $c, $id) = @_;
 #    my $guard = $c->model('DB')->txn_scope_guard;
 #    {
-#        my $bn = $self->item_by_id($c, $id);
-#        last unless $self->resource_exists($c, billingnetwork => $bn);
-#        last unless NGCP::Panel::Utils::Reseller::check_reseller_delete_item($c,$bn->reseller_id,sub {
+#        my $item = $self->item_by_id($c, $id);
+#        last unless $self->resource_exists($c, billingnetwork => $item);
+#        last unless NGCP::Panel::Utils::Reseller::check_reseller_delete_item($c,$item->reseller_id,sub {
 #            my ($err) = @_;
 #            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
 #        });
 #        try {
-#            $bn->delete;
+#            $item->delete;
 #        } catch($e) {
 #            $c->log->error("Failed to delete billingnetwork with id '$id': $e");
 #            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
@@ -203,8 +199,6 @@ sub PUT :Allow {
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
-
-
 
 1;
 

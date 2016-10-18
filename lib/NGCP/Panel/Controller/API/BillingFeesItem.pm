@@ -44,16 +44,14 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingfee => $item);
 
-        my $hal = $self->hal_from_fee($c, $fee);
+        my $hal = $self->hal_from_fee($c, $item);
 
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -70,10 +68,6 @@ sub GET :Allow {
     return;
 }
 
-
-
-
-
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
@@ -88,15 +82,15 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
-        my $old_resource = { $fee->get_inflated_columns };
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingfee => $item);
+        my $old_resource = { $item->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $fee = $self->update_fee($c, $fee, $old_resource, $resource, $form);
-        last unless $fee;
+        $item = $self->update_fee($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
         $guard->commit;
 
@@ -124,22 +118,21 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingfee => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $fee->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $fee = $self->update_fee($c, $fee, $old_resource, $resource, $form);
-        last unless $fee;
+        $item = $self->update_fee($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
         $guard->commit;
-
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
@@ -161,11 +154,11 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingfee => $item);
 
         try {
-            $fee->delete;
+            $item->delete;
         } catch($e) {
             $c->log->error("Failed to delete billing fee with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
@@ -179,8 +172,6 @@ sub DELETE :Allow {
     }
     return;
 }
-
-
 
 1;
 

@@ -77,7 +77,7 @@ sub hal_from_fee {
     return $hal;
 }
 
-sub fee_by_id {
+sub item_by_id {
     my ($self, $c, $id) = @_;
 
     my $item_rs = $self->item_rs($c);
