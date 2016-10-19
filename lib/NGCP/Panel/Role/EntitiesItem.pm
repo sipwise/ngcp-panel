@@ -108,7 +108,7 @@ sub put {
 
         $guard->commit;
 
-        $self->return_representation($c, , 'item' => $item, 'form' => $form, 'preference' => $preference );
+        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
 }
