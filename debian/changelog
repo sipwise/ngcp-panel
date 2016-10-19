@@ -1,3 +1,13 @@
+ngcp-panel (1.14.2.4+0~mr4.5.2.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [821836d] MT#20027 porting number history
+  * [9c6a957] MT#20007 Lnp.pm fix warnings
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 19 Oct 2016 09:29:21 +0200
+
 ngcp-panel (1.14.2.3+0~mr4.5.2.3) unstable; urgency=medium
 
   [ Rene Krenn ]
