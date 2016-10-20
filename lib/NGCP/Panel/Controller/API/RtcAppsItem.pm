@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::RtcAppsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use Data::HAL qw();
 use Data::HAL::Link qw();
