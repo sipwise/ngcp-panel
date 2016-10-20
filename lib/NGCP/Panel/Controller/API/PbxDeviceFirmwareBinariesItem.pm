@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::PbxDeviceFirmwareBinariesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
