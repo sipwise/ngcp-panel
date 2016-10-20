@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::Resellers;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use JSON qw();
 use boolean qw(true);

@@ -1,6 +1,9 @@
 package NGCP::Panel::Controller::API::Interceptions;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
