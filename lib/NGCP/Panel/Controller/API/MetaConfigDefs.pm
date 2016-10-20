@@ -71,17 +71,17 @@ sub GET :Allow {
         my $hal = Data::HAL->new(
             links => [@links],
         );
-        
+
         #my $resource = $c->config;
-        my $catalyst_config = Config::General->new($c->config->{'Plugin::ConfigLoader'}->{file});   
+        my $catalyst_config = Config::General->new($c->config->{'Plugin::ConfigLoader'}->{file});
         my %config_internal = $catalyst_config->getall();
         my %config;
-        
+
         $config{file} = $c->config->{'Plugin::ConfigLoader'}->{file};
         $config{numbermanagement}->{auto_sync_cli} = $config_internal{numbermanagement}->{auto_sync_cli};
         $config{numbermanagement}->{auto_allow_cli} = $config_internal{numbermanagement}->{auto_allow_cli};
         $config{features} = $config_internal{features};
-        
+
         my $meta = {
             collections => {
                 #name => {
@@ -116,12 +116,12 @@ sub GET :Allow {
                 #unique_fields => [['table.field','table1.fields1']],
             };
         }
-    
-        
+
+
         my $resource = { config => \%config, meta => $meta };
         $hal->resource($resource);
 
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -136,7 +136,6 @@ sub HEAD :Allow {
     $c->response->body(q());
     return;
 }
-
 sub OPTIONS :Allow {
     my ($self, $c) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
@@ -148,13 +147,10 @@ sub OPTIONS :Allow {
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
-
 sub end : Private {
     my ($self, $c) = @_;
-
     $self->log_response($c);
 }
-
 no Moose;
 1;
 
