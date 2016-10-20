@@ -1,7 +1,10 @@
 package NGCP::Panel::Role::API::Faxes;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use parent 'NGCP::Panel::Role::API';
 
@@ -13,6 +16,7 @@ use HTTP::Status qw(:constants);
 use DateTime::Format::Strptime;
 use NGCP::Panel::Form::Subscriber::WebfaxAPI;
 use NGCP::Panel::Utils::Subscriber;
+use TryCatch;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -68,7 +72,7 @@ sub resource_from_item {
 
     $form //= $self->get_form($c);
 
-   my $datetime_fmt = DateTime::Format::Strptime->new(
+    my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
     );
 
