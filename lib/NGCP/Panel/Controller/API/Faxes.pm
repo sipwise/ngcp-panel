@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::Faxes;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 
 use boolean qw(true);
@@ -21,6 +24,7 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+use TryCatch;
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];

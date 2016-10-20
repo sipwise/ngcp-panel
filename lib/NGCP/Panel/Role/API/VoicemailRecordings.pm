@@ -1,7 +1,10 @@
 package NGCP::Panel::Role::API::VoicemailRecordings;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use parent 'NGCP::Panel::Role::API';
 

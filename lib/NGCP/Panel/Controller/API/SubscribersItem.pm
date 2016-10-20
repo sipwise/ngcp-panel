@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::SubscribersItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();

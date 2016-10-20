@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::PeeringGroupsItem;
 
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Headers qw();

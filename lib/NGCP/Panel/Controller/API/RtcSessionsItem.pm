@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::RtcSessionsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 
 use NGCP::Panel::Utils::DataHal qw();

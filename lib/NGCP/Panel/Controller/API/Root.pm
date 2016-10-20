@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::Root;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use Encode qw(encode);
 use Clone qw/clone/;
@@ -17,7 +20,7 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
-
+use TryCatch;
 use NGCP::Panel::Utils::Journal qw();
 
 #with 'NGCP::Panel::Role::API';
