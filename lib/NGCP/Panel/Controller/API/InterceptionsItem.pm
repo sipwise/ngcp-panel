@@ -1,6 +1,9 @@
 package NGCP::Panel::Controller::API::InterceptionsItem;
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 no Moose;
 
 use HTTP::Headers qw();
