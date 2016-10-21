@@ -1,3 +1,109 @@
+ngcp-panel (5.0.0.0+0~mr5.0.0.0) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [24cacab] MT#20655 fix subscribercreate form
+  * [9f7566e] MT#21609 add possibility to register peer_auth at only one instance
+  * [687588f] MT#21195 call kamailio xmlrpc addressReload
+  * [31e54a8] MT#21543 fix reseller terminate emergency mapping
+  * [99c0db1] MT#19795 editing of reseller rtc status via web
+  * [11b82f1] MT#16931 some api documentation examples
+  * [99aa547] TT#2393 implement a-number cf for panel
+  * [af86cac] TT#2393 implement a-number cf for API
+  * [a2c0914] TT#2393 add description fields for cf-source-sets
+  * [234fcaf] TT#2395 UPN rewrite cli via Panel
+  * [7c188a6] TT#2395 UPN rewrite cli via API
+
+  [ Kirill Solomko ]
+  * [b2843a6] MT#21683 fix a typo in log_passwords
+  * [93c91ac] MT#13573 CallList intra_alias_field_param for gpp* fields
+  * [4b88ff4] MT#21685 - fix fax remote host/port check
+  * [ecc390c] MT#19263 add optional "sip:" prefix for caller/callee input
+  * [f7735ad] MT#19113 CallRoutingVerify adjustments, Peering lookup
+  * [1853203] MT#22229 CallRoutingVerify accept chars in input numbers
+  * [98ad079] MT#13573 CallList: add (terminated) suffix for other numbers
+  * [66ea5df] TT#3996 show (terminated) prefix for other_cli change
+  * [a674309] MT#22913 Faxes API remove deprecated preference check
+  * [007edf0] MT#22913 Faxes API add check for non existing/terminated subscriber
+
+  [ Rene Krenn ]
+  * [158ed2c] MT#21871 setting the allowed_ips via api and panel corrupts the db
+  * [8fe0261] MT#21775 regexp pattern for interception's sip_username
+  * [604558c] MT#21969 cf_ ncos attributes not considered in PATCH
+  * [7f4212a] MT#21775 tune the "username" interception regexp to tolerate vsc codes
+  * [6fa78d1] MT#19981 align dashboard customer count query
+  * [c411f1b] MT#20939 display/search customer contact full name
+  * [171d792] MT#20027 porting number history
+  * [9f81fd1] MT#20007 Lnp.pm fix warnings
+  * [7a89ab8] MT#22992 journal time range query parameters
+
+  [ Jenkins Git User ]
+  * [eed7aeb] I18N dump: snapshot 2016-08-12 01:22:17 +0200
+  * [ee9487c] I18N dump: snapshot 2016-08-23 01:21:40 +0200
+  * [61895f3] I18N dump: snapshot 2016-08-30 01:22:10 +0200
+  * [0c9d2f0] I18N dump: snapshot 2016-08-31 01:14:35 +0200
+  * [3ce8504] I18N dump: snapshot 2016-09-01 01:22:40 +0200
+  * [87e8428] I18N dump: snapshot 2016-09-03 01:14:30 +0200
+  * [e65c16a] I18N dump: snapshot 2016-09-06 01:15:48 +0200
+  * [b39c559] I18N dump: snapshot 2016-09-10 01:13:41 +0200
+  * [cc5f5c3] I18N dump: snapshot 2016-09-13 01:14:44 +0200
+  * [a2f0262] I18N dump: snapshot 2016-09-16 01:14:08 +0200
+  * [168eacf] I18N dump: snapshot 2016-09-17 01:21:20 +0200
+
+  [ Irina Peshinskaya ]
+  * [f4d293a] MT#5065 Validation of the codecs_list preference
+  * [ec026f1] MT#18561 Test empty and not empty x3_port
+  * [1ae39de] MT#22063 Allow cyclic number ranges
+  * [577ba7a] MT#19295 Disable ajax caching in the IE11
+  * [adf4c32] MT#21501 Add delete button for the subscriber's reminder
+  * [03acd88] TT#2452 Implement device preferences web and api interface
+  * [d7f19af] TT#2452 Implement device profile preferences web and api interface
+  * [014e4e1] TT#2452 Pass device preferences values to the config
+  * [17333c7] MT#17173 Check performance for small code improvement
+  * [08e0a0f] MT#2452 Add vendor specific prefixes filtering
+  * [e00e46e] TT#2459 Use encryption for the denwaip devices config
+  * [fdb2799] MT#22804 Fix reseller query in the form data validation
+  * [85e93b5] TT#3994 Add download csv to LNP and EmergencyMapping API
+  * [4c27ee1] TT#3994 Lnp and emergencymappings fixes after testing
+  * [980b0f8] TT#3994 Add lnp tests
+  * [faa5b06] MT#22657 Close peering API for the reseller role and small texts fixes
+  * [4ba7932] MT#12347 Allow to show curl command only for patch
+  * [f288ec2] MT#17173 Add common methods to  use in future API
+  * [ad20878] MT#17173 Adapt common API method for not DB entities
+  * [a42334c] MT#17173 Add return representation
+  * [6996604] MT#12347 Cache for FakeData to increase tests speed in massive run
+  * [ad62a1a] MT#17173 Mass collections tests
+  * [ae5e887] TT#3648 Add banned ips and users API interface
+  * [325044c] TT#4708 Update year information in copyright info
+  * [5384ec4] TT#4476 Fix top settings menu for csc
+  * [57efb7c] MT#17173 Fix typo in return_representation call
+  * [8516c6c] MT#17173 Fix line endings
+
+  [ Andreas Granig ]
+  * [f5462f6] MT#22061 Include extension in pbx phonebook search
+  * [8edfa5e] TT#2757 Rework emergemcy mapping CSV up/download
+  * [eb94e8d] MT#22405 Fix html doc in emergencymappings
+  * [031bfeb] TT#2766 Implement inbound peering rules.
+  * [81e3988] TT#2766 Fix selenium for outbound peering rules.
+  * [ff110dc] TT#2766 Implement inbound peering rules API.
+  * [34dd42e] TT#3991 Add ncos level flag for intra-pbx calls
+
+  [ Alexander Lutay ]
+  * [6d35b85] MT#22099 Docker >=1.11 no longer has /.dockerinit, adjust docker run check accordingly
+  * [1d3eaab] TT#2395 Fix REST API test for /api/upnrewritesets in api-root.t
+  * [46f1402] TT#3648 Add bannedips/bannedusers to t/api-rest/api-root.t
+  * [c81a20d] TT#3648 Add REST APT tests bannedips/bannedusers to stable and fast test groups
+
+  [ Victor Seva ]
+  * [92a6847] MT#22363 depends on sipsak from backports
+
+  [ Jozef Kenyeres ]
+  * [2e3c713] TT#2453 getValue function added to DeviceConfig
+
+  [ Daniel Grotti ]
+  * [a2a5a0c] MT#22163 Italian translation
+
+ -- Alexander Lutay <alutay@sipwise.com>  Fri, 21 Oct 2016 15:28:01 +0200
+
 ngcp-panel (1.15.0.0+0~mr5.0.0.0) unstable; urgency=medium
 
   [ Jenkins Git User ]
