@@ -1,5 +1,8 @@
 package NGCP::Panel::Role::EntitiesItem;
 
+use warnings;
+use strict;
+
 use parent qw/Catalyst::Controller/;
 
 use boolean qw(true);
@@ -42,9 +45,8 @@ sub get {
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
-                s/rel=self/rel="item self"/;
-                $_
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-[a-z]+)"|rel="item $1"|r =~
+                s/rel=self/rel="item self"/r;
             } $hal->http_headers),
         ), $hal->as_json);
         $c->response->headers($response->headers);

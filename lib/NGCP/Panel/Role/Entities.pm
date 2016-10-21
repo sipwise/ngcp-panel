@@ -1,5 +1,8 @@
 package NGCP::Panel::Role::Entities;
 
+use warnings;
+use strict;
+
 use parent qw/Catalyst::Controller/;
 use boolean qw(true);
 use Safe::Isa qw($_isa);
@@ -47,7 +50,7 @@ sub get {
         my $items = $self->get_list($c);
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
-        my $form = $self->get_form($c);
+        my ($form) = $self->get_form($c);
         my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
         for my $item (@items) {
             push @embedded, $self->hal_from_item($c, $item, $form);
