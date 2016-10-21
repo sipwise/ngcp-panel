@@ -149,7 +149,7 @@ sub GET : Allow {
             }
         }
 
-        my $form = $full_mod->get_form($c);
+        my ($form) = $full_mod->get_form($c);
 
         my $sorting_cols = [];
         my $item_rs;
