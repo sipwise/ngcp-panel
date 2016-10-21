@@ -75,17 +75,20 @@ EOF
             }
         }
     }
-
+    my $config_failed_auth_attempts = $c->config->{security}->{failed_auth_attempts} // 3;
     for my $key (keys %{ $usr }) {
         my $last_auth = $usr->{$key}->{last_auth} ? NGCP::Panel::Utils::DateTime::epoch_local($usr->{$key}->{last_auth}) : undef;
         if($last_auth && $params{data_for_json}){
             $last_auth =  $last_auth->ymd.' '. $last_auth->hms;
         }
-        push @users, {
-            username => $key,
-            auth_count => $usr->{$key}->{auth_count},
-            last_auth  => $last_auth,
-        } if($usr->{$key}->{auth_count} >= $c->config->{security}->{failed_auth_attempts});
+        if( defined $usr->{$key}->{auth_count} 
+            && $usr->{$key}->{auth_count} >= $config_failed_auth_attempts ) {
+            push @users, {
+                username => $key,
+                auth_count => $usr->{$key}->{auth_count},
+                last_auth  => $last_auth,
+            };
+        }
     }
     return \@users;
 }
