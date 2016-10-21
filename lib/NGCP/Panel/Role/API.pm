@@ -707,6 +707,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $self->get_item_id($c, $item))),
+            Data::HAL::Link->new(relation => "ngcp:".$self->resource_name, href => sprintf("/api/%s/%d", $self->resource_name, $self->get_item_id($c, $item))),
             @$links
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -895,7 +896,7 @@ sub return_representation_post{
     ), $hal->as_json);
 
     $c->response->status(HTTP_CREATED);
-    $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+    $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
     if ('minimal' eq $preference) {
         $c->response->body(q());
     }else{
