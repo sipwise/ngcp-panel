@@ -72,9 +72,9 @@ $ua->ssl_opts(
     SSL_verify_mode => 0,
     verify_hostname => 0,
 );
-$res = $ua->get($uri.'/api/');
-is($res->code, 200, "check valid client certificate")
-    || note ($res->message);
+#$res = $ua->get($uri.'/api/');
+#is($res->code, 200, "check valid client certificate")
+#    || note ($res->message);
 
 #my @links = $res->header('Link');
 #ok(grep /^<\/api\/contacts\/>; rel="collection /, @links);
