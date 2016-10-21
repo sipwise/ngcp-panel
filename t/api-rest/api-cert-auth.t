@@ -8,6 +8,7 @@ use File::Temp qw/tempfile/;
 
 #use IO::Socket::SSL;
 #$IO::Socket::SSL::DEBUG = 1;
+use Data::Dumper;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
@@ -66,6 +67,11 @@ SKIP: {
 }
 
 # successful auth
+print Dumper {
+    SSL_cert_file => $valid_ssl_client_cert,
+    SSL_key_file  => $valid_ssl_client_key,
+    SSL_ca_file   => $ssl_ca_cert,
+};
 $ua->ssl_opts(
     SSL_cert_file => $valid_ssl_client_cert,
     SSL_key_file => $valid_ssl_client_key,
@@ -73,6 +79,7 @@ $ua->ssl_opts(
     verify_hostname => 0,
 );
 $res = $ua->get($uri.'/api/');
+print Dumper $res;
 is($res->code, 200, "check valid client certificate")
     || note ($res->message);
 
