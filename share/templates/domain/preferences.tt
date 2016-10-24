@@ -1,10 +1,10 @@
 [% site_config.title = c.loc('Domain "[_1]" - Preferences', domain.domain) -%]
 
-[% 
+[%
     helper.name = c.loc('Domain');
     helper.identifier = 'domain';
     helper.messages = messages;
-    
+
     helper.edit_preference = edit_preference;
     helper.preference = preference;
     helper.preference_meta = preference_meta;
@@ -16,6 +16,7 @@
     helper.ncos_levels = ncos_levels;
     helper.emergency_mapping_containers = emergency_mapping_containers;
     helper.sound_sets = sound_sets;
+    helper.aip_grp_rs = aip_grp_rs;
     helper.man_aip_grp_rs = man_aip_grp_rs;
 
     helper.top_buttons = [
