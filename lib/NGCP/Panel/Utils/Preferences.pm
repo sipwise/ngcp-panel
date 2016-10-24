@@ -36,8 +36,6 @@ sub load_preference_list {
     my $pref_values = $params{pref_values};
     my $peer_pref = $params{peer_pref};
     my $dom_pref = $params{dom_pref};
-    my $dev_pref = $params{dev_pref};
-    my $devprof_pref = $params{devprof_pref};
     my $prof_pref = $params{prof_pref};
     my $usr_pref = $params{usr_pref};
     my $contract_pref = $params{contract_pref};
@@ -46,8 +44,6 @@ sub load_preference_list {
 
     my $customer_view = $params{customer_view} // 0;
     my $cloudpbx_enabled = $c->config->{features}{cloudpbx};
-
-    my $search_conditions = $params{search_conditions};
 
     my $pref_rs = $c->model('DB')
         ->resultset('voip_preference_groups')
@@ -64,12 +60,6 @@ sub load_preference_list {
             $dom_pref ? ('voip_preferences.dom_pref' => 1,
                 -or => ['voip_preferences_enums.dom_pref' => 1,
                     'voip_preferences_enums.dom_pref' => undef]) : (),
-            $dev_pref ? ('voip_preferences.dev_pref' => 1,
-                -or => ['voip_preferences_enums.dev_pref' => 1,
-                    'voip_preferences_enums.dev_pref' => undef]) : (),
-            $devprof_pref ? ('voip_preferences.devprof_pref' => 1,
-                -or => ['voip_preferences_enums.devprof_pref' => 1,
-                    'voip_preferences_enums.devprof_pref' => undef]) : (),
             $prof_pref ? ('voip_preferences.prof_pref' => 1,
                 -or => ['voip_preferences_enums.prof_pref' => 1,
                     'voip_preferences_enums.prof_pref' => undef]) : (),
@@ -86,13 +76,6 @@ sub load_preference_list {
         $pref_rs = $pref_rs->search({
             'voip_preferences.id' => { in => \@prof_attributes }
         });
-    }
-    if($search_conditions) {
-        if('ARRAY' eq $search_conditions){
-            $pref_rs = $pref_rs->search(@$search_conditions);
-        }else{
-            $pref_rs = $pref_rs->search($search_conditions);
-        }
     }
     my @pref_groups = $pref_rs->all;
 
@@ -393,21 +376,6 @@ sub create_preference_form {
                       peer_host_id    => $c->stash->{server}{id},
                       peer_host_name  => $c->stash->{server}{name},
                     );
-    } elsif ($c->stash->{devmod}) {
-        %log_data = ( %log_data,
-                      type            => 'dev',
-                      device_id       => $c->stash->{devmod}->{id},
-                      device_vendor   => $c->stash->{devmod}->{vendor},
-                      device_model    => $c->stash->{devmod}->{model},
-                      reseller_id     => $c->stash->{devmod}->{reseller_id},
-                    );
-    } elsif ($c->stash->{devprof}) {
-        %log_data = ( %log_data,
-                      type            => 'devprof',
-                      device_id       => $c->stash->{devprof}->{id},
-                      device_vendor   => $c->stash->{devprof}->{config_id},
-                      device_model    => $c->stash->{devprof}->{name},
-                    );
     }
 
     if($posted && $form->validated) {
@@ -474,7 +442,7 @@ sub create_preference_form {
                 $c->response->redirect($base_uri);
                 return 1;
             }
-        } elsif ($attribute eq "man_allowed_ips") {
+       } elsif ($attribute eq "man_allowed_ips") {
             unless(validate_ipnet($form->field($attribute))) {
                 goto OUT;
             }
@@ -865,43 +833,11 @@ sub get_usr_preferences_rs {
     my $prov_subscriber = $params{prov_subscriber};
     my $schema = $params{schema} // $c->model('DB');
     my $get_rows = $params{get_rows};
-    
+
     my $pref_rs = $schema->resultset('voip_usr_preferences')->search({
             'attribute.usr_pref' => 1,
             $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : ()  ,
             $prov_subscriber ? ('me.subscriber_id' => $prov_subscriber->id) : (),
-        },{
-            '+select' => ['attribute.attribute'],
-            '+as' => ['attribute'],
-            'join' => 'attribute',
-    });
-
-    return $pref_rs;
-}
-
-sub get_preferences_rs {
-    my %params = @_;
-
-    my $c = $params{c};
-    my $preferences_type = $params{type};
-    my $attribute = $params{attribute};
-    my $item_id = $params{id};
-    my $schema = $params{schema} // $c->model('DB');
-
-    my %config = (
-        'usr'      => [qw/voip_usr_preferences usr_pref subscriber_id/],
-        'dom'      => [qw/voip_dom_preferences dom_pref domain_id/],
-        'prof'     => [qw/voip_prof_preferences prof_pref profile_id/],
-        'peer'     => [qw/voip_peer_preferences peer_pref peer_host_id/],
-        'dev'      => [qw/voip_dev_preferences dev_pref device_id/],
-        'devprof'  => [qw/voip_devprof_preferences devprof_pref profile_id/],
-        'contract' => [qw/voip_contract_preferences contract_pref contract_id/],
-        'contract_location' => [qw/voip_contract_preferences contract_location_pref location_id/],
-    );
-    my $pref_rs = $schema->resultset($config{$preferences_type}->[0])->search({
-            'attribute.'.$config{$preferences_type}->[1] => 1,
-            $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : ()  ,
-            $item_id ? ('me.'.$config{$preferences_type}->[2] => $item_id) : (),
         },{
             '+select' => ['attribute.attribute'],
             '+as' => ['attribute'],
@@ -985,36 +921,7 @@ sub get_peer_preference_rs {
             peer_host_id => $host->id,
         });
 }
-sub get_dev_preference_rs {
-    my %params = @_;
 
-    my $c = $params{c};
-    my $attribute = $params{attribute};
-    my $device = $params{device};
-
-    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
-            attribute => $attribute, 'dev_pref' => 1,
-        });
-    return unless($preference);
-    return $preference->voip_dev_preferences->search_rs({
-           device_id => $device->id,
-        });
-}
-sub get_devprof_preference_rs {
-    my %params = @_;
-
-    my $c = $params{c};
-    my $attribute = $params{attribute};
-    my $profile = $params{profile};
-
-    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
-            attribute => $attribute, 'devprof_pref' => 1,
-        });
-    return unless($preference);
-    return $preference->voip_devprof_preferences->search_rs({
-           profile_id => $profile->id,
-        });
-}
 sub get_contract_preference_rs {
     my %params = @_;
 
