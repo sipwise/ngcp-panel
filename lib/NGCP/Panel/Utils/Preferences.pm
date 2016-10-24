@@ -143,15 +143,15 @@ sub load_preference_list {
                     $pref->{emergency_mapping_container_id} = $tmp->id;
                 }
             }
-            elsif($pref->attribute eq "allowed_ips") {
-                $pref->{allowed_ips_group_id} = $pref_values->{allowed_ips_grp};
-                $pref->{allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
-                    ->search_rs({ group_id => $pref_values->{allowed_ips_grp} });
+            elsif($pref->attribute =~ /^(domain_)?allowed_ips$/) {
+                $pref->{$0 . '_group_id'} = $pref_values->{$0 . '_grp'};
+                $pref->{$0 . '_rs'} = $c->model('DB')->resultset('voip_allowed_ip_groups')
+                    ->search_rs({ group_id => $pref_values->{$0 . '_grp'} });
             }
-            elsif($pref->attribute eq "man_allowed_ips") {
-                $pref->{man_allowed_ips_group_id} = $pref_values->{man_allowed_ips_grp};
-                $pref->{man_allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
-                    ->search_rs({ group_id => $pref_values->{man_allowed_ips_grp} });
+            elsif($pref->attribute =~ /^(domain_)?man_allowed_ips$/) {
+                $pref->{$0 . '_group_id'} = $pref_values->{$0 . '_grp'};
+                $pref->{$0 . '_rs'} = $c->model('DB')->resultset('voip_allowed_ip_groups')
+                    ->search_rs({ group_id => $pref_values->{$0 . '_grp'} });
             }
             elsif($c->stash->{subscriber} &&
                   ($pref->attribute eq "block_in_list" || $pref->attribute eq "block_out_list")) {
@@ -865,7 +865,7 @@ sub get_usr_preferences_rs {
     my $prov_subscriber = $params{prov_subscriber};
     my $schema = $params{schema} // $c->model('DB');
     my $get_rows = $params{get_rows};
-    
+
     my $pref_rs = $schema->resultset('voip_usr_preferences')->search({
             'attribute.usr_pref' => 1,
             $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : ()  ,
