@@ -103,7 +103,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
                 my $new_dom = $c->stash->{dom_rs}
                     ->create({domain => $form->value->{domain}});
                 unless($pbx) {
-                    $reseller_id = $c->user->is_superuser ? 
+                    $reseller_id = $c->user->is_superuser ?
                         $form->values->{reseller}{id} : $c->user->reseller_id;
                 } elsif($form->values->{rwr_set}) {
                     my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')
@@ -329,9 +329,9 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
 
 sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
-   
+
     $c->stash(edit_preference => 1);
-    
+
     my @enums = $c->stash->{preference_meta}
         ->voip_preferences_enums
         ->search({dom_pref => 1})
@@ -353,7 +353,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
 
 sub load_preference_list :Private {
     my ($self, $c) = @_;
-    
+
     my $dom_pref_values = $c->model('DB')
         ->resultset('voip_preferences')
         ->search({
@@ -361,10 +361,10 @@ sub load_preference_list :Private {
             },{
                 prefetch => {'voip_dom_preferences' => 'domain'},
             });
-        
+
     my %pref_values;
     foreach my $value($dom_pref_values->all) {
-    
+
         $pref_values{$value->attribute} = [
             map {$_->value} $value->voip_dom_preferences->all
         ];
