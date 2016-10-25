@@ -95,7 +95,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
-    #$self->apply_fake_time($c);    
+    #$self->apply_fake_time($c);
     return 1;
 }
 
@@ -131,9 +131,9 @@ sub GET :Allow {
                 templated => true,
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
-        
+
         push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
-        
+
         #    Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
 
         #if(($total_count / $rows) > $page ) {
@@ -150,7 +150,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -185,7 +185,7 @@ sub POST :Allow {
     {
         my $schema = $c->model('DB');
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -198,7 +198,16 @@ sub POST :Allow {
             form => $form,
             exceptions => [ "contact_id", "billing_profile_id" ],
         );
-        
+
+        my $syscontact = $schema->resultset('contacts')
+            ->search({
+                'me.status' => { '!=' => 'terminated' },
+            })->find($resource->{contact_id});
+        unless($syscontact) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contact_id'");
+            last;
+        }
+
         my $mappings_to_create = [];
         last unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
             c => $c,
@@ -217,12 +226,12 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type'.");
             last;
         }
-        
+
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
         my $contract;
-        
+
         try {
             $contract = $schema->resultset('contracts')->create($resource);
         } catch($e) {
@@ -238,7 +247,7 @@ sub POST :Allow {
 
         try {
             foreach my $mapping (@$mappings_to_create) {
-                $contract->billing_mappings->create($mapping); 
+                $contract->billing_mappings->create($mapping);
             }
             $contract = $self->contract_by_id($c, $contract->id,1,$now);
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
@@ -255,12 +264,12 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contract.");
             last;
         }
-        
+
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
             my $_contract = $self->contract_by_id($c, $contract->id, 1);
-            return $self->hal_from_contract($c,$_contract,$form,$now); });        
+            return $self->hal_from_contract($c,$_contract,$form,$now); });
 
         $guard->commit;
 

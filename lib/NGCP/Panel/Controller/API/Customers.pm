@@ -26,7 +26,7 @@ sub api_description {
     return 'Defines a billing container for end customers. Customers usually have one or more <a href="#subscribers">Subscribers</a>. A <a href="#billingprofiles">Billing Profile</a> is assigned to a customer, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the customer for current and past billing intervals. Customer can be one of the "sipaccount" or "pbxaccount" type. Type should be specified as "type" parameter.';
 };
 sub documentation_sample {
-    return  
+    return
         {
            "billing_profile_id" => 4,
            "type" => "sipaccount",
@@ -141,7 +141,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
-    #$self->apply_fake_time($c);    
+    #$self->apply_fake_time($c);
     return 1;
 }
 
@@ -157,7 +157,7 @@ sub GET :Allow {
         (my $total_count, $customers_rs) = $self->paginate_order_collection($c, $customers_rs);
         my $customers = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
             rs => $customers_rs,
-            contract_id_field => 'id');          
+            contract_id_field => 'id');
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $customer (@$customers) {
@@ -186,7 +186,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -221,7 +221,7 @@ sub POST :Allow {
     {
         my $schema = $c->model('DB');
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -236,6 +236,15 @@ sub POST :Allow {
         );
         #$resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
+        my $custcontact = $c->model('DB')->resultset('contacts')
+            ->search({
+                'me.status' => { '!=' => 'terminated' },
+            })->find($resource->{contact_id});
+        unless($custcontact) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contact_id'");
+            last;
+        }
+
         my $mappings_to_create = [];
         last unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
             c => $c,
@@ -247,14 +256,14 @@ sub POST :Allow {
                 #$c->log->error($err);
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
             });
-        
+
         my $product_class = delete $resource->{type};
         my $product = $schema->resultset('products')->find({ class => $product_class });
         unless($product) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type'.");
             last;
         }
-        
+
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
@@ -272,22 +281,22 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The contact_id is not a valid ngcp:customercontacts item, but an ngcp:systemcontacts item");
             last;
         }
-        if($customer->invoice_template_id && 
+        if($customer->invoice_template_id &&
            $customer->invoice_template->reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
-        if($customer->subscriber_email_template_id && 
+        if($customer->subscriber_email_template_id &&
            $customer->subscriber_email_template->reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
-        if($customer->passreset_email_template_id && 
+        if($customer->passreset_email_template_id &&
            $customer->passreset_email_template->reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'passreset_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
-        if($customer->invoice_email_template_id && 
+        if($customer->invoice_email_template_id &&
            $customer->invoice_email_template->reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
@@ -295,7 +304,7 @@ sub POST :Allow {
 
         try {
             foreach my $mapping (@$mappings_to_create) {
-                $customer->billing_mappings->create($mapping); 
+                $customer->billing_mappings->create($mapping);
             }
             $customer = $self->customer_by_id($c, $customer->id,$now);
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
@@ -312,7 +321,7 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
             last;
         }
-        
+
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
