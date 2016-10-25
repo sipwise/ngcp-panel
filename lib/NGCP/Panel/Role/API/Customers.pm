@@ -40,7 +40,7 @@ sub hal_from_customer {
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile_id = $billing_mapping->billing_profile->id;
     my $future_billing_profiles = NGCP::Panel::Utils::Contract::resource_from_future_mappings($customer);
-    my $billing_profiles = NGCP::Panel::Utils::Contract::resource_from_mappings($customer);    
+    my $billing_profiles = NGCP::Panel::Utils::Contract::resource_from_mappings($customer);
     #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     #my $etime = $stime->clone->add(months => 1);
     #my $contract_balance = $customer->contract_balances
@@ -65,7 +65,7 @@ sub hal_from_customer {
     #        end => { '<' => $etime },
     #    });
     #}
-    
+
     #we leave this here to keep the former behaviour: contract balances are also created upon GET api/customers/4711
     NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $customer,
@@ -81,7 +81,7 @@ sub hal_from_customer {
             push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingnetworks', href => sprintf("/api/billingnetworks/%d", $mapping->network_id)));
         }
     }
-    
+
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -148,11 +148,11 @@ sub update_customer {
 
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile = $billing_mapping->billing_profile;
-    
-    my $old_package = $customer->profile_package;    
+
+    my $old_package = $customer->profile_package;
 
     $old_resource->{prepaid} = $billing_profile->prepaid;
-    
+
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
     $resource->{contact_id} //= undef;
@@ -166,7 +166,7 @@ sub update_customer {
     #$resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
     #my $now = NGCP::Panel::Utils::DateTime::current_local;
-    
+
     my $mappings_to_create = [];
     my $delete_mappings = 0;
     my $set_package = ($resource->{billing_profile_definition} // 'id') eq 'package';
@@ -185,12 +185,14 @@ sub update_customer {
     delete $resource->{type};
 
     $resource->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
-    
+
     my $custcontact;
     if($old_resource->{contact_id} != $resource->{contact_id}) {
         $custcontact = $c->model('DB')->resultset('contacts')
-            ->search({ reseller_id => { '-not' => undef }})
-            ->find($resource->{contact_id});
+            ->search({
+                'me.status' => { '!=' => 'terminated' },
+                reseller_id => { '-not' => undef },
+            })->find($resource->{contact_id});
         unless($custcontact) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contact_id', doesn't exist");
             return;
@@ -204,7 +206,7 @@ sub update_customer {
     }
 
     my $oldinvoicetmpl = $old_resource->{invoice_template_id} // 0;
-    if($resource->{invoice_template_id} && 
+    if($resource->{invoice_template_id} &&
        $oldinvoicetmpl != $resource->{invoice_template_id}) {
         my $tmpl = $c->model('DB')->resultset('invoice_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -215,7 +217,7 @@ sub update_customer {
         }
     }
     my $oldsubtmpl = $old_resource->{subscriber_email_template_id} // 0;
-    if($resource->{subscriber_email_template_id} && 
+    if($resource->{subscriber_email_template_id} &&
        $oldsubtmpl != $resource->{subscriber_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -226,7 +228,7 @@ sub update_customer {
         }
     }
     my $oldpasstmpl = $old_resource->{passreset_email_template_id} // 0;
-    if($resource->{passreset_email_template_id} && 
+    if($resource->{passreset_email_template_id} &&
        $oldpasstmpl != $resource->{passreset_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -237,7 +239,7 @@ sub update_customer {
         }
     }
     my $oldinvtmpl = $old_resource->{invoice_email_template_id} // 0;
-    if($resource->{invoice_email_template_id} && 
+    if($resource->{invoice_email_template_id} &&
        $oldinvtmpl != $resource->{invoice_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -257,10 +259,10 @@ sub update_customer {
         $customer->update($resource);
         NGCP::Panel::Utils::Contract::remove_future_billing_mappings($customer,$now) if $delete_mappings;
         foreach my $mapping (@$mappings_to_create) {
-            $customer->billing_mappings->create($mapping); 
+            $customer->billing_mappings->create($mapping);
         }
         $customer = $self->customer_by_id($c, $customer->id, $now);
-        
+
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $customer,
             old_package => $old_package,
@@ -274,8 +276,8 @@ sub update_customer {
             );
 
         $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-        $billing_profile = $billing_mapping->billing_profile;            
-        
+        $billing_profile = $billing_mapping->billing_profile;
+
         if(($customer->external_id // '') ne $old_ext_id) {
             foreach my $sub($customer->voip_subscribers->all) {
                 my $prov_sub = $sub->provisioning_voip_subscriber;
@@ -287,7 +289,7 @@ sub update_customer {
                 );
             }
         }
-    
+
         if($old_resource->{status} ne $resource->{status}) {
             if($customer->id == 1) {
                 $self->error($c, HTTP_FORBIDDEN, "Cannot set customer status to '".$resource->{status}."' for customer id '1'");
@@ -298,21 +300,21 @@ sub update_customer {
                 contract => $customer,
             );
         }
-        
+
         NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
             #old_prepaid => $old_resource->{prepaid},
             #new_prepaid => $billing_profile->prepaid,
             prepaid => $billing_profile->prepaid,
             contract => $customer,
-        );        
-    
+        );
+
         # TODO: what about changed product, do we allow it?
     } catch($e) {
         $c->log->error("Failed to update customer contract id '".$customer->id."': $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
         return;
     };
-        
+
     return $customer;
 }
 

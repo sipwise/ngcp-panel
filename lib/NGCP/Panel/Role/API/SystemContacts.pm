@@ -15,8 +15,10 @@ use NGCP::Panel::Form::Contact::Reseller;
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('contacts')
-        ->search({ reseller_id => undef });
+    my $item_rs = $c->model('DB')->resultset('contacts')->search({
+        reseller_id => undef,
+        'me.status' => { '!=' => 'terminated' },
+    });
     return $item_rs;
 }
 
@@ -42,7 +44,7 @@ sub hal_from_contact {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $contact->id)),
             $self->get_journal_relation_link($contact->id),
-            
+
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

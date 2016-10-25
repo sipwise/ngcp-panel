@@ -10,6 +10,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
+use NGCP::Panel::Utils::DateTime qw();
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -199,22 +200,51 @@ sub DELETE :Allow {
     {
         my $contact = $self->contact_by_id($c, $id);
         last unless $self->resource_exists($c, customercontact => $contact);
-        my $contract_count = $c->model('DB')->resultset('contracts')->search({
+        my $contract_rs = $c->model('DB')->resultset('contracts')->search({
             contact_id => $id,
             status => { '!=' => 'terminated' },
         });
-        if($contract_count > 0) {
+        my $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+            contact_id => $id,
+            status => { '!=' => 'terminated' },
+        });
+        if ($contract_rs->first or $subscriber_rs->first) { #2. if active contracts or subscriber  -> error
             $self->error($c, HTTP_LOCKED, "Contact is still in use.");
             last;
         } else {
-
-            last unless $self->add_delete_journal_item_hal($c,sub {
-                my $self = shift;
-                my ($c) = @_;
-                my $_form = $self->get_form($c);
-                return $self->hal_from_contact($c, $contact, $_form); });
-
-            $contact->delete;
+            $contract_rs = $c->model('DB')->resultset('contracts')->search({
+                contact_id => $id,
+                status => { '=' => 'terminated' },
+            });
+            $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+                contact_id => $id,
+                status => { '=' => 'terminated' },
+            });
+            if ($contract_rs->first or $subscriber_rs->first) { #1. terminate if terminated contracts or subscribers
+                $c->log->debug("terminate contact id ".$contact->id);
+                try {
+                    $contact->update({
+                        status => "terminated",
+                        terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
+                    });
+                    $contact->discard_changes();
+                } catch($e) {
+                    $c->log->error("Failed to terminate contact id '".$contact->id."': $e");
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+                    last;
+                };
+                my $form = $self->get_form($c);
+                my $hal = $self->hal_from_contact($c, $contact, $form);
+                last unless $self->add_update_journal_item_hal($c,$hal);
+            } else { #3. delete otherwise
+                last unless $self->add_delete_journal_item_hal($c,sub {
+                    my $self = shift;
+                    my ($c) = @_;
+                    my $_form = $self->get_form($c);
+                    return $self->hal_from_contact($c, $contact, $_form); });
+                $c->log->debug("delete contact id ".$contact->id);
+                $contact->delete;
+            }
         }
         $guard->commit;
 

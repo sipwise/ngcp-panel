@@ -18,6 +18,7 @@ my $user = $ENV{API_USER} // 'administrator';
 my $pass = $ENV{API_PASS} // 'administrator';
 $ua->credentials($netloc, "api_admin_http", $user, $pass);
 
+#goto SKIP;
 # OPTIONS tests
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/customercontacts/');
@@ -183,14 +184,14 @@ my @allcontacts = ();
     ok(exists $contact->{email}, "check existence of email");
     like($contact->{id}, qr/[0-9]+/, "check existence of id");
     like($contact->{reseller_id}, qr/[0-9]+/, "check existence of reseller_id");
-    
+
     # PUT same result again
     my $old_contact = { %$contact };
     delete $contact->{_links};
     delete $contact->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstcontact);
     $req->header('Prefer' => 'return=minimal');
-    
+
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $res = $ua->request($req);
@@ -265,12 +266,209 @@ my @allcontacts = ();
 }
 
 # DELETE
-{
+{ #regular delete:
     foreach my $contact(@allcontacts) {
         $req = HTTP::Request->new('DELETE', $uri.'/'.$contact);
         $res = $ua->request($req);
         is($res->code, 204, "check delete of contact");
     }
+}
+
+#SKIP:
+#MT#20639
+my $t = time;
+my $reseller_id = 1;
+
+$req = HTTP::Request->new('POST', $uri.'/api/domains/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    domain => 'test' . $t . '.example.org',
+    reseller_id => $reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test domain");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test domain");
+my $domain = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->header('Prefer' => 'return=representation');
+$req->content(JSON::to_json({
+    name => "test profile $t",
+    handle  => "testprofile$t",
+    reseller_id => $reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "create test billing profile");
+my $billing_profile_id = $res->header('Location');
+$billing_profile_id =~ s/^.+\/(\d+)$/$1/;
+
+my %subscriber_map = ();
+my %customer_map = ();
+my %customer_contact_map = ();
+
+{ #termination, if a terminated contract exists:
+
+    my $customer_contact = _create_customer_contact();
+    my $customer = _create_customer($customer_contact->{id});
+    _delete_customer_contact($customer_contact,423);
+    _update_customer($customer,status => "terminated");
+    _delete_customer_contact($customer_contact);
+
+}
+
+{ #termination, if a subscriber exists:
+
+    my $customer_contact = _create_customer_contact();
+    my $subscriber1_contact = _create_customer_contact();
+    my $subscriber2_contact = _create_customer_contact();
+    my $customer = _create_customer($customer_contact->{id});
+    my $subscriber1 = _create_subscriber($customer,contact_id => $subscriber1_contact->{id});
+    my $subscriber2 = _create_subscriber($customer,contact_id => $subscriber2_contact->{id});
+    #termination wether subscriber is terminated or not.
+    _delete_customer_contact($subscriber1_contact);
+    _delete_subscriber($subscriber2);
+    _delete_customer_contact($subscriber2_contact);
+
+}
+
+sub _create_customer_contact {
+
+    my (@further_opts) = @_;
+
+    $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        firstname => "cust_contact_first",
+        lastname  => "cust_contact_last",
+        email     => "cust_contact\@custcontact.invalid",
+        reseller_id => $reseller_id,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "create test customer contact");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch test customer contact");
+    my $customer_contact = JSON::from_json($res->decoded_content);
+    $customer_contact_map{$customer_contact->{id}} = $customer_contact;
+    return $customer_contact;
+
+}
+
+sub _delete_customer_contact {
+
+    my ($contact,$expected_code) = @_;
+    $expected_code //= 204;
+    my $url = $uri.'/api/customercontacts/'.$contact->{id};
+    $req = HTTP::Request->new('DELETE', $url);
+    $res = $ua->request($req);
+    if ($expected_code eq '204') {
+        is($res->code, 204, "delete test customer contact");
+        $req = HTTP::Request->new('GET', $url);
+        $res = $ua->request($req);
+        is($res->code, 404, "test customer contact is not found");
+        return delete $customer_contact_map{$contact->{id}};
+    } else {
+        is($res->code, $expected_code, "delete test customer contact returns $expected_code");
+        $req = HTTP::Request->new('GET', $url);
+        $res = $ua->request($req);
+        is($res->code, 200, "test customer contact is still found");
+        return undef;
+    }
+
+}
+
+sub _create_customer {
+
+    my ($contact_id,@further_opts) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/customers/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        status => "active",
+        contact_id => $contact_id,
+        type => "sipaccount",
+        billing_profile_id => $billing_profile_id,
+        max_subscribers => undef,
+        external_id => undef,
+        #status => "active",
+        @further_opts,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "create test customer");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch test customer");
+    my $customer = JSON::from_json($res->decoded_content);
+    $customer_map{$customer->{id}} = $customer;
+    return $customer;
+
+}
+
+sub _update_customer {
+
+    my ($customer,@further_opts) = @_;
+    $req = HTTP::Request->new('PUT', $uri.'/api/customers/'.$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        %$customer,
+        @further_opts,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "patch test customer");
+    $customer = JSON::from_json($res->decoded_content);
+    $customer_map{$customer->{id}} = $customer;
+    return $customer;
+
+}
+
+sub _create_subscriber {
+
+    my ($customer,@further_opts) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/subscribers/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        domain_id => $domain->{id},
+        username => 'subscriber_' . (scalar keys %subscriber_map) . '_'.$t,
+        password => 'subscriber_password',
+        customer_id => $customer->{id},
+        #status => "active",
+        @further_opts,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "create test subscriber");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch test subscriber");
+    my $subscriber = JSON::from_json($res->decoded_content);
+    $subscriber_map{$subscriber->{id}} = $subscriber;
+    return $subscriber;
+
+}
+
+sub _delete_subscriber {
+
+    my ($subscriber,$expected_code) = @_;
+    $expected_code //= 204;
+    my $url = $uri.'/api/subscribers/'.$subscriber->{id};
+    $req = HTTP::Request->new('DELETE', $url);
+    $res = $ua->request($req);
+    if ($expected_code eq '204') {
+        is($res->code, 204, "delete test subscriber");
+        $req = HTTP::Request->new('GET', $url);
+        $res = $ua->request($req);
+        is($res->code, 404, "test subscriber is not found");
+        return delete $subscriber_map{$subscriber->{id}};
+    } else {
+        is($res->code, $expected_code, "delete test subscriber returns $expected_code");
+        $req = HTTP::Request->new('GET', $url);
+        $res = $ua->request($req);
+        is($res->code, 200, "test subscriber is still found");
+        return undef;
+    }
+
 }
 
 done_testing;

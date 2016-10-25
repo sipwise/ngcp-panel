@@ -607,7 +607,12 @@ sub update_item {
         } # else old email == new email, nothing to do
         $resource->{contact_id} = $contact->id;
     } elsif($subscriber->contact) {
-        $subscriber->contact->delete;
+        try {
+            $c->log->debug("delete contact id ".$subscriber->contact->id);
+            $subscriber->contact->delete;
+        } catch($e) {
+            $c->log->debug("contact still in use: ".$e);
+        }
         $resource->{contact_id} = undef; # mark for clearance
     }
     delete $resource->{email};
