@@ -8,7 +8,7 @@ use NGCP::Panel::Form::Contact::Reseller;
 use NGCP::Panel::Form::Contact::Admin;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
-
+use NGCP::Panel::Utils::DateTime qw();
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -20,7 +20,9 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $contacts = $c->model('DB')->resultset('contacts');
+    my $contacts = $c->model('DB')->resultset('contacts')->search({
+        'me.status' => { '!=' => 'terminated' },
+    });
     unless($c->user->is_superuser) {
         $contacts = $contacts->search({ reseller_id => $c->user->reseller_id });
     }
@@ -102,7 +104,7 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
 sub create_without_reseller :Chained('list_contact') :PathPart('create/noreseller') :Args(0) {
     my ($self, $c) = @_;
 
-    $self->create($c, 1); 
+    $self->create($c, 1);
 }
 
 sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
@@ -194,19 +196,58 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub edit_without_reseller :Chained('base') :PathPart('edit/noreseller') :Args(0) {
     my ($self, $c) = @_;
 
-    $self->edit($c, 1); 
+    $self->edit($c, 1);
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     try {
-        $c->stash->{contact}->delete;
-        NGCP::Panel::Utils::Message::info(
-            c => $c,
-            data => { $c->stash->{contact}->get_inflated_columns },
-            desc  => $c->loc('Contact successfully deleted'),
-        );
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            my $contact = $c->stash->{contact};
+            my $id = $contact->id;
+            my $contract_rs = $schema->resultset('contracts')->search({
+                contact_id => $id,
+                status => { '!=' => 'terminated' },
+            });
+            my $subscriber_rs = $schema->resultset('voip_subscribers')->search({
+                contact_id => $id,
+                status => { '!=' => 'terminated' },
+            });
+            if ($contract_rs->first or $subscriber_rs->first) { #2. if active contracts or subscribers -> error
+                die( ["Contact is still in use.", "showdetails"] );
+            } else {
+                $contract_rs = $schema->resultset('contracts')->search({
+                    contact_id => $id,
+                    status => { '=' => 'terminated' },
+                });
+                $subscriber_rs = $schema->resultset('voip_subscribers')->search({
+                    contact_id => $id,
+                    status => { '=' => 'terminated' },
+                });
+                if ($contract_rs->first or $subscriber_rs->first) { #1. terminate if terminated contracts or subscribers
+                    $c->log->debug("terminate contact id ".$id);
+                    $contact->update({
+                        status => "terminated",
+                        terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
+                    });
+                    NGCP::Panel::Utils::Message::info(
+                        c => $c,
+                        data => { $contact->get_inflated_columns },
+                        desc  => $c->loc('Contact successfully terminated'),
+                    );
+                } else { #3. delete otherwise
+                    $c->log->debug("delete contact id ".$contact->id);
+                    $contact->delete;
+                    NGCP::Panel::Utils::Message::info(
+                        c => $c,
+                        data => { $contact->get_inflated_columns },
+                        desc  => $c->loc('Contact successfully deleted'),
+                    );
+                }
+            }
+        });
     } catch($e) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
@@ -220,18 +261,25 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 
 sub ajax :Chained('list_contact') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    
+
     NGCP::Panel::Utils::Datatables::process(
         $c,
         $c->stash->{contacts}->search_rs(undef, {prefetch=>"contracts"}),
         $c->stash->{contact_dt_columns},
         sub {
             my ($result) = @_;
-            my %data = (deletable => ($result->contracts->all) ? 0 : 1);
+            my $contract_rs = $result->contracts->search({
+                status => { '!=' => 'terminated' },
+            });
+            my $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+                contact_id => $result->id,
+                status => { '!=' => 'terminated' },
+            });
+            my %data = (deletable => ($contract_rs->first or $subscriber_rs->first) ? 0 : 1);
             return %data
         },
     );
-    
+
     $c->detach( $c->view("JSON") );
 }
 
@@ -246,7 +294,14 @@ sub ajax_noreseller :Chained('list_contact') :PathPart('ajax_noreseller') :Args(
         $c->stash->{contact_dt_columns},
         sub {
             my ($result) = @_;
-            my %data = (deletable => ($result->contracts->all) ? 0 : 1);
+            my $contract_rs = $result->contracts->search({
+                status => { '!=' => 'terminated' },
+            });
+            my $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+                contact_id => $result->id,
+                status => { '!=' => 'terminated' },
+            });
+            my %data = (deletable => ($contract_rs->first or $subscriber_rs->first) ? 0 : 1);
             return %data
         },
     );
@@ -264,8 +319,8 @@ sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) {
     my $top = $c->request->params->{iIdOnTop};
 
     my $top_entry;
-    my @aaData = map { 
-        my @c = country($_); 
+    my @aaData = map {
+        my @c = country($_);
         if($c[CNT_I_CODE2]) {
             my $e = { name => $_, id => $c[CNT_I_CODE2] };
             if($top && !$top_entry && $top eq $e->{id}) {
