@@ -142,7 +142,7 @@ sub get_customer_rs {
         include_terminated => $params{include_terminated},
         contract_id => $contract_id,
     );
-    
+
     $customers = $customers->search({
             'contact.reseller_id' => { '-not' => undef },
         },{
@@ -158,8 +158,8 @@ sub get_customer_rs {
         $customers = $customers->search({
                 'contact.reseller_id' => $c->user->contract->contact->reseller_id,
         });
-    } 
-    
+    }
+
     $customers = $customers->search({
             '-or' => [
                 'product.class' => 'sipaccount',
@@ -169,7 +169,7 @@ sub get_customer_rs {
             '+select' => 'billing_mappings.id',
             '+as' => 'bmid',
     });
-    
+
     return $customers;
 }
 
@@ -208,7 +208,7 @@ sub get_contract_zonesfees_rs {
         ],
         join        => 'source_customer_billing_zones_history',
         group_by    => [
-            'source_customer_billing_zones_history.zone', 
+            'source_customer_billing_zones_history.zone',
             $group_detail ? 'source_customer_billing_zones_history.detail' : (),
         ],
         order_by    => 'source_customer_billing_zones_history.zone',
@@ -261,10 +261,10 @@ sub get_contract_zonesfees {
         $in ? $zonecalls_rs_in->all : (),
         $out ? $zonecalls_rs_out->all : (),
     );
-    
+
     my %allzones;
     for my $zone (@zones) {
-        my $zname = $params{group_by_detail} ? 
+        my $zname = $params{group_by_detail} ?
             ($zone->get_column('zone')//'') . ' ' . ($zone->get_column('zone_detail')//'') :
             ($zone->get_column('zone')//'');
 
@@ -299,7 +299,7 @@ sub get_contract_calls_rs{
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         'call_status'       => 'ok',
         'source_user_id'    => { '!=' => '0' },
-        'start_time'        => 
+        'start_time'        =>
             [ -and =>
                 { '>=' => $stime->epoch},
                 { '<=' => $etime->epoch},
@@ -307,25 +307,25 @@ sub get_contract_calls_rs{
         'source_account_id' => $customer_contract_id,
     },{
         select => [qw/
-            source_user source_domain source_cli 
-            destination_user_in 
+            source_user source_domain source_cli
+            destination_user_in
             start_time duration call_type
             source_customer_cost
             source_customer_billing_zones_history.zone
             source_customer_billing_zones_history.detail
         /],
         as => [qw/
-            source_user source_domain source_cli 
-            destination_user_in 
+            source_user source_domain source_cli
+            destination_user_in
             start_time duration call_type
             source_customer_cost
-            zone 
+            zone
             zone_detail
         /],
-        'join' => 'source_customer_billing_zones_history', 
+        'join' => 'source_customer_billing_zones_history',
         'order_by'    => 'start_time',
-    } );    
- 
+    } );
+
     return $calls_rs;
 }
 
@@ -338,10 +338,10 @@ sub prepare_billing_mappings {
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return 0; };
     }
-    
+
     my $profile_def_mode = $resource->{billing_profile_definition} // 'id';
     $now //= NGCP::Panel::Utils::DateTime::current_local;
-            
+
     my $reseller_id = undef;
     my $is_customer = 1;
     if (defined $resource->{contact_id}) {
@@ -372,7 +372,7 @@ sub prepare_billing_mappings {
             $product_id = $resource->{product_id};
         }
     }
-   
+
     if ('id' eq $profile_def_mode) {
         my $delete = undef;
         if (defined $old_resource) { #update
@@ -386,13 +386,13 @@ sub prepare_billing_mappings {
                         profile_id_field => 'billing_profile_id',
                         field => $billing_profile_field,
                         );
-                    my ($profile) = @$entities{qw/profile/};                    
+                    my ($profile) = @$entities{qw/profile/};
                     push(@$mappings_to_create,{billing_profile_id => $profile->id,
                         network_id => undef,
                         product_id => $product_id,
                         start_date => $now,
                         end_date => undef,
-                    });                    
+                    });
                 } else {
                     #not changed, don't touch mappings
                     $delete = 0;
@@ -448,7 +448,7 @@ sub prepare_billing_mappings {
                 profile_id_field => 'profile_id',
                 network_id_field => 'network_id',
                 );
-            my ($profile,$network) = @$entities{qw/profile network/};            
+            my ($profile,$network) = @$entities{qw/profile network/};
             if (defined $prepaid) {
                 if ($profile->prepaid != $prepaid) {
                     return 0 unless &{$err_code}("Future switching between prepaid and post-paid billing profiles is not supported (" . $profile->name . ").",$billing_profiles_field);
@@ -493,7 +493,7 @@ sub prepare_billing_mappings {
                 my $stop_str = $dtf->format_datetime($stop);
                 return 0 unless &{$err_code}("Interval with 'stop' timestamp ($stop_str) but no 'start' timestamp specified.",$billing_profiles_field);
                 $interval_type_counts{'open start'} //= 0;
-                $interval_type_counts{'open start'} += 1;                
+                $interval_type_counts{'open start'} += 1;
             } else { #start-end interval
                 my $start_str = $dtf->format_datetime($start);
                 if ($start <= $now) {
@@ -509,7 +509,7 @@ sub prepare_billing_mappings {
                 #} else {
                 #    $start_dupes{$start_str} = 1;
                 #}
-                $interval_type_counts{'start-end'} += 1;                                
+                $interval_type_counts{'start-end'} += 1;
             }
 
             push(@$mappings_to_create,{
@@ -522,7 +522,7 @@ sub prepare_billing_mappings {
         }
 
         if (!defined $old_resource && $interval_type_counts{'open_any_network'} < 1) {
-            return 0 unless &{$err_code}("An interval without 'start' and 'stop' timestamps and no billing network is required.",$billing_profiles_field);            
+            return 0 unless &{$err_code}("An interval without 'start' and 'stop' timestamps and no billing network is required.",$billing_profiles_field);
         } elsif (defined $old_resource && $interval_type_counts{'open'} > 0) {
             return 0 unless &{$err_code}("Adding intervals without 'start' and 'stop' timestamps is not allowed.",$billing_profiles_field);
         }
@@ -549,7 +549,7 @@ sub prepare_billing_mappings {
                     );
                 my ($package) = @$entities{qw/package/};
                 foreach my $mapping ($package->initial_profiles->all) {
-                    push(@$mappings_to_create,{ #assume not terminated, 
+                    push(@$mappings_to_create,{ #assume not terminated,
                         billing_profile_id => $mapping->profile_id,
                         network_id => ($is_customer ? $mapping->network_id : undef),
                         product_id => $product_id,
@@ -568,7 +568,7 @@ sub prepare_billing_mappings {
                         );
                     my ($package) = @$entities{qw/package/};
                     foreach my $mapping ($package->initial_profiles->all) {
-                        push(@$mappings_to_create,{ #assume not terminated, 
+                        push(@$mappings_to_create,{ #assume not terminated,
                             billing_profile_id => $mapping->profile_id,
                             network_id => ($is_customer ? $mapping->network_id : undef),
                             product_id => $product_id,
@@ -582,7 +582,7 @@ sub prepare_billing_mappings {
                 }
             } else {
                 #package unchanged (null): don't touch billing mappings
-                $delete = 0;                
+                $delete = 0;
             }
         } else { #create
             $delete = 1; #for the sake of completeness
@@ -593,7 +593,7 @@ sub prepare_billing_mappings {
                 );
             my ($package) = @$entities{qw/package/};
             foreach my $mapping ($package->initial_profiles->all) {
-                push(@$mappings_to_create,{ #assume not terminated, 
+                push(@$mappings_to_create,{ #assume not terminated,
                     billing_profile_id => $mapping->profile_id,
                     network_id => ($is_customer ? $mapping->network_id : undef),
                     product_id => $product_id,
@@ -607,19 +607,19 @@ sub prepare_billing_mappings {
         }
     } else {
         return 0 unless &{$err_code}("Invalid 'billing_profile_definition'.",$billing_profile_definition_field);
-    } 
+    }
 
     delete $resource->{billing_profile_id};
     delete $resource->{billing_profiles};
-    
+
     delete $resource->{billing_profile_definition};
-        
+
     return 1;
 }
-    
+
 sub _check_profile_network {
     my (%params) = @_;
-    my ($c,$res,$profile_id_field,$network_id_field,$field,$reseller_id,$err_code,$entities) = @params{qw/c resource profile_id_field network_id_field field reseller_id err_code entities/};    
+    my ($c,$res,$profile_id_field,$network_id_field,$field,$reseller_id,$err_code,$entities) = @params{qw/c resource profile_id_field network_id_field field reseller_id err_code entities/};
 
     my $schema = $c->model('DB');
     if (!defined $err_code || ref $err_code ne 'CODE') {
@@ -628,7 +628,7 @@ sub _check_profile_network {
 
     unless(defined $res->{$profile_id_field}) {
         return 0 unless &{$err_code}("Invalid '$profile_id_field', not defined.",$field);
-    }    
+    }
     my $profile = $schema->resultset('billing_profiles')->find($res->{$profile_id_field});
     unless($profile) {
         return 0 unless &{$err_code}("Invalid '$profile_id_field' ($res->{$profile_id_field}).",$field);
@@ -658,7 +658,7 @@ sub _check_profile_network {
 
 sub _check_profile_package {
     my (%params) = @_;
-    my ($c,$res,$package_id,$reseller_id,$field,$err_code,$entities) = @params{qw/c resource package_id reseller_id field err_code entities/};    
+    my ($c,$res,$package_id,$reseller_id,$field,$err_code,$entities) = @params{qw/c resource package_id reseller_id field err_code entities/};
 
     my $schema = $c->model('DB');
     if (!defined $err_code || ref $err_code ne 'CODE') {
@@ -676,7 +676,7 @@ sub _check_profile_package {
     if (defined $reseller_id && defined $package->reseller_id && $reseller_id != $package->reseller_id) {
         return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the profile package (" . $package->name . ").",$field);
     }
-    
+
     if (defined $entities and ref $entities eq 'HASH') {
         $entities->{package} = $package;
     }
@@ -689,16 +689,16 @@ sub resource_from_future_mappings {
 }
 
 sub resource_from_mappings {
-    
+
     my ($contract,$future_only) = @_;
-    
+
     my $is_customer = (defined $contract->contact->reseller_id ? 1 : 0);
     my @mappings_resource = ();
-    
+
     my $datetime_fmt = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
+        pattern => '%F %T',
     ); #validate_forms uses RFC3339 otherwise, which contains the tz offset part
-    
+
     foreach my $mapping (billing_mappings_ordered($future_only ? future_billing_mappings($contract->billing_mappings) : $contract->billing_mappings)->all) {
         my %m = $mapping->get_inflated_columns;
         delete $m{id};
@@ -712,9 +712,9 @@ sub resource_from_mappings {
         delete $m{network_id} unless $is_customer;
         push(@mappings_resource,\%m);
     }
-    
+
     return \@mappings_resource;
-    
+
 }
 
 sub billing_mappings_ordered {
@@ -722,7 +722,7 @@ sub billing_mappings_ordered {
 
     my $dtf;
     $dtf = $rs->result_source->schema->storage->datetime_parser if defined $now;
-    
+
     my @select = ();
     if ($now) {
         push(@select,{ '' => \[ 'if(`me`.`start_date` is null,0,`me`.`start_date` > ?)', $dtf->format_datetime($now) ], -as => 'is_future' });
@@ -730,7 +730,7 @@ sub billing_mappings_ordered {
     if ($actual_bmid) {
         push(@select,{ '' => \[ '`me`.`id` = ?', $actual_bmid ], -as => 'is_actual' });
     }
-    
+
     return $rs->search_rs(
         {},
         { order_by => { '-asc' => ['start_date', 'id']},
@@ -741,21 +741,21 @@ sub billing_mappings_ordered {
 }
 
 sub remove_future_billing_mappings {
-    
+
     my ($contract,$now) = @_;
     $now //= NGCP::Panel::Utils::DateTime::current_local;
-    
+
     future_billing_mappings($contract->billing_mappings,$now)->delete;
-    
+
 }
 
 sub future_billing_mappings {
-    
+
     my ($rs,$now) = @_;
     $now //= NGCP::Panel::Utils::DateTime::current_local;
-    
+
     return $rs->search_rs({start_date => { '>' => $now },});
-    
+
 }
 
 1;
