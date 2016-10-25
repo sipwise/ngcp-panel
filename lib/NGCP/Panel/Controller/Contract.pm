@@ -586,6 +586,7 @@ sub is_valid_noreseller_contact {
     my $contact = $c->model('DB')->resultset('contacts')->search_rs({
         'id' => $contact_id,
         'reseller_id' => undef,
+        'status' => { '!=' => 'terminated' },
         })->first;
     if( $contact ) {
         return 1;
