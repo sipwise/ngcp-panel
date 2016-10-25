@@ -49,6 +49,7 @@ sub _prepare_contacts_count {
     $c->stash(
         contacts => $c->model('DB')->resultset('contacts')->search({
             reseller_id => $c->user->reseller_id,
+            'me.status' => { '!=' => 'terminated' },
         }),
     );
 }

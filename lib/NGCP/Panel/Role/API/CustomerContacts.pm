@@ -16,8 +16,10 @@ use NGCP::Panel::Form::Contact::Reseller;
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('contacts')
-        ->search({ reseller_id => { '-not' => undef } });
+    my $item_rs = $c->model('DB')->resultset('contacts')->search({
+        reseller_id => { '-not' => undef },
+        'me.status' => { '!=' => 'terminated' },
+    });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
@@ -88,7 +90,7 @@ sub update_contact {
     $resource->{country}{id} = delete $resource->{country};
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller_id slip thru
-    $resource->{reseller_id} //= undef; 
+    $resource->{reseller_id} //= undef;
     return unless $self->validate_form(
         c => $c,
         form => $form,

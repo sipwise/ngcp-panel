@@ -20,6 +20,7 @@ my $user = $ENV{API_USER} // 'administrator';
 my $pass = $ENV{API_PASS} // 'administrator';
 $ua->credentials($netloc, "api_admin_http", $user, $pass);
 
+#goto SKIP;
 # OPTIONS tests
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/systemcontacts/');
@@ -115,7 +116,7 @@ my @allcontacts = ();
                 delete $contacts{$c->{href}};
             }
         }
-             
+
     } while($nexturi);
 
     is(scalar(keys %contacts), 0, "check if all test contacts have been found");
@@ -147,7 +148,7 @@ my @allcontacts = ();
     ok(exists $contact->{id}, "check existence of id");
     like($contact->{id}, qr/[0-9]+/, "check validity of id");
     ok(!exists $contact->{reseller_id}, "check absence of reseller_id");
-    
+
     # PUT same result again
     my $old_contact = { %$contact };
     delete $contact->{_links};
@@ -225,12 +226,147 @@ my @allcontacts = ();
 }
 
 # DELETE
-{
+{ #regular delete:
     foreach my $contact(@allcontacts) {
         $req = HTTP::Request->new('DELETE', $uri.'/'.$contact);
         $res = $ua->request($req);
         is($res->code, 204, "check delete of contact");
     }
+}
+
+#SKIP:
+#MT#20639
+my $t = time;
+my $reseller_id = 1;
+
+$req = HTTP::Request->new('POST', $uri.'/api/domains/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    domain => 'test' . $t . '.example.org',
+    reseller_id => $reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test domain");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test domain");
+my $domain = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->header('Prefer' => 'return=representation');
+$req->content(JSON::to_json({
+    name => "test profile $t",
+    handle  => "testprofile$t",
+    reseller_id => $reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "create test billing profile");
+my $billing_profile_id = $res->header('Location');
+$billing_profile_id =~ s/^.+\/(\d+)$/$1/;
+
+my %subscriber_map = ();
+my %contract_map = ();
+my %system_contact_map = ();
+
+{ #termination, if a terminated contract exists:
+
+    my $system_contact = _create_system_contact();
+    my $contract = _create_contract($system_contact->{id});
+    _delete_system_contact($system_contact,423);
+    _update_contract($contract,status => "terminated");
+    _delete_system_contact($system_contact);
+
+}
+
+sub _create_system_contact {
+
+    my (@further_opts) = @_;
+
+    $req = HTTP::Request->new('POST', $uri.'/api/systemcontacts/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        firstname => "syst_contact_first",
+        lastname  => "syst_contact_last",
+        email     => "syst_contact\@systcontact.invalid",
+        #reseller_id => $reseller_id,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "create test system contact");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch test system contact");
+    my $system_contact = JSON::from_json($res->decoded_content);
+    $system_contact_map{$system_contact->{id}} = $system_contact;
+    return $system_contact;
+
+}
+
+sub _delete_system_contact {
+
+    my ($contact,$expected_code) = @_;
+    $expected_code //= 204;
+    my $url = $uri.'/api/systemcontacts/'.$contact->{id};
+    $req = HTTP::Request->new('DELETE', $url);
+    $res = $ua->request($req);
+    if ($expected_code eq '204') {
+        is($res->code, 204, "delete test system contact");
+        $req = HTTP::Request->new('GET', $url);
+        $res = $ua->request($req);
+        is($res->code, 404, "test system contact is not found");
+        return delete $system_contact_map{$contact->{id}};
+    } else {
+        is($res->code, $expected_code, "delete test system contact returns $expected_code");
+        $req = HTTP::Request->new('GET', $url);
+        $res = $ua->request($req);
+        is($res->code, 200, "test system contact is still found");
+        return undef;
+    }
+
+}
+
+sub _create_contract {
+
+    my ($contact_id,@further_opts) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/contracts/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        status => "active",
+        contact_id => $contact_id,
+        type => "sippeering",
+        billing_profile_id => $billing_profile_id,
+        max_subscribers => undef,
+        external_id => undef,
+        #status => "active",
+        @further_opts,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "create test contract");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch test contract");
+    my $contract = JSON::from_json($res->decoded_content);
+    $contract_map{$contract->{id}} = $contract;
+    return $contract;
+
+}
+
+sub _update_contract {
+
+    my ($contract,@further_opts) = @_;
+    $req = HTTP::Request->new('PUT', $uri.'/api/contracts/'.$contract->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        %$contract,
+        @further_opts,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "patch test contract");
+    $contract = JSON::from_json($res->decoded_content);
+    $contract_map{$contract->{id}} = $contract;
+    return $contract;
+
 }
 
 done_testing;

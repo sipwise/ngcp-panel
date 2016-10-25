@@ -151,8 +151,10 @@ sub update_contract {
 
     if($old_resource->{contact_id} != $resource->{contact_id}) {
         my $syscontact = $c->model('DB')->resultset('contacts')
-            ->search({ reseller_id => undef })
-            ->find($resource->{contact_id});
+            ->search({
+                'me.status' => { '!=' => 'terminated' },
+                reseller_id => undef,
+            })->find($resource->{contact_id});
         unless($syscontact) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contact_id'");
             return;
