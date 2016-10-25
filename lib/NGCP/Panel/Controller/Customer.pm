@@ -173,6 +173,11 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     my $form;
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
+
+    unless ($self->is_valid_contact($c, $params->{contact}{id})) {
+        delete $params->{contact};
+    }
+
     if($c->config->{features}->{cloudpbx}) {
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
@@ -2242,6 +2247,20 @@ sub load_preference_list :Private {
         contract_location_pref => $c->stash->{location}{id} ? 1 : 0,
         customer_view => ($c->user->roles eq 'subscriberadmin' ? 1 : 0),
     );
+}
+
+sub is_valid_contact {
+    my ($self, $c, $contact_id) = @_;
+    my $contact = $c->model('DB')->resultset('contacts')->search_rs({
+        'id' => $contact_id,
+        #'reseller_id' => { '!=' => undef },
+        'status' => { '!=' => 'terminated' },
+        })->first;
+    if( $contact ) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 =head1 AUTHOR

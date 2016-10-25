@@ -17,7 +17,7 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has_field 'billing_profile_definition' => (
     type => 'Select',
     label => 'Set billing profiles',
-    options => [ 
+    options => [
         { value => 'id', label => 'single (actual billing mapping)' },
         { value => 'profiles', label => 'schedule (billing mapping intervals)' },
     ],
@@ -36,7 +36,7 @@ has_field 'billing_profile' => (
     },
 );
 
-has_block 'all_mappings' => ( 
+has_block 'all_mappings' => (
     type => '+NGCP::Panel::Block::Contract::ProfileMappings',
 );
 
@@ -93,7 +93,7 @@ has_field 'status' => (
     type => 'Select',
     required => 1,
     label => 'Status',
-    options => [ 
+    options => [
         { label => 'active', value => 'active' },
         { label => 'pending', value => 'pending' },
         { label => 'locked', value => 'locked' },
@@ -109,9 +109,9 @@ has_field 'external_id' => (
     type => 'Text',
     label => 'External #',
     required => 0,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['An external id, e.g. provided by a 3rd party provisioning'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An external id, e.g. provided by a 3rd party provisioning']
     },
 );
 
@@ -215,8 +215,8 @@ sub _inflate_billing_mappings {
     my ($field,$value) = @_;
     my @mappings = ();
     my $datetime_fmt = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
-    );   
+        pattern => '%F %T',
+    );
     foreach my $mapping (@$value) {
         my %row = ();
         $row{start} = (defined $mapping->{start_date} ? $datetime_fmt->format_datetime($mapping->{start_date}) : undef);
@@ -247,22 +247,22 @@ sub validate {
     my ($self) = @_;
     my $c = $self->ctx;
     return unless $c;
-    
+
     my $resource = Storable::dclone($self->values);
     $resource->{contact_id} = $resource->{contact}->{id};
     delete $resource->{contact};
 
     $resource->{product_id} = $resource->{product}->{id} if exists $resource->{product};
     delete $resource->{product};
-    
+
     $resource->{billing_profile_id} = $resource->{billing_profile}->{id};
     delete $resource->{billing_profile};
-   
+
     $resource->{profile_package_id} = $resource->{profile_package}->{id} if exists $resource->{profile_package};
     delete $resource->{profile_package};
-    
-    my $old_resource = (exists $c->stash->{contract} ? { $c->stash->{contract}->get_inflated_columns } : undef);    
-    
+
+    my $old_resource = (exists $c->stash->{contract} ? { $c->stash->{contract}->get_inflated_columns } : undef);
+
     my $mappings_to_create = [];
     NGCP::Panel::Utils::Contract::prepare_billing_mappings(
         c => $c,
@@ -278,8 +278,8 @@ sub validate {
             foreach my $field (@fields) {
                 $self->field($field)->add_error($err);
             }
-        });    
-    
+        });
+
 }
 
 1;
