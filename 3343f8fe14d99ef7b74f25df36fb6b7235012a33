@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_eefee137",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-25T15:20:28Z",
+      "side": 1,
+      "message": "||",
+      "range": {
+        "startLine": 218,
+        "startChar": 36,
+        "endLine": 218,
+        "endChar": 38
+      },
+      "revId": "3343f8fe14d99ef7b74f25df36fb6b7235012a33",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
