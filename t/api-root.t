@@ -47,6 +47,8 @@ $ua->ssl_opts(
     my @links = $res->header('Link');
     my $rels = { applyrewrites => 1,
                  autoattendants => 1,
+                 bannedips => 1,
+                 bannedusers => 1,
                  billingfees => 1,
                  billingprofiles => 1,
                  billingzones => 1,
