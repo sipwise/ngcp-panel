@@ -49,6 +49,8 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         applyrewrites => 1,
         autoattendants => 1,
         balanceintervals => 1,
+        bannedips => 1,
+        bannedusers => 1,
         billingfees => 1,
         billingnetworks => 1,
         billingprofiles => 1,
