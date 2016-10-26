@@ -341,7 +341,13 @@ sub require_valid_patch {
 
     return 1;
 }
-
+sub item_by_id_valid {
+    my ($self, $c, $id) = @_;
+    return unless $self->valid_id($c, $id);
+    my $item = $self->item_by_id($c, $id);
+    return unless $self->resource_exists($c, $self->item_name => $item);
+    return $item;
+}
 sub resource_exists {
     my ($self, $c, $entity_name, $resource) = @_;
     return 1 if $resource;
@@ -350,12 +356,41 @@ sub resource_exists {
 }
 
 sub paginate_order_collection {
-    my ($self, $c, $item_rs) = @_;
+    my ($self, $c, $items) = @_;
+    my $params = {
+        page => $c->request->params->{page} // 1,
+        rows => $c->request->params->{rows} // 10,
+        order_by => $c->request->params->{order_by},
+        direction => $c->request->params->{order_by_direction} // "asc",
+    };
+    my($total_count, $item_rs);
+    if('ARRAY' eq ref $items){
+        ($total_count, $item_rs) = $self->paginate_order_collection_array($c, $items, $params);
+    }else{
+        ($total_count, $item_rs) = $self->paginate_order_collection_rs($c, $items, $params);
+    }
+    return ($total_count, $item_rs);
+}
 
-    my $page = $c->request->params->{page} // 1;
-    my $rows = $c->request->params->{rows} // 10;
-    my $order_by = $c->request->params->{order_by};
-    my $direction = $c->request->params->{order_by_direction} // "asc";
+sub paginate_order_collection_array {
+    my ($self, $c, $items, $params) = @_;
+    my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
+    my $total_count = scalar @$items;
+    if(defined $order_by ){
+        if(defined $order_by && defined $direction && (lc($direction) eq 'desc') ){
+            $items = [sort { $b->{$order_by} cmp  $a->{$order_by} } @$items];
+        }else{
+            $items = [sort { $a->{$order_by} cmp  $b->{$order_by} } @$items];
+        }
+    }
+    $items = [splice(@$items, ( $page - 1 )*$rows, $rows) ];
+    return ($total_count, $items);
+}
+
+sub paginate_order_collection_rs {
+    my ($self, $c, $item_rs, $params) = @_;
+    my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
+
     my $total_count = int($item_rs->count);
     $item_rs = $item_rs->search(undef, {
         page => $page,
@@ -480,7 +515,9 @@ around 'item_rs' => sub {
     my $c = $orig_params[0];
     foreach my $param(keys %{ $c->req->query_params }) {
         my @p = grep { $_->{param} eq $param } @{ $self->query_params };
-        next unless($p[0]->{query} || $p[0]->{new_rs}); # skip "dummy" query parameters
+        #todo: we can generate default filters for all item_rs fields here
+        #the only reason not to do this is a security
+        next unless($p[0]->{query} || $p[0]->{query_type} || $p[0]->{new_rs}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
         $q = undef if $q eq "NULL"; # IS NULL translation
@@ -488,7 +525,7 @@ around 'item_rs' => sub {
             if (defined $p[0]->{new_rs}) {
                 #compose fresh rs based on current, to support set operations with filters:
                 $item_rs = $p[0]->{new_rs}($c,$q,$item_rs);
-            } elsif (defined $p[0]->{query}) {
+            } elsif (defined $p[0]->{query} || defined $p[0]->{query_type}) {
                 #regular chaining:
                 $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$c), $p[0]->{query}->{second}($q,$c));
             }
@@ -504,6 +541,7 @@ sub is_true {
         $val = $v;
     } else {
         $val = ${$v};
+
     }
     return 1 if(defined $val && $val == 1);
     return;
@@ -525,6 +563,9 @@ sub to_json {
     my ($self, $data) = @_;
     return JSON::to_json($data, { canonical => 1, pretty => 1, utf8 => 1 });
 }
+
+
+
 
 1;
 # vim: set tabstop=4 expandtab:

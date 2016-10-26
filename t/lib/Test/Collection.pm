@@ -14,12 +14,28 @@ use URI::Escape;
 use Clone qw/clone/;
 
 use Data::Dumper;
+use Carp qw(cluck longmess shortmess);
 
 
 has 'local_test' => (
     is => 'rw',
     isa => 'Str',
     default => $ENV{LOCAL_TEST} // '',
+);
+has 'ALLOW_EMPTY_COLLECTION' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0,
+);
+has 'IS_EMPTY_COLLECTION' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0,
+);
+has 'NO_ITEM_MODULE' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0,
 );
 has 'catalyst_config' => (
     is => 'rw',
@@ -96,6 +112,12 @@ after 'DATA_ITEM_STORE' => sub {
         $self->form_data_item;
     }
 };
+has 'DATA_LOADED' => (
+    is => 'rw',
+    isa => 'HashRef',
+    default => sub{{}},
+);
+
 has 'DATA_CREATED' => (
     is => 'rw',
     isa => 'HashRef',
@@ -269,14 +291,74 @@ sub get_uri_firstitem{
     if(!$self->DATA_CREATED->{FIRST}){
         my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection."?page=1&rows=1");
         my $hal_name = $self->get_hal_name($name);
-        if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
-            $self->DATA_CREATED->{FIRST} = $list_collection->{_links}->{$hal_name}->{href};
-        } else {
-            $self->DATA_CREATED->{FIRST} = $list_collection->{_embedded}->{$hal_name}->[0]->{_links}->{self}->{href};
+        if($list_collection->{total_count}){
+            $self->IS_EMPTY_COLLECTION(0);
+            if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
+                $self->DATA_CREATED->{FIRST} = $list_collection->{_links}->{$hal_name}->{href};
+            } else {
+                $self->DATA_CREATED->{FIRST} = $list_collection->{_embedded}->{$hal_name}->[0]->{_links}->{self}->{href};
+            }
+        }else{
+            $self->IS_EMPTY_COLLECTION(1);        
         }
     }
     $self->DATA_CREATED->{FIRST} //= '';
     return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
+}
+sub get_item_hal{
+    my($self,$name,$uri) = @_;
+    $name ||= $self->name;
+    my $resitem ;
+    if(!$uri){
+        if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
+            $resitem = $self->get_created_first;
+        }
+        if(!$resitem && $self->DATA_LOADED->{$name} && @{$self->DATA_LOADED->{$name}}){
+            $resitem = $self->DATA_LOADED->{$name}->[0];
+        }
+    }
+    if(!$resitem){
+        my ($reshal, $location,$total_count);
+        $uri //= $self->get_uri_collection($name)."?page=1&rows=1";
+        #print "uri=$uri;";
+        my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
+        ($reshal,$location,$total_count) = $self->get_hal_from_collection($list_collection,$name);
+        if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
+            $self->IS_EMPTY_COLLECTION(0);
+            $resitem = { num => 1, content => $reshal, res => $res, req => $req, location => $location, total_count => $total_count };
+            $self->DATA_LOADED->{$name} ||= [];
+            push @{$self->DATA_LOADED->{$name}}, $resitem;
+        }else{
+            $self->IS_EMPTY_COLLECTION(1);
+        }
+    }
+    return $resitem;
+}
+sub get_hal_from_collection{
+    my($self,$list_collection,$name) = @_;
+    $name ||= $self->name;
+    my $hal_name = $self->get_hal_name($name);
+    my($reshal,$location,$total_count);
+    if( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
+        $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
+        $location = $reshal->{_links}->{self}->{href};
+        $total_count = $reshal->{total_count};
+    } elsif( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'HASH') {
+        $reshal = $list_collection->{_embedded}->{$hal_name};
+        $location = $reshal->{_links}->{self}->{href};
+        $total_count = $list_collection->{total_count};
+    } elsif(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
+#found first subscriber
+        $reshal = $list_collection;
+        $location = $reshal->{_links}->{$hal_name}->{href};
+         $total_count = $reshal->{total_count};
+    } elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
+#preferencedefs collection
+        $reshal = $list_collection;
+        $location = $reshal->{_links}->{self}->{href};
+        $total_count = $reshal->{total_count};
+    }
+    return ($reshal,$location,$total_count);
 }
 
 sub get_uri_current{
@@ -420,7 +502,7 @@ sub get_response_content{
 }
 sub normalize_uri{
     my($self,$uri) = @_;
-    $uri ||= $self->get_uri_current;
+    $uri ||= $self->get_uri_current // '';
     if($uri !~/^http/i){
         $uri = $self->base_uri.$uri;
     }
@@ -435,30 +517,32 @@ sub check_options_collection{
     $uri //= $self->get_uri_collection;
     my $req = HTTP::Request->new('OPTIONS', $uri );
     my $res = $self->request($req);
-    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-".$self->name, "check Accept-Post header in options response");
+    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-".$self->name, "$self->{name}: check Accept-Post header in options response");
     $self->check_methods($res,'collection');
 }
 sub check_options_item{
     my ($self,$uri) = @_;
     # OPTIONS tests
     $uri ||= $self->get_uri_current;
-    my $req = HTTP::Request->new('OPTIONS', $uri);
-    my $res = $self->request($req);
-    $self->check_methods($res,'item');
+    if(!$self->IS_EMPTY_COLLECTION){
+        my $req = HTTP::Request->new('OPTIONS', $uri);
+        my $res = $self->request($req);
+        $self->check_methods($res,'item');
+    }
 }
 sub check_methods{
     my($self, $res, $area) = @_;
     my $opts = $self->get_response_content($res);
     $self->http_code_msg(200, "check $area options request", $res,$opts);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
-    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
+    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "$self->{name}: check for valid 'methods' in body");
     foreach my $opt(keys %{$self->methods->{$area}->{all}} ) {
         if(exists $self->methods->{$area}->{allowed}->{$opt}){
-            ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-            ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
+            ok(grep(/^$opt$/, @hopts), "$self->{name}: check for existence of '$opt' in Allow header");
+            ok(grep(/^$opt$/, @{ $opts->{methods} }), "$self->{name}: check for existence of '$opt' in body");
         }else{
-            ok(!grep(/^$opt$/, @hopts), "check for absence of '$opt' in Allow header");
-            ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for absence of '$opt' in body");
+            ok(!grep(/^$opt$/, @hopts), "$self->{name}: check for absence of '$opt' in Allow header");
+            ok(!grep(/^$opt$/, @{ $opts->{methods} }), "$self->{name}: check for absence of '$opt' in body");
         }
     }
 }
@@ -508,25 +592,26 @@ sub check_list_collection{
         #print "nexturi=$nexturi;\n";
         my ($res,$list_collection) = $self->check_item_get($nexturi);
         my $selfuri = $self->base_uri . $list_collection->{_links}->{self}->{href};
-        is($selfuri, $nexturi, "check _links.self.href of collection");
+        is($selfuri, $nexturi, "$self->{name}: check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
-
-        ok($list_collection->{total_count} > 0, "check 'total_count' of collection");
+        if(($list_collection->{total_count} && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
+            ok($list_collection->{total_count} > 0, "$self->{name}: check 'total_count' of collection");
+        }
 
         my %q = $colluri->query_form;
-        ok(exists $q{page} && exists $q{rows}, "check existence of 'page' and 'row' in 'self'");
+        ok(exists $q{page} && exists $q{rows}, "$self->{name}: check existence of 'page' and 'row' in 'self'");
         my $page = int($q{page});
         my $rows = int($q{rows});
         ok($rows != 0, "check existance of the 'rows'");
         if($page == 1) {
-            ok(!exists $list_collection->{_links}->{prev}->{href}, "check absence of 'prev' on first page");
+            ok(!exists $list_collection->{_links}->{prev}->{href}, "$self->{name}: check absence of 'prev' on first page");
         } else {
-            ok(exists $list_collection->{_links}->{prev}->{href}, "check existence of 'prev'");
+            ok(exists $list_collection->{_links}->{prev}->{href}, "$self->{name}: check existence of 'prev'");
         }
         if(($rows != 0) && ($list_collection->{total_count} / $rows) <= $page) {
-            ok(!exists $list_collection->{_links}->{next}->{href}, "check absence of 'next' on last page");
+            ok(!exists $list_collection->{_links}->{next}->{href}, "$self->{name}: check absence of 'next' on last page");
         } else {
-            ok(exists $list_collection->{_links}->{next}->{href}, "check existence of 'next'");
+            ok(exists $list_collection->{_links}->{next}->{href}, "$self->{name}: check existence of 'next'");
         }
 
         if($list_collection->{_links}->{next}->{href}) {
@@ -536,8 +621,10 @@ sub check_list_collection{
         }
 
         my $hal_name = $self->get_hal_name;
-        ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
-             (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), "check if 'ngcp:".$self->name."' is array/hash-ref");
+        if(($list_collection->{total_count} && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
+            ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
+                (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), "$self->{name}: check if 'ngcp:".$self->name."' is array/hash-ref");
+        }
 
 
         # it is really strange - we check that the only element of the _links will be hash - and after this treat _embedded as hash too
@@ -567,10 +654,10 @@ sub check_created_listed{
     foreach (@$listed){
         delete $created_items->{$_};
     }
-    is(scalar(keys %{$created_items}), 0, "check if all created test items have been foundin the list");
+    is(scalar(keys %{$created_items}), 0, "$self->{name}: check if all created test items have been foundin the list");
     if(scalar(keys %{$created_items})){
-        print Dumper $created_items;
-        print Dumper $listed;
+        #print Dumper $created_items;
+        #print Dumper $listed;
     }
 }
 
@@ -689,7 +776,7 @@ sub check_patch_correct{
     my ($res,$rescontent,$req) = $self->request_patch( $content );
     $self->http_code_msg(200, "check patched item", $res, $rescontent);
     is($rescontent->{_links}->{self}->{href}, $self->DATA_CREATED->{FIRST}, "check patched self link");
-    is($rescontent->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "check patched collection link");
+    is($rescontent->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "$self->{name}: check patched collection link");
     return ($res,$rescontent,$req);
 }
 
@@ -722,7 +809,7 @@ sub check_patch_body_empty{
     my($self) = @_;
     my ($res,$content,$req) = $self->request_patch;
     $self->http_code_msg(400, "check patch missing body", $res, $content);
-    like($content->{message}, qr/is missing a message body/, "check patch missing body response");
+    like($content->{message}, qr/is missing a message body/, "$self->{name}: check patch missing body response");
 }
 
 sub check_patch_body_notarray{
@@ -731,7 +818,7 @@ sub check_patch_body_notarray{
         { foo => 'bar' },
     );
     $self->http_code_msg(400, "check patch no array body", $res, $content);
-    like($content->{message}, qr/must be an array/, "check patch missing body response");
+    like($content->{message}, qr/must be an array/, "$self->{name}: check patch missing body response");
 }
 
 sub check_patch_op_missed{
@@ -740,7 +827,7 @@ sub check_patch_op_missed{
         [{ foo => 'bar' }],
     );
     $self->http_code_msg(400, "check patch no op in body", $res, $content);
-    like($content->{message}, qr/must have an 'op' field/, "check patch no op in body response");
+    like($content->{message}, qr/must have an 'op' field/, "$self->{name}: check patch no op in body response");
 }
 
 sub check_patch_op_wrong{
@@ -749,7 +836,7 @@ sub check_patch_op_wrong{
         [{ op => 'bar' }],
     );
     $self->http_code_msg(400, "check patch invalid op in body", $res, $content);
-    like($content->{message}, qr/Invalid PATCH op /, "check patch no op in body response");
+    like($content->{message}, qr/Invalid PATCH op /, "$self->{name}: check patch no op in body response");
 }
 
 sub check_patch_opreplace_paramsmiss{
@@ -758,7 +845,7 @@ sub check_patch_opreplace_paramsmiss{
         [{ op => 'replace' }],
     );
     $self->http_code_msg(400, "check patch missing fields for op", $res, $content);
-    like($content->{message}, qr/Missing PATCH keys /, "check patch missing fields for op response");
+    like($content->{message}, qr/Missing PATCH keys /, "$self->{name}: check patch missing fields for op response");
 }
 
 sub check_patch_opreplace_paramsextra{
@@ -767,7 +854,7 @@ sub check_patch_opreplace_paramsextra{
         [{ op => 'replace', path => '/foo', value => 'bar', invalid => 'sna' }],
     );
     $self->http_code_msg(400, "check patch extra fields for op", $res, $content);
-    like($content->{message}, qr/Invalid PATCH key /, "check patch extra fields for op response");
+    like($content->{message}, qr/Invalid PATCH key /, "$self->{name}: check patch extra fields for op response");
 }
 
 sub check_patch_bundle{
@@ -786,16 +873,21 @@ sub check_bundle{
     my($self) = @_;
     $self->check_options_collection();
     # iterate over collection to check next/prev links and status
-    my $listed = $self->check_list_collection();
-    $self->check_created_listed($listed);
+    my $listed=[];
+    if($self->methods->{collection}->{allowed}->{GET}){
+        $listed = $self->check_list_collection();
+        $self->check_created_listed($listed);
+    }
     # test model item
-    if(@$listed){
+    if(@$listed && !$self->NO_ITEM_MODULE){
         $self->check_options_item;
-        if(exists $self->methods->{'item'}->{allowed}->{'PUT'}){
-            $self->check_put_bundle;
-        }
-        if(exists $self->methods->{'item'}->{allowed}->{'PATCH'}){
-            $self->check_patch_bundle;
+        if(!$self->IS_EMPTY_COLLECTION){
+            if(exists $self->methods->{'item'}->{allowed}->{'PUT'}){
+                $self->check_put_bundle;
+            }
+            if(exists $self->methods->{'item'}->{allowed}->{'PATCH'}){
+                $self->check_patch_bundle;
+            }
         }
     }
 }
@@ -807,14 +899,16 @@ sub hash2params{
 sub http_code_msg{
     my($self,$code,$message,$res,$content) = @_;
     my $message_res;
+    my $name = $self->{name} // '';
+    $message //= '';
     if ( ($res->code < 300) || ( $code >= 300 ) ) {
         $message_res = $message;
     } else {
         $content //= $self->get_response_content($res);
         if (defined $content && $content && defined $content->{message}) {
-            $message_res = $message . ' (' . $res->message . ': ' . $content->{message} . ')';
+            $message_res = "$name: ".$message . ' (' . $res->message . ': ' . $content->{message} . ')';
         } else {
-            $message_res = $message . ' (' . $res->message . ')';
+            $message_res = "$name: ".$message . ' (' . $res->message . ')';
         }
     }
     $code and is($res->code, $code, $message_res);
