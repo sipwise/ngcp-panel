@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_c27c9475",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-10-27T10:07:03Z",
+      "side": 1,
+      "message": "like we discussed, maybe swap 1. and 2. once again for better performance. either way, functionality-wise lgtm. I would use \"||\" as the standard OR (sensible precendence)",
+      "revId": "1462c8166ad8d19fdc20baef96528ad736591fde",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
