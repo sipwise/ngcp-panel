@@ -121,6 +121,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         rtcapps => 1,
         rtcnetworks => 1,
         rtcsessions => 1,
+        sms => 1,
         soundfilerecordings => 1,
         soundfiles => 1,
         soundhandles => 1,
