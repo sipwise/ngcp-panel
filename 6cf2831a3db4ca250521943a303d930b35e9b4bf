@@ -45,6 +45,29 @@
       "revId": "6cf2831a3db4ca250521943a303d930b35e9b4bf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_4e8d4a7b",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-30T16:36:37Z",
+      "side": 1,
+      "message": "I remember that it required some extra package, or something like that. Something with compatibility.",
+      "range": {
+        "startLine": 42,
+        "startChar": 4,
+        "endLine": 42,
+        "endChar": 48
+      },
+      "revId": "6cf2831a3db4ca250521943a303d930b35e9b4bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
