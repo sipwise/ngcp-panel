@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_2e96fe94",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-30T16:31:57Z",
+      "side": 1,
+      "message": "as far as I can see - these \"auto\" and \"end\" are default here. So, we can use inherited methods. Do you see reason to override them?",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 1
+      },
+      "revId": "6cf2831a3db4ca250521943a303d930b35e9b4bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_0e9342a4",
+        "filename": "lib/NGCP/Panel/Role/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-10-30T16:31:57Z",
+      "side": 1,
+      "message": "You know - sometimes we have \"ambiguous\" error, when somebody adds table to join for not default case. Maybe it would be correct to add tablename prefix for the field in search condition?",
+      "range": {
+        "startLine": 53,
+        "startChar": 21,
+        "endLine": 53,
+        "endChar": 25
+      },
+      "revId": "6cf2831a3db4ca250521943a303d930b35e9b4bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
