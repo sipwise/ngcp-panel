@@ -9,6 +9,7 @@ use Time::Warp qw();
 use DateTime;
 use DateTime::Format::ISO8601;
 use DateTime::Format::Strptime;
+use DateTime::Format::DateParse;
 
 use constant RFC_1123_FORMAT_PATTERN => '%a, %d %b %Y %T %Z';
 
@@ -114,6 +115,7 @@ sub epoch_local {
         epoch => $epoch,
     );
 }
+
 sub from_string {
     my $s = shift;
 
@@ -129,16 +131,20 @@ sub from_string {
     return $ts;
 }
 
+#https://packages.debian.org/sid/all/libdatetime-format-dateparse-perl/filelist
+sub from_string_dateparse {
+    my ($date,$tz) = @_;
+    my $dt = DateTime::Format::DateParse->parse_datetime( $date, $tz ? $tz : () );
+    #my $dt = DateTime::Format::DateParse->parse_datetime( $date, $zone );
+    return $dt;
+}
+
 sub from_rfc1123_string {
-
     my $s = shift;
-
     my $strp = DateTime::Format::Strptime->new(pattern => RFC_1123_FORMAT_PATTERN,
-                                               locale => 'en_US',
-                                               on_error => 'undef');
-
+       locale => 'en_US',
+       on_error => 'undef');
     return $strp->parse_datetime($s);
-
 }
 
 sub new_local {
@@ -154,8 +160,7 @@ sub new_local {
 }
 
 # convert seconds to 'HH:MM:SS' format
-sub sec_to_hms
-{
+sub sec_to_hms {
     use integer;
     local $_ = shift;
     my ($h, $m, $s);
@@ -165,8 +170,7 @@ sub sec_to_hms
     return "$h:$m:$s";
 }
 
-sub to_string
-{
+sub to_string {
     my ($dt) = @_;
     return unless defined ($dt);
     my $s = $dt->ymd('-') . ' ' . $dt->hms(':');
@@ -175,28 +179,24 @@ sub to_string
 }
 
 sub to_rfc1123_string {
-
     my $dt = shift;
-
     my $strp = DateTime::Format::Strptime->new(pattern => RFC_1123_FORMAT_PATTERN,
-                                               locale => 'en_US',
-                                               on_error => 'undef');
-
+       locale => 'en_US',
+       on_error => 'undef');
     return $strp->format_datetime($dt);
-
 }
 
 sub get_weekday_names {
     my $c = shift;
     return [
-            $c->loc('Monday'),
-            $c->loc('Tuesday'),
-            $c->loc('Wednesday'),
-            $c->loc('Thursday'),
-            $c->loc('Friday'),
-            $c->loc('Saturday'),
-            $c->loc('Sunday')
-        ];
+        $c->loc('Monday'),
+        $c->loc('Tuesday'),
+        $c->loc('Wednesday'),
+        $c->loc('Thursday'),
+        $c->loc('Friday'),
+        $c->loc('Saturday'),
+        $c->loc('Sunday')
+    ];
 }
 
 1;

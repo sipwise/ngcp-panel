@@ -5,6 +5,7 @@ use Time::HiRes qw();
 use Path::Tiny qw();
 use Sys::Hostname qw(hostname);
 use parent 'Catalyst::Component';
+use NGCP::Panel::Utils::DateTime;
 
 sub client_signing_template {
     my ($self, $serial) = @_;
@@ -29,9 +30,17 @@ sub COMPONENT {
 sub make_client {
     my ($self, $c, $serial) = @_;
     my $client_key = Path::Tiny->tempfile;
-    my $command = 'openssl x509 -noout -purpose -in ' . $c->config->{ssl}->{rest_api_certfile};
+    my $command = 'openssl x509 -noout -purpose -enddate -in ' . $c->config->{ssl}->{rest_api_certfile};
     $c->log->debug($command);
     my $stdout = `$command 2>&1` // "";
+    {
+        (my ($enddate_string,$enddate_timezone_string)) = $stdout =~ m/notAfter=(.*?) [A-Z]+$/;#Jun 30 01:19:50 2015 GMT
+        my $enddate = NGCP::Panel::Utils::DateTime::from_string( $enddate_string,$enddate_timezone_string );
+        if( $enddate < NGCP::Panel::Utils::DateTime::current_local ){
+            $c->log->error("Failed to check CA certificate: expired");
+            die [$c->loc('Cannot use the configured certificate for signing client certificates'), "showdetails"];
+        }
+    }
     unless ($stdout =~ m/SSL (client|server) CA : Yes/) {
         $c->log->error("Failed to check CA certificate: $stdout");
         die [$c->loc('Cannot use the configured certificate for signing client certificates'), "showdetails"];
