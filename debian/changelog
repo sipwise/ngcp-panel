@@ -1,3 +1,14 @@
+ngcp-panel (1.8.8.2+0~mr3.8.8.2) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [1729565] TT#4708 Update year information in copyright info
+  * [3f940ca] TT#4476 Fix top settings menu for csc
+  * [0660d11] TT#5203 Add banned ips and users API interface
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 31 Oct 2016 02:55:28 +0100
+
 ngcp-panel (1.8.8.1+0~mr3.8.8.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
