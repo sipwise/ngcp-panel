@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_8409f197",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-11-01T15:28:28Z",
+      "side": 1,
+      "message": "right, I\u0027ll remove them",
+      "parentUuid": "3a4c51b2_2e96fe94",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 1
+      },
+      "revId": "6cf2831a3db4ca250521943a303d930b35e9b4bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_0e9342a4",
         "filename": "lib/NGCP/Panel/Role/API/SMS.pm",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_e4fef56a",
+        "filename": "lib/NGCP/Panel/Role/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-11-01T15:28:28Z",
+      "side": 1,
+      "message": "yes, I can do that. Usually, I only do that, after this ambiguity-issue appeared. Because I think, the table name in the generated sql (\"provisioning_voip_subscriber\" here) is - although predictable so far - not guaranteed.",
+      "parentUuid": "3a4c51b2_0e9342a4",
+      "range": {
+        "startLine": 53,
+        "startChar": 21,
+        "endLine": 53,
+        "endChar": 25
+      },
+      "revId": "6cf2831a3db4ca250521943a303d930b35e9b4bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_4e8d4a7b",
         "filename": "lib/NGCP/Panel/Utils/SMS.pm",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2016-10-30T16:36:37Z",
       "side": 1,
       "message": "I remember that it required some extra package, or something like that. Something with compatibility.",
+      "range": {
+        "startLine": 42,
+        "startChar": 4,
+        "endLine": 42,
+        "endChar": 48
+      },
+      "revId": "6cf2831a3db4ca250521943a303d930b35e9b4bf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_c403f971",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-11-01T15:28:28Z",
+      "side": 1,
+      "message": "I\u0027ll remove that. It was for debugging and should not be in trunk anyway",
+      "parentUuid": "3a4c51b2_4e8d4a7b",
       "range": {
         "startLine": 42,
         "startChar": 4,
