@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_04f5e182",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-11-01T15:34:38Z",
+      "side": 1,
+      "message": "minor style thing: this line less than 80 chars (some say 50)",
+      "revId": "0dbf378ccab21a81af41228b7a78a0cabcc799a0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_64f2e59b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-11-01T15:34:38Z",
+      "side": 1,
+      "message": "wrong ID (from issue)",
+      "range": {
+        "startLine": 7,
+        "startChar": 3,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "0dbf378ccab21a81af41228b7a78a0cabcc799a0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
