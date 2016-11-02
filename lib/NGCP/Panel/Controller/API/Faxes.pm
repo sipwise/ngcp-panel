@@ -15,6 +15,7 @@ use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API::Subscribers;
 use NGCP::Panel::Utils::Fax;
+use NGCP::Panel::Utils::DateTime qw();
 use Encode qw( encode_utf8 );
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -49,6 +50,33 @@ sub query_params {
                 second => sub { },
             },
         },
+
+        {
+            param => 'timestamp_from',
+            description => 'Filter for faxes performed after or at the given time stamp.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                    return { 'me.time' => { '>=' => $dt->epoch  } };
+                },
+                second => sub { },
+            },
+        },
+        {
+            param => 'timestamp_to',
+            description => 'Filter for faxes performed before or at the given time stamp.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                    return { 'me.time' => { '<=' => $dt->epoch  } };
+                },
+                second => sub { },
+            },
+        }, 
+
+
     ];
 }
 
