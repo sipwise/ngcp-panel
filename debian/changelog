@@ -1,3 +1,16 @@
+ngcp-panel (1.14.2.6+0~mr4.5.2.6) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [ed87d28] MT#22099 Docker >=1.11 no longer has /.dockerinit, adjust docker run check accordingly
+
+  [ Rene Krenn ]
+  * [d76b958] TT#4638 domain level allowed_ips
+  * [4bb9eb4] MT#22982 faxes time_from/time_to filters
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 02 Nov 2016 17:18:19 +0100
+
 ngcp-panel (1.14.2.5+0~mr4.5.2.5) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
