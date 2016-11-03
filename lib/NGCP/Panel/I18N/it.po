@@ -65,12 +65,14 @@ msgid ""
 "either the base matching number or the original dialed number with extension "
 "(with possible fallback to user on 404 response from callee)."
 msgstr ""
-"\"Selezione del numero chiamato in ingresso\" - definisci tra il match selettivo "
-"per le chiamate in ingresso, dove il numero chiamato deve corrispondere esattamente "
-"al numero dell´interno chiamato e tra il match esteso, dove il il sistema seleziona "
-"il numero dell´interno in base ad un best match con il numero chiamato e invierà sia "
-"il numero base sia il numero originale composto con l´estensione (con possibile "
-"fallback sull´utente in caso di risposta 404 dal chiamato)."
+"\"Selezione del numero chiamato in ingresso\" - definisci tra il match "
+"selettivo per le chiamate in ingresso, dove il numero chiamato deve "
+"corrispondere esattamente al numero dell´interno chiamato e tra il match "
+"esteso, dove il il sistema seleziona il numero dell´interno in base ad un "
+"best match con il numero chiamato e invierà sia il numero base sia il numero "
+"originale composto con l´estensione (con possibile fallback sull´utente in "
+"caso di risposta 404 dal chiamato)."
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "\"Music on Hold\" - if set to true and a music on hold file is provided, a "
@@ -136,6 +138,7 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
 #: lib/NGCP/Panel/Utils/Sounds.pm lib/NGCP/Panel/Utils/Voucher.pm
 #: share/templates/customer/details.tt
+#: share/templates/subscriber/preferences.tt
 msgid "#"
 msgstr "#"
 
@@ -224,15 +227,19 @@ msgstr "404 - Nessun logo personalizzato per questo rivenditore"
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "404 - No front image available for the model of this device profile"
-msgstr "404 - Nessuna immagine frontale disponibile per il modello di questo dispositivo"
+msgstr ""
+"404 - Nessuna immagine frontale disponibile per il modello di questo "
+"dispositivo"
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "404 - No front image available for this device model"
-msgstr "404 - Nessuna immagine frontale disponibile per questo modello di dispositivo"
+msgstr ""
+"404 - Nessuna immagine frontale disponibile per questo modello di dispositivo"
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "404 - No mac image available for this device model"
-msgstr "404 - Nessuna immagine mac disponibile per questo modello di dispositivo"
+msgstr ""
+"404 - Nessuna immagine mac disponibile per questo modello di dispositivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -264,8 +271,8 @@ msgid ""
 "A POSIX regex matching against the specified field (e.g. '^sip:.+@example\\."
 "org$' or '^sip:431') when matching against a full URI"
 msgstr ""
-"Una espressione regolare POSIX che corrisponda il campo specifico (es. '^sip:.+@example\\."
-"org$' o '^sip:431') quando confrontata con la URI."
+"Una espressione regolare POSIX che corrisponda il campo specifico (es. "
+"'^sip:.+@example\\.org$' o '^sip:431') quando confrontata con la URI."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A POSIX regular expression to match the called number (e.g. ^431.+$)."
@@ -288,80 +295,90 @@ msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp0 or destination_gpp0, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp0 o destination_gpp0, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp0 o destination_gpp0, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp1 or destination_gpp1, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp1 o destination_gpp1, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp1 o destination_gpp1, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp2 or destination_gpp2, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp2 o destination_gpp2, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp2 o destination_gpp2, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp3 or destination_gpp3, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp3 o destination_gpp3, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp3 o destination_gpp3, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp4 or destination_gpp4, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp4 o destination_gpp4, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp4 o destination_gpp4, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp5 or destination_gpp5, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp5 o destination_gpp5, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp5 o destination_gpp5, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp6 or destination_gpp6, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp6 o destination_gpp6, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp6 o destination_gpp6, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp7 or destination_gpp7, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp7 o destination_gpp7, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp7 o destination_gpp7, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp8 or destination_gpp8, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp8 o destination_gpp8, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp8 o destination_gpp8, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "A general purpose parameter, which is reflected in CDRs of this subscriber "
 "either as source_gpp9 or destination_gpp9, depending on the call direction."
 msgstr ""
-"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell´abbonato "
-"nei campi source_gpp9 o destination_gpp9, a seconda della direzione della chiamata"
+"Campo generico, il suo valore viene visualizzato all´interno delle CDR dell"
+"´abbonato nei campi source_gpp9 o destination_gpp9, a seconda della "
+"direzione della chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A human readable name of the LNP carrier."
@@ -405,7 +422,8 @@ msgid ""
 "A path describing the folder on the NFS server, where the logfiles will be "
 "stored."
 msgstr ""
-"Il percorso della cartella sul server NFS, dove i file di log verranno salvati."
+"Il percorso della cartella sul server NFS, dove i file di log verranno "
+"salvati."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -428,8 +446,8 @@ msgid ""
 "A simple destination format, e.g. \"4312345\" if it is a number, or "
 "\"user@domain\" if it is a URI."
 msgstr ""
-"Una semplice destinazione, esempio \"4312345\" se un numero, o "
-"\"user@domain\" se una URI."
+"Una semplice destinazione, esempio \"4312345\" se un numero, o \"user@domain"
+"\" se una URI."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A unique identifier string (only alphanumeric chars and _)."
@@ -519,8 +537,8 @@ msgid ""
 "Add user=phone URI parameters to the calling party number (in From, P-"
 "Asserted-Identity etc headers)"
 msgstr ""
-"Aggiunge il parametro URI user=phone al numero chiamante (nel From header, "
-"P-Asserted-Identity e altri headers)"
+"Aggiunge il parametro URI user=phone al numero chiamante (nel From header, P-"
+"Asserted-Identity e altri headers)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Add user=phone to calling number"
@@ -541,6 +559,14 @@ msgstr ""
 #: share/templates/customer/details.tt
 msgid "Address"
 msgstr "Indirizzo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Admin name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Admin pass"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/master.tt
 msgid "Administrative"
@@ -659,9 +685,8 @@ msgid ""
 "Allow Desktop Softphone Autoprovisioning for this subscriber. If disabled, "
 "no configuration will be provided to the Desktop Softphone."
 msgstr ""
-"Consenti l´autoprovisioning del Desktop Softphone per questo abbonato. Se disabilitato, "
-"nessuna configurazione sarà inviata al Desktop Softphone."
-
+"Consenti l´autoprovisioning del Desktop Softphone per questo abbonato. Se "
+"disabilitato, nessuna configurazione sarà inviata al Desktop Softphone."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Allow access from the given list of IP addresses and/or IP nets."
@@ -684,8 +709,8 @@ msgid ""
 "Allow mail2fax emails only to this IP (the IP or hostname is present in the "
 "\"Received\" header)."
 msgstr ""
-"Consenti invio mail2fax solo da questo IP (l´indirizzo IP o nome host deve essere presente "
-"nell´header \"Received\")"
+"Consenti invio mail2fax solo da questo IP (l´indirizzo IP o nome host deve "
+"essere presente nell´header \"Received\")"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Allow numbers to be allocated from this block."
@@ -721,17 +746,25 @@ msgstr "Importo"
 msgid ""
 "An Array of mappings, each entry containing the mandatory key \"auth_key\"."
 msgstr ""
-"Un elenco di associazioni, ognuno contenente la chiave obligatoria \"auth_key\"."
+"Un elenco di associazioni, ognuno contenente la chiave obligatoria \"auth_key"
+"\"."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An Array of source CLI patterns"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "An IP or hostname of an external NFS server which can be used to log data to."
 msgstr ""
-"Un indirizzo IP o nome host di un server NFS esterno che possa essere utilizzato per salvare i dati."
+"Un indirizzo IP o nome host di un server NFS esterno che possa essere "
+"utilizzato per salvare i dati."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An arbitrary hash of additional config contents; e.g. {\"xms\": false}"
-msgstr "Un hash a piacere di contenuti aggiuntivi di configurazione; es. {\"xms\": false}"
+msgstr ""
+"Un hash a piacere di contenuti aggiuntivi di configurazione; es. {\"xms\": "
+"false}"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An arbitrary name, to address that network instance"
@@ -751,9 +784,9 @@ msgid ""
 "address and an optional \"mask\" to specify the network portion (subnet "
 "prefix length)."
 msgstr ""
-"Una lista di reti di fatturazione, ognuno contenente le chiavi (fondamentali) "
-"indirizzo \"ip\" e \"mask\" per specificare la porzione di rete "
-"(subnet prefix lenght)."
+"Una lista di reti di fatturazione, ognuno contenente le chiavi "
+"(fondamentali) indirizzo \"ip\" e \"mask\" per specificare la porzione di "
+"rete (subnet prefix lenght)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -778,22 +811,23 @@ msgid ""
 "representation purposes as a simple destination format, e.g. \"4312345\" if "
 "it is a number, or \"user@domain\" if it is a URI"
 msgstr ""
-"Una lista di destinazioni, ognuna contenente le chiavi \"destination\", \"timeout"
-"\", \"priority\". \"destination\" è l´indirizzo a cui inoltrare la chiamate. "
-"\"timeout\" è la durata in secondi, quanto tempo provare questa destinazione "
-"prima di inoltrare la chiamata alla prossima destinazione o rinunciare. "
-"\"priority\" è la priorità di questa destinazione rispetto alla altre per "
-"questo inoltro. \"simple_destination\" non è un campo verificato e viene "
-"usato solo scopi di rappresentazione come formato semplice della destinazione, "
-"es. \"4312345\" se si tratta di un numero, o \"user@domain\" se si tratta di una URI"
+"Una lista di destinazioni, ognuna contenente le chiavi \"destination\", "
+"\"timeout\", \"priority\". \"destination\" è l´indirizzo a cui inoltrare la "
+"chiamate. \"timeout\" è la durata in secondi, quanto tempo provare questa "
+"destinazione prima di inoltrare la chiamata alla prossima destinazione o "
+"rinunciare. \"priority\" è la priorità di questa destinazione rispetto alla "
+"altre per questo inoltro. \"simple_destination\" non è un campo verificato e "
+"viene usato solo scopi di rappresentazione come formato semplice della "
+"destinazione, es. \"4312345\" se si tratta di un numero, o \"user@domain\" "
+"se si tratta di una URI"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "An array of hashes, each containing the keys \"slot\" (\"*0 .. *9\") and "
 "\"destination\" (A valid SIP URI)."
 msgstr ""
-"Una lista di hash, ognuna contenente le chiavi \"slot\" (\"*0 .. *9\") "
-"e \"destination\" (URI SIP valida)."
+"Una lista di hash, ognuna contenente le chiavi \"slot\" (\"*0 .. *9\") e "
+"\"destination\" (URI SIP valida)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -814,8 +848,8 @@ msgid ""
 "length)."
 msgstr ""
 "Una lista  di location, ognuno contenente le chiavi (fondamentali): "
-"indirizzo \"ip\" e \"mask\" per specificare la porzione di rete (subnet prefix "
-"lenght)."
+"indirizzo \"ip\" e \"mask\" per specificare la porzione di rete (subnet "
+"prefix lenght)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -824,10 +858,10 @@ msgid ""
 "length). The specified blocks must not overlap and can uniformly contain "
 "either IPv6 addresses or IPv4 addresses."
 msgstr ""
-"Una lista di location, ognuno contenente le chiavi (fondamentali): "
-"indirizzo \"ip\" e \"mask\" per specificare la porzione di rete (subnet prefix "
-"lenght). I blocchi specificati non si devono sovrapporre e possono indipendentemente "
-"contenere indirizzi IPv4 e IPv6."
+"Una lista di location, ognuno contenente le chiavi (fondamentali): indirizzo "
+"\"ip\" e \"mask\" per specificare la porzione di rete (subnet prefix "
+"lenght). I blocchi specificati non si devono sovrapporre e possono "
+"indipendentemente contenere indirizzi IPv4 e IPv6."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -850,8 +884,8 @@ msgid ""
 "this profile package."
 msgstr ""
 "Una lista di oggetti con chiavi: \"profile_id\" e \"network_id\" per creare "
-"associazioni di profili dal momento in cui un cliente ricarica con un voucher "
-"associato con uno di questi piani tariffari"
+"associazioni di profili dal momento in cui un cliente ricarica con un "
+"voucher associato con uno di questi piani tariffari"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -874,13 +908,22 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"An array of sources, each containing the key \"source\" which will be "
+"matched against the call's anumber to determine whether to apply the "
+"callforward or not. \"source\" is the calling party number in E164 format to "
+"match. Shell patterns like 431* or 49123[1-5]67 are possible. Use \"anonymous"
+"\" to match suppressed numbers."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "An array of time definitions with keys \"year\", \"month\", \"mday\", \"wday"
 "\", \"hour\", \"minute\", where each value can be a number like \"10\" or a "
 "range like \"10-20\"."
 msgstr ""
 "Una lista di definizioni temporali con chiavi \"year\", \"month\", \"mday\", "
-"\"wday\", \"hour\", \"minute\", dove ogni valore puó essere un numero come \"10\" "
-"o un range come \"10-20\"."
+"\"wday\", \"hour\", \"minute\", dove ogni valore puó essere un numero come "
+"\"10\" o un range come \"10-20\"."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An external ID to identify the top-up request in the top-up log."
@@ -898,7 +941,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An optional emergency prefix the emergency code is mapped to."
-msgstr "Un prefisso di emergenza opzionale a cui il codice di emergenza è associato."
+msgstr ""
+"Un prefisso di emergenza opzionale a cui il codice di emergenza è associato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An optional routing number replacing the ported number."
@@ -913,8 +957,8 @@ msgid ""
 "Anonymize the From-Username in addition to From-Displayname in case of CLIR "
 "call to this peer."
 msgstr ""
-"Anonimizza il From-Username oltre che al From-Displayname in caso di chiamata "
-"anonima verso questo peer."
+"Anonimizza il From-Username oltre che al From-Displayname in caso di "
+"chiamata anonima verso questo peer."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Anonymous"
@@ -1385,6 +1429,14 @@ msgid "CLI of CloudPBX Pilot Subscriber"
 msgstr "CLI dell´Abbonato Pilota per CloudPBX"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CPBX Device Administration"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CPBX Device Firmware Settings"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CSS"
 msgstr "CSS"
 
@@ -1399,8 +1451,10 @@ msgid ""
 "message in ringing phase. Disabling the preference will make the platform "
 "ignore the redirect message."
 msgstr ""
-"La deviazione di chiamata permette ad un dispositivo chiamato di ridirezionare la chiamata non risposta "
-"verso un´altra destinazione durante la fase di chiamata, inviando un messaggio 302 Redirect durante la fase di squillo."
+"La deviazione di chiamata permette ad un dispositivo chiamato di "
+"ridirezionare la chiamata non risposta verso un´altra destinazione durante "
+"la fase di chiamata, inviando un messaggio 302 Redirect durante la fase di "
+"squillo."
 
 #: share/templates/subscriber/calllist.tt
 msgid "Call Details"
@@ -1424,31 +1478,20 @@ msgstr "Deviazione di Chiamata su Occupato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Busy, Contains the keys \"destinations\" and \"times\". "
-"\"destinations\" is an Array of Objects having a \"destination\", \"priority"
-"\" and \"timeout\" field. \"times\" is an Array of Objects having the fields "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" can "
-"be empty, then the CF is applied always."
+"Call Forward Busy, Contains the keys \"destinations\", \"times\" and "
+"\"sources\". \"destinations\" is an Array of Objects having a \"destination"
+"\", \"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+"having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year"
+"\". \"times\" can be empty, then the CF is applied always. \"sources\" is an "
+"Array of Objects having one field \"source\". \"sources\" can be empty."
 msgstr ""
-"Deviazione di Chiamata su Occupato - Contiene le chiavi \"destinations"
-"\" (destinazioni) e \"times\" (periodi). \"destinations\" è una lista di "
-"oggetti costituiti dai campi \"destination\" (destinazione), \"priority"
-"\" (priorità) e \"timeout\" (durata). \"times\" è una lista di oggetti "
-"costituiti dai campi \"minute\" (minuto), \"hour\" (ora), \"wday\" (giorno "
-"della settimana), \"mday\" (giorno del mese), \"month\" (mese), \"year"
-"\" (anno). \"times\" può essere vuoto, in questo caso la deviazione è "
-"effettuata sempre."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Busy, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Busy, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
-"Deviazione di Chiamata su Occupato, Numero degli Oggetti, ciascuno contiene "
-"le chiavi \"destinationset\" (gruppo di detinazione) e \"timeset\" (gruppo "
-"degli intervalli). I valori devono essere i nomi di una coppia detination/"
-"time che appartiene all´abbonato stesso."
 
 #: share/templates/widgets/subscriber_cf_overview.tt
 msgid "Call Forward Configured"
@@ -1462,34 +1505,22 @@ msgstr "Deviazione di Chiamata su Mancata Risposta"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Timeout, Contains the keys \"destinations\", \"times\" and "
-"\"ringtimeout\". \"destinations\" is an Array of Objects having a "
-"\"destination\", \"priority\" and \"timeout\" field. \"times\" is an Array "
-"of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday\", "
-"\"month\", \"year\". \"times\" can be empty, then the CF is applied always."
-"\"ringtimeout\" is a numeric ringing time value in seconds before call "
-"forward will be applied."
+"Call Forward Timeout, Contains the keys \"destinations\", \"times\", "
+"\"sources\" and \"ringtimeout\". \"destinations\" is an Array of Objects "
+"having a \"destination\", \"priority\" and \"timeout\" field. \"times\" is "
+"an Array of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday"
+"\", \"month\", \"year\". \"times\" can be empty, then the CF is applied "
+"always. \"sources\" is an Array of Objects having one field \"source\". "
+"\"sources\" can be empty.\"ringtimeout\" is a numeric ringing time value in "
+"seconds before call forward will be applied."
 msgstr ""
-"Deviazione di Chiamata su Mancata Risposta, Contiene le chiavi \"destinations"
-"\" (destinazioni), \"times\" (periodi) e \"ringtimeout\" (tempo di squillo)."
-"\"destinations\" è una lista di oggetti costituiti dai campi \"destination\" "
-"(destinazione), \"priority\" (priorità) e \"timeout\" (durata). \"times\" è "
-"una lista di oggetti costituiti dai campi \"minute\" (minuto), \"hour\" (ora), "
-"\"wday\" (giorno della settimana), \"mday\" (giorno del mese), \"month\" (mese), "
-"\"year\" (anno). \"times\" può essere vuoto, in questo caso la deviazione è "
-"effettuata sempre. \"ringtimeout\" è il tempo di squillo in secondi prima che "
-"sia applicato l´inoltro di chiamata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Timeout, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Timeout, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
-"Deviazione di Chiamata su Mancata Risposta, Numero degli Oggetti, ciascuno "
-"contiene le chiavi \"destinationset\" (gruppo di detinazione) e \"timeset"
-"\" (gruppo degli intervalli). I valori devono essere i nomi di una coppia "
-"detination/time che appartiene all´abbonato stesso."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
@@ -1499,31 +1530,20 @@ msgstr "Deviazione di Chiamata su Non Disposnibile"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unavailable, Contains the keys \"destinations\" and \"times\". "
-"\"destinations\" is an Array of Objects having a \"destination\", \"priority"
-"\" and \"timeout\" field. \"times\" is an Array of Objects having the fields "
-"\"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". \"times\" can "
-"be empty, then the CF is applied always."
+"Call Forward Unavailable, Contains the keys \"destinations\", \"times\" and "
+"\"sources\". \"destinations\" is an Array of Objects having a \"destination"
+"\", \"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+"having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year"
+"\". \"times\" can be empty, then the CF is applied always. \"sources\" is an "
+"Array of Objects having one field \"source\". \"sources\" can be empty."
 msgstr ""
-"Deviazione di Chiamata su Non Disponibile - Contiene le chiavi \"destinations"
-"\" (destinazioni) e \"times\" (periodi). \"destinations\" è una lista di "
-"oggetti costituiti dai campi \"destination\" (destinazione), \"priority"
-"\" (priorità) e \"timeout\" (durata). \"times\" è una lista di oggetti "
-"costituiti dai campi \"minute\" (minuto), \"hour\" (ora), \"wday\" (giorno "
-"della settimana), \"mday\" (giorno del mese), \"month\" (mese), \"year"
-"\" (anno). \"times\" può essere vuoto, in questo caso la deviazione è "
-"effettuata sempre."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unavailable, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Unavailable, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
-"Deviazione di Chiamata su Non Disponibile, Numero degli Oggetti, ciascuno "
-"contiene le chiavi \"destinationset\" (gruppo di detinazione) e \"timeset"
-"\" (gruppo degli intervalli). I valori devono essere i nomi di una coppia "
-"detination/time che appartiene all´abbonato stesso."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
@@ -1533,31 +1553,21 @@ msgstr "Deviazione di Chiamata Incondizionata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unconditional, Contains the keys \"destinations\" and \"times"
-"\". \"destinations\" is an Array of Objects having a \"destination\", "
-"\"priority\" and \"timeout\" field. \"times\" is an Array of Objects having "
-"the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". "
-"\"times\" can be empty, then the CF is applied always."
+"Call Forward Unconditional, Contains the keys \"destinations\", \"times\" "
+"and \"sources\". \"destinations\" is an Array of Objects having a "
+"\"destination\", \"priority\" and \"timeout\" field. \"times\" is an Array "
+"of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday\", "
+"\"month\", \"year\". \"times\" can be empty, then the CF is applied always. "
+"\"sources\" is an Array of Objects having one field \"source\". \"sources\" "
+"can be empty."
 msgstr ""
-"Deviazione di Chiamata Incondizionata - Contiene le chiavi \"destinations"
-"\" (destinazioni) e \"times\" (periodi). \"destinations\" è una lista di "
-"oggetti costituiti dai campi \"destination\" (destinazione), \"priority"
-"\" (priorità) e \"timeout\" (durata). \"times\" è una lista di oggetti "
-"costituiti dai campi \"minute\" (minuto), \"hour\" (ora), \"wday\" (giorno "
-"della settimana), \"mday\" (giorno del mese), \"month\" (mese), \"year"
-"\" (anno). \"times\" può essere vuoto, in questo caso la deviazione è "
-"effettuata sempre."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Call Forward Unconditional, Number of Objects, each containing the keys, "
-"\"destinationset\" and \"timeset\". The values must be the name of a "
-"destination/time set which belongs to the same subscriber."
+"Call Forward Unconditional, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
 msgstr ""
-"Deviazione di Chiamata su Incondizionata, Numero degli Oggetti, ciascuno "
-"contiene le chiavi \"destinationset\" (gruppo di detinazione) e \"timeset"
-"\" (gruppo degli intervalli). I valori devono essere i nomi di una coppia "
-"detination/time che appartiene all´abbonato stesso."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 #: share/templates/widgets/subscriber_cf_overview.tt
@@ -2312,6 +2322,10 @@ msgstr "Crea Nuovo"
 msgid "Create Number Block"
 msgstr "Crea Blocco di Numeri"
 
+#: share/templates/peering/servers_rules.tt
+msgid "Create Outbound Peering Rule"
+msgstr ""
+
 #: share/templates/customer/details.tt
 msgid "Create PBX Device"
 msgstr "Crea Dispositivo PBX"
@@ -2623,17 +2637,25 @@ msgid ""
 "entry is found for the caller number in the LNP database. This prefix is NOT "
 "used for routing purposes like rewrite rules, only for CDR tagging."
 msgstr ""
-"Definisce un prefisso di portabilità di default del chiamante che verrà scritto nelle CDR se "
-"nessun prefisso di portabilità per il numero chiamante verrà trovato nel database dei numeri portati."
-"Questo prefisso NON è utilizzato a scopo di instradamento, ma solo come dato nelle CDR."
+"Definisce un prefisso di portabilità di default del chiamante che verrà "
+"scritto nelle CDR se nessun prefisso di portabilità per il numero chiamante "
+"verrà trovato nel database dei numeri portati.Questo prefisso NON è "
+"utilizzato a scopo di instradamento, ma solo come dato nelle CDR."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Defines a rewrite CLI and and pattern. If the a-number of a call matches one "
+"of the associated patterns, the User-Provided-Number is set to the "
+"configured CLI."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Defines how to provide the routing number after a LNP query. If enabled, rn "
 "parameter will be used."
 msgstr ""
-"Definisce come fornire il numero da instradare dopo la query nel DB dei numeri portati. Se abilitato, "
-"sarà utilizzato il parametro rn."
+"Definisce come fornire il numero da instradare dopo la query nel DB dei "
+"numeri portati. Se abilitato, sarà utilizzato il parametro rn."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -2641,9 +2663,9 @@ msgid ""
 "Emergency Mode is enabled for the domain of the subscriber. If disabled, "
 "registrations and calls are blocked and dropped."
 msgstr ""
-"Definisce se l´abbonato può ancora registrarsi e inviare/ricevere chiamate nel caso "
-"la Modalità Emergenza sia abilitata per il dominio dell´abbonato. Se disabilitato, "
-"registrazioni e chiamate saranno bloccate."
+"Definisce se l´abbonato può ancora registrarsi e inviare/ricevere chiamate "
+"nel caso la Modalità Emergenza sia abilitata per il dominio dell´abbonato. "
+"Se disabilitato, registrazioni e chiamate saranno bloccate."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/administrator/list.tt
 #: share/templates/billing/fees.tt share/templates/billing/peaktimes.tt
@@ -2806,7 +2828,8 @@ msgstr "Dominio destinatario entrante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Destination email to send the secret key renew notification to."
-msgstr "Indirizzo email a cui inviare la notifica di rinnovo della chiave segreta."
+msgstr ""
+"Indirizzo email a cui inviare la notifica di rinnovo della chiave segreta."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Destination gpp0"
@@ -2885,16 +2908,16 @@ msgid ""
 "Destination username or number as received by the system from calling party "
 "after internal rewriting."
 msgstr ""
-"Username/numero destinatario come ricevuto nel sistema dal chiamante "
-"dopo la manipolazione interna."
+"Username/numero destinatario come ricevuto nel sistema dal chiamante dopo la "
+"manipolazione interna."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Destination username or number as received by the system from calling party "
 "before any internal rewriting."
 msgstr ""
-"Username/numero destinatario come ricevuto nel sistema dal chiamante "
-"prima di qualsiasi manipolazione interna."
+"Username/numero destinatario come ricevuto nel sistema dal chiamante prima "
+"di qualsiasi manipolazione interna."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 msgid "Destinations"
@@ -3058,10 +3081,28 @@ msgid "Disable RTP-Proxy in the selected case"
 msgstr "Disabilita RTP-Proxy nel caso selezionato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable auto upgrade feature."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable firmware upgrade."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable phone web interface."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable web gui"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Disables PRACK method (RFC3262) by filtering the 100rel tag from SIP "
 "Supported header."
-msgstr "Disabilita metodo PRACK (RFC3262) filtranto il tag 100rel dall´header SIP 'Supported'."
+msgstr ""
+"Disabilita metodo PRACK (RFC3262) filtranto il tag 100rel dall´header SIP "
+"'Supported'."
 
 #: share/templates/invoice/template_editor_form.tt
 msgid "Discard"
@@ -3411,7 +3452,9 @@ msgstr "Gruppo di numeri di emergenza aggiornato con successo"
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid ""
 "Emergency mapping container with this name already exists for this reseller!"
-msgstr "Esiste già un gruppo di numeri di emergenza con lo stesso nome per questo rivenditore!"
+msgstr ""
+"Esiste già un gruppo di numeri di emergenza con lo stesso nome per questo "
+"rivenditore!"
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency mapping does not exist!"
@@ -3465,7 +3508,8 @@ msgstr "Abilita Fax in T.38"
 msgid ""
 "Enable T38 Fax-over-IP via auto-provisioning if the end device supports it."
 msgstr ""
-"Abilita fax in T.38 attraverso l´auto-provisioning se il dispositivo lo supporta."
+"Abilita fax in T.38 attraverso l´auto-provisioning se il dispositivo lo "
+"supporta."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -3483,9 +3527,10 @@ msgid ""
 "as the very first line of the email + an empty line. The key is removed from "
 "the email once matched."
 msgstr ""
-"Abilita la modalità sicura, che richiede che tutte le email mail2fax contengano "
-"una chiave segreta nella prima linea del corpo della email seguita da uno spazio o "
-"da una nuova riga. La chiave verrà rimossa dallàemail una volta verificata."
+"Abilita la modalità sicura, che richiede che tutte le email mail2fax "
+"contengano una chiave segreta nella prima linea del corpo della email "
+"seguita da uno spazio o da una nuova riga. La chiave verrà rimossa "
+"dallàemail una volta verificata."
 
 #: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/rewrite/rules_list.tt
@@ -3513,11 +3558,16 @@ msgstr "Data/Ora di Fine"
 msgid ""
 "Error while sending fax (have the fax settings been configured properly?)"
 msgstr ""
-"Errore durante l´invio del fax (le impostazione fax dell´abbonato sono state configurate ?)"
+"Errore durante l´invio del fax (le impostazione fax dell´abbonato sono state "
+"configurate ?)"
 
 #: share/layout/body.tt
 msgid "Expand Groups"
 msgstr "Espandi Gruppi"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Expected firmware version."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Expires"
@@ -3528,8 +3578,8 @@ msgid ""
 "Explicitly declare the way how you want to set billing profiles for this API "
 "call."
 msgstr ""
-"Dichiarare esplicitamente il modo in cui si vuole settare il profilo di fatturazione per questa "
-"chiamata API."
+"Dichiarare esplicitamente il modo in cui si vuole settare il profilo di "
+"fatturazione per questa chiamata API."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Export status"
@@ -3542,8 +3592,7 @@ msgstr "Esporta abbonato su lista contatti XMPP condivisa"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Export this subscriber into the shared XMPP buddy list for the customer."
-msgstr ""
-"Esporta questo abbonato nella lista contatti XMPP per il cliente."
+msgstr "Esporta questo abbonato nella lista contatti XMPP per il cliente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Exported at"
@@ -3595,7 +3644,8 @@ msgstr "ID Codice Esterno dell´abbonato chiamante, se locale."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External ID of the calling subscriber's customer, if local."
-msgstr "ID Codice Esterno del Cliente facente capo l´abbonato chiamante, se locale."
+msgstr ""
+"ID Codice Esterno del Cliente facente capo l´abbonato chiamante, se locale."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External Subscriber #"
@@ -3607,7 +3657,8 @@ msgstr "ID Esterno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External id of called subscriber's customer, if local."
-msgstr "ID Codice Esterno del Cliente facente capo l´abbonato chiamato, se locale."
+msgstr ""
+"ID Codice Esterno del Cliente facente capo l´abbonato chiamato, se locale."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External id of called subscriber, if local."
@@ -3616,6 +3667,18 @@ msgstr "ID Codice Esterno dell´abbonato chiamato, se locale."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "FAILED"
 msgstr "FALLITO"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "FW Upgrade disable"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "FW automatic upgrade disable"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "FW version"
+msgstr ""
 
 #: share/templates/security/list.tt
 msgid "Fail Count"
@@ -3684,6 +3747,10 @@ msgstr "Creazione dispositivo PBX fallita."
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to create PBX group"
 msgstr "Creazione del gruppo PBX fallita"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to create UPN rewrite set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Failed to create administrator"
@@ -3881,6 +3948,10 @@ msgstr "Eliminazione del pattern NCOS fallita"
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to delete PBX device"
 msgstr "Eliminazione dispositivo PBX fallita."
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete UPN rewrite set."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Failed to delete administrator"
@@ -4193,6 +4264,10 @@ msgstr "Aggiornamento dispositivo PBX fallito."
 msgid "Failed to update PBX group"
 msgstr "Aggiornamento gruppo PBX fallito"
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to update UPN rewrite set"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Failed to update administrator"
 msgstr "Aggiornamento amministratore di sistema fallito"
@@ -4438,7 +4513,7 @@ msgstr "Febbraio"
 msgid "Fees"
 msgstr "Quote"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Field"
 msgstr "Campo"
 
@@ -4454,8 +4529,7 @@ msgstr "Tipo di File"
 msgid ""
 "File to send. Will be sent if no text content specified. Supported File "
 "Types are TXT, PDF, PS, TIFF"
-msgstr ""
-"File da inviare. Tipi di file supportati sono TXT, PDF, PS, TIFF"
+msgstr "File da inviare. Tipi di file supportati sono TXT, PDF, PS, TIFF"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/sound/handles_list.tt
 msgid "Filename"
@@ -4515,19 +4589,19 @@ msgid ""
 "\"Always\" on the originating peer. Use with caution, as this setting may "
 "increase your costs!"
 msgstr ""
-"Forza le chiamate da questo utente/dominio/peer ad essere dirottate verso i peers "
-"dopo i controlli opzionali sul numero chiamato (se offline, utente non locale o "
-"utente di un altro cliente). Per abilitare il peer relay (chiamata da un peer dirottata "
-"verso un altro peer) scegliere \"Se numero chiamato non è locale\" oppure \"Sempre\" "
-"nel peer di origine."
+"Forza le chiamate da questo utente/dominio/peer ad essere dirottate verso i "
+"peers dopo i controlli opzionali sul numero chiamato (se offline, utente non "
+"locale o utente di un altro cliente). Per abilitare il peer relay (chiamata "
+"da un peer dirottata verso un altro peer) scegliere \"Se numero chiamato non "
+"è locale\" oppure \"Sempre\" nel peer di origine."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Force calls to this user to be treated as if the user was not local. This "
 "helps in migration scenarios."
 msgstr ""
-"Forza le chiamate verso questo utente ad essere trattate come se "
-"l´utente non fosse locale. Questo aiuta in caso di scenari di migrazione."
+"Forza le chiamate verso questo utente ad essere trattate come se l´utente "
+"non fosse locale. Questo aiuta in caso di scenari di migrazione."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Force inbound calls to peer"
@@ -4854,7 +4928,8 @@ msgstr "Timeout di Ricerca"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Hunting policy, one of serial, parallel, random, circular."
-msgstr "Modalitè di Ricerca, scegliere tra seriale, parallela, casuale, circolare."
+msgstr ""
+"Modalitè di Ricerca, scegliere tra seriale, parallela, casuale, circolare."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "IBAN"
@@ -4897,15 +4972,16 @@ msgid ""
 "IP that the Dialogic IMG will configure on it's second port for the RTP "
 "traffic. Must be different from the SIP IP."
 msgstr ""
-"Indirizzo IP che il dispositivo Dialogic IMG configurerè sulla sua seconda porta per "
-"il traffico RTP. Deve essere diverso dall´IP SIP"
+"Indirizzo IP che il dispositivo Dialogic IMG configurerè sulla sua seconda "
+"porta per il traffico RTP. Deve essere diverso dall´IP SIP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "IP under which the Dialogic IMG's webinterface is accessible for "
 "confiuration."
 msgstr ""
-"Indirizzo IP a cui accedere alla interfaccia grafica di configurazione del dispositivo Dialogic IMG."
+"Indirizzo IP a cui accedere alla interfaccia grafica di configurazione del "
+"dispositivo Dialogic IMG."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "IPv4/IPv6 briding mode"
@@ -4933,15 +5009,17 @@ msgid ""
 "You can set it to any friendly name you prefer to identify this exchange "
 "point"
 msgstr ""
-"Nome identificativo per un dominio o un peer (es. SIPWISE_1 o ACME_SBC). "
-"Può essere configurato un qualsiasi nome che possa identificare il nodo suceessivo."
+"Nome identificativo per un dominio o un peer (es. SIPWISE_1 o ACME_SBC). Può "
+"essere configurato un qualsiasi nome che possa identificare il nodo "
+"suceessivo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Idle interval before connecting first caller in PBX Call Queue. By default "
 "it is 10 seconds"
 msgstr ""
-"Intervallo di tempo prima di connettere il primo utente in coda all´agente libero. A default è 10 secondi"
+"Intervallo di tempo prima di connettere il primo utente in coda all´agente "
+"libero. A default è 10 secondi"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -4949,9 +5027,9 @@ msgid ""
 "emergency_priorization flag set are no longer able to register and place "
 "calls except for emergency calls."
 msgstr ""
-"Se attivato per questo dominio, gli abbonati che non hanno il parametro emergency_priorization "
-"settato non saranno più in grado di registrarsi ed effettuare chiamate, ad eccezione delle "
-"chiamate di emergenza."
+"Se attivato per questo dominio, gli abbonati che non hanno il parametro "
+"emergency_priorization settato non saranno più in grado di registrarsi ed "
+"effettuare chiamate, ad eccezione delle chiamate di emergenza."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -4968,13 +5046,14 @@ msgid ""
 "If active, and the number is not assigned to a local subscriber, calls to "
 "this number are rejected with 404 Not Found."
 msgstr ""
-"Se attivo ed il numero non è assegnato ad un abbonato locale, le chiamate "
-"a questo numero saranno rifiutate con un 404 Not Found."
+"Se attivo ed il numero non è assegnato ad un abbonato locale, le chiamate a "
+"questo numero saranno rifiutate con un 404 Not Found."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If active, no LNP rewrite rules will be applied after the LNP lookup."
 msgstr ""
-"Se attivo, nessuna rewrite rule LNP verrà applicata dopo la ricerca nel DB del numero portato."
+"Se attivo, nessuna rewrite rule LNP verrà applicata dopo la ricerca nel DB "
+"del numero portato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -4986,7 +5065,9 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled allows LNP queries for local subscribers."
-msgstr "Se abilitato permette la ricerca nel DB dei numeri portati anche per abbonati locali."
+msgstr ""
+"Se abilitato permette la ricerca nel DB dei numeri portati anche per "
+"abbonati locali."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -4994,20 +5075,23 @@ msgid ""
 "network-provided calling party number. The resulting LNP prefix is written "
 "to CDRs as source_lnp_prefix."
 msgstr ""
-"Se abilitato, la ricerca nel DB del numero portato viene fatta per le chiamate da questo peer "
-"utilizzando numero network-provided del chiamante. Il risultante prefisso di portabilità (colore) "
-"verrà scritto nelle CDR nel campo source_lnp_prefix."
+"Se abilitato, la ricerca nel DB del numero portato viene fatta per le "
+"chiamate da questo peer utilizzando numero network-provided del chiamante. "
+"Il risultante prefisso di portabilità (colore) verrà scritto nelle CDR nel "
+"campo source_lnp_prefix."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "If enabled, any vertical service codes, e.g. *99*1234, are rejected by the "
 "system to disable the possibility of provisioning features via phones ."
 msgstr ""
-"Se abilitato, qualsiasi codice di servizio (es. *99*1234) verrà rifiutato dal sistema. "
+"Se abilitato, qualsiasi codice di servizio (es. *99*1234) verrà rifiutato "
+"dal sistema. "
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, npdi parameter will be added if there is a LNP query."
-msgstr "Se abilitato, il parametro npdi sarà aggiunto se c'è una richiesta LNP."
+msgstr ""
+"Se abilitato, il parametro npdi sarà aggiunto se c'è una richiesta LNP."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -5015,17 +5099,17 @@ msgid ""
 "to purge any existing fees for the given billing profile before inserting "
 "the new ones."
 msgstr ""
-"Se i costi sono caricati tramite un file di testo/csv, questa opzione definisce "
-"se rimuovere qualsiasi costo esistente per il dato profilo di fatturazione prima "
-"di inserire i nuovi costi."
+"Se i costi sono caricati tramite un file di testo/csv, questa opzione "
+"definisce se rimuovere qualsiasi costo esistente per il dato profilo di "
+"fatturazione prima di inserire i nuovi costi."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "If reject code is specified and the call is rejected, the reason in the "
 "response is taken from this value"
 msgstr ""
-"Se il codice di rifiuto di è specificato e la chiamata viene rifiutata, il motivo indicato nella risposta "
-"sarà quelo qui selezionato."
+"Se il codice di rifiuto di è specificato e la chiamata viene rifiutata, il "
+"motivo indicato nella risposta sarà quelo qui selezionato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -5035,10 +5119,11 @@ msgid ""
 "subscriber device and transporting the originally calling party number on "
 "the second leg. Use with caution as it might allow for number spoofing."
 msgstr ""
-"Se settato, lo UPN del chiamante non verrà confrontato con la lista dei CLI permessi "
-"configurata per questo abbonato SE sono presenti nel messaggio SIP un Diversion header oppure un "
-"History-Info header. Questo può essere usato per permettere deviazioni dal dispositivo "
-"dell´abbonato e trasportare l´informazione del numero chiamante di origine al numero destinatario finale."
+"Se settato, lo UPN del chiamante non verrà confrontato con la lista dei CLI "
+"permessi configurata per questo abbonato SE sono presenti nel messaggio SIP "
+"un Diversion header oppure un History-Info header. Questo può essere usato "
+"per permettere deviazioni dal dispositivo dell´abbonato e trasportare l"
+"´informazione del numero chiamante di origine al numero destinatario finale."
 "Usare con cautela, potrebbe consentire lo spoofing the numero."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5046,8 +5131,8 @@ msgid ""
 "If set, will be played as Number of the voicebox owner. Otherwise the number "
 "of the preference \"cli\" is used."
 msgstr ""
-"Se settato, sarà riprodotto come numero della casella vocale. Altrimenti sarà riprodotto il numero della "
-"preferenza \"cli\"."
+"Se settato, sarà riprodotto come numero della casella vocale. Altrimenti "
+"sarà riprodotto il numero della preferenza \"cli\"."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -5055,20 +5140,20 @@ msgid ""
 "in a peering server of the group, but the given pattern does not match; "
 "Range of 400-699"
 msgstr ""
-"Se specificato, la chiamata viene rifiutata se la sorgente IP della richiesta "
-"viene trovata nei server peer del gruppo, ma il pattern fornito non corrisponde; "
-"Range 400-699"
+"Se specificato, la chiamata viene rifiutata se la sorgente IP della "
+"richiesta viene trovata nei server peer del gruppo, ma il pattern fornito "
+"non corrisponde; Range 400-699"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "If true, calling party number is shown regardles of caller CLIR settings."
 msgstr ""
-"Se vero, il numero chiamante verrà visualizzato, indipendentemente dal configurazione CLIR del chiamante."
+"Se vero, il numero chiamante verrà visualizzato, indipendentemente dal "
+"configurazione CLIR del chiamante."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ignore Call Forward when Hunting"
 msgstr "Ignora Deviazione di Chiamata se in modalità ricerca"
-
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ignore allowed IPs"
@@ -5083,7 +5168,8 @@ msgid ""
 "Ignore the Call Forward from a Cloud PBX subscriber when it is called within "
 "a huntgroup"
 msgstr ""
-"Ignora Deciazione di Chiamata da un utente PBX quando fa parte di un gruppo di chiamata"
+"Ignora Deciazione di Chiamata da un utente PBX quando fa parte di un gruppo "
+"di chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Inbound"
@@ -5136,6 +5222,10 @@ msgstr "Regola peer in ingresso creata con successo"
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Inbound peering rule successfully deleted"
 msgstr "Regola peer in ingresso eliminata con successo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Include Intra PBX Calls within same Customer"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/ncos/pattern_list.tt
 msgid "Include local area code"
@@ -5251,6 +5341,10 @@ msgid "Internal NCOS Level #"
 msgstr "Livello NCOS Interno #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal User CLI rewrite #"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal allowed source IP group #"
 msgstr "Gruppo IP sorgenti abilitati interno #"
 
@@ -5310,6 +5404,10 @@ msgstr "Intervallo a"
 msgid "Interval when the secret key is automatically renewed."
 msgstr "Intervallo di rinnovo della chiave segreta"
 
+#: share/templates/ncos/pattern_list.tt
+msgid "Intra PBX Calls within same customer"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Intra customer"
 msgstr "Intra cliente"
@@ -5345,7 +5443,9 @@ msgstr "Id Pattern NCOS non valido"
 #. ($pref_id, $c->user->id)
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Invalid access to pref_id '%1' by provisioning subscriber id '%2'"
-msgstr "Accesso non valito alla preferenza con id '%1' da parte dell´abbonato con id '%2'"
+msgstr ""
+"Accesso non valito alla preferenza con id '%1' da parte dell´abbonato con id "
+"'%2'"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Invalid administrator id detected"
@@ -5715,7 +5815,6 @@ msgstr "Numeri Portati"
 msgid "LNP Rewrite Rules for Callee"
 msgstr "Rewrite Rules per numero chiamato portato"
 
-
 #: share/templates/rewrite/rules_list.tt
 msgid "LNP Rewrite Rules for Caller"
 msgstr "Rewrite Rules per numero chiamante portato"
@@ -5747,10 +5846,6 @@ msgstr "Portabilità per abbonati locali"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP npdi param"
 msgstr "Parametro npdi portabilità"
-
-#: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "LNP number already defined for LNP provider!"
-msgstr "Numero portato già definito per questo provider!"
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "LNP number does not exist!"
@@ -5884,9 +5979,9 @@ msgid ""
 "MPV, MP2T, nv, vp8, vp9 and h264."
 msgstr ""
 "Lista dei codec audio e video consentiti o negati. Nomi codec validi sono "
-"G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, "
-"DVI4, G729, AMR, opus, telephone-event, CelB, JPEG, H261, H263, H263-1998, "
-"MPV, MP2T, nv, vp8, vp9 and h264."
+"G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, DVI4, "
+"G729, AMR, opus, telephone-event, CelB, JPEG, H261, H263, H263-1998, MPV, "
+"MP2T, nv, vp8, vp9 and h264."
 
 #: share/templates/sound/handles_list.tt
 msgid "Load Default Files"
@@ -5992,8 +6087,8 @@ msgid ""
 "Make this profile automatically the default profile for new subscribers "
 "having this profile set."
 msgstr ""
-"Rendi questo profile quello di default per i nuovi abbonati "
-"aventi questa Impostazione profilo"
+"Rendi questo profile quello di default per i nuovi abbonati aventi questa "
+"Impostazione profilo"
 
 #: share/templates/maliciouscall/list.tt
 msgid "Malicious Call"
@@ -6055,13 +6150,13 @@ msgid ""
 "Marks subscriber for CloudPBX Call Queue that queues incoming calls if it is "
 "busy and serves them to this subscriber when it becomes available"
 msgstr ""
-"Rendi il numero dell´abbonato una Coda, la quale mette in attesta le chiamate in ingresso "
-"all´abbonato se occupato e che inoltra la chiamata non appena il numero diventa disponibile."
+"Rendi il numero dell´abbonato una Coda, la quale mette in attesta le "
+"chiamate in ingresso all´abbonato se occupato e che inoltra la chiamata non "
+"appena il numero diventa disponibile."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Mask"
 msgstr "Maschera"
-
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 #: lib/NGCP/Panel/Controller/Reseller.pm
@@ -6092,13 +6187,13 @@ msgstr "Pattern match"
 msgid "Match pattern, a regular expression."
 msgstr "Pattern match, una espressione regolare "
 
-#: lib/NGCP/Panel/Controller/Customer.pm
-msgid "Max Number of Subscribers"
-msgstr "Numero Massimo di Abbonati"
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Max subscribers"
 msgstr "Abbonati Massimi"
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Max. Subscribers"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum Number of Participants in Conference Room"
@@ -6140,8 +6235,8 @@ msgid ""
 "application server and intra-PBX calls."
 msgstr ""
 "Numero massimo di chiamate in uscita locali o esterne al sistema provenienti "
-"da un abbonato o verso un peer, escludendo le chiamate da un abbonato ai servizi "
-"interni (casella vocale, conferenze, etc.) e chiamate intra-PBX."
+"da un abbonato o verso un peer, escludendo le chiamate da un abbonato ai "
+"servizi interni (casella vocale, conferenze, etc.) e chiamate intra-PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -6150,8 +6245,9 @@ msgid ""
 "application server and intra-PBX calls."
 msgstr ""
 "Numero massimo di chiamate in uscita locali o esterne al sistema per "
-"abbonati appartenenti allo stesso Cliente, escludendo le chiamate da un abbonato ai servizi "
-"interni (casella vocale, conferenze, etc.) e chiamate intra-PBX."
+"abbonati appartenenti allo stesso Cliente, escludendo le chiamate da un "
+"abbonato ai servizi interni (casella vocale, conferenze, etc.) e chiamate "
+"intra-PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -6159,9 +6255,10 @@ msgid ""
 "net calls for a subscriber or peer, excluding calls from subscriber to the "
 "application server and intra-PBX calls."
 msgstr ""
-"Numero massimo di chiamate (in ingresso e in uscita) locali o esterne al sistema "
-"da/per un abbonato o da/verso un peer, escludendo le chiamate da un abbonato ai servizi "
-"interni (casella vocale, conferenze, etc.) e chiamate intra-PBX."
+"Numero massimo di chiamate (in ingresso e in uscita) locali o esterne al "
+"sistema da/per un abbonato o da/verso un peer, escludendo le chiamate da un "
+"abbonato ai servizi interni (casella vocale, conferenze, etc.) e chiamate "
+"intra-PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -6169,9 +6266,10 @@ msgid ""
 "net calls for subscribers within the same Customer account, excluding calls "
 "to the application server and intra-PBX calls."
 msgstr ""
-"Numero massimo di chiamate (in ingresso e in uscita) locali o esterne al sistema "
-"da/per abbonati appartenenti allo stesso Cliente, escludendo le chiamate da un abbonato ai servizi "
-"interni (casella vocale, conferenze, etc.) e chiamate intra-PBX."
+"Numero massimo di chiamate (in ingresso e in uscita) locali o esterne al "
+"sistema da/per abbonati appartenenti allo stesso Cliente, escludendo le "
+"chiamate da un abbonato ai servizi interni (casella vocale, conferenze, "
+"etc.) e chiamate intra-PBX."
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Maximum number of subscribers for this customer reached"
@@ -6181,14 +6279,16 @@ msgstr "Raggiunto numero massimo di abbonati per questo cliente"
 msgid ""
 "Maximum total number of outgoing concurrent calls coming from subscribers."
 msgstr ""
-"Numero massimo di chiamate contemporanee in uscita provenienti dagli abbonati."
+"Numero massimo di chiamate contemporanee in uscita provenienti dagli "
+"abbonati."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Maximum total number of overall (incoming and outgoing) concurrent calls for "
 "subscribers."
 msgstr ""
-"Numero massimo di chiamate contemporanee (in uscita e in ingresso) da/per gli abbonati."
+"Numero massimo di chiamate contemporanee (in uscita e in ingresso) da/per "
+"gli abbonati."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "May"
@@ -6216,8 +6316,8 @@ msgid ""
 "Method to configure the provisioning server on the phone. One of http, "
 "redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom."
 msgstr ""
-"Metodo per configurare il server di provisioning sul telefono. Scelta tra http, "
-"redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom."
+"Metodo per configurare il server di provisioning sul telefono. Scelta tra "
+"http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Minute"
@@ -6400,6 +6500,18 @@ msgstr "Server NFS"
 msgid "NGCP Support Status"
 msgstr "Status Supporto NGCP"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "NTP server"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "NTP server URL."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "NTP server sync interval"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
@@ -6428,6 +6540,10 @@ msgstr "Nome intestazione fax per Sendfax"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Name of the location."
 msgstr "Nome della localizzazione."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Name of the phone administrator."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Nat"
@@ -6471,6 +6587,10 @@ msgstr "Reti"
 msgid "Never"
 msgstr "Mai"
 
+#: share/templates/subscriber/preferences.tt
+msgid "New CLI"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "New Description"
 msgstr "Nuova Descrizione"
@@ -6486,6 +6606,10 @@ msgstr "Nuovi Messaggi"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "New Name"
 msgstr "Nuovo nome"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "New cli"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "No Billing Fee file specified!"
@@ -6688,8 +6812,8 @@ msgid ""
 "One of the available options. This defines, to which networks rtc "
 "subscribers will be able to connect to."
 msgstr ""
-"Una delle opzioni disponibili. Questo definisce a quale rete l´abbonato "
-"rtc si connetterà."
+"Una delle opzioni disponibili. Questo definisce a quale rete l´abbonato rtc "
+"si connetterà."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Onpeak follow interval"
@@ -6731,7 +6855,7 @@ msgstr ""
 msgid ""
 "Options to carry over the customer's balance to the next balance interval."
 msgstr ""
-"Possibilità di traslare il saldo del cliente al prossimo intevallo di saldo." 
+"Possibilità di traslare il saldo del cliente al prossimo intevallo di saldo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Options to lock customer if the daily limit is exceeded."
@@ -6976,35 +7100,45 @@ msgid "Password"
 msgstr "Password"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Password of the phone administrator."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Password used to configure bootstrap url on Panasonic redirect server. "
 "Obtained from Panasonic."
 msgstr ""
-"Password usata per configurare l´url di bootstrap sul server di redirezione Panasonic. Fornito da Panasonic."
+"Password usata per configurare l´url di bootstrap sul server di redirezione "
+"Panasonic. Fornito da Panasonic."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Password used to configure bootstrap url on Polycom redirect server."
-msgstr "Password usata per configurare l´url di bootstrap sul server di redirezione Polycom."
+msgstr ""
+"Password usata per configurare l´url di bootstrap sul server di redirezione "
+"Polycom."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Password used to configure bootstrap url on Snom redirect server. Obtained "
 "from Snom."
-msgstr "Password usata per configurare l´url di bootstrap sul server di redirezione Snom. Fornito da Snom."
+msgstr ""
+"Password usata per configurare l´url di bootstrap sul server di redirezione "
+"Snom. Fornito da Snom."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Password used to configure bootstrap url on Yealink redirect server. "
 "Obtained from Yealink."
 msgstr ""
-"Password usata per configurare l´url di bootstrap sul server di redirezione Yealink. Fornito da Yealink."
+"Password usata per configurare l´url di bootstrap sul server di redirezione "
+"Yealink. Fornito da Yealink."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
 msgstr "Pattern"
 
-#: share/templates/ncos/list.tt
+#: share/templates/ncos/list.tt share/templates/subscriber/preferences.tt
 msgid "Patterns"
 msgstr "Patterns"
 
@@ -7085,7 +7219,6 @@ msgstr "Gruppi peer eliminati con successo"
 msgid "Peering Groups"
 msgstr "Gruppi Peer"
 
-#: share/templates/peering/servers_rules.tt
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Rule"
 msgstr "Regola Peer"
@@ -7094,7 +7227,6 @@ msgstr "Regola Peer"
 msgid "Peering Rule does not exist"
 msgstr "Regola peer non esistente"
 
-#: share/templates/peering/servers_rules.tt
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Rules"
 msgstr "Regole Peer"
@@ -7156,7 +7288,9 @@ msgstr "Peers"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Perform serial forking based on q-value of registered contacts"
-msgstr "Effettua chiamata seriale in base al valore del parametro 'q' associato al Contact registrato."
+msgstr ""
+"Effettua chiamata seriale in base al valore del parametro 'q' associato al "
+"Contact registrato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Perform top-up"
@@ -7216,7 +7350,8 @@ msgid ""
 "Playback announcement as early media before Call Forward Unconditional or "
 "Unavailable."
 msgstr ""
-"Riprodurre annuncio come early media prima di deviare la chiamata su CFU o CFNA"
+"Riprodurre annuncio come early media prima di deviare la chiamata su CFU o "
+"CFNA"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Polycom"
@@ -7421,9 +7556,10 @@ msgid ""
 "disposition: signal;handling=required\" according to the German NGN "
 "interconnect specification"
 msgstr ""
-"Usa questo campo come valore precodificato da aggiungere nel corpo SDP come oggetto MIME "
-"con content-type \"application/vnd.cirpack.isdn-ext\" e \"content-disposition: "
-"signal;handling=required\", in accordo con le specifiche di interconnessione NGN tedesche."
+"Usa questo campo come valore precodificato da aggiungere nel corpo SDP come "
+"oggetto MIME con content-type \"application/vnd.cirpack.isdn-ext\" e "
+"\"content-disposition: signal;handling=required\", in accordo con le "
+"specifiche di interconnessione NGN tedesche."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Purge existing"
@@ -7677,14 +7813,16 @@ msgid ""
 "Reseller contract id of called subscriber, or contract id of peer if to "
 "external."
 msgstr ""
-"Id contratto Rivenditore dell´abbonato chiamato, o Id contratto del peer se chiamata verso esterno."
+"Id contratto Rivenditore dell´abbonato chiamato, o Id contratto del peer se "
+"chiamata verso esterno."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Reseller contract id of calling subscriber, or contract id of peer if from "
 "external."
 msgstr ""
-"Id contratto Rivenditore dell´abbonato chiamante, o Id contratto del peer se chiamata da esterno."
+"Id contratto Rivenditore dell´abbonato chiamante, o Id contratto del peer se "
+"chiamata da esterno."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reseller id"
@@ -7693,7 +7831,8 @@ msgstr "Id Rivenditore"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reseller id of called subscriber, or contract id of peer if to external"
 msgstr ""
-"Id Rivenditore dell´abbonato chiamato, o Id contratto del peer se chiamata verso esterno."
+"Id Rivenditore dell´abbonato chiamato, o Id contratto del peer se chiamata "
+"verso esterno."
 
 #. (reseller.first.status)
 #: share/templates/reseller/branding.tt share/templates/reseller/details.tt
@@ -7765,6 +7904,10 @@ msgstr "Rewrite Rule"
 #: share/templates/rewrite/rules_list.tt
 msgid "Rewrite Rules for %1"
 msgstr "Rewrite Rules per %1"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Rewrite Set entry not found"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule does not exist"
@@ -8001,34 +8144,39 @@ msgid ""
 "Same as \"block_in_clir\" but may only be set by administrators and is "
 "applied prior to the user setting."
 msgstr ""
-"Lo stesso di \"block_in_clir\" ma può essere configurato solo da amministratori "
-"ed è applicato con priorità maggiore rispetto alle impostazioni utente."
+"Lo stesso di \"block_in_clir\" ma può essere configurato solo da "
+"amministratori ed è applicato con priorità maggiore rispetto alle "
+"impostazioni utente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Same as \"block_in_list\" but may only be set by administrators and is "
 "applied prior to the user setting."
 msgstr ""
-"Lo stesso di \"block_in_list\" ma può essere configurato solo da amministratori "
-"ed è applicato con priorità maggiore rispetto alle impostazioni utente."
+"Lo stesso di \"block_in_list\" ma può essere configurato solo da "
+"amministratori ed è applicato con priorità maggiore rispetto alle "
+"impostazioni utente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Same as \"block_in_mode\" but may only be set by administrators."
 msgstr ""
-"Lo stesso di \"block_in_mode\" ma può essere configurato solo da amministratori."
+"Lo stesso di \"block_in_mode\" ma può essere configurato solo da "
+"amministratori."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Same as \"block_out_list\" but may only be set by administrators and is "
 "applied prior to the user setting."
 msgstr ""
-"Lo stesso di \"block_out_list\" ma può essere configurato solo da amministratori "
-"ed è applicato con priorità maggiore rispetto alle impostazioni utente."
+"Lo stesso di \"block_out_list\" ma può essere configurato solo da "
+"amministratori ed è applicato con priorità maggiore rispetto alle "
+"impostazioni utente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Same as \"block_out_mode\" but may only be set by administrators."
 msgstr ""
-"Lo stesso di \"block_out_mode\" ma può essere configurato solo da amministratori."
+"Lo stesso di \"block_out_mode\" ma può essere configurato solo da "
+"amministratori."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -8065,9 +8213,9 @@ msgid ""
 "allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 "Ricerca per un riscontro parziale di user-provided number (UPN) con il "
-"numero primario E164 e numeri alias dell´abbonato. Se c'è riscontro, "
-"accetta UPN come valido senza controllo su allowed_clis e copia UPN in "
-"network-provided number (NPN)."
+"numero primario E164 e numeri alias dell´abbonato. Se c'è riscontro, accetta "
+"UPN come valido senza controllo su allowed_clis e copia UPN in network-"
+"provided number (NPN)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -8220,8 +8368,8 @@ msgid ""
 "Set Min-SE value in SBC. This is also used to build 422 reply if remote Min-"
 "SE is smaller than local Min-SE."
 msgstr ""
-"Imposta il valore Min-SE in SBC. Questo viene anche usato per creare risposte "
-"di tipo 422 se il valore remoto di Min-SE è minore di quello locale."
+"Imposta il valore Min-SE in SBC. Questo viene anche usato per creare "
+"risposte di tipo 422 se il valore remoto di Min-SE è minore di quello locale."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Set RTP relay mode for this peer/domain/user"
@@ -8232,7 +8380,8 @@ msgid ""
 "Set dialogic mode, which is used to autoprovision configuration on a "
 "Dialogic IMG."
 msgstr ""
-"Imposta modalità Dialogic, che viene usata per autoconfigurare il Dialogic IMG."
+"Imposta modalità Dialogic, che viene usata per autoconfigurare il Dialogic "
+"IMG."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Set id"
@@ -8244,9 +8393,10 @@ msgid ""
 "bypass RTP-Proxy if the SIP UAs are within the same LAN of each other as "
 "determined by the 'received' IP address check (peer-to-peer mode)"
 msgstr ""
-"Imposta a 'se entrambe le parti sono dietro lo stesso NAT' se vuoi abilitare lo streaming RTP direttamente "
-"end-to-end, nel caso li UA SIP siano all´interno della stessa LAN come determinato dal controllo sull´indirizzo "
-"IP 'received' (peer-to-peer mode)"
+"Imposta a 'se entrambe le parti sono dietro lo stesso NAT' se vuoi abilitare "
+"lo streaming RTP direttamente end-to-end, nel caso li UA SIP siano all"
+"´interno della stessa LAN come determinato dal controllo sull´indirizzo IP "
+"'received' (peer-to-peer mode)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Sets upper limit on accepted Min-SE value in in SBC."
@@ -8631,8 +8781,8 @@ msgid ""
 "Specifies the Administrative NCOS Level that applies for the Call Forward "
 "from the user."
 msgstr ""
-"Specifica il livello di NCOS Amministrativo che si applica alle Deviazioni di Chiamata "
-"di un abbonato."
+"Specifica il livello di NCOS Amministrativo che si applica alle Deviazioni "
+"di Chiamata di un abbonato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the NCOS level that applies to the user."
@@ -8947,6 +9097,10 @@ msgstr "Intervallo frode eliminato con successo!"
 msgid "Successfully cleared reminder setting"
 msgstr "Configurazione promemoria eliminata con successo"
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully created UPN rewrite set"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully created device configuration"
 msgstr "Configurazione dispositivo creata con successo"
@@ -8986,6 +9140,10 @@ msgstr "Sorgente fidata creata con successo"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted Call Forward"
 msgstr "Deviazione di chiamata eliminata con successo"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted UPN rewrite set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted auto attendant slot"
@@ -9029,12 +9187,16 @@ msgstr "Richiesta rediretta al dispositivo con sucesso"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully reset web password, please check your email"
-msgstr "Password web resettata con successo, si prega di controllare la propria casella di posta"
+msgstr ""
+"Password web resettata con successo, si prega di controllare la propria "
+"casella di posta"
 
 #. ($subscriber->contact ? $subscriber->contact->email : $subscriber->contract->contact->email)
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully reset web password, please check your email at %1"
-msgstr "Password web resettata con successo, si prega di controllare la propria casella di posta %1"
+msgstr ""
+"Password web resettata con successo, si prega di controllare la propria "
+"casella di posta %1"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully saved Call Forward"
@@ -9051,6 +9213,10 @@ msgstr "Abbonato terminato con successo"
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Successfully triggered config reload via SIP"
 msgstr "Reload configurazione via SIP attivata con successo"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully updated UPN rewrite set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated auto attendant slots"
@@ -9149,12 +9315,32 @@ msgid ""
 "Switch between blacklisting (bl) or whitelisting (wl) of codecs listed in "
 "codecs_list (1 for wl, 0 bl)."
 msgstr ""
-"Selezione tra blacklisting (bl) o whitelisting (wl) dei codecs definiti "
-"in codecs_list (1 per wl, 0 per l)."
+"Selezione tra blacklisting (bl) o whitelisting (wl) dei codecs definiti in "
+"codecs_list (1 per wl, 0 per l)."
 
 #: share/templates/customer/details.tt
 msgid "Sync Device"
 msgstr "Sync Dispositivo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Synchronisation interval of NTP server."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Syslog level"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Syslog logging level."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Syslog server"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Syslog server URL."
+msgstr ""
 
 #: share/templates/widgets/admin_system_overview.tt
 msgid "System <strong>Ok</strong>"
@@ -9199,7 +9385,8 @@ msgstr "Modello e Cliente devono appartenere allo stesso rivenditore"
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Template has not been saved yet, please save before previewing."
-msgstr "Il modello non è stato ancora salvato, prego salvare prima dell´anteprima."
+msgstr ""
+"Il modello non è stato ancora salvato, prego salvare prima dell´anteprima."
 
 #: share/templates/invoice/template_editor_form.tt
 msgid "Template variables"
@@ -9232,10 +9419,10 @@ msgid ""
 "ss) and \"stop\" (YYYY-MM-DD HH:mm:ss). Each time range provided determines "
 "when to use a fee's offpeak rates."
 msgstr ""
-"Pianificazione degli orari di picco 'speciali' per questo profilo di fatturazione."
-"E' composto da un elenco di oggetti, ognuno contenente le chiavi: \"start\" "
-"(YYYY-MM-DD HH:mm:ss) e \"stop\" (YYYY-MM-DD HH:mm:ss). Ogni range temporale "
-"fornito determina quando usare le tariffe fuori picco."
+"Pianificazione degli orari di picco 'speciali' per questo profilo di "
+"fatturazione.E' composto da un elenco di oggetti, ognuno contenente le "
+"chiavi: \"start\" (YYYY-MM-DD HH:mm:ss) e \"stop\" (YYYY-MM-DD HH:mm:ss). "
+"Ogni range temporale fornito determina quando usare le tariffe fuori picco."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -9244,10 +9431,11 @@ msgid ""
 "6 .. Sunday), \"start\" (HH:mm:ss) and \"stop\" (HH:mm:ss). Each time range "
 "provided determines when to use a fee's offpeak rates."
 msgstr ""
-"Pianificazione dei 'giorni della settimanà per questo profilo di fatturazione."
-"E' composto da un elenco di oggetti, ognuno contenente le chiavi: \"weekday\" "
-"(0 .. Lunedí, 6 .. Domenica), \"start\" (HH:mm:ss) e \"stop\" (HH:mm:ss). Ogni "
-"range temporale fornito determina quando usare le tariffe fuori picco."
+"Pianificazione dei 'giorni della settimanà per questo profilo di "
+"fatturazione.E' composto da un elenco di oggetti, ognuno contenente le "
+"chiavi: \"weekday\" (0 .. Lunedí, 6 .. Domenica), \"start\" (HH:mm:ss) e "
+"\"stop\" (HH:mm:ss). Ogni range temporale fornito determina quando usare le "
+"tariffe fuori picco."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The API key (readonly)."
@@ -9279,7 +9467,8 @@ msgstr "Il blocco di numeri E164."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The HTTP method to set the provisioning server (one of GET, POST)."
-msgstr "Il metodo HTTP per impostare il server di provisioning (uno tra GET, POST)."
+msgstr ""
+"Il metodo HTTP per impostare il server di provisioning (uno tra GET, POST)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -9353,7 +9542,8 @@ msgstr "Il PIN usato per entrare nel menu IVR da numeri esterni."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The RTC networks that should be preinitialized for this reseller."
-msgstr "Le reti RTC che dovrebbero essere pre-inizializzare per questo rivenditore."
+msgstr ""
+"Le reti RTC che dovrebbero essere pre-inizializzare per questo rivenditore."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The SIP URI pointing to the current contact of the subscriber."
@@ -9421,11 +9611,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The authentication realm (domain) used for outbound authentication."
-msgstr "Il realm (dominio) di autenticazione usato per l´autenticaione verso l´esterno."
+msgstr ""
+"Il realm (dominio) di autenticazione usato per l´autenticaione verso l"
+"´esterno."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The authentication username used for outbound authentication."
-msgstr "La username di autenticazione usata per l´autenticaione verso l´esterno."
+msgstr ""
+"La username di autenticazione usata per l´autenticaione verso l´esterno."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The balance interval in temporal units."
@@ -9464,27 +9657,39 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing fee id used to calculate the destination carrier cost."
-msgstr "L´Id della quota di fatturazione usata per calcolare i costi dell´operatore destinatario"
+msgstr ""
+"L´Id della quota di fatturazione usata per calcolare i costi dell´operatore "
+"destinatario"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing fee id used to calculate the destination customer cost."
-msgstr "L´Id della quota di fatturazione usata per calcolare i costi del cliente destinatario"
+msgstr ""
+"L´Id della quota di fatturazione usata per calcolare i costi del cliente "
+"destinatario"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing fee id used to calculate the destination reseller cost."
-msgstr "L´Id della quota di fatturazione usata per calcolare i costi del rivenditore destinatario"
+msgstr ""
+"L´Id della quota di fatturazione usata per calcolare i costi del rivenditore "
+"destinatario"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing fee id used to calculate the source carrier cost."
-msgstr "L´Id della quota di fatturazione usata per calcolare i costi dell´operatore sorgente"
+msgstr ""
+"L´Id della quota di fatturazione usata per calcolare i costi dell´operatore "
+"sorgente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing fee id used to calculate the source customer cost."
-msgstr "L´Id della quota di fatturazione usata per calcolare i costi del cliente sorgente"
+msgstr ""
+"L´Id della quota di fatturazione usata per calcolare i costi del cliente "
+"sorgente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing fee id used to calculate the source reseller cost."
-msgstr "L´Id della quota di fatturazione usata per calcolare i costi del rivenditore sorgente"
+msgstr ""
+"L´Id della quota di fatturazione usata per calcolare i costi del rivenditore "
+"sorgente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing network id this profile is restricted to."
@@ -9504,13 +9709,14 @@ msgid ""
 "can be updated afterwards. This field is required if the 'profiles' profile "
 "definition mode is used."
 msgstr ""
-"Puó essere specificato un intervallo pianificato del profilo/rete di fatturazione "
-"per addebitare questo contratto. E' rappresentato da una lista di oggetti, ognuno "
-"contenente le chiavi \"start\", \"stop\", \"profile_id\" e \"network_id\" "
-"(solo /api/customers/). Nel POST, deve essere contenuto un singolo intervallo con "
-"i campi \"start\" e \"stop\" vuoti. Solo gli intervalli che iniziano nel futuro "
-"possono essere aggiornato successivamente. Questo campo è richiesto se viene usato "
-"il modalità di definizione del profilo 'profili'."
+"Puó essere specificato un intervallo pianificato del profilo/rete di "
+"fatturazione per addebitare questo contratto. E' rappresentato da una lista "
+"di oggetti, ognuno contenente le chiavi \"start\", \"stop\", \"profile_id\" "
+"e \"network_id\" (solo /api/customers/). Nel POST, deve essere contenuto un "
+"singolo intervallo con i campi \"start\" e \"stop\" vuoti. Solo gli "
+"intervalli che iniziano nel futuro possono essere aggiornato "
+"successivamente. Questo campo è richiesto se viene usato il modalità di "
+"definizione del profilo 'profili'."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -9518,8 +9724,8 @@ msgid ""
 "active immediately. This field is required if the profile definition mode is "
 "not defined or the 'id' mode is used."
 msgstr ""
-"L´id del profilo di fatturazione usato per addebitare questo contratto, "
-"il quale diventerà attivo immediatamente. Questo campo è obligatorio se la "
+"L´id del profilo di fatturazione usato per addebitare questo contratto, il "
+"quale diventerà attivo immediatamente. Questo campo è obligatorio se la "
 "modalità del profilo non è definita o se a vene usata la modalità 'id'."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9533,7 +9739,8 @@ msgstr "Il profilo di fatturazione a cui appartiene questa fatturazione."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing profile this billing zone belongs to."
-msgstr "Il profilo di fatturazione a cui appartiene questa zona di fatturazione."
+msgstr ""
+"Il profilo di fatturazione a cui appartiene questa zona di fatturazione."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing zone id this fee belongs to."
@@ -9557,16 +9764,17 @@ msgid ""
 "or 49123~~[1-5~~]67 are possible. Use &quot;anonymous&quot; to match "
 "suppressed numbers."
 msgstr ""
-"Il numero chiamante la confrontare il formato E.164. Eà possibile usare pattern "
-"come 431* o 49123~~[1-5~~]67. Usare &quot;anonymous&quot; per confrontare numeri soppressi."
+"Il numero chiamante la confrontare il formato E.164. Eà possibile usare "
+"pattern come 431* o 49123~~[1-5~~]67. Usare &quot;anonymous&quot; per "
+"confrontare numeri soppressi."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The chosen Codecs will be used from the IMG to transcode to, in the given "
 "order of priority."
 msgstr ""
-"I codec scelti saranno usati dal IMG per la trascodifica, nel dato ordine "
-"di priorità."
+"I codec scelti saranno usati dal IMG per la trascodifica, nel dato ordine di "
+"priorità."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The city name of the contact."
@@ -9580,7 +9788,8 @@ msgstr "Il set di cluster usato per LB SIP e RTP"
 msgid ""
 "The community name, used by the SNMP manager, to access this IMG as an Agent."
 msgstr ""
-"Il nome della community, usato dal manager SNMP, per accedere a questa IMG come Agente."
+"Il nome della community, usato dal manager SNMP, per accedere a questa IMG "
+"come Agente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The company name of the contact."
@@ -9706,11 +9915,13 @@ msgstr "Il l´intervallo di saldo del contratto prima della ricarica."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The contract's cash balance after the top-up in Euro/USD/etc."
-msgstr "Il bilancio del saldo del contratto dopo della ricarica in Euro/USD/ecc."
+msgstr ""
+"Il bilancio del saldo del contratto dopo della ricarica in Euro/USD/ecc."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The contract's cash balance before the top-up in Euro/USD/etc."
-msgstr "Il bilancio del saldo del contratto prima della ricarica in Euro/USD/ecc."
+msgstr ""
+"Il bilancio del saldo del contratto prima della ricarica in Euro/USD/ecc."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The contract's profile package after the top-up."
@@ -9751,14 +9962,12 @@ msgstr "Il costo verso il peer per l´operatore."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The cost for the reseller of the called party towards the system operator."
-msgstr ""
-"Il costo verso l´operatore per il rivenditore del chiamato."
+msgstr "Il costo verso l´operatore per il rivenditore del chiamato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The cost for the reseller of the calling party towards the system operator."
-msgstr ""
-"Il costo verso l´operatore per il rivenditore del chiamante."
+msgstr "Il costo verso l´operatore per il rivenditore del chiamante."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The cost of each following interval in cents per second (e.g. 0.90)."
@@ -9815,7 +10024,8 @@ msgstr "Il contratto del cliente a cui appartiene questo dispositivo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The customer contract this voucher can be used by (optional)."
-msgstr "Il contratto del cliente da cui puó essere usato questo voucher (opzionale)."
+msgstr ""
+"Il contratto del cliente da cui puó essere usato questo voucher (opzionale)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The customer this invoice belongs to."
@@ -9823,11 +10033,13 @@ msgstr "Il cliente a cui appartiene la fattura."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The date the invoice has been sent by email or null if not sent."
-msgstr "La data in cui la fattura è stata inviata tramite email, o null se non inviata."
+msgstr ""
+"La data in cui la fattura è stata inviata tramite email, o null se non "
+"inviata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The date until this voucher is valid (YYYY-MM-DD hh:mm:ss) "
-msgstr "La data fino a quando questo voucher è valido (YYYY-MM-DD hh:mm:ss)."
+msgid "The date until this voucher is valid (YYYY-MM-DD hh:mm:ss)."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The date until this voucher is valid."
@@ -9846,8 +10058,8 @@ msgid ""
 "The datetime (YYYY-MM-DD HH:mm:ss) pointing the deadline, when the cash "
 "balance will be discarded if no top-up was performed."
 msgstr ""
-"La data e ora (YYYY-MM-DD HH:mm:ss) che indica la scadenza dopo la quale "
-"il saldo viene scartato se non viene effettuata nessuna ricarica."
+"La data e ora (YYYY-MM-DD HH:mm:ss) che indica la scadenza dopo la quale il "
+"saldo viene scartato se non viene effettuata nessuna ricarica."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -9862,26 +10074,29 @@ msgid ""
 "The datetime (YYYY-MM-DD HH:mm:ss) pointing the first second belonging to "
 "the balance interval."
 msgstr ""
-"La data e ora (YYYY-MM-DD HH:mm:ss) che indica il primo secondo che appartiene "
-"all´intervallo di saldo."
+"La data e ora (YYYY-MM-DD HH:mm:ss) che indica il primo secondo che "
+"appartiene all´intervallo di saldo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The datetime (YYYY-MM-DD HH:mm:ss) pointing the last second belonging to the "
 "balance interval."
 msgstr ""
-"La data e ora (YYYY-MM-DD HH:mm:ss) che indica l´ultimo secondo che appartiene "
-"all´intervallo di saldo."
+"La data e ora (YYYY-MM-DD HH:mm:ss) che indica l´ultimo secondo che "
+"appartiene all´intervallo di saldo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The datetime (YYYY-MM-DD HH:mm:ss) when the billing profile gets active."
 msgstr ""
-"La data e ora (YYYY-MM-DD HH:mm:ss) quando il profilo di fatturazione è stato attivato."
+"La data e ora (YYYY-MM-DD HH:mm:ss) quando il profilo di fatturazione è "
+"stato attivato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The datetime (YYYY-MM-DD HH:mm:ss) when the billing profile is revoked."
-msgstr "La data e ora (YYYY-MM-DD HH:mm:ss) quando il profilo di fatturazione è stato revocato."
+msgstr ""
+"La data e ora (YYYY-MM-DD HH:mm:ss) quando il profilo di fatturazione è "
+"stato revocato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -9890,8 +10105,8 @@ msgid ""
 "set."
 msgstr ""
 "La data e ora (YYYY-MM-DD HH:mm:ss) quando il bilancio del saldo ha "
-"modificato il piano tariffario underrun_lock_threshold e il livello di blocco "
-"dell´abbonato è stato applicato" 
+"modificato il piano tariffario underrun_lock_threshold e il livello di "
+"blocco dell´abbonato è stato applicato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -9901,7 +10116,7 @@ msgid ""
 msgstr ""
 "La data e ora (YYYY-MM-DD HH:mm:ss) quando il bilancio del saldo ha "
 "modificato il piano tariffario underrun_profile_threshold e il profilo "
-"underrun è stato applicato" 
+"underrun è stato applicato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The description of the level"
@@ -9913,31 +10128,32 @@ msgstr "La descrizione del set di suoni"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The destination URI, user or number as dialed by the end user"
-msgstr "La URI di destinazione, utente o numero che sarà chiamato dall´utente finale"
+msgstr ""
+"La URI di destinazione, utente o numero che sarà chiamato dall´utente finale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The destination billing zone id (from billing.billing_zones_history) "
 "attached to the carrier billing cost."
 msgstr ""
-"L´id della zona di fatturazione (da billing.billing_zones_history)"
-"collegata ai costi di fatturazione dell´operatore."
+"L´id della zona di fatturazione (da billing.billing_zones_history)collegata "
+"ai costi di fatturazione dell´operatore."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The destination billing zone id (from billing.billing_zones_history) "
 "attached to the customer billing cost."
 msgstr ""
-"L´id della zona di fatturazione (da billing.billing_zones_history)"
-"collegata ai costi di fatturazione del cliente."
+"L´id della zona di fatturazione (da billing.billing_zones_history)collegata "
+"ai costi di fatturazione del cliente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The destination billing zone id (from billing.billing_zones_history) "
 "attached to the reseller billing cost."
 msgstr ""
-"L´id della zona di fatturazione (da billing.billing_zones_history)"
-"collegata ai costi di fatturazione del rivenditore."
+"L´id della zona di fatturazione (da billing.billing_zones_history)collegata "
+"ai costi di fatturazione del rivenditore."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -9992,11 +10208,15 @@ msgstr "Il modello di email usato per notificare gli utenti della fattura."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The email template used to notify users about password reset."
-msgstr "Il modello di email usato per notificare gli utenti del repristino della password."
+msgstr ""
+"Il modello di email usato per notificare gli utenti del repristino della "
+"password."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The email template used to notify users about subscriber creation."
-msgstr "Il modello di email usato per notificare gli utenti della creazione dell´abbonato."
+msgstr ""
+"Il modello di email usato per notificare gli utenti della creazione dell"
+"´abbonato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The emergency code."
@@ -10065,8 +10285,8 @@ msgid ""
 "The folder the message is currently in (one of INBOX, Old, Work, Friends, "
 "Family, Cust1-Cust6)"
 msgstr ""
-"La cartella in cui il messagio si trova attualmente (ona tra INBOX, "
-"Vecchi, Lavoro, Amici, Famiglia, Cust1-Cust6)"
+"La cartella in cui il messagio si trova attualmente (ona tra INBOX, Vecchi, "
+"Lavoro, Amici, Famiglia, Cust1-Cust6)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The fraud detection threshold per day (in cents, e.g. 1000)."
@@ -10103,7 +10323,8 @@ msgstr "Il metodo di ricerca per un gruppo di chiamata PBX"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The id of the billing profile at the first second of the balance interval."
-msgstr "L´id del profilo di fatturazione al primo secondo di intervallo di saldo."
+msgstr ""
+"L´id del profilo di fatturazione al primo secondo di intervallo di saldo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -10147,27 +10368,29 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The included free money per billing interval (in cents, e.g. 10000)."
-msgstr "Il credito gratuito incluso per l´intervallo di fatturazione (in "
-"centesimi, es 10000)."
+msgstr ""
+"Il credito gratuito incluso per l´intervallo di fatturazione (in centesimi, "
+"es 10000)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The initial balance (in cents) that will be set for the very first balance "
 "interval."
 msgstr ""
-"Il saldo iniziale (in centesimi) che sarà impostato per il primissimo intervallo."
+"Il saldo iniziale (in centesimi) che sarà impostato per il primissimo "
+"intervallo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The internal SIP Call-ID of the call."
 msgstr "Il Call-ID SIP interno della chiamata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The interval´s cash balance of the contract in EUR/USD/etc."
-msgstr "Il bilancio del saldo del contratto, in EUR/USD/ecc., per questo intervallo."
+msgid "The interval's cash balance of the contract in EUR/USD/etc."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The interval´s free-time balance of the contract in seconds."
-msgstr "Il saldo dell´intervallo di tempo gratuito, in secondi, per il contratto."
+msgid "The interval's free-time balance of the contract in seconds."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The invoice serial number."
@@ -10224,10 +10447,10 @@ msgid ""
 "of 'private', 'shared', 'blf'), 'subscriber_id' (the subscriber mapped to "
 "this key)."
 msgstr ""
-"Le linee di questo dispositivo pbx. Tasti necessari sono 'linerange' (nome del "
-"range da usare), 'key_num' (numero del tasto nel linerange, partendo da 0). "
-"'type' (uno tra 'privato', 'condiviso', 'blf'), 'subscriber_id' (l´abbonato "
-"associato a questo tasto)"
+"Le linee di questo dispositivo pbx. Tasti necessari sono 'linerange' (nome "
+"del range da usare), 'key_num' (numero del tasto nel linerange, partendo da "
+"0). 'type' (uno tra 'privato', 'condiviso', 'blf'), 'subscriber_id' (l"
+"´abbonato associato a questo tasto)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The lock level of the subscriber."
@@ -10238,24 +10461,24 @@ msgid ""
 "The lock level to reset all customer's subscribers to after a successful top-"
 "up (usually 'no lock (unlock)')."
 msgstr ""
-"Il livello di blocco a cui riportare tutti i subscriber del cliente dopo "
-"una ricarica avvenuta con successo (solitamente 'non bloccare (sblocca)')."
+"Il livello di blocco a cui riportare tutti i subscriber del cliente dopo una "
+"ricarica avvenuta con successo (solitamente 'non bloccare (sblocca)')."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The lock level to reset all customer's subscribers to after a successful top-"
 "up (usually 0)."
 msgstr ""
-"Il livello di blocco a cui riportare tutti gli abbonati del cliente dopo "
-"una ricarica avvenuta con successo (solitamente 0)."
+"Il livello di blocco a cui riportare tutti gli abbonati del cliente dopo una "
+"ricarica avvenuta con successo (solitamente 0)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The lock level to set all customer's subscribers to in case the balance "
 "underruns \"underrun_lock_threshold\"."
 msgstr ""
-"Il livello di blocco a cui impostare tutti gli abbonati del cliente nel "
-"caso in cu il saldo vada al di sotto del \"underrun_lock_threshold\"."
+"Il livello di blocco a cui impostare tutti gli abbonati del cliente nel caso "
+"in cu il saldo vada al di sotto del \"underrun_lock_threshold\"."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -10270,8 +10493,8 @@ msgid ""
 "The max number of extension modules which can be attached to this device "
 "model."
 msgstr ""
-"Il numero massimo di moduli estensione che possono essere collegati a "
-"questo dispositivo."
+"Il numero massimo di moduli estensione che possono essere collegati a questo "
+"dispositivo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The members (as SIP URIs) of the PBX hunt group."
@@ -10330,8 +10553,8 @@ msgid ""
 "The name to display on the device (usually the name of the person this "
 "device belongs to)."
 msgstr ""
-"Il nome da mostrare sul dispositivo (di solito il nome della persona a "
-"cui appartiene il telefono)."
+"Il nome da mostrare sul dispositivo (di solito il nome della persona a cui "
+"appartiene il telefono)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The ncos level this lnp entry belongs to."
@@ -10354,8 +10577,13 @@ msgstr ""
 "manipolazioni header SIP in uscita."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The new CLI to be used as UPN, when one of the patterns matches."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The number of free seconds of the carrier contract for this call."
-msgstr "Il numero di secondi gratuiti dell´operatore usati per questa chiamata."
+msgstr ""
+"Il numero di secondi gratuiti dell´operatore usati per questa chiamata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The number of free seconds of the customer used for this call."
@@ -10363,7 +10591,8 @@ msgstr "Il numero di secondi gratuiti del cliente usati per questa chiamata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The number of free seconds of the reseller used for this call."
-msgstr "Il numero di secondi gratuiti del rivenditore usati per questa chiamata."
+msgstr ""
+"Il numero di secondi gratuiti del rivenditore usati per questa chiamata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The number of top-ups performed in the 'timely' span of this interval."
@@ -10388,8 +10617,7 @@ msgstr "Data opzionale di attivazione del porting, in formato YYYY-MM-DD."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The optional date when the porting gets inactive again in format YYYY-MM-DD."
-msgstr ""
-"Data opzionale di disattivazione del porting, in formato YYYY-MM-DD."
+msgstr "Data opzionale di disattivazione del porting, in formato YYYY-MM-DD."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The package this voucher belongs to."
@@ -10470,9 +10698,10 @@ msgid ""
 "(how the label for the key is displayed in the web interface, relative to "
 "the given coordinates; one of top, bottom, left, right)."
 msgstr ""
-"La posizione dei tasti nell´immagine frontale. Gli attributi sono x, y, labelpos "
-"(definiscono come l´etichetta dei tasti viene mostrata nel´interfaccia web, "
-"relativamente alle coordinate date; ona per alto, basso, sinisctra, destra)."
+"La posizione dei tasti nell´immagine frontale. Gli attributi sono x, y, "
+"labelpos (definiscono come l´etichetta dei tasti viene mostrata nel"
+"´interfaccia web, relativamente alle coordinate date; ona per alto, basso, "
+"sinisctra, destra)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The postal code of the contact."
@@ -10491,7 +10720,9 @@ msgstr "La priorità (q-value) della registrazione."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The priority of this rule. Lower values mean higher priority."
-msgstr "La priorità di questa regola. Valori più bassi corrispondono a maggiore priorità."
+msgstr ""
+"La priorità di questa regola. Valori più bassi corrispondono a maggiore "
+"priorità."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The profile defining the actual feature set for this subscriber."
@@ -10513,8 +10744,8 @@ msgid ""
 "charge this contract. This field is required if the 'package' profile "
 "definition mode is used."
 msgstr ""
-"L´id del piano tariffario, a cui inizialmente il profilo/rete sarà associato. "
-"Questo campo è richiesto se viene utilizzata la modalità 'package'"
+"L´id del piano tariffario, a cui inizialmente il profilo/rete sarà "
+"associato. Questo campo è richiesto se viene utilizzata la modalità 'package'"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The profile set defining the possible feature sets for this subscriber."
@@ -10627,16 +10858,16 @@ msgid ""
 "The service charge amount (in cents) will be subtracted from the voucher "
 "amount upon every top-up."
 msgstr ""
-"Il costo del servizio (in centesimi) sarà sottratta dall´ammontare "
-"del voucher dopo ogni ricarica."
+"Il costo del servizio (in centesimi) sarà sottratta dall´ammontare del "
+"voucher dopo ogni ricarica."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The service charge amount (in cents) will be subtracted from the voucher "
 "amount."
 msgstr ""
-"Il costo del servizio (in centesimi) sarà sottratta dall´ammontare "
-"del voucher."
+"Il costo del servizio (in centesimi) sarà sottratta dall´ammontare del "
+"voucher."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The sound handle when to play this sound file."
@@ -10688,7 +10919,8 @@ msgstr "L´orario di inizio nel formato hh:mm:ss"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the call rating, one of ok, unrated, failed."
-msgstr "Lo stato della tariffazione della chiamata, uno tra ok, non tassato, fallito."
+msgstr ""
+"Lo stato della tariffazione della chiamata, uno tra ok, non tassato, fallito."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -10809,16 +11041,20 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The system contact, appearing in the output when acting as an SNMP Agent."
-msgstr "Il contatto di sistema, sarà fornito in output quando agirà come SNMP Agent."
+msgstr ""
+"Il contatto di sistema, sarà fornito in output quando agirà come SNMP Agent."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The system location, appearing in the output when acting as an SNMP Agent."
-msgstr "La localizzazione del sistema, sarà fornito in output quando agirà come SNMP Agent."
+msgstr ""
+"La localizzazione del sistema, sarà fornito in output quando agirà come SNMP "
+"Agent."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The system name, appearing in the output when acting as an SNMP Agent."
-msgstr "Il nome di sistema, sarà fornito in output quando agirà come SNMP Agent."
+msgstr ""
+"Il nome di sistema, sarà fornito in output quando agirà come SNMP Agent."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The temporal unit for the \"timely\" interval."
@@ -11189,6 +11425,14 @@ msgstr "Tipo di evento fraudolento."
 msgid "UDP"
 msgstr "UDP"
 
+#: share/templates/subscriber/preferences.tt
+msgid "UPN Rewrite"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "UPN rewrite set"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "URI/Number"
 msgstr "URI/Numero"
@@ -11303,6 +11547,14 @@ msgid "Upload vouchers"
 msgstr "Carica Vouchers"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Upn rewrite sources"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Upn rewrite sources add"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Uri"
 msgstr "Uri"
 
@@ -11318,7 +11570,8 @@ msgstr "Usa Regex"
 msgid ""
 "Use User-Provided-Number instead of Subscriber UUID when storing recent calls"
 msgstr ""
-"Usa User-Provided-Number invece del UUID dell'abbonato quando vengono salvata le chiamate recenti"
+"Usa User-Provided-Number invece del UUID dell'abbonato quando vengono "
+"salvata le chiamate recenti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -11327,8 +11580,9 @@ msgid ""
 "registration) and of RTP relays (both peers and subscribers)."
 msgstr ""
 "Usa un set particolare di cluster di load-balancer per mandare messaggi SIP "
-"verso questo endpoint (solo per i peer, mentre per gli abbonati viene definito "
-"dal Path durante la registrazione) e per il relay RTP (per peer e abbonati)."
+"verso questo endpoint (solo per i peer, mentre per gli abbonati viene "
+"definito dal Path durante la registrazione) e per il relay RTP (per peer e "
+"abbonati)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use free time"
@@ -11336,7 +11590,9 @@ msgstr "Usa tempo gratuito"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use rates of the reseller's billing profile for fraud control."
-msgstr "Usa le tariffe del profilo di fatturazione del rivenditore per il controllo delle frodi."
+msgstr ""
+"Usa le tariffe del profilo di fatturazione del rivenditore per il controllo "
+"delle frodi."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use reseller rates"
@@ -11373,6 +11629,10 @@ msgstr "Utente"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "User Agent"
 msgstr "User Agent"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "User CLI rewrite"
+msgstr ""
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt
@@ -11435,8 +11695,8 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Username used to configure bootstrap url on Polycom redirect server."
 msgstr ""
-"Nome utente usato per configurare la bootstrap url del server di"
-"reindirizzamento Polycom."
+"Nome utente usato per configurare la bootstrap url del server "
+"direindirizzamento Polycom."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -11538,8 +11798,7 @@ msgstr "Caselle Vocali"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Voice prompts language for voicemail, conference and application server."
-msgstr ""
-"Prompt vocali per la casella vocale, conferenza e SEMS."
+msgstr "Prompt vocali per la casella vocale, conferenza e SEMS."
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt
 #: share/templates/widgets/subscriber_vm_overview.tt
@@ -11646,15 +11905,16 @@ msgid ""
 "When checked the subscriber can receive mail2fax emails and dispatch them as "
 "faxes."
 msgstr ""
-"Se selezionato, l´abbonato puó ricevere le email mail2fax e spedirle come fax."
+"Se selezionato, l´abbonato puó ricevere le email mail2fax e spedirle come "
+"fax."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "When set to true, the ISDN ports are configured to be the Userside end of an "
 "ISDN network. This only has an effect in the ISDN mode."
 msgstr ""
-"Se impostato su true, le porte ISDN saranno configurate come teminali lato Utente "
-"di una rete ISDN. Questo avrà effetto solo nella modalità ISDN."
+"Se impostato su true, le porte ISDN saranno configurate come teminali lato "
+"Utente di una rete ISDN. Questo avrà effetto solo nella modalità ISDN."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -11666,7 +11926,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether an RTC-entity should be created for this reseller."
-msgstr "Se una entità RTC (RTC-entity) deve essere creata per questo rivenditore."
+msgstr ""
+"Se una entità RTC (RTC-entity) deve essere creata per questo rivenditore."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether calling party number was suppressed (CLIR)."
@@ -11712,7 +11973,8 @@ msgstr "Se aggiungere la copertina/frontespizio"
 msgid ""
 "Whether to also intercept call content via X-3 interface (false by default)."
 msgstr ""
-"Se intercettare anche il contenuto della chiamata tramite interfaccia X-3 (di default false)"
+"Se intercettare anche il contenuto della chiamata tramite interfaccia X-3 "
+"(di default false)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether to charge VAT in invoices."
@@ -11722,6 +11984,10 @@ msgstr "Scegliere di addebitare l´IVA in fattura"
 msgid "Whether to include check for calls to local area code"
 msgstr ""
 "Scegliere di aggiungere il controllo per le chiamate verso prefisso locale"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Whether to include check for intra pbx calls within same customer"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether to play files in a loop where applicable."
@@ -12269,11 +12535,15 @@ msgstr "registrazione fallita:"
 
 #: lib/NGCP/Panel/Form/Peering/InboundRule.pm
 msgid "reject code must be filled if reject reason is filled"
-msgstr "il codice di rifiuto deve essere compilato se il motivo del rifiuto è compilato"
+msgstr ""
+"il codice di rifiuto deve essere compilato se il motivo del rifiuto è "
+"compilato"
 
 #: lib/NGCP/Panel/Form/Peering/InboundRule.pm
 msgid "reject reason must be filled if reject code is filled"
-msgstr "il motivo del rifiuto deve essere compilato se il codice di rifiuto è compilato"
+msgstr ""
+"il motivo del rifiuto deve essere compilato se il codice di rifiuto è "
+"compilato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "reseller"
@@ -12415,6 +12685,133 @@ msgstr "y"
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid ""
+#~ "Call Forward Busy, Contains the keys \"destinations\" and \"times\". "
+#~ "\"destinations\" is an Array of Objects having a \"destination\", "
+#~ "\"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+#~ "having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", "
+#~ "\"year\". \"times\" can be empty, then the CF is applied always."
+#~ msgstr ""
+#~ "Deviazione di Chiamata su Occupato - Contiene le chiavi \"destinations"
+#~ "\" (destinazioni) e \"times\" (periodi). \"destinations\" è una lista di "
+#~ "oggetti costituiti dai campi \"destination\" (destinazione), \"priority"
+#~ "\" (priorità) e \"timeout\" (durata). \"times\" è una lista di oggetti "
+#~ "costituiti dai campi \"minute\" (minuto), \"hour\" (ora), \"wday"
+#~ "\" (giorno della settimana), \"mday\" (giorno del mese), \"month"
+#~ "\" (mese), \"year\" (anno). \"times\" può essere vuoto, in questo caso la "
+#~ "deviazione è effettuata sempre."
+
+#~ msgid ""
+#~ "Call Forward Busy, Number of Objects, each containing the keys, "
+#~ "\"destinationset\" and \"timeset\". The values must be the name of a "
+#~ "destination/time set which belongs to the same subscriber."
+#~ msgstr ""
+#~ "Deviazione di Chiamata su Occupato, Numero degli Oggetti, ciascuno "
+#~ "contiene le chiavi \"destinationset\" (gruppo di detinazione) e \"timeset"
+#~ "\" (gruppo degli intervalli). I valori devono essere i nomi di una coppia "
+#~ "detination/time che appartiene all´abbonato stesso."
+
+#~ msgid ""
+#~ "Call Forward Timeout, Contains the keys \"destinations\", \"times\" and "
+#~ "\"ringtimeout\". \"destinations\" is an Array of Objects having a "
+#~ "\"destination\", \"priority\" and \"timeout\" field. \"times\" is an "
+#~ "Array of Objects having the fields \"minute\", \"hour\", \"wday\", \"mday"
+#~ "\", \"month\", \"year\". \"times\" can be empty, then the CF is applied "
+#~ "always.\"ringtimeout\" is a numeric ringing time value in seconds before "
+#~ "call forward will be applied."
+#~ msgstr ""
+#~ "Deviazione di Chiamata su Mancata Risposta, Contiene le chiavi "
+#~ "\"destinations\" (destinazioni), \"times\" (periodi) e \"ringtimeout"
+#~ "\" (tempo di squillo).\"destinations\" è una lista di oggetti costituiti "
+#~ "dai campi \"destination\" (destinazione), \"priority\" (priorità) e "
+#~ "\"timeout\" (durata). \"times\" è una lista di oggetti costituiti dai "
+#~ "campi \"minute\" (minuto), \"hour\" (ora), \"wday\" (giorno della "
+#~ "settimana), \"mday\" (giorno del mese), \"month\" (mese), \"year"
+#~ "\" (anno). \"times\" può essere vuoto, in questo caso la deviazione è "
+#~ "effettuata sempre. \"ringtimeout\" è il tempo di squillo in secondi prima "
+#~ "che sia applicato l´inoltro di chiamata."
+
+#~ msgid ""
+#~ "Call Forward Timeout, Number of Objects, each containing the keys, "
+#~ "\"destinationset\" and \"timeset\". The values must be the name of a "
+#~ "destination/time set which belongs to the same subscriber."
+#~ msgstr ""
+#~ "Deviazione di Chiamata su Mancata Risposta, Numero degli Oggetti, "
+#~ "ciascuno contiene le chiavi \"destinationset\" (gruppo di detinazione) e "
+#~ "\"timeset\" (gruppo degli intervalli). I valori devono essere i nomi di "
+#~ "una coppia detination/time che appartiene all´abbonato stesso."
+
+#~ msgid ""
+#~ "Call Forward Unavailable, Contains the keys \"destinations\" and \"times"
+#~ "\". \"destinations\" is an Array of Objects having a \"destination\", "
+#~ "\"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+#~ "having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", "
+#~ "\"year\". \"times\" can be empty, then the CF is applied always."
+#~ msgstr ""
+#~ "Deviazione di Chiamata su Non Disponibile - Contiene le chiavi "
+#~ "\"destinations\" (destinazioni) e \"times\" (periodi). \"destinations\" è "
+#~ "una lista di oggetti costituiti dai campi \"destination\" (destinazione), "
+#~ "\"priority\" (priorità) e \"timeout\" (durata). \"times\" è una lista di "
+#~ "oggetti costituiti dai campi \"minute\" (minuto), \"hour\" (ora), \"wday"
+#~ "\" (giorno della settimana), \"mday\" (giorno del mese), \"month"
+#~ "\" (mese), \"year\" (anno). \"times\" può essere vuoto, in questo caso la "
+#~ "deviazione è effettuata sempre."
+
+#~ msgid ""
+#~ "Call Forward Unavailable, Number of Objects, each containing the keys, "
+#~ "\"destinationset\" and \"timeset\". The values must be the name of a "
+#~ "destination/time set which belongs to the same subscriber."
+#~ msgstr ""
+#~ "Deviazione di Chiamata su Non Disponibile, Numero degli Oggetti, ciascuno "
+#~ "contiene le chiavi \"destinationset\" (gruppo di detinazione) e \"timeset"
+#~ "\" (gruppo degli intervalli). I valori devono essere i nomi di una coppia "
+#~ "detination/time che appartiene all´abbonato stesso."
+
+#~ msgid ""
+#~ "Call Forward Unconditional, Contains the keys \"destinations\" and \"times"
+#~ "\". \"destinations\" is an Array of Objects having a \"destination\", "
+#~ "\"priority\" and \"timeout\" field. \"times\" is an Array of Objects "
+#~ "having the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", "
+#~ "\"year\". \"times\" can be empty, then the CF is applied always."
+#~ msgstr ""
+#~ "Deviazione di Chiamata Incondizionata - Contiene le chiavi \"destinations"
+#~ "\" (destinazioni) e \"times\" (periodi). \"destinations\" è una lista di "
+#~ "oggetti costituiti dai campi \"destination\" (destinazione), \"priority"
+#~ "\" (priorità) e \"timeout\" (durata). \"times\" è una lista di oggetti "
+#~ "costituiti dai campi \"minute\" (minuto), \"hour\" (ora), \"wday"
+#~ "\" (giorno della settimana), \"mday\" (giorno del mese), \"month"
+#~ "\" (mese), \"year\" (anno). \"times\" può essere vuoto, in questo caso la "
+#~ "deviazione è effettuata sempre."
+
+#~ msgid ""
+#~ "Call Forward Unconditional, Number of Objects, each containing the keys, "
+#~ "\"destinationset\" and \"timeset\". The values must be the name of a "
+#~ "destination/time set which belongs to the same subscriber."
+#~ msgstr ""
+#~ "Deviazione di Chiamata su Incondizionata, Numero degli Oggetti, ciascuno "
+#~ "contiene le chiavi \"destinationset\" (gruppo di detinazione) e \"timeset"
+#~ "\" (gruppo degli intervalli). I valori devono essere i nomi di una coppia "
+#~ "detination/time che appartiene all´abbonato stesso."
+
+#~ msgid "LNP number already defined for LNP provider!"
+#~ msgstr "Numero portato già definito per questo provider!"
+
+#~ msgid "Max Number of Subscribers"
+#~ msgstr "Numero Massimo di Abbonati"
+
+#~ msgid "The date until this voucher is valid (YYYY-MM-DD hh:mm:ss) "
+#~ msgstr ""
+#~ "La data fino a quando questo voucher è valido (YYYY-MM-DD hh:mm:ss)."
+
+#~ msgid "The interval´s cash balance of the contract in EUR/USD/etc."
+#~ msgstr ""
+#~ "Il bilancio del saldo del contratto, in EUR/USD/ecc., per questo "
+#~ "intervallo."
+
+#~ msgid "The interval´s free-time balance of the contract in seconds."
+#~ msgstr ""
+#~ "Il saldo dell´intervallo di tempo gratuito, in secondi, per il contratto."
 
 #~ msgid "Create Peering Rule"
 #~ msgstr "Crea Regole Peer"
@@ -12846,8 +13243,8 @@ msgstr "si"
 #~ "Maximum number of concurrent outgoing sessions (calls) for subscribers "
 #~ "within the same account"
 #~ msgstr ""
-#~ "Numero massimo di sessioni in uscita simultanee (chiamate), per "
-#~ "abbonati appartenenti allo stesso cliente"
+#~ "Numero massimo di sessioni in uscita simultanee (chiamate), per abbonati "
+#~ "appartenenti allo stesso cliente"
 
 #~ msgid ""
 #~ "Maximum number of concurrent sessions (calls) for a subscriber or peer."
