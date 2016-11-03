@@ -3,6 +3,9 @@ use strict;
 use warnings;
 
 use Sipwise::Base;
+
+use NGCP::Panel::Utils::Generic qw(:all);
+
 use DBIx::Class::Exception;
 use String::MkPasswd;
 use NGCP::Panel::Utils::DateTime;
@@ -416,6 +419,7 @@ sub get_pbx_subscribers_ordered_by_ids{
     }
     return wantarray ? (\@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef )) : \@items;
 }
+
 sub get_subscriber_pbx_items{
     my %params = @_;
 
@@ -470,71 +474,116 @@ sub manage_pbx_groups{
     my $c               = $params{c};
     my $schema          = $params{schema} // $c->model('DB');
     my $group_ids       = $params{group_ids} // [];
+    my $groups          = $params{groups} // [];
     my $groupmember_ids = $params{groupmember_ids} // [];
+    my $groupmembers    = $params{groupmembers} // [];
     my $subscriber      = $params{subscriber};
     my $customer        = $params{customer} // $subscriber->contract;
 
-    my $groups       = $params{groups} // ( @$group_ids ? get_pbx_subscribers_ordered_by_ids(
-        c           => $c, 
-        schema      => $schema, 
-        ids         => $group_ids, 
-        customer_id => $customer->id, 
-        is_group    => 1,
-    ) : [] );
-    my $groupmembers = $params{groupmembers} // ( @$groupmember_ids ? get_pbx_subscribers_ordered_by_ids(
-        c           => $c, 
-        schema      => $schema, 
-        ids         => $groupmember_ids, 
-        customer_id => $customer->id, 
-        is_group    => 0,
-    ) : [] );
-
-    #delete all old groups, to support correct order
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
-    my $subscriber_uri  = get_pbx_group_member_name( subscriber => $subscriber );
-    my $member_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, 
-        attribute => 'cloud_pbx_hunt_group', 
-    )->search_rs({
-        subscriber_id => { -in => [ $prov_subscriber->voip_pbx_groups->get_column('group_id')->all ] },
-        value         => $subscriber_uri,
-    });
+
+    my $ids_existent = get_subscriber_pbx_items_ids( c => $c, subscriber => $subscriber );
+
+    if( !$prov_subscriber->is_pbx_group ){
+        if(!@$group_ids && @$groups){
+            $group_ids = [ map {$_->id} @$groups ];
+        }
+        #Returns 0 if the structures differ, else returns 1.
+        if(!compare($ids_existent, $group_ids)){
+            $c->log->debug('Old and new groups differ, apply changes');
+
+            $c->log->debug('Existent groups:'.join(',',@$ids_existent));
+            $c->log->debug('Requested groups:'.join(',',@$group_ids));
+
+            my(@added_ids, @deleted_ids, %existent_hash, %requested_hash);
+            @requested_hash{@$group_ids} = @$group_ids;
+            @existent_hash{@$ids_existent} = @$ids_existent;
+            @added_ids = grep { !exists $existent_hash{$_} } keys %requested_hash;
+            @deleted_ids = grep { !exists $requested_hash{$_} } keys %existent_hash;
+
+            my $subscriber_uri  = get_pbx_group_member_name( subscriber => $subscriber );
+
+
+            if(scalar @deleted_ids){
+                #delete all old groups, to support correct order
+                $c->log->debug('Delete groups:'.join(',',@deleted_ids));
+                my $member_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c,
+                    attribute => 'cloud_pbx_hunt_group',
+                )->search_rs({
+                    subscriber_id => { -in => [ @deleted_ids ] },
+                    value         => $subscriber_uri,
+                });
     
-    $member_preferences_rs->delete;
-    $prov_subscriber->voip_pbx_groups->delete;
+                $member_preferences_rs->delete;
+                $prov_subscriber->voip_pbx_groups->search_rs( { group_id => { -in => [@deleted_ids] } } )->delete;
+            }
+            if(scalar @added_ids){
+                $c->log->debug('Added groups:'.join(',',@added_ids));
+                my $groups_added       = @$group_ids ? get_pbx_subscribers_ordered_by_ids(
+                    c           => $c,
+                    schema      => $schema,
+                    ids         => \@added_ids,
+                    customer_id => $customer->id,
+                    is_group    => 1,
+                ) : [] ;
 
-    #create new groups
-    foreach my $group(@{ $groups }) {
-        my $group_prov_subscriber = $group->provisioning_voip_subscriber;
-        next unless( $group_prov_subscriber && $group_prov_subscriber->is_pbx_group );
-        $prov_subscriber->voip_pbx_groups->create({
-            group_id => $group_prov_subscriber->id,
-        });
-        my $preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c               => $c, 
-            attribute       => 'cloud_pbx_hunt_group', 
-            prov_subscriber => $group_prov_subscriber,
-        );
-        $preferences_rs->create({ value => $subscriber_uri });
-    }
+                #create new groups_added
+                foreach my $group(@{ $groups_added }) {
+                    my $group_prov_subscriber = $group->provisioning_voip_subscriber;
+                    next unless( $group_prov_subscriber && $group_prov_subscriber->is_pbx_group );
+                    $prov_subscriber->voip_pbx_groups->create({
+                        group_id => $group_prov_subscriber->id,
+                    });
+                    my $preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                        c               => $c,
+                        attribute       => 'cloud_pbx_hunt_group',
+                        prov_subscriber => $group_prov_subscriber,
+                    );
+                    $preferences_rs->create({ value => $subscriber_uri });
+                }
+            }{
+                $c->log->debug('No groups were added.');
+            }
+        }else{
+            $c->log->debug('Old and new groups are the same');
+        }
+    }else{
+        if(!@$groupmember_ids && @$groupmembers){
+            $groupmember_ids = [ map {$_->id} @$groupmembers ];
+        }
+        #Returns 0 if the structures differ, else returns 1.
+        if(!compare($ids_existent, $groupmember_ids)){
+            $c->log->debug('Old and new group members differ, apply changes');
+            my $groupmembers = @$groupmember_ids ? get_pbx_subscribers_ordered_by_ids(
+                c           => $c,
+                schema      => $schema,
+                ids         => $groupmember_ids,
+                customer_id => $customer->id,
+                is_group    => 0,
+            ) : [] ;
 
-    #delete old members to support correct order
-    $prov_subscriber->voip_pbx_group_members->delete;
-    my $group_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, 
-        attribute => 'cloud_pbx_hunt_group', 
-        prov_subscriber => $prov_subscriber,
-    );
-    $group_preferences_rs->delete;
+            #delete old members to support correct order
+            $prov_subscriber->voip_pbx_group_members->delete;
+            my $group_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c,
+                attribute => 'cloud_pbx_hunt_group',
+                prov_subscriber => $prov_subscriber,
+            );
+            $group_preferences_rs->delete;
 
-    foreach my $member(@{ $groupmembers }) {
-        my $member_prov_subscriber = $member->provisioning_voip_subscriber;
-        next unless( $member_prov_subscriber && !$member_prov_subscriber->is_pbx_group );
-        my $member_uri = get_pbx_group_member_name( subscriber => $member );
-        $prov_subscriber->voip_pbx_group_members->create({
-            subscriber_id => $member_prov_subscriber->id,
-        });
-        $group_preferences_rs->create({ value => $member_uri });
+            foreach my $member(@{ $groupmembers }) {
+                my $member_prov_subscriber = $member->provisioning_voip_subscriber;
+                next unless( $member_prov_subscriber && !$member_prov_subscriber->is_pbx_group );
+                my $member_uri = get_pbx_group_member_name( subscriber => $member );
+                $prov_subscriber->voip_pbx_group_members->create({
+                    subscriber_id => $member_prov_subscriber->id,
+                });
+                $group_preferences_rs->create({ value => $member_uri });
+            }
+        }else{
+            $c->log->debug('Old and new group members are the same');
+        }
    }
 }
 sub get_pbx_group_member_name{
