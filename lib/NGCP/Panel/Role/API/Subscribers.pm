@@ -391,11 +391,11 @@ sub prepare_resource {
                     }
                     my $absent_ids;
                     ($groupmembers,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_ordered_by_ids(
-                        c            => $c,
-                        schema       => $schema,
-                        ids          => $resource->{pbx_groupmember_ids},
-                        customer_id  => $resource->{customer_id},
-                        is_group     => 0,
+                        c             => $c,
+                        schema        => $schema,
+                        ids           => $resource->{pbx_groupmember_ids},
+                        customer_id   => $resource->{customer_id},
+                        is_group      => 0,
                         sync_with_ids => 1,
                     ) ;
                     if($absent_ids){
