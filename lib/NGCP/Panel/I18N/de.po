@@ -127,6 +127,7 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
 #: lib/NGCP/Panel/Utils/Sounds.pm lib/NGCP/Panel/Utils/Voucher.pm
 #: share/templates/customer/details.tt
+#: share/templates/subscriber/preferences.tt
 msgid "#"
 msgstr "#"
 
@@ -511,6 +512,14 @@ msgstr ""
 msgid "Address"
 msgstr "Adresse"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Admin name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Admin pass"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/master.tt
 msgid "Administrative"
 msgstr "Administrativ"
@@ -683,6 +692,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "An Array of mappings, each entry containing the mandatory key \"auth_key\"."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An Array of source CLI patterns"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -1311,6 +1324,14 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CLI of CloudPBX Pilot Subscriber"
 msgstr "Rufnummer des CloudPBX Pilot-Subscribers"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CPBX Device Administration"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CPBX Device Firmware Settings"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CSS"
@@ -2508,6 +2529,13 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Defines a rewrite CLI and and pattern. If the a-number of a call matches one "
+"of the associated patterns, the User-Provided-Number is set to the "
+"configured CLI."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Defines how to provide the routing number after a LNP query. If enabled, rn "
 "parameter will be used."
 msgstr ""
@@ -2924,6 +2952,22 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Disable RTP-Proxy in the selected case"
 msgstr "RTP-Proxy im gewählten Fall deaktivieren"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable auto upgrade feature."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable firmware upgrade."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable phone web interface."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Disable web gui"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -3381,6 +3425,10 @@ msgstr ""
 msgid "Expand Groups"
 msgstr "Alle ausklappen"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Expected firmware version."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Expires"
 msgstr "Läuft aus"
@@ -3477,6 +3525,18 @@ msgstr "Externe ID des angerufenen Subscribers, wenn lokal."
 msgid "FAILED"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "FW Upgrade disable"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "FW automatic upgrade disable"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "FW version"
+msgstr ""
+
 #: share/templates/security/list.tt
 msgid "Fail Count"
 msgstr "Fehler-Anzahl"
@@ -3543,6 +3603,10 @@ msgstr "PBX Gerät erstellen fehlgeschlagen"
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to create PBX group"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to create UPN rewrite set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
@@ -3741,6 +3805,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to delete PBX device"
 msgstr "PBX Gerät löschen fehlgeschlagen."
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete UPN rewrite set."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Failed to delete administrator"
@@ -4051,6 +4119,10 @@ msgstr "PBX Gerät aktualisieren fehlgeschlagen."
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to update PBX group"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to update UPN rewrite set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
@@ -4961,6 +5033,10 @@ msgstr ""
 msgid "Inbound peering rule successfully deleted"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Include Intra PBX Calls within same Customer"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/ncos/pattern_list.tt
 msgid "Include local area code"
 msgstr "Ortsvorwahl inkludieren"
@@ -5073,6 +5149,10 @@ msgid "Internal NCOS Level #"
 msgstr "Interne NCOS-Stufe #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal User CLI rewrite #"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal allowed source IP group #"
 msgstr "Interne Erlaubte Quell-IP-Gruppen #"
 
@@ -5130,6 +5210,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Interval when the secret key is automatically renewed."
+msgstr ""
+
+#: share/templates/ncos/pattern_list.tt
+msgid "Intra PBX Calls within same customer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5570,10 +5654,6 @@ msgid "LNP npdi param"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
-msgid "LNP number already defined for LNP provider!"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "LNP number does not exist!"
 msgstr ""
 
@@ -5906,12 +5986,12 @@ msgstr "Vergleichs-Pattern"
 msgid "Match pattern, a regular expression."
 msgstr "Vergleichs-Pattern, ein regulärer Ausdruck"
 
-#: lib/NGCP/Panel/Controller/Customer.pm
-msgid "Max Number of Subscribers"
-msgstr "Max. Anzahl von Subscriber"
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Max subscribers"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Max. Subscribers"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6202,6 +6282,18 @@ msgstr ""
 msgid "NGCP Support Status"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "NTP server"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "NTP server URL."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "NTP server sync interval"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
@@ -6229,6 +6321,10 @@ msgstr "Name in Fax-Kopf für Sendfax"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Name of the location."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Name of the phone administrator."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6273,6 +6369,10 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
+#: share/templates/subscriber/preferences.tt
+msgid "New CLI"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "New Description"
 msgstr "Neue Beschreibung"
@@ -6288,6 +6388,10 @@ msgstr "Neue Nachrichten"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "New Name"
 msgstr "Neuer Name"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "New cli"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "No Billing Fee file specified!"
@@ -6776,6 +6880,10 @@ msgid "Password"
 msgstr "Passwort"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Password of the phone administrator."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Password used to configure bootstrap url on Panasonic redirect server. "
 "Obtained from Panasonic."
@@ -6802,7 +6910,7 @@ msgstr ""
 msgid "Pattern"
 msgstr "Pattern"
 
-#: share/templates/ncos/list.tt
+#: share/templates/ncos/list.tt share/templates/subscriber/preferences.tt
 msgid "Patterns"
 msgstr "Patterns"
 
@@ -7560,6 +7668,10 @@ msgstr "Übersetzungsregeln-Sets"
 #: share/templates/rewrite/rules_list.tt
 msgid "Rewrite Rules for %1"
 msgstr "Übersetzungsregeln für %1"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Rewrite Set entry not found"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule does not exist"
@@ -8729,6 +8841,10 @@ msgstr "Missbrauchs-Intervall erfolgreich zurückgesetzt!"
 msgid "Successfully cleared reminder setting"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully created UPN rewrite set"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully created device configuration"
 msgstr "Geräte-Konfiguration erfolgreich erstellt"
@@ -8768,6 +8884,10 @@ msgstr "Vertraute Quelle erfolgreich erstellt"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted Call Forward"
 msgstr "Ruf-Weiterleitung erfolgreich gelöscht"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted UPN rewrite set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted auto attendant slot"
@@ -8836,6 +8956,10 @@ msgstr "Subscriber erfolgreich terminiert"
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Successfully triggered config reload via SIP"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully updated UPN rewrite set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -8939,6 +9063,26 @@ msgstr ""
 #: share/templates/customer/details.tt
 msgid "Sync Device"
 msgstr "Gerät synchronisieren"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Synchronisation interval of NTP server."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Syslog level"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Syslog logging level."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Syslog server"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Syslog server URL."
+msgstr ""
 
 #: share/templates/widgets/admin_system_overview.tt
 msgid "System <strong>Ok</strong>"
@@ -10078,6 +10222,10 @@ msgstr ""
 "ausgehende SIP-Header-Manipulationen"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The new CLI to be used as UPN, when one of the patterns matches."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The number of free seconds of the carrier contract for this call."
 msgstr ""
 
@@ -10881,6 +11029,14 @@ msgstr ""
 msgid "UDP"
 msgstr "UDP"
 
+#: share/templates/subscriber/preferences.tt
+msgid "UPN Rewrite"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "UPN rewrite set"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "URI/Number"
 msgstr "URI/Nummer"
@@ -10995,6 +11151,14 @@ msgid "Upload vouchers"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Upn rewrite sources"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Upn rewrite sources add"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Uri"
 msgstr "Uri"
 
@@ -11061,6 +11225,10 @@ msgstr "Benutzer"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "User Agent"
 msgstr "User Agent"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "User CLI rewrite"
+msgstr ""
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt
@@ -11393,6 +11561,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether to include check for calls to local area code"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Whether to include check for intra pbx calls within same customer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12085,6 +12257,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Max Number of Subscribers"
+#~ msgstr "Max. Anzahl von Subscriber"
 
 #~ msgid "Create Peering Rule"
 #~ msgstr "Neue Peering-Regel"
