@@ -279,6 +279,22 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
                 $serial++;
             };
         }
+    } elsif ($c->req->body_parameters->{'ca.verify'} || $c->req->parameters->{'ca.verify'}) {
+        my $result = $c->model('CA')->check_ca_errors($c);
+        if($result){
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $result,
+                data => { $c->stash->{administrator}->get_inflated_columns },
+                desc  => $c->loc('CA certificate verification failed: '.$result),
+            );
+        }else{
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc  => $c->loc('CA certificate is OK'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     } elsif ($c->req->body_parameters->{'del.delete'}) {
         undef $serial;
         undef $cert;

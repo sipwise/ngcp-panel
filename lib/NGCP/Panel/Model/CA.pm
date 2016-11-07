@@ -29,11 +29,8 @@ sub COMPONENT {
 sub make_client {
     my ($self, $c, $serial) = @_;
     my $client_key = Path::Tiny->tempfile;
-    my $command = 'openssl x509 -noout -purpose -in ' . $c->config->{ssl}->{rest_api_certfile};
-    $c->log->debug($command);
-    my $stdout = `$command 2>&1` // "";
-    unless ($stdout =~ m/SSL (client|server) CA : Yes/) {
-        $c->log->error("Failed to check CA certificate: $stdout");
+    my($command,$stdout);
+    if($self->check_ca_errors($c)){
         die [$c->loc('Cannot use the configured certificate for signing client certificates'), "showdetails"];
     }
     $command = sprintf 'certtool -p --bits 3248 --outfile %s 1>&- 2>&-', $client_key->stringify;
@@ -58,6 +55,29 @@ sub make_client {
     $client_key->remove;
 
     return $cert;
+}
+
+sub check_ca_errors {
+    my ($self, $c) = @_;
+    my($command,$stdout,$error);
+    $command = 'openssl x509 -noout -purpose -in ' . $c->config->{ssl}->{rest_api_certfile};
+    $c->log->debug($command);
+    $stdout = `$command 2>&1` // "";
+    unless ($stdout =~ m/SSL (client|server) CA : Yes/) {
+        $error = "Failed to check CA certificate: $stdout";
+    }
+    $command = 'openssl verify ' . $c->config->{ssl}->{rest_api_certfile};
+    #$command = 'openssl verify /etc/ngcp-config/ssl/client-auth-ca.crt';
+    $c->log->debug($command);
+    $stdout = `$command 2>&1` // "";
+    if ($stdout =~ m/certificate has expired/) {
+        $error = "Failed to check CA certificate: expired: $stdout";
+    }
+    if($error){
+        $c->log->error($error);
+        return $error;        
+    }
+    return 0;
 }
 
 sub make_pkcs12 {
