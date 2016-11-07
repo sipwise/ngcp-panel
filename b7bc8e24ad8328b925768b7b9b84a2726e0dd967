@@ -22,6 +22,30 @@
       "revId": "b7bc8e24ad8328b925768b7b9b84a2726e0dd967",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_35de3e40",
+        "filename": "lib/NGCP/Panel/Controller/API/SMSItem.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-11-07T11:27:22Z",
+      "side": 1,
+      "message": "nope, needs to be fixed ;) thank you\n\nespecially, there are 2 \"use parent\" afaics",
+      "parentUuid": "3a4c51b2_606dae32",
+      "range": {
+        "startLine": 15,
+        "startChar": 59,
+        "endLine": 15,
+        "endChar": 71
+      },
+      "revId": "b7bc8e24ad8328b925768b7b9b84a2726e0dd967",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
