@@ -31,6 +31,7 @@ unless ($valid_ssl_client_cert && $ssl_ca_cert) {
     ($valid_ssl_client_cert, $ssl_ca_cert) = _download_certs($uri);
     $valid_ssl_client_key = $valid_ssl_client_cert;
 }
+my $ca_verify_error = _verify_ca($uri);
 
 my ($ua, $res);
 $ua = LWP::UserAgent->new;
@@ -49,7 +50,6 @@ SKIP: {
     is($res->code, 400, "check invalid client certificate")
         || note ($res->message);
 }
-
 SKIP: {
     unless ( $unauth_ssl_client_cert && (-e $unauth_ssl_client_cert) ) {
         skip ("Skip unauthorized client certificate, we have none", 1);
@@ -66,15 +66,21 @@ SKIP: {
 }
 
 # successful auth
-$ua->ssl_opts(
-    SSL_cert_file => $valid_ssl_client_cert,
-    SSL_key_file => $valid_ssl_client_key,
-    SSL_verify_mode => 0,
-    verify_hostname => 0,
-);
-$res = $ua->get($uri.'/api/');
-is($res->code, 200, "check valid client certificate")
-    || note ($res->message);
+SKIP: {
+    if($ca_verify_error){
+        skip ("Skip valid certificate test: CA has errors: $ca_verify_error", 1);
+    }else{
+        $ua->ssl_opts(
+            SSL_cert_file => $valid_ssl_client_cert,
+            SSL_key_file => $valid_ssl_client_key,
+            SSL_verify_mode => 0,
+            verify_hostname => 0,
+        );
+        $res = $ua->get($uri.'/api/');
+        is($res->code, 200, "check valid client certificate")
+            || note ($res->message);
+    }
+}
 
 #my @links = $res->header('Link');
 #ok(grep /^<\/api\/contacts\/>; rel="collection /, @links);
@@ -82,12 +88,19 @@ is($res->code, 200, "check valid client certificate")
 
 done_testing;
 
-sub _download_certs {
+sub _prepare_ua {
     my ($uri) = @_;
     my ($ua, $req, $res);
     $ua = LWP::UserAgent->new(cookie_jar => {}, ssl_opts => {verify_hostname => 0, SSL_verify_mode => 0});
     $res = $ua->post($uri.'/login/admin', {username => 'administrator', password => 'administrator'}, 'Referer' => $uri.'/login/admin');
     $res = $ua->get($uri.'/dashboard/');
+    return $ua;
+}
+
+sub _download_certs {
+    my ($uri) = @_;
+    my ($ua, $req, $res);
+    $ua = _prepare_ua($uri);
     $res = $ua->get($uri.'/administrator/1/api_key');
     if ($res->decoded_content =~ m/gen\.generate/) { # key need to be generated first
         $res = $ua->post($uri.'/administrator/1/api_key', {'gen.generate' => 'foo'}, 'Referer' => $uri.'/dashboard');
@@ -98,6 +111,19 @@ sub _download_certs {
     $res = $ua->post($uri.'/administrator/1/api_key', {'ca.download' => 'foo'}, 'Referer' => $uri.'/dashboard', ':content_file' => $tmp_apica_filename);
     diag ("Client cert: $tmp_apiclient_filename - CA cert: $tmp_apica_filename\n");
     return ($tmp_apiclient_filename, $tmp_apica_filename);
+}
+
+sub _verify_ca {
+    my ($uri) = @_;
+    my ($ua, $req, $res);
+    $ua = _prepare_ua($uri);
+    $res = $ua->get($uri.'/administrator/1/api_key?ca.verify=1', 'Referer' => $uri.'/dashboard');
+    my $content = $res->decoded_content;
+    if($content !~ /CA certificate is OK/i){
+        (my ($error)) = $res->decoded_content =~/<div class="alert alert-error">(.*?)<\/div>/ism;
+        return $error;
+    }
+    return;
 }
 
 # vim: set tabstop=4 expandtab:
