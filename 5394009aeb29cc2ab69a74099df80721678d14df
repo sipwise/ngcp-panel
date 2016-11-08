@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_1bb7f087",
+        "filename": "lib/NGCP/Panel/I18N/de.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 2559,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2016-11-08T11:15:36Z",
+      "side": 1,
+      "message": "Is that normal to have empty msgid?",
+      "range": {
+        "startLine": 2559,
+        "startChar": 0,
+        "endLine": 2559,
+        "endChar": 8
+      },
+      "revId": "5394009aeb29cc2ab69a74099df80721678d14df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
