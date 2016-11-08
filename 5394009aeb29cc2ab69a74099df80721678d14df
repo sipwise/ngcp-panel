@@ -22,6 +22,30 @@
       "revId": "5394009aeb29cc2ab69a74099df80721678d14df",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_3b5bcc55",
+        "filename": "lib/NGCP/Panel/I18N/de.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 2559,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2016-11-08T11:19:45Z",
+      "side": 1,
+      "message": "Yes, it means see the next line :-)",
+      "parentUuid": "3a4c51b2_1bb7f087",
+      "range": {
+        "startLine": 2559,
+        "startChar": 0,
+        "endLine": 2559,
+        "endChar": 8
+      },
+      "revId": "5394009aeb29cc2ab69a74099df80721678d14df",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
