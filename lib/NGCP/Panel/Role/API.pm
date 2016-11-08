@@ -721,6 +721,7 @@ sub hal_from_item {
             c => $c,
             resource => $resource,
             form => $form,
+            $form_exceptions ? (exceptions => $form_exceptions) : (),
             run => 0,
         );
     }
