@@ -457,6 +457,10 @@ msgstr "Una stringa identificativa unica (solo caratteri alfanumerici e _)."
 msgid "A username used for authentication against the peer host."
 msgstr "Una nome utente usato per autenticarsi verso il peer host."
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A valid CLI in the E164 format"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "ACL"
 msgstr "Restrizioni di Accesso"
@@ -924,6 +928,10 @@ msgstr ""
 "Una lista di definizioni temporali con chiavi \"year\", \"month\", \"mday\", "
 "\"wday\", \"hour\", \"minute\", dove ogni valore puó essere un numero come "
 "\"10\" o un range come \"10-20\"."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An error message in case of a failed transmission"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An external ID to identify the top-up request in the top-up log."
@@ -2666,6 +2674,13 @@ msgstr ""
 "Definisce se l´abbonato può ancora registrarsi e inviare/ricevere chiamate "
 "nel caso la Modalità Emergenza sia abilitata per il dominio dell´abbonato. "
 "Se disabilitato, registrazioni e chiamate saranno bloccate."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Defines whether this subscriber or domain is handled in an IMS application "
+"server context, so no direct registrations and calls are possible, but are "
+"signalled via an IMS S-CSCF instead"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/administrator/list.tt
 #: share/templates/billing/fees.tt share/templates/billing/peaktimes.tt
@@ -4944,6 +4959,14 @@ msgid "ID in the backend RTC API (readonly)."
 msgstr "ID in the backend RTC API (sola lettura)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "IMS Application Server"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "IMS Subscriber/Domain"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "INBOX"
 msgstr "INBOX"
 
@@ -6874,6 +6897,12 @@ msgid "Other cli"
 msgstr "Altra cli"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Our CLI in case of sent messages. Must be valid according to the preferences "
+"allowed_clis, user_cli, cli"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Outbound"
 msgstr "Uscita"
 
@@ -7628,6 +7657,10 @@ msgstr "Sola lettura"
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Read-Only"
 msgstr "Sola-Lettura"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reason"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Receive Reports"
@@ -9409,6 +9442,10 @@ msgid "Terminating own subscriber is prohibited."
 msgstr "Terminare il proprio abbonato è proibito."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Text"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The \"timely\" interval in temporal units."
 msgstr "L´intervallo \"temporale\" in unità di tempo."
 
@@ -9810,6 +9847,10 @@ msgid ""
 msgstr ""
 "La priorità del Contact per chiamata in serie (valore decimale, valore "
 "maggiore ha alta priorità) tra -1.00 e 1.00"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The content of the message"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -10383,6 +10424,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The internal SIP Call-ID of the call."
 msgstr "Il Call-ID SIP interno della chiamata."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The internal id in the sms journal"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The interval's cash balance of the contract in EUR/USD/etc."
@@ -10987,6 +11032,10 @@ msgstr "L´id abboanto a cui appartine il messaggio."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber id this destination set belongs to."
 msgstr "L´id dell´abbonato a cui appartiene il questa destinazione"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber id this journal entry belongs to"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber id this source set belongs to"
@@ -11944,6 +11993,14 @@ msgstr "Se utilizzare minuti gratuiti per chiamare questa destinazione."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether it is a call between subscribers of one single customer."
 msgstr "Se è una chiamata tra abbonati dello stesso cliente."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Whether the logged message is sent or received"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Whether the message has been sent successfully"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether the reseller rates were used for interval_cost or not."
