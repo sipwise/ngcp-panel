@@ -41,8 +41,13 @@ EOF
     my @ips = ();
     for my $host (grep {$$_[1]} @$ip_res) {
         my $xmlDoc = $xml_parser->parse_string($host->[2]);
-        @ips = map { { ip => $_->to_literal } }
-                    $xmlDoc->findnodes('//member/value/string');
+        foreach my $node ($xmlDoc->findnodes('//member')) {
+            my $name = $node->findvalue('./name');
+            my $value = $node->findvalue('./value/string');
+            if ($name eq 'name') {
+                push @ips, { ip => $value };
+            }
+        }
     }
 
 
@@ -78,13 +83,20 @@ EOF
             }
         }
     }
-
+    my $config_failed_auth_attempts = $c->config->{security}->{failed_auth_attempts} // 3;
     for my $key (keys %{ $usr }) {
-        push @users, {
-            username => $key,
-            auth_count => $usr->{$key}->{auth_count},
-            last_auth => NGCP::Panel::Utils::DateTime::epoch_local($usr->{$key}->{last_auth}),
-        } if($usr->{$key}->{auth_count} >= $c->config->{security}->{failed_auth_attempts});
+        my $last_auth = $usr->{$key}->{last_auth} ? NGCP::Panel::Utils::DateTime::epoch_local($usr->{$key}->{last_auth}) : undef;
+        if($last_auth && $params{data_for_json}){
+            $last_auth =  $last_auth->ymd.' '. $last_auth->hms;
+        }
+        if( defined $usr->{$key}->{auth_count} 
+            && $usr->{$key}->{auth_count} >= $config_failed_auth_attempts ) {
+            push @users, {
+                username => $key,
+                auth_count => $usr->{$key}->{auth_count},
+                last_auth  => $last_auth,
+            };
+        }
     }
 
     $c->stash(
