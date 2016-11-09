@@ -5115,6 +5115,11 @@ msgid "Initial profiles add"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Intercept and record media packets from or to this subscriber into a file."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal # for inbound callee rewrite rule set"
 msgstr "# Interno para grupo de reglas de reescritura del destino en entrada"
 
@@ -7454,6 +7459,10 @@ msgstr "Llamadas recientes"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Recent Calls by UPN"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Record calls"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
