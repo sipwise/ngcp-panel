@@ -22,6 +22,30 @@
       "revId": "8927c1570b5b18135714bec436c83418549c2529",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_bd08922e",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2016-11-11T12:02:06Z",
+      "side": 1,
+      "message": "yes, intended in case if we get \"false\" back :)",
+      "parentUuid": "1a494da4_5dbcee6c",
+      "range": {
+        "startLine": 170,
+        "startChar": 33,
+        "endLine": 170,
+        "endChar": 44
+      },
+      "revId": "8927c1570b5b18135714bec436c83418549c2529",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
