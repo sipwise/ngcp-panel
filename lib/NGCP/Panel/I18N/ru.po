@@ -1983,6 +1983,10 @@ msgstr "Контакта успешно создан"
 msgid "Contact successfully deleted"
 msgstr "Контакт успешно удален"
 
+#: lib/NGCP/Panel/Controller/Contact.pm
+msgid "Contact successfully terminated"
+msgstr ""
+
 #: share/templates/contact/list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/reseller_customer_overview.tt
