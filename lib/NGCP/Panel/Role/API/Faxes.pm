@@ -13,6 +13,7 @@ use HTTP::Status qw(:constants);
 use DateTime::Format::Strptime;
 use NGCP::Panel::Form::Subscriber::WebfaxAPI;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::Fax;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -68,20 +69,24 @@ sub resource_from_item {
 
     $form //= $self->get_form($c);
 
-   my $datetime_fmt = DateTime::Format::Strptime->new(
+    my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
     );
+
+    my $subscriber = $item->provisioning_voip_subscriber->voip_subscriber;
 
     my %resource = ();
     $resource{id} = int($item->id);
     $resource{time} = $datetime_fmt->format_datetime($item->time);
-    $resource{subscriber_id} = int($item->provisioning_voip_subscriber->voip_subscriber->id);
+    $resource{subscriber_id} = int($subscriber->id);
     foreach(qw/direction caller callee reason status quality filename/){
         $resource{$_} = $item->$_;
     }
     foreach(qw/duration pages signal_rate/){
         $resource{$_} = is_int($item->$_) ? $item->$_ : 0;
     }
+    my $data = NGCP::Panel::Utils::Fax::process_fax_journal_item($c, $item, $subscriber);
+    map { $resource{$_} = $data->{$_} } qw(caller callee);
     return \%resource;
 }
 
