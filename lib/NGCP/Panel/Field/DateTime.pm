@@ -9,7 +9,7 @@ has '+deflate_method' => ( default => sub { \&datetime_deflate } );
 sub datetime_deflate {
                 my ( $self, $value ) = @_;             
                 if(blessed($value) && $value->isa('DateTime')) {
-                    return $value->ymd('-') . ' ' . $value->hms(':');;
+                    return $value->ymd('-') . ' ' . $value->hms(':');
                 } else {
                     return $value;
                 }

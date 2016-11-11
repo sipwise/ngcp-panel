@@ -91,6 +91,15 @@ has_field 'reason' => (
     },
 );
 
+has_field 'time' => (
+    type => '+NGCP::Panel::Field::DateTime', # Readonly
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The timestamp of the message'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
