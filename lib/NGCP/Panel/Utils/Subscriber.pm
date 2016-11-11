@@ -444,6 +444,7 @@ sub get_pbx_subscribers_ordered_by_ids{
     }
     return wantarray ? (\@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef )) : \@items;
 }
+
 sub get_subscriber_pbx_items{
     my %params = @_;
 
@@ -510,10 +511,17 @@ sub manage_pbx_groups{
         #Returns 0 if the structures differ, else returns 1.
         if(!compare($ids_existent, $group_ids)){
             $c->log->debug('Old and new groups differ, apply changes');
-            my $groups       = $params{groups} // ( @$group_ids ? get_pbx_subscribers_ordered_by_ids(
+
+            my(@added_ids, @deleted_ids, %existent_hash, %requested_hash);
+            @requested_hash{@$group_ids} = @$group_ids;
+            @existent_hash{@$ids_existent} = @$ids_existent;
+            @added_ids = grep { !exists $existent_hash{$_} } keys %requested_hash;
+            @deleted_ids = grep { !exists $requested_hash{$_} } keys %existent_hash;
+
+            my $groups_added       = $params{groups} // ( @$group_ids ? get_pbx_subscribers_ordered_by_ids(
                 c           => $c,
                 schema      => $schema,
-                ids         => $group_ids,
+                ids         => \@added_ids,
                 customer_id => $customer->id,
                 is_group    => 1,
             ) : [] );
@@ -524,15 +532,15 @@ sub manage_pbx_groups{
                 c => $c,
                 attribute => 'cloud_pbx_hunt_group',
             )->search_rs({
-                subscriber_id => { -in => [ $prov_subscriber->voip_pbx_groups->get_column('group_id')->all ] },
+                subscriber_id => { -in => [ @deleted_ids ] },
                 value         => $subscriber_uri,
             });
 
             $member_preferences_rs->delete;
-            $prov_subscriber->voip_pbx_groups->delete;
+            $prov_subscriber->voip_pbx_groups->search_rs( { group_id => { -in => [@deleted_ids] } } )->delete;
 
-            #create new groups
-            foreach my $group(@{ $groups }) {
+            #create new groups_added
+            foreach my $group(@{ $groups_added }) {
                 my $group_prov_subscriber = $group->provisioning_voip_subscriber;
                 next unless( $group_prov_subscriber && $group_prov_subscriber->is_pbx_group );
                 $prov_subscriber->voip_pbx_groups->create({
