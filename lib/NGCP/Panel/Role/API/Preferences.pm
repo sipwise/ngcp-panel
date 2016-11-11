@@ -306,7 +306,7 @@ sub _item_rs {
             #$item_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs(
             #    undef,
             #    {
-            #        'columns' 
+            #        'columns'
             #            => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri extensions_num/]
             #    }
             #);
@@ -326,7 +326,7 @@ sub _item_rs {
     } elsif($type eq "contracts") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('contracts')->search({
-                status => { '!=' => 'terminated' },
+                'me.status' => { '!=' => 'terminated' },
                 'contact.reseller_id' => { '!=' => undef },
 
             },{
@@ -335,7 +335,7 @@ sub _item_rs {
         } elsif($c->user->roles eq "reseller") {
             $item_rs = $c->model('DB')->resultset('contracts')->search({
                 'contact.reseller_id' => $c->user->reseller_id,
-                'status' => { '!=' => 'terminated' },
+                'me.status' => { '!=' => 'terminated' },
             }, {
                 join => 'contact',
             });
