@@ -9,6 +9,7 @@ use parent 'NGCP::Panel::Role::API';
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::SMS;
+use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Form::SMSAPI;
 
 sub item_name {
@@ -30,6 +31,12 @@ sub hal_links {
     return [
         Data::HAL::Link->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
     ];
+}
+
+sub process_hal_resource {
+    my($self, $c, $item, $resource, $form) = @_;
+    $resource->{time} = NGCP::Panel::Utils::DateTime::to_string($resource->{time});
+    return $resource;
 }
 
 sub _item_rs {

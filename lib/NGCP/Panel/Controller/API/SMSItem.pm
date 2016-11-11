@@ -12,8 +12,6 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CFSourceSets/;
-
 1;
 
 # vim: set tabstop=4 expandtab:
