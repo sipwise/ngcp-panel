@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a494da4_5dbcee6c",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-11-11T11:46:54Z",
+      "side": 1,
+      "message": "ok otherwise it remains unchanged",
+      "range": {
+        "startLine": 170,
+        "startChar": 33,
+        "endLine": 170,
+        "endChar": 44
+      },
+      "revId": "8927c1570b5b18135714bec436c83418549c2529",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
