@@ -1,3 +1,13 @@
+ngcp-panel (1.14.2.8+0~mr4.5.2.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [dee3f35] TT#5549 improve fax journal numbers representation
+  * [549cfe9] TT#5549 improve fax journal numbers representation for the API
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 11 Nov 2016 16:19:39 +0100
+
 ngcp-panel (1.14.2.7+0~mr4.5.2.7) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
