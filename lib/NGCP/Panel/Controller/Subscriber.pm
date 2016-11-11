@@ -306,16 +306,12 @@ sub webfax_ajax :Chained('base') :PathPart('webfax/ajax') :Args(0) {
     NGCP::Panel::Utils::Datatables::process($c, $fax_rs, $c->stash->{fax_dt_columns},
         sub {
             my ($result) = @_;
-            my %data = ();
-            my $destination = {destination => $result->callee};
-            $data{callee} = NGCP::Panel::Utils::Subscriber::destination_as_string(
-                $c,
-                $destination,
-                $subscriber,
-                ('in' eq $result->direction) ? 'caller_in' : 'callee_out'
-            );
-            return %data;
-        },
+            my $resource =
+                NGCP::Panel::Utils::Fax::process_fax_journal_item(
+                    $c, $result, $subscriber
+                );
+            return %$resource;
+        }
     );
 
     $c->detach( $c->view("JSON") );
