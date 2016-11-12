@@ -1081,6 +1081,15 @@ msgstr ""
 msgid "Buddy List"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "CA certificate is OK"
+msgstr ""
+
+#. ($result)
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "CA certificate verification failed: "
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "CLI"
 msgstr ""
