@@ -3,6 +3,7 @@ Section: admin
 Priority: extra
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends: debhelper (>= 8),
+               libmodule-build-perl | perl (<< 5.21.0~),
                ngcp-schema
 Standards-Version: 3.9.7
 Homepage: http://sipwise.com/
