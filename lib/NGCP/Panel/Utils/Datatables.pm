@@ -13,6 +13,7 @@ sub process {
 
     $params //= {};
     my $total_row_func = $params->{total_row_func};
+    my $identifier = $params->{identifier};
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
     my $totalRecords = 0;
@@ -20,6 +21,9 @@ sub process {
     my $aggregate_cols = [];
     my $aggregations = {};
 
+    my $config;
+    #iDisplayLength
+    #...
 
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
@@ -230,11 +234,24 @@ sub process {
 
     # pagination
     my $pageStart = $c->request->params->{iDisplayStart};
-    my $pageSize = $c->request->params->{iDisplayLength};
+    my $pageSize;
+    if(defined $c->request->params->{iDisplayLength}){
+        $c->response->cookies->{datatables_iDisplayLength} = {
+            value   => $c->request->params->{iDisplayLength}, 
+            expires =>  '+3M', 
+        };
+        $pageSize = $c->request->params->{iDisplayLength};
+    }elsif($c->response->cookies->{datatables_iDisplayLength}->{value}){
+        $pageSize = $c->response->cookies->{datatables_iDisplayLength}->{value};
+    }else{
+        $pageSize =  = 5;
+    }
+    $config->{iDisplayLength} = $pageSize;
+
     if ($use_rs_cb) {
         ($rs, $totalRecords, $displayRecords) = $rs->(
                 offset       => $pageStart || 0,
-                rows         => $pageSize  || 5,
+                rows         => $pageSize,
                 searchstring => $searchString,
             );
     } else {
@@ -261,6 +278,7 @@ sub process {
         iTotalRecords        => $totalRecords,
         iTotalDisplayRecords => $displayRecords,
         sEcho                => int($c->request->params->{sEcho} // 1),
+        dt_config            => $config,
     );
 
 }
