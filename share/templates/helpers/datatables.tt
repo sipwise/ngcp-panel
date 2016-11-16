@@ -52,7 +52,7 @@ $(document).ready(function() {
         "sPaginationType": "bootstrap",
         [% IF helper.length_change %]
             "bLengthChange": true,
-            "aLengthMenu": [5, 10, 25, 50],
+            "aLengthMenu":  [[ 5, 10, 50, 100, 250, -1], [5, 10, 50, 100, 250, "All"]],
         [% ELSE %]
             "bLengthChange": false,
         [% END %]
