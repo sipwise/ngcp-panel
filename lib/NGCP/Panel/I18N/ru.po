@@ -10780,6 +10780,10 @@ msgid "The timestamp of the call initiation."
 msgstr "Отметка времени начала звонка."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timestamp of the message"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The timestamp of the topup attempt."
 msgstr ""
 

@@ -11160,6 +11160,10 @@ msgid "The timestamp of the call initiation."
 msgstr "La data e ora in cui è iniziata la chiamata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timestamp of the message"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The timestamp of the topup attempt."
 msgstr "La data e ora in cui è avvenuto un tentativo di ricarica."
 
