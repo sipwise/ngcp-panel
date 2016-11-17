@@ -4,8 +4,7 @@ use warnings;
 
 use Sipwise::Base;
 
-use NGCP::Panel::Utils::Generic qw(:all);
-
+use Data::Compare qw//;
 use DBIx::Class::Exception;
 use String::MkPasswd;
 use NGCP::Panel::Utils::DateTime;
@@ -489,7 +488,7 @@ sub manage_pbx_groups{
             $group_ids = [ map {$_->id} @$groups ];
         }
         #Returns 0 if the structures differ, else returns 1.
-        if(!compare($ids_existent, $group_ids)){
+        if(!_compare($ids_existent, $group_ids)){
             $c->log->debug('Old and new groups differ, apply changes');
 
             $c->log->debug('Existent groups:'.join(',',@$ids_existent));
@@ -553,7 +552,7 @@ sub manage_pbx_groups{
             $groupmember_ids = [ map {$_->id} @$groupmembers ];
         }
         #Returns 0 if the structures differ, else returns 1.
-        if(!compare($ids_existent, $groupmember_ids)){
+        if(!_compare($ids_existent, $groupmember_ids)){
             $c->log->debug('Old and new group members differ, apply changes');
             my $groupmembers = @$groupmember_ids ? get_pbx_subscribers_ordered_by_ids(
                 c           => $c,
@@ -586,6 +585,12 @@ sub manage_pbx_groups{
         }
    }
 }
+
+# 0 if different, 1 if equal
+sub _compare {
+    return Data::Compare::Compare(@_);
+}
+
 sub get_pbx_group_member_name{
     my %params = @_;
     my $c               = $params{c};
