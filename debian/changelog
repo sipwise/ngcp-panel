@@ -1,3 +1,43 @@
+ngcp-panel (5.0.1.0+0~mr5.0.1.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [e8557f0] TT#4638 domain level allowed_ips
+  * [40247d8] MT#22982 faxes time_from/time_to filters
+  * [979397c] MT#20639 TT#5411 contact termination
+  * [f0b9d4d] TT#5411 fix contract status filter query param
+  * [2dd0060] TT#5411 TT#6250 fix preferences contract.status vs contact.status clashes
+
+  [ Gerhard Jungwirth ]
+  * [ea210ba] MT#17173 small inconsistencies in Entities modules
+  * [de239d6] TT#2369 API for sending SMS and journal
+  * [3ade236] MT#17173 make default hal consider exceptions
+  * [cc06544] TT#5479 improve sms journal api resource
+
+  [ Irina Peshinskaya ]
+  * [458dda3] TT#5204 Check that all htable.auth keys are defined
+  * [34fe20e] TT#4902 Check API CA cert
+  * [2bce1c9] TT#5415 Don't touch unchanged pbx groups for member to save members order
+
+  [ Alexander Lutay ]
+  * [cbbf48c] MT#22163 Fix a2a5a0c: msgmerge doesn't like duplicates in Italian translation
+
+  [ Sipwise Jenkins Builder ]
+  * [786d934] TT#4166 I18N dump: snapshot 2016.11.04-16.33.00
+  * [5394009] TT#4166 I18N dump: snapshot 2016.11.08-06.44.01
+  * [b5d766f] TT#4166 I18N dump: snapshot 2016.11.09-06.21.13
+  * [ef83b7e] TT#4166 I18N dump: snapshot 2016.11.11-06.17.37
+  * [2b45800] TT#4166 I18N dump: snapshot 2016.11.12-06.46.33
+  * [d8b7787] TT#4166 I18N dump: snapshot 2016.11.16-06.54.25
+
+  [ Kirill Solomko ]
+  * [0b3308d] TT#5549 improve fax journal numbers representation
+  * [5d73a12] TT#5549 improve fax journal numbers representation for the API
+
+  [ Guillem Jover ]
+  * [3bea079] TT#5903 Build-Depend on libmodule-build-perl
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Nov 2016 23:17:04 +0100
+
 ngcp-panel (5.0.0.0+0~mr5.0.0.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
