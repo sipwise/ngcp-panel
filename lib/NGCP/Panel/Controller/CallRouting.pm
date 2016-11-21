@@ -250,22 +250,22 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
             }
         }
         my $match = map { $_ =~ s/\*/.*/g;
-                          $data->{caller} =~ /^$_$/;
+                          $data->{caller_in} =~ /^$_$/;
                         } @{$usr_prefs{allowed_clis}};
         if ($match) {
             push @log, sprintf
                 "caller %s is accepted as it matches subscriber's 'allowed_clis'",
-                    $data->{caller};
+                    $data->{caller_in};
         } else {
             push @log, sprintf
                 "caller %s is rejected as it does not match subscriber's 'allowed_clis'",
-                    $data->{caller};
+                    $data->{caller_in};
             if (defined $usr_prefs{allowed_clis_reject_policy}) {
                 SWITCH: for ($usr_prefs{allowed_clis_reject_policy}[0]) {
                     /^override_by_clir$/ && do {
                         push @log,
                             "'allowed_cli' reject policy is 'override_by_clir', anonymising caller";
-                        $data->{caller} = 'anonymous';
+                        $data->{caller_in} = 'anonymous';
                         last SWITCH;
                     };
                     /^override_by_usernpn$/ && do {
@@ -273,7 +273,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                             "'allowed_cli' reject policy is 'override_by_usernpn'";
                         foreach my $cli (qw(user_cli cli)) {
                             if (defined $usr_prefs{$cli}) {
-                                $data->{caller} = $usr_prefs{$cli}[0];
+                                $data->{caller_in} = $usr_prefs{$cli}[0];
                                 $log[-1] .= sprintf ", taken from '$cli' %s",
                                     $usr_prefs{$cli}[0];
                                 last;
@@ -311,11 +311,11 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
         $data->{callee_peer_host} = $data->{callee_peer}->voip_peer_hosts->first;
     } else {
         push @log, sprintf "callee subscriber lookup based on %s",
-            $data->{callee};
+            $data->{callee_in};
         $data->{callee_subscriber} =
             NGCP::Panel::Utils::Subscriber::lookup(
                                     c => $c,
-                                    lookup => $data->{callee},
+                                    lookup => $data->{callee_in},
                                  );
         if ($data->{callee_subscriber}) {
             $data->{callee_subscriber_id} = $data->{callee_subscriber}->id;
@@ -326,13 +326,13 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                         $sub, $data->{callee_subscriber_id};
         } else {
             foreach my $type (qw(caller callee)) {
-                $data->{$type.'_uri'} = $data->{$type};
+                $data->{$type.'_uri'} = $data->{$type.'_in'};
                 if ($data->{$type.'_domain'}) {
                     $data->{$type.'_uri'} .= '@' . $data->{$type.'_domain'};
                 }
             }
             push @log,
-                sprintf "no callee subscriber found, performing a peer lookup with caller uri %s and callee uri %s and callee %s",
+                sprintf "no callee subscriber found, performing peer lookup with caller uri %s and callee uri %s and callee %s",
                     @{$data}{qw(caller_uri callee_uri callee_in)};
             $data->{callee_peers} =
                 NGCP::Panel::Utils::Peering::lookup(
@@ -451,7 +451,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
 
     # apply outbound rewrite rules
     foreach my $type (qw(caller callee)) {
-        $data->{$type.'_out'} = $data->{$type};
+        $data->{$type.'_out'} = $data->{$type.'_in'};
         next unless $data->{callee_rewrite};
         my $new;
         if ($data->{callee_subscriber_id}) {
