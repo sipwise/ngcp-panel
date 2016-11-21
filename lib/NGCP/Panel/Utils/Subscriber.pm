@@ -567,7 +567,7 @@ sub manage_pbx_groups{
                     );
                     $preferences_rs->create({ value => $subscriber_uri });
                 }
-            }{
+            }else{
                 $c->log->debug('No groups were added.');
             }
         }else{
