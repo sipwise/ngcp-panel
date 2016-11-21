@@ -6,6 +6,7 @@ use strict;
 use Test::More;
 use Moose;
 use JSON;
+use Config::General;
 use LWP::UserAgent;
 use HTTP::Request::Common;
 use Net::Domain qw(hostfqdn);
@@ -180,7 +181,7 @@ sub get_catalyst_config{
     my $catalyst_config;
     my $panel_config;
     if ($self->{local_test}) {
-        for my $path(qw#../ngcp_panel.conf ngcp_panel.conf#) {
+        for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf ../ngcp_panel.conf ngcp_panel.conf#) {
             if(-f $path) {
                 $panel_config = $path;
                 last;
@@ -409,7 +410,7 @@ sub get_request_put{
     $uri ||= $self->get_uri_current;
     #This is for multipart/form-data cases
     $content = $self->encode_content($content, $self->content_type->{PUT});
-    my $req = POST $uri,
+    my $req = POST $self->normalize_uri($uri),
         Content_Type => $self->content_type->{POST},
         $content ? ( Content => $content ) : ();
     $req->method('PUT');
@@ -443,12 +444,6 @@ sub request_patch{
     my $rescontent = $self->get_response_content($res);
     #print Dumper [$res,$rescontent,$req];
     return wantarray ? ($res,$rescontent,$req) : $res;
-}
-sub process_data{
-    my($self, $data_cb, $data_in, $data_cb_data) = @_;
-    my $data = $data_in || clone($self->DATA_ITEM);
-    defined $data_cb and $data_cb->($data, $data_cb_data);
-    return $data;
 }
 sub request_post{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
@@ -546,21 +541,61 @@ sub check_methods{
         }
     }
 }
+sub process_data{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $data = $data_in || clone($self->DATA_ITEM);
+    
+    defined $data_cb and ('CODE' eq ref $data_cb) and $data_cb->($data, $data_cb_data);
+    return $data;
+}
+sub get_item_post_content{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
+    my $content = {
+        $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
+        %$data,
+    };
+    return $content;
+}
+sub check_item_post{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $content = $self->get_item_post_content($data_cb, $data_in, $data_cb_data);
+    my ($res,$rescontent,$req) = $self->request_post(undef,$content);#,$uri,$req
+    return wantarray ? ($res,$rescontent,$req,$content) : $res;
+};
 sub check_create_correct{
     my($self, $number, $uniquizer_cb) = @_;
     if(!$self->KEEP_CREATED){
         $self->clear_data_created;
     }
     $self->DATA_CREATED->{ALL} //= {};
+    my @created = ();
     for(my $i = 1; $i <= $number; ++$i) {
-        my ($res, $content, $req) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
+        my $created_info={};
+        my ($res, $content, $req, $content_post) = $self->check_item_post( $uniquizer_cb , undef, { i => $i } );
         $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
         my $location = $res->header('Location');
         if($location){
-            $self->DATA_CREATED->{ALL}->{$location} = { num => $i, content => $content, res => $res, req => $req, location => $location};
+            #some interfaces (e.g. subscribers) don't provide hal after creation - is it correct, by the way?
+            my $get ={};
+            if(!$content){
+                @$get{qw/res_get content_get req_get/} = $self->check_item_get($location,"no object returned after POST");
+            }
+            $created_info = {
+                num => $i,
+                content => $content ? $content : $get->{content_get},
+                res => $res,
+                req => $req,
+                location => $location,
+                content_post => $content_post,
+                %$get,
+            };
+            push @created, $created_info;
+            $self->DATA_CREATED->{ALL}->{$location} = $created_info;
             $self->DATA_CREATED->{FIRST} = $location unless $self->DATA_CREATED->{FIRST};
         }
     }
+    return \@created;
 }
 sub clear_test_data_all{
     my($self,$uri) = @_;
@@ -731,8 +766,12 @@ sub check_get2put{
 
 sub check_put2get{
     my($self, $put_data_in, $put_data_cb, $uri) = @_;
-
-    my $item_put_data = $self->process_data($put_data_cb, $put_data_in);
+    my $put_data_in_cloned = clone($put_data_in);
+    delete $put_data_in_cloned->{_links};
+    delete $put_data_in_cloned->{_embedded};
+    delete $put_data_in_cloned->{id};
+    
+    my $item_put_data = $self->process_data($put_data_cb, $put_data_in_cloned);
     $item_put_data = JSON::to_json($item_put_data);
     my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
     $self->http_code_msg(200, "check_put2get: check put successful",$res_put, $result_item_put);
@@ -891,6 +930,18 @@ sub check_bundle{
         }
     }
 }
+sub put_and_get{
+    my($self, $put_in, $get_in) = @_;
+    my($put_out,$put_get_out,$get_out);
+    @{$put_out}{qw/response content request/} = $self->request_put($put_in->{content},$put_in->{uri});
+    @{$put_get_out}{qw/response content request/} = $self->check_item_get($put_in->{uri});
+    @{$get_out}{qw/response content request/} = $self->check_item_get($get_in->{uri});
+    delete $put_get_out->{content_in}->{_links};
+    delete $put_get_out->{content_in}->{_embedded};
+    is_deeply($put_in->{content}, $put_get_out->{content}, "$self->{name}: check that '$put_in->{uri}' was updated on put;");
+    return ($put_out,$put_get_out,$get_out);
+}
+
 #utils
 sub hash2params{
     my($self,$hash) = @_;
