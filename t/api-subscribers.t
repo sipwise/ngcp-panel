@@ -72,7 +72,7 @@ if((exists $pilot->{total_count} && $pilot->{total_count}) || $pilot->{content}-
 $test_machine->DATA_ITEM_STORE($fake_data_processed);
 $test_machine->form_data_item();
 
-my $remote_config = $test_machine->init_catalyst_config;
+my $remote_config = $test_machine->get_catalyst_config;
 
 {
 #20369
@@ -102,7 +102,7 @@ my $remote_config = $test_machine->init_catalyst_config;
         $_[0]->{username} .= time().'_'.$_[1]->{i} ;
     } );
     $test_machine->check_bundle();
-    $test_machine->check_get2put(undef,{});
+    $test_machine->check_get2put();
     $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $pilot and $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
@@ -117,7 +117,7 @@ my $remote_config = $test_machine->init_catalyst_config;
         'sn' => '1234'.time(),
     };
 
-    #prepare preconditions: cli should differ from primary_nuber
+    #prepare preconditions: cli should differ from primary_number
     #my $subscriber = ($test_machine->get_created_first() || $fake_data->get_existent_item($test_machine->name) || $test_machine->get_item_hal());
     my $subscriber = $test_machine->check_create_correct(1, sub{
             my $num = $_[1]->{i};
@@ -206,37 +206,37 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         });
         $members->[0]->{content}->{pbx_group_ids} = [];
         diag("1. Check that member will return empty groups after put groups empty");
-        my($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
+        my($member_put,$member_get) = $test_machine->check_put2get($members->[0]->{content},undef,$members->[0]->{location});
 
         $members->[0]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (2,1)];
         diag("2. Check that member will return groups as they were specified");
-        #($member_put,$member_get) = $test_machine->check_put2get($members->[0]);
+        #($member_put,$member_get) = $test_machine->check_put2get($members->[0]->{content},undef,$members->[0]->{location});
         my ($res,$content,$request) = $test_machine->request_put(@{$members->[0]}{qw/content location/});
         $test_machine->http_code_msg(200, "PUT of the members groups was successful", $res, $content);
 
         $groups->[1]->{content}->{pbx_groupmember_ids} = [map { $members->[$_]->{content}->{id} } (2,1,0)];
         diag("3. Check that group will return members as they were specified");
-        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
+        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]->{content},undef,$groups->[1]->{location});
 
         $groups->[1]->{content}->{pbx_groupmember_ids} = [];
         diag("4. Check that group will return empty members after put members empty");
-        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]);
+        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]->{content},undef,$groups->[1]->{location});
 #5415 WF
         diag("5415: check that groups management doesn't change members order;\n");
 
         diag("5415:Set members order for the group;\n");
-        $groups->[0]->{content}->{pbx_groupmember_ids} = [ map { $members->[$_]->{content}->{id} } ( 0, 2, 1 ) ];
-        $test_machine->check_put2get($groups->[0]);
+        $groups->[1]->{content}->{pbx_groupmember_ids} = [ map { $members->[$_]->{content}->{id} } ( 0, 2, 1 ) ];
+        $test_machine->check_put2get($groups->[1]->{content},undef,$groups->[1]->{location});
 
         diag("5415:Touch one of the members;\n");
-        $members->[0]->{content}->{pbx_group_ids} = [ map { $groups->[$_]->{content}->{id} } (2,1)];
-        my($res,$content) = $test_machine->request_put(@{$members->[0]}{qw/content location/});
+        $members->[1]->{content}->{pbx_group_ids} = [ map { $groups->[$_]->{content}->{id} } (2,1)];
+        my($res,$content) = $test_machine->request_put(@{$members->[1]}{qw/content location/});
         $test_machine->http_code_msg(200, "PUT for groups was successful", $res, $content);
 
         diag("5415:Check members order in the group;\n");
-        my(undef, $group_get_after) = $test_machine->check_item_get($groups->[0]->{location});
+        my(undef, $group_get_after) = $test_machine->check_item_get($groups->[1]->{location});
 
-        is_deeply($groups->[0]->{content}->{pbx_groupmember_ids}, $group_get_after->{pbx_groupmember_ids}, "Check group members order after touching it's member");
+        is_deeply($groups->[1]->{content}->{pbx_groupmember_ids}, $group_get_after->{pbx_groupmember_ids}, "Check group members order after touching it's member");
         
         
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.

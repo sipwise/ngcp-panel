@@ -219,6 +219,18 @@ sub build_data{
             'query' => ['external_id'],
             'no_delete_available' => 1,
         },
+        'customer_sipaccount' => {
+            'data' => {
+                status             => 'active',
+                contact_id         => sub { return shift->create('customercontacts',@_); },
+                billing_profile_id => sub { return shift->create('billingprofiles',@_); },
+                external_id        => 'api_test customer sipaccount',
+                type               => 'sipaccount',
+            },
+            'query' => ['external_id'],
+            'no_delete_available' => 1,
+            'collection' => 'customers',
+        },
         'billingprofiles' => {
             'data' => {
                 name        => 'api_test test profile'.time(),
@@ -329,7 +341,7 @@ sub load_db{
             my(undef,$content) = $self->search_item($collection_name,$data);
             #print Dumper $content;
             if($content->{total_count}){
-                my $values = $content->{_embedded}->{$self->test_machine->get_hal_name($collection_name)};
+                my $values = $content->{_embedded}->{$self->test_machine->get_hal_name($self->get_collection_interface($collection_name))};
                 $values = ('HASH' eq ref $values) ? [$values] : $values;
                 $self->loaded->{$collection_name} = [ map {
                     {
@@ -356,7 +368,7 @@ sub clear_db{
         }
         my(undef,$content) = $self->search_item($collection_name,$data);
         if($content->{total_count}){
-            my $values = $content->{_links}->{$self->test_machine->get_hal_name($collection_name)};
+            my $values = $content->{_links}->{$self->test_machine->get_hal_name($self->get_collection_interface($collection_name))};
             $values = ('HASH' eq ref $values) ? [$values] : $values;
             my @locations = map {$_->{href}} @$values;
             if($data->{$collection_name}->{no_delete_available}){
@@ -401,7 +413,7 @@ sub search_item{
     );
     my $name_prev = $self->test_machine->{name};
     $self->test_machine->name($collection_name);
-    my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string));
+    my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string, $self->get_collection_interface($collection_name)));
     $name_prev and $self->test_machine->name($name_prev);
     #time for memoize?
     $self->searched->{$collection_name} = [$res, $content, $req];
@@ -506,7 +518,7 @@ sub create{
     #create itself
     my $data = clone($self->data->{$collection_name}->{data});
     $self->test_machine->set(
-        name            => $collection_name,
+        name            => $self->get_collection_interface($collection_name),
         DATA_ITEM       => $data,
     );
     if(exists $self->data->{$collection_name}->{create_special} && 'CODE' eq ref $self->data->{$collection_name}->{create_special}){
@@ -549,6 +561,11 @@ sub get_collection_data_fields{
     my $data = $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data};
     my %res = map { $_ => $data->{$_} } @fields;
     return wantarray ? %res : ( values %res )[0];
+}
+sub get_collection_interface{
+    my($self,$collection_name,$data) = @_;
+    $data //= $self->data;
+    return $data->{$collection_name}->{collection} ?  $data->{$collection_name}->{collection} : $collection_name;
 }
 sub collection_id_exists{
     my($self, $collection_name)  = @_;
