@@ -81,6 +81,8 @@ sub destination_as_string {
         return "Auto Attendant";
     } elsif($dest =~ /^sip:office-hours\@app\.local$/) {
         return "Office Hours Announcement";
+    } elsif($dest =~ /^sip:custom-hours\@app\.local$/) {
+        return "Custom Hours Announcement";
     } else {
         my $d = $dest;
         $d =~ s/^sips?://;
@@ -1121,6 +1123,8 @@ sub field_to_destination {
         $d = "sip:auto-attendant\@app.local";
     } elsif($d eq "officehours") {
         $d = "sip:office-hours\@app.local";
+    } elsif($d eq "customhours") {
+        $d = "sip:custom-hours\@app.local";
     } else {
         my $v = $uri;
         $v =~ s/^sips?://;
@@ -1152,6 +1156,8 @@ sub destination_to_field {
         $d = 'autoattendant';
     } elsif($d =~ /^sip:office-hours\@app\.local$/) {
         $d = 'officehours';
+    } elsif($d =~ /^sip:custom-hours\@app\.local$/) {
+        $d = 'customhours';
     } else {
         $duri = $d;
         $d = 'uri';
