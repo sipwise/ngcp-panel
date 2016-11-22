@@ -453,7 +453,7 @@ has_field 'start_time' => (
 );
 
 has_field 'duration' => (
-    type => 'PosInteger',
+    type => 'Float',
     required => 1,
     element_attr => {
         rel => ['tooltip'],
