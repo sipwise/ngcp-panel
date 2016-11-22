@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_71fc653f",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-11-22T05:33:13Z",
+      "side": 1,
+      "message": "Do I get ir right that we don\u0027t use it now? I didn\u0027t find the call in other changed files.\n\nAlso if some CPAN library is near, but doesn\u0027t fit our needs - could you please describe why? So nobody will investigate it again.",
+      "range": {
+        "startLine": 197,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 88
+      },
+      "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_b1955de6",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-11-22T05:33:13Z",
+      "side": 1,
+      "message": "Seems like gerrit breaks code format below, so really it is hard to get the logic.",
+      "range": {
+        "startLine": 198,
+        "startChar": 0,
+        "endLine": 200,
+        "endChar": 31
+      },
+      "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_51f9614c",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-11-22T05:33:13Z",
+      "side": 1,
+      "message": "may we did it as:\nmy @units \u003d qw/seconds minutes hours days months years/;\nmy @unit_abs \u003d qw/60.0 60.0 24.0 30.0 12.0/;\nmy $least_significant_verified;\nfor(my $i \u003d 0; $i \u003c\u003d $#units; $i++){\n  if($units[$i] ne $least_significant){\n    $abs \u003d $abs / $unit_abs[$i];\n  }else{\n    $least_significant_verified \u003d $unit[$i];\n    last;\n  }\n}\nif(!$least_significant_verified){\n  die(...);\n}\nif(\u0027years\u0027 eq $least_significant){\n  $seocnds \u003d 0.0;\n  ...\n}\n\nAs for me it is more clear. Of course it may stay as is.",
+      "range": {
+        "startLine": 203,
+        "startChar": 0,
+        "endLine": 207,
+        "endChar": 39
+      },
+      "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_11ffe935",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-11-22T05:33:13Z",
+      "side": 1,
+      "message": "Does it look as broken format only in the gerrit interface?",
+      "range": {
+        "startLine": 221,
+        "startChar": 0,
+        "endLine": 223,
+        "endChar": 36
+      },
+      "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
