@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_74c45340",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-11-22T11:33:43Z",
+      "side": 1,
+      "message": "no it is not used explicitly somewhere yet, but could be nice for stuff like \"no topup for last 9months, 2.5days\", \"you havent been logged in for 3 days\". right now its only used by \"sec_to_hms\".\n\nthere is DateTime::Duration\n-which was introduced to represent DateTime arithmentic results (thus the \"delta\" methods there), rather than explicit amount of seconds.\n-it comes without DateTime dependency, so also no timezones  to be considered in a \"base\" date etc.\n-different functionality: this one allows to normalize in a desired \"range of units\", eg. \"print 123456s using \u0027days\u0027 to \u0027minutes\u0027, while minutes have 2 decimals\".\n-definite point of involved strings to localize\n\n-this one known to handle decimal seconds friendly (--\u003e vs \"All of the numbers must be integers.\"), which is the original motivation here.",
+      "parentUuid": "ba51214e_71fc653f",
+      "range": {
+        "startLine": 197,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 88
+      },
+      "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_b1955de6",
         "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
         "patchSetId": 2
