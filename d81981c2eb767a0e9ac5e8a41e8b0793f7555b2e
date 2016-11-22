@@ -132,6 +132,52 @@
       "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_14099731",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-11-22T12:34:44Z",
+      "side": 1,
+      "message": "maybe it would be more convenient to keepp them in the hash - so all initiazition could be done in 1-liner?",
+      "range": {
+        "startLine": 336,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 15
+      },
+      "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_273aafcd",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-11-22T12:34:44Z",
+      "side": 1,
+      "message": "Seems as broken code format",
+      "range": {
+        "startLine": 437,
+        "startChar": 0,
+        "endLine": 440,
+        "endChar": 30
+      },
+      "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
