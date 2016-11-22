@@ -69,7 +69,7 @@ sub calls_slice {
                 $resource{call_status} = $call->{call_status};
                 $resource{source_user_id} = $call->{source_user_id};
                 $resource{start_time} = $datetime_fmt->format_datetime($call->{start_time});
-                $resource{duration} = $call->{duration};
+                $resource{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$call->{duration});
                 \%resource;
             } $c->stash->{calls_rs}->search(undef, {
                     order_by => { -desc => 'me.start_time' },
