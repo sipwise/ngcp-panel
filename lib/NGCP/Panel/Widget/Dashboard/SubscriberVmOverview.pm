@@ -3,6 +3,7 @@ package NGCP::Panel::Widget::Dashboard::SubscriberVmOverview;
 use warnings;
 use strict;
 
+use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::Strptime;
 
 sub template {
@@ -56,7 +57,7 @@ sub voicemails_slice {
                 $resource{play_uri} = $c->uri_for_action('/subscriber/play_voicemail', [$sub->id, $_->id])->as_string;
                 $resource{callerid} = $_->callerid;
                 $resource{origtime} = $datetime_fmt->format_datetime($_->origtime);
-                $resource{duration} = $_->duration;
+                $resource{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$_->duration);
                 \%resource;
             } $c->stash->{voicemails}->search(undef,{
                 order_by => { -desc => 'me.origtime' },

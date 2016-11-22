@@ -3456,6 +3456,7 @@ sub _process_calls_rows {
                 $data{destination_user} = uri_unescape($resource->{own_cli});
             }
             $data{duration} = (defined $result->duration ? sprintf("%.2f s", $result->duration) : "");
+            $data{duration} = (defined $result->duration ? NGCP::Panel::Utils::DateTime::sec_to_hms($c,$result->duration,3) : "");
             $data{total_customer_cost} = (defined $result->get_column('total_customer_cost') ? sprintf("%.2f", $result->get_column('total_customer_cost') / 100.0) : "");
             $data{call_id_url} = encode_base64url($resource->{call_id});
             return %data;
@@ -3463,7 +3464,7 @@ sub _process_calls_rows {
         { 'total_row_func' => sub {
                 my ($result) = @_;
                 my %data = ();
-                $data{duration} = (defined $result->{duration} ? sprintf("%.2f s", $result->{duration}) : "");
+                $data{duration} = (defined $result->{duration} ? NGCP::Panel::Utils::DateTime::sec_to_hms($c,$result->{duration},3) : "");
                 $data{total_customer_cost} = (defined $result->{total_customer_cost} ? sprintf("%.2f", $result->{total_customer_cost} / 100.0) : "");
                 return %data;
             },

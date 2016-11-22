@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use JSON qw();
-use POSIX qw(ceil);
 use NGCP::Panel::Utils::DateTime;
 
 # owner:
@@ -214,7 +213,7 @@ sub process_cdr_item {
     $resource->{rating_status} = $item->rating_status;
 
     $resource->{start_time} = $item->start_time;
-    $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms(ceil($item->duration));
+    $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$item->duration,3);
     $resource->{customer_cost} = $resource->{direction} eq "out" ?
         $item->source_customer_cost : $item->destination_customer_cost;
     if ($cust->add_vat) {

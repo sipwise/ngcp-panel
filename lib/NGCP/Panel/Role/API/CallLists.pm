@@ -109,6 +109,7 @@ sub resource_from_item {
     }
 
     $resource->{start_time} = $datetime_fmt->format_datetime($item->start_time);
+    $resource->{start_time} .= '.'.$item->start_time->millisecond if $item->start_time->millisecond > 0.0;
     return $resource;
 }
 

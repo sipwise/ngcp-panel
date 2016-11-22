@@ -32,7 +32,7 @@ enqueLists.push([{
                     '</div>' +
                     '<div class="row-fluid">' +
                         '<div class="offset1 span8">' + call.start_time + '</div>' +
-                        '<div class="span1">' + Math.floor(call.duration) + 's</div>' +
+                        '<div class="span1">' + call.duration + '</div>' +
                     '</div>' +
                 '</li>');
             }
