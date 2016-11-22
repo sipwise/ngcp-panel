@@ -21,7 +21,7 @@ enqueLists.push([{
                         '</div>' +
                         '<div class="row-fluid">' +
                             '<div class="offset1 span8">' + voicemail.origtime + '</div>' +
-                            '<div class="span1">' + voicemail.duration + 's</div>' +
+                            '<div class="span1">' + voicemail.duration + '</div>' +
                         '</div>' +
                 '</li>');
             }
