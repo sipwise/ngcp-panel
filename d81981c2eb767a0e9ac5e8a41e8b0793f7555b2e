@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "ba51214e_541dcfbc",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-11-22T11:40:37Z",
+      "side": 1,
+      "message": "this is to align to datetime string output in the rest of the panel: for fractional seconds, we must not ever see a \".000\"",
+      "revId": "d81981c2eb767a0e9ac5e8a41e8b0793f7555b2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_71fc653f",
         "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
         "patchSetId": 2
