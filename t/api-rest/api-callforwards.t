@@ -5,7 +5,7 @@ use Test::More;
 use Test::Collection;
 use Test::FakeData;
 use Data::Dumper;
-
+use Clone qw/clone/;
 
 my $fake_data = Test::FakeData->new;
 $fake_data->set_data_from_script({
@@ -25,7 +25,36 @@ $fake_data->set_data_from_script({
                     { destination => "voicebox", timeout => 500 },
                 ],
                 ringtimeout => 10,
-            }
+            },
+            cfb => {
+                destinations => [
+                    {
+                        destination => "customhours",
+                        priority => "1",
+                        timeout => "300"
+                    },
+                    {
+                        destination => "officehours",
+                        priority => "2",
+                        timeout => "300"
+                    },
+                ],
+                sources => [
+                    {
+                        source => "123-13-13"
+                    }
+                ],
+                'times' => [
+                    {
+                       hour => "18-8",
+                       mday =>  undef,
+                       minute => "0-0",
+                       month => undef,
+                       wday => "6-2",
+                       year => undef
+                    }
+                ]
+            },
         },
     },
 });
@@ -43,13 +72,12 @@ SKIP:{
     my ($res,$req,$content);
     my $cf1 = $test_machine->get_item_hal();
 
-    if(!$cf1->{content}->{total_count}){
+    if(!$cf1->{total_count} && !$cf1->{content_collection}->{total_count}){
         skip("Testing requires at least one present callforward. No creation is available.",1);
     }
 
     $test_machine->check_bundle();
-
-    my($cf1_id) = $test_machine->get_id_from_hal($cf1->{content}); #($cf1,'callforwards');
+    my($cf1_id) = $test_machine->get_id_from_hal($cf1->{content_collection}); #($cf1,'callforwards');
     cmp_ok ($cf1_id, '>', 0, "should be positive integer");
     my $cf1single_uri = "/api/callforwards/$cf1_id";
     my $cf1single;
@@ -69,6 +97,8 @@ SKIP:{
     is ($cf1_put->{content}->{cft}{destinations}->[0]->{simple_destination}, "5678", "Check first destination of cft");
     like ($cf1_put->{content}->{cft}{destinations}->[0]->{destination}, qr/^sip:5678@/, "Check first destination of cft (regex, full uri)");
     is ($cf1_put->{content}->{cft}{destinations}->[1]->{destination}, "voicebox", "Check second destination of cft");
+    is ($cf1_put->{content}->{cfb}{destinations}->[0]->{destination}, "customhours", "Check customhours destination");
+    is ($cf1_put->{content}->{cfb}{destinations}->[1]->{destination}, "officehours", "Check customhours destination");
 
     #write invalid 'timeout'
     ($res,$content,$req) = $test_machine->request_put({
@@ -89,7 +119,7 @@ SKIP:{
     is($content->{code}, "400", "check error code in body");
     like($content->{message}, qr/Invalid id/, "check error message in body");
 
-    my($cf2_put,$cf2_get) = $test_machine->check_put2get({data_in => $cf1_put->{content}, uri => $cf1single_uri},undef, 1 );
+    my($cf2_put,$cf2_get) = $test_machine->check_put2get({data_in => clone($cf1_put->{content}), uri => $cf1single_uri},undef, 1 );
     is_deeply($cf1_put->{content}, $cf2_put->{content}, "check put if unmodified put returns the same");
     $test_machine->check_embedded($cf2_put->{content});
 
