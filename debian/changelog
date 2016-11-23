@@ -1,3 +1,19 @@
+ngcp-panel (1.8.8.3+0~mr3.8.8.3) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [baac83f] TT#5204 Check that all htable.auth keys are defined
+  * [a55052a] TT#5415 Backport Generic.pm as base for the further backportings
+  * [5d817bb] TT#5415 Don't touch unchanged pbx groups for member to save members order
+  * [c9fb969] MT#20369 Remove warning about return from sub by last
+  * [2a60886] TT#5415 Adapt subscribers tests to 3.8
+
+  [ Gerhard Jungwirth ]
+  * [7c448a7] TT#5415 fix backport by using Data::Compare directly
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 23 Nov 2016 14:33:00 +0100
+
 ngcp-panel (1.8.8.2+0~mr3.8.8.2) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
