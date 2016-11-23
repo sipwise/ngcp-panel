@@ -52,7 +52,7 @@ $fake_data->set_data_from_script({
         'create_special'=> sub {
             my ($self,$collection_name,$test_machine) = @_;
             my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$self->data->{$collection_name}->{data}->{customer_id}.'&'.'is_pbx_pilot=1');
-            if($pilot->{content}->{total_count} <= 0){
+            if($pilot->{total_count} <= 0){
                 undef $pilot;
             }
             $test_machine->check_create_correct(1, sub{$_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;} );
@@ -242,7 +242,11 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     }
 }
+$fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
+$fake_data->clear_test_data_all();
+undef $test_machine;
+undef $fake_data;
 done_testing;
 
 sub number_as_string{
