@@ -959,12 +959,16 @@ sub check_create_correct{
 }
 
 sub clear_test_data_all{
-    my($self,$uri) = @_;
+    my($self,$uri,$strict) = @_;
     my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys %{ $self->DATA_CREATED->{ALL} };
     foreach my $del_uri(@uris){
         $del_uri = $self->normalize_uri($del_uri);
         my($req,$res,$content) = $self->request_delete($del_uri);
-        $self->http_code_msg(204, "check delete item $del_uri",$res,$content);
+        if($strict){#for particular deletion test
+            $self->http_code_msg(204, "$self->name: check delete item $del_uri",$res,$content);
+        }elsif($res->code == 404){
+            diag($self->name.": Item $del_uri is absent already.");
+        }
     }
     $self->clear_data_created();
     return \@uris;
