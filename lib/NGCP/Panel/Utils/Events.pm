@@ -11,14 +11,14 @@ sub insert {
     my $old = $params{old};
     my $new = $params{new};
 
-   
+
     $schema->resultset('events')->create({
         type => $type,
         subscriber_id => $subscriber->id,
         reseller_id => $subscriber->contract->contact->reseller_id,
         old_status => $old // '',
         new_status => $new // '',
-        timestamp => NGCP::Panel::Utils::DateTime::current_local->hires_epoch,
+        timestamp => NGCP::Panel::Utils::DateTime::current_local_hires,
         export_status => 'unexported',
         exported_at => undef,
     });
