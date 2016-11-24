@@ -10,6 +10,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::DeviceFirmware;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
@@ -199,12 +200,16 @@ sub POST :Allow {
             last;
         }
 
-        $resource->{data} = $binary;
         last unless($resource);
 
         my $item;
         try {
             $item = $model->autoprov_firmwares->create($resource);
+            if ($binary) {
+                NGCP::Panel::Utils::DeviceFirmware::insert_firmware_data(
+                    c => $c, fw_id => $item->id, data_ref => \$binary
+                );
+            }
         } catch($e) {
             $c->log->error("failed to create pbxdevicefirmware: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdevicefirmware.");

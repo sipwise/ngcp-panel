@@ -27,7 +27,7 @@ has_field 'data' => (
     type => 'Upload',
     required => 1,
     label => 'Firmware File',
-    max_size => '134217728', # 128MB
+    max_size => '671088640', # 500MB
 );
 
 has_field 'save' => (

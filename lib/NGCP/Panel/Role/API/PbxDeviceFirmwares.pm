@@ -65,7 +65,6 @@ sub hal_from_item {
     );
 
     $resource->{id} = int($item->id);
-    delete $resource->{data};
     $hal->resource($resource);
     return $hal;
 }
@@ -74,7 +73,6 @@ sub resource_from_item {
     my ($self, $c, $item, $form) = @_;
 
     my $resource = { $item->get_inflated_columns };
-    delete $resource->{data};
 
     return $resource;
 }
@@ -88,7 +86,6 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-    my $binary = delete $resource->{data};
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
@@ -112,8 +109,6 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device model does not exist");
         last;
     }
-
-    $resource->{data} = $binary;
 
     $item->update($resource);
 
