@@ -27,6 +27,15 @@ sub current_local {
     }
 }
 
+sub current_local_hires {
+
+    #If the epoch value is a floating-point value, it will be rounded to nearest microsecond.
+    return DateTime->from_epoch( epoch => Time::HiRes::time,
+        time_zone => DateTime::TimeZone->new(name => 'local')
+    );
+
+}
+
 sub set_local_tz {
     my $dt = shift;
     if (defined $dt && ref $dt eq 'DateTime' && !is_infinite($dt)) {
