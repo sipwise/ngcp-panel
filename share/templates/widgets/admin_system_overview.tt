@@ -1,3 +1,16 @@
+<script>
+enqueLists.push([{
+    res: 'emergency_mode',
+    widgetName: "AdminSystemOverview",
+    cb: function(data) {
+        console.log(data);
+        var txt = (data.widget_data > 0 ? "Emergency Mode" : "Ok");
+        var col = (data.widget_data > 0 ? "#FFC200" : "#000");
+        $("#admin_system_overview_lazy_items_list").prepend('<li>[% c.loc('Applications') %] <strong style="color:' + col + '">' + txt + '</strong></li>');
+    }
+}]);
+</script>
+
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
@@ -8,8 +21,7 @@
             </div>
         </div>
         <div class="plan-features">
-            <ul>
-                <li>[% c.loc('Applications <strong>Ok</strong>') %]</li>
+            <ul id="admin_system_overview_lazy_items_list">
                 <li>[% c.loc('System <strong>Ok</strong>') %]</li>
                 <li>[% c.loc('Hardware <strong>Ok</strong>') %]</li>
             </ul>
