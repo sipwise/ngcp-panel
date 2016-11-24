@@ -15,6 +15,7 @@ use NGCP::Panel::Form::Device::Profile;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
+use NGCP::Panel::Utils::DeviceFirmware;
 use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::HTTP;
 
@@ -573,9 +574,13 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
             $schema->txn_do(sub {
                 my $file = delete $form->values->{data};
                 $form->values->{filename} = $file->filename;
-                $form->values->{data} = $file->slurp;
                 my $devmod = $c->stash->{devmod_rs}->find($form->values->{device}{id},{'+columns' => [qw/mac_image front_image/]});
                 my $devfw = $devmod->create_related('autoprov_firmwares', $form->values);
+                if ($file->size) {
+                    NGCP::Panel::Utils::DeviceFirmware::insert_firmware_data(
+                        c => $c, fw_id => $devfw->id, data_fh => $file->fh
+                    );
+                }
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{firmware} = { id => $devfw->id };
             });
@@ -611,7 +616,7 @@ sub devfw_base :Chained('base') :PathPart('firmware') :CaptureArgs(1) :Does(ACL)
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
 
-    $c->stash->{devfw} = $c->stash->{devfw_rs}->find($devfw_id,{'+columns' => 'data'});
+    $c->stash->{devfw} = $c->stash->{devfw_rs}->find($devfw_id);
     unless($c->stash->{devfw}) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
@@ -678,9 +683,14 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
                 delete $form->values->{device};
                 my $file = delete $form->values->{data};
                 $form->values->{filename} = $file->filename;
-                $form->values->{data} = $file->slurp;
-
                 $c->stash->{devfw}->update($form->values);
+                if ($file->size) {
+                    NGCP::Panel::Utils::DeviceFirmware::insert_firmware_data(
+                        c => $c,
+                        fw_id => $c->stash->{devfw}->id,
+                        data_fh => $file->fh
+                    );
+                }
                 delete $c->session->{created_objects}->{device};
             });
             NGCP::Panel::Utils::Message::info(
@@ -710,7 +720,9 @@ sub devfw_download :Chained('devfw_base') :PathPart('download') :Args(0) {
 
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
     $c->response->content_type('application/octet-stream');
-    $c->response->body($fw->data);
+    $c->response->body(NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
+                        c => $c, fw_id => $fw->id
+                        ));
 }
 
 sub devconf_ajax :Chained('base') :PathPart('config/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {

@@ -102,21 +102,26 @@ sub PUT :Allow {
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, pbxdevicefirmware => $item);
-        my $recording = $self->get_valid_raw_put_data(
+        my $binary = $self->get_valid_raw_put_data(
             c => $c,
             id => $id,
             media_type => 'application/octet-stream',
         );
-        last unless $recording;
+        last unless $binary;
         my $resource = $c->req->query_params;
-        $resource->{data} = $recording;
         my $form = $self->get_form($c);
         my $old_resource = $self->resource_from_item($c, $item, $form);
 
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
-        $guard->commit; 
+        if ($binary) {
+            NGCP::Panel::Utils::DeviceFirmware::insert_firmware_data(
+                c => $c, fw_id => $item->id, data_ref => \$binary
+            );
+        }
+
+        $guard->commit;
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);

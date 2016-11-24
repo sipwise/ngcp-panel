@@ -6,6 +6,7 @@ use Sipwise::Base;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
+use NGCP::Panel::Utils::DeviceFirmware;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
@@ -59,10 +60,11 @@ sub GET :Allow {
         last unless $self->resource_exists($c, pbxdevicefirmwarebinary => $item);
         my $resource = $self->resource_from_item($c, $item);
 
-        $resource->{data} = $item->data;
         $c->response->header ('Content-Disposition' => 'attachment; filename="' . $resource->{filename} . '"');
         $c->response->content_type('application/octet-stream');
-        $c->response->body($resource->{data});
+        $c->response->body(NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
+                            c => $c, fw_id => $item->id
+                          ));
         return;
     }
     return;
