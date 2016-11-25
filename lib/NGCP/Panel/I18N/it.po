@@ -981,12 +981,9 @@ msgid "Api key"
 msgstr "Chiave API"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+#: share/templates/widgets/admin_system_overview.tt
 msgid "Applications"
 msgstr "Applicazioni"
-
-#: share/templates/widgets/admin_system_overview.tt
-msgid "Applications <strong>Ok</strong>"
-msgstr "Applicazioni <strong>Ok</strong>"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Apps"
@@ -12343,13 +12340,17 @@ msgstr "connessione in corso..."
 msgid "dataTables.default.js"
 msgstr "dataTables.it.js"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "day"
 msgstr "giorno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "day(s)"
 msgstr "giorno/i"
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "days"
+msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "destination"
@@ -12435,13 +12436,17 @@ msgstr "global (includendo accesso web)"
 msgid "has stopped typing."
 msgstr "ha interrotto la scrittura."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "hour"
 msgstr "ora"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "hour(s)"
 msgstr "ora/e"
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "hours"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "in"
@@ -12491,7 +12496,7 @@ msgstr "bloccato"
 msgid "man_allowed_ip_grp successfully created"
 msgstr "man_allowed_ip_grp creato con successo"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "minute"
 msgstr "minuto"
 
@@ -12499,13 +12504,21 @@ msgstr "minuto"
 msgid "minute(s)"
 msgstr "minuto/i"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "minutes"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "month"
 msgstr "mese"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "month(s)"
 msgstr "mese/i"
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "months"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "new interval for each top-up"
@@ -12640,6 +12653,14 @@ msgstr "destra"
 msgid "schedule: by 'billing_profiles' field"
 msgstr "pianificato: con campo 'billing_profiles'"
 
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "second"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "seconds"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "serial"
 msgstr "periodico"
@@ -12764,10 +12785,21 @@ msgstr ""
 msgid "y"
 msgstr "y"
 
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "year"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "years"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Reseller.pm share/templates/rewrite/rules_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Applications <strong>Ok</strong>"
+#~ msgstr "Applicazioni <strong>Ok</strong>"
 
 #~ msgid ""
 #~ "Call Forward Busy, Contains the keys \"destinations\" and \"times\". "

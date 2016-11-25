@@ -873,12 +873,9 @@ msgid "Api key"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+#: share/templates/widgets/admin_system_overview.tt
 msgid "Applications"
 msgstr ""
-
-#: share/templates/widgets/admin_system_overview.tt
-msgid "Applications <strong>Ok</strong>"
-msgstr "Приложения <strong>НОРМА</strong>"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Apps"
@@ -11937,12 +11934,16 @@ msgstr "подключение..."
 msgid "dataTables.default.js"
 msgstr "dataTables.ru.js"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "day"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "day(s)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "days"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -12029,12 +12030,16 @@ msgstr "глобально (включая web логин)"
 msgid "has stopped typing."
 msgstr "прекратил набор текста."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "hour"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "hour(s)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "hours"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12085,7 +12090,7 @@ msgstr "заблокирован"
 msgid "man_allowed_ip_grp successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "minute"
 msgstr ""
 
@@ -12093,12 +12098,20 @@ msgstr ""
 msgid "minute(s)"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "minutes"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "month"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "month(s)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "months"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12230,6 +12243,14 @@ msgstr ""
 msgid "schedule: by 'billing_profiles' field"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "second"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "seconds"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "serial"
 msgstr "последовательный"
@@ -12352,10 +12373,21 @@ msgstr ""
 msgid "y"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "year"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "years"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Reseller.pm share/templates/rewrite/rules_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "да"
+
+#~ msgid "Applications <strong>Ok</strong>"
+#~ msgstr "Приложения <strong>НОРМА</strong>"
 
 #~ msgid "Max Number of Subscribers"
 #~ msgstr "Максимальное количество абонентов"
