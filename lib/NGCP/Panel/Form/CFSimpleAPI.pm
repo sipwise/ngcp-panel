@@ -69,6 +69,20 @@ has_field 'cfna' => (
     },
 );
 
+has_field 'cfs' => (
+    type => 'Compound',
+    do_wrapper => 1,
+    do_label => 0,
+    required => 0,
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['Call Forward SMS, Contains the keys "destinations", "times" and "sources". "destinations" is an Array of Objects ' .
+                  'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always. ' .
+                  '"sources" is an Array of Objects having one field "source". "sources" can be empty.'],
+    },
+);
+
 has_field 'cfu.destinations' => (
     type => 'Repeatable',
     do_wrapper => 1,
@@ -189,6 +203,36 @@ has_field 'cfna.sources.source' => (
     type => 'Text',
 );
 
+has_field 'cfs.destinations' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfs.destinations.destination' => (
+    type => 'Text',
+);
+
+has_field 'cfs.destinations.timeout' => (
+    type => 'PosInteger',
+);
+
+has_field 'cfs.times' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfs.sources' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfs.sources.source' => (
+    type => 'Text',
+);
+
 has_field 'cft.ringtimeout' => (
     type => 'PosInteger',
     do_wrapper => 1,
@@ -198,7 +242,7 @@ has_field 'cft.ringtimeout' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(cfu cfb cft cfna)],
+    render_list => [qw(cfu cfb cft cfna cfs)],
 );
 
 1;

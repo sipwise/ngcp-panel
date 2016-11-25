@@ -46,7 +46,7 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
-    @resource{qw/cfu cfb cft cfna/} = ({}) x 4;
+    @resource{qw/cfu cfb cft cfna cfs/} = ({}) x 5;
     for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
         $resource{$item_cf->type} = $self->_contents_from_cfm($c, $item_cf, $item);
     }
@@ -111,7 +111,7 @@ sub update_item {
         run => 1,
     );
 
-    for my $type (qw/cfu cfb cft cfna/) {
+    for my $type (qw/cfu cfb cft cfna cfs/) {
         next unless "ARRAY" eq ref $resource->{$type}{destinations};
         for my $d (@{ $resource->{$type}{destinations} }) {
             if (exists $d->{timeout} && ! is_int($d->{timeout})) {
@@ -122,7 +122,7 @@ sub update_item {
         }
     }
 
-    for my $type (qw/cfu cfb cft cfna/) {
+    for my $type (qw/cfu cfb cft cfna cfs/) {
         my $mapping = $c->model('DB')->resultset('voip_cf_mappings')->search_rs({
             subscriber_id => $prov_subscriber_id,
             type => $type,

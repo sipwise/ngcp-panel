@@ -2,8 +2,9 @@ package NGCP::Panel::Controller::InternalSms;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
-
 use parent 'Catalyst::Controller';
+use Time::Period;
+use File::FnMatch qw(:fnmatch);
 
 #sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
 sub auto {
@@ -38,6 +39,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
 
     $to =~ s/^\+//;
     $from =~ s/^\+//;
+    my $now = time;
 
     try {
         my $schema = $c->model('DB');
@@ -60,6 +62,101 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 direction => "in",
                 caller => $from,
                 callee => $to,
+                text => $text,
+                });
+
+            # check for cfs
+
+            my $cf_maps = $c->model('DB')->resultset('voip_cf_mappings')->search({
+                subscriber_id => $prov_dbalias->subscriber_id,
+                type => 'cfs'
+            });
+            unless($cf_maps->count) {
+                $c->log->info("No cfs for inbound sms from $from to $to found.");
+                last;
+            }
+
+            my $dset;
+            foreach my $map($cf_maps->all) {
+                # check source set
+                my $source_pass = 1;
+                if($map->source_set) {
+                    $source_pass = 0;
+                    foreach my $source($map->source_set->voip_cf_sources->all) {
+                        $c->log->info(">>>> checking $from against ".$source->source);
+                        if(fnmatch($source->source, $from)) {
+                            $c->log->info(">>>> matched $from against ".$source->source.", pass");
+                            $source_pass = 1;
+                            last;
+                        }
+                    }
+                }
+                if($source_pass) {
+                    $c->log->info(">>>> source check for $from passed, continue with time check");
+                } else {
+                    $c->log->info(">>>> source check for $from failed, trying next map entry");
+                    next;
+                }
+
+                my $time_pass = 1;
+                if($map->time_set) {
+                    $time_pass = 0;
+                    foreach my $time($map->time_set->voip_cf_periods->all) {
+                        my $timestring = join(' ',
+                            $time->year // '',
+                            $time->month // '',
+                            $time->mday // '',
+                            $time->wday // '',
+                            $time->hour // '',
+                            $time->minute // ''
+                        );
+                        $c->log->info(">>>> checking $now against ".$timestring);
+                        if(inPeriod($now, $timestring)) {
+                            $c->log->info(">>>> matched $now against ".$timestring.", pass");
+                            $time_pass = 1;
+                            last;
+                        }
+                    }
+                }
+                if($time_pass) {
+                    $c->log->info(">>>> time check for $now passed, use destination set");
+                    $dset = $map->destination_set;
+                    last;
+                } else {
+                    $c->log->info(">>>> time check for $now failed, trying next map entry");
+                    next;
+                }
+            }
+
+            unless($dset) {
+                $c->log->info(">>>> checks failed, bailing out without forwarding");
+                last;
+            }
+
+            $c->log->info(">>>> proceed sms forwarding");
+
+            unless($dset->voip_cf_destinations->first) {
+                $c->log->info(">>>> detected cf mapping has no destinations in destination set");
+                last;
+            }
+            my $dst = $dset->voip_cf_destinations->first->destination;
+            $dst =~ s/^sip:(.+)\@.+$/$1/;
+            $c->log->info(">>>> forward sms to $dst");
+
+            # feed back into kannel
+            my $error_msg;
+            NGCP::Panel::Utils::SMS::send_sms(
+                    c => $c,
+                    caller => $to, # use the original to as new from
+                    callee => $dst,
+                    text => $text,
+                    err_code => sub {$error_msg = shift;},
+                );
+            my $fwd_item = $c->model('DB')->resultset('sms_journal')->create({
+                subscriber_id => $prov_dbalias->subscriber_id,
+                direction => "forward",
+                caller => $to,
+                callee => $dst,
                 text => $text,
                 });
         });
