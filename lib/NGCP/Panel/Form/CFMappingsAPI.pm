@@ -64,6 +64,19 @@ has_field 'cfna' => (
     },
 );
 
+has_field 'cfs' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+    required => 0,
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['Call Forward SMS, Number of Objects, each containing the keys ' .
+                  '"destinationset", "timeset" and "sourceset". The values must be the name of ' .
+                  'a corresponding set which belongs to the same subscriber.'],
+    },
+);
+
 has_field 'cfu.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -136,6 +149,24 @@ has_field 'cfna.sourceset' => (
     do_label => 0,
 );
 
+has_field 'cfs.destinationset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfs.timeset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfs.sourceset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
 has_field 'cft_ringtimeout' => (
     type => 'PosInteger',
     do_wrapper => 1,
@@ -145,7 +176,7 @@ has_field 'cft_ringtimeout' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(cfu cfb cft cfna)],
+    render_list => [qw(cfu cfb cft cfna cfs)],
 );
 
 1;

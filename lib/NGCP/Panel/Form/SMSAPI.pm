@@ -33,12 +33,13 @@ has_field 'direction' => (
     options => [
         { value => 'in', label => 'inbound' },
         { value => 'out', label => 'outbound' },
+        { value => 'forward', label => 'forwarded' },
     ],
     default => 'out', # FYI, default is not considered with API
     required => 0,  # should be "1" actually, see above
     element_attr => {
         rel => ['tooltip'],
-        title => ['Whether the logged message is sent or received'],
+        title => ['Whether the logged message is sent, received or forwarded'],
     },
 );
 

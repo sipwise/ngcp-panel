@@ -127,7 +127,7 @@ sub query_params {
         },
         {
             param => 'type',
-            description => 'Filter for calls with a specific type. One of "call", "cfu", "cfb", "cft", "cfna".',
+            description => 'Filter for calls with a specific type. One of "call", "cfu", "cfb", "cft", "cfna", "cfs".',
             query => {
                 first => sub {
                     my $q = shift;
@@ -140,7 +140,7 @@ sub query_params {
         },
         {
             param => 'type_ne',
-            description => 'Filter for calls not having a specific type. One of "call", "cfu", "cfb", "cft", "cfna".',
+            description => 'Filter for calls not having a specific type. One of "call", "cfu", "cfb", "cft", "cfna", "cfs".',
             query => {
                 first => sub {
                     my $q = shift;

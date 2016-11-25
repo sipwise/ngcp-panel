@@ -77,7 +77,8 @@
                     [% FOR cf IN [ { type = "cfu", desc = c.loc("Call Forward Unconditional") },
                                    { type = "cfb", desc = c.loc("Call Forward Busy") },
                                    { type = "cft", desc = c.loc("Call Forward Timeout") },
-                                   { type = "cfna", desc = c.loc("Call Forward Unavailable") } ] -%]
+                                   { type = "cfna", desc = c.loc("Call Forward Unavailable") },
+                                   { type = "cfs", desc = c.loc("Call Forward SMS") } ] -%]
                         [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
                           [% NEXT IF special_prefs.check && !special_prefs.callforward.${cf.type} -%]
                         [% END -%]

@@ -624,7 +624,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cfs = {};
 
-    foreach my $type(qw/cfu cfna cft cfb/) {
+    foreach my $type(qw/cfu cfna cft cfb cfs/) {
         my $maps = $prov_subscriber->voip_cf_mappings
             ->search({ type => $type });
         $cfs->{$type} = [];
@@ -695,7 +695,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
         $c->stash->{pref_groups} = \@newprefgroups;
 
         my $special_prefs = { check => 1 };
-        foreach my $pref(qw/cfu cft cfna cfb
+        foreach my $pref(qw/cfu cft cfna cfb cfs
                             speed_dial reminder auto_attendant
                             voice_mail fax_server/) {
             my $preference = $c->model('DB')->resultset('voip_preferences')->find({
@@ -837,6 +837,10 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         };
         /^cfna$/ && do {
             $cf_desc = $c->loc('Call Forward Unavailable');
+            last SWITCH;
+        };
+        /^cfs$/ && do {
+            $cf_desc = $c->loc('Call Forward SMS');
             last SWITCH;
         };
         # default
@@ -1094,6 +1098,10 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
         };
         /^cfna$/ && do {
             $cf_desc = $c->loc('Call Forward Unavailable');
+            last SWITCH;
+        };
+        /^cfs$/ && do {
+            $cf_desc = $c->loc('Call Forward SMS');
             last SWITCH;
         };
         # default
@@ -2620,7 +2628,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     if(keys %old_profile_attributes) {
                         my $cfs = $c->model('DB')->resultset('voip_preferences')->search({
                             id => { -in => [ keys %old_profile_attributes ] },
-                            attribute => { -in => [qw/cfu cfb cft cfna/] },
+                            attribute => { -in => [qw/cfu cfb cft cfna cfs/] },
                         });
                         $prov_subscriber->voip_usr_preferences->search({
                             attribute_id => { -in => [ keys %old_profile_attributes ] },

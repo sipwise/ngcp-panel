@@ -24,7 +24,7 @@ sub hal_from_item {
     my ($self, $c, $item, $type) = @_;
     my $form;
 
-    my $resource = { subscriber_id => $item->id, cfu => [], cfb => [], cfna => [], cft => [], };
+    my $resource = { subscriber_id => $item->id, cfu => [], cfb => [], cfna => [], cft => [], cfs => []};
     my $b_subs_id = $item->id;
     my $p_subs_id = $item->provisioning_voip_subscriber->id;
 
@@ -125,7 +125,7 @@ sub update_item {
     my $tsets_rs = $c->model('DB')->resultset('voip_cf_time_sets');
     my $ssets_rs = $c->model('DB')->resultset('voip_cf_source_sets');
 
-    for my $type ( qw/cfu cfb cft cfna/) {
+    for my $type ( qw/cfu cfb cft cfna cfs/) {
         if (ref $resource->{$type} ne "ARRAY") {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field '$type'. Must be an array.");
             return;
@@ -174,7 +174,7 @@ sub update_item {
             $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
         }
         $mappings_rs->delete;
-        for my $type ( qw/cfu cfb cft cfna/) {
+        for my $type ( qw/cfu cfb cft cfna cfs/) {
             $cf_preferences{$type}->delete;
         }
         for my $mapping ( @new_mappings ) {
