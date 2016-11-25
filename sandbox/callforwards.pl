@@ -43,7 +43,7 @@ for my $item ($item_rs->all) {
 #       print Dumper({$item->get_inflated_columns});
     my %resource = ();
     my $prov_subs = $item->provisioning_voip_subscriber;
-    for my $cf_type (qw/cfu cfb cft cfna/) {
+    for my $cf_type (qw/cfu cfb cft cfna cfs/) {
         my $mapping = $schema->resultset('voip_cf_mappings')->search({
                 subscriber_id => $prov_subs->id,
                 type => $cf_type,
@@ -73,7 +73,7 @@ $time = time();
 for my $item ($item_rs->all) {
     my %resource = ();
     my $prov_subs = $item->provisioning_voip_subscriber;
-    @resource{qw/cfu cfb cft cfna/} = ({}) x 4;
+    @resource{qw/cfu cfb cft cfna cfs/} = ({}) x 5;
     for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all){
         $resource{$item_cf->type} = _contents_from_cfm($item_cf, $item);
     }

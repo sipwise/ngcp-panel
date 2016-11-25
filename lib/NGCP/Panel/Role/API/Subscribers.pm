@@ -582,7 +582,7 @@ sub update_item {
         if(keys %old_profile_attributes) {
             my $cfs = $schema->resultset('voip_preferences')->search({
                 id => { -in => [ keys %old_profile_attributes ] },
-                attribute => { -in => [qw/cfu cfb cft cfna/] },
+                attribute => { -in => [qw/cfu cfb cft cfna cfs/] },
             });
             $prov_subscriber->voip_usr_preferences->search({
                 attribute_id => { -in => [ keys %old_profile_attributes ] },

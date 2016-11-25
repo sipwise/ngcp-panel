@@ -61,6 +61,7 @@ SKIP:{
     ok(exists $cf1single->{cfb}, "cf should have key cfb");
     ok(exists $cf1single->{cft}, "cf should have key cft");
     ok(exists $cf1single->{cfna}, "cf should have key cfna");
+    ok(exists $cf1single->{cfs}, "cf should have key cfs");
 
     #write cf and check written values
     my($cf1_put,$cf1_get) = $test_machine->check_put2get({data_in => $test_machine->DATA_ITEM, uri => $cf1single_uri},undef, 1 );

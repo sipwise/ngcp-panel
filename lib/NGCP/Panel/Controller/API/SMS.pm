@@ -82,11 +82,11 @@ sub query_params {
         },
         {
             param => 'direction',
-            description => 'Filter for messages sent ("out") or received ("in").',
+            description => 'Filter for messages sent ("out"), received ("in") or forwarded ("forward").',
             query => {
                 first => sub {
                     my $q = shift;
-                    if ($q eq "out" || $q eq "in") {
+                    if ($q eq "out" || $q eq "in" || $q eq "forward") {
                         return { "me.direction" => $q };
                     } else {
                         return {},

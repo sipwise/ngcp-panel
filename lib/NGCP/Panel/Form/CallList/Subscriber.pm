@@ -80,10 +80,11 @@ has_field 'type' => (
         { label => 'cfb', value => 'cfb' },
         { label => 'cft', value => 'cft' },
         { label => 'cfna', value => 'cfna' },
+        { label => 'cfs', value => 'cfs' },
     ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['The type of call, one of call, cfu, cfb, cft, cfna.']
+        title => ['The type of call, one of call, cfu, cfb, cft, cfna, cfs.']
     },
 );
 
