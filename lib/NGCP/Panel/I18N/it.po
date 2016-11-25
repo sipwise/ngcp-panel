@@ -981,12 +981,9 @@ msgid "Api key"
 msgstr "Chiave API"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+#: share/templates/widgets/admin_system_overview.tt
 msgid "Applications"
 msgstr "Applicazioni"
-
-#: share/templates/widgets/admin_system_overview.tt
-msgid "Applications <strong>Ok</strong>"
-msgstr "Applicazioni <strong>Ok</strong>"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Apps"
@@ -1517,6 +1514,29 @@ msgstr "Deviazione di Chiamata Configurato"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
+msgid "Call Forward SMS"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Call Forward SMS, Contains the keys \"destinations\", \"times\" and \"sources"
+"\". \"destinations\" is an Array of Objects having a \"destination\", "
+"\"priority\" and \"timeout\" field. \"times\" is an Array of Objects having "
+"the fields \"minute\", \"hour\", \"wday\", \"mday\", \"month\", \"year\". "
+"\"times\" can be empty, then the CF is applied always. \"sources\" is an "
+"Array of Objects having one field \"source\". \"sources\" can be empty."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Call Forward SMS, Number of Objects, each containing the keys "
+"\"destinationset\", \"timeset\" and \"sourceset\". The values must be the "
+"name of a corresponding set which belongs to the same subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
+#: share/templates/subscriber/preferences.tt
 msgid "Call Forward Timeout"
 msgstr "Deviazione di Chiamata su Mancata Risposta"
 
@@ -1897,6 +1917,10 @@ msgstr "Cfb"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Cfna"
 msgstr "Cfna"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Cfs"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Cft"
@@ -3513,6 +3537,12 @@ msgid "Enable Caller LNP lookup"
 msgstr "Abilita controllo su DB di portabilità per il chiamante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Enable Party Call Control (PCC) Application to route calls to a remote API "
+"server first and continue the call only upon an accepted reply"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Peer Authentication"
 msgstr "Abilita Autenticazione Peer"
 
@@ -4506,6 +4536,16 @@ msgid "Failed to upload emergency mappings"
 msgstr "Caricamento numeri di emergenza fallito"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Failover to next peer on 5xx with given Reason text"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Failover to the next peer if it sends 5xx response with Reason text "
+"parameter matching provided value (regex)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Family"
 msgstr "Famiglia"
 
@@ -5352,6 +5392,10 @@ msgstr "Livello di NCOS Amministrativo Interno #"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Administrative NCOS Level for Call Forward #"
 msgstr "Livello di NCOS Amministrativo Interno per Devizione di Chiamata #"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal Cal Forward SMS #"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Call Forward Busy map #"
@@ -7137,6 +7181,10 @@ msgstr "Personalizzazione Interfaccia"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Parallel Ringing"
 msgstr "Chiamata in Parallelo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Party Call Control"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Passreset email template"
@@ -10399,6 +10447,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"The id pointing to the \"Call Forward SMS\" entry in the voip_cf_mappings "
+"table"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "The id pointing to the \"Call Forward Timeout\" entry in the "
 "voip_cf_mappings table"
 msgstr ""
@@ -11200,8 +11254,8 @@ msgid "The two-letter ISO 3166-1 country code of the contact (e.g. US or DE)."
 msgstr "Il codice nazione ISO 3166-1 a due lettere del contatto (es. US o DE)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The type of call, one of call, cfu, cfb, cft, cfna."
-msgstr "Il tipo di chiamata, una chiamata, cfu, cfb, cfna."
+msgid "The type of call, one of call, cfu, cfb, cft, cfna, cfs."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The type of feature to use on this line/key"
@@ -12021,7 +12075,7 @@ msgid "Whether it is a call between subscribers of one single customer."
 msgstr "Se è una chiamata tra abbonati dello stesso cliente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Whether the logged message is sent or received"
+msgid "Whether the logged message is sent, received or forwarded"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12303,6 +12357,10 @@ msgid "cfna"
 msgstr "cfna"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "cfs"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "cft"
 msgstr "cft"
 
@@ -12343,13 +12401,17 @@ msgstr "connessione in corso..."
 msgid "dataTables.default.js"
 msgstr "dataTables.it.js"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "day"
 msgstr "giorno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "day(s)"
 msgstr "giorno/i"
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "days"
+msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "destination"
@@ -12404,6 +12466,10 @@ msgid "foreign calls"
 msgstr "chiamate esterne"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "forwarded"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "fraud detection threshold per day, specifying cents"
 msgstr "Soglia giornalineria rilevazione frode, specificata in cents"
 
@@ -12435,13 +12501,17 @@ msgstr "global (includendo accesso web)"
 msgid "has stopped typing."
 msgstr "ha interrotto la scrittura."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "hour"
 msgstr "ora"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "hour(s)"
 msgstr "ora/e"
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "hours"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "in"
@@ -12491,7 +12561,7 @@ msgstr "bloccato"
 msgid "man_allowed_ip_grp successfully created"
 msgstr "man_allowed_ip_grp creato con successo"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "minute"
 msgstr "minuto"
 
@@ -12499,13 +12569,21 @@ msgstr "minuto"
 msgid "minute(s)"
 msgstr "minuto/i"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "minutes"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "month"
 msgstr "mese"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "month(s)"
 msgstr "mese/i"
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "months"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "new interval for each top-up"
@@ -12640,6 +12718,14 @@ msgstr "destra"
 msgid "schedule: by 'billing_profiles' field"
 msgstr "pianificato: con campo 'billing_profiles'"
 
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "second"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "seconds"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "serial"
 msgstr "periodico"
@@ -12764,10 +12850,24 @@ msgstr ""
 msgid "y"
 msgstr "y"
 
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "year"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "years"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Reseller.pm share/templates/rewrite/rules_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Applications <strong>Ok</strong>"
+#~ msgstr "Applicazioni <strong>Ok</strong>"
+
+#~ msgid "The type of call, one of call, cfu, cfb, cft, cfna."
+#~ msgstr "Il tipo di chiamata, una chiamata, cfu, cfb, cfna."
 
 #~ msgid ""
 #~ "Call Forward Busy, Contains the keys \"destinations\" and \"times\". "
