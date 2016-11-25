@@ -1,5 +1,5 @@
 package Test::Collection;
-#later package should be split into 2: apiclient and testcollection
+#todo: later package should be split into 2: apiclient and testcollection
 #testcollection will keep object of the apiclient
 
 use strict;
@@ -371,31 +371,93 @@ sub get_item_hal{
     return $resitem;
 }
 sub get_hal_from_collection{
-    my($self,$list_collection,$name) = @_;
-    $name ||= $self->name;
+    my($self,$list_collection,$name,$number) = @_;
+    $number //= 0;
     my $hal_name = $self->get_hal_name($name);
     my($reshal,$reshal_collection,$location,$total_count);
     $reshal_collection = $list_collection;
     if( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
-        $reshal = $list_collection->{_embedded}->{$hal_name}->[0];
+        #print Dumper ["get_hal_from_collection","1"];
+        $reshal = $list_collection->{_embedded}->{$hal_name}->[$number];
         $location = $reshal->{_links}->{self}->{href};
-        $total_count = $reshal->{total_count};
+        $total_count = $reshal->{total_count} // $list_collection->{total_count};
     } elsif( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'HASH') {
+        #print Dumper ["get_hal_from_collection","2"];
         $reshal = $list_collection->{_embedded}->{$hal_name};
         $location = $reshal->{_links}->{self}->{href};
         $total_count = $list_collection->{total_count};
+        #todo: check all collections
     } elsif(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
 #found first subscriber
+        #print Dumper ["get_hal_from_collection","3"];
         $reshal = $list_collection;
         $location = $reshal->{_links}->{$hal_name}->{href};
         $total_count = $reshal->{total_count};
     } elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
 #preferencedefs collection
+#or empty collection, see "/api/pbxdeviceprofiles/?name=two"
         $reshal = $list_collection;
         $location = $reshal->{_links}->{self}->{href};
         $total_count = $reshal->{total_count};
+        #print Dumper ["get_hal_from_collection","4",$total_count];
     }
     return ($reshal,$location,$total_count,$reshal_collection);
+}
+sub get_collection_hal{
+    my($self,$name, $uri, $reload, $page, $rows) = @_;
+    my (@reshals, $location,$total_count,$reshal_collection,$rescollection,$firstitem,$res,$list_collection,$req);
+
+    $name ||= $self->name;
+    if(!$uri || $uri !~/rows=\d+/){
+        if(!$rows){
+            $firstitem = $self->get_item_hal($name, $uri, $reload);
+            $rows = $total_count = $firstitem->{total_count};
+        }
+        if(!$rows){
+            return;
+        }
+        $page ||= 1;
+        $uri //= $self->get_uri_collection($name);
+        $uri .= ( ($uri =~/\?/) ? '&' : '?')."page=$page&rows=$rows";
+    }
+    if(!$firstitem || ($page != 1 || $rows != 1)){
+        ($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
+        ($reshals[0],$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name);
+    }else{
+        #the only risk here is that we get reshal_collection as content_collection, although potentially they may differ.
+        ($res,$list_collection,$req,$reshals[0],$location,$total_count,$reshal_collection) = @{$firstitem}{qw/res content_collection req content location total_count content_collection/};
+    }
+    #print Dumper ["get_collection_hal",$total_count];
+    if($total_count){
+        $self->IS_EMPTY_COLLECTION(0);
+        #$self->DATA_LOADED->{$name} ||= [];
+        $rescollection = {
+            total_count => $total_count, 
+            content => $reshal_collection,
+            res => $res, 
+            req => $req, 
+            collection => [],
+        };
+        my $add_item = sub{
+            my ($number,$location) = @_;
+            my $resitem = { 
+                num => $number, 
+                content => $reshals[$number], 
+                location => $location, 
+            };
+            #while no caching here
+            #push @{$self->DATA_LOADED->{$name}}, $resitem;
+            push @{$rescollection->{collection}}, $resitem;
+        };
+        $add_item->(0);
+        for(my $i=1; $i<$total_count; $i++){
+            ($reshals[$i],$location) = $self->get_hal_from_collection($reshal_collection,$name,$i);
+            $add_item->($i,$location);
+        }
+    }else{
+        $self->IS_EMPTY_COLLECTION(1);
+    }
+    return $rescollection;
 }
 sub get_created_first{
     my($self) = @_;
@@ -967,6 +1029,7 @@ sub clear_test_data_all{
         if($strict){#for particular deletion test
             $self->http_code_msg(204, "$self->name: check delete item $del_uri",$res,$content);
         }elsif($res->code == 404){
+        #todo: if fake data will provide tree of the cascade deletion - it can be checked here, I think
             diag($self->name.": Item $del_uri is absent already.");
         }
     }
