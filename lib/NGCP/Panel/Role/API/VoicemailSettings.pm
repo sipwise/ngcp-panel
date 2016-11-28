@@ -74,6 +74,7 @@ sub resource_from_item {
     $resource->{pin} = delete $resource->{password};
     $resource->{delete} = delete $resource->{delete} eq 'yes' ? 1 : 0; 
     $resource->{attach} = delete $resource->{attach} eq 'yes' ? 1 : 0; 
+    $resource->{sms_number} = delete $resource->{pager};
 
     return $resource;
 }
@@ -102,6 +103,8 @@ sub update_item {
     $resource->{delete} = delete $resource->{delete} ? 'yes' : 'no';
     $resource->{attach} = delete $resource->{attach} ? 'yes' : 'no';
     $resource->{password} = delete $resource->{pin};
+    $resource->{pager} = delete $resource->{sms_number};
+    $resource->{pager} //= "";
 
     $item->update($resource);
 

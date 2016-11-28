@@ -111,6 +111,13 @@ sub create_item {
             err_code => sub {$error_msg = shift;},
         );
 
+    # TODO: agranig: we need to return an item here, otherwise it fails
+    #if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+    #    if($c->req->params->{skip_journal} eq "true") {
+    #        return;
+    #    }
+    #}
+
     my $rs = $self->item_rs($c);
     my $item = $rs->create({
             subscriber_id => $resource->{subscriber_id},

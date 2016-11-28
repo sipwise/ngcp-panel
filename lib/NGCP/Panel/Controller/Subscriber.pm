@@ -36,6 +36,7 @@ use NGCP::Panel::Form::DestinationSet;
 use NGCP::Panel::Form::TimeSet;
 use NGCP::Panel::Form::Voicemail::Pin;
 use NGCP::Panel::Form::Voicemail::Email;
+use NGCP::Panel::Form::Voicemail::Pager;
 use NGCP::Panel::Form::Voicemail::Attach;
 use NGCP::Panel::Form::Voicemail::Delete;
 use NGCP::Panel::Form::Reminder;
@@ -3002,6 +3003,18 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 );
                 if($posted && $form->validated) {
                     $vm_user->update({ email => $form->values->{email} // '' });
+                }
+                last SWITCH;
+            };
+            /^pager$/ && do {
+                $form = NGCP::Panel::Form::Voicemail::Pager->new;
+                $params = { 'sms_number' => $vm_user->pager };
+                $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
+                if($posted && $form->validated) {
+                    $vm_user->update({ pager => $form->values->{sms_number} // ''});
                 }
                 last SWITCH;
             };

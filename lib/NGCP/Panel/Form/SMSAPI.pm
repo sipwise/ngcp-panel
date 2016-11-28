@@ -4,7 +4,6 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
-use NGCP::Panel::Field::BillingZone;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
