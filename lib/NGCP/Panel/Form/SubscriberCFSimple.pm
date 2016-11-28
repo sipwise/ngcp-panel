@@ -50,10 +50,11 @@ sub build_destinations {
         if($c->config->{features}->{cloudpbx} && $c->stash->{pbx}){
             push @options, 
                 { label => 'Auto Attendant', value => 'autoattendant' },
-                { label => 'Office Hours Announcement', value => 'officehours' },
-                { label => 'Custom Hours Announcement', value => 'customhours' };
+                { label => 'Office Hours Announcement', value => 'officehours' };
         }
-        push @options, { label => 'Local Subscriber', value => 'localuser' }
+        push @options, 
+            { label => 'Custom Announcement', value => 'customhours' };
+         push @options, { label => 'Local Subscriber', value => 'localuser' }
             if($c->config->{features}->{callthrough} || $c->config->{features}->{callingcard} );
     }
     push @options, { label => 'URI/Number', value => 'uri' };
