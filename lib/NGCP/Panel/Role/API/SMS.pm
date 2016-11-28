@@ -73,6 +73,7 @@ sub check_resource{
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
         return;
     }
+
     my $b_subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
             id => $resource->{subscriber_id},
         });
@@ -86,6 +87,13 @@ sub check_resource{
         return;
     }
     $resource->{subscriber_id} = $subscriber->id;
+
+    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+        if($c->req->params->{skip_checks} eq "true") {
+            $c->log->info("skipping number checks for sending sms");
+            return 1;
+        }
+    }
 
     return unless NGCP::Panel::Utils::SMS::check_numbers($c, $resource, $subscriber, sub {
             my ($err) = @_;
