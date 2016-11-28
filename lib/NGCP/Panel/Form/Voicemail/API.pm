@@ -47,12 +47,32 @@ has_field 'attach' => (
     },
 );
 
+has_field 'sms_number' => (
+    type => 'Text',
+    required => 0,
+    validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The E164 number in format &lt;cc&gt;&lt;ac&gt;&lt;sn&gt; to send voicemail notification SMS.']
+    },
+);
+
+
 sub validate {
     my $self = shift;
     my $attach = $self->field('attach')->value;
     my $delete = $self->field('delete')->value;
     if($delete && !$attach) {
         $self->field('attach')->add_error('Must be set if delete is set');
+    }
+}
+
+sub validate_sms_number {
+    my ($self, $field) = @_;
+
+    unless($field->value =~ /^[1-9]\d+$/) {
+        my $err_msg = 'Invalid E164 number';
+        $field->add_error($err_msg);
     }
 }
 
