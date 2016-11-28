@@ -40,7 +40,13 @@
     <script>
         $(function () {
             Theme.init();
-            localStorage.clear();
+            //localStorage.clear();//it's a little bit too greedy )
+            for (var i = 0; i < localStorage.length; i++){
+                var key = localStorage.key(i);
+                if(!key.test(/^DataTables_/)){
+                    localStorage.removeItem(key);
+                }
+            }
         });
     </script>
 </body>
