@@ -82,7 +82,7 @@ sub destination_as_string {
     } elsif($dest =~ /^sip:office-hours\@app\.local$/) {
         return "Office Hours Announcement";
     } elsif($dest =~ /^sip:custom-hours\@app\.local$/) {
-        return "Custom Hours Announcement";
+        return "Custom Announcement";
     } else {
         my $d = $dest;
         $d =~ s/^sips?://;
