@@ -48,6 +48,7 @@ $(document).ready(function() {
         "bPaginate": [% helper.paginate || 'true' %],
         "bFilter": [% helper.filter || 'true' %],
         "bStateSave": true,
+        "iStateDuration": 0,
 
         "sPaginationType": "bootstrap",
         [% IF helper.length_change %]
