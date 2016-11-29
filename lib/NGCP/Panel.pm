@@ -49,6 +49,12 @@ for my $path(qw#./logging.conf /etc/ngcp-panel/logging.conf#) {
 }
 $logger_config = $panel_config unless(defined $logger_config);
 
+sub handle_unicode_encoding_exception {
+    my ($self, $exception_context) = @_;
+    $self->log->debug(">> handle_unicode_encoding_exception: ", $exception_context->{error_msg});
+    return $exception_context->{param_value};
+}
+
 __PACKAGE__->config(
     name => 'NGCP::Panel',
     # Disable deprecated behavior needed by old applications
