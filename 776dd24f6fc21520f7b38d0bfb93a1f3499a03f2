@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_00593ffe",
+        "filename": "lib/NGCP/Panel/Controller/InternalSms.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-11-29T13:45:47Z",
+      "side": 1,
+      "message": "\"exiting subroutine via last\" causing rollback",
+      "revId": "776dd24f6fc21520f7b38d0bfb93a1f3499a03f2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
