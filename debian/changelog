@@ -1,3 +1,12 @@
+ngcp-panel (1.14.2.10+0~mr4.5.2.10) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [6a43c2c] TT#5811 fractional CDR times/durations in panel UI/api
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 29 Nov 2016 09:40:26 +0100
+
 ngcp-panel (1.14.2.9+0~mr4.5.2.9) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
