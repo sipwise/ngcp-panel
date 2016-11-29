@@ -32,7 +32,22 @@ sub emergency_mode {
             $em_count++;
         }
     }
-    return $em_count;
+    return $em_count.'';
+}
+
+sub system {
+    my ($self, $c) = @_;
+    return { color => "#FFC200", text => "OK1" };
+}
+
+sub hardware {
+    my ($self, $c) = @_;
+    return { color => "#FFC200", text => "OK2" };
+}
+
+sub overall_status {
+    my ($self, $c) = @_;
+    return { class => "ngcp-green-ok", text => $c->loc("All services running") };
 }
 
 1;
