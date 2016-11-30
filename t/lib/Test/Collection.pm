@@ -1022,15 +1022,16 @@ sub check_create_correct{
 
 sub clear_test_data_all{
     my($self,$uri,$strict) = @_;
+    my $name = $self->name // '';
     my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys %{ $self->DATA_CREATED->{ALL} };
     foreach my $del_uri(@uris){
         $del_uri = $self->normalize_uri($del_uri);
         my($req,$res,$content) = $self->request_delete($del_uri);
         if($strict){#for particular deletion test
-            $self->http_code_msg(204, "$self->name: check delete item $del_uri",$res,$content);
+            $self->http_code_msg(204, "$name: check delete item $del_uri",$res,$content);
         }elsif($res->code == 404){
         #todo: if fake data will provide tree of the cascade deletion - it can be checked here, I think
-            diag($self->name.": Item $del_uri is absent already.");
+            diag($name.": Item $del_uri is absent already.");
         }
     }
     $self->clear_data_created();
@@ -1150,7 +1151,7 @@ sub resource_clear_file{
 sub get_id_from_hal{
     my($self,$hal,$name) = @_;
     $name //= $self->name;
-    my $id = $hal->{_embedded}->{'ngcp:'.$name}->{_links}{self}{href} =~ m!${name}/([0-9]*)$!;
+    (my ($id)) = $hal->{_embedded}->{'ngcp:'.$name}->{_links}{self}{href} =~ m!${name}/([0-9]*)$!;
     return $id;
 }
 sub uri2location{

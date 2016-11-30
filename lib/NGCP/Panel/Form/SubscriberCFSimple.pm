@@ -66,6 +66,8 @@ has_field 'destination.uri' => (
     type => 'Compound',
     do_label => 0,
 );
+
+
 has_field 'destination.uri.destination' => (
     type => '+NGCP::Panel::Field::URI',
     label => 'URI/Number',
@@ -74,6 +76,14 @@ has_field 'destination.uri.timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     label => 'for (seconds)',
     default => 300,
+);
+has_field 'destination.announcement_id' => (
+    type => 'Select',
+    #widget => 'RadioGroup',
+    label => 'Custom announcement',
+    options_method => \&build_announcements,
+    wrapper_class => [qw/hfh-rep-field ngcp-destination ngcp-destination-customhours/],
+    required => 0,
 );
 
 has_field 'cf_actions' => (
@@ -116,6 +126,18 @@ sub validate_destination{
     }
     return $result;
 }
+
+sub build_announcements {
+    my ($self) = @_;
+    my @options = ();
+    my $c = $self->form->ctx;
+    push @options, { label => 'Select announcement', value => '' };
+    foreach($c->stash->{custom_announcements_rs}->all){
+        push @options, { label => $_->name, value => $_->id };
+    }
+    return \@options;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:

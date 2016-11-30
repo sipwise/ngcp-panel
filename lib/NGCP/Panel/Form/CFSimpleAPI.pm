@@ -97,6 +97,10 @@ has_field 'cfu.destinations.timeout' => (
     type => 'PosInteger',
 );
 
+has_field 'cfu.destinations.announcement_id' => (
+    type => 'PosInteger',
+);
+
 has_field 'cfu.times' => (
     type => 'Repeatable',
     do_wrapper => 1,
@@ -124,6 +128,10 @@ has_field 'cfb.destinations.destination' => (
 );
 
 has_field 'cfb.destinations.timeout' => (
+    type => 'PosInteger',
+);
+
+has_field 'cfb.destinations.announcement_id' => (
     type => 'PosInteger',
 );
 
@@ -163,6 +171,10 @@ has_field 'cft.times' => (
     do_label => 0,
 );
 
+has_field 'cft.destinations.announcement_id' => (
+    type => 'PosInteger',
+);
+
 has_field 'cft.sources' => (
     type => 'Repeatable',
     do_wrapper => 1,
@@ -184,6 +196,10 @@ has_field 'cfna.destinations.destination' => (
 );
 
 has_field 'cfna.destinations.timeout' => (
+    type => 'PosInteger',
+);
+
+has_field 'cfna.destinations.announcement_id' => (
     type => 'PosInteger',
 );
 
@@ -214,6 +230,10 @@ has_field 'cfs.destinations.destination' => (
 );
 
 has_field 'cfs.destinations.timeout' => (
+    type => 'PosInteger',
+);
+
+has_field 'cfs.destinations.announcement_id' => (
     type => 'PosInteger',
 );
 

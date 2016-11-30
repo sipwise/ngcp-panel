@@ -119,6 +119,24 @@ sub update_item {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid timeout in '$type'");
                 return;
             }
+            if (defined $d->{announcement_id}) {
+                if('customhours' ne $d->{destination}){
+                    $c->log->error("Invalid paramster 'announcement_id' for the destination '".$d->{destination}."' in '$type'");
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid paramster 'announcement_id' for the destination '".$d->{destination}."' in '$type'");
+                    return;
+                }elsif(! is_int($d->{announcement_id})){
+                    $c->log->error("Invalid announcement_id in '$type'");
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid announcement_id in '$type'");
+                    return;
+                }elsif(! $c->model('DB')->resultset('voip_sound_handles')->search_rs({
+                   'me.id' => $d->{announcement_id},
+                   'group.name' => 'custom_announcements',
+                })->first() ){
+                    $c->log->error("Unknown announcement_id in '$type'");
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown announcement_id in '$type'");
+                    return;
+                }
+            }
         }
     }
 
