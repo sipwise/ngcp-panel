@@ -70,7 +70,7 @@ sub GET :Allow {
     {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, subscriber => $item);
+        last unless $self->resource_exists($c, 'callforward' => $item);
 
         my $hal = $self->hal_from_item($c, $item);
 

@@ -4,6 +4,7 @@ use warnings;
 use Test::More;
 use Test::Collection;
 use Test::FakeData;
+use Data::Dumper;
 
 my $test_machine = Test::Collection->new(
     name => 'cfdestinationsets',
@@ -18,7 +19,14 @@ $fake_data->set_data_from_script({
         data => {
             destinations => [
                 {
-                   destination =>  "sip:custom-hours\@app.local",
+                   destination =>  "customhours",
+                   priority => 1,
+                   timeout => 300,
+                   announcement_id => sub { return shift->get_id('soundhandles_custom_announcements',@_); },,
+                },
+                #without announcement
+                {
+                   destination =>  "customhours",
                    priority => 1,
                    timeout => 300,
                 }
@@ -94,8 +102,36 @@ SKIP:
     ($res, $content) = $test_machine->request_get('/api/cftimesets/99987');
     is($res->code, 404, "check get nonexistent cftimesets item");
 }
+{
+#5954
+    my($res,$content,$req);
+    $test_machine->runas('admin');
+    my $d = $test_machine->check_create_correct( 1, sub{ 
+        $_[0]->{name} .= '5954' ; 
+    } )->[0];
+    ok(exists $d->{content}->{destinations}->[0]->{announcement_id},"Check announcement_id existance");
+    
+    my (undef,$announcement_hal) = $test_machine->check_item_get('/api/soundhandles/'.$d->{content}->{destinations}->[0]->{announcement_id});
+    ok($announcement_hal->{group} eq 'custom_announcements', 'Check announcement group' );
+    
+    $d->{content}->{destinations}->[0]->{announcement_id} = 'aaa';
+    ($res,$content,$req) = $test_machine->request_put(@$d{qw/content location/});
+    $test_machine->http_code_msg(422, "Check invalid announcement_id", $res, $content);
 
+    $d->{content}->{destinations}->[0]->{announcement_id} = '999999';
+    ($res,$content,$req) = $test_machine->request_put(@$d{qw/content location/});
+    $test_machine->http_code_msg(422, "Check absent announcement_id", $res, $content);
+
+    $announcement_hal = $test_machine->get_item_hal('soundhandles', '/api/soundhandles/?group=pbx');
+    $d->{content}->{destinations}->[0]->{announcement_id} = $announcement_hal->{content}->{id};
+    ($res,$content,$req) = $test_machine->request_put(@$d{qw/content location/});
+    $test_machine->http_code_msg(422, "Check announcement_id from other group", $res, $content);
+
+}
+$fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();
+undef $fake_data;
+undef $test_machine;
 done_testing;
 
 # vim: set tabstop=4 expandtab:
