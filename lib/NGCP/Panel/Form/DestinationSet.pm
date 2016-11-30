@@ -102,6 +102,14 @@ has_field 'destination.priority' => (
     required => 1,
 );
 
+has_field 'destination.announcement_id' => (
+    type => '+NGCP::Panel::Field::PosInteger',
+    label => 'Priority',
+    wrapper_class => [qw/hfh-rep-field/],
+    default => 1,
+    required => 1,
+);
+
 has_field 'destination.rm' => (
     type => 'RmElement',
     value => 'Remove',
