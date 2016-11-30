@@ -609,7 +609,7 @@ msgstr "Añadir un Alias"
 msgid "Alias numbers"
 msgstr "Alias number"
 
-#: share/templates/widgets/admin_system_overview.tt
+#: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm
 msgid "All services running"
 msgstr "Todos los servicios en ejecución"
 
@@ -4803,8 +4803,8 @@ msgid "Handle"
 msgstr "Manejo"
 
 #: share/templates/widgets/admin_system_overview.tt
-msgid "Hardware <strong>Ok</strong>"
-msgstr "Hardware <strong>Ok</strong>"
+msgid "Hardware"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Header text to add on every page"
@@ -6629,7 +6629,8 @@ msgstr ""
 msgid "Numbers"
 msgstr "Números"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/layout/body.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm share/layout/body.tt
 msgid "OK"
 msgstr ""
 
@@ -8763,6 +8764,14 @@ msgid "Status"
 msgstr "Estado"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Status information after the event, if applicable."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Status information before the event, if applicable."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Stop"
 msgstr ""
 
@@ -9198,8 +9207,8 @@ msgid "Syslog server URL."
 msgstr ""
 
 #: share/templates/widgets/admin_system_overview.tt
-msgid "System <strong>Ok</strong>"
-msgstr "Sistema <strong>Ok</strong>"
+msgid "System"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "System Sound Set"
@@ -10009,6 +10018,10 @@ msgid "The end time in format hh:mm:ss"
 msgstr "Hora de fin en formato hh:mm:ss"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The event type."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The expire timestamp of the registered contact."
 msgstr ""
 
@@ -10715,6 +10728,10 @@ msgid "The subscriber ID."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber contract's reseller."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber for which to topup the balance."
 msgstr ""
 
@@ -10744,6 +10761,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber the contact belongs to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber the event is related to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10822,6 +10843,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The timestamp of the call initiation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timestamp of the event."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12450,6 +12475,12 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Hardware <strong>Ok</strong>"
+#~ msgstr "Hardware <strong>Ok</strong>"
+
+#~ msgid "System <strong>Ok</strong>"
+#~ msgstr "Sistema <strong>Ok</strong>"
 
 #~ msgid "Applications <strong>Ok</strong>"
 #~ msgstr "Aplicaciones <strong>Ok</strong>"
