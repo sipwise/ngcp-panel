@@ -68,6 +68,12 @@ has_field 'destinations.priority' => (
     default => 1,
 );
 
+has_field 'destinations.announcement_id' => (
+    type => '+NGCP::Panel::Field::PosInteger',
+    label => 'Priority',
+    default => 1,
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
