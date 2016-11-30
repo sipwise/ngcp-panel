@@ -102,6 +102,16 @@ has_field 'destination.priority' => (
     required => 1,
 );
 
+has_field 'destination.announcement_id' => (
+    type => 'Select',
+    #widget => 'RadioGroup',
+    label => 'Custom announcement',
+    options_method => \&build_announcements,
+    wrapper_class => [qw/hfh-rep-field ngcp-destination ngcp-destination-customhours/],
+    required => 0,
+);
+
+
 has_field 'destination.rm' => (
     type => 'RmElement',
     value => 'Remove',
@@ -155,6 +165,17 @@ sub validate_destination{
     }
     return $result;
 }
+sub build_announcements {
+    my ($self) = @_;
+    my @options = ();
+    my $c = $self->form->ctx;
+    push @options, { label => 'Select announcement', value => '' };
+    foreach($c->stash->{custom_announcements_rs}->all){
+        push @options, { label => $_->name, value => $_->id };
+    }
+    return \@options;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:

@@ -931,7 +931,13 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params = { destination => $c->stash->{cf_tmp_params} };
         $params->{destination}{destination} = $d;
         $params->{ringtimeout} = $ringtimeout;
+        $params->{destination}->{announcement_id} = $destination->announcement_id; 
     }
+    $c->stash->{custom_announcements_rs} = $c->model('DB')->resultset('voip_sound_handles')->search({
+        'group.name' => 'custom_announcements',
+    },{
+        join => 'group',
+    });
 
     if($c->config->{features}->{cloudpbx}) {
         my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -1020,6 +1026,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                     destination => $d,
                     timeout => $t,
                     priority => 1,
+                    announcement_id => $dest->field('announcement_id')->value || undef,
                 });
 
                 unless(defined $map) {
@@ -1375,6 +1382,7 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                             destination => $d,
                             timeout => $t,
                             priority => $dest->field('priority')->value,
+                            announcement_id => $dest->field('announcement_id')->value || undef,
                         });
                     }
                 }
@@ -1470,6 +1478,11 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
         }
         $params->{destination} = \@destinations;
     }
+    $c->stash->{custom_announcements_rs} = $c->model('DB')->resultset('voip_sound_handles')->search({
+        'group.name' => 'custom_announcements',
+    },{
+        join => 'group',
+    });
 
     $c->stash->{cf_tmp_params} = $params;
     my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
@@ -1544,6 +1557,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                         destination => $d,
                         timeout => $t,
                         priority => $dest->field('priority')->value,
+                        announcement_id => $dest->field('announcement_id')->value || undef,
                     });
                 }
                 $set->discard_changes; # reload (destinations may be cached)

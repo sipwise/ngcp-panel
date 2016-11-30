@@ -158,6 +158,8 @@ sub update_item {
         for my $d ( @{$resource->{destinations}} ) {
             delete $d->{destination_set_id};
             delete $d->{simple_destination};
+            #be careful  this should be done before NGCP::Panel::Utils::Subscriber::field_to_destination, that chages destination
+            $d->{announcement_id} = (( 'customhours' eq $d->{destination}) and $d->{announcement_id} ) || undef;
             $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
                     destination => $d->{destination},
                     number => $number,
