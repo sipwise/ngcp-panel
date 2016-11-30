@@ -197,8 +197,7 @@ sub POST :Allow {
         if (! exists $resource->{destinations} ) {
             $resource->{destinations} = [];
         }
-        if (ref $resource->{destinations} ne "ARRAY") {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
+        if(!$self->check_destinations($c, $resource)){
             last;
         }
         try {
