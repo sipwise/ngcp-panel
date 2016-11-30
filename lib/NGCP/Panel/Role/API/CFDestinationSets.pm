@@ -116,16 +116,8 @@ sub update_item {
     if (! exists $resource->{destinations} ) {
         $resource->{destinations} = [];
     }
-    if (ref $resource->{destinations} ne "ARRAY") {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
+    if(!$self->check_destinations($c, $resource)){
         return;
-    }
-    for my $d (@{ $resource->{destinations} }) {
-        if (exists $d->{timeout} && ! is_int($d->{timeout})) {
-            $c->log->error("Invalid field 'timeout'.");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'timeout'.");
-            return;
-        }
     }
 
     my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
@@ -136,7 +128,7 @@ sub update_item {
     my $subscriber = $b_subscriber->provisioning_voip_subscriber;
     unless($subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
-        last;
+        return;
     }
 
     try {
@@ -185,5 +177,46 @@ sub update_item {
     return $item;
 }
 
+sub check_destinations{
+    my($self,$c,$resource) = @_;
+    if (ref $resource->{destinations} ne "ARRAY") {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
+        return;
+    }
+    for my $d (@{ $resource->{destinations} }) {
+        if (exists $d->{timeout} && ! is_int($d->{timeout})) {
+            $c->log->error("Invalid timeout for the destination '".$d->{destination}."'");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid timeout for the destination '".$d->{destination}."'");
+            return;
+        }
+        if (exists $d->{priority} && ! is_int($d->{priority})) {
+            $c->log->error("Invalid priority for the destination '".$d->{destination}."'");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid priority for the destination '".$d->{destination}."'");
+            return;
+        }
+        if (defined $d->{announcement_id}) {
+        #todo: I think that user expects that put and get will be the same
+            if(('customhours' ne $d->{destination}) && ('sip:custom-hours@app.local' ne $d->{destination}) ){
+                $c->log->error("Invalid parameter 'announcement_id' for the destination '".$d->{destination}."'");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'announcement_id' for the destination '".$d->{destination}."'");
+                return;
+            }elsif(! is_int($d->{announcement_id})){
+                $c->log->error("Invalid announcement_id");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid announcement_id");
+                return;
+            }elsif(! $c->model('DB')->resultset('voip_sound_handles')->search_rs({
+               'me.id' => $d->{announcement_id},
+               'group.name' => 'custom_announcements',
+            },{
+                'join' => 'group',
+            })->first() ){
+                $c->log->error("Unknown announcement_id: ".$d->{announcement_id});
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown announcement_id:".$d->{announcement_id});
+                return;
+            }
+        }
+    }
+    return 1;
+}
 1;
 # vim: set tabstop=4 expandtab:

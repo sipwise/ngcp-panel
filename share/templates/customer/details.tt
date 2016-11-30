@@ -14,7 +14,6 @@
         { level = 5, text = c.loc("ported (call forwarding only)") },
     ];
 -%]
-<script src="/js/jquery.dump.js"></script>
 
 <div class="row">
     <span>
