@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_49f9a3e8",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-11-30T05:33:36Z",
+      "side": 1,
+      "message": "If we can\u0027t return anything as an item here, I think we need to introduce some return code. To distinguish from item, it may be less the 0.\nReally it is not the only API that uses some async action to create. We may create subclass for them.\n\nBut wouldn\u0027t it be confusing for the API users when POST returns or doesn\u0027t return item representation?",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 115,
+        "endChar": 1
+      },
+      "revId": "0bc1a1970a8361faaf90e19a0e42f52872716fd8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
