@@ -54,6 +54,44 @@
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" -%]
 
+<script>
+function destinationDynamicFields(selectedValue, inputNumber){
+    if($.isNumeric( inputNumber )){
+      inputNumber = inputNumber.toString();
+    }else if(!inputNumber){
+      inputNumber = '';
+    } 
+    var name = inputNumber + '.announcement_id';
+    $(":input[name$='" + name + "']").closest('.ngcp-destination').css("display","none");
+    $(":input[name$='" + name + "']").closest('.ngcp-destination-' + selectedValue ).css("display","block");
+}
+function inputNumberFromName(name){
+    var inputNumber = name;
+    var inputNumbers = inputNumber.match(/\.(\d+)\./);
+    if(inputNumbers){
+      inputNumber = inputNumbers[1];
+    }else{
+      inputNumber = '';
+    }
+    return inputNumber;
+}
+
+$( document ).ready(function() {
+    $("input:radio[name$='.destination']:checked").each(function(index, item){
+      destinationDynamicFields( $(this).val(), inputNumberFromName($(this).attr('name')) );
+    });
+    $("input:radio[name$='.destination']").on('click',function(){
+      destinationDynamicFields($(this).val(), inputNumberFromName($(this).attr('name')) );
+    });
+    $('.controls').on('click','input:radio',function(){
+      if($(this).attr("checked")){
+        destinationDynamicFields($(this).val(), inputNumberFromName($(this).attr('name')) );
+      }
+    });
+});
+
+</script>
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_cf">[% c.loc('Call Forwards') %]</a>
