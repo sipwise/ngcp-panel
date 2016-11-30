@@ -573,4 +573,9 @@ div.login {
     font-size: 12px;
 }
 
+/*callforwards announcement_id field for the different destinations*/
+.ngcp-destination {
+  display: none;
+}
+
 /* vim: set tabstop=4 syntax=css expandtab: */

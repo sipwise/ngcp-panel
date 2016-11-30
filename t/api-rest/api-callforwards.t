@@ -38,6 +38,12 @@ $fake_data->set_data_from_script({
                         priority => "2",
                         timeout => "300"
                     },
+                    {
+                        destination => "customhours",
+                        priority => "1",
+                        timeout => "300",
+                        announcement_id => sub { return shift->get_id('soundhandles_custom_announcements',@_); },
+                    },
                 ],
                 sources => [
                     {
@@ -68,6 +74,10 @@ $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPT
 $test_machine->DATA_ITEM_STORE($fake_data->process('callforwards'));
 $test_machine->form_data_item( );
 
+my $announcement_id = $test_machine->DATA_ITEM->{cfb}->{destinations}->[2]->{announcement_id};
+ok($announcement_id =~/^\d+$/,"announcement_id should be a positiv integer: $announcement_id");
+
+
 SKIP:{
     my ($res,$req,$content);
     my $cf1 = $test_machine->get_item_hal();
@@ -84,12 +94,17 @@ SKIP:{
     (undef, $cf1single) = $test_machine->check_item_get($cf1single_uri,"fetch cf id $cf1_id");
 
     #check cf structure
+    delete $cf1single->{_links};
     is(ref $cf1single, "HASH", "cf should be hash");
-    ok(exists $cf1single->{cfu}, "cf should have key cfu");
-    ok(exists $cf1single->{cfb}, "cf should have key cfb");
-    ok(exists $cf1single->{cft}, "cf should have key cft");
-    ok(exists $cf1single->{cfna}, "cf should have key cfna");
-    ok(exists $cf1single->{cfs}, "cf should have key cfs");
+    my @valid_types = (qw/cfu cfb cft cfna cfs/);
+    my %valid_types;
+    @valid_types{@valid_types} = ( 1 ) x @valid_types;
+    foreach my $type(@valid_types){
+        ok(exists $cf1single->{$type}, "cf should have key $type");
+    }
+    foreach my $test_type (keys %{$cf1single}){
+        ok( exists $valid_types{$test_type} , "check cf against unknown types: $test_type");
+    }
 
     #write cf and check written values
     my($cf1_put,$cf1_get) = $test_machine->check_put2get({data_in => $test_machine->DATA_ITEM, uri => $cf1single_uri},undef, 1 );
@@ -100,6 +115,10 @@ SKIP:{
     is ($cf1_put->{content}->{cft}{destinations}->[1]->{destination}, "voicebox", "Check second destination of cft");
     is ($cf1_put->{content}->{cfb}{destinations}->[0]->{destination}, "customhours", "Check customhours destination");
     is ($cf1_put->{content}->{cfb}{destinations}->[1]->{destination}, "officehours", "Check customhours destination");
+
+    is ($cf1_put->{content}->{cfb}{destinations}->[2]->{announcement_id}, $announcement_id, "Check announcement_id after put");
+    is ($cf1_get->{content}->{cfb}{destinations}->[2]->{announcement_id}, $announcement_id, "Check announcement_id after get");
+
 
     #write invalid 'timeout'
     ($res,$content,$req) = $test_machine->request_put({
@@ -137,6 +156,50 @@ SKIP:{
     ($res,$mod_cf1) = $test_machine->request_patch( [ { op => 'replace', path => '/cfu/destinations/0/timeout', value => 'invalid' } ] );
     is($res->code, 422, "check patched invalid status");
 
+    #5954
+    my $data = {
+        destinations => [
+            {
+                destination => "officehours",
+                timeout => "15",
+                announcement_id =>  $announcement_id,
+            },
+        ],
+    };
+    ($res,$content,$req) = $test_machine->request_put({
+        data_in => {
+            cfu => $data,
+        },
+        uri => $cf1single_uri,
+    });
+    is ($content->{cfu}->{destinations}->[0]->{announcement_id}, undef, "Check announcement_id after put into other destination (officehours)");
+    #$test_machine->http_code_msg(422, "Check announcement_id for the officehours", $res, $content);#got 200 here
+
+    $data->{destinations}->[0]->{destination} = 'customhours';
+    ($res,$content,$req) = $test_machine->request_put({ cfu => $data}, $cf1single_uri );
+    is($content->{cfu}->{destinations}->[0]->{announcement_id}, $announcement_id, "Check announcement_id after put into correct destination (customhours)");
+
+
+    foreach my $destination (qw/officehours customhours/){
+        $data->{destinations}->[0]->{destination} = $destination;
+        #$data->{destinations}->[0]->{destination} = 'customhours';
+
+        $data->{destinations}->[0]->{announcement_id} = 9999999;
+        ($res,$content,$req) = $test_machine->request_put({ cfu => $data}, $cf1single_uri);
+        $test_machine->http_code_msg(422, "Check absent announcement_id", $res, $content);
+
+        $data->{destinations}->[0]->{announcement_id} = 'aaaaa';
+        ($res,$content,$req) = $test_machine->request_put({ cfu => $data}, $cf1single_uri);
+        $test_machine->http_code_msg(422, "Check invalid announcement_id", $res, $content);
+
+        my $wrong_announcement_hal = $test_machine->get_item_hal('soundhandles', '/api/soundhandles/?group=pbx');
+        $data->{destinations}->[0]->{announcement_id} = $wrong_announcement_hal->{content}->{id};
+        ($res,$content,$req) = $test_machine->request_put({ cfu => $data }, $cf1single_uri );
+        $test_machine->http_code_msg(422, "Check announcement_id from other group", $res, $content);
+    }
+
+    #return initial state:
+    $test_machine->request_put( $cf1single, $cf1single_uri );
 }
 
 done_testing;

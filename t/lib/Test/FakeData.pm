@@ -241,6 +241,14 @@ sub build_data{
             'no_delete_available' => 1,
             'collection' => 'customers',
         },
+        'soundhandles_custom_announcements' => {
+            'data' => {
+                group              => 'custom_announcements',
+            },
+            'query' => ['group'],
+            'no_delete_available' => 1,
+            'collection' => 'soundhandles',
+        },
         'billingprofiles' => {
             'data' => {
                 name        => 'api_test test profile'.time(),
@@ -471,10 +479,14 @@ sub get_id{
     my( $collection_name )  = @_;
     $self->load_collection_data($collection_name);
     my $res_id;
-    if( $self->collection_id_exists($collection_name) ){
-        $res_id = $self->get_existent_id($collection_name);
+    if('CODE' eq ref $self->data->{$collection_name}->{get_id}){
+        $res_id = $self->data->{$collection_name}->get_id();
     }else{
-        $res_id = $self->create(@_);
+        if( $self->collection_id_exists($collection_name) ){
+            $res_id = $self->get_existent_id($collection_name);
+        }else{
+            $res_id = $self->create(@_);
+        }
     }
     return $res_id;
 }
