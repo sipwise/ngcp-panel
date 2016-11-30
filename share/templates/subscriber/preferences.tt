@@ -53,6 +53,21 @@
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.callforward.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" -%]
+<script>
+function destinationDynamicFields(selectedValue){
+    $('.ngcp-destination').css("display","none");
+    $('.ngcp-destination-'+selectedValue).css("display","block");
+}
+$( document ).ready(function() {
+    destinationDynamicFields($("input:radio[name='destination.destination']:checked").val());
+    $("input:radio[name='destination.destination']").on('click',function(){
+        destinationDynamicFields($(this).val());
+    });
+    $("input:radio[name='destination.destination']").on('click',function(){
+        destinationDynamicFields($(this).val());
+    });
+});
+</script>
 
     <div class="accordion-group">
         <div class="accordion-heading">

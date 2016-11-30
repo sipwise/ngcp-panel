@@ -931,6 +931,11 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params->{destination}{destination} = $d;
         $params->{ringtimeout} = $ringtimeout;
     }
+    $c->stash->{custom_announcements_rs} = $c->model('DB')->resultset('voip_sound_handles')->search({
+        'group.name' => 'custom_announcements',
+    },{
+        join => 'group',
+    });
 
     if($c->config->{features}->{cloudpbx}) {
         my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
