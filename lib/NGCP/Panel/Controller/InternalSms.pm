@@ -28,6 +28,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
     my $text = $c->req->params->{text} // "";
     my $token = $c->req->params->{auth_token} // "";
     my $charset = $c->req->params->{charset} // "";
+    my $coding = $c->req->params->{coding} // "";
 
     my $decoded_text = '';
     if ($charset && $charset =~ m/^utf-16/i) {
@@ -160,6 +161,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                         caller => $to, # use the original to as new from
                         callee => $dst,
                         text => $text,
+                        coding => $coding,
                         err_code => sub {$error_msg = shift;},
                     );
                 my $fwd_item = $c->model('DB')->resultset('sms_journal')->create({
