@@ -10,6 +10,7 @@ sub send_sms {
     my $caller = $args{caller};
     my $callee = $args{callee};
     my $text = $args{text};
+    my $coding = $args{coding};
     my $err_code = $args{err_code};
 
     if (!defined $err_code || ref $err_code ne 'CODE') {
@@ -30,8 +31,8 @@ sub send_sms {
         );
     my $uri = URI->new($fullpath);
     $uri->query_form(
-            charset => "utf8",
-            coding => "2",
+            charset => "utf-8",
+            coding => $coding // "2",
             user => "$user",
             pass => "$pass",
             text => $text,
