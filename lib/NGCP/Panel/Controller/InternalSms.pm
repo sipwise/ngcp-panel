@@ -49,6 +49,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
     $to =~ s/^\+//;
     $from =~ s/^\+//;
     my $now = time;
+    $text =~ s/\N{CURRENCY SIGN}/\N{EURO SIGN}/;
 
     try {
         my $schema = $c->model('DB');

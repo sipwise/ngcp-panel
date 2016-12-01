@@ -30,7 +30,7 @@ sub send_sms {
         );
     my $uri = URI->new($fullpath);
     $uri->query_form(
-            charset => "utf8",
+            charset => "utf-8",
             coding => "2",
             user => "$user",
             pass => "$pass",
