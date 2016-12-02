@@ -228,6 +228,12 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
             subscriber => $c->stash->{subscriber} ,
         ) // [] ;
     }
+    $c->stash->{pbx} = NGCP::Panel::Utils::Subscriber::get_subscriber_pbx_status($c, $c->stash->{subscriber});
+    $c->stash->{custom_announcements_rs} = $c->model('DB')->resultset('voip_sound_handles')->search({
+        'group.name' => 'custom_announcements',
+    },{
+        join => 'group',
+    });
 }
 
 sub webfax :Chained('base') :PathPart('webfax') :Args(0) {
@@ -933,23 +939,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params->{ringtimeout} = $ringtimeout;
         $params->{destination}->{announcement_id} = $destination ? $destination->announcement_id : ''; 
     }
-    $c->stash->{custom_announcements_rs} = $c->model('DB')->resultset('voip_sound_handles')->search({
-        'group.name' => 'custom_announcements',
-    },{
-        join => 'group',
-    });
-
-    if($c->config->{features}->{cloudpbx}) {
-        my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c,
-            attribute => 'cloud_pbx',
-            prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber
-        );
-        if($pbx_pref->first) {
-            $c->stash->{pbx} = 1;
-        }
-    }
-
+    
     my $cf_form;
     if($cf_type eq "cft") {
         $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new(ctx => $c);
@@ -991,44 +981,22 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                         subscriber_id => $prov_subscriber->id,
                     });
                 }
-
-                my $numberstr = "";
-                my $number = $c->stash->{subscriber}->primary_number;
-                if(defined $number) {
-                    $numberstr .= $number->cc;
-                    $numberstr .= $number->ac if defined($number->ac);
-                    $numberstr .= $number->sn;
-                } else {
-                    $numberstr = $c->stash->{subscriber}->uuid;
-                }
-                my $dest = $cf_form->field('destination');
-                my $d = $dest->field('destination')->value;
-                my $t = 300;
+                my $d = $cf_form->field('destination')->field('destination')->value;
                 NGCP::Panel::Utils::Subscriber::check_cf_ivr(
                     subscriber => $c->stash->{subscriber},
                     schema => $c->model('DB'),
                     old_aa => $old_autoattendant,
                     new_aa => ($d eq 'autoattendant'),
                 );
-                if ($d eq "uri") {
-                    $t = $dest->field('uri')->field('timeout')->value;
-                    # TODO: check for valid timeout here
-                }
-                $d = NGCP::Panel::Utils::Subscriber::field_to_destination(
-                        number => $numberstr,
-                        domain => $c->stash->{subscriber}->domain->domain,
-                        destination => $d,
-                        uri => $dest->field('uri')->field('destination')->value,
-                        cf_type => $cf_type,
-                    );
 
-                $dest_set->voip_cf_destinations->create({
-                    destination => $d,
-                    timeout => $t,
-                    priority => 1,
-                    announcement_id => (('customhours' eq $dest->field('destination')->value) and $dest->field('announcement_id')->value) || undef,
-                });
 
+                NGCP::Panel::Utils::Subscriber::create_cf_destination(
+                    c => $c,
+                    subscriber => $c->stash->{subscriber},
+                    cf_type => $cf_type,
+                    set => $dest_set,
+                    fields => [$cf_form->field('destination')],
+                );
                 unless(defined $map) {
                     $map = $prov_subscriber->voip_cf_mappings->create({
                         type => $cf_type,
@@ -1319,22 +1287,6 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
-    if($c->config->{features}->{cloudpbx}) {
-        my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c,
-            attribute => 'cloud_pbx',
-            prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber
-        );
-        if($pbx_pref->first) {
-            $c->stash->{pbx} = 1;
-        }
-    }
-    $c->stash->{custom_announcements_rs} = $c->model('DB')->resultset('voip_sound_handles')->search({
-        'group.name' => 'custom_announcements',
-    },{
-        join => 'group',
-    });
-
     my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
 
     my $posted = ($c->request->method eq 'POST');
@@ -1359,37 +1311,13 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                     my $set = $prov_subscriber->voip_cf_destination_sets->create({
                         name => $form->field('name')->value,
                     });
-                    my $number = $c->stash->{subscriber}->primary_number;
-                    my $numberstr = "";
-                    if(defined $number) {
-                        $numberstr .= $number->cc;
-                        $numberstr .= $number->ac if defined($number->ac);
-                        $numberstr .= $number->sn;
-                    } else {
-                        $numberstr = $c->stash->{subscriber}->uuid;
-                    }
-                    foreach my $dest(@fields) {
-                        my $d = $dest->field('destination')->value;
-                        my $t = 300;
-                        if ($d eq "uri") {
-                            $t = $dest->field('uri')->field('timeout')->value;
-                            # TODO: check for valid timeout here
-                        }
-                        $d = NGCP::Panel::Utils::Subscriber::field_to_destination(
-                                number => $numberstr,
-                                domain => $c->stash->{subscriber}->domain->domain,
-                                destination => $d,
-                                uri => $dest->field('uri')->field('destination')->value,
-                                cf_type => $cf_type,
-                            );
-
-                        $set->voip_cf_destinations->create({
-                            destination => $d,
-                            timeout => $t,
-                            priority => $dest->field('priority')->value,
-                            announcement_id => (('customhours' eq $dest->field('destination')->value) and $dest->field('announcement_id')->value) || undef,
-                        });
-                    }
+                    NGCP::Panel::Utils::Subscriber::create_cf_destination(
+                        c => $c,
+                        subscriber => $c->stash->{subscriber},
+                        cf_type => $cf_type,
+                        set => $set,
+                        fields => \@fields,
+                    );
                 }
             });
             NGCP::Panel::Utils::Message::info(
@@ -1443,17 +1371,6 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 
     my $posted = ($c->request->method eq 'POST');
 
-    if($c->config->{features}->{cloudpbx}) {
-        my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c,
-            attribute => 'cloud_pbx',
-            prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber
-        );
-        if($pbx_pref->first) {
-            $c->stash->{pbx} = 1;
-        }
-    }
-
     my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
         attribute => $cf_type,
@@ -1484,11 +1401,6 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
         }
         $params->{destination} = \@destinations;
     }
-    $c->stash->{custom_announcements_rs} = $c->model('DB')->resultset('voip_sound_handles')->search({
-        'group.name' => 'custom_announcements',
-    },{
-        join => 'group',
-    });
 
     $c->stash->{cf_tmp_params} = $params;
     my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
@@ -1534,38 +1446,15 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 }
                 my $old_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($set);
                 $set->voip_cf_destinations->delete_all;
+                
+                NGCP::Panel::Utils::Subscriber::create_cf_destination(
+                    c => $c,
+                    subscriber => $c->stash->{subscriber},
+                    cf_type => $cf_type,
+                    set => $set,
+                    fields => [$form->field('destination')->fields],
+                );
 
-                my $number = $c->stash->{subscriber}->primary_number;
-                my $numberstr = "";
-                if(defined $number) {
-                    $numberstr .= $number->cc;
-                    $numberstr .= $number->ac if defined($number->ac);
-                    $numberstr .= $number->sn;
-                } else {
-                    $numberstr = $c->stash->{subscriber}->uuid;
-                }
-                foreach my $dest($form->field('destination')->fields) {
-                    my $d = $dest->field('destination')->value;
-                    my $t = 300;
-                    if ($d eq "uri") {
-                        $t = $dest->field('uri')->field('timeout')->value;
-                        # TODO: check for valid timeout here
-                    }
-                    $d = NGCP::Panel::Utils::Subscriber::field_to_destination(
-                            number => $numberstr,
-                            domain => $c->stash->{subscriber}->domain->domain,
-                            destination => $d,
-                            uri => $dest->field('uri')->field('destination')->value,
-                            cf_type => $cf_type,
-                        );
-
-                    $set->voip_cf_destinations->create({
-                        destination => $d,
-                        timeout => $t,
-                        priority => $dest->field('priority')->value,
-                        announcement_id => (('customhours' eq $dest->field('destination')->value) and $dest->field('announcement_id')->value) || undef,
-                    });
-                }
                 $set->discard_changes; # reload (destinations may be cached)
                 my $new_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($set);
                 my $event_type = '';
