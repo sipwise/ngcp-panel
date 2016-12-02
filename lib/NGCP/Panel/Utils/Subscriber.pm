@@ -1560,6 +1560,55 @@ sub lookup {
     return $rs->first || undef;
 }
 
+sub create_cf_destination{
+    my %params = @_;
+    my($c,$subscriber,$cf_type,$set,$fields) = @params{qw/c subscriber cf_type set fields/};
+    my $number = $subscriber->primary_number;
+    my $numberstr = "";
+    if(defined $number) {
+        $numberstr .= $number->cc;
+        $numberstr .= $number->ac if defined($number->ac);
+        $numberstr .= $number->sn;
+    } else {
+        $numberstr = $subscriber->uuid;
+    }
+    foreach my $dest(@$fields) {
+        my $d = $dest->field('destination')->value;
+        my $t = 300;
+        if ($d eq "uri") {
+            $t = $dest->field('uri')->field('timeout')->value;
+            # TODO: check for valid timeout here
+        }
+        $d = NGCP::Panel::Utils::Subscriber::field_to_destination(
+                number => $numberstr,
+                domain => $subscriber->domain->domain,
+                destination => $d,
+                uri => $dest->field('uri')->field('destination')->value,
+                cf_type => $cf_type,
+            );
+
+        $set->voip_cf_destinations->create({
+            destination => $d,
+            timeout => $t,
+            priority => ( $dest->field('priority') && $dest->field('priority')->value ) ? $dest->field('priority')->value : 1,
+            announcement_id => (('customhours' eq $dest->field('destination')->value) and $dest->field('announcement_id')->value) || undef,
+        });
+    }
+}
+sub get_subscriber_pbx_status{
+    my($c, $subscriber) = @_;
+    if($c->config->{features}->{cloudpbx}) {
+        my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c,
+            attribute => 'cloud_pbx',
+            prov_subscriber => $subscriber->provisioning_voip_subscriber
+        );
+        if($pbx_pref->first) {
+            return 1;
+        }
+    }
+    return 0;
+}
 1;
 
 =head1 NAME
