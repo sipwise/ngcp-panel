@@ -7950,6 +7950,10 @@ msgstr ""
 "экстренных вызовов может использоваться, как подстановка в правилах "
 "перезаписи."
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
+msgid "SMS Number"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "SN Length"
 msgstr "Длинна SN"
@@ -8344,6 +8348,10 @@ msgstr "Слот"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Slot add"
 msgstr "Добавить слот"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Sms number"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Sn"
@@ -9318,6 +9326,17 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The E164 number block."
 msgstr "Блок номеров вида E164."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The E164 number in format &lt;cc&gt;&lt;ac&gt;&lt;sn&gt; to send voicemail "
+"notification SMS."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The E164 number in format <cc><ac><sn> to send voicemail notification SMS."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The HTTP method to set the provisioning server (one of GET, POST)."

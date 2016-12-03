@@ -7955,6 +7955,10 @@ msgstr ""
 "\"user@example.com\"). Emergency CLI which can be used in rewrite rules as "
 "substitution value."
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
+msgid "SMS Number"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "SN Length"
 msgstr ""
@@ -8351,6 +8355,10 @@ msgstr "Entrada"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Slot add"
 msgstr "Añadir entrada"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Sms number"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Sn"
@@ -9321,6 +9329,17 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The E164 number block."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The E164 number in format &lt;cc&gt;&lt;ac&gt;&lt;sn&gt; to send voicemail "
+"notification SMS."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The E164 number in format <cc><ac><sn> to send voicemail notification SMS."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
