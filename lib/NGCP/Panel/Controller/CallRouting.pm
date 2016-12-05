@@ -97,18 +97,19 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                                     c => $c,
                                     lookup => $caller_uri
                                  );
-        if ($data->{caller_subscriber}) {
-            $data->{caller_subscriber_id} = $data->{caller_subscriber}->id;
-            my $sub = sprintf '%s@%s',
-                        $data->{caller_subscriber}->username,
-                        $data->{caller_subscriber}->domain->domain;
-            push @log, sprintf "found caller subscriber '%s' with id %d",
-                        $sub, $data->{caller_subscriber_id};
-        } else {
-            push @log, sprintf "no caller subscriber found.";
-            goto RESULT;
+    }
+    if ($data->{caller_subscriber}) {
+        $data->{caller_subscriber_id} = $data->{caller_subscriber}->id;
+        my $caller_uri = sprintf '%s@%s',
+            $data->{caller_subscriber}->username,
+            $data->{caller_subscriber}->domain->domain;
+        $data->{caller_domain} = $data->{caller_subscriber}->domain->domain;
+        push @log, sprintf "found caller subscriber '%s' with id %d",
+            $caller_uri, $data->{caller_subscriber_id};
+    } else {
+        push @log, sprintf "no caller subscriber found.";
+        goto RESULT;
 
-        }
     }
 
     # caller sum up
