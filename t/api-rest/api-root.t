@@ -125,6 +125,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         sms => 1,
         soundfilerecordings => 1,
         soundfiles => 1,
+        soundgroups => 1,
         soundhandles => 1,
         soundsets => 1,
         speeddials => 1,
