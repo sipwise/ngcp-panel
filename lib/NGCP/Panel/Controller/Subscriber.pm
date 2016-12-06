@@ -1983,15 +1983,32 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     try {
-        my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
-        $prov_subscriber->voip_cf_mappings->search({ type => $cf_type })
-            ->delete_all;
-        my $cf_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c,
-            attribute => $cf_type,
-            prov_subscriber => $prov_subscriber,
-        );
-        $cf_pref->delete_all;
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+            my $mapping_rs = $prov_subscriber->voip_cf_mappings->search({ type => $cf_type });
+            my $autoattendant_count = 0;
+            foreach my $map($mapping_rs->all) {
+                $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
+            }
+            $mapping_rs->delete;
+            my $cf_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c,
+                attribute => $cf_type,
+                prov_subscriber => $prov_subscriber,
+            );
+            $cf_pref->delete_all;
+            if ($autoattendant_count > 0) {
+                while ($autoattendant_count != 0) {
+                    $autoattendant_count--;
+                    NGCP::Panel::Utils::Events::insert(
+                        schema => $schema,
+                        subscriber => $c->stash->{subscriber},
+                        type => 'end_ivr',
+                    );
+                }
+            }
+        });
         NGCP::Panel::Utils::Message->info(
             c    => $c,
             desc => $c->loc('Successfully deleted Call Forward'),
