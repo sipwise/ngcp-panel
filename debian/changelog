@@ -1,3 +1,13 @@
+ngcp-panel (5.0.1.1+0~mr5.0.1.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [ce88b51] TT#5554 CallRouting: domain part for caller subscribers
+  * [fc8235b] TT#5554 CallRouting: fix use caller_in/callee_in for the internal processing
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 06 Dec 2016 16:18:03 +0100
+
 ngcp-panel (5.0.1.0+0~mr5.0.1.0) unstable; urgency=medium
 
   [ Rene Krenn ]
