@@ -41,6 +41,70 @@ sub query_params {
                 },
             },
         },
+        {
+            param => 'callid',
+            description => 'Filter by the call id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                       'me.call_id' => { '!=' => $q },
+                    };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'caller',
+            description => 'Filter by the caller number',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                       'me.caller' => { '!=' => $q },
+                    };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'callee',
+            description => 'Filter by the callee number',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                       'me.callee' => { '!=' => $q },
+                    };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'start_le',
+            description => 'Filter by records with lower or equal than the specified time stamp.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    $q .= ' 23:59:59' if($q =~ /^\d{4}\-\d{2}\-\d{2}$/);
+                    my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                    { start_time => { '<=' => $dt->epoch } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'start_ge',
+            description => 'Filter by records with greater or equal the specified time stamp.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                    { 'me.start_time' => { '>=' => $dt->epoch } };
+                },
+                second => sub {},
+            },
+        },
     ];
 }
 
