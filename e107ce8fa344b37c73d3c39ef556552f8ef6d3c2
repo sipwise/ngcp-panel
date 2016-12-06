@@ -125,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_03cf7880",
+        "filename": "lib/NGCP/Panel/Role/API/CFDestinationSets.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-12-06T15:08:24Z",
+      "side": 1,
+      "message": "This was my thought. And I decided to don\u0027t change anything, but left this \"todo\". So, for now will not \"fix\" it )",
+      "parentUuid": "ba51214e_435690d3",
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_20e39234",
         "filename": "lib/NGCP/Panel/Role/API/CFDestinationSets.pm",
         "patchSetId": 9
