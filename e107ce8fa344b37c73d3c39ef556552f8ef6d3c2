@@ -1,0 +1,135 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_00de4e6d",
+        "filename": "lib/NGCP/Panel/Controller/API/CallForwardsItem.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:23:35Z",
+      "side": 1,
+      "message": "well, actually the item we get here is a subscriber. Which description is more understandable to the user, I don\u0027t know..",
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_e0d87a81",
+        "filename": "lib/NGCP/Panel/Form/CFDestinationSetAPI.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:23:35Z",
+      "side": 1,
+      "message": "we don\u0027t use this label, right? IMO just remove it.",
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_80d1be59",
+        "filename": "lib/NGCP/Panel/Role/API/CFDestinationSets.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:23:35Z",
+      "side": 1,
+      "message": "Utils::Subscriber::field_to_destination should cover that?",
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_20e39234",
+        "filename": "lib/NGCP/Panel/Role/API/CFDestinationSets.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:23:35Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 201,
+        "startChar": 69,
+        "endLine": 201,
+        "endChar": 78
+      },
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_60d46a47",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:23:35Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 124,
+        "startChar": 44,
+        "endLine": 124,
+        "endChar": 53
+      },
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_c0cbb6a3",
+        "filename": "share/templates/subscriber/preferences.tt",
+        "patchSetId": 9
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:23:35Z",
+      "side": 1,
+      "message": "afair, you can use share/static/css/main.css",
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_a0ce82b2",
+        "filename": "share/templates/subscriber/preferences.tt",
+        "patchSetId": 9
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:23:35Z",
+      "side": 1,
+      "message": "remove from production?",
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
