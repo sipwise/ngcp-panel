@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_7296ff95",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-12-06T09:30:41Z",
+      "side": 1,
+      "message": "This I met during testing",
+      "range": {
+        "startLine": 201,
+        "startChar": 0,
+        "endLine": 201,
+        "endChar": 52
+      },
+      "revId": "f8a53195cd5ad5f56071925283f96e088fb236ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_928d937e",
+        "filename": "lib/NGCP/Panel/Role/API/CallForwards.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-12-06T09:30:41Z",
+      "side": 1,
+      "message": "And this looks as similar typo",
+      "range": {
+        "startLine": 205,
+        "startChar": 0,
+        "endLine": 205,
+        "endChar": 95
+      },
+      "revId": "f8a53195cd5ad5f56071925283f96e088fb236ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
