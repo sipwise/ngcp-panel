@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_60ed8a25",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 4540,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:09:08Z",
+      "side": 1,
+      "message": "call it _get_subscriber_pbx_status and return 1|0. IMO easier to understand.\n\ndoesn\u0027t need to be a catalyst-forward just a private method is fine IMO",
+      "revId": "32387567d8bcc3a12f2e44d46a6a937b0dc9f9c5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_c0f456f4",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 4556,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:09:08Z",
+      "side": 1,
+      "message": "then you could remove this part. You could move this to base() or similar.",
+      "range": {
+        "startLine": 4552,
+        "startChar": 0,
+        "endLine": 4556,
+        "endChar": 7
+      },
+      "revId": "32387567d8bcc3a12f2e44d46a6a937b0dc9f9c5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
