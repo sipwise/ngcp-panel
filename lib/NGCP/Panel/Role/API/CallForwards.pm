@@ -198,11 +198,11 @@ sub update_item {
                 } else {
                     $mapping_count && $mapping->update({source_set_id => undef});
                     if ($sset->name =~ m/^quickset_/) {
-                        $tset->delete; # delete sset
+                        $sset->delete; # delete sset
                     }
                 }
             } else {
-                if ((defined $resource->{$type}{times}) && @{ $resource->{$type}{times}}) {
+                if ((defined $resource->{$type}{sources}) && @{ $resource->{$type}{sources}}) {
                     $sset = $mapping->create_related('source_set', {'name' => "quickset_$type", subscriber_id => $prov_subscriber_id,} );
                     $mapping->update({source_set_id => $sset->id});
                 }
