@@ -198,7 +198,7 @@ sub update_item {
                 } else {
                     $mapping_count && $mapping->update({source_set_id => undef});
                     if ($sset->name =~ m/^quickset_/) {
-                        $tset->delete; # delete sset
+                        $sset->delete; # delete sset
                     }
                 }
             } else {
