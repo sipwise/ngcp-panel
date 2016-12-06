@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_8306e8cc",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 1154,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T14:43:15Z",
+      "side": 1,
+      "message": "\"my ($id)\" or \"(my $id)\" would be sufficient",
+      "revId": "75c81ea4b1421282d79c3c2409ea2f4a6f9f5e68",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
