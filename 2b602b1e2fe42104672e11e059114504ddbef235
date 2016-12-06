@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_e046ba20",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1994,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:50:41Z",
+      "side": 1,
+      "message": "we had a delete_all here?",
+      "revId": "2b602b1e2fe42104672e11e059114504ddbef235",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_2051d2d8",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 2002,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-06T12:50:41Z",
+      "side": 1,
+      "message": "without the if: \"while (autoattendant_count \u003e 0)\"",
+      "revId": "2b602b1e2fe42104672e11e059114504ddbef235",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
