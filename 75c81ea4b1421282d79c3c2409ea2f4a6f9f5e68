@@ -16,6 +16,24 @@
       "revId": "75c81ea4b1421282d79c3c2409ea2f4a6f9f5e68",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_a3b84ce6",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 1154,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2016-12-06T15:08:24Z",
+      "side": 1,
+      "message": "Yes, you are right. I remember that long-long time ago (~2005) it required two braces for the array context.\nBut I will leave it as is for now.",
+      "parentUuid": "ba51214e_8306e8cc",
+      "revId": "75c81ea4b1421282d79c3c2409ea2f4a6f9f5e68",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
