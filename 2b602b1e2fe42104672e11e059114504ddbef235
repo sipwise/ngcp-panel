@@ -33,6 +33,24 @@
       "revId": "2b602b1e2fe42104672e11e059114504ddbef235",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_c6458e71",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 2002,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-12-07T01:41:59Z",
+      "side": 1,
+      "message": "ack, will be fixed in subsequent commit",
+      "parentUuid": "ba51214e_2051d2d8",
+      "revId": "2b602b1e2fe42104672e11e059114504ddbef235",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
