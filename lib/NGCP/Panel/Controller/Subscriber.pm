@@ -1568,10 +1568,18 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
+            my $autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($set);
             foreach my $map($set->voip_cf_mappings->all) {
                 my $cf = $cf_preference->find({ value => $map->id });
                 $cf->delete if $cf;
                 $map->delete;
+                if ($autoattendant) {
+                    NGCP::Panel::Utils::Events::insert(
+                        schema => $schema,
+                        subscriber => $c->stash->{subscriber},
+                        type => 'end_ivr',
+                    );
+                }
             }
             if($cf_type eq "cft" &&
                $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type})->count == 0) {
@@ -1892,22 +1900,20 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
             foreach my $map($mapping_rs->all) {
                 $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
             }
-            $mapping_rs->delete;
+            $mapping_rs->delete_all;
             my $cf_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c,
                 attribute => $cf_type,
                 prov_subscriber => $prov_subscriber,
             );
             $cf_pref->delete_all;
-            if ($autoattendant_count > 0) {
-                while ($autoattendant_count != 0) {
-                    $autoattendant_count--;
-                    NGCP::Panel::Utils::Events::insert(
-                        schema => $schema,
-                        subscriber => $c->stash->{subscriber},
-                        type => 'end_ivr',
-                    );
-                }
+            while ($autoattendant_count > 0) {
+                $autoattendant_count--;
+                NGCP::Panel::Utils::Events::insert(
+                    schema => $schema,
+                    subscriber => $c->stash->{subscriber},
+                    type => 'end_ivr',
+                );
             }
         });
         NGCP::Panel::Utils::Message::info(
