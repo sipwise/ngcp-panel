@@ -491,8 +491,8 @@ sub request{
 
     my $credentials = {};
     (@$credentials{qw/user password/},undef,undef) = $self->get_role_credentials();
-    my $curl = Test::HTTPRequestAsCurl::as_curl($req, credentials => $credentials );
     if($self->DEBUG){
+        my $curl = Test::HTTPRequestAsCurl::as_curl($req, credentials => $credentials );
         print $req->as_string;
         print "$curl\n\n";
     }

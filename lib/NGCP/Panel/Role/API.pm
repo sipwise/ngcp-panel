@@ -23,6 +23,58 @@ use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
 
+sub get_valid_data{
+    my ($self, %params) = @_;
+
+    my $data;
+
+    my $c = $params{c};
+    my $method = $params{method};
+    my $media_type = $params{media_type};
+    my $json_media_type = $params{json_media_type};#for rare specific cases, like text/csv
+
+    return unless $self->forbid_link_header($c);
+
+    if(('POST' eq $method) || ('PUT' eq $method) ){
+        $json_media_type //=  'application/json';
+    }elsif('PATCH' eq $method){
+        $json_media_type //= 'application/json-patch+json';
+    }
+    return unless $self->valid_media_type($c, $media_type);
+
+    if(('PUT' eq $method) || ('PATCH' eq $method)){
+        my $id = $params{id};
+        return unless $self->valid_id($c, $id);
+    }
+
+    my ($json_raw,$json);
+    if('multipart/form-data' eq $c->req->headers->content_type){
+        $json_raw = $c->req->param('json');
+    }else{
+        return unless $self->require_body($c);
+        $json_raw = $c->stash->{body};
+    }
+    return unless $json_raw;
+
+    #if($json_media_type =~/json/i){
+    if($json_media_type eq 'application/json' 
+        || $json_media_type eq 'application/json-patch+json' ){
+
+        return unless $self->require_wellformed_json($c, $json_media_type, $json_raw);
+        $json = JSON::from_json($json_raw, { utf8 => 1 });
+        if('PATCH' eq $method){
+            my $ops = $params{ops} // [qw/replace copy/];
+            return unless $self->require_valid_patch($c, $json, $ops);       
+        }
+        $self->get_uploads($c, $json, $params{uploads});
+        $data = $json;
+    }else{
+        $data = $json_raw;
+    }
+
+    return $data;
+}
+
 sub get_valid_post_data {
     my ($self, %params) = @_;
 
@@ -253,6 +305,34 @@ sub get_upload {
     return;
 }
 
+sub get_uploads {
+    my ($self, $c, $json, $uploads) = @_;
+    my (@upload_fields, %mime_types);
+    if(!$uploads || ('ARRAY' ne ref $uploads && 'HASH' ne ref $uploads ) ){
+        return;
+    }elsif('ARRAY' eq ref $uploads){
+        @upload_fields = @$uploads;
+    }elsif('HASH' eq ref $uploads){
+        @upload_fields = keys %$uploads;
+        %mime_types = %$uploads;
+    }
+    my $ft;
+    foreach my $field (@upload_fields){
+        $json->{$field} = $self->get_upload($c, $field);
+        if($mime_types{$field}){
+            $ft //= File::Type->new();
+            my $mime_type = $ft->mime_type($json->{$field}->slurp);
+            if('ARRAY' ne ref $mime_types{$field}){
+                $mime_types{$field} = [$mime_types{$field}];
+            }
+            if(!grep {$_ eq $mime_type} @{$mime_types{$field}}){
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
 sub require_preference {
     my ($self, $c) = @_;
     return 'minimal' unless $c->request->header('Prefer');
@@ -480,7 +560,7 @@ sub apply_patch {
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed $pe and $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
-                                &$optional_field_code_ref(substr($op->{path},1),$entity);
+                                &$optional_field_code_ref(substr($op->{path},1),$entity,$op);
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                             }
                         } else {

@@ -142,6 +142,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         trustedsources => 1,
         upnrewritesets => 1,
         voicemailrecordings => 1,
+        voicemailgreetings => 1,
         voicemails => 1,
         voicemailsettings => 1,
         vouchers => 1,

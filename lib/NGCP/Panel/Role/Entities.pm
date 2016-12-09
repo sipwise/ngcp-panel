@@ -44,6 +44,11 @@ sub get_list{
 
 sub get {
     my ($self, $c) = @_;
+    my $header_accept = $c->request->header('Accept');
+    if(defined $header_accept && ($header_accept eq 'text/csv')) {
+        $self->return_csv($c);
+        return;
+    }
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
@@ -96,9 +101,12 @@ sub post {
     my ($c) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $resource = $self->get_valid_post_data(
-            c => $c,
-            media_type =>  $self->config->{action}->{OPTIONS}->{POST}->{ContentType} // 'application/json',
+        my $method_config = $self->config->{action}->{POST}; 
+        my $resource = $self->get_valid_data(
+            c          => $c,
+            method     =>  'POST',
+            media_type =>  $method_config->{ContentType} // 'application/json',
+            uploads    =>  $method_config->{Uploads} // [] ,
         );
         last unless $resource;
         my ($form, $exceptions) = $self->get_form($c);
