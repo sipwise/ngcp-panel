@@ -407,10 +407,18 @@ sub search_item{
     my $query_string = join('&', map {
             my @deep_keys = ('ARRAY' eq ref $_) ? @$_:($_);
             my $field_name = ( @deep_keys > 1 ) ? shift @deep_keys : $deep_keys[0];
+            my $spec = {};
+            if('HASH' eq ref $deep_keys[0]){
+                $spec = shift @deep_keys;
+                @deep_keys = $spec->{field_path} ? (('ARRAY' eq $spec->{field_path}) ? @{$spec->{field_path}} : ($spec->{field_path})) : ($field_name);
+            }
             #here we don't use get/set _collection_data_fields - we should refer directly to the {json}, if we have {json}
-            my $search_value = deepvalue($item->{data},@deep_keys);
+            my $search_value = deepvalue($item->{data},@deep_keys);      
             if('CODE' eq ref $search_value){
                 $search_value = $search_value->($self);
+            }
+            if($spec->{query_type} && $spec->{query_type} eq 'string_like'){
+                $search_value = '%'.$search_value.'%';
             }
             $field_name.'='.uri_escape($search_value);
         } @{$item->{query}}
@@ -595,6 +603,17 @@ sub create{
     }
     return $self->get_existent_id($collection_name);
 }
+sub create_special_upload{
+    my $self = shift;
+    return sub {
+        my ($self,$collection_name,$test_machine) = @_;
+        my $prev_params = $test_machine->get_cloned('content_type');
+        @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
+        $test_machine->check_create_correct(1);
+        $test_machine->set(%$prev_params);
+    };
+}
+
 sub clear_test_data_all{
     my $self = shift;
     my($force_delete) = @_;
