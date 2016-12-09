@@ -8,6 +8,7 @@ use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
 use Data::Dumper;
 use MIME::Base64 qw(encode_base64url decode_base64url);
+use File::Type;
 
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -39,6 +40,7 @@ use NGCP::Panel::Form::Voicemail::Email;
 use NGCP::Panel::Form::Voicemail::Pager;
 use NGCP::Panel::Form::Voicemail::Attach;
 use NGCP::Panel::Form::Voicemail::Delete;
+use NGCP::Panel::Form::Voicemail::Greeting;
 use NGCP::Panel::Form::Reminder;
 use NGCP::Panel::Form::Subscriber::AutoAttendant;
 use NGCP::Panel::Form::Subscriber::EditWebpass;
@@ -678,6 +680,20 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
                             ->upn_rewrite_sets_rs->all;
     $c->stash->{upn_rw_sets} = \@upn_rewrite_sets;
 
+    my $vm_recordings_types = [];#type, greeting_exists
+    my $subscriber_vm_recordings = get_inflated_columns_all(
+        $c->stash->{subscriber}->provisioning_voip_subscriber->voicemail_user->voicemail_spools->search_rs(undef,{
+            '+select' => [qw/dir dir/],
+            '+as' => [qw/type greeting_exists/],
+        }),
+        hash => 'type',
+    );
+    foreach my $voicemail_greeting_type (qw/unavail busy/){
+        push @$vm_recordings_types,
+            $subscriber_vm_recordings->{$voicemail_greeting_type} // {greeting_exists => 0, type => $voicemail_greeting_type} ;
+    }
+    $c->stash->{vm_recordings_types} = $vm_recordings_types;
+
     if($prov_subscriber->profile_id && (
        $c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
         my @attribute_ids = $prov_subscriber->voip_subscriber_profile->profile_attributes->get_column('attribute_id')->all;
@@ -713,9 +729,6 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             }
         }
         $c->stash->{special_prefs} = $special_prefs;
-
-
-
     }
 }
 
@@ -931,7 +944,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params = { destination => $c->stash->{cf_tmp_params} };
         $params->{destination}{destination} = $d;
         $params->{ringtimeout} = $ringtimeout;
-        $params->{destination}->{announcement_id} = $destination ? $destination->announcement_id : ''; 
+        $params->{destination}->{announcement_id} = $destination ? $destination->announcement_id : '';
     }
     $c->forward('prepare_cf_destination_form', [ $c->stash->{subscriber} ]);
 
@@ -1444,7 +1457,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 }
                 my $old_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($set);
                 $set->voip_cf_destinations->delete_all;
-                
+
                 NGCP::Panel::Utils::Subscriber::create_cf_destination(
                     c => $c,
                     subscriber => $c->stash->{subscriber},
@@ -2890,8 +2903,8 @@ sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
     );
 }
 
-sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(1) {
-    my ($self, $c, $attribute) = @_;
+sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args() {
+    my ($self, $c, $attribute, @additions) = @_;
 
     $c->detach('/denied_page')
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
@@ -2909,7 +2922,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
     my $params;
-
+    my $attribute_name = $attribute;
     try {
         SWITCH: for ($attribute) {
             /^pin$/ && do {
@@ -2976,6 +2989,85 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 }
                 last SWITCH;
             };
+            /^voicemailgreeting$/ && do {
+                my ($action, $type) = @additions;
+                try{
+                    if( !grep{ $action eq $_ } (qw/edit delete download/) ){
+                        die('Wrong voicemail greeting action.');
+                    }
+                    if( !grep{ $type eq $_ } (qw/unavail busy/) ){
+                        die('Wrong voicemail greeting type.');
+                    }
+
+                    $attribute_name = $c->loc('voicemail greeting "'.$type.'"');
+                    $form = NGCP::Panel::Form::Voicemail::Greeting->new;
+                    $params = {};
+                    $c->req->params->{greetingfile} = $c->req->upload('greetingfile');
+                    $form->process(params => $posted ? $c->req->params : $params);
+                    NGCP::Panel::Utils::Navigation::check_form_buttons(
+                        c => $c,
+                        form => $form,
+                        fields => {},
+                        back_uri => $c->req->uri,
+                    );
+                    if('delete' eq $action){
+                        $vm_user->voicemail_spools->search_rs({
+                            'dir'       => $type,
+                            'msgnum'    => '-1',
+                        })->delete;
+                        NGCP::Panel::Utils::Message::info(
+                            c     => $c,
+                            log   => 'Voicemail greeting '.$type.' for the subscriber_id '.$vm_user->id.' deleted.',
+                            desc  => $c->loc('Voicemail greeting "'.$type.'" deleted'),
+                        );
+                        NGCP::Panel::Utils::Navigation::back_or($c,
+                            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+                        return;
+                    }elsif('download' eq $action){
+                        my $recording = $vm_user->voicemail_spools->search_rs({
+                            'dir'       => $type,
+                            'msgnum'    => '-1',
+                        })->first;
+                        if($recording){
+                            $recording = $recording->recording;
+                            $c->res->headers(HTTP::Headers->new(
+                                'Content-Type' => 'audio/x-wav',
+                                #'Content-Type' => 'application/octet-stream',
+                                'Content-Disposition' => sprintf('attachment; filename=%s', "voicemail_${type}.wav")
+                            ));
+                            $c->res->body($recording);
+                            return;
+                        }
+                    }elsif($posted){
+                        my $ft = File::Type->new();
+                        my $greetingfile = delete $form->values->{'greetingfile'};
+                        my $mime_type = $ft->mime_type($greetingfile);
+                        if(('edit' eq $action) &&('audio/x-wav' ne $mime_type && 'application/octet-stream' ne $mime_type)){
+                            die('Wrong mimee-type '.$mime_type.' for the voicemail greeting. Must be a audio file in the "wav" format');
+                            return;
+                        }
+                        if($form->validated) {
+                            if('edit' eq $action){
+                                $vm_user->voicemail_spools->update_or_create({
+                                    'recording' => $greetingfile->slurp,
+                                    'dir'       => $type,
+                                    'msgnum'    => '-1',
+                                });
+                            }
+                        }
+                    }
+                } catch($e) {
+                    NGCP::Panel::Utils::Message::error(
+                        c     => $c,
+                        log   => $e,
+                        desc  => $c->loc($e),
+                    );
+                    NGCP::Panel::Utils::Navigation::back_or($c,
+                        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+                    return;                
+                }
+                last SWITCH;
+            };
             # default
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
@@ -3008,7 +3100,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     $c->stash(
         template => 'subscriber/preferences.tt',
         edit_cf_flag => 1,
-        cf_description => $attribute,
+        cf_description => $attribute_name || $attribute,
         cf_form => $form,
     );
 }

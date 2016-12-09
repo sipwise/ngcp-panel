@@ -595,6 +595,17 @@ sub create{
     }
     return $self->get_existent_id($collection_name);
 }
+sub create_special_upload{
+    my $self = shift;
+    return sub {
+        my ($self,$collection_name,$test_machine) = @_;
+        my $prev_params = $test_machine->get_cloned('content_type');
+        @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
+        $test_machine->check_create_correct(1);
+        $test_machine->set(%$prev_params);
+    };
+}
+
 sub clear_test_data_all{
     my $self = shift;
     my($force_delete) = @_;
