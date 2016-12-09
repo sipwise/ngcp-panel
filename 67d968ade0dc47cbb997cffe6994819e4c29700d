@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_341630f2",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 2212,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-09T12:12:31Z",
+      "side": 1,
+      "message": "I would still prefer \"\u003e\" :)",
+      "revId": "67d968ade0dc47cbb997cffe6994819e4c29700d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
