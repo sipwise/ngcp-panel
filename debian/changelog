@@ -1,3 +1,20 @@
+ngcp-panel (1.14.2.11+0~mr4.5.2.11) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [8d2b57f] TT#5554 CallRouting: fix use caller_in/callee_in for the internal processing
+  * [5c74a35] TT#5554 CallRouting: domain part for caller subscribers
+
+  [ Rene Krenn ]
+  * [f15efa3] TT#5559 end_ivr event for panel UI delete callforward btn
+  * [4d12885] TT#5559 end_ivr event for panel UI delete destinationset btn
+
+  [ Gerhard Jungwirth ]
+  * [f602615] TT#5812 fix calllist direction processing
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 09 Dec 2016 17:12:33 +0100
+
 ngcp-panel (1.14.2.10+0~mr4.5.2.10) unstable; urgency=medium
 
   [ Rene Krenn ]
