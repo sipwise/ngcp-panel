@@ -1,3 +1,16 @@
+ngcp-panel (1.13.1.14+0~mr4.4.1.14) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [7f83eff] MT#19263 add optional "sip:" prefix for caller/callee input
+  * [726a1df] MT#19113 CallRoutingVerify adjustments, Peering lookup
+  * [36fff47] TT#5554 CallRouting: fix use caller_in/callee_in for the internal processing
+  * [5fa22f4] TT#5554 CallRouting: domain part for caller subscribers
+  * [70fea4e] TT#7506 MaliciousCall add API filter options
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 09 Dec 2016 17:42:01 +0100
+
 ngcp-panel (1.13.1.13+0~mr4.4.1.13) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
