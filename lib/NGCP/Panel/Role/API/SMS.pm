@@ -89,7 +89,7 @@ sub check_resource{
     $resource->{subscriber_id} = $subscriber->id;
 
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-        if($c->req->params->{skip_checks} eq "true") {
+        if($c->req->params->{skip_checks} && $c->req->params->{skip_checks} eq "true") {
             $c->log->info("skipping number checks for sending sms");
             return 1;
         }
