@@ -48,7 +48,7 @@ $fake_data->set_data_from_script({
             pbx_hunt_policy      => 'parallel',
             pbx_hunt_timeout     => '15',
         },
-        'query' => ['username'],
+        'query' => [['username',{'query_type'=> 'string_like'}]],
         'create_special'=> sub {
             my ($self,$collection_name,$test_machine) = @_;
             my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$self->data->{$collection_name}->{data}->{customer_id}.'&'.'is_pbx_pilot=1');
