@@ -167,6 +167,8 @@ sub process_cdr_item {
     # a call forward
     if($resource->{direction} eq "in") {
         $resource->{type} = "call";
+    } else {
+        $resource->{type} = $item->call_type;
     }
 
     # strip any _b2b-1 and _pbx-1 to allow grouping of calls
@@ -210,7 +212,6 @@ sub process_cdr_item {
 
     $resource->{status} = $item->call_status;
     $resource->{rating_status} = $item->rating_status;
-    $resource->{type} = $item->call_type;
 
     $resource->{start_time} = $item->start_time;
     $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms(ceil($item->duration));
