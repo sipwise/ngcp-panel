@@ -23,6 +23,63 @@ use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
 
+#It is expected to work for all our 3 common cases:
+#1. Body is the plain json data
+#2. Multipart/form data with resource in "json" form field, and some uploads
+#3. Some media data uploaded in request body, resource data passed as the query parameters 
+sub get_valid_data{
+    my ($self, %params) = @_;
+
+    my ($data,$resource);
+
+    my $c = $params{c};
+    my $method = $params{method};
+    my $media_type = $params{media_type};
+    my $json_media_type = $params{json_media_type};#for rare specific cases, like text/csv
+
+    return unless $self->forbid_link_header($c);
+
+    if(('POST' eq $method) || ('PUT' eq $method) ){
+        $json_media_type //=  'application/json';
+    }elsif('PATCH' eq $method){
+        $json_media_type //= 'application/json-patch+json';
+    }
+    return unless $self->valid_media_type($c, $media_type);
+
+    if(('PUT' eq $method) || ('PATCH' eq $method)){
+        my $id = $params{id};
+        return unless $self->valid_id($c, $id);
+    }
+
+    my ($json_raw,$json);
+    if('multipart/form-data' eq $c->req->headers->content_type){
+        return unless $self->require_uploads($c);
+        $json_raw = $c->req->param('json');
+    }else{
+        return unless $self->require_body($c);
+        $data = $c->stash->{body};
+        $resource = $c->req->query_params;
+    }
+ 
+    #if($json_media_type =~/json/i){
+    if($json_media_type eq 'application/json' 
+        || $json_media_type eq 'application/json-patch+json' ){
+
+        $json_raw //= $data;
+
+        return unless $self->require_wellformed_json($c, $json_media_type, $json_raw);
+        $json = JSON::from_json($json_raw, { utf8 => 1 });
+        if('PATCH' eq $method){
+            my $ops = $params{ops} // [qw/replace copy/];
+            return unless $self->require_valid_patch($c, $json, $ops);       
+        }
+        return unless $self->get_uploads($c, $json, $params{uploads});
+        $resource = $json;
+    }
+
+    return ($resource, $data);
+}
+
 sub get_valid_post_data {
     my ($self, %params) = @_;
 
@@ -243,6 +300,12 @@ sub require_body {
     $self->error($c, HTTP_BAD_REQUEST, "This request is missing a message body.");
     return;
 }
+sub require_uploads {
+    my ($self, $c) = @_;
+    return 1 if $c->req->upload;
+    $self->error($c, HTTP_BAD_REQUEST, "Thismultipart/form-data request is missing upload part.");
+    return;
+}
 
 # returns Catalyst::Request::Upload
 sub get_upload {
@@ -251,6 +314,35 @@ sub get_upload {
     return $upload if $upload;
     $self->error($c, HTTP_BAD_REQUEST, "This request is missing the upload part '$field' in body.");
     return;
+}
+
+sub get_uploads {
+    my ($self, $c, $json, $uploads) = @_;
+    my (@upload_fields, %mime_types);
+    if(!$uploads || ('ARRAY' ne ref $uploads && 'HASH' ne ref $uploads ) ){
+        return;
+    }elsif('ARRAY' eq ref $uploads){
+        @upload_fields = @$uploads;
+    }elsif('HASH' eq ref $uploads){
+        @upload_fields = keys %$uploads;
+        %mime_types = %$uploads;
+    }
+    my $ft;
+    foreach my $field (@upload_fields){
+        $json->{$field} = $self->get_upload($c, $field);
+        if($mime_types{$field}){
+            $ft //= File::Type->new();
+            my $mime_type = $ft->mime_type($json->{$field}->slurp);
+            if('ARRAY' ne ref $mime_types{$field}){
+                $mime_types{$field} = [$mime_types{$field}];
+            }
+            if(!grep {$_ eq $mime_type} @{$mime_types{$field}}){
+                $self->error($c, HTTP_UNSUPPORTED_MEDIA_TYPE, "Unsupported media type '" . ($mime_type // 'undefined') . "' for the $field, accepting ".join(" or ", @{$mime_types{$field}})." only.");
+                return 0;
+            }
+        }
+    }
+    return 1;
 }
 
 sub require_preference {
@@ -480,7 +572,7 @@ sub apply_patch {
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed $pe and $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
-                                &$optional_field_code_ref(substr($op->{path},1),$entity);
+                                &$optional_field_code_ref(substr($op->{path},1),$entity,$op);
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                             }
                         } else {
@@ -691,7 +783,7 @@ sub delay_commit {
 
 sub hal_from_item {
     my ($self, $c, $item, $form, $params) = @_;
-    my ($form_exceptions) = @$params{qw/form_exceptions/};
+    my ($form_exceptions) = @{$params}{qw/form_exceptions/};
     my $resource = $self->resource_from_item($c, $item, $form);
 
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
@@ -707,7 +799,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $self->get_item_id($c, $item))),
-            Data::HAL::Link->new(relation => "ngcp:".$self->resource_name, href => sprintf("/api/%s/%d", $self->resource_name, $self->get_item_id($c, $item))),
+            Data::HAL::Link->new(relation => "ngcp:".$self->resource_name, href => sprintf("/api/%s/%s", $self->resource_name, $self->get_item_id($c, $item))),
             @$links
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -759,8 +851,7 @@ sub update_item {
 
     $item = $self->update_item_model($c, $item, $old_resource, $resource, $form, $process_extras);
 
-    return $item, $form;
-
+    return $item, $form, $form_exceptions;
 }
 
 #------ dummy & default methods
@@ -866,11 +957,11 @@ sub relation {
 #------ /accessors ---
 sub return_representation{
     my($self, $c, %params) = @_;
-    my($hal, $response, $item, $form, $preference) = @params{qw/hal response item form preference/};
+    my($hal, $response, $item, $form, $preference, $form_exceptions) = @params{qw/hal response item form preference form_exceptions/};
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form);
+    $hal //= $self->hal_from_item($c, $item, $form, \%params );
     $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
         $hal->http_headers,
     ), $hal->as_json);
@@ -887,11 +978,11 @@ sub return_representation{
 }
 sub return_representation_post{
     my($self, $c, %params) = @_;
-    my($hal, $response, $item, $form, $preference) = @params{qw/hal response item form preference/};
+    my($hal, $response, $item, $form, $preference, $form_exceptions) = @params{qw/hal response item form preference form_exceptions/};
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form);
+    $hal //= $self->hal_from_item($c, $item, $form, \%params );
     $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
         $hal->http_headers,
     ), $hal->as_json);
@@ -921,5 +1012,19 @@ sub return_csv(){
     }
 }
 
+sub return_requested_type {
+    my ($self, $c, $id, $item) = @_;
+    try{
+        my($data_ref,$mime_type,$filename) = $self->get_item_binary_data($c, $id, $item);
+        $filename  //= $self->item_name.''.$self->get_item_id($c, $item);
+        $mime_type //= 'application/octet-stream' ;
+
+        $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename  . '"');
+        $c->response->content_type( $mime_type );
+        $c->response->body($$data_ref);
+    }catch($e){
+        $self->error($c, HTTP_BAD_REQUEST, $e);
+    }
+}
 1;
 # vim: set tabstop=4 expandtab:

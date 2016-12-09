@@ -491,8 +491,8 @@ sub request{
 
     my $credentials = {};
     (@$credentials{qw/user password/},undef,undef) = $self->get_role_credentials();
-    my $curl = Test::HTTPRequestAsCurl::as_curl($req, credentials => $credentials );
     if($self->DEBUG){
+        my $curl = Test::HTTPRequestAsCurl::as_curl($req, credentials => $credentials );
         print $req->as_string;
         print "$curl\n\n";
     }
@@ -598,8 +598,16 @@ sub request_delete{
     my ($self,$uri) = @_;
     # DELETE tests
     #no auto rows for deletion
-    my $req = HTTP::Request->new('DELETE', $self->normalize_uri($uri));
+    my $name = $self->name // '';
+    my $del_uri = $self->normalize_uri($uri);
+    my $req = HTTP::Request->new('DELETE', $del_uri);
     my $res = $self->request($req);
+    if($res->code == 404){
+    #todo: if fake data will provide tree of the cascade deletion - it can be checked here, I think
+        diag($name.": Item $del_uri is absent already.");
+    }elsif($res->code == 204){
+        diag($name.": Item $del_uri deleted.");
+    }
     my $content = $self->get_response_content($res);
     if($self->cache_data){
         #my $restored = (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
@@ -757,10 +765,10 @@ sub check_created_listed{
     foreach (@$listed){
         delete $created_items->{$_};
     }
-    is(scalar(keys %{$created_items}), 0, "$self->{name}: check if all created test items have been foundin the list");
+    is(scalar(keys %{$created_items}), 0, "$self->{name}: check if all created test items have been found in the list");
     if(scalar(keys %{$created_items})){
-        print Dumper $created_items;
-        print Dumper $listed;
+        #print Dumper $created_items;
+        #print Dumper $listed;
     }
 }
 
@@ -985,6 +993,14 @@ sub check_item_post{
     my ($res,$rescontent,$req) = $self->request_post($content);#,$uri,$req
     return wantarray ? ($res,$rescontent,$req,$content) : $res;
 };
+sub check_item_delete{
+    my($self, $uri, $msg) = @_;
+    my $name = $self->name // '';
+    $uri =  $self->normalize_uri($uri);
+    my ($req,$res,$content) = $self->request_delete($uri);#,$uri,$req
+    $self->http_code_msg(204, "$name: check delete item $uri",$res,$content);
+    return ($req,$res,$content);
+};
 sub check_create_correct{
     my($self, $number, $uniquizer_cb) = @_;
     if(!$self->KEEP_CREATED){
@@ -1026,20 +1042,26 @@ sub clear_test_data_all{
     my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys %{ $self->DATA_CREATED->{ALL} };
     foreach my $del_uri(@uris){
         $del_uri = $self->normalize_uri($del_uri);
-        my($req,$res,$content) = $self->request_delete($del_uri);
+        my($req,$res,$content);
         if($strict){#for particular deletion test
-            $self->http_code_msg(204, "$name: check delete item $del_uri",$res,$content);
-        }elsif($res->code == 404){
-        #todo: if fake data will provide tree of the cascade deletion - it can be checked here, I think
-            diag($name.": Item $del_uri is absent already.");
+            ($req,$res,$content) = $self->check_item_delete($del_uri);
+        }else{
+            ($req,$res,$content) = $self->request_delete($del_uri);
         }
     }
     $self->clear_data_created();
     return \@uris;
 }
 sub clear_test_data_dependent{
-    my($self,$uri) = @_;
-    my($req,$res,$content) = $self->request_delete($self->normalize_uri($uri));
+    my($self,$uri,$strict) = @_;
+    my $name = $self->name // '';
+    my $del_uri = $self->normalize_uri($uri);
+    my($req,$res,$content);
+    if($strict){#for particular deletion test
+        ($req,$res,$content) = $self->check_item_delete($del_uri);
+    }else{
+        ($req,$res,$content) = $self->request_delete($del_uri);
+    }
     return ('204' eq $res->code);
 }
 
