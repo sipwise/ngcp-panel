@@ -1,0 +1,7 @@
+Verified+1: Jenkins Jenkins
+Code-Review+2: Kirill Solomko <ksolomko@sipwise.com>
+Submitted-by: Kirill Solomko <ksolomko@sipwise.com>
+Submitted-at: Fri, 09 Dec 2016 17:40:21 +0100
+Reviewed-on: http://gerrit.mgm.sipwise.com/10068
+Project: ngcp-panel
+Branch: refs/heads/mr4.5.2
