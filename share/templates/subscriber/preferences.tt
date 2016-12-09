@@ -314,6 +314,33 @@ $( document ).ready(function() {
                             </td>
                         </tr>
                         [% END -%]
+                        [% FOREACH  vm_recording_type IN vm_recordings_types -%]
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('Voicemail greeting ') %] "[%vm_recording_type.type%]"</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                [% IF  vm_recording_type.greeting_exists %]
+                                <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'voicemailgreeting', 'download', vm_recording_type.type  ) %]"><i class="icon-edit"></i> [% c.loc('Download') %]</a>
+                                [%END%]
+                            </div>
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    [% IF  vm_recording_type.greeting_exists %]
+                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'voicemailgreeting','delete', vm_recording_type.type ) %]">
+                                        <i class="icon-trash"></i> [% c.loc('Delete') %]
+                                    [% END %]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'voicemailgreeting','edit', vm_recording_type.type ) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
+                        [% END -%]
+
+                        
+
                     </tbody>
                 </table>
 
