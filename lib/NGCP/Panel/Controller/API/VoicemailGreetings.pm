@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::VoicemailRecordings;
+package NGCP::Panel::Controller::API::VoicemailGreetings;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
@@ -26,16 +26,6 @@ sub api_description {
 };
 
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::VoicemailRecordings/;
-
-sub resource_name{
-    return 'voicemailrecordings';
-}
-sub dispatch_path{
-    return '/api/voicemailrecordings/';
-}
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-voicemailrecordings';
-}
 
 
 1;
