@@ -6,10 +6,10 @@
     END;
 -%]
 
-[% 
+[%
     helper.name = c.loc('Subscriber');
     helper.messages = messages;
-    
+
     helper.edit_preference = edit_preference;
     helper.preference = preference;
     helper.preference_meta = preference_meta;
@@ -49,7 +49,7 @@
 <div class="accordion" id="preference_groups">
 
 
-    [% IF 
+    [% IF
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.callforward.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" -%]
@@ -60,7 +60,7 @@ function destinationDynamicFields(selectedValue, inputNumber){
       inputNumber = inputNumber.toString();
     }else if(!inputNumber){
       inputNumber = '';
-    } 
+    }
     var name = inputNumber + '.announcement_id';
     $(":input[name$='" + name + "']").closest('.ngcp-destination').css("display","none");
     $(":input[name$='" + name + "']").closest('.ngcp-destination-' + selectedValue ).css("display","block");
@@ -221,7 +221,7 @@ $( document ).ready(function() {
     </div>
     [% END -%]
 
-    [% IF 
+    [% IF
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.voice_mail.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" -%]
@@ -314,6 +314,33 @@ $( document ).ready(function() {
                             </td>
                         </tr>
                         [% END -%]
+                        [% FOREACH  vm_recording_type IN vm_recordings_types -%]
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('Voicemail greeting ') %] "[%vm_recording_type.type%]"</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                [% IF  vm_recording_type.greeting_exists %]
+                                <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'voicemailgreeting', 'download', vm_recording_type.type  ) %]"><i class="icon-edit"></i> [% c.loc('Download') %]</a>
+                                [%END%]
+                            </div>
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    [% IF  vm_recording_type.greeting_exists %]
+                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'voicemailgreeting','delete', vm_recording_type.type ) %]">
+                                        <i class="icon-trash"></i> [% c.loc('Delete') %]
+                                    [% END %]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'voicemailgreeting','edit', vm_recording_type.type ) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
+                        [% END -%]
+
+
+
                     </tbody>
                 </table>
 
@@ -345,9 +372,9 @@ $( document ).ready(function() {
                         </tr>
                     </thead>
                     <tbody>
-                        [% 
+                        [%
                             faxpref = subscriber.provisioning_voip_subscriber.voip_fax_preference;
-                            faxdests = subscriber.provisioning_voip_subscriber.voip_fax_destinations.all; 
+                            faxdests = subscriber.provisioning_voip_subscriber.voip_fax_destinations.all;
                         -%]
                         <tr class="sw_action_row">
                             <td>[% c.loc('Name in Fax Header for Sendfax') %]</td>
@@ -516,7 +543,7 @@ $( document ).ready(function() {
     [% IF c.config.features.cloudpbx && billing_mapping.product.class == 'pbxaccount' && (
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.auto_attendant.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
-        c.user.roles == "admin" || c.user.roles == "reseller" 
+        c.user.roles == "admin" || c.user.roles == "reseller"
     ) -%]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -550,7 +577,7 @@ $( document ).ready(function() {
     </div>
     [% END -%]
 
-    [% IF 
+    [% IF
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.speed_dial.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" -%]
@@ -584,7 +611,7 @@ $( document ).ready(function() {
     </div>
     [% END -%]
 
-    [% IF 
+    [% IF
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.reminder.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" -%]
@@ -637,7 +664,7 @@ $( document ).ready(function() {
     [% END -%]
 
     [% IF c.config.features.callingcard && (
-        c.user.roles == "admin" || c.user.roles == "reseller" 
+        c.user.roles == "admin" || c.user.roles == "reseller"
     ) -%]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -790,7 +817,7 @@ $( document ).ready(function() {
 [% END -%]
 
 
-[% 
+[%
     PROCESS 'helpers/pref_table.tt';
 %]
 

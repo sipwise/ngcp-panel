@@ -40,6 +40,11 @@ sub get {
     {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
+        my $header_accept = $c->request->header('Accept');
+        if(defined $header_accept && ($header_accept ne 'application/json')) {
+            $self->return_requested_type($c,$id,$item);
+            return;
+        }
 
         my $hal = $self->hal_from_item($c, $item);
 
@@ -95,22 +100,25 @@ sub put {
 
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
-
-        my $resource = $self->get_valid_put_data(
-            c => $c,
-            id => $id,
-            media_type => $self->config->{action}->{OPTIONS}->{PUT}->{ContentType} // 'application/json',
+        my $method_config = $self->config->{action}->{PUT};
+        my ($resource, $data) = $self->get_valid_data(
+            c          => $c,
+            id         => $id,
+            method     =>  'PUT',
+            media_type =>  $method_config->{ContentType} // 'application/json',
+            uploads    =>  $method_config->{Uploads} // [] ,
         );
         last unless $resource;
         my $old_resource = { $item->get_inflated_columns };
-        my $form;
-        
-        ($item, $form) = $self->update_item($c, $item, $old_resource, $resource, $form );
+        #TODO: MOVE form exceptions to proper forms as property
+        my ($form, $form_exceptions);
+
+        ($item, $form, $form_exceptions) = $self->update_item($c, $item, $old_resource, $resource, $form );
         last unless $item;
 
         $guard->commit;
 
-        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
+        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference, 'form_exceptions' => $form_exceptions );
     }
     return;
 }
@@ -131,6 +139,11 @@ sub delete {
         $c->response->body(q());
     }
     return;
+}
+
+sub delete_item{
+    my($self, $c, $item) = @_;
+    $item->delete();
 }
 
 sub auto :Private {
