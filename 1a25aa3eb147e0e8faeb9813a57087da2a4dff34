@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_2fba5d0a",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-12-09T13:55:29Z",
+      "side": 1,
+      "message": "aside: although not panel UI yet, this field is still not merged with the row\u0027s value there.",
+      "range": {
+        "startLine": 170,
+        "startChar": 8,
+        "endLine": 170,
+        "endChar": 25
+      },
+      "revId": "1a25aa3eb147e0e8faeb9813a57087da2a4dff34",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
