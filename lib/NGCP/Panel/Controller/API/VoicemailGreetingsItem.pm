@@ -18,7 +18,18 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::VoicemailRecordings/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::VoicemailGreetings/;
+
+sub _set_config{
+    my ($self, $method) = @_;
+    $method //='';
+    if ('PUT' eq $method || 'POST' eq $method){
+        return { 'ContentType' => 'audio/x-wav' };
+    }elsif(){
+    
+    }
+    return {};
+}
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;

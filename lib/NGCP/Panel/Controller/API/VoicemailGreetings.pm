@@ -22,10 +22,10 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines the actual recording of voicemail messages. It is referred to by the <a href="#voicemails">Voicemails</a> relation. A GET on an item returns the binary blob of the recording with Content-Type "audio/x-wav".';
+    return 'Defines the voicemail greetings. A GET on an item with Accept "audio/x-wav" returns the binary blob of the greeting.';
 };
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::VoicemailRecordings/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::VoicemailGreetings/;
 
 
 1;

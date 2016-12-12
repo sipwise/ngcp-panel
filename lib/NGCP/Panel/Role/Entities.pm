@@ -44,6 +44,11 @@ sub get_list{
 
 sub get {
     my ($self, $c) = @_;
+    my $header_accept = $c->request->header('Accept');
+    if(defined $header_accept && $header_accept eq 'text/csv') {
+        $self->return_csv($c);
+        return;
+    }
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
