@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_6a9440e2",
+        "filename": "lib/NGCP/Panel/Controller/API/CallForwardsItem.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2016-12-13T01:01:02Z",
+      "side": 1,
+      "message": "agree with ira here, remember other ones too where it denotes the particular resource here, rather than the actual db item type",
+      "parentUuid": "ba51214e_20eef2b4",
+      "revId": "e107ce8fa344b37c73d3c39ef556552f8ef6d3c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_e0d87a81",
         "filename": "lib/NGCP/Panel/Form/CFDestinationSetAPI.pm",
         "patchSetId": 9
