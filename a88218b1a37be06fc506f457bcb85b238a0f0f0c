@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_e0e86fb6",
+        "filename": "tools_bin/ngcp-emergency-mode",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2016-12-13T12:22:12Z",
+      "side": 1,
+      "message": "http://perldoc.perl.org/perlobj.html#Indirect-Object-Syntax",
+      "revId": "a88218b1a37be06fc506f457bcb85b238a0f0f0c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
