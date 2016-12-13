@@ -61,8 +61,8 @@ sub ERROR {
 
 my $mode = shift @ARGV;
 my @emergency_domains = @ARGV;
-unless(defined $mode && ($mode eq "enable" || $mode eq "disable") && @emergency_domains) {
-    ERROR "Usage: $PROGRAM_NAME <enable|disable> <all|[domain1 domain2 ...]>";
+unless(defined $mode && ($mode eq "enable" || $mode eq "disable" || $mode eq "status") && @emergency_domains) {
+    ERROR "Usage: $PROGRAM_NAME <enable|disable|status> <all|[domain1 domain2 ...]>";
     exit 1;
 }
 DEBUG "Emergency mode '$mode' requested for domains " . join(", ", @emergency_domains);
@@ -80,7 +80,7 @@ unless($enabled) {
 
 DEBUG "Using redis db $redis_db on port $redis_port for hosts " . join(", ", @redis_hosts);
 
-my $client = new NGCP::API::Client;
+my $client = NGCP::API::Client->new();
 my $res = $client->request('GET', '/api/domains/');
 unless($res->is_success) {
     ERROR "Failed to fetch domains from API, aborting!";
@@ -103,13 +103,15 @@ foreach my $dom(@emergency_domains) {
     $emergency_domain_names{$dom} = $domain_names{$dom};
 }
 
-INFO "" . ($mode eq "enable" ? "A" : "Dea") . "ctivating emergency mode for domains " . join(", ", keys %emergency_domain_names);
-DEBUG "Waiting for user confirmation...";
-$res = prompt(-in => *STDIN, -prompt => 'Please confirm (yes/no): ');
-DEBUG "User entered '$res'";
-if($res ne "yes") {
-    INFO "Aborting emergency mode $mode by user request!";
-    exit 0;
+unless ($mode eq "status") {
+    INFO "" . ($mode eq "enable" ? "A" : "Dea") . "ctivating emergency mode for domains " . join(", ", keys %emergency_domain_names);
+    DEBUG "Waiting for user confirmation...";
+    $res = prompt(-in => *STDIN, -prompt => 'Please confirm (yes/no): ');
+    DEBUG "User entered '$res'";
+    if($res ne "yes") {
+        INFO "Aborting emergency mode $mode by user request!";
+        exit 0;
+    }
 }
 
 foreach my $domid(values %emergency_domain_names) {
@@ -119,9 +121,11 @@ foreach my $domid(values %emergency_domain_names) {
         next;
     }
     my $prefs = $res->as_hash;
-    if($mode eq "enable" && exists $prefs->{emergency_mode_enabled} && $prefs->{emergency_mode_enabled} == 1) {
+    if ($mode eq "status") {
+        INFO "domain $domain_ids{$domid} status: " . ($prefs->{emergency_mode_enabled} ? "enabled" : "disabled");
+    } elsif ($mode eq "enable" && exists $prefs->{emergency_mode_enabled} && $prefs->{emergency_mode_enabled} == 1) {
         INFO "Emergency mode for domain $domain_ids{$domid} already active, skipping...";
-    } elsif($mode eq "disable" && (!exists $prefs->{emergency_mode_enabled} || $prefs->{emergency_mode_enabled} == 0)) {
+    } elsif ($mode eq "disable" && (!exists $prefs->{emergency_mode_enabled} || $prefs->{emergency_mode_enabled} == 0)) {
         INFO "Emergency mode for domain $domain_ids{$domid} already inactive, skipping...";
     } else {
         $prefs->{emergency_mode_enabled} = ($mode eq "enable" ? JSON::true : JSON::false);
@@ -133,7 +137,10 @@ foreach my $domid(values %emergency_domain_names) {
     }
 }
 
-if($mode eq "disable") {
+if ($mode eq "status") {
+    INFO "Status report finished.";
+    exit 0;
+} elsif ($mode eq "disable") {
     INFO "Emergency mode disabled.";
     exit 0;
 }
@@ -232,7 +239,7 @@ foreach my $redis_host(@redis_hosts) {
 </methodCall>
 EOF
 
-        if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>(Accepted|Not found)</value># } @ret) {
+        if (grep { $$_[1] != 1 or $$_[2] !~ m#<value>(Accepted|Not found)</value># } @ret) {
             DEBUG "Failed to dispatch teardown request: " . join(", ", @ret);
         }
     }
