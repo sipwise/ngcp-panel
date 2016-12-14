@@ -28,24 +28,9 @@ sub get_valid_post_data {
 
     my $c = $params{c};
     my $media_type = $params{media_type};
-    if('ARRAY' eq ref $media_type){
-        push @$media_type,'multipart/form-data';
-    }else{
-        $media_type = [$media_type, 'multipart/form-data'];
-    }
-    my $json_raw;
-    if('multipart/form-data' eq $c->req->headers->content_type){
-        $json_raw = $c->req->param('json');
-    }else{
-        $json_raw =  $self->get_valid_raw_post_data(%params);
-    }
-    return unless $json_raw;
-    return unless $self->require_wellformed_json($c, $media_type, $json_raw);
-    my $json = JSON::from_json($json_raw, { utf8 => 1 });
-    foreach my $upload ($params{uploads}){
-        $json->{$upload} = $self->get_upload($upload);
-    }
-    return $json;
+    my $json =  $self->get_valid_raw_post_data(%params);
+    return unless $self->require_wellformed_json($c, $media_type, $json);
+    return JSON::from_json($json, { utf8 => 1 });
 }
 
 sub get_valid_raw_post_data {
@@ -65,24 +50,10 @@ sub get_valid_put_data {
 
     my $c = $params{c};
     my $media_type = $params{media_type};
-    if('ARRAY' eq ref $media_type){
-        push @$media_type,'multipart/form-data';
-    }else{
-        $media_type = [$media_type, 'multipart/form-data'];
-    }
-    my $json_raw;
-    if('multipart/form-data' eq $c->req->headers->content_type){
-        $json_raw = $c->req->param('json');
-    }else{
-        $json_raw =  $self->get_valid_raw_put_data(%params);
-    }
-    return unless $json_raw;
-    return unless $self->require_wellformed_json($c, $media_type, $json_raw);
-    my $json = JSON::from_json($json_raw, { utf8 => 1 });
-    foreach my $upload ($params{uploads}){
-        $json->{$upload} = $self->get_upload($upload);
-    }
-    return $json;
+    my $json =  $self->get_valid_raw_put_data(%params);
+    return unless $json;
+    return unless $self->require_wellformed_json($c, $media_type, $json);
+    return JSON::from_json($json, { utf8 => 1 });
 }
 
 sub get_valid_raw_put_data {
@@ -97,61 +68,6 @@ sub get_valid_raw_put_data {
     return unless $self->valid_media_type($c, $media_type);
     return unless $self->require_body($c);
     return $c->stash->{body};
-}
-
-sub get_valid_multipart_put_data {
-    my ($self, %params) = @_;
-
-    my $c = $params{c};
-    my $media_type = $params{media_type};
-
-    my $body =  $self->get_valid_raw_post_data(%params);
-    #return unless $body;
-    my $json = $c->req->param('json');
-    return unless $json;
-    return unless $self->require_wellformed_json($c, $media_type, $json);
-    $json = JSON::from_json($json, { utf8 => 1 });
-    foreach my $upload ($params{uploads}){
-        $json->{$upload} = $self->get_upload($upload);
-    }
-    return $json;
-}
-
-sub get_valid_multipar_patch_data {
-    my ($self, %params) = @_;
-
-    my $c = $params{c};
-    my $media_type = $params{media_type};
-    my $id = $params{id};
-    my $ops = $params{ops} // [qw/replace copy/];
-    if('ARRAY' eq ref $media_type){
-        push @$media_type,'multipart/form-data';
-    }else{
-        $media_type = [$media_type, 'multipart/form-data'];
-    }
-    return unless $self->valid_id($c, $id);
-    return unless $self->forbid_link_header($c);
-    return unless $self->valid_media_type($c, $media_type);
-    return unless $self->require_body($c);
-    my $json_raw;
-    if('multipart/form-data' eq $c->req->headers->content_type){
-        $json_raw = $c->req->param('json');
-    }else{
-        $json_raw =  $c->stash->{body};
-    }
-    return unless $self->require_wellformed_json($c, $media_type, $json_raw);
-    return unless $self->require_valid_patch($c, $json_raw, $ops);
-    my $json = JSON::from_json($json_raw, { utf8 => 1 });
-    foreach my $upload ($params{uploads}){
-        foreach my $elem(@{ $json }) {
-            my $path = $elem->{path};
-            $path =~s/^\///;
-            if($path eq $upload){
-                $elem->{value} = $self->get_upload($upload);
-            }
-        }        
-    }
-    return $json;
 }
 
 sub get_valid_patch_data {
@@ -564,7 +480,7 @@ sub apply_patch {
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed $pe and $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
-                                &$optional_field_code_ref(substr($op->{path},1),$entity,$op);
+                                &$optional_field_code_ref(substr($op->{path},1),$entity);
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                             }
                         } else {
