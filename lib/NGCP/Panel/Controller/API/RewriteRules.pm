@@ -136,7 +136,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -183,6 +183,9 @@ sub POST :Allow {
             form => $form,
             exceptions => [qw/set_id/],
         );
+
+        $resource->{match_pattern} = $form->values->{match_pattern};
+        $resource->{replace_pattern} = $form->values->{replace_pattern};
 
         my $rule;
 
