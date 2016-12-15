@@ -87,7 +87,8 @@ my @allrules = ();
             direction => "out",
             field => "callee",
             match_pattern => "test pattern $t",
-            replace_pattern => "test_replace_$t",
+            #replace_pattern => "test_replace_$t",
+            replace_pattern => '${caller_in}_' . "$t",
         }));
         $res = $ua->request($req);
         is($res->code, 201, "create test rewriterule $i");
@@ -288,7 +289,7 @@ my @allrules = ();
     delete $rule->{_links};
     delete $rule->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstrule);
-    
+
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $req->header('Prefer' => "return=minimal");
