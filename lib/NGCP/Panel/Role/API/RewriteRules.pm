@@ -23,7 +23,7 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $type) = @_;
     my $form;
-    
+
     my %resource = $item->get_inflated_columns;
 
     my $hal = Data::HAL->new(
@@ -51,6 +51,10 @@ sub hal_from_item {
         run => 0,
         exceptions => [qw/set_id/],
     );
+
+    $resource{match_pattern} = $form->inflate_match_pattern($resource{match_pattern});
+    $resource{replace_pattern} = $form->inflate_replace_pattern($resource{replace_pattern});
+
     $hal->resource(\%resource);
     return $hal;
 }
@@ -93,6 +97,9 @@ sub update_item {
         resource => $resource,
         exceptions => [qw/set_id/],
     );
+
+    $resource->{match_pattern} = $form->values->{match_pattern};
+    $resource->{replace_pattern} = $form->values->{replace_pattern};
 
     $item->update($resource);
 
