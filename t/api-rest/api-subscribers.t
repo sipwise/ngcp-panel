@@ -20,8 +20,8 @@ $fake_data->set_data_from_script({
         'data' => {
             administrative       => 0,
             customer_id          => sub { return shift->get_id('customers',@_); },
-            primary_number       => { ac => 111, cc=> 111, sn => 111 },
-            alias_numbers        => [ { ac => 11, cc=> 11, sn => 11 } ],
+            primary_number       => { ac => 1112, cc=> 1112, sn => 1112 },
+            alias_numbers        => [ { ac => 1221, cc=> 121, sn => 121 } ],
             username             => 'api_test_username',
             password             => 'api_test_password',
             webusername          => 'api_test_webusername',
