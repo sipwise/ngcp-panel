@@ -44,6 +44,7 @@ sub get_list{
 
 sub get {
     my ($self, $c) = @_;
+    $c->log->debug('in get');
     my $header_accept = $c->request->header('Accept');
     if(defined $header_accept && ($header_accept eq 'text/csv')) {
         $self->return_csv($c);
@@ -91,8 +92,10 @@ sub get {
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
+        $c->log->debug('return from get');
         return;
     }
+    $c->log->debug('return from get');
     return;
 }
 

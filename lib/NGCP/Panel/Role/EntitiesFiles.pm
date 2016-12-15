@@ -44,13 +44,13 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    #$self->log_request($c);
+    $self->log_request($c);
 }
 
 sub end :Private {
     my ($self, $c) = @_;
 
-    #$self->log_response($c);
+    $self->log_response($c);
 }
 
 1;
