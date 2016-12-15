@@ -5,7 +5,7 @@
 # Required-Stop:     $syslog $network $local_fs $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Should-Start:      sshd
+# Should-Start:      sshd mysql
 # Short-Description: Start the ngcp-panel webapp
 # Description:       Start the ngcp-panel webapp
 ### END INIT INFO
