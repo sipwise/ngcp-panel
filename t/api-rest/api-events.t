@@ -60,6 +60,45 @@ is($res->code, 201, "create test billing profile");
 my $billing_profile_id = $res->header('Location');
 $billing_profile_id =~ s/^.+\/(\d+)$/$1/;
 
+$req = HTTP::Request->new('POST', $uri.'/api/subscriberprofilesets/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    name => "subscriber_profile_set_".$t,
+    reseller_id => $reseller_id,
+    description => "subscriber_profile_set_description_".$t,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test subscriberprofileset");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test subscriberprofileset");
+my $subscriberprofileset = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('GET', $uri.'/api/subscriberpreferencedefs/');
+$res = $ua->request($req);
+is($res->code, 200, "fetch profilepreferencedefs");
+my $subscriberpreferencedefs = JSON::from_json($res->decoded_content);
+
+my @subscriber_profile_attributes = ();
+foreach my $attr (keys %$subscriberpreferencedefs) {
+    push(@subscriber_profile_attributes,$attr);
+}
+
+$req = HTTP::Request->new('POST', $uri.'/api/subscriberprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    name => "subscriber_profile_".$t,
+    profile_set_id => $subscriberprofileset->{id},
+    attributes => \@subscriber_profile_attributes,
+    description => "subscriber_profile_description_".$t,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test subscriberprofile");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test subscriberprofile");
+my $subscriberprofile = JSON::from_json($res->decoded_content);
+
 $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
 $req->header('Content-Type' => 'application/json');
 $req->content(JSON::to_json({
@@ -85,6 +124,8 @@ my %customer_map = ();
         );
     my $subscriber = _create_subscriber($customer,
         primary_number => { cc => 888, ac => '1'.(scalar keys %subscriber_map), sn => $t },
+        profile_id => $subscriberprofile->{id},
+        profile_set_id => $subscriberprofileset->{id},
         );
 
     my $call_forwards = set_callforwards($subscriber,{ cfu => {
@@ -114,6 +155,8 @@ SKIP:
         );
     my $subscriber = _create_subscriber($customer,
         primary_number => { cc => 888, ac => '2'.(scalar keys %subscriber_map), sn => $t },
+        profile_id => $subscriberprofile->{id},
+        profile_set_id => $subscriberprofileset->{id},
         );
 
     my $destinationset_1 = _create_cfdestinationset($subscriber,"dest1_$t",[{ destination => "1234",
