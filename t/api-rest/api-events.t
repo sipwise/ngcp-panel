@@ -3,6 +3,7 @@ use Net::Domain qw(hostfqdn);
 use LWP::UserAgent;
 use JSON qw();
 use Test::More;
+use Data::Dumper;
 
 my $is_local_env = 0;
 
@@ -60,6 +61,45 @@ is($res->code, 201, "create test billing profile");
 my $billing_profile_id = $res->header('Location');
 $billing_profile_id =~ s/^.+\/(\d+)$/$1/;
 
+$req = HTTP::Request->new('POST', $uri.'/api/subscriberprofilesets/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    name => "subscriber_profile_set_".$t,
+    reseller_id => $reseller_id,
+    description => "subscriber_profile_set_description_".$t,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test subscriberprofileset");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test subscriberprofileset");
+my $subscriberprofileset = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('GET', $uri.'/api/subscriberpreferencedefs/');
+$res = $ua->request($req);
+is($res->code, 200, "fetch profilepreferencedefs");
+my $subscriberpreferencedefs = JSON::from_json($res->decoded_content);
+
+my @subscriber_profile_attributes = ();
+foreach my $attr (keys %$subscriberpreferencedefs) {
+    push(@subscriber_profile_attributes,$attr);
+}
+
+$req = HTTP::Request->new('POST', $uri.'/api/subscriberprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    name => "subscriber_profile_".$t,
+    profile_set_id => $subscriberprofileset->{id},
+    attributes => \@subscriber_profile_attributes,
+    description => "subscriber_profile_description_".$t,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test subscriberprofile");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test subscriberprofile");
+my $subscriberprofile = JSON::from_json($res->decoded_content);
+
 $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
 $req->header('Content-Type' => 'application/json');
 $req->content(JSON::to_json({
@@ -106,7 +146,7 @@ my %customer_map = ();
 
 #$t = time;
 
-SKIP:
+#SKIP:
 {
 
     my $customer = _create_customer(
@@ -153,6 +193,7 @@ SKIP:
                  timeset => $timeset->{name}}],
         cfu => [{ destinationset => $destinationset_2->{name},
                  timeset => $timeset->{name}}],
+        cfs => [],
         });
 
     #1. update destination set:
@@ -173,6 +214,54 @@ SKIP:
         { subscriber_id => $subscriber->{id}, type => "start_ivr" },
         { subscriber_id => $subscriber->{id}, type => "end_ivr" },
         { subscriber_id => $subscriber->{id}, type => "end_ivr" },
+    ]);
+
+}
+
+#SKIP:
+{
+
+    my $customer = _create_customer(
+        type => "pbxaccount",
+        );
+    my $cc = "888";
+    my $pilot_ac = undef; #'3'.(scalar keys %subscriber_map);
+    my $pilot_sn = $t.(scalar keys %subscriber_map);
+    my $pilot_subscriber = _create_subscriber($customer,
+        primary_number => { cc => $cc, ac => $pilot_ac, sn => $pilot_sn },
+        is_pbx_pilot => JSON::true,
+        profile_id => $subscriberprofile->{id},
+        profile_set_id => $subscriberprofileset->{id},
+        );
+    my $ac = undef; #'3'.(scalar keys %subscriber_map);
+    my $sn = ($t+1).(scalar keys %subscriber_map);
+    my $subscriber = _create_subscriber($customer,
+        primary_number => { cc => $cc, ac => $ac, sn => $sn },
+        profile_id => $subscriberprofile->{id},
+        profile_set_id => $subscriberprofileset->{id},
+        );
+    #_update_subscriber($subscriber,
+    _check_event_history("events when creating a pbx pilot subscriber: ",$pilot_subscriber->{id},"start_profile",[
+        { subscriber_id => $pilot_subscriber->{id}, type => "start_profile",
+          subscriber_profile_id => $subscriberprofile->{id}, subscriber_profile_name => $subscriberprofile->{name},
+          subscriber_profile_set_id => $subscriberprofileset->{id}, subscriber_profile_set_name => $subscriberprofileset->{name},
+          primary_number_cc => $cc, primary_number_ac => $pilot_ac, primary_number_sn => $pilot_sn,
+          pilot_subscriber_id => $pilot_subscriber->{id},
+          pilot_subscriber_profile_id => $subscriberprofile->{id}, pilot_subscriber_profile_name => $subscriberprofile->{name},
+          pilot_subscriber_profile_set_id => $subscriberprofileset->{id}, pilot_subscriber_profile_set_name => $subscriberprofileset->{name},
+          pilot_primary_number_cc => $cc, pilot_primary_number_ac => $pilot_ac, pilot_primary_number_sn => $pilot_sn,
+        },
+    ]);
+    _check_event_history("events when creating a pbx subscriber: ",$subscriber->{id},"start_profile",[
+        { subscriber_id => $subscriber->{id}, type => "start_profile",
+          subscriber_profile_id => $subscriberprofile->{id}, subscriber_profile_name => $subscriberprofile->{name},
+          subscriber_profile_set_id => $subscriberprofileset->{id}, subscriber_profile_set_name => $subscriberprofileset->{name},
+          primary_number_cc => $cc, primary_number_ac => $ac, primary_number_sn => $sn,
+          pilot_subscriber_id => $pilot_subscriber->{id},
+          pilot_subscriber_profile_id => $subscriberprofile->{id}, pilot_subscriber_profile_name => $subscriberprofile->{name},
+          pilot_subscriber_profile_set_id => $subscriberprofileset->{id}, pilot_subscriber_profile_set_name => $subscriberprofileset->{name},
+          pilot_primary_number_cc => $cc, pilot_primary_number_ac => $pilot_ac, pilot_primary_number_sn => $pilot_sn,
+        },
     ]);
 
 }
@@ -431,16 +520,8 @@ sub _compare_event {
 
     my $ok = 1;
 
-    if ($expected->{id}) {
-        $ok = is($got->{id},$expected->{id},$label . "check event " . $got->{id} . " id") && $ok;
-    }
-
-    if ($expected->{subscriber_id}) {
-        $ok = is($got->{subscriber_id},$expected->{subscriber_id},$label . "check event " . $got->{id} . " subscriber_id") && $ok;
-    }
-
-    if ($expected->{type}) {
-        $ok = is($got->{type},$expected->{type},$label . "check event " . $got->{id} . " type '".$expected->{type}."'") && $ok;
+    foreach my $field (keys %$expected) {
+        $ok = is($got->{$field},$expected->{$field},$label . "check event " . $got->{$field} . " $field") && $ok;
     }
 
     return $ok;
