@@ -12,7 +12,8 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Event::Reseller;
 use NGCP::Panel::Form::Event::Admin;
-use Data::Dumper;
+use NGCP::Panel::Utils::Events qw();
+#use Data::Dumper;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -45,6 +46,27 @@ sub hal_from_item {
     );
     $resource{timestamp} = $datetime_fmt->format_datetime($resource{timestamp}) if defined $resource{timestamp};
 
+    $resource{primary_number_id} = NGCP::Panel::Utils::Events::get_relation_value(c => $c, event => $item, type => 'primary_number_id');
+    $resource{primary_number_ac} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'primary_number_ac');
+    $resource{primary_number_cc} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'primary_number_cc');
+    $resource{primary_number_sn} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'primary_number_sn');
+    $resource{subscriber_profile_id} = NGCP::Panel::Utils::Events::get_relation_value(c => $c, event => $item, type => 'subscriber_profile_id');
+    $resource{subscriber_profile_name} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'subscriber_profile_name');
+    $resource{subscriber_profile_set_id} = NGCP::Panel::Utils::Events::get_relation_value(c => $c, event => $item, type => 'subscriber_profile_set_id');
+    $resource{subscriber_profile_set_name} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'subscriber_profile_set_name');
+
+    $resource{pilot_subscriber_id} = NGCP::Panel::Utils::Events::get_relation_value(c => $c, event => $item, type => 'pilot_subscriber_id');
+
+    $resource{pilot_primary_number_id} = NGCP::Panel::Utils::Events::get_relation_value(c => $c, event => $item, type => 'pilot_primary_number_id');
+    $resource{pilot_primary_number_ac} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'pilot_primary_number_ac');
+    $resource{pilot_primary_number_cc} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'pilot_primary_number_cc');
+    $resource{pilot_primary_number_sn} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'pilot_primary_number_sn');
+    $resource{pilot_subscriber_profile_id} = NGCP::Panel::Utils::Events::get_relation_value(c => $c, event => $item, type => 'pilot_subscriber_profile_id');
+    $resource{pilot_subscriber_profile_name} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'pilot_subscriber_profile_name');
+    $resource{pilot_subscriber_profile_set_id} = NGCP::Panel::Utils::Events::get_relation_value(c => $c, event => $item, type => 'pilot_subscriber_profile_set_id');
+    $resource{pilot_subscriber_profile_set_name} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'pilot_subscriber_profile_set_name');
+
+
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -58,6 +80,9 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             (defined $item->subscriber_id ? Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->subscriber_id)) : ()),
             (defined $item->reseller_id ? Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : ()),
+            #(defined $resource{pilot_subscriber_id} ? Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $resource{pilot_subscriber_id})) : ()),
+            #(defined $resource{subscriber_profile_set_id} ? Data::HAL::Link->new(relation => 'ngcp:subscriberprofilesets', href => sprintf("/api/subscriberprofilesets/%d", $resource{subscriber_profile_set_id})) : ()),
+            #(defined $resource{subscriber_profile_id} ? Data::HAL::Link->new(relation => 'ngcp:subscriberprofiles', href => sprintf("/api/subscriberprofiles/%d", $resource{subscriber_profile_id})) : ()),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
