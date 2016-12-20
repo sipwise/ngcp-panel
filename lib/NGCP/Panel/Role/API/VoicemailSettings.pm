@@ -15,13 +15,15 @@ use NGCP::Panel::Form::Voicemail::API;
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('voicemail_users');
+    my $item_rs = $c->model('DB')->resultset('voicemail_users')->search({ 
+        'voip_subscriber.status' => { '!=' => 'terminated' },
+    }, {
+        join => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } },
+    });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ 
-            'contact.reseller_id' => $c->user->reseller_id 
-        }, {
-            join => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } },
+            'contact.reseller_id' => $c->user->reseller_id,
         });
     }
     return $item_rs;
