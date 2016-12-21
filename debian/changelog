@@ -1,3 +1,12 @@
+ngcp-panel (1.14.2.14+0~mr4.5.2.14) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [6ab8427] TT#5559 Fix 563377: add REST API 'events' to api-root.t
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Dec 2016 13:58:40 +0100
+
 ngcp-panel (1.14.2.13+0~mr4.5.2.13) unstable; urgency=medium
 
   [ Rene Krenn ]
