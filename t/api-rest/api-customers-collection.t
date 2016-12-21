@@ -39,7 +39,7 @@ SKIP:{
     my $invoicetemplate = $test_machine->get_item_hal('invoicetemplates','/api/invoicetemplates/?name=api_test');
 
     if(!$invoicetemplate->{total_count} ){
-        skip("Testing requires at least one present callforward. No creation is available.",1);
+        skip("Testing requires invoice template with name api_test. No creation is available.",1);
     }
     $fake_data->data->{customers}->{data}->{invoice_template_id} = $invoicetemplate->{content}->{id};
     #for item creation test purposes /post request data/
@@ -52,8 +52,8 @@ SKIP:{
 }
 
 
-$fake_data->clear_test_data_all();
-$test_machine->clear_test_data_all();
+#$fake_data->clear_test_data_all();
+#$test_machine->clear_test_data_all();
 undef $fake_data;
 undef $test_machine;
 
