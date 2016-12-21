@@ -55,7 +55,7 @@ has_field 'type' => (
     },
 );
 
-has_field 'subscriber_email_template' => (
+has_field 'subscriber_email_template_id' => (
     type => 'PosInteger',
     required => 0,
     element_attr => {
@@ -64,7 +64,7 @@ has_field 'subscriber_email_template' => (
     },
 );
 
-has_field 'passreset_email_template' => (
+has_field 'passreset_email_template_id' => (
     type => 'PosInteger',
     required => 0,
     element_attr => {
@@ -73,7 +73,7 @@ has_field 'passreset_email_template' => (
     },
 );
 
-has_field 'invoice_email_template' => (
+has_field 'invoice_email_template_id' => (
     type => 'PosInteger',
     required => 0,
     element_attr => {
@@ -81,7 +81,7 @@ has_field 'invoice_email_template' => (
         title => ['The email template used to notify users about invoice.']
     },
 );
-has_field 'invoice_template' => (
+has_field 'invoice_template_id' => (
     type => 'PosInteger',
     required => 0,
     element_attr => {

@@ -104,7 +104,6 @@ sub hal_from_customer {
             $customer->subscriber_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:subscriberemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->subscriber_email_template_id))) : (),
             $customer->passreset_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:passresetemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->passreset_email_template_id))) : (),
             $customer->invoice_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:invoiceemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->invoice_email_template_id))) : (),
-            $customer->invoice_template_id ? (Data::HAL::Link->new(relation => 'ngcp:invoicetemplates', href => sprintf("/api/invoicetemplates/%d", $customer->invoice_template_id))) : (),
             Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?customer_id=%d", $customer->id)),
             $self->get_journal_relation_link($customer->id),
         ],
@@ -161,7 +160,7 @@ sub update_customer {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id", "invoice_email_template_id", "invoice_template_id", "passreset_email_template_id", "subscriber_email_template_id" ],
+        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id"],
     );
     #$resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
