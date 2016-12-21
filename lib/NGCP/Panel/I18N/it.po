@@ -641,14 +641,6 @@ msgid "Administrators"
 msgstr "Amministratori"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Advanced"
-msgstr "Avanzato"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Advanced View"
-msgstr "Vista Avanzata"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Alias Number"
 msgstr "Numero Alias"
 
@@ -955,6 +947,14 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An optional routing number replacing the ported number."
 msgstr "Un numero chiamabile opzionale che sostituisce il numero portato."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Announcement ID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Announcement id"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Anonymize From User"
@@ -11606,10 +11606,6 @@ msgstr ""
 msgid "UPN rewrite set"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "URI/Number"
-msgstr "URI/Numero"
-
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/subscriber/master.tt
 msgid "UUID"
@@ -11726,10 +11722,6 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Upn rewrite sources add"
 msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Uri"
-msgstr "Uri"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use Number instead of Contact first for outbound calls"
@@ -11983,10 +11975,6 @@ msgstr "Messaggi Casella Vocale"
 #: share/templates/subscriber/voicemail.tt
 msgid "Voicebox Messages for %1@%2"
 msgstr "Messaggi Casella Vocale per %1@%2"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Voicemail"
-msgstr "Casella Vocale"
 
 #: share/templates/subscriber/preferences.tt
 msgid "Voicemail and Voicebox"
@@ -12906,6 +12894,21 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Advanced"
+#~ msgstr "Avanzato"
+
+#~ msgid "Advanced View"
+#~ msgstr "Vista Avanzata"
+
+#~ msgid "URI/Number"
+#~ msgstr "URI/Numero"
+
+#~ msgid "Uri"
+#~ msgstr "Uri"
+
+#~ msgid "Voicemail"
+#~ msgstr "Casella Vocale"
 
 #~ msgid "Hardware <strong>Ok</strong>"
 #~ msgstr "Hardware <strong>Ok</strong>"

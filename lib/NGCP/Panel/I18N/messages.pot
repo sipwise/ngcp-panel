@@ -458,14 +458,6 @@ msgid "Administrators"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Advanced"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Advanced View"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Alias Number"
 msgstr ""
 
@@ -655,6 +647,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An optional routing number replacing the ported number."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Announcement ID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Announcement id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9998,10 +9998,6 @@ msgstr ""
 msgid "UPN rewrite set"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "URI/Number"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/master.tt
 msgid "UUID"
 msgstr ""
@@ -10116,10 +10112,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Upn rewrite sources add"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Uri"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10338,10 +10330,6 @@ msgstr ""
 #. (subscriber.username, subscriber.domain.domain)
 #: share/templates/subscriber/voicemail.tt
 msgid "Voicebox Messages for %1@%2"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Voicemail"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt

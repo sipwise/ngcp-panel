@@ -577,14 +577,6 @@ msgid "Administrators"
 msgstr "Administradores"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Advanced"
-msgstr "Avanzado"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Advanced View"
-msgstr "Vista Avanzada"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Alias Number"
 msgstr "Alias Number"
 
@@ -841,6 +833,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An optional routing number replacing the ported number."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Announcement ID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Announcement id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11219,10 +11219,6 @@ msgstr ""
 msgid "UPN rewrite set"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "URI/Number"
-msgstr "URI/Número"
-
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/subscriber/master.tt
 msgid "UUID"
@@ -11339,10 +11335,6 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Upn rewrite sources add"
 msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Uri"
-msgstr "Uri"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use Number instead of Contact first for outbound calls"
@@ -11584,10 +11576,6 @@ msgstr "Mensajes del buzón de voz"
 #: share/templates/subscriber/voicemail.tt
 msgid "Voicebox Messages for %1@%2"
 msgstr "Mensajes del buzón de %1@%2"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Voicemail"
-msgstr "Buzón de voz"
 
 #: share/templates/subscriber/preferences.tt
 msgid "Voicemail and Voicebox"
@@ -12494,6 +12482,21 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Advanced"
+#~ msgstr "Avanzado"
+
+#~ msgid "Advanced View"
+#~ msgstr "Vista Avanzada"
+
+#~ msgid "URI/Number"
+#~ msgstr "URI/Número"
+
+#~ msgid "Uri"
+#~ msgstr "Uri"
+
+#~ msgid "Voicemail"
+#~ msgstr "Buzón de voz"
 
 #~ msgid "Hardware <strong>Ok</strong>"
 #~ msgstr "Hardware <strong>Ok</strong>"
