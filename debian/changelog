@@ -1,3 +1,23 @@
+ngcp-panel (1.14.2.13+0~mr4.5.2.13) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [4daf3bf] MT#21775 regexp pattern for interception's sip_username
+  * [d277cf4] MT#21775 tune the "username" interception regexp to tolerate vsc codes
+  * [acb38e2] MT#19981 align dashboard customer count query
+  * [9cb43d1] MT#20639 TT#5411 contact termination
+  * [edda39e] TT#5411 fix contract status filter query param
+  * [aa2afaa] TT#5411 TT#6250 fix preferences contract.status vs contact.status clashes
+  * [005c9be] TT#5559 api/events, event test with "missing end-events" cases
+  * [0a4af44] TT#6638 fix hanging loading-icon on dashboard
+  * [22f9236] TT#7930 consider rewriterule formhandler inflate/defalte in api
+
+  [ Andreas Granig ]
+  * [803adb4] TT#6638 Show emergency mode in Application Status
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Dec 2016 11:55:57 +0100
+
 ngcp-panel (1.14.2.12+0~mr4.5.2.12) unstable; urgency=medium
 
   [ Kirill Solomko ]
