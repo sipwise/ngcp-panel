@@ -1,3 +1,23 @@
+ngcp-panel (5.0.1.2+0~mr5.0.1.2) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [1fbabf0] TT#5812 fix calllist direction processing
+
+  [ Rene Krenn ]
+  * [e228945] TT#5811 fractional CDR times/durations in panel UI/api
+  * [f48c5c4] TT#5559 api/events, event test with "missing end-events" cases
+  * [b0bd82b] TT#6638 fix hanging loading-icon on dashboard
+  * [0c1cd2b] TT#5559 end_ivr event for panel UI delete callforward btn
+  * [4f9b315] TT#5559 end_ivr event for panel UI delete destinationset btn
+  * [a9c4c3c] TT#7930 consider rewriterule formhandler inflate/defalte in api
+
+  [ Andreas Granig ]
+  * [e64979d] TT#6638 Show emergency mode in Application Status
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Dec 2016 11:56:29 +0100
+
 ngcp-panel (5.0.1.1+0~mr5.0.1.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
