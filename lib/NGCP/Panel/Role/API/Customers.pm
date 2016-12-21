@@ -204,49 +204,19 @@ sub update_customer {
         $custcontact = $customer->contact;
     }
 
-    my $oldinvoicetmpl = $old_resource->{invoice_template_id} // 0;
-    if($resource->{invoice_template_id} &&
-       $oldinvoicetmpl != $resource->{invoice_template_id}) {
-        my $tmpl = $c->model('DB')->resultset('invoice_templates')
-            ->search({ reseller_id => $custcontact->reseller_id })
-            ->find($resource->{invoice_template_id});
-        unless($tmpl) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_template_id', doesn't exist for reseller assigned to customer contact");
-            return;
-        }
-    }
-    my $oldsubtmpl = $old_resource->{subscriber_email_template_id} // 0;
-    if($resource->{subscriber_email_template_id} &&
-       $oldsubtmpl != $resource->{subscriber_email_template_id}) {
-        my $tmpl = $c->model('DB')->resultset('email_templates')
-            ->search({ reseller_id => $custcontact->reseller_id })
-            ->find($resource->{subscriber_email_template_id});
-        unless($tmpl) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_email_template_id', doesn't exist for reseller assigned to customer contact");
-            return;
-        }
-    }
-    my $oldpasstmpl = $old_resource->{passreset_email_template_id} // 0;
-    if($resource->{passreset_email_template_id} &&
-       $oldpasstmpl != $resource->{passreset_email_template_id}) {
-        my $tmpl = $c->model('DB')->resultset('email_templates')
-            ->search({ reseller_id => $custcontact->reseller_id })
-            ->find($resource->{passreset_email_template_id});
-        unless($tmpl) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'passreset_email_template_id', doesn't exist for reseller assigned to customer contact");
-            return;
-        }
-    }
-    my $oldinvtmpl = $old_resource->{invoice_email_template_id} // 0;
-    if($resource->{invoice_email_template_id} &&
-       $oldinvtmpl != $resource->{invoice_email_template_id}) {
-        my $tmpl = $c->model('DB')->resultset('email_templates')
-            ->search({ reseller_id => $custcontact->reseller_id })
-            ->find($resource->{invoice_email_template_id});
-        unless($tmpl) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_email_template_id', doesn't exist for reseller assigned to customer contact");
-            return;
-        }
+    my $tmplfields = $self->get_template_fields_spec();
+    foreach my $field (keys %$tmplfields){
+        my $oldtmpl = $old_resource->{$field} // 0;
+        if($resource->{$field} &&
+           $oldtmpl != $resource->{$field}) {
+            my $tmpl = $c->model('DB')->resultset($tmplfields->{$field}->[0])
+                ->search({ reseller_id => $custcontact->reseller_id })
+                ->find($resource->{$field});
+            unless($tmpl) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid '$field', doesn't exist for reseller assigned to customer contact");
+                return;
+            }
+        }        
     }
 
     my $old_ext_id = $customer->external_id // '';
@@ -315,6 +285,15 @@ sub update_customer {
     };
 
     return $customer;
+}
+
+sub get_template_fields_spec{
+    return {
+        'invoice_template_id'          => [qw/invoice_templates invoice_template/],
+        'subscriber_email_template_id' => [qw/email_templates subscriber_email_template/],
+        'passreset_email_template_id'  => [qw/email_templates passreset_email_template/],
+        'invoice_email_template_id'    => [qw/email_templates invoice_email_template/],
+    };
 }
 
 1;

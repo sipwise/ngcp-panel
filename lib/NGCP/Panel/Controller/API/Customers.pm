@@ -281,25 +281,15 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The contact_id is not a valid ngcp:customercontacts item, but an ngcp:systemcontacts item");
             last;
         }
-        if($customer->invoice_template_id &&
-           $customer->invoice_template->reseller_id != $customer->contact->reseller_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_template_id', doesn't exist for reseller assigned to customer contact");
-            return;
-        }
-        if($customer->subscriber_email_template_id &&
-           $customer->subscriber_email_template->reseller_id != $customer->contact->reseller_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_email_template_id', doesn't exist for reseller assigned to customer contact");
-            return;
-        }
-        if($customer->passreset_email_template_id &&
-           $customer->passreset_email_template->reseller_id != $customer->contact->reseller_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'passreset_email_template_id', doesn't exist for reseller assigned to customer contact");
-            return;
-        }
-        if($customer->invoice_email_template_id &&
-           $customer->invoice_email_template->reseller_id != $customer->contact->reseller_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_email_template_id', doesn't exist for reseller assigned to customer contact");
-            return;
+        #todo: strange: why do we check this after customer creation? 
+        my $tmplfields = $self->get_template_fields_spec();
+        foreach my $field (keys %$tmplfields){
+            my $field_table_rel = $tmplfields->{$field}->[1];
+            if($customer->$field() &&
+               $customer->$field_table_rel()->reseller_id != $customer->contact->reseller_id) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid '$field', doesn't exist for the reseller assigned to customer contact");
+                return;
+            }
         }
 
         try {
