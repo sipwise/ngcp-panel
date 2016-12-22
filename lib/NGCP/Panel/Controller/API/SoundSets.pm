@@ -22,13 +22,13 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines sound sets for both system and customers.';
+    return 'Defines sound sets for both system and customers.';  # should allow a different description per role
 };
 
 sub query_params {
     return [
         {
-            param => 'customer_id',
+            param => 'customer_id',  # should allow different params per role (no security-problem)
             description => 'Filter for sound sets of a specific customer',
             query => {
                 first => sub {
@@ -79,7 +79,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -182,17 +182,14 @@ sub POST :Allow {
             form => $form,
         );
 
-        #$form //= $self->get_form($c);
-        #return unless $self->validate_form(
-        #    c => $c,
-        #    form => $form,
-        #    resource => $resource,
-        #);
-
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
+        if ($c->user->roles eq "admin") {
+        } elsif ($c->user->roles eq "reseller") {
             $resource->{reseller_id} = $c->user->reseller_id;
+        } elsif ($c->user->roles eq "subscriberadmin") {
+            $resource->{contract_id} = $c->user->account_id;
+            $resource->{reseller_id} = $c->user->contract->contact->reseller_id;
         }
+
         my $reseller = $c->model('DB')->resultset('resellers')->find({
             id => $resource->{reseller_id},
         });

@@ -23,7 +23,7 @@ sub hal_from_item {
     my ($self, $c, $item) = @_;
 
     my $p_subs = $item->provisioning_voip_subscriber;
-    my $resource = { subscriber_id => $item->id, slots => $self->autoattendants_from_subscriber($p_subs) };
+    my $resource = { subscriber_id => $item->id, slots => $self->_autoattendants_from_subscriber($p_subs) };
 
     my $hal = Data::HAL->new(
         links => [
@@ -70,6 +70,12 @@ sub _item_rs {
         }, {
             join => { 'contract' => 'contact' },
         });
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'provisioning_voip_subscriber.account_id' => $c->user->account_id,
+        });
+    } else {
+        return;  # subscriber role not allowed
     }
 
     return $item_rs;
@@ -121,7 +127,7 @@ sub update_item {
     return $billing_subs;
 }
 
-sub autoattendants_from_subscriber {
+sub _autoattendants_from_subscriber {
     my ($self, $prov_subscriber) = @_;
 
     my @aas;

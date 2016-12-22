@@ -10,6 +10,10 @@ sub build_form_element_class {return [qw(form-horizontal)]}
 has_field 'slots' => (
     type => 'Repeatable',
     label => 'IVR Slots',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['IVR Slots. A list of items each containing the keys slot and destination. "slot" from 0-9. "destination" can be a number, username or full SIP URI.'],
+    },
 );
 
 has_field 'slots.slot' => (
