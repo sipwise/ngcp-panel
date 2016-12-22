@@ -12,16 +12,23 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Sound::AdminSet;
 use NGCP::Panel::Form::Sound::ResellerSet;
+use NGCP::Panel::Form::Sound::SubadminSet;
 
 sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voip_sound_sets');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
-            'reseller_id' => $c->user->reseller_id
+            'reseller_id' => $c->user->reseller_id,
         });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search_rs({
+                'contract_id' => $c->user->account_id,
+            });
+    } else {
+        return;  # subscriber role not allowed
     }
     return $item_rs;
 }
@@ -32,6 +39,8 @@ sub get_form {
         return NGCP::Panel::Form::Sound::AdminSet->new;
     } elsif($c->user->roles eq "reseller") {
         return NGCP::Panel::Form::Sound::ResellerSet->new;
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        return NGCP::Panel::Form::Sound::SubadminSet->new;
     }
 }
 
@@ -49,6 +58,7 @@ sub hal_from_item {
                 name => 'ngcp',
                 templated => true,
             ),
+            # nth: these should also be adapted/adaptable when using subscriber(admin) roles
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
@@ -67,7 +77,9 @@ sub hal_from_item {
         form => $form,
         run => 0,
     );
-    $resource->{customer_id} = delete $resource->{contract_id};
+    if (exists $resource->{contract_id}) {
+        $resource->{customer_id} = delete $resource->{contract_id};
+    }
 
     $resource->{id} = int($item->id);
     $hal->resource($resource);
@@ -99,9 +111,12 @@ sub update_item {
         resource => $resource,
     );
 
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
         $resource->{reseller_id} = $c->user->reseller_id;
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $resource->{contract_id} = $c->user->account_id;
+        $resource->{reseller_id} = $c->user->contract->contact->reseller_id;
     }
     my $reseller = $c->model('DB')->resultset('resellers')->find({
         id => $resource->{reseller_id},
