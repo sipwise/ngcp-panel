@@ -13,7 +13,7 @@ sub insert_firmware_data {
     # do not set it larger than 10M
     my $chunk_size = 10*1024*1024; # 10MB
 
-    $c->model('DB')->resultset('autoprov_firmwares')->find({fw_id => $fw_id},{for => 'update'});
+    $c->model('DB')->resultset('autoprov_firmwares')->find({id => $fw_id},{for => 'update'});
 
     my $rs = $c->model('DB')->resultset('autoprov_firmwares_data')->search({
         fw_id => $fw_id
