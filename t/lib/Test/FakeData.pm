@@ -267,13 +267,6 @@ sub build_data{
             },
             'query' => ['username'],
         },
-        'domains' => {
-            'data' => {
-                domain => 'api_test_domain.api_test_domain',
-                reseller_id => sub { return shift->get_id('resellers',@_); },
-            },
-            'query' => ['domain'],
-        },
         'subscriberprofilesets' => {
             'data' => {
                 name        => 'api_test_subscriberprofileset',
