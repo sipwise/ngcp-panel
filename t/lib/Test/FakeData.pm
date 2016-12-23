@@ -256,13 +256,6 @@ sub build_data{
             'no_delete_available' => 1,
             'dependency_requires_recreation' => ['resellers'],
         },
-        'domains' => {
-            'data' => {
-                domain => 'api_test_domain.api_test_domain',
-                reseller_id => sub { return shift->get_id('resellers',@_); },
-            },
-            'query' => ['domain'],
-        },
         'subscriberprofilesets' => {
             'data' => {
                 name        => 'api_test_subscriberprofileset',
