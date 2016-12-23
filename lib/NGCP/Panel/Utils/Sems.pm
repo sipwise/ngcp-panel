@@ -303,6 +303,62 @@ EOF
     return 1;
 }
 
+sub party_call_control {
+    my ($c, $data) = @_;
+
+    foreach my $param (qw(caller callee callid status)) {
+        die "missing '$param' parameter'" unless $data->{$param};
+    }
+
+    my ($caller, $callee, $callid, $status) = 
+        @{$data}{qw(caller callee callid status)};
+
+    my $service = 'appserver';
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+
+    my @ret = $dispatcher->dispatch($c, $service, 1, 1, <<EOF );
+<?xml version="1.0"?>
+  <methodCall>
+    <methodName>postDSMEvent</methodName>
+    <params>
+      <param>
+        <value><string>$callid</string></value>
+      </param>
+      <param>
+        <value><array><data>
+          <value><array><data>
+            <value><string>cmd</string></value>
+            <value><string>handleCall</string></value>
+          </data></array></value>
+          <value><array><data>
+            <value><string>callid</string></value>
+            <value><string>$callid</string></value>
+          </data></array></value>
+          <value><array><data>
+            <value><string>caller</string></value>
+            <value><string>$caller</string></value>
+          </data></array></value>
+          <value><array><data>
+            <value><string>callee</string></value>
+            <value><string>$callee</string></value>
+          </data></array></value>
+          <value><array><data>
+            <value><string>status</string></value>
+            <value><string>$status</string></value>
+          </data></array></value>
+        </data></array></value>
+      </param>
+    </params>
+  </methodCall>
+EOF
+
+    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {
+        die "failed to handle party call control request";
+    }
+
+    return 1;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
