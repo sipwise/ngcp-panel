@@ -167,7 +167,10 @@ sub POST :Allow {
             resource => $resource,
             form => $form,
         );
-
+        #form for the reseller role doesn't have field reseller.
+        if($c->user->roles eq "reseller") {
+            $resource->{reseller_id} = $c->user->reseller_id;
+        }
         my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
         unless($reseller) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id', doesn't exist.");
