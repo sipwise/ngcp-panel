@@ -1313,6 +1313,10 @@ msgstr ""
 msgid "Buddy List"
 msgstr "Lista de contactos"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Busy"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "CA certificate is OK"
 msgstr ""
@@ -2984,6 +2988,10 @@ msgstr ""
 msgid "Dialogic successfully flashed."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Dir"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Direction"
 msgstr "Dirección"
@@ -3118,6 +3126,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 #: share/templates/device/list.tt share/templates/invoice/invoice_list.tt
+#: share/templates/subscriber/preferences.tt
 msgid "Download"
 msgstr "Descargar"
 
@@ -4769,6 +4778,10 @@ msgid "Generate Certificate"
 msgstr "Generar Certificado"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Greeting type."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/subscriber/pbx_group_items.tt
 msgid "Group"
 msgstr "Grupo"
@@ -5579,15 +5592,11 @@ msgid "Invoice does not exist"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Invoice email template"
+msgid "Invoice email template id"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Invoice successfully deleted"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Invoice template"
 msgstr ""
 
 #. (tmpl.name)
@@ -5601,6 +5610,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Invoice template does not have an SVG stored yet"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Invoice template id"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Invoice.pm
@@ -6971,7 +6984,7 @@ msgid "Party Call Control"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Passreset email template"
+msgid "Passreset email template id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8889,7 +8902,7 @@ msgid "Subscriber does not exist"
 msgstr "El suscriptor no existe"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Subscriber email template"
+msgid "Subscriber email template id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8900,6 +8913,10 @@ msgstr ""
 #: share/templates/subscriber/master.tt
 msgid "Subscriber is locked for <b>%1</b>"
 msgstr "El suscriptor está bloqueado para <b>%1</b>"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Subscriber owning the greeting."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Subscriber profile does not exist"
@@ -11232,6 +11249,10 @@ msgstr ""
 msgid "UUID of calling subscriber, or 0 if from external."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Unavailable"
+msgstr ""
+
 #: share/templates/security/list.tt
 msgid "Unban"
 msgstr "Desbanear"
@@ -11580,6 +11601,19 @@ msgstr "Mensajes del buzón de %1@%2"
 #: share/templates/subscriber/preferences.tt
 msgid "Voicemail and Voicebox"
 msgstr "Mensaje de voz y buzón de voz"
+
+#: share/templates/subscriber/preferences.tt
+msgid "Voicemail greeting "
+msgstr ""
+
+#. ($type.'" deleted')
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Voicemail greeting \""
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Voicemail greeting file"
+msgstr ""
 
 #: share/templates/subscriber/master.tt
 #: share/templates/subscriber/voicemail.tt
@@ -12432,6 +12466,11 @@ msgstr "desregistrado."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "upon customer creation"
+msgstr ""
+
+#. ($type.'"')
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "voicemail greeting \""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
