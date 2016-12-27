@@ -117,7 +117,8 @@ sub DELETE :Allow {
 
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
-            unless($domain->domain_resellers->reseller_id == $c->user->reseller_id) {
+            #relation domain->domain_resellers is one to many.
+            unless($domain->domain_resellers->search({ reseller_id => $c->user->reseller_id })->first() ) {
                 $self->error($c, HTTP_FORBIDDEN, "Domain does not belong to reseller");
                 last;
             }
