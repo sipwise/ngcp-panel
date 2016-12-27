@@ -23,6 +23,11 @@ has 'local_test' => (
     isa => 'Str',
     default => $ENV{LOCAL_TEST} // '',
 );
+has 'QUIET_DELETION' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0,
+);
 has 'ALLOW_EMPTY_COLLECTION' => (
     is => 'rw',
     isa => 'Bool',
@@ -475,8 +480,18 @@ sub request_delete{
     my ($self,$uri) = @_;
     # DELETE tests
     #no auto rows for deletion
-    my $req = HTTP::Request->new('DELETE', $self->normalize_uri($uri));
+    my $name = $self->name // '';
+    my $del_uri = $self->normalize_uri($uri);
+    my $req = HTTP::Request->new('DELETE', $del_uri);
     my $res = $self->request($req);
+    if($res->code == 404){
+    #todo: if fake data will provide tree of the cascade deletion - it can be checked here, I think
+        diag($name.": Item $del_uri is absent already.");
+    }elsif($res->code == 204){
+        diag($name.": Item $del_uri deleted.");
+    }elsif(!$self->QUIET_DELETION){
+        $self->http_code_msg(204, "$name: check response from DELETE $uri", $res);
+    }
     my $content = $self->get_response_content($res);
     return($req,$res,$content);
 }
@@ -689,7 +704,7 @@ sub check_created_listed{
     foreach (@$listed){
         delete $created_items->{$_};
     }
-    is(scalar(keys %{$created_items}), 0, "$self->{name}: check if all created test items have been foundin the list");
+    is(scalar(keys %{$created_items}), 0, "$self->{name}: check if all created test items have been found in the list");
     if(scalar(keys %{$created_items})){
         #print Dumper $created_items;
         #print Dumper $listed;
@@ -930,6 +945,14 @@ sub check_bundle{
         }
     }
 }
+sub check_item_delete{
+    my($self, $uri, $msg) = @_;
+    my $name = $self->name // '';
+    $uri =  $self->normalize_uri($uri);
+    my ($req,$res,$content) = $self->request_delete($uri);#,$uri,$req
+    $self->http_code_msg(204, "$name: check delete item $uri",$res,$content);
+    return ($req,$res,$content);
+};
 sub put_and_get{
     my($self, $put_in, $get_in) = @_;
     my($put_out,$put_get_out,$get_out);
