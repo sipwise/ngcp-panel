@@ -595,7 +595,7 @@ sub request_options{
 }
 
 sub request_delete{
-    my ($self,$uri) = @_;
+    my ($self,$uri,$noerror) = @_;
     # DELETE tests
     #no auto rows for deletion
     my $name = $self->name // '';
@@ -607,6 +607,8 @@ sub request_delete{
         diag($name.": Item $del_uri is absent already.");
     }elsif($res->code == 204){
         diag($name.": Item $del_uri deleted.");
+    }elsif(!$noerror){
+        $self->http_code_msg(204, "$name: check response from DELETE $uri", $res);
     }
     my $content = $self->get_response_content($res);
     if($self->cache_data){
