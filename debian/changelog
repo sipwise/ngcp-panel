@@ -1,3 +1,63 @@
+ngcp-panel (1.14.3.1+0~mr4.5.3.1) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [f3f88a0] MT#22163 Italian translation
+
+  [ Rene Krenn ]
+  * [d9ff942] MT#22992 journal time range query parameters
+  * [eaf0663] MT#20027 porting number history
+  * [e55ef35] MT#20007 Lnp.pm fix warnings
+  * [913e345] TT#4638 domain level allowed_ips
+  * [5c8fb2e] MT#22982 faxes time_from/time_to filters
+  * [d8a6080] TT#5811 fractional CDR times/durations in panel UI/api
+  * [3305e6c] TT#5559 end_ivr event for panel UI delete callforward btn
+  * [445f42d] TT#5559 end_ivr event for panel UI delete destinationset btn
+  * [e7d36ce] TT#5559 api/events, event test with "missing end-events" cases
+  * [4f3f9da] TT#6638 fix hanging loading-icon on dashboard
+  * [30d0c6f] MT#21775 regexp pattern for interception's sip_username
+  * [bc1cc9c] MT#21775 tune the "username" interception regexp to tolerate vsc codes
+  * [6499a77] MT#19981 align dashboard customer count query
+  * [0748387] MT#20639 TT#5411 contact termination
+  * [61ce752] TT#5411 fix contract status filter query param
+  * [1bf68e0] TT#5411 TT#6250 fix preferences contract.status vs contact.status clashes
+  * [4eb8c72] TT#7930 consider rewriterule formhandler inflate/defalte in api
+
+  [ Irina Peshinskaya ]
+  * [e7e8f92] TT#4476 Fix top settings menu for csc
+  * [1b131b2] TT#5203 Add banned ips and users API interface
+  * [0f17a9a] TT#5204 Check that all htable.auth keys are defined
+  * [83e186c] MT#17173 Add common methods to  use in future API
+  * [45c815d] MT#17173 Adapt common API method for not DB entities
+  * [ce8b531] MT#17173 Add return representation
+  * [a12a6e8] MT#12347 Cache for FakeData to increase tests speed in massive run
+  * [53ecc91] MT#17173 Mass collections tests
+  * [471ba7a] TT#5415 Don't touch unchanged pbx groups for member to save members order
+  * [caeba8c] TT#8272 Fix customer creation with invoices and email templates in API
+
+  [ Alexander Lutay ]
+  * [7ad80de] MT#22099 Docker >=1.11 no longer has /.dockerinit, adjust docker run check accordingly
+  * [d6f306a] TT#5559 Fix 563377: add REST API 'events' to api-root.t
+
+  [ Gerhard Jungwirth ]
+  * [f3aae46] MT#17173 small inconsistencies in Entities modules
+  * [01fa350] MT#17173 make default hal consider exceptions
+  * [3b2dc00] TT#5812 fix calllist direction processing
+  * [eb84b99] TT#7179 emergency mode cli status report
+
+  [ Kirill Solomko ]
+  * [e355a9a] TT#5549 improve fax journal numbers representation
+  * [0047afd] TT#5549 improve fax journal numbers representation for the API
+  * [a5b36b4] TT#5554 CallRouting: fix use caller_in/callee_in for the internal processing
+  * [63636c1] TT#5554 CallRouting: domain part for caller subscribers
+  * [c2bf13d] TT#7506 MaliciousCall add API filter options
+
+  [ Andreas Granig ]
+  * [5c801d7] TT#6638 Show emergency mode in Application Status
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 27 Dec 2016 11:18:55 +0100
+
 ngcp-panel (1.14.3.0+0~mr4.5.3.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
