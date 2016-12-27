@@ -29,12 +29,12 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('domains'));
 
 $test_machine->form_data_item( );
 # create 3 new sound sets from DATA_ITEM
-$test_machine->check_create_correct( 1, sub{ $_[0]->{domain} .=  $_[1]->{i}; } );
+$test_machine->check_create_correct( 1, sub{ $_[0]->{domain} .=  $_[1]->{i}.time(); } );
 $test_machine->check_bundle();
 
 $test_machine->runas('reseller');
 diag('8185: Run as reseller');
-$test_machine->check_create_correct( 1, sub{ $_[0]->{domain} .=  'reseller'.$_[1]->{i}; } );
+$test_machine->check_create_correct( 1, sub{ $_[0]->{domain} .=  'reseller'.$_[1]->{i}.time(); } );
 $test_machine->check_bundle();
 
 
