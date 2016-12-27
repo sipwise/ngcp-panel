@@ -29,6 +29,11 @@ has 'DEBUG' => (
     isa => 'Bool',
     default => 0,
 );
+has 'QUIET_DELETION' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0,
+);
 has 'catalyst_config' => (
     is => 'rw',
     isa => 'HashRef',
@@ -490,6 +495,8 @@ sub request_delete{
     #no auto rows for deletion
     my $req = HTTP::Request->new('DELETE', $self->normalize_uri($uri));
     my $res = $self->request($req);
+    }elsif(!$self->QUIET_DELETION){
+        $self->http_code_msg(204, "$name: check response from DELETE $uri", $res);
     my $content = $self->get_response_content($res);
     return($req,$res,$content);
 }
