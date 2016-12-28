@@ -5,6 +5,7 @@ use parent qw/NGCP::Panel::Role::API/;
 use Sipwise::Base;
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Generic qw(:all);
+use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Form::Voicemail::GreetingAPI;
 
 sub item_name {
@@ -28,7 +29,10 @@ sub _item_rs {
 
     my $item_rs = $c->model('DB')->resultset('voicemail_spool')->search({
         'msgnum'   => '-1',
-        'dir'      => {-in => [qw/unavail busy/]},
+        '-or' => [
+            'dir' => { like => '%/unavail' },
+            'dir' => { like => '%/busy' },
+        ],
         'voip_subscriber.id' => { '!=' => undef },
         'voip_subscriber.status' => { '!=' => 'terminated' }
     },{
@@ -97,6 +101,7 @@ sub check_resource{
         return;
     }
 
+    $c->stash->{checked}->{subscriber} = $subscriber;
     $c->stash->{checked}->{voicemail_subscriber} = $voicemail_subscriber;
 
     return 1;
@@ -106,9 +111,10 @@ sub check_duplicate{
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     my $rs = $self->item_rs($c);
+    
     my $existing_item = $rs->search({
         'voip_subscriber.id' => $resource->{subscriber_id},
-        'me.dir'             => $resource->{dir},
+        'me.dir'             => {like => '%/'.$resource->{dir}},
     })->first;
     if($existing_item && (!$item || $item->id != $existing_item->id)) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Voicemail greeting for the type "'.$resource->{dir}.'" and subscriber id "'.$resource->{subscriber_id}.'" already exists');
@@ -118,5 +124,19 @@ sub check_duplicate{
     return 1;
 }
 
+#sub resource_from_item{
+#    my $self shift;
+#    my($c, $item) = @_;
+#    my $res = $self->SUPER::resource_from_item(@_);
+#    $res->{dir} =  NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{checked}->{subscriber}, dir => $resource->{dir} );
+#    return $res;
+#}
+
+sub process_hal_resource{
+    my $self = shift;
+    my ($c, $item, $resource, $form) = @_;
+    $resource->{dir} =  NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_type(c => $c, dir => $resource->{dir} );
+    return $resource;
+}
 1;
 # vim: set tabstop=4 expandtab:
