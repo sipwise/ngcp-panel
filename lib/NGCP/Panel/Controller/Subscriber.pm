@@ -695,8 +695,10 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
         hash => 'type',
     );
     foreach my $voicemail_greeting_type (qw/unavail busy/){
+        my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{subscriber}, dir => $voicemail_greeting_type);
         push @$vm_recordings_types,
-            $subscriber_vm_recordings->{$voicemail_greeting_type} // {greeting_exists => 0, type => $voicemail_greeting_type} ;
+            $subscriber_vm_recordings->{$dir} ? {%{$subscriber_vm_recordings->{$dir}}, type =>  $voicemail_greeting_type } 
+            : {greeting_exists => 0, type => $voicemail_greeting_type} ;
     }
     $c->stash->{vm_recordings_types} = $vm_recordings_types;
 
@@ -3000,7 +3002,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                     if( !grep{ $type eq $_ } (qw/unavail busy/) ){
                         die('Wrong voicemail greeting type.');
                     }
-
+                    my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{subscriber}, dir => $type);
                     $attribute_name = $c->loc('voicemail greeting "'.$type.'"');
                     $form = NGCP::Panel::Form::Voicemail::Greeting->new;
                     $params = {};
@@ -3014,7 +3016,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                     );
                     if('delete' eq $action){
                         $vm_user->voicemail_spools->search_rs({
-                            'dir'       => $type,
+                            'dir'       => $dir,
                             'msgnum'    => '-1',
                         })->delete;
                         NGCP::Panel::Utils::Message::info(
@@ -3027,7 +3029,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                         return;
                     }elsif('download' eq $action){
                         my $recording = $vm_user->voicemail_spools->search_rs({
-                            'dir'       => $type,
+                            'dir'       => $dir,
                             'msgnum'    => '-1',
                         })->first;
                         if($recording){
@@ -3053,7 +3055,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                                 $vm_user->voicemail_spools->update_or_create({
                                     'origtime'  => time(),#just to make inflate possible. Really we don't need this value
                                     'recording' => $greetingfile->slurp,
-                                    'dir'       => $type,
+                                    'dir'       => $dir,
                                     'msgnum'    => '-1',
                                 });
                             }
