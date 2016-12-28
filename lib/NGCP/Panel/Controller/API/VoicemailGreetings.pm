@@ -68,7 +68,7 @@ sub query_params {
                 first => sub {
                     my $q = shift;
                     return {
-                        'me.dir' => $q,
+                        'me.dir' => { like => '%/'.$q },
                     };
                 },
                 second => sub {},
@@ -79,12 +79,13 @@ sub query_params {
 
 sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
-
+    my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory( c => $c, subscriber => $c->stash->{checked}->{subscriber}, dir => $resource->{dir} );
     my $item = $c->stash->{checked}->{voicemail_subscriber}->voicemail_spools->create({
-        'origtime'  => time(),#just to make inflate possible. Really we don't need this value
-        'recording' => $resource->{greetingfile}->slurp,
-        'dir'       => $resource->{dir},
-        'msgnum'    => '-1',
+        'recording'      => $resource->{greetingfile}->slurp,
+        'dir'            => $dir,
+        'origtime'       => time(),#just to make inflate possible. Really we don't need this value
+        'mailboxcontext' => 'default',
+        'msgnum'         => '-1',
     });
     #we need to return subscriber id, so item can be used for further update
     #We can't just add field to the item object, so we need to reselect it
