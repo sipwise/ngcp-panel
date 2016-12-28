@@ -1528,7 +1528,22 @@ sub mark_voicemail_read{
     $voicemail->update({ dir => $dir });
     return;
 }
+sub get_subscriber_voicemail_directory{
+    my (%params) = @_;
 
+    my $c = $params{c};
+    my $subscriber = $params{subscriber};
+    my $dir = $params{dir};
+    return "/var/spool/asterisk/voicemail/default/".$subscriber->uuid."/$dir";
+}
+sub get_subscriber_voicemail_type{
+    my (%params) = @_;
+
+    my $c = $params{c};
+    my $dir = $params{dir};
+    $dir =~s/.*?\/([^\/]+)$/$1/gis;
+    return $dir;
+}
 sub number_as_string{
     my ($number_row, %params) = @_;
     return 'HASH' eq ref $number_row
