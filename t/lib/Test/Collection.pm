@@ -51,7 +51,7 @@ has 'NO_ITEM_MODULE' => (
 has 'QUIET_DELETION' => (
     is => 'rw',
     isa => 'Bool',
-    default => 0,
+    default => 1,
 );
 has 'ALLOW_EMPTY_COLLECTION' => (
     is => 'rw',
