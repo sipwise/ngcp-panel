@@ -9,6 +9,7 @@ use Data::Dumper;
 
 my $test_machine = Test::Collection->new(
     name => 'subscribers',
+    QUIET_DELETION => 1,
 );
 my $fake_data = Test::FakeData->new;
 
