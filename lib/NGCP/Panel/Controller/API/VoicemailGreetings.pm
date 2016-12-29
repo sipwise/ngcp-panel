@@ -68,7 +68,7 @@ sub query_params {
                 first => sub {
                     my $q = shift;
                     return {
-                        'me.dir' => { like => '%/'.$q },
+                        'me.dir' => { like => '/var/spool/asterisk/voicemail/%/'.$q },
                     };
                 },
                 second => sub {},
