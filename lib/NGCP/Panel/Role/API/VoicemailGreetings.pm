@@ -30,8 +30,8 @@ sub _item_rs {
     my $item_rs = $c->model('DB')->resultset('voicemail_spool')->search({
         'msgnum'   => '-1',
         '-or' => [
-            'dir' => { like => '%/unavail' },
-            'dir' => { like => '%/busy' },
+            'dir' => { like => '/var/spool/asterisk/voicemail/%/unavail' },
+            'dir' => { like => '/var/spool/asterisk/voicemail/%/busy' },
         ],
         'voip_subscriber.id' => { '!=' => undef },
         'voip_subscriber.status' => { '!=' => 'terminated' }
