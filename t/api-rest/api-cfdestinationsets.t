@@ -6,6 +6,7 @@ use Test::Collection;
 
 my $test_machine = Test::Collection->new(
     name => 'cfdestinationsets',
+    QUIET_DELETION => 1,
 );
 
 diag('Note that the next tests require at least one subscriber to be present ' .
