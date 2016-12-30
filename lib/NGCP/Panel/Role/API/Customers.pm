@@ -124,6 +124,8 @@ sub hal_from_customer {
     $resource{billing_profiles} = $future_billing_profiles;
     $resource{all_billing_profiles} = $billing_profiles;
 
+    $self->format_resource_dates($c, \%resource);
+
     $resource{id} = int($customer->id);
     $resource{billing_profile_id} = int($billing_profile_id);
     $resource{billing_profile_definition} = 'id';
@@ -285,6 +287,14 @@ sub update_customer {
     };
 
     return $customer;
+}
+
+sub format_resource_dates{
+    my ($self,$c,$resource) = @_;
+    foreach my $field (qw/create_timestamp activate_timestamp modify_timestamp terminate_timestamp/){
+        $resource->{$field} =  defined $resource->{$field} ? NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::from_string($resource->{$field})) : undef ;
+    }
+    return $resource;
 }
 
 sub get_template_fields_spec{

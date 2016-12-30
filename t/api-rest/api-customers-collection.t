@@ -46,8 +46,9 @@ SKIP:{
     $test_machine->DATA_ITEM_STORE($fake_data->process('customers'));
 
     $test_machine->form_data_item( );
-    # create 3 new sound sets from DATA_ITEM
+    # create new customer from DATA_ITEM
     $test_machine->check_create_correct( 1, sub{ $_[0]->{external_id} .=  $_[1]->{i}; } );
+    $test_machine->check_get2put();
     $test_machine->check_bundle();
 }
 
