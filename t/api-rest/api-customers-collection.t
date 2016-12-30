@@ -46,8 +46,11 @@ SKIP:{
     $test_machine->DATA_ITEM_STORE($fake_data->process('customers'));
 
     $test_machine->form_data_item( );
-    # create 3 new sound sets from DATA_ITEM
+    # create new customer from DATA_ITEM
     $test_machine->check_create_correct( 1, sub{ $_[0]->{external_id} .=  $_[1]->{i}; } );
+    #modify_timestamp - differs exactly because of the put.
+    #create_timestamp - strange,  it is different to the value of the time zone
+    $test_machine->check_get2put({ignore_fields => [qw/modify_timestamp create_timestamp/]});
     $test_machine->check_bundle();
 }
 

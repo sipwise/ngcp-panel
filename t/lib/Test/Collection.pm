@@ -1079,6 +1079,8 @@ sub check_get2put{
 
     $get_in //= {};
     $put_in //= {};
+    $get_in->{ignore_fields} //= [];
+    $put_in->{ignore_fields} //= [];
     $get_in->{uri} //= $put_in->{uri};
     $put_in->{uri} //= $get_in->{uri};
 
@@ -1089,6 +1091,10 @@ sub check_get2put{
     # check if put is ok
     (defined $put_in->{data_cb}) and $put_in->{data_cb}->($put_out->{content_in});
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
+    foreach my $field (@{$get_in->{ignore_fields}}, @{$put_in->{ignore_fields}}){
+        delete $get_out->{content}->{$field};
+        delete $put_out->{content}->{$field};
+    }
     $self->http_code_msg(200, "check_get2put: check put successful", $put_out->{response},  $put_out->{content} );
     is_deeply($get_out->{content}, $put_out->{content}, "$self->{name}: check_get2put: check put if unmodified put returns the same");
     return ($put_out,$get_out);
