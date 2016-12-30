@@ -763,7 +763,8 @@ sub check_put_body_empty{
 }
 
 sub check_get2put{
-    my($self, $put_data_cb, $uri) = @_;
+    my($self, $put_data_cb, $uri, $params) = @_;
+    $params->{ignore_fields} //= [];
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
     # PUT same result again
@@ -775,6 +776,10 @@ sub check_get2put{
     (defined $put_data_cb) and $put_data_cb->($item_put_data);
     my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
     $self->http_code_msg(200, "check_get2put: check put successful",$res_put, $result_item_put);
+    foreach my $field (@{$params->{ignore_fields}}){
+        delete $result_item_get->{$field};
+        delete $result_item_put->{$field};
+    }
     is_deeply($result_item_get, $result_item_put, "check_get2put: check put if unmodified put returns the same");
     return ($res_put,$result_item_put,$req_put,$item_put_data);
 }
@@ -945,6 +950,7 @@ sub check_bundle{
         }
     }
 }
+
 sub check_item_delete{
     my($self, $uri, $msg) = @_;
     my $name = $self->name // '';
@@ -953,6 +959,7 @@ sub check_item_delete{
     $self->http_code_msg(204, "$name: check delete item $uri",$res,$content);
     return ($req,$res,$content);
 };
+
 sub put_and_get{
     my($self, $put_in, $get_in) = @_;
     my($put_out,$put_get_out,$get_out);
