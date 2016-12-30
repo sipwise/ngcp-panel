@@ -105,8 +105,19 @@ sub validate_form {
         }
     }
 
-    # remove unknown keys
-    my %fields = map { $_->name => $_ } $form->fields;
+    # remove unknown keys and prepare resource
+    my %fields;
+    foreach($form->fields){
+        if($_->readonly){
+            #Prepare resource for the PATCH considering readonly fields.
+            #PATCH is supposed to take full item content and so will get readonly fields into resource too. And apply patch.
+            #It leads to the situation when we may try to change some not existing fields in the DB
+            #All readonly fields are considered as representation only and should never be applied.
+            delete $resource->{$_->name};
+            next;
+        }
+        $fields{$_->name} = $_;
+    }
     $self->validate_fields($c, $resource, \%fields, $run);
 
     if($run) {
