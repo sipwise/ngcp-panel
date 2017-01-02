@@ -39,6 +39,11 @@ RUN apt-get -y install libdata-printer-perl
 RUN apt-get clean
 
 RUN echo "cd /code && ./t/api-rest/testrunner 1.2.3.4" > /home/testuser/.bash_history
+
+# Create files with mode 666 and folders with mode 777 which
+# allows to delete the temporary files (aka results) for
+# non-root users (like 'jenkins' or 'developer's laptop local user')
+RUN echo 'umask 0' >>/root/.bashrc
 RUN echo "su - testuser" > /root/.bash_history
 
 WORKDIR /home/testuser
