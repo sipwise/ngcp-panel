@@ -38,20 +38,8 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
-        {
-            param => 'name',
-            description => 'Filter for invoice templates with a specific name',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'me.name' => { like => $q } };
-                },
-                second => sub {},
-            },
-        },
     ]},
 );
-
 
 with 'NGCP::Panel::Role::API::InvoiceTemplates';
 

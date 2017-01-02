@@ -25,46 +25,5 @@ has_block 'fields' => (
     render_list => [qw/contact billing_profile product max_subscribers status external_id invoice_template subscriber_email_template passreset_email_template invoice_email_template vat_rate add_vat/],
 );
 
-has_field 'create_timestamp' => (
-    type => '+NGCP::Panel::Field::DateTime',
-    required => 0,
-    readonly => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the creation.']
-    },
-);
-
-has_field 'activate_timestamp' => (
-    type => '+NGCP::Panel::Field::DateTime',
-    required => 0,
-    readonly => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the activation.']
-    },
-);
-
-has_field 'modify_timestamp' => (
-    type => '+NGCP::Panel::Field::DateTime',
-    required => 0,
-    readonly => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the modification.']
-    },
-);
-
-has_field 'terminate_timestamp' => (
-    type => '+NGCP::Panel::Field::DateTime',
-    required => 0,
-    readonly => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the termination.']
-    },
-);
-
-
 1;
 # vim: set tabstop=4 expandtab:
