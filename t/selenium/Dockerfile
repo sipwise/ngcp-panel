@@ -44,6 +44,12 @@ RUN dpkg --force-depends -i libtest-pretty-perl_0.31-1~bpo80+1_all.deb
 RUN apt-get --assume-yes -f install
 
 RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4" >/home/selenium/.bash_history
+
+# Create files with mode 666 and folders with mode 777 which
+# allows to delete the temporary files (aka results) for
+# non-root users (like 'jenkins' or 'developer's laptop local user')
+RUN echo 'umask 0' >>/root/.bashrc
+
 RUN echo "su - selenium" >/root/.bash_history
 EXPOSE 5999
 
