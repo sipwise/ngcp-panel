@@ -116,7 +116,7 @@ sub hal_from_customer {
         form => $form,
         resource => \%resource,
         run => 0,
-        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id" ],
+        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id", "invoice_template_id", "invoice_email_template_id", "passreset_email_template_id", "subscriber_email_template_id" ],
     );
 
     foreach my $field (qw/create_timestamp activate_timestamp modify_timestamp terminate_timestamp/){
@@ -163,7 +163,7 @@ sub update_customer {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id"],
+        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id", "invoice_template_id", "invoice_email_template_id", "passreset_email_template_id", "subscriber_email_template_id"],
     );
     #$resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 

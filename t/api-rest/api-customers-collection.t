@@ -47,9 +47,15 @@ SKIP:{
 
     $test_machine->form_data_item( );
     # create new customer from DATA_ITEM
-    $test_machine->check_create_correct( 1, sub{ $_[0]->{external_id} .=  $_[1]->{i}; } );
+    my $customer = $test_machine->check_create_correct( 1, sub{ $_[0]->{external_id} .=  $_[1]->{i}; } )->[0];
+    is($customer->{content}->{invoice_template_id}, $invoicetemplate->{content}->{id}, "Check invoice template id of the created customer.");
+    for my $template_id (qw/subscriber_email_template_id passreset_email_template_id invoice_email_template_id/){
+        print Dumper [$customer->{content}, $test_machine->DATA_ITEM->{$template_id}];
+        is($customer->{content}->{$template_id}, $test_machine->DATA_ITEM->{$template_id}, "Check $template_id of the created customer.");
+    }
+
     #modify_timestamp - differs exactly because of the put.
-    #create_timestamp - strange,  it is different to the value of the time zone
+    #todo: create_timestamp - strange,  it is different to the value of the time zone
     $test_machine->check_get2put({ignore_fields => [qw/modify_timestamp create_timestamp/]});
     $test_machine->check_bundle();
 }
