@@ -77,6 +77,17 @@ sub query_params {
             },
         }, 
 
+        {
+            param => 'sid',
+            description => 'Filter for a fax with the specific session id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.sid' => $q };
+                },
+                second => sub { },
+            },
+        },
 
     ];
 }
