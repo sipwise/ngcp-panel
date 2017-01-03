@@ -47,7 +47,12 @@ SKIP:{
 
     $test_machine->form_data_item( );
     # create 3 new sound sets from DATA_ITEM
-    $test_machine->check_create_correct( 1, sub{ $_[0]->{external_id} .=  $_[1]->{i}; } );
+    my $customer = $test_machine->check_create_correct( 1, sub{ $_[0]->{external_id} .=  $_[1]->{i}; } )->[0];
+    is($customer->{content}->{invoice_template_id}, $invoicetemplate->{content}->{id}, "Check invoice template id of the created customer.");
+    for my $template_id (qw/subscriber_email_template_id passreset_email_template_id invoice_email_template_id/){
+        is($customer->{content}->{$template_id}, $test_machine->DATA_ITEM->{$template_id}, "Check $template_id of the created customer.");
+    }
+
     $test_machine->check_bundle();
 }
 
