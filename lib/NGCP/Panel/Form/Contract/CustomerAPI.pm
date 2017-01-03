@@ -110,4 +110,44 @@ has_field 'add_vat' => (
     default => 0,
 );
 
+has_field 'create_timestamp' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the creation.']
+    },
+);
+
+has_field 'activate_timestamp' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the activation.']
+    },
+);
+
+has_field 'modify_timestamp' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the modification.']
+    },
+);
+
+has_field 'terminate_timestamp' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the termination.']
+    },
+);
+
 1;
