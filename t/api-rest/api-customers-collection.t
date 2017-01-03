@@ -39,19 +39,22 @@ SKIP:{
     my $invoicetemplate = $test_machine->get_item_hal('invoicetemplates','/api/invoicetemplates/?name=api_test');
 
     if(!$invoicetemplate->{total_count} ){
-        skip("Testing requires at least one present callforward. No creation is available.",1);
+        skip("Testing requires at least one present invoice template with name "api_test". No creation is available.",1);
     }
     $fake_data->data->{customers}->{data}->{invoice_template_id} = $invoicetemplate->{content}->{id};
     #for item creation test purposes /post request data/
     $test_machine->DATA_ITEM_STORE($fake_data->process('customers'));
 
     $test_machine->form_data_item( );
-    # create 3 new sound sets from DATA_ITEM
+    # create new customer from DATA_ITEM
     my $customer = $test_machine->check_create_correct( 1, sub{ $_[0]->{external_id} .=  $_[1]->{i}; } )->[0];
     is($customer->{content}->{invoice_template_id}, $invoicetemplate->{content}->{id}, "Check invoice template id of the created customer.");
     for my $template_id (qw/subscriber_email_template_id passreset_email_template_id invoice_email_template_id/){
         is($customer->{content}->{$template_id}, $test_machine->DATA_ITEM->{$template_id}, "Check $template_id of the created customer.");
     }
+    #modify_timestamp - differs exactly because of the put.
+    #todo: create_timestamp - strange,  it is different to the value of the time zone
+    $test_machine->check_get2put({ignore_fields => [qw/modify_timestamp create_timestamp/]});
 
     $test_machine->check_bundle();
 }
