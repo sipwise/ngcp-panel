@@ -119,6 +119,9 @@ sub hal_from_customer {
         exceptions => [ "contact_id", "billing_profile_id", "profile_package_id", "invoice_template_id", "invoice_email_template_id", "passreset_email_template_id", "subscriber_email_template_id" ],
     );
 
+    foreach my $field (qw/create_timestamp activate_timestamp modify_timestamp terminate_timestamp/){
+        $resource{$field} =  defined $resource{$field} ? NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::from_string($resource{$field})) : undef ;
+    }
     # return the virtual "type" instead of the actual product id
     $resource{type} = $billing_mapping->product->class;
     $resource{billing_profiles} = $future_billing_profiles;
