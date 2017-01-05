@@ -1,3 +1,16 @@
+ngcp-panel (1.14.3.2+0~mr4.5.3.2) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [f3b9afa] TT#8272 Fix customer creation with invoices and email templates in API
+  * [02db876] TT#8185 Add reseller_id to the domain for the reseller roles
+  * [eb23a14] TT#8185 Fix domain deletion for the reseller
+  * [ea4b47a] TT#7029 Make deletion quiet again
+  * [015367d] TT#8272 Add necessary form_validation exceptions for the template fields
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 05 Jan 2017 16:15:35 +0100
+
 ngcp-panel (1.14.3.1+0~mr4.5.3.1) unstable; urgency=medium
 
   [ Victor Seva ]
