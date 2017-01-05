@@ -226,18 +226,19 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         diag("5415: check that groups management doesn't change members order;\n");
 
         diag("5415:Set members order for the group;\n");
-        $groups->[0]->{content}->{pbx_groupmember_ids} = [ map { $members->[$_]->{content}->{id} } ( 0, 2, 1 ) ];
-        $test_machine->check_put2get($groups->[0]);
+        $groups->[1]->{content}->{pbx_groupmember_ids} = [ map { $members->[$_]->{content}->{id} } ( 0, 2, 1 ) ];
+        
+        $test_machine->check_put2get($groups->[1]);
 
         diag("5415:Touch one of the members;\n");
-        $members->[0]->{content}->{pbx_group_ids} = [ map { $groups->[$_]->{content}->{id} } (2,1)];
-        my($res,$content) = $test_machine->request_put(@{$members->[0]}{qw/content location/});
+        $members->[1]->{content}->{pbx_group_ids} = [ map { $groups->[$_]->{content}->{id} } (2,1)];
+        my($res,$content) = $test_machine->request_put(@{$members->[1]}{qw/content location/});
         $test_machine->http_code_msg(200, "PUT for groups was successful", $res, $content);
 
         diag("5415:Check members order in the group;\n");
-        my(undef, $group_get_after) = $test_machine->check_item_get($groups->[0]->{location});
+        my(undef, $group_get_after) = $test_machine->check_item_get($groups->[1]->{location});
 
-        is_deeply($groups->[0]->{content}->{pbx_groupmember_ids}, $group_get_after->{pbx_groupmember_ids}, "Check group members order after touching it's member");
+        is_deeply($groups->[1]->{content}->{pbx_groupmember_ids}, $group_get_after->{pbx_groupmember_ids}, "Check group members order after touching it's member");
         
         
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
