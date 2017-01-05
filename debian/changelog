@@ -1,3 +1,15 @@
+ngcp-panel (1.14.2.16+0~mr4.5.2.16) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [f894ef1] TT#8185 Add reseller_id to the domain for the reseller roles
+  * [0c96e5a] TT#8185 Fix domain deletion for the reseller
+  * [4295ee5] TT#7029 Make deletion quiet again
+  * [71cc64b] TT#8272 Add necessary form_validation exceptions for the template fields
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 05 Jan 2017 16:15:07 +0100
+
 ngcp-panel (1.14.2.15+0~mr4.5.2.15) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
