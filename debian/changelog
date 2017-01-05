@@ -1,3 +1,14 @@
+ngcp-panel (1.8.8.4+0~mr3.8.8.4) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [db814ed] TT#8185 Add reseller_id to the domain for the reseller roles
+  * [2ff9e46] TT#8185 Fix domain deletion for the reseller
+  * [035b0a6] TT#7029 Make deletion quiet again
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 06 Jan 2017 00:09:21 +0100
+
 ngcp-panel (1.8.8.3+0~mr3.8.8.3) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
