@@ -506,6 +506,10 @@ msgstr "Acl"
 msgid "Acl add"
 msgstr "Aggiungi Acl"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Activate timestamp"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/subscriber/preferences.tt
@@ -2459,6 +2463,10 @@ msgstr "Crea Gruppo Profilo per Abbonato"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Create Zone"
 msgstr "Crea Zona"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Create timestamp"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Currency"
@@ -6445,6 +6453,10 @@ msgstr "Modello"
 msgid "Model type"
 msgstr "Tipo di Modello"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Modify timestamp"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Monday"
 msgstr "Lunedì"
@@ -7737,6 +7749,22 @@ msgstr "Sola lettura"
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Read-Only"
 msgstr "Sola-Lettura"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the activation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the creation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the modification."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the termination."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reason"
@@ -9540,6 +9568,10 @@ msgstr "Termina"
 #: share/templates/subscriber/webphone.tt
 msgid "Terminate Call"
 msgstr "Termina Chiamata"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Terminate timestamp"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Terminating own subscriber is prohibited."
