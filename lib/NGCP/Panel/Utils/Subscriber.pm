@@ -15,6 +15,7 @@ use NGCP::Panel::Utils::Events;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
 use IPC::System::Simple qw/capturex/;
+use File::Slurp qw/read_file/;
 
 my %LOCK = (
     0, 'none',
@@ -1493,6 +1494,7 @@ sub update_voicemail_number {
 
     return;
 }
+
 sub vmnotify{
     my (%params) = @_;
 
@@ -1518,6 +1520,7 @@ sub vmnotify{
     $c->log->debug("cmd=".join(" ", @cmd)."; output=$output;");
     return;
 }
+
 sub mark_voicemail_read{
     my (%params) = @_;
 
@@ -1528,6 +1531,7 @@ sub mark_voicemail_read{
     $voicemail->update({ dir => $dir });
     return;
 }
+
 sub get_subscriber_voicemail_directory{
     my (%params) = @_;
 
@@ -1536,6 +1540,7 @@ sub get_subscriber_voicemail_directory{
     my $dir = $params{dir};
     return "/var/spool/asterisk/voicemail/default/".$subscriber->uuid."/$dir";
 }
+
 sub get_subscriber_voicemail_type{
     my (%params) = @_;
 
@@ -1544,6 +1549,46 @@ sub get_subscriber_voicemail_type{
     $dir =~s/.*?\/([^\/]+)$/$1/gis;
     return $dir;
 }
+
+sub convert_voicemailgreeting{
+    my (%params) = @_;
+
+    my $c = $params{c};
+    my $upload = $params{upload};
+    my $converted_data_ref = $params{converted_data_ref};
+    if(!$upload->size){
+        die('Uploaded greeting file is empty.');
+    }
+    $c->log->debug("type=".$upload->type."; size=".$upload->size."; filename=".$upload->filename.";");
+
+    my $filepath = $upload->tempname;
+    my $filepath_converted = $filepath;
+    $filepath_converted =~s/\.([^\.]+)$/\.converted.$1/;
+
+    #my $ft = File::Type->new();
+    #my $greetingfile = delete $form->values->{'greetingfile'};
+    #my $mime_type = $ft->mime_type($greetingfile);
+    #if(('edit' eq $action) &&('audio/x-wav' ne $mime_type && 'application/octet-stream' ne $mime_type)){
+    #    die('Wrong mime-type '.$mime_type.' for the voicemail greeting. Must be a audio file in the "wav" format');
+    #    return;
+    #}
+    my @cmd = ( $filepath, '-e', 'gsm', $filepath_converted);
+    my $output = '';
+    $c->log->debug("cmd=".join(" ", 'sox', @cmd));
+    eval {
+        $output = capturex('sox', @cmd);
+    };
+    $c->log->debug("cmd=".join(" ", 'sox', @cmd)."; output=$output; \$\@=".($@?$@:'').';');
+    if($output || $@){
+        die('Wrong file format for the voicemail greeting. Must be a audio file in the "wav" format with "gsm" encoding.');
+    }
+    my $data = read_file($filepath_converted, {binmode => ':raw'},);
+    if(!length($data)){
+        die('Empty greeting file after conversion to GSM encoding.');
+    }
+    ${$params{converted_data_ref}} = \$data;
+}
+
 sub number_as_string{
     my ($number_row, %params) = @_;
     return 'HASH' eq ref $number_row
@@ -1610,6 +1655,7 @@ sub create_cf_destination{
         });
     }
 }
+
 sub get_subscriber_pbx_status{
     my($c, $subscriber) = @_;
     if($c->config->{features}->{cloudpbx}) {

@@ -29,10 +29,12 @@ sub update_item_model{
     my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
 
     my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{checked}->{subscriber}, dir => $resource->{dir} );
+    
     $item->update({
-        'recording' => $resource->{greetingfile}->slurp,
-        'dir'       => $dir,
-        'origtime'  => time(),#just to make inflate possible. Really we don't need this value
+        'recording'     => ${$process_extras->{binary_ref}},
+        'dir'           => $dir,
+        'subscriber_id' => 'subscriber_id',
+        'origtime'      => time(),#just to make inflate possible. Really we don't need this value
     });
     #we need to return subscriber id, so item can be used for further update
     #We can't just add field to the item object, so we need to reselect it
