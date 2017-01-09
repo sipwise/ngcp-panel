@@ -486,6 +486,15 @@ sub encode_content{
     if($content){
         if( $json_types{$type} && (('HASH' eq ref $content) ||('ARRAY' eq ref $content))  ){
             return JSON::to_json($content);
+        }elsif('multipart/form-data' eq $type 
+            && 'HASH' eq ref $content 
+            && $content->{json} 
+            && (('HASH' eq ref $content->{json}) || ( 'ARRAY' eq ref $content->{json} ) ) 
+        ){
+            $content->{json} = JSON::to_json($content->{json});
+            return [
+                %{$content},
+            ];
         }
     }
     #print "2. content=$content;\n\n";
@@ -524,9 +533,13 @@ sub request_process{
     return ($res,$rescontent,$req);
 }
 sub get_request_get{
-    my($self, $uri) = @_;
+    my($self, $uri, $headers) = @_;
+    $headers ||= {};
     $uri = $self->normalize_uri($uri);
     my $req = HTTP::Request->new('GET', $uri);
+    foreach my $key (keys %$headers){
+        $req->header($key => $headers->{$key});
+    }
     return $req ;
 }
 sub get_request_put{
@@ -635,9 +648,9 @@ sub request_delete{
 }
 
 sub request_get{
-    my($self,$uri,$req) = @_;
+    my($self,$uri,$req,$headers) = @_;
     $uri = $self->normalize_uri($uri);
-    $req //= $self->get_request_get($uri);
+    $req //= $self->get_request_get($uri,$headers);
     my $res = $self->request($req);
     my $content = $self->get_response_content($res);
     return wantarray ? ($res, $content, $req) : $res;
