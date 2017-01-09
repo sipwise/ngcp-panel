@@ -62,8 +62,31 @@ sub get_form {
     return (NGCP::Panel::Form::Voicemail::GreetingAPI->new, ['subscriber_id'] );
 }
 
+sub process_hal_resource{
+    my $self = shift;
+    my ($c, $item, $resource, $form) = @_;
+    $resource->{dir} =  NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_type(c => $c, dir => $resource->{dir} );
+    return $resource;
+}
+
+sub process_form_resource{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    try{
+        NGCP::Panel::Utils::Subscriber::convert_voicemailgreeting( 
+            c => $c, 
+            upload => $resource->{greetingfile},
+            converted_data_ref => \$process_extras->{binary_ref},
+        );
+    } catch($e) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $e);
+        return;
+    }
+    return 1;
+}
+
 sub check_resource{
-    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
 
     #TODO: Move subscriber checking to some checking collections
     my $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
@@ -108,7 +131,7 @@ sub check_resource{
 }
 
 sub check_duplicate{
-    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
 
     my $rs = $self->item_rs($c);
     
@@ -132,11 +155,6 @@ sub check_duplicate{
 #    return $res;
 #}
 
-sub process_hal_resource{
-    my $self = shift;
-    my ($c, $item, $resource, $form) = @_;
-    $resource->{dir} =  NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_type(c => $c, dir => $resource->{dir} );
-    return $resource;
-}
+
 1;
 # vim: set tabstop=4 expandtab:
