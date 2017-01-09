@@ -1,3 +1,12 @@
+ngcp-panel (1.14.3.3+0~mr4.5.3.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [364f45e] TT#6735 TT#7030 TT#5850 record event subscriber numbers
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Jan 2017 18:44:35 +0100
+
 ngcp-panel (1.14.3.2+0~mr4.5.3.2) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
