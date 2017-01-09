@@ -8,7 +8,6 @@ use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
 use Data::Dumper;
 use MIME::Base64 qw(encode_base64url decode_base64url);
-use File::Type;
 
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -3043,17 +3042,27 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                             return;
                         }
                     }elsif($posted){
-                        my $ft = File::Type->new();
                         my $greetingfile = delete $form->values->{'greetingfile'};
-                        my $mime_type = $ft->mime_type($greetingfile);
-                        if(('edit' eq $action) &&('audio/x-wav' ne $mime_type && 'application/octet-stream' ne $mime_type)){
-                            die('Wrong mime-type '.$mime_type.' for the voicemail greeting. Must be a audio file in the "wav" format');
-                            return;
+                        my $greeting_converted_ref;
+                        try{
+                            NGCP::Panel::Utils::Subscriber::convert_voicemailgreeting( 
+                                c => $c, 
+                                upload => $greetingfile, 
+                                filepath => $greetingfile->tempname, 
+                                converted_data_ref => \$greeting_converted_ref );
+                        } catch($e) {
+                            NGCP::Panel::Utils::Message::error(
+                                c     => $c,
+                                error => $e,
+                                desc  => $c->loc($e),
+                            );
+                            NGCP::Panel::Utils::Navigation::back_or($c,
+                                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
                         }
                         if($form->validated) {
                             if('edit' eq $action){
                                 $vm_user->voicemail_spools->update_or_create({
-                                    'recording'      => $greetingfile->slurp,
+                                    'recording'      => $$greeting_converted_ref,
                                     'dir'            => $dir,
                                     'origtime'       => time(),#just to make inflate possible. Really we don't need this value
                                     'mailboxcontext' => 'default',
@@ -3097,7 +3106,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
-            desc  => $c->loc('Failed to update voicemail setting'),
+            desc  => $c->loc('Failed to update voicemail setting.'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));

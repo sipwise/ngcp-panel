@@ -81,7 +81,7 @@ sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
     my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory( c => $c, subscriber => $c->stash->{checked}->{subscriber}, dir => $resource->{dir} );
     my $item = $c->stash->{checked}->{voicemail_subscriber}->voicemail_spools->create({
-        'recording'      => $resource->{greetingfile}->slurp,
+        'recording'      => ${$process_extras->{binary_ref}},
         'dir'            => $dir,
         'origtime'       => time(),#just to make inflate possible. Really we don't need this value
         'mailboxcontext' => 'default',
