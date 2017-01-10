@@ -8,6 +8,11 @@
   [% END -%]
 </h[% level %]>
 
+[%- curl_auth_string = '';
+    IF is_admin_api;
+      curl_auth_string = '--cert NGCP-API-client-certificate.pem --cacert ca-cert.pem ';
+    END; -%]
+
 <h[% level + 1 %]>Description</h[% level + 1%]>
 
 [% col.description %]
@@ -109,7 +114,7 @@ See description how to obtain properties, if any.
 <h[% level + 2 %]>Request available HTTP methods on the URI</h[% level + 2 %]>
 <p>
 [%
-    cmd = 'curl -i -X OPTIONS -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem https://example.org:1443' _ uri;
+    cmd = 'curl -i -X OPTIONS -H \'Connection: close\' '_ curl_auth_string _'https://example.org:1443' _ uri;
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request = 
@@ -133,7 +138,7 @@ Accept-Post: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/#re
     To define the page number and the rows per page to return, you can pass the parameters <i>page</i> and <i>rows</i>. Default values are <i>page=1</i> and <i>rows=10</i>, if you do not provide them.
 </p>
 [%
-    cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/?page=1&rows=1\'';
+    cmd = 'curl -i -X GET -H \'Connection: close\' '_ curl_auth_string _'\'https://example.org:1443/api/' _ id _ '/?page=1&rows=1\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     props = get_props_plain() | indent(12);
@@ -201,7 +206,7 @@ Content-Type: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/"
 <p>
 
 [%
-    cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/1\'';
+    cmd = 'curl -i -X GET -H \'Connection: close\' '_ curl_auth_string _'\'https://example.org:1443/api/' _ id _ '/1\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     props = get_props_plain() | indent(3);
@@ -277,7 +282,7 @@ Preference-Applied: return=minimal';
     
 
 
-    cmd = 'curl -i -X ' _ http_request _ ' -H \'Connection: close\' -H \'Content-Type: ' _ content_type _ '\'' _ request_headers_form _ ' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/' _ item_id _ '\' ' _ request_form ;
+    cmd = 'curl -i -X ' _ http_request _ ' -H \'Connection: close\' -H \'Content-Type: ' _ content_type _ '\'' _ request_headers_form _ ' '_ curl_auth_string _'\'https://example.org:1443/api/' _ id _ '/' _ item_id _ '\' ' _ request_form ;
     
     request =
 http_request _ ' /api/' _ id _ '/' _ item_id _ ' HTTP/1.1
@@ -348,7 +353,7 @@ END%]
     END;
     props = props.substr(0, props.length - 2);
 
-    cmd = 'curl -i -X PATCH -H \'Connection: close\' -H \'Content-Type: application/json-patch+json\' -H \'Prefer: return=minimal\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/2\' --data-binary \'[ ' _ props _ ' ]\'';
+    cmd = 'curl -i -X PATCH -H \'Connection: close\' -H \'Content-Type: application/json-patch+json\' -H \'Prefer: return=minimal\' '_ curl_auth_string _'\'https://example.org:1443/api/' _ id _ '/2\' --data-binary \'[ ' _ props _ ' ]\'';
     INCLUDE helpers/api_command.tt cmd=cmd extended=1 level=level+3;
 %]
 
@@ -437,7 +442,7 @@ Preference-Applied: return=minimal';
 <p>
 
 [%
-    cmd = 'curl -i -X DELETE -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/1\'';
+    cmd = 'curl -i -X DELETE -H \'Connection: close\' '_ curl_auth_string _'\'https://example.org:1443/api/' _ id _ '/1\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request =
