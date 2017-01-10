@@ -31,7 +31,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => 'invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -64,6 +64,7 @@ sub GET : Allow {
     };
 
     my $colls = NGCP::Panel::Utils::API::get_collections_files;
+    my %user_roles = map {$_ => 1} $c->user->roles;
     foreach my $coll(@$colls) {
         my $mod = $coll;
         $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
@@ -74,9 +75,10 @@ sub GET : Allow {
 
         my $role = $full_mod->config->{action}->{OPTIONS}->{AllowedRole};
         if(ref $role eq "ARRAY") {
-            next unless grep @{ $role }, $c->user->roles;
+            #next unless $c->check_any_user_role( @{ $role } );  # proper catalyst way, but maybe slow
+            next unless grep { $user_roles{$_}; } @{ $role };  # IMO fast
         } else {
-            next unless $role && $role eq $c->user->roles;
+            next unless $user_roles{$role};
         }
 
         my $query_params = [];
@@ -197,6 +199,11 @@ sub GET : Allow {
 
     }
 
+    if ($user_roles{subscriber} || $user_roles{subscriberadmin}) {
+        $c->stash(is_subscriber_api => 1);
+    } else {
+        $c->stash(is_admin_api => 1);
+    }
     $c->stash(template => 'api/root.tt');
     $c->forward($c->view);
     $c->response->headers(HTTP::Headers->new(
