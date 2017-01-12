@@ -4667,6 +4667,10 @@ msgid "Forbidden!"
 msgstr "Vietato!"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Force Diversion counter"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Force calls from this user/domain/peer to be routed to the peering servers "
 "after optional check of called number (if offline, non-local user or user of "
@@ -5093,6 +5097,12 @@ msgid "IVR Slots"
 msgstr "Slot IVR"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"IVR Slots. A list of items each containing the keys slot and destination. "
+"\"slot\" from 0-9. \"destination\" can be a number, username or full SIP URI."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Id"
 msgstr "Id"
 
@@ -5127,6 +5137,13 @@ msgstr ""
 "Se attivato per questo dominio, gli abbonati che non hanno il parametro "
 "emergency_priorization settato non saranno più in grado di registrarsi ed "
 "effettuare chiamate, ad eccezione delle chiamate di emergenza."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"If active (and a customer is selected), this sound set is used for all "
+"existing and new subscribers within this customer if no specific sound set "
+"is specified for the subscribers"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -5222,6 +5239,12 @@ msgstr ""
 "per permettere deviazioni dal dispositivo dell´abbonato e trasportare l"
 "´informazione del numero chiamante di origine al numero destinatario finale."
 "Usare con cautela, potrebbe consentire lo spoofing the numero."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"If set, the value given here is forced as counter parameter in the outbound "
+"Diversion header."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -10883,6 +10906,10 @@ msgid "The phone number of the contact."
 msgstr "Il numero di telefono del contatto."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The pilot subscriber of the subscriber the event is related to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The port of the X-2 interface."
 msgstr "La porta dell´interfaccia X-2."
 
@@ -10917,6 +10944,23 @@ msgstr ""
 "fatturazione prepagato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The primary number area code of the subscriber's pilot subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The primary number country code of the subscriber's pilot subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The primary number of the subscriber's pilot subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The primary number subscriber number of the subscriber's pilot subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The priority (q-value) of the registration."
 msgstr "La priorità (q-value) della registrazione."
 
@@ -10931,6 +10975,14 @@ msgid "The profile defining the actual feature set for this subscriber."
 msgstr ""
 "Il profilo che definisce il reale set delle caratteirstiche per questo "
 "abbonato."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The profile name of the subscriber's pilot subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The profile of the subscriber's pilot subscriber."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The profile package the customer will switch to."
@@ -10954,6 +11006,14 @@ msgid "The profile set defining the possible feature sets for this subscriber."
 msgstr ""
 "Il set del profilo che definisce i possibili set delle caratteristiche per "
 "questo abbonato."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The profile set name of the subscriber's pilot subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The profile set of the subscriber's pilot subscriber."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The registered contact is detected as behind NAT."
@@ -11237,6 +11297,38 @@ msgstr "L´abbonato da usare in questa linea/tasto"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber's customer contract."
 msgstr "Il contratto cliente dell´abbonato."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber's primary number area code."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber's primary number country code."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber's primary number subscriber number."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber's primary number."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber's profile name."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber's profile set name."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber's profile set."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber's profile."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The surname of the contact."
