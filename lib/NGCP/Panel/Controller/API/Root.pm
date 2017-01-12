@@ -182,6 +182,7 @@ sub GET : Allow {
 
         $c->stash->{collections}->{$rel} = {
             name => $mod,
+            entity_name => $mod =~ s/s$//r,
             description => $full_mod->api_description,
             fields => $form_fields,
             uploads => $form_fields_upload,
@@ -198,18 +199,28 @@ sub GET : Allow {
 
     }
 
+    use DDP; p $c->stash->{collections};
+
     if ($user_roles{subscriber} || $user_roles{subscriberadmin}) {
         $c->stash(is_subscriber_api => 1);
     } else {
         $c->stash(is_admin_api => 1);
     }
-    $c->stash(template => 'api/root.tt');
+    if ($c->req->params->{swagger}) {
+        $c->stash(template => 'api/swagger.tt');
+        $c->response->headers(HTTP::Headers->new(
+            Content_Language => 'en',
+            Content_Type => 'application/json',
+        ));
+    } else {
+        $c->stash(template => 'api/root.tt');
+        $c->response->headers(HTTP::Headers->new(
+            Content_Language => 'en',
+            Content_Type => 'application/xhtml+xml',
+        ));
+    }
     $c->forward($c->view);
-    $c->response->headers(HTTP::Headers->new(
-        Content_Language => 'en',
-        Content_Type => 'application/xhtml+xml',
-        #$self->collections_link_headers,
-    ));
+    
     return;
 }
 
