@@ -18,3 +18,6 @@ ngcp-panel source: source-is-missing share/static/js/plugins/hoverIntent/jquery.
 ngcp-panel source: source-is-missing share/static/js/plugins/lightbox/jquery.lightbox.js *
 ngcp-panel source: source-is-missing share/static/js/plugins/validate/additional-methods.js *
 ngcp-panel source: source-is-missing share/static/js/plugins/validate/jquery.validate.js *
+ngcp-panel source: source-is-missing share/static/js/swaggerui/swagger-ui-bundle.js *
+ngcp-panel source: source-is-missing share/static/js/swaggerui/swagger-ui-standalone-preset.js *
+ngcp-panel source: source-is-missing share/static/js/swaggerui/swagger-ui.css *
