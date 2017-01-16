@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="intercept"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             targetNamespace="http://dev.sipwise.com/SOAP/Intercept"
+             xmlns:tns="http://dev.sipwise.com/SOAP/Intercept"
+             xmlns:typens="http://dev.sipwise.com/SOAP/Intercept/Types"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" >
+
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://dev.sipwise.com/SOAP/Intercept/Types"
+            xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+            xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+
+      <complexType name="Authentication">
+        <all>
+          <element name="username" type="string" />
+          <element name="password" type="string" />
+          <element name="type" type="string" />
+        </all>
+      </complexType>
+
+      <complexType name="IRIDelivery">
+        <all>
+          <element name="host" type="string" />
+          <element name="port" type="int">
+          </element>
+          <element name="username" type="string" minOccurs="0" maxOccurs="1" />
+          <element name="password" type="string" minOccurs="0" maxOccurs="1">
+          </element>
+        </all>
+      </complexType>
+
+      <complexType name="CCDelivery">
+        <all>
+          <element name="host" type="string" />
+          <element name="port" type="int">
+          </element>
+        </all>
+      </complexType>
+
+      <complexType name="UpdateIntercept">
+        <all>
+          <element name="iri_delivery" type="typens:IRIDelivery" minOccurs="0" maxOccurs="1" />
+          <element name="cc_required" type="boolean" minOccurs="1" maxOccurs="1">
+	  </element>
+          <element name="cc_delivery" type="typens:CCDelivery" minOccurs="0" maxOccurs="1" />
+        </all>
+      </complexType>
+
+      <complexType name="ReadIntercept">
+        <all>
+          <element name="id" type="int">
+          </element>
+          <element name="LIID" type="string">
+          </element>
+          <element name="number" type="string">
+          </element>
+          <element name="iri_delivery" type="typens:IRIDelivery" />
+          <element name="cc_required" type="boolean">
+	  </element>
+          <element name="cc_delivery" type="typens:CCDelivery" />
+        </all>
+      </complexType>
+
+      <complexType name="ReadInterceptArray">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <attribute ref="soapenc:arrayType" wsdl:arrayType="typens:ReadIntercept[]" />
+          </restriction>
+        </complexContent>
+      </complexType>
+
+      <!-- define "parameters" containers for functions -->
+
+      <complexType name="idParameter">
+        <all>
+          <element name="id" type="int">
+          </element>
+        </all>
+      </complexType>
+
+      <complexType name="NumberParameter">
+        <all>
+          <element name="number" type="string">
+          </element>
+        </all>
+      </complexType>
+
+      <complexType name="LIIDParameter">
+        <all>
+          <element name="LIID" type="string">
+          </element>
+        </all>
+      </complexType>
+
+      <complexType name="CreateInterceptParameter">
+        <all>
+          <element name="LIID" type="string" minOccurs="0" maxOccurs="1">
+          </element>
+          <element name="number" type="string">
+          </element>
+          <element name="iri_delivery" type="typens:IRIDelivery" />
+          <element name="cc_required" type="boolean" minOccurs="1" maxOccurs="1">
+	  </element>
+          <element name="cc_delivery" type="typens:CCDelivery" />
+        </all>
+      </complexType>
+
+      <complexType name="UpdateInterceptParameter">
+        <all>
+          <element name="id" type="int">
+          </element>
+          <element name="data" type="typens:UpdateIntercept" />
+        </all>
+      </complexType>
+
+    </schema>
+  </types>
+
+
+  <!-- request message declarations -->
+
+  <!-- this is used by get_interceptions only -->
+  <message name="empty_Request">
+    <part name="authentication" type="typens:Authentication" />
+  </message>
+
+  <!-- this is used by delete_interception and get_interception_by_id -->
+  <message name="by_id_Request">
+    <part name="authentication" type="typens:Authentication" />
+    <part name="parameters" type="typens:idParameter" />
+  </message>
+
+  <!-- this is used by get_interceptions_by_number -->
+  <message name="by_number_Request">
+    <part name="authentication" type="typens:Authentication" />
+    <part name="parameters" type="typens:NumberParameter" />
+  </message>
+
+  <!-- this is used by get_interceptions_by_liid -->
+  <message name="by_liid_Request">
+    <part name="authentication" type="typens:Authentication" />
+    <part name="parameters" type="typens:LIIDParameter" />
+  </message>
+
+  <!-- this is only used to create an interception -->
+  <message name="create_interception_Request">
+    <part name="authentication" type="typens:Authentication" />
+    <part name="parameters" type="typens:CreateInterceptParameter" />
+  </message>
+
+  <!-- this is only used to update an interception -->
+  <message name="update_interception_Request">
+    <part name="authentication" type="typens:Authentication" />
+    <part name="parameters" type="typens:UpdateInterceptParameter" />
+  </message>
+
+  <!-- response message declarations -->
+
+  <!-- this is used quite often -->
+  <message name="empty_Response">
+  </message>
+
+  <!-- this is curently only used by create_interception -->
+  <message name="integer_Response">
+    <part name="data" type="xsd:int" />
+  </message>
+
+  <!-- this is only used by get_interception -->
+  <message name="interception_Response">
+    <part name="data" type="typens:ReadIntercept" />
+  </message>
+
+  <!-- this is used by get_interceptions_by_number and get_interceptions -->
+  <message name="interceptions_Response">
+    <part name="data" type="typens:ReadInterceptArray" />
+  </message>
+
+  <!-- define the interface by collecting all functions -->
+
+  <portType name="InterceptPortType">
+
+    <operation name="create_interception">
+      <input message="tns:create_interception_Request" />
+      <output message="tns:integer_Response" />
+    </operation>
+
+    <operation name="update_interception">
+      <input message="tns:update_interception_Request" />
+      <output message="tns:empty_Response" />
+    </operation>
+
+    <operation name="delete_interception">
+      <input message="tns:by_id_Request" />
+      <output message="tns:empty_Response" />
+    </operation>
+
+    <operation name="get_interception_by_id">
+      <input message="tns:by_id_Request" />
+      <output message="tns:interception_Response" />
+    </operation>
+
+    <operation name="get_interceptions_by_number">
+      <input message="tns:by_number_Request" />
+      <output message="tns:interceptions_Response" />
+    </operation>
+
+    <operation name="get_interceptions_by_liid">
+      <input message="tns:by_liid_Request" />
+      <output message="tns:interceptions_Response" />
+    </operation>
+
+    <operation name="get_interceptions">
+      <input message="tns:empty_Request" />
+      <output message="tns:interceptions_Response" />
+    </operation>
+
+  </portType>
+
+
+  <!-- bind operations to SOAP actions and namespaces -->
+
+  <binding name="InterceptBinding" type="tns:InterceptPortType">
+
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="create_interception"> <soap:operation soapAction="urn:/SOAP/Intercept#create_interception" style="rpc" />
+      <input><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></input>
+      <output><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></output>
+    </operation>
+
+    <operation name="update_interception"> <soap:operation soapAction="urn:/SOAP/Intercept#update_interception" style="rpc" />
+      <input><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></input>
+      <output><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></output>
+    </operation>
+
+    <operation name="delete_interception"> <soap:operation soapAction="urn:/SOAP/Intercept#delete_interception" style="rpc" />
+      <input><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></input>
+      <output><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></output>
+    </operation>
+
+    <operation name="get_interception_by_id"> <soap:operation soapAction="urn:/SOAP/Intercept#get_interception_by_id" style="rpc" />
+      <input><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></input>
+      <output><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></output>
+    </operation>
+
+    <operation name="get_interceptions_by_number"> <soap:operation soapAction="urn:/SOAP/Intercept#get_interceptions_by_number" style="rpc" />
+      <input><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></input>
+      <output><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></output>
+    </operation>
+
+    <operation name="get_interceptions_by_liid"> <soap:operation soapAction="urn:/SOAP/Intercept#get_interceptions_by_liid" style="rpc" />
+      <input><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></input>
+      <output><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></output>
+    </operation>
+
+    <operation name="get_interceptions"> <soap:operation soapAction="urn:/SOAP/Intercept#get_interceptions" style="rpc" />
+      <input><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></input>
+      <output><soap:body use="encoded" namespace="urn:/SOAP/Intercept" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /></output>
+    </operation>
+
+  </binding>
+
+
+  <!-- define request endpoint -->
+
+  <service name="intercept">
+    <port name="InterceptPort" binding="tns:InterceptBinding">
+      <soap:address location="https://10.15.17.189:1443/SOAP/Intercept" />
+    </port>
+  </service>
+
+</definitions>
