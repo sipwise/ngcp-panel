@@ -58,6 +58,7 @@ sub auto :Private {
         or $c->req->uri->path =~ m|^/recoverwebpassword/?$|
         or $c->req->uri->path =~ m|^/resetwebpassword/?$|
         or $c->req->uri->path =~ m|^/internalsms/receive/?$|
+        or $c->req->uri->path =~ m|^/soap/intercept(\.wsdl)?/?$|i
     ) {
         $c->log->debug("*** Root::auto skip authn, grant access to " . $c->request->path);
         return 1;
