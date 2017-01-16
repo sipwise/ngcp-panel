@@ -14,6 +14,7 @@ use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 
 use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::SMS;
 
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -25,7 +26,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Allows to place calls via the API.';
+    return 'Allows to control queued calls and sms via the API.';
 };
 
 sub query_params {
@@ -42,7 +43,7 @@ sub dispatch_path{
     return '/api/partycallcontrols/';
 }
 sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-callcontrols';
+    return 'http://purl.org/sipwise/ngcp-api/#rel-partycallcontrols';
 }
 
 __PACKAGE__->config(
@@ -104,9 +105,73 @@ sub POST :Allow {
                     "Failed to handle a party call control request.");
                 last;
             }
+        } elsif ($resource->{type} eq "sms") {
+            my $error_msg;
+            my $callid = $resource->{callid};
+            my $status = $resource->{status};
+            my $token = $resource->{token};
+            my $sms;
+            try {
+                if($c->user->roles eq "reseller") {
+                    my $sms_rs = $c->model('DB')->resultset('sms_journal')->search({
+                        'me.id' => $callid,
+                        'pcc_status' => 'pending',
+                        'contact.reseller_id' => $c->user->reseller_id,
+                    },{
+                        join => { 'provisioning_voip_subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' } } }
+                    });
+                    $sms = $sms_rs->first;
+                } else {
+                    $sms = $c->model('DB')->resultset('sms_journal')->search({
+                        'me.id' => $callid,
+                        'pcc_token' => $token,
+                        'pcc_status' => 'pending',
+                    })->first;
+                }
+            } catch($e) {
+                $c->log->error("failed to handle a party call control request: $e");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
+                    "Failed to handle a party call control request.");
+                last;
+            }
+            unless($sms) {
+                $c->log->error("failed to find sms with id $callid and token $token");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                    "Failed to find sms with callid $callid and given token");
+                last;
+            }
+            if($status eq "ACCEPT") {
+                $c->log->info("status for pcc sms of $callid is $status, forward sms");
+                try {
+                    NGCP::Panel::Utils::SMS::send_sms(
+                        c => $c,
+                        caller => $sms->caller,
+                        callee => $sms->callee,
+                        text => $sms->text,
+                        coding => $sms->coding,
+                        err_code => sub {$error_msg = shift;},
+                    );
+                    $sms->update({ pcc_status => "complete" });
+                } catch($e) {
+                    $c->log->error("failed to handle a party call control request: $e");
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
+                        "Failed to handle a party call control request.");
+                    last;
+                }
+            } else {
+                $c->log->info("status for pcc sms of $callid is $status, don't forward sms");
+                try {
+                    $sms->update({ pcc_status => "complete" });
+                } catch($e) {
+                    $c->log->error("failed to handle a party call control request: $e");
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
+                        "Failed to handle a party call control request.");
+                    last;
+                }
+            }
         } else {
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
-                "Failed to handle a party call control request of unknown type.");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                "Invalid party call control type, must be 'pcc' or 'sms'.");
             last;
         }
 

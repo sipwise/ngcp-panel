@@ -322,7 +322,7 @@ sub party_call_control {
     <methodName>postDSMEvent</methodName>
     <params>
       <param>
-        <value><string>pcc_$call_id</string></value>
+        <value><string>pcc_$callid</string></value>
       </param>
       <param>
         <value><array><data>

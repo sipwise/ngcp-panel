@@ -6,6 +6,11 @@ use parent 'Catalyst::Controller';
 use Time::Period;
 use File::FnMatch qw(:fnmatch);
 use Encode qw/decode/;
+use UUID;
+
+use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::PartyCallControl;
+use NGCP::Panel::Utils::SMS;
 
 #sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
 sub auto {
@@ -67,12 +72,38 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 die "no_subscriber_found";
             }
 
+            my $pcc_url = $c->config->{pcc}->{url};
+            my $pcc_timeout = $c->config->{pcc}->{timeout};
+            my $pcc_enabled = 0;
+            my ($pcc_uuid, $pcc_token);
+            UUID::generate($pcc_uuid);
+            UUID::unparse($pcc_uuid, $pcc_token);
+            my $fwd_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'party_call_control',
+                prov_subscriber => $prov_dbalias->subscriber,
+            );
+            if($fwd_pref_rs && $fwd_pref_rs->first && $fwd_pref_rs->first->value) {
+                $pcc_enabled = 1;
+            } else {
+                $fwd_pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                    c => $c, attribute => 'party_call_control',
+                    prov_domain => $prov_dbalias->domain,
+                );
+                if($fwd_pref_rs && $fwd_pref_rs->first && $fwd_pref_rs->first->value) {
+                    $pcc_enabled = 1;
+                }
+            }
+            $c->log->info("pcc is set to $pcc_enabled for prov subscriber id " . $prov_dbalias->subscriber_id);
+
             my $created_item = $c->model('DB')->resultset('sms_journal')->create({
                 subscriber_id => $prov_dbalias->subscriber_id,
                 direction => "in",
                 caller => $from,
                 callee => $to,
                 text => $text,
+                pcc_status => "none",
+                pcc_token => $pcc_token,
+                coding => $coding,
                 });
 
             # check for cfs
@@ -154,27 +185,56 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 $dst =~ s/^sip:(.+)\@.+$/$1/;
                 $c->log->info(">>>> forward sms to $dst");
 
-                # feed back into kannel
-                my $error_msg;
-                NGCP::Panel::Utils::SMS::send_sms(
-                        c => $c,
-                        caller => $to, # use the original to as new from
-                        callee => $dst,
-                        text => $text,
-                        coding => $coding,
-                        err_code => sub {$error_msg = shift;},
-                    );
+                my $pcc_status = $pcc_enabled ? "pending" : "none";
                 my $fwd_item = $c->model('DB')->resultset('sms_journal')->create({
                     subscriber_id => $prov_dbalias->subscriber_id,
                     direction => "forward",
                     caller => $to,
                     callee => $dst,
                     text => $text,
+                    pcc_status => $pcc_status,
+                    pcc_token => $pcc_token,
+                    coding => $coding,
                 });
+
+                if($pcc_enabled && $pcc_url) {
+                    try {
+                        my $ret = NGCP::Panel::Utils::PartyCallControl::dispatch(
+                            c => $c,
+                            url => $pcc_url,
+                            timeout => $pcc_timeout,
+                            id => $fwd_item->id,
+                            from => $from,
+                            to => $to,
+                            type => "sms",
+                            text => $text,
+                            token => $pcc_token,
+                        );
+                        unless($ret) {
+                            $c->log->error("failed to dispatch pcc request");
+                            $fwd_item->update({ pcc_status => "failed" });
+                        }
+                    } catch($e) {
+                        $c->log->error("failed to dispatch pcc request: $e");
+                        $fwd_item->update({ pcc_status => "failed" });
+                    }
+                } else {
+                    # no 3rd party call control, feed back into kannel
+                    my $error_msg;
+                    NGCP::Panel::Utils::SMS::send_sms(
+                            c => $c,
+                            caller => $to, # use the original to as new from
+                            callee => $dst,
+                            text => $text,
+                            coding => $coding,
+                            err_code => sub {$error_msg = shift;},
+                        );
+                }
+
             }
         });
     } catch($e) {
-        $c->log->error("Failed to store received SMS message.");
+        $c->log->error("Failed to handle received SMS message.");
         $c->log->debug($e);
     }
 
