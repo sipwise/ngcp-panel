@@ -88,10 +88,6 @@ msgstr ""
 "\"Kurzwahl\" - Ein internes Flag für die Kurzwahl Pseudo-Präferenz um diese "
 "Subscriber Profilen zuzuweisen. Nicht direkt verwendbar."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "\"Timely\" Duration"
-msgstr ""
-
 #: share/templates/customer/details.tt
 msgid "\"Timely\" top-ups from"
 msgstr ""
@@ -347,10 +343,6 @@ msgid "A human readable name of the emergency mapping container."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "A human readable profile name."
-msgstr "Ein menschenlesbarer Profil-Name."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A list of emails to send the notify to."
 msgstr ""
 
@@ -403,11 +395,6 @@ msgid ""
 "A simple destination format, e.g. \"4312345\" if it is a number, or "
 "\"user@domain\" if it is a URI."
 msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "A unique identifier string (only alphanumeric chars and _)."
-msgstr ""
-"Eindeutiger Identifikations-String (nur Buchstaben, Ziffern und Unterstrich)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A username used for authentication against the peer host."
@@ -1025,12 +1012,8 @@ msgstr "Zurück"
 msgid "Back to Dashboard"
 msgstr "Zurück zur Übersicht"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
+#: share/templates/customer/details.tt
 msgid "Balance Interval"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Balance Interval Start"
 msgstr ""
 
 #: share/templates/customer/details.tt
@@ -1621,6 +1604,10 @@ msgid "Callee UUID"
 msgstr "Angerufener UUID"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee number or SIP uri"
 msgstr ""
 
@@ -1680,6 +1667,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Callflow.pm
 msgid "Caller UUID"
 msgstr "Anrufer UUID"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller number"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller number or SIP uri"
@@ -1767,10 +1758,6 @@ msgstr "Aufgezeichnete Dialoge"
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Carrier"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Carry Over"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -1932,14 +1919,6 @@ msgstr ""
 #: share/layout/body.tt
 msgid "Collapse Groups"
 msgstr "Alle einklappen"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"Comma-Separated list of Email addresses to send notifications when tresholds "
-"are exceeded."
-msgstr ""
-"Komma-separierte Liste von Email-Adressen, and die Benachrichtigungen bei "
-"Schwellwert-Überschreitungen geschickt werden."
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
@@ -2360,10 +2339,6 @@ msgstr "Neue Zone"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Create timestamp"
 msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Currency"
-msgstr "Währung"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Cust1"
@@ -3052,10 +3027,6 @@ msgid "Discard Changes"
 msgstr "Änderungen verwerfen"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Discard balance after intervals"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Display Name"
 msgstr "Anzeigename"
 
@@ -3583,6 +3554,10 @@ msgstr "Externe ID des Kunden des anrufenden Subscribers, wenn lokal."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External Subscriber #"
 msgstr "Externe Subscriber #"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "External call control request type"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External id"
@@ -4390,8 +4365,8 @@ msgid "Failed to update uploaded sound handle"
 msgstr "Hochgeladenes Sound Handle aktualisieren fehlgeschlagen."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Failed to update voicemail setting"
-msgstr ""
+msgid "Failed to update voicemail setting."
+msgstr "Sprachnachrichten-Einstellungen aktualisieren fehlgeschlagen."
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to upload Billing Fees"
@@ -4565,37 +4540,9 @@ msgstr "Passwort vergessen?"
 msgid "Fraud Limits"
 msgstr "Missbrauchs-Limits"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud Monthly Limit"
-msgstr "Monatliches Missbrauchs-Limit"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud Monthly Lock"
-msgstr "Monatliche Missbrauchs-Sperre"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud Monthly Notify"
-msgstr "Monatliche Missbrauchs-Benachrichtigung"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud daily limit"
-msgstr "Tägliches Missbrauchs-Limit"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud daily lock"
-msgstr "Tägliche Missbrauchs-Sperre"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud daily notify"
-msgstr "Tägliche Missbrauchs-Benachrichtigung"
-
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Fraud settings successfully changed!"
 msgstr "Missbrauchs-Einstellungen erfolgreich aktualisiert!"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud use reseller rates"
-msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "Free time balance"
@@ -5180,14 +5127,6 @@ msgstr ""
 msgid "Init time"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Initial Balance"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Initial Billing Profile/Network"
-msgstr ""
-
 #: share/templates/package/details.tt
 msgid "Initial Billing Profiles/Networks"
 msgstr ""
@@ -5202,10 +5141,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Initial profiles"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Initial profiles add"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5306,20 +5241,8 @@ msgid "Interval Notify"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Interval charge"
-msgstr "Intervall Gebühr"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Interval cost"
 msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Interval free cash"
-msgstr "Intervall Frei-Guthaben"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Interval free time"
-msgstr "Intervall Freiminuten"
 
 #: share/templates/customer/details.tt
 msgid "Interval from"
@@ -6473,10 +6396,6 @@ msgstr "NCOS-Stufen ID"
 msgid "Net Amount"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Network"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/BillingNetworks.pm
 #: lib/NGCP/Panel/Utils/ContractLocations.pm
 msgid "Network Blocks"
@@ -6770,14 +6689,6 @@ msgstr ""
 msgid ""
 "Options to carry over the customer's balance to the next balance interval."
 msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Options to lock customer if the daily limit is exceeded."
-msgstr "Sperr-Option für Kunden bei Überschreitung des täglichen Limits."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Options to lock customer if the monthly limit is exceeded."
-msgstr "Sperr-Option für Kunden bei Überschreitung des monatlichen Limits"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Orientation"
@@ -7079,14 +6990,6 @@ msgid "Peaktime date does not exist!"
 msgstr "Onpeak-Datum existiert nicht!"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Peaktime special"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Peaktime weekdays"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Peer"
 msgstr ""
 
@@ -7346,7 +7249,7 @@ msgid ""
 "Refer to documentation."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
+#: share/templates/customer/details.tt
 msgid "Prepaid"
 msgstr "Prepaid"
 
@@ -8258,16 +8161,16 @@ msgid "Server enabled state."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Service Charge"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Service charge"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session Timers"
 msgstr "Session Timers"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Session related token"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session-Timer Max Refresh Interval"
@@ -9352,22 +9255,6 @@ msgid "The \"timely\" interval in temporal units."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The 'special' peak-time schedule for this billing profile. It is represented "
-"by an array of objects, each containing the keys \"start\" (YYYY-MM-DD HH:mm:"
-"ss) and \"stop\" (YYYY-MM-DD HH:mm:ss). Each time range provided determines "
-"when to use a fee's offpeak rates."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The 'weekday' peak-time schedule for this billing profile. It is represented "
-"by an array of objects, each containing the keys \"weekday\" (0 .. Monday, "
-"6 .. Sunday), \"start\" (HH:mm:ss) and \"stop\" (HH:mm:ss). Each time range "
-"provided determines when to use a fee's offpeak rates."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The API key (readonly)."
 msgstr ""
 
@@ -9587,12 +9474,6 @@ msgstr "Der Bankname der Bankdetails des Kontakts."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The base CLI for the PBX extension."
 msgstr "Die Kopfnummer der PBX-Durchwahl"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The base fee charged per billing interval (a monthly fixed fee, e.g. 100) in "
-"cents. This fee can be used on the invoice."
-msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The billing fee id used to calculate the destination carrier cost."
@@ -9900,12 +9781,6 @@ msgstr ""
 "vorhanden."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The currency symbol or ISO code, used on invoices and webinterfaces."
-msgstr ""
-"Das Währungs-Symbol oder ISO-Code. Wird auf Rechnungen und im Web-Interface "
-"dargestellt"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The current cash balance of the customer in EUR/USD/etc for the current "
 "interval (Read-only)."
@@ -10064,10 +9939,6 @@ msgid "The duration of the message."
 msgstr "Die Dauer der Nachricht."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The duration/interval in temporal units."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The email address of the contact."
 msgstr "Die Email-Adresse des Kontakts."
 
@@ -10167,14 +10038,6 @@ msgstr ""
 "Arbeit, Freunde, Familie, Benutzerdefiniert1-Benutzerdefiniert6)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The fraud detection threshold per day (in cents, e.g. 1000)."
-msgstr "Missbrauchserkennungs-Schwellwert pro Tag (in Cents, z.B. 1000)."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The fraud detection threshold per month (in cents, e.g. 10000)."
-msgstr "Missbrauchserkennungs-Schwellwert pro Monat (in Cents, z.B. 10000)."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The free-time spent during this interval in EUR/USD/etc."
 msgstr ""
 
@@ -10240,18 +10103,6 @@ msgid ""
 msgstr ""
 "Die ID, die auf den \"Call Forward Unconditional\" Eintrag in der "
 "voip_cf_mappings Tabelle zeigt"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The included free minutes per billing interval (in seconds, e.g. 60000 for "
-"1000 free minutes)."
-msgstr ""
-"Die inkludierten Freiminuten pro Verrechnungs-Intervall (in Sekunden, z.B. "
-"60000 für 1000 Freiminuten)."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The included free money per billing interval (in cents, e.g. 10000)."
-msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -10338,12 +10189,6 @@ msgstr "Die Sperr-Stufe des Subscribers."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The lock level to reset all customer's subscribers to after a successful top-"
-"up (usually 'no lock (unlock)')."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The lock level to reset all customer's subscribers to after a successful top-"
 "up (usually 0)."
 msgstr ""
 
@@ -10402,10 +10247,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The name of the invoice template."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The name of the profile package."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10677,10 +10518,6 @@ msgid "The reseller id this networks belong to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The reseller id this profile belongs to."
-msgstr "Die Reseller-Id, zu der das Profil gehört."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id this profile package belongs to."
 msgstr ""
 
@@ -10702,10 +10539,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id to assign this invoice template to."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The reseller id to assign this profile package to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10739,12 +10572,6 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The serial timeout for hunting in PBX hunt groups."
 msgstr "Die Zeitüberschreitung für serielles Hunting in PBX Hunt-Gruppen."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The service charge amount (in cents) will be subtracted from the voucher "
-"amount upon every top-up."
-msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -10972,10 +10799,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The temporal unit for the balance interval."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The temporal unit for the duration/interval."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11218,12 +11041,12 @@ msgstr ""
 msgid "To-User"
 msgstr ""
 
-#: share/templates/widgets/admin_topmenu_settings.tt
-msgid "Tools"
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Token"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Top-up Billing Profile/Network"
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Tools"
 msgstr ""
 
 #: share/templates/package/details.tt
@@ -11246,10 +11069,6 @@ msgstr ""
 msgid "Top-up Voucher"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Top-up lock level"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Top-up using cash performed successfully!"
 msgstr ""
@@ -11268,10 +11087,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Topup profiles"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Topup profiles add"
 msgstr ""
 
 #: share/templates/customer/details.tt
@@ -11372,10 +11187,6 @@ msgstr ""
 msgid "Unban"
 msgstr "Entsperren"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Underrun Billing Profile/Network"
-msgstr ""
-
 #: share/templates/package/details.tt
 msgid "Underrun Billing Profiles/Networks"
 msgstr ""
@@ -11410,14 +11221,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Underrun profiles"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Underrun profiles add"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Unit"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm
@@ -11495,10 +11298,6 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use free time"
 msgstr "Verwende Freiminuten"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Use rates of the reseller's billing profile for fraud control."
-msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use reseller rates"
@@ -11629,8 +11428,7 @@ msgstr ""
 msgid "Valid until"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
-#: share/templates/helpers/pref_table.tt
+#: share/templates/customer/details.tt share/templates/helpers/pref_table.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Value"
 msgstr "Wert"
@@ -11832,10 +11630,6 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether calling party number was suppressed (CLIR)."
 msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Whether customers using this profile are handled prepaid."
-msgstr "Kunden mit diesem Billing-Profil als Prepaid-Kunden behandeln."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether free minutes may be used when calling this destination."
@@ -12171,10 +11965,6 @@ msgstr "dataTables.de.js"
 msgid "day"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "day(s)"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "days"
 msgstr ""
@@ -12271,10 +12061,6 @@ msgstr "hat aufgehört zu tippen."
 msgid "hour"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "hour(s)"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "hours"
 msgstr ""
@@ -12331,20 +12117,12 @@ msgstr ""
 msgid "minute"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "minute(s)"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "minutes"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "month"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "month(s)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
@@ -12590,10 +12368,6 @@ msgid "week"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "week(s)"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "where e-mail notifications are sent, a list of e-mail addreses separated by "
 "comma"
@@ -12629,6 +12403,81 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "A human readable profile name."
+#~ msgstr "Ein menschenlesbarer Profil-Name."
+
+#~ msgid "A unique identifier string (only alphanumeric chars and _)."
+#~ msgstr ""
+#~ "Eindeutiger Identifikations-String (nur Buchstaben, Ziffern und "
+#~ "Unterstrich)"
+
+#~ msgid ""
+#~ "Comma-Separated list of Email addresses to send notifications when "
+#~ "tresholds are exceeded."
+#~ msgstr ""
+#~ "Komma-separierte Liste von Email-Adressen, and die Benachrichtigungen bei "
+#~ "Schwellwert-Überschreitungen geschickt werden."
+
+#~ msgid "Currency"
+#~ msgstr "Währung"
+
+#~ msgid "Fraud Monthly Limit"
+#~ msgstr "Monatliches Missbrauchs-Limit"
+
+#~ msgid "Fraud Monthly Lock"
+#~ msgstr "Monatliche Missbrauchs-Sperre"
+
+#~ msgid "Fraud Monthly Notify"
+#~ msgstr "Monatliche Missbrauchs-Benachrichtigung"
+
+#~ msgid "Fraud daily limit"
+#~ msgstr "Tägliches Missbrauchs-Limit"
+
+#~ msgid "Fraud daily lock"
+#~ msgstr "Tägliche Missbrauchs-Sperre"
+
+#~ msgid "Fraud daily notify"
+#~ msgstr "Tägliche Missbrauchs-Benachrichtigung"
+
+#~ msgid "Interval charge"
+#~ msgstr "Intervall Gebühr"
+
+#~ msgid "Interval free cash"
+#~ msgstr "Intervall Frei-Guthaben"
+
+#~ msgid "Interval free time"
+#~ msgstr "Intervall Freiminuten"
+
+#~ msgid "Options to lock customer if the daily limit is exceeded."
+#~ msgstr "Sperr-Option für Kunden bei Überschreitung des täglichen Limits."
+
+#~ msgid "Options to lock customer if the monthly limit is exceeded."
+#~ msgstr "Sperr-Option für Kunden bei Überschreitung des monatlichen Limits"
+
+#~ msgid "The currency symbol or ISO code, used on invoices and webinterfaces."
+#~ msgstr ""
+#~ "Das Währungs-Symbol oder ISO-Code. Wird auf Rechnungen und im Web-"
+#~ "Interface dargestellt"
+
+#~ msgid "The fraud detection threshold per day (in cents, e.g. 1000)."
+#~ msgstr "Missbrauchserkennungs-Schwellwert pro Tag (in Cents, z.B. 1000)."
+
+#~ msgid "The fraud detection threshold per month (in cents, e.g. 10000)."
+#~ msgstr "Missbrauchserkennungs-Schwellwert pro Monat (in Cents, z.B. 10000)."
+
+#~ msgid ""
+#~ "The included free minutes per billing interval (in seconds, e.g. 60000 "
+#~ "for 1000 free minutes)."
+#~ msgstr ""
+#~ "Die inkludierten Freiminuten pro Verrechnungs-Intervall (in Sekunden, z."
+#~ "B. 60000 für 1000 Freiminuten)."
+
+#~ msgid "The reseller id this profile belongs to."
+#~ msgstr "Die Reseller-Id, zu der das Profil gehört."
+
+#~ msgid "Whether customers using this profile are handled prepaid."
+#~ msgstr "Kunden mit diesem Billing-Profil als Prepaid-Kunden behandeln."
 
 #~ msgid "Advanced"
 #~ msgstr "Erweitert"
@@ -13078,9 +12927,6 @@ msgstr "ja"
 
 #~ msgid "Failed to update trusted source."
 #~ msgstr "Vertraute Quelle aktualisieren fehlgeschlagen."
-
-#~ msgid "Failed to update voicemail setting."
-#~ msgstr "Sprachnachrichten-Einstellungen aktualisieren fehlgeschlagen."
 
 #~ msgid "Invalid voicemail setting."
 #~ msgstr "Ungültige Sprachnachrichten-Einstellungen"
