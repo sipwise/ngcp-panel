@@ -1613,6 +1613,10 @@ msgid "Callee UUID"
 msgstr "UUID de destinatario"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee number or SIP uri"
 msgstr ""
 
@@ -1672,6 +1676,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Callflow.pm
 msgid "Caller UUID"
 msgstr "UUID de originador"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller number"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller number or SIP uri"
@@ -3584,6 +3592,10 @@ msgid "External Subscriber #"
 msgstr "Suscriptor Externo #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "External call control request type"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External id"
 msgstr ""
 
@@ -4391,8 +4403,8 @@ msgid "Failed to update uploaded sound handle"
 msgstr "Failed to update uploaded sound handle"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Failed to update voicemail setting"
-msgstr ""
+msgid "Failed to update voicemail setting."
+msgstr "Fallo al actualizar preferencia de buzón de voz."
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to upload Billing Fees"
@@ -8282,6 +8294,10 @@ msgid "Session Timers"
 msgstr "Tiempos de Sesión"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Session related token"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #, fuzzy
 msgid "Session-Timer Max Refresh Interval"
 msgstr "Session-Timer Max Refresh Interval"
@@ -10623,10 +10639,6 @@ msgid "The profile package the customer will switch to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The profile package the customer will switch with the top-up."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The profile package's id, whose initial profile/networks are to be used to "
 "charge this contract. This field is required if the 'package' profile "
@@ -11225,6 +11237,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "To-User"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Token"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -12931,9 +12947,6 @@ msgstr "sí"
 
 #~ msgid "Failed to update trusted source."
 #~ msgstr "Fallo al actualizar origen de confianza."
-
-#~ msgid "Failed to update voicemail setting."
-#~ msgstr "Fallo al actualizar preferencia de buzón de voz."
 
 #~ msgid "Invalid voicemail setting."
 #~ msgstr "Preferencia de buzón de voz inválida"

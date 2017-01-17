@@ -1305,6 +1305,10 @@ msgid "Callee UUID"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee number or SIP uri"
 msgstr ""
 
@@ -1362,6 +1366,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Callflow.pm
 msgid "Caller UUID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller number"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3076,6 +3084,10 @@ msgid "External Subscriber #"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "External call control request type"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External id"
 msgstr ""
 
@@ -3881,7 +3893,7 @@ msgid "Failed to update uploaded sound handle"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Failed to update voicemail setting"
+msgid "Failed to update voicemail setting."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
@@ -7421,6 +7433,10 @@ msgid "Session Timers"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Session related token"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session-Timer Max Refresh Interval"
 msgstr ""
 
@@ -9434,10 +9450,6 @@ msgid "The profile package the customer will switch to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The profile package the customer will switch with the top-up."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The profile package's id, whose initial profile/networks are to be used to charge this contract. This field is required if the 'package' profile definition mode is used."
 msgstr ""
 
@@ -10000,6 +10012,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "To-User"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Token"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt

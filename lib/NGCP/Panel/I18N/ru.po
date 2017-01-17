@@ -1616,6 +1616,10 @@ msgid "Callee UUID"
 msgstr "UUID вызываемого"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee number or SIP uri"
 msgstr ""
 
@@ -1675,6 +1679,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Callflow.pm
 msgid "Caller UUID"
 msgstr "UUID звонящего"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller number"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller number or SIP uri"
@@ -3585,6 +3593,10 @@ msgid "External Subscriber #"
 msgstr "Внешний Абонент #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "External call control request type"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External id"
 msgstr ""
 
@@ -4390,8 +4402,8 @@ msgid "Failed to update uploaded sound handle"
 msgstr "Не удалось обновить загруженный звуковой файл"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Failed to update voicemail setting"
-msgstr ""
+msgid "Failed to update voicemail setting."
+msgstr "Не удалось обновить настройки голосовой почты."
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to upload Billing Fees"
@@ -8275,6 +8287,10 @@ msgid "Session Timers"
 msgstr "Таймеры сессии"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Session related token"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session-Timer Max Refresh Interval"
 msgstr "Session-Timer максимальный интервал обновления"
 
@@ -10627,10 +10643,6 @@ msgid "The profile package the customer will switch to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The profile package the customer will switch with the top-up."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The profile package's id, whose initial profile/networks are to be used to "
 "charge this contract. This field is required if the 'package' profile "
@@ -11233,6 +11245,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "To-User"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Token"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -13100,9 +13116,6 @@ msgstr "да"
 
 #~ msgid "Failed to update trusted source."
 #~ msgstr "Ошибка обновления IP авторизации."
-
-#~ msgid "Failed to update voicemail setting."
-#~ msgstr "Не удалось обновить настройки голосовой почты."
 
 #~ msgid "Invalid voicemail setting."
 #~ msgstr "Неверные настройки голосовой почты."

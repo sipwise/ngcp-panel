@@ -1728,6 +1728,10 @@ msgid "Callee UUID"
 msgstr "UUID Chiamato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee number or SIP uri"
 msgstr "Numero Chiamato o SIP  URI"
 
@@ -1787,6 +1791,10 @@ msgstr "Tipo di Chiamante"
 #: lib/NGCP/Panel/Controller/Callflow.pm
 msgid "Caller UUID"
 msgstr "UUID Chiamante"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller number"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller number or SIP uri"
@@ -3727,6 +3735,10 @@ msgid "External Subscriber #"
 msgstr "Codice Esterno Abbonato #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "External call control request type"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External id"
 msgstr "ID Esterno"
 
@@ -4533,8 +4545,8 @@ msgid "Failed to update uploaded sound handle"
 msgstr "Aggiornamento riferimento suono caricato fallito."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Failed to update voicemail setting"
-msgstr "Aggiornamento impostazione casella vocale fallito"
+msgid "Failed to update voicemail setting."
+msgstr "Aggiornamento configurazione casella vocale fallito."
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to upload Billing Fees"
@@ -8516,6 +8528,10 @@ msgid "Session Timers"
 msgstr "Session Timers"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Session related token"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session-Timer Max Refresh Interval"
 msgstr "Intervallo Massimo di Refresh Session-Timer"
 
@@ -10989,10 +11005,6 @@ msgid "The profile package the customer will switch to."
 msgstr "Il piano tariffario a cui il cliente passerà."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The profile package the customer will switch with the top-up."
-msgstr "Il piano tariffario a cui il cliente passerà dopo la ricarica."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The profile package's id, whose initial profile/networks are to be used to "
 "charge this contract. This field is required if the 'package' profile "
@@ -11613,6 +11625,10 @@ msgstr "To-URI"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "To-User"
 msgstr "To-User"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Token"
+msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Tools"
@@ -13058,6 +13074,12 @@ msgstr ""
 msgid "yes"
 msgstr "si"
 
+#~ msgid "Failed to update voicemail setting"
+#~ msgstr "Aggiornamento impostazione casella vocale fallito"
+
+#~ msgid "The profile package the customer will switch with the top-up."
+#~ msgstr "Il piano tariffario a cui il cliente passerà dopo la ricarica."
+
 #~ msgid "Invoice email template"
 #~ msgstr "Modello email fattura"
 
@@ -13494,9 +13516,6 @@ msgstr "si"
 
 #~ msgid "Failed to update trusted source."
 #~ msgstr "Aggiornamento sorgente fidata fallito."
-
-#~ msgid "Failed to update voicemail setting."
-#~ msgstr "Aggiornamento configurazione casella vocale fallito."
 
 #~ msgid "Invalid voicemail setting."
 #~ msgstr "Configurazione casella vocale non valida"

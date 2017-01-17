@@ -1621,6 +1621,10 @@ msgid "Callee UUID"
 msgstr "Angerufener UUID"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee number or SIP uri"
 msgstr ""
 
@@ -1680,6 +1684,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Callflow.pm
 msgid "Caller UUID"
 msgstr "Anrufer UUID"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller number"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller number or SIP uri"
@@ -3585,6 +3593,10 @@ msgid "External Subscriber #"
 msgstr "Externe Subscriber #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "External call control request type"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External id"
 msgstr ""
 
@@ -4390,8 +4402,8 @@ msgid "Failed to update uploaded sound handle"
 msgstr "Hochgeladenes Sound Handle aktualisieren fehlgeschlagen."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Failed to update voicemail setting"
-msgstr ""
+msgid "Failed to update voicemail setting."
+msgstr "Sprachnachrichten-Einstellungen aktualisieren fehlgeschlagen."
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to upload Billing Fees"
@@ -8270,6 +8282,10 @@ msgid "Session Timers"
 msgstr "Session Timers"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Session related token"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session-Timer Max Refresh Interval"
 msgstr "Session-Timer Max Refresh-Intervall"
 
@@ -10618,10 +10634,6 @@ msgid "The profile package the customer will switch to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The profile package the customer will switch with the top-up."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The profile package's id, whose initial profile/networks are to be used to "
 "charge this contract. This field is required if the 'package' profile "
@@ -11216,6 +11228,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "To-User"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Token"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -13078,9 +13094,6 @@ msgstr "ja"
 
 #~ msgid "Failed to update trusted source."
 #~ msgstr "Vertraute Quelle aktualisieren fehlgeschlagen."
-
-#~ msgid "Failed to update voicemail setting."
-#~ msgstr "Sprachnachrichten-Einstellungen aktualisieren fehlgeschlagen."
 
 #~ msgid "Invalid voicemail setting."
 #~ msgstr "Ungültige Sprachnachrichten-Einstellungen"
