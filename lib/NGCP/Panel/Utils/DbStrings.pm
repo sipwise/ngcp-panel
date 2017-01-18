@@ -202,8 +202,8 @@ sub form_strings {
     #NGCP::Panel::Form::BillingPeaktimeWeekdays
     #NGCP::Panel::Form::BillingZone
     #NGCP::Panel::Form::CustomerBalance
-    #NGCP::Panel::Form::CustomerDailyFraud
-    #NGCP::Panel::Form::CustomerMonthlyFraud
+    #NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud
+    #NGCP::Panel::Form::CustomerFraudPreferences::CustomerMonthlyFraud
     #NGCP::Panel::Form::DestinationSet
     #NGCP::Panel::Form::Login
     #NGCP::Panel::Form::PeeringGroup
@@ -691,4 +691,3 @@ This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
