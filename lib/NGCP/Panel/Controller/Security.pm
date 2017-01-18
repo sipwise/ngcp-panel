@@ -59,7 +59,7 @@ sub user_base :Chained('/') :PathPart('security/user') :CaptureArgs(1) {
 sub user_unban :Chained('user_base') :PathPart('unban') :Args(0) {
     my ( $self, $c ) = @_;
     my $user = $c->stash->{user};
-    NGCP::Panel::Utils::Security::ip_unban($c, $user);
+    NGCP::Panel::Utils::Security::user_unban($c, $user);
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         data => { user => $user },
