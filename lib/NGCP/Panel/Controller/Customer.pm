@@ -4,8 +4,8 @@ use Sipwise::Base;
 use parent 'Catalyst::Controller';
 use JSON qw(decode_json encode_json);
 use IPC::System::Simple qw/capturex EXIT_ANY $EXITVAL/;
-use NGCP::Panel::Form::CustomerMonthlyFraud;
-use NGCP::Panel::Form::CustomerDailyFraud;
+use NGCP::Panel::Form::CustomerFraudPreferences::CustomerMonthlyFraud;
+use NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud;
 use NGCP::Panel::Form::Balance::CustomerBalance;
 use NGCP::Panel::Form::Customer::Subscriber;
 use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
@@ -900,9 +900,9 @@ sub edit_fraud :Chained('base_restricted') :PathPart('fraud/edit') :Args(1) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     if($type eq "month") {
-        $form = NGCP::Panel::Form::CustomerMonthlyFraud->new;
+        $form = NGCP::Panel::Form::CustomerFraudPreferences::CustomerMonthlyFraud->new;
     } elsif($type eq "day") {
-        $form = NGCP::Panel::Form::CustomerDailyFraud->new;
+        $form = NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud->new;
     } else {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
