@@ -56,6 +56,13 @@ SKIP:{
     #todo: create_timestamp - strange,  it is different to the value of the time zone
     $test_machine->check_get2put({ignore_fields => [qw/modify_timestamp create_timestamp/]});
 
+    my $mod_customer;
+    ($res,$mod_customer) = $test_machine->check_patch_correct( [ { op => 'replace', path => '/subscriber_email_template_id', value => undef } ] );
+    is($mod_customer->{subscriber_email_template_id}, undef,  "check patched subscriber_email_template_id:".($mod_customer->{subscriber_email_template_id} // 'undef'));
+
+    ($res,$mod_customer) = $test_machine->check_patch_correct( [ { op => 'replace', path => '/subscriber_email_template_id', value => $test_machine->DATA_ITEM->{subscriber_email_template_id} } ] );
+    is($mod_customer->{subscriber_email_template_id}, $test_machine->DATA_ITEM->{subscriber_email_template_id}, "check patched subscriber_email_template_id:".$mod_customer->{subscriber_email_template_id});
+
     $test_machine->check_bundle();
 }
 
