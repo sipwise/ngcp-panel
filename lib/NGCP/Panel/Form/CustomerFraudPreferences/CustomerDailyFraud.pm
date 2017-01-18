@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::CustomerDailyFraud;
+package NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Model::DBIC';
