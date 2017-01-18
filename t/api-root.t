@@ -6,7 +6,7 @@ use Test::More;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
-my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
+my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} ||
     "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
 my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
     $valid_ssl_client_cert;
@@ -61,6 +61,7 @@ $ua->ssl_opts(
                  cfmappings => 1,
                  cftimesets => 1,
                  contracts => 1,
+                 customerfraudpreferences => 1,
                  customerbalances => 1,
                  customercontacts => 1,
                  customerpreferencedefs => 1,

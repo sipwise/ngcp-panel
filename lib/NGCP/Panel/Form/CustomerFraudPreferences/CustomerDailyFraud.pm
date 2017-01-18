@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::CustomerMonthlyFraud;
+package NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Model::DBIC';
@@ -11,17 +11,17 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'fraud_interval_limit' => (
+has_field 'fraud_daily_limit' => (
     type => 'Integer',
-    label => 'Monthly Fraud Limit',
+    label => 'Daily Fraud Limit',
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['fraud detection threshold per month, specifying cents']
+        title => ['fraud detection threshold per day, specifying cents']
     },
 );
 
-has_field 'fraud_interval_lock' => (
+has_field 'fraud_daily_lock' => (
     type => 'Select',
     label => 'Lock Level',
     options => [
@@ -33,7 +33,7 @@ has_field 'fraud_interval_lock' => (
     ],
 );
 
-has_field 'fraud_interval_notify' => (
+has_field 'fraud_daily_notify' => (
     type => '+NGCP::Panel::Field::EmailList',
     label => 'Notify Emails',
     maxlength => 255,
@@ -53,7 +53,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/fraud_interval_limit fraud_interval_lock fraud_interval_notify/],
+    render_list => [qw/fraud_daily_limit fraud_daily_lock fraud_daily_notify/],
 );
 
 has_block 'actions' => (

@@ -91,7 +91,7 @@ sub get_contract_balance_values {
         my $ctime = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day');
         if( ( $ctime->epoch >= $stime->epoch ) && ( $ctime->epoch <= $etime->epoch ) ){
             my $ratio = ($etime->epoch - $ctime->epoch) / ($etime->epoch - $stime->epoch);
-            
+
             $cash_balance = sprintf("%.4f", $free_cash * $ratio);
             $cash_balance_interval = 0;
 
@@ -237,7 +237,7 @@ sub get_customer_rs {
         include_terminated => $params{include_terminated},
         contract_id => $contract_id,
     );
-    
+
     $customers = $customers->search({
             'contact.reseller_id' => { '-not' => undef },
         },{
@@ -253,8 +253,8 @@ sub get_customer_rs {
         $customers = $customers->search({
                 'contact.reseller_id' => $c->user->contract->contact->reseller_id,
         });
-    } 
-    
+    }
+
     $customers = $customers->search({
             '-or' => [
                 'product.class' => 'sipaccount',
@@ -264,7 +264,7 @@ sub get_customer_rs {
             '+select' => 'billing_mappings.id',
             '+as' => 'bmid',
     });
-    
+
     return $customers;
 }
 
@@ -303,7 +303,7 @@ sub get_contract_zonesfees_rs {
         ],
         join        => 'source_customer_billing_zones_history',
         group_by    => [
-            'source_customer_billing_zones_history.zone', 
+            'source_customer_billing_zones_history.zone',
             $group_detail ? 'source_customer_billing_zones_history.detail' : (),
         ],
         order_by    => 'source_customer_billing_zones_history.zone',
@@ -356,10 +356,10 @@ sub get_contract_zonesfees {
         $in ? $zonecalls_rs_in->all : (),
         $out ? $zonecalls_rs_out->all : (),
     );
-    
+
     my %allzones;
     for my $zone (@zones) {
-        my $zname = $params{group_by_detail} ? 
+        my $zname = $params{group_by_detail} ?
             ($zone->get_column('zone')//'') . ' ' . ($zone->get_column('zone_detail')//'') :
             ($zone->get_column('zone')//'');
 
@@ -394,7 +394,7 @@ sub get_contract_calls_rs{
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         'call_status'       => 'ok',
         'source_user_id'    => { '!=' => '0' },
-        'start_time'        => 
+        'start_time'        =>
             [ -and =>
                 { '>=' => $stime->epoch},
                 { '<=' => $etime->epoch},
@@ -402,25 +402,25 @@ sub get_contract_calls_rs{
         'source_account_id' => $customer_contract_id,
     },{
         select => [qw/
-            source_user source_domain source_cli 
-            destination_user_in 
+            source_user source_domain source_cli
+            destination_user_in
             start_time duration call_type
             source_customer_cost
             source_customer_billing_zones_history.zone
             source_customer_billing_zones_history.detail
         /],
         as => [qw/
-            source_user source_domain source_cli 
-            destination_user_in 
+            source_user source_domain source_cli
+            destination_user_in
             start_time duration call_type
             source_customer_cost
-            zone 
+            zone
             zone_detail
         /],
-        'join' => 'source_customer_billing_zones_history', 
+        'join' => 'source_customer_billing_zones_history',
         'order_by'    => 'start_time',
-    } );    
- 
+    } );
+
     return $calls_rs;
 }
 1;
