@@ -37,6 +37,7 @@ sub hal_from_customer {
 
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile_id = $billing_mapping->billing_profile->id;
+
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
     my $contract_balance = $customer->contract_balances
@@ -78,6 +79,7 @@ sub hal_from_customer {
             Data::HAL::Link->new(relation => 'ngcp:customercontacts', href => sprintf("/api/customercontacts/%d", $customer->contact->id)),
             Data::HAL::Link->new(relation => 'ngcp:customerpreferences', href => sprintf("/api/customerpreferences/%d", $customer->id)),
             Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
+            Data::HAL::Link->new(relation => 'ngcp:customerfraudpreferences', href => sprintf("/api/customerfraudpreferences/%d", $customer->id)),
             Data::HAL::Link->new(relation => 'ngcp:customerbalances', href => sprintf("/api/customerbalances/%d", $customer->id)),
             $customer->invoice_template ? (Data::HAL::Link->new(relation => 'ngcp:invoicetemplates', href => sprintf("/api/invoicetemplates/%d", $customer->invoice_template_id))) : (),
             $customer->subscriber_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:subscriberemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->subscriber_email_template_id))) : (),
@@ -140,10 +142,10 @@ sub update_customer {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Customer is already terminated and cannot be changed.');
         return;
     }
-   
+
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
-    $resource->{contact_id} //= undef; 
+    $resource->{contact_id} //= undef;
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -190,7 +192,7 @@ sub update_customer {
     }
 
     my $oldinvoicetmpl = $old_resource->{invoice_template_id} // 0;
-    if($resource->{invoice_template_id} && 
+    if($resource->{invoice_template_id} &&
        $oldinvoicetmpl != $resource->{invoice_template_id}) {
         my $tmpl = $c->model('DB')->resultset('invoice_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -201,7 +203,7 @@ sub update_customer {
         }
     }
     my $oldsubtmpl = $old_resource->{subscriber_email_template_id} // 0;
-    if($resource->{subscriber_email_template_id} && 
+    if($resource->{subscriber_email_template_id} &&
        $oldsubtmpl != $resource->{subscriber_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -212,7 +214,7 @@ sub update_customer {
         }
     }
     my $oldpasstmpl = $old_resource->{passreset_email_template_id} // 0;
-    if($resource->{passreset_email_template_id} && 
+    if($resource->{passreset_email_template_id} &&
        $oldpasstmpl != $resource->{passreset_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -223,7 +225,7 @@ sub update_customer {
         }
     }
     my $oldinvtmpl = $old_resource->{invoice_email_template_id} // 0;
-    if($resource->{invoice_email_template_id} && 
+    if($resource->{invoice_email_template_id} &&
        $oldinvtmpl != $resource->{invoice_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -231,6 +233,7 @@ sub update_customer {
         unless($tmpl) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
+
         }
     }
 

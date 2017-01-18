@@ -4,8 +4,8 @@ use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use JSON qw(decode_json encode_json);
 use IPC::System::Simple qw/capturex EXIT_ANY $EXITVAL/;
-use NGCP::Panel::Form::CustomerMonthlyFraud;
-use NGCP::Panel::Form::CustomerDailyFraud;
+use NGCP::Panel::Form::CustomerFraudPreferences::CustomerMonthlyFraud;
+use NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
 use NGCP::Panel::Form::Customer::Subscriber;
 use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
@@ -248,7 +248,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
-   
+
     my $balance;
     try {
         $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
@@ -274,7 +274,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         error => "No product for customer contract id $contract_id found",
         desc  => $c->loc('No product for this customer contract found.'),
     ) unless($product_id);
-    
+
     my $product = $c->model('DB')->resultset('products')->find($product_id);
     NGCP::Panel::Utils::Message->error(
         c => $c,
@@ -354,7 +354,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(product => $product);
     $c->stash(balance => $balance);
     $c->stash(fraud => $contract_rs->first->contract_fraud_preference);
-    $c->stash(template => 'customer/details.tt'); 
+    $c->stash(template => 'customer/details.tt');
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
     $c->stash(billing_mapping => $billing_mapping );
@@ -436,8 +436,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                         my $prov_sub = $sub->provisioning_voip_subscriber;
                         next unless($prov_sub);
                         NGCP::Panel::Utils::Subscriber::update_preferences(
-                            c => $c, 
-                            prov_subscriber => $prov_sub, 
+                            c => $c,
+                            prov_subscriber => $prov_sub,
                             preferences => { ext_contract_id => $contract->external_id }
                         );
                     }
@@ -525,7 +525,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
             $contract->voip_contract_preferences->delete;
-            $contract->update({ 
+            $contract->update({
                 status => 'terminated',
                 terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
             });
@@ -579,7 +579,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             error => "tried to exceed max number of subscribers of " . $c->stash->{contract}->max_subscribers,
             desc  => $c->loc('Maximum number of subscribers for this customer reached'),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -592,7 +592,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         'provisioning_voip_subscriber.is_pbx_pilot' => 1,
     })->first;
 
-    
+
     my $params = {};
 
     if($c->config->{features}->{cloudpbx} && $pbx) {
@@ -635,7 +635,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             'group.create' => $c->uri_for_action('/customer/pbx_group_create', $c->req->captures),
     };
     if($pbxadmin) {
-        $fields->{'domain.create'} = $c->uri_for_action('/domain/create', 
+        $fields->{'domain.create'} = $c->uri_for_action('/domain/create',
             $c->stash->{contract}->contact->reseller_id, 'pbx');
     }
     NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -672,8 +672,8 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     $preferences->{cloud_pbx} = 1;
                     $preferences->{cloud_pbx_ext} = $form->params->{pbx_extension};
                     if($pbxadmin && $form->params->{e164}{cc} && $form->params->{e164}{sn}) {
-                        $preferences->{cloud_pbx_base_cli} = $form->params->{e164}{cc} . 
-                                                             ($form->params->{e164}{ac} // '') . 
+                        $preferences->{cloud_pbx_base_cli} = $form->params->{e164}{cc} .
+                                                             ($form->params->{e164}{ac} // '') .
                                                              $form->params->{e164}{sn};
                     }
 
@@ -741,7 +741,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 desc  => $c->loc('Failed to create subscriber'),
             );
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -756,9 +756,9 @@ sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     if($type eq "month") {
-        $form = NGCP::Panel::Form::CustomerMonthlyFraud->new;
+        $form = NGCP::Panel::Form::CustomerFraudPreferences::CustomerMonthlyFraud->new;
     } elsif($type eq "day") {
-        $form = NGCP::Panel::Form::CustomerDailyFraud->new;
+        $form = NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud->new;
     } else {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
@@ -862,7 +862,7 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            $balance->update($form->values); 
+            $balance->update($form->values);
             NGCP::Panel::Utils::Message->info(
                 c => $c,
                 desc => $c->loc('Account balance successfully changed!'),
@@ -899,7 +899,7 @@ sub subscriber_ajax :Chained('base') :PathPart('subscriber/ajax') :Args(0) {
 sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $subscriber_id = $c->req->params->{subscriber_id} // 0;
-    
+
     my $subscriber;
     if($subscriber_id && $subscriber_id->is_integer) {
         $subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
@@ -937,7 +937,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             error => "tried to exceed max number of subscribers of " . $c->stash->{contract}->max_subscribers,
             desc  => $c->loc('Maximum number of subscribers for this customer reached'),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -1005,7 +1005,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 );
                 NGCP::Panel::Utils::Events::insert(
                     c => $c, schema => $schema, type => 'start_huntgroup',
-                    subscriber => $billing_subscriber, old_status => undef, 
+                    subscriber => $billing_subscriber, old_status => undef,
                     new_status => $billing_subscriber->provisioning_voip_subscriber->profile_id,
                 );
                 $c->session->{created_objects}->{group} = { id => $billing_subscriber->id };
@@ -1022,7 +1022,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -1044,7 +1044,7 @@ sub pbx_group_base :Chained('base') :PathPart('pbx/group') :CaptureArgs(1) {
             error => "invalid voip pbx group id $group_id",
             desc  => $c->loc('PBX group with id [_1] does not exist.',$group_id),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -1096,7 +1096,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                         pbx_hunt_timeout => $form->values->{pbx_hunt_timeout},
                     });
                 NGCP::Panel::Utils::Subscriber::update_preferences(
-                    c => $c, 
+                    c => $c,
                     prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
                     'preferences'   => {
                         cloud_pbx_hunt_policy  => $form->values->{pbx_hunt_policy},
@@ -1147,7 +1147,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -1166,7 +1166,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
         ->search({
             'device.reseller_id' => $c->stash->{contract}->contact->reseller_id,
         },{
-            join => { 'config' => 'device' }, 
+            join => { 'config' => 'device' },
         });
     my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
     my $params = {};
@@ -1229,7 +1229,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -1252,7 +1252,7 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
             error => "invalid voip pbx device id $dev_id",
             desc  => $c->loc('PBX device with id [_1] does not exist.',$dev_id),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -1262,7 +1262,7 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
             error => "invalid voip pbx device id $dev_id for customer id '".$c->stash->{contract}->id."'",
             desc  => $c->loc('PBX device with id [_1] does not exist for this customer.',$dev_id),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -1280,7 +1280,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         ->search({
             'device.reseller_id' => $c->stash->{contract}->contact->reseller_id,
         },{
-            join => { 'config' => 'device' }, 
+            join => { 'config' => 'device' },
         });
     my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
     my $params = { $c->stash->{pbx_device}->get_inflated_columns };
@@ -1352,7 +1352,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
         return;
@@ -1422,7 +1422,7 @@ sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
         );
     }
 
-    NGCP::Panel::Utils::Navigation::back_or($c, 
+    NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
     );
 }
@@ -1462,14 +1462,14 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
                         desc => $c->loc('Failed to trigger config reload via SIP'),
                         error => 'Failed to load proxy from xmlhosts',
                     );
-                    NGCP::Panel::Utils::Navigation::back_or($c, 
+                    NGCP::Panel::Utils::Navigation::back_or($c,
                         $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
                     );
                     return;
             }
 
-            my @cmd_args = ($c->config->{cloudpbx}->{sync}, 
-                $sub->username, $sub->domain->domain, 
+            my @cmd_args = ($c->config->{cloudpbx}->{sync},
+                $sub->username, $sub->domain->domain,
                 $sub->password, $proxy->ip . ":" . $proxy->sip_port);
             my @out = capturex(EXIT_ANY, "/bin/sh", @cmd_args);
             if($EXITVAL != 0) {
@@ -1485,7 +1485,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
                     desc => $c->loc('Successfully triggered config reload via SIP'),
                 );
             }
-            NGCP::Panel::Utils::Navigation::back_or($c, 
+            NGCP::Panel::Utils::Navigation::back_or($c,
                 $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
             );
             return;
@@ -1506,7 +1506,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
             c => $c,
             desc => $c->loc('Successfully redirected request to device'),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
@@ -1519,7 +1519,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     my $conf = {
         client => {
             ip => '__NGCP_CLIENT_IP__',
-            
+
         },
         server => {
             uri => "$schema://$host:$port/device/autoprov/config",
@@ -1595,7 +1595,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
     if($c->user->roles eq 'subscriberadmin' && !$c->stash->{preference_meta}->expose_to_customer) {
         $c->log->error("invalid access to pref_id '$pref_id' by provisioning subscriber id '".$c->user->id."'");
         $c->detach('/denied_page');
-    } 
+    }
 
     $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_contract_preferences')
@@ -1610,14 +1610,14 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
 
 sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
-   
+
     $c->stash(edit_preference => 1);
 
     my @enums = $c->stash->{preference_meta}
         ->voip_preferences_enums
         ->search({contract_pref => 1})
         ->all;
-    
+
     my $pref_rs = $c->stash->{contract}->voip_contract_preferences;
 
     NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
@@ -1630,7 +1630,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
 
 sub load_preference_list :Private {
     my ($self, $c) = @_;
-    
+
     my $contract_pref_values = $c->model('DB')
         ->resultset('voip_preferences')
         ->search({
@@ -1638,10 +1638,10 @@ sub load_preference_list :Private {
             },{
                 prefetch => 'voip_contract_preferences',
             });
-        
+
     my %pref_values;
     foreach my $value($contract_pref_values->all) {
-    
+
         $pref_values{$value->attribute} = [
             map {$_->value} $value->voip_contract_preferences->all
         ];

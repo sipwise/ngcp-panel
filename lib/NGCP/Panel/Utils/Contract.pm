@@ -235,6 +235,7 @@ sub get_customer_rs {
     my $customers = get_contract_rs(
         schema => $c->model('DB'),
         include_terminated => $params{include_terminated},
+        now => $now,
         contract_id => $contract_id,
     );
     
