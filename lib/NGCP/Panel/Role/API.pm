@@ -190,7 +190,18 @@ sub validate_form {
     }
 
     # remove unknown keys
-    my %fields = map { $_->name => $_ } $form->fields;
+    my %fields;
+    foreach($form->fields){
+        if($_->readonly){
+            #fix resource for PATCH and  readonly fields. Sometimes we are showing information, which is not intended to be appplied. 
+            #But PATCH is supposed to take fulll item content and apply patch, 
+            #It leads to the situation when we may try to change some not existing fields in the DB  
+            #All readonly fields are considered as representation only and shoould never be applied
+            delete $resource->{$_->name};
+            next;
+        }
+        $fields{$_->name} = $_;
+    }
     $self->validate_fields($c, $resource, \%fields, $run);
 
     if($run) {
