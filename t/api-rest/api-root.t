@@ -94,6 +94,7 @@ $ua->credentials($netloc, "api_admin_http", $user, $pass);
         ncoslevels => 1,
         ncoslnpcarriers => 1,
         ncospatterns => 1,
+        partycallcontrols => 1,
         pbxdeviceconfigfiles => 1,
         pbxdeviceconfigs => 1,
         pbxdevicefirmwarebinaries => 1,
