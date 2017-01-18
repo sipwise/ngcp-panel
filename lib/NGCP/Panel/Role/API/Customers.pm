@@ -41,32 +41,7 @@ sub hal_from_customer {
     my $billing_profile_id = $billing_mapping->billing_profile->id;
     my $future_billing_profiles = NGCP::Panel::Utils::Contract::resource_from_future_mappings($customer);
     my $billing_profiles = NGCP::Panel::Utils::Contract::resource_from_mappings($customer);
-    #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    #my $etime = $stime->clone->add(months => 1);
-    #my $contract_balance = $customer->contract_balances
-    #    ->find({
-    #        start => { '>=' => $stime },
-    #        end => { '<' => $etime },
-    #        });
-    #unless($contract_balance) {
-    #    try {
-    #        NGCP::Panel::Utils::Contract::create_contract_balance(
-    #            c => $c,
-    #            profile => $billing_mapping->billing_profile,
-    #            contract => $customer,
-    #        );
-    #    } catch($e) {
-    #        $c->log->error("Failed to create current contract balance for customer contract id '".$customer->id."': $e");
-    #        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
-    #        return;
-    #    };
-    #    $contract_balance = $customer->contract_balances->find({
-    #        start => { '>=' => $stime },
-    #        end => { '<' => $etime },
-    #    });
-    #}
 
-    #we leave this here to keep the former behaviour: contract balances are also created upon GET api/customers/4711
     NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $customer,
             now => $now);
@@ -95,6 +70,7 @@ sub hal_from_customer {
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $customer->id)),
             Data::HAL::Link->new(relation => 'ngcp:customercontacts', href => sprintf("/api/customercontacts/%d", $customer->contact->id)),
             Data::HAL::Link->new(relation => 'ngcp:customerpreferences', href => sprintf("/api/customerpreferences/%d", $customer->id)),
+            Data::HAL::Link->new(relation => 'ngcp:customerfraudpreferences', href => sprintf("/api/customerfraudpreferences/%d", $customer->id)),
             @profile_links,
             @network_links,
             $customer->profile_package_id ? Data::HAL::Link->new(relation => 'ngcp:profilepackages', href => sprintf("/api/profilepackages/%d", $customer->profile_package_id)) : (),
