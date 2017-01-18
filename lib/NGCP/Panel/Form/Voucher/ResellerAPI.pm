@@ -51,12 +51,12 @@ has_field 'customer' => (
     },
 );
 
-has_field 'package_id' => (
-    type => 'PosInteger',
-    required => 0,
+has_field 'package' => (
+    type => '+NGCP::Panel::Field::ProfilePackage',
+    #required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The package this voucher belongs to.']
+        title => ['The profile package the customer will switch with the top-up.']
     },
 );
 
