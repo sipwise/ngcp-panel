@@ -10861,10 +10861,6 @@ msgid ""
 msgstr "Data opzionale di disattivazione del porting, in formato YYYY-MM-DD."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The package this voucher belongs to."
-msgstr "Il piano tariffario a cui appartiene questo voucher."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The parameters appended to the sync URI when setting the provisioning "
 "server, e.g. server.uri/$MA. The server.uri variable is automatically "
@@ -11003,6 +10999,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The profile package the customer will switch to."
 msgstr "Il piano tariffario a cui il cliente passerà."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The profile package the customer will switch with the top-up."
+msgstr "Il piano tariffario a cui il cliente passerà dopo la ricarica."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -13074,11 +13074,11 @@ msgstr ""
 msgid "yes"
 msgstr "si"
 
+#~ msgid "The package this voucher belongs to."
+#~ msgstr "Il piano tariffario a cui appartiene questo voucher."
+
 #~ msgid "Failed to update voicemail setting"
 #~ msgstr "Aggiornamento impostazione casella vocale fallito"
-
-#~ msgid "The profile package the customer will switch with the top-up."
-#~ msgstr "Il piano tariffario a cui il cliente passerà dopo la ricarica."
 
 #~ msgid "Invoice email template"
 #~ msgstr "Modello email fattura"
