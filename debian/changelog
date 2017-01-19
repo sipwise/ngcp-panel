@@ -1,3 +1,12 @@
+ngcp-panel (5.0.1.7+0~mr5.0.1.7) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [00cc0e0] TT#9100 Fix user_unban in the web panel
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Jan 2017 17:11:38 +0100
+
 ngcp-panel (5.0.1.6+0~mr5.0.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
