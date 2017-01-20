@@ -10,6 +10,10 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT DELETE/];
 }
 
+sub allowed_roles {
+    return qw/admin reseller subscriberadmin/;
+}
+
 sub _set_config{
     my ($self, $method) = @_;
     $method //='';

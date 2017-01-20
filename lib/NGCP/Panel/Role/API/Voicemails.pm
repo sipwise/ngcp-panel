@@ -29,6 +29,14 @@ sub _item_rs {
         },{
             join => { mailboxuser => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } } }
         });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'contract.id' => $c->user->account_id,
+        },{
+            join => { mailboxuser => { provisioning_voip_subscriber => { voip_subscriber => 'contract' } } }
+        });
+    } elsif ($c->user->roles eq "subscriber") {
+        return;  # forbidden
     }
     return $item_rs;
 }

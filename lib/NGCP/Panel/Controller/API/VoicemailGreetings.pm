@@ -11,6 +11,10 @@ sub allowed_methods{
     return [qw/OPTIONS HEAD GET POST/];
 }
 
+sub allowed_roles {
+    return qw/admin reseller subscriberadmin/;
+}
+
 sub api_description {
     return 'Defines the voicemail greetings. A GET on an item with Accept "audio/x-wav" returns the binary blob of the greeting.';
 };
