@@ -53,6 +53,15 @@ sub _item_rs {
                 }
             } }
         });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search_rs({
+            'contract.id' => $c->user->account_id,
+        },{
+            join => { 'mailboxuser' => { 'provisioning_voip_subscriber' =>
+                { 'voip_subscriber' => 'contract' } } },
+        });
+    } elsif ($c->user->roles eq "subscriber") {
+        return;  # forbidden
     }
     return $item_rs;
 }
@@ -146,14 +155,6 @@ sub check_duplicate{
 
     return 1;
 }
-
-#sub resource_from_item{
-#    my $self shift;
-#    my($c, $item) = @_;
-#    my $res = $self->SUPER::resource_from_item(@_);
-#    $res->{dir} =  NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{checked}->{subscriber}, dir => $resource->{dir} );
-#    return $res;
-#}
 
 
 1;

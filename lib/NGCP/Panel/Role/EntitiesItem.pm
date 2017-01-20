@@ -22,7 +22,7 @@ sub set_config {
         action => {
             map { $_ => {
                 ACLDetachTo => '/api/root/invalid_user',
-                AllowedRole => [qw/admin reseller/],
+                AllowedRole => [$self->allowed_roles],
                 Args => 1,
                 Does => [qw(ACL RequireSSL)],
                 Method => $_,
@@ -33,6 +33,10 @@ sub set_config {
         action_roles => [qw(HTTPMethods)],
         %{$self->_set_config()},
     );
+}
+
+sub allowed_roles {
+    return qw/admin reseller/;
 }
 
 sub get {
