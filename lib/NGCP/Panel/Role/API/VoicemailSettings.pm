@@ -20,11 +20,17 @@ sub _item_rs {
     }, {
         join => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } },
     });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ 
             'contact.reseller_id' => $c->user->reseller_id,
         });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'contract.id' => $c->user->account_id,
+        });
+    } elsif ($c->user->roles eq "subscriber") {
+        return;
     }
     return $item_rs;
 }

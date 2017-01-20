@@ -34,7 +34,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
@@ -49,6 +49,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -89,6 +90,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     #$self->log_response($c);
+    return;
 }
 
 
