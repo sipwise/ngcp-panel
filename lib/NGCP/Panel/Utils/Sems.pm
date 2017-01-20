@@ -306,7 +306,7 @@ EOF
 sub party_call_control {
     my ($c, $data) = @_;
 
-    foreach my $param (qw(caller callee call_id status token)) {
+    foreach my $param (qw(caller callee callid status token)) {
         die "missing '$param' parameter'" unless $data->{$param};
     }
 
