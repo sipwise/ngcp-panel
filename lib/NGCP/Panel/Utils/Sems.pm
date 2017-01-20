@@ -306,12 +306,12 @@ EOF
 sub party_call_control {
     my ($c, $data) = @_;
 
-    foreach my $param (qw(caller callee call_id status)) {
+    foreach my $param (qw(caller callee call_id status token)) {
         die "missing '$param' parameter'" unless $data->{$param};
     }
 
-    my ($caller, $callee, $callid, $status) =
-        @{$data}{qw(caller callee callid status)};
+    my ($caller, $callee, $callid, $status $token) =
+        @{$data}{qw(caller callee callid status token)};
 
     my $service = 'appserver';
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
@@ -322,7 +322,7 @@ sub party_call_control {
     <methodName>postDSMEvent</methodName>
     <params>
       <param>
-        <value><string>pcc_$callid</string></value>
+        <value><string>$token</string></value>
       </param>
       <param>
         <value><array><data>
