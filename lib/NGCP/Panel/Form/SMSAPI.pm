@@ -100,6 +100,16 @@ has_field 'time' => (
     },
 );
 
+has_field 'coding' => (
+    type => 'Text', 
+    required => 0,
+    maxlength => 16,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Message coding information'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
