@@ -45,6 +45,30 @@
       "revId": "33180f36a9d31aa4c8cef5b4966f79766305f8f6",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_5f5e9eea",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudPreferences.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-01-24T09:34:03Z",
+      "side": 1,
+      "message": "if we cant find the customer (eg terminated, not accessible with user role etc.), nothing is returned and we see 404, as desired.",
+      "parentUuid": "1a622d24_5f37beb0",
+      "range": {
+        "startLine": 87,
+        "startChar": 8,
+        "endLine": 87,
+        "endChar": 24
+      },
+      "revId": "33180f36a9d31aa4c8cef5b4966f79766305f8f6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
