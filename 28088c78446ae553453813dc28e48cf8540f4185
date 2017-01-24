@@ -16,6 +16,24 @@
       "revId": "28088c78446ae553453813dc28e48cf8540f4185",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_527975fb",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-01-24T15:37:31Z",
+      "side": 1,
+      "message": "Ok, got it",
+      "parentUuid": "1a622d24_12209df6",
+      "revId": "28088c78446ae553453813dc28e48cf8540f4185",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
