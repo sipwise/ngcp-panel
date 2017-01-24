@@ -1,0 +1,66 @@
+[%- chapters = ["foo", "bar"];
+    chapters = collections.keys.sort;
+    # FOREACH col IN collections.keys.sort;
+    #     chapters.push({ id = col, title = collections.$col.name, uri = collections.$col.uri, full = collections.$col });
+    # END;
+-%]
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Sipwise NGCP API",
+    "version": "1.0.0",
+    "title": "NGCP API",
+    "contact": {
+      "email": "foobar@sipwise.com"
+    }
+  },
+  "basePath": "/api",
+  "schemes": [ "https" ],
+  "produces": [
+    "application/json"
+  ],
+
+
+
+
+
+
+  "paths":
+    {
+
+
+
+[%- FOR chapter IN chapters;
+      col = collections.$chapter;
+      INCLUDE 'api/swagger/collection.tt' entity=col.entity_name title=col.name id=chapter uri=col.uri col=col;
+
+      "," UNLESS loop.last;
+    END -%]
+
+
+
+    },
+
+
+
+  "definitions": {
+
+
+[%- FOR chapter IN chapters;
+      col = collections.$chapter;
+      INCLUDE 'api/swagger/entity.tt' entity=col.entity_name title=col.name id=chapter uri=col.uri col=col;
+
+      "," UNLESS loop.last;
+    END -%]
+
+
+
+
+  }
+
+
+
+
+}
+
+
