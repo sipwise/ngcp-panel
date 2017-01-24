@@ -195,6 +195,7 @@ sub GET : Allow {
 
         $c->stash->{collections}->{$rel} = {
             name => $mod,
+            entity_name => $mod =~ s/s$//r,
             description => $full_mod->api_description,
             fields => $form_fields,
             uploads => $form_fields_upload,
@@ -235,6 +236,8 @@ sub GET : Allow {
             Content_Language => 'en',
             Content_Type => 'application/json',
         ));
+    } elsif ($c->req->params->{swagger}) {
+        $c->detach('swagger');
     } else {
         $c->stash(template => 'api/root.tt');
         $c->forward($c->view);
@@ -244,6 +247,29 @@ sub GET : Allow {
             #$self->collections_link_headers,
         ));
     }
+
+    return;
+}
+
+sub swagger :Private {
+    my ($self, $c) = @_;
+
+    my $collections = $c->stash->{collections};
+    my $user_role = $c->user->roles;
+
+    my $result = NGCP::Panel::Utils::API::generate_swagger_datastructure(
+        $collections,
+        $user_role,
+    );
+
+    use JSON qw/encode_json/;
+
+    $c->response->headers(HTTP::Headers->new(
+        Content_Language => 'en',
+        Content_Type => 'application/json',
+    ));
+    $c->response->body(encode_json($result));
+    $c->response->code(200);
     return;
 }
 
@@ -386,7 +412,11 @@ sub get_field_poperties :Private{
             $name .= '_id';
         }
     }
+    my $enum;
     push(@types, $self->field_to_json($field));
+    if ($field->$_isa('HTML::FormHandler::Field::Select')) {
+        $enum = $field->options;
+    }
     my $desc = undef;
     if($field->element_attr) {
         $desc = $field->element_attr->{title}->[0];
@@ -397,7 +427,8 @@ sub get_field_poperties :Private{
     unless (defined $desc && length($desc) > 0) {
         $desc = 'to be described ...';
     }
-    return { name => $name, description => $desc, types => \@types, type_original => $field->type, readonly => $field->readonly };
+    return { name => $name, description => $desc, types => \@types, type_original => $field->type,
+        readonly => $field->readonly, ($enum ? (enum => $enum) : ()) };
 }
 sub get_collection_properties {
     my ($self, $form) = @_;
