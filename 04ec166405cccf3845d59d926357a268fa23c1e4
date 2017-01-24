@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_b291e954",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-01-24T15:00:58Z",
+      "side": 1,
+      "message": "should not be 0 by default, IMO\nsee Utils::SMS::send_sms",
+      "revId": "04ec166405cccf3845d59d926357a268fa23c1e4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
