@@ -240,7 +240,7 @@ sub validate_fields {
         if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
             $resource->{$k} = $resource->{$k} ? 1 : 0;
         }
-        unless(exists $fields->{$k}) {
+        if( (!exists $fields->{$k}) || $fields->{$k}->readonly) {
             delete $resource->{$k};
         }
         $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
@@ -252,13 +252,29 @@ sub validate_fields {
                $fields->{$k}->$_isa('HTML::FormHandler::Field::Float')) &&
                (is_int($resource->{$k}) || is_decimal($resource->{$k})));
 
-        if (defined $resource->{$k} &&
-                $fields->{$k}->$_isa('HTML::FormHandler::Field::Repeatable') &&
+        if (defined $resource->{$k}){
+            if( $fields->{$k}->$_isa('HTML::FormHandler::Field::Repeatable') &&
                 "ARRAY" eq ref $resource->{$k} ) {
-            for my $elem (@{ $resource->{$k} }) {
-                my ($subfield_instance) = $fields->{$k}->fields;
-                my %subfields = map { $_->name => $_ } $subfield_instance->fields;
-                $self->validate_fields($c, $elem, \%subfields, $run);
+                for my $elem (@{ $resource->{$k} }) {
+                    my ($subfield_instance) = $fields->{$k}->fields;
+                    my %subfields = map { $_->name => $_ } $subfield_instance->fields;
+                    $self->validate_fields($c, $elem, \%subfields, $run);
+                }
+            }elsif( $fields->{$k}->$_isa('HTML::FormHandler::Field::Compound') ){
+                my %subfields = map { $_->name => $_ } $fields->{$k}->fields;
+
+    use Data::Dumper;
+    use irka;
+    $c->log->debug(Dumper(["BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"]));
+    my @subfields_keys = map { $_->name} $fields->{$k}->fields;
+    irka::loglong(Dumper([ @subfields_keys]));
+    $c->log->debug(Dumper([ @subfields_keys]));
+
+                if('HASH' ne ref $resource->{$k}){
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $k.' should be a HASH reference');
+                    return;
+                }
+                $self->validate_fields($c, $resource->{$k}, \%subfields, $run);            
             }
         }
 

@@ -258,6 +258,14 @@ sub prepare_resource {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid alias_numbers parameter, must be array.");
         return;
     }
+    if(exists $resource->{e164}) {
+        
+       # if( ref $resource->{e164} ne "HASH" || !exists $resource->{e164}->{ac} || !exists $resource->{e164}->{cc} || ){
+        if( ref $resource->{e164} ne "HASH"){
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid primary_number parameter, must be hash with keys "ac", "cc", "sn".');
+            return;
+        }
+    }
     $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
 
     my $form = $self->get_form($c);
