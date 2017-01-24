@@ -40,13 +40,21 @@ sub _item_rs {
         {
             prefetch => ['handle', 'set'],
         });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'set.reseller_id' => $c->user->reseller_id,
         },{
             join => 'set',
         });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'set.contract_id' => $c->user->account_id,
+        },{
+            join => 'set',
+        });
+    } elsif ($c->user->roles eq "subscriber") {
+        return;
     }
     return $item_rs;
 }
