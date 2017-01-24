@@ -1,0 +1,47 @@
+"/[% id %]/": {
+[% not_first = 0 -%]
+
+[% IF col.actions.grep('^GET$') -%]
+[% ',' IF not_first; not_first=1; -%]
+  "get": {
+    "description": "[% col.description.dquote %]",
+    "responses": {
+      "200": {
+        "description": "A list of [% title %].",
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/[% entity %]"
+          }
+        }
+      }
+    }
+  }
+[% END %]
+
+[% IF col.actions.grep('^POST$') -%]
+[% ',' IF not_first; not_first=1; -%]
+  "post": {
+    "description": "Creates a new item of [% title %]",
+    "parameters": [
+      {
+        "name": "bodyparam",
+        "in": "body",
+        "required": true,
+        "schema": {
+          "$ref": "#/definitions/[% entity %]"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "The newly created item or empty",
+        "schema": {
+            "$ref": "#/definitions/[% entity %]"
+        }
+      }
+    }
+  }
+[% END %]
+
+}

@@ -1,0 +1,42 @@
+"[% entity %]": {
+
+  [% req_list = [] %]
+  "type": "object",
+  "properties": {
+
+
+    [% FOR f IN col.fields %]
+      "[% f.name %]": {
+        [% IF f.type_original == "Select" -%]
+          "type": "string",
+          "enum": [ [% FOR e IN f.types.last.match("'.*?'",1); e.replace("'",'"'); ',' UNLESS loop.last; END; %] ],
+        [% ELSIF f.type_original == "Boolean" %]
+          "type": "boolean",
+        [% ELSIF f.types.last == "Number" -%]
+          "type": "number",
+        [% ELSIF f.types.last == "String" || f.type_original == "Text" -%]
+          "type": "string",
+        [% ELSIF f.type_original == "Repeatable" -%]
+          [% # array %]
+        [% ELSE -%]
+          [% # object? %]
+        [% END -%]
+        "description": "[% f.description.dquote %]"
+      }
+      [% "," UNLESS loop.last %]
+      [% req_list.push(f.name) IF f.types.grep('^null$'); %]
+    [% END %]
+
+
+  },
+
+  [% IF req_list.size %]
+  "required": [
+    "[% req_list.join('","') %]"
+  ],
+  [% END %]
+
+  "xml": {
+    "name": "[% entity %]"
+  }
+}

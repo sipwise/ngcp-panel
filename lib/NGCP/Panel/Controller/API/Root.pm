@@ -195,6 +195,7 @@ sub GET : Allow {
 
         $c->stash->{collections}->{$rel} = {
             name => $mod,
+            entity_name => $mod =~ s/s$//r,
             description => $full_mod->api_description,
             fields => $form_fields,
             uploads => $form_fields_upload,
@@ -210,6 +211,8 @@ sub GET : Allow {
         };
 
     }
+
+    use DDP; p $c->stash->{collections};
 
     if ($user_roles{subscriber} || $user_roles{subscriberadmin}) {
         $c->stash(is_subscriber_api => 1);
@@ -235,15 +238,152 @@ sub GET : Allow {
             Content_Language => 'en',
             Content_Type => 'application/json',
         ));
+    elsif ($c->req->params->{swagger}) {
+        $c->detach('swagger');
+        # $c->stash(template => 'api/swagger.tt');
+        # $c->response->headers(HTTP::Headers->new(
+        #     Content_Language => 'en',
+        #     Content_Type => 'application/json',
+        # ));
     } else {
         $c->stash(template => 'api/root.tt');
-        $c->forward($c->view);
+        $c->forward($c->view); # TODO: ??
         $c->response->headers(HTTP::Headers->new(
             Content_Language => 'en',
             Content_Type => 'application/xhtml+xml',
             #$self->collections_link_headers,
         ));
     }
+
+    return;
+}
+
+sub swagger :Private {
+    my ($self, $c) = @_;
+
+    my %paths;
+    my %entities;
+
+    my @chapters = sort (keys %{ $c->stash->{collections} });
+
+    for my $chapter (@chapters) {
+        my $col = $c->stash->{collections}{$chapter};
+        my $p = {};
+        my $title = $col->{name};
+        my $entity = $col->{entity_name};
+
+        if (grep {m/^GET$/} @{ $col->{actions} }) {
+            $p->{get} = {
+                description => $col->{description},
+                responses => {
+                    "200" => {
+                        description => "$title",
+                        schema => {
+                            type => "array",
+                            items => {
+                                '$ref' => "#/definitions/$title",
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        if (grep {m/^POST$/} @{ $col->{actions} }) {
+            $p->{post} = {
+                description => "Creates a new item of $title",
+                parameters => [
+                    {
+                        name => "bodyparam",
+                        in => "body",
+                        required => JSON::true,
+                        schema => {
+                            '$ref' => "#/definitions/$entity",
+                        }
+                    }
+                ],
+                responses => {
+                    "200" => {
+                        description => "The newly created item or empty",
+                        schema => {
+                            type => "array",
+                            items => {
+                                '$ref' => "#/definitions/$entity",
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        #push @paths, $p;
+        $paths{'/'.$chapter.'/'} = $p;
+
+
+        # --------------------------------
+
+        my $e = {
+            type => "object",
+            properties => {},
+            required => [],
+            xml => { name => $entity },
+        };
+
+        # possible values for types: null, (select options), Number, Boolean, Array, Object, String
+        for my $f (@{ $col->{fields} }) {
+            my $p = {};
+            if ($f->{type_original} eq "Select") {
+                $p->{type} = "string";
+                $p->{enum} = [ map {$_->{value}} @{ $f->{enum} // [] } ];
+            } elsif ($f->{type_original} eq "Boolean") {
+                $p->{type} = "boolean";
+            } elsif (grep {m/^Number$/} @{$f->{types}}) {
+                $p->{type} = "number";
+            } elsif ($f->{type_original} eq "Text" || grep {m/^String$/} @{$f->{types}}) {
+                $p->{type} = "string";
+            } elsif ($f->{type_original} eq "Repeatable") {
+                # $p->{type} = "string"; # TODO: Array
+            } else {
+                # $p->{type} = "TODO"; # TODO: object
+            }
+
+            $p->{description} = $f->{description};
+            if (grep {m/^null$/} @{ $f->{types} // [] }) {
+                push @{ $e->{required} }, $f->{name};
+            }
+
+            $e->{properties}{$f->{name}} = $p;
+        }
+
+        $entities{$entity} = $e;
+    }
+
+    my $role = "".$c->user->roles;
+    my $result = {
+      "swagger" => "2.0",
+      "info"=> {
+        "description" => "Sipwise NGCP API (role $role)",
+        "version" => "1.0.0",
+        "title" => "NGCP API",
+        "contact" => {
+          "email" => "foobar\@sipwise.com"
+        }
+      },
+      "basePath" => "/api",
+      "schemes" => [ "https" ],
+      "produces" => [ "application/json" ],
+
+      "paths" => \%paths,
+      "definitions" => \%entities,
+    };
+    use JSON qw/encode_json/;
+
+    $c->response->headers(HTTP::Headers->new(
+        Content_Language => 'en',
+        Content_Type => 'application/json',
+    ));
+    $c->response->body(encode_json($result));
+    $c->response->code(200);
     return;
 }
 
@@ -386,7 +526,11 @@ sub get_field_poperties :Private{
             $name .= '_id';
         }
     }
+    my $enum;
     push(@types, $self->field_to_json($field));
+    if ($field->$_isa('HTML::FormHandler::Field::Select')) {
+        $enum = $field->options;
+    }
     my $desc = undef;
     if($field->element_attr) {
         $desc = $field->element_attr->{title}->[0];
@@ -397,7 +541,8 @@ sub get_field_poperties :Private{
     unless (defined $desc && length($desc) > 0) {
         $desc = 'to be described ...';
     }
-    return { name => $name, description => $desc, types => \@types, type_original => $field->type, readonly => $field->readonly };
+    return { name => $name, description => $desc, types => \@types, type_original => $field->type,
+        readonly => $field->readonly, ($enum ? (enum => $enum) : ()) };
 }
 sub get_collection_properties {
     my ($self, $form) = @_;
