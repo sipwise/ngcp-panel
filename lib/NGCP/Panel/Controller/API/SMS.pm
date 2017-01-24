@@ -117,14 +117,17 @@ sub create_item {
     #        return;
     #    }
     #}
+    $resource->{direction} //= 'out';
+    $resource->{coding} //= '2';
 
     my $rs = $self->item_rs($c);
     my $item = $rs->create({
             subscriber_id => $resource->{subscriber_id},
-            direction => 'out',
+            direction => $resource->{direction},
             caller => $resource->{caller},
             callee => $resource->{callee},
             text => $resource->{text},
+            coding => $resource->{coding},
             $error_msg ? (status => $error_msg) : (),
         });
     return $item;
