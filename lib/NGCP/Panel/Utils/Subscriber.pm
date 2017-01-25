@@ -1011,6 +1011,19 @@ sub terminate {
     my $schema = $c->model('DB');
     $schema->txn_do(sub {
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        if($prov_subscriber) {
+            foreach my $set ($prov_subscriber->voip_cf_destination_sets->all) {
+                my $autoattendant = check_dset_autoattendant_status($set);
+                if ($autoattendant) {
+                    foreach my $map ($set->voip_cf_mappings->all) {
+                        NGCP::Panel::Utils::Events::insert(
+                            c => $c, schema => $schema,
+                            subscriber => $subscriber, type => 'end_ivr',
+                        );
+                    }
+                }
+            }
+        }
         if($prov_subscriber && $prov_subscriber->profile_id) {
             NGCP::Panel::Utils::Events::insert(
                 c => $c, schema => $schema,
