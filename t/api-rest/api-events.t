@@ -218,6 +218,27 @@ my %customer_map = ();
 
 }
 
+{
+    my $customer = _create_customer(
+        type => "sipaccount",
+        );
+    my $subscriber = _create_subscriber($customer,
+        primary_number => { cc => 888, ac => '3'.(scalar keys %subscriber_map), sn => $t },
+        );
+
+    my $call_forwards = set_callforwards($subscriber,{ cfu => {
+                destinations => [
+                    { destination => "5678" },
+                    { destination => "autoattendant", },
+                ],
+            }});
+    _update_subscriber($subscriber, status => 'terminated');
+    _check_event_history("events generated terminating the susbcriber: ",$subscriber->{id},"%ivr",[
+        { subscriber_id => $subscriber->{id}, type => "start_ivr" },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr" },
+    ]);
+}
+
 #SKIP:
 {
 
