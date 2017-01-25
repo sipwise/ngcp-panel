@@ -51,6 +51,14 @@ has_field 'snlength' => (
 
 sub validate {
     my $self = shift;
+
+    use Data::Dumper;
+    use irka;
+    my $ctx = $self->ctx;
+    $ctx->log->debug(Dumper(["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"]));
+    irka::loglong(Dumper($self->field('cc')));
+    $ctx->log->debug(Dumper($self->field('cc')));
+
     my $cc = $self->field('cc')->value;
     my $sn = $self->field('snbase')->value;
     my $snlen = $self->field('snlength')->value;
@@ -63,6 +71,7 @@ sub validate {
     for my $sub_error( keys %sub_errors ) {
         $self->add_error($sub_error);
     }
+
     $self->field('cc')->clear_errors if $self->field('cc');
     $self->field('ac')->clear_errors if $self->field('ac');
     $self->field('snbase')->clear_errors if $self->field('snbase');
