@@ -8,6 +8,7 @@ use NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 use NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 use NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 use NGCP::Panel::Utils::DeviceBootstrap::Snom;
+use NGCP::Panel::Utils::DeviceBootstrap::Grandstream;
 
 sub dispatch{
     my($c, $action, $fdev, $old_identifier) = @_;
@@ -94,6 +95,8 @@ sub get_redirect_processor{
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Polycom->new( params => $params );
     }elsif('redirect_snom' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Snom->new( params => $params );
+    }elsif('redirect_grandstream' eq $bootstrap_method){
+        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Grandstream->new( params => $params );
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }
