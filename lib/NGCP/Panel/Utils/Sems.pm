@@ -310,7 +310,7 @@ sub party_call_control {
         die "missing '$param' parameter'" unless $data->{$param};
     }
 
-    my ($caller, $callee, $callid, $status $token) =
+    my ($caller, $callee, $callid, $status, $token) =
         @{$data}{qw(caller callee callid status token)};
 
     my $service = 'appserver';
