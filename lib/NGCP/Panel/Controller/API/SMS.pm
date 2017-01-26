@@ -101,6 +101,32 @@ sub query_params {
 sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
 
+    my $subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
+            id => $resource->{subscriber_id},
+            status => 'active'
+        })->first;
+    unless($subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber");
+        return;
+    }
+
+    my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
+    try {
+        unless(NGCP::Panel::Utils::SMS::perform_prepaid_billing(c => $c,
+            prov_subscriber => $subscriber->provisioning_voip_subscriber,
+            parts => $parts,
+            caller => $resource->{caller},
+            callee => $resource->{callee}
+        ) != 1) {
+            $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send sms");
+            return;
+        }
+    } catch($e) {
+        $c->log->error("Failed to determine credit: $e");
+        $self->error($c, HTTP_PAYMENT_REQUIRED, "Failed to determine credit");
+        return;
+    }
+
     my $error_msg = "";
 
     NGCP::Panel::Utils::SMS::send_sms(

@@ -3,6 +3,11 @@ package NGCP::Panel::Utils::SMS;
 use Sipwise::Base;
 use LWP::UserAgent;
 use URI;
+use POSIX;
+use UUID;
+
+use NGCP::Rating::Inew::SmsSession;
+use NGCP::Panel::Utils::Utf8;
 
 sub send_sms {
     my (%args) = @_;
@@ -15,6 +20,17 @@ sub send_sms {
 
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return; };
+    }
+
+    unless(defined $coding) {
+        # if unicode, we have to use utf8 encoding, limiting our
+        # text length to 70; otherwise send as default
+        # encoding, allowing 160 chars
+        if(NGCP::Panel::Utils::Utf8::is_within_ascii($text)) {
+            $coding = 0;
+        } else {
+            $coding = 2;
+        }
     }
 
     my $schema = $c->config->{sms}{schema};
@@ -32,7 +48,7 @@ sub send_sms {
     my $uri = URI->new($fullpath);
     $uri->query_form(
             charset => "utf-8",
-            coding => $coding // "2",
+            coding => $coding,
             user => "$user",
             pass => "$pass",
             text => $text,
@@ -135,6 +151,90 @@ sub _glob_matches {
 
     use Text::Glob;
     return !!Text::Glob::match_glob($glob, $string);
+}
+
+sub get_number_of_parts {
+    my $text = shift;
+    my $maxlen; 
+    if(NGCP::Panel::Utils::Utf8::is_within_ascii($text)) {
+        $maxlen = 160;
+    } else {
+        $maxlen = 70;
+    }
+    return ceil(length($text) / $maxlen);
+}
+
+sub perform_prepaid_billing {
+    my (%args) = @_;
+    my $c = $args{c};
+    my $prov_subscriber = $args{prov_subscriber};
+    my $parts = $args{parts};
+    my $caller = $args{caller};
+    my $callee = $args{callee};
+
+    my ($uuid, $session_id);
+    UUID::generate($uuid);
+    UUID::unparse($uuid, $session_id);
+
+    my ($prepaid_lib, $is_prepaid);
+    my $prepaid_pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+        c => $c, attribute => 'prepaid_library',
+        prov_domain => $prov_subscriber->domain,
+    );
+    if($prepaid_pref_rs && $prepaid_pref_rs->first) {
+        $prepaid_lib = $prepaid_pref_rs->first->value;
+    }
+
+    $prepaid_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'prepaid',
+        prov_subscriber => $prov_subscriber,
+    );
+    if($prepaid_pref_rs && $prepaid_pref_rs->first && $prepaid_pref_rs->first->value) {
+        $is_prepaid = 1;
+    } else {
+        $is_prepaid = 0;
+    }
+
+    # currently only inew rating supported
+    return unless($is_prepaid && $prepaid_lib eq "libinewrate");
+
+    my $amqr = NGCP::Rating::Inew::SmsSession::init(
+        $c->config->{libinewrate}->{soap_uri},
+        $c->config->{libinewrate}->{openwire_uri},
+    );
+    die "Failed to create sms amqr handle" unless $amqr;
+    # Reserve credit for each part, and then commit each reservation.
+    # If we can charge multiple times within one session - perfect.
+    # Otherwise we have to create one session per part, store it in an
+    # array, then after all reservations were successful, commit each
+    # of them!
+    my @sessions = ();
+    for(my $i = 0; $i < $parts; ++$i) {
+        my $sess = NGCP::Rating::Inew::SmsSession::session_create(
+            $amqr, $session_id."-".$i, $caller, $callee, sub {
+        });
+        die "Failed to create sms rating session" unless($sess);
+        # TODO: if session is blocked, $sess is 0 anyways, so the
+        # line below would never execute
+        die "SMS rating session is blocked" if(NGCP::Rating::Inew::SmsSession::session_blocked($sess));
+        if(NGCP::Rating::Inew::SmsSession::session_sms_reserve($sess)) {
+            push @sessions, $sess;
+        } else {
+            last;
+        }
+    }
+    if(@sessions == $parts) {
+        foreach my $sess(@sessions) {
+            NGCP::Rating::Inew::SmsSession::session_sms_commit($sess);
+        }
+    } else {
+        foreach my $sess(@sessions) {
+            NGCP::Rating::Inew::SmsSession::session_sms_discard($sess);
+        }
+        die "Failed to reserve credit for all sms parts";
+    }
+
+    return 1;
 }
 
 1;
