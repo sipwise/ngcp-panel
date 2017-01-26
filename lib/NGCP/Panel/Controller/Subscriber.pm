@@ -3838,7 +3838,7 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
                 protocol => $form->field('protocol')->value,
                 from_pattern => $form->field('from_pattern') ? $form->field('from_pattern')->value : undef,
             });
-            NGCP::Panel::Utils::Kamailio::address_reload($c);
+            NGCP::Panel::Utils::Kamailio::trusted_reload($c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully created trusted source'),
@@ -3915,7 +3915,7 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
                 protocol => $form->field('protocol')->value,
                 from_pattern => $form->field('from_pattern') ? $form->field('from_pattern')->value : undef,
             });
-            NGCP::Panel::Utils::Kamailio::address_reload($c);
+            NGCP::Panel::Utils::Kamailio::trusted_reload($c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated trusted source'),
@@ -3947,7 +3947,7 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{trusted}->delete;
-        NGCP::Panel::Utils::Kamailio::address_reload($c);
+        NGCP::Panel::Utils::Kamailio::trusted_reload($c);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{trusted}->get_inflated_columns },
