@@ -254,11 +254,12 @@ has_field 'bootstrap_method' => (
         { label => 'Yealink', value => 'redirect_yealink' },
         { label => 'Polycom', value => 'redirect_polycom' },
         { label => 'Snom', value => 'redirect_snom' },
+        { label => 'Grandstream', value => 'redirect_grandstream' },
     ],
     default => 'http',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom.'],
+        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom, redirect_grandstream.'],
         javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
     },
 );
@@ -268,7 +269,7 @@ has_field 'bootstrap_uri' => (
     label => 'Bootstrap URI',
     default => '',
     #we don't show this field for polycom, because polycom doesn't support now any possibility to configure provisioning url via API
-    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http ngcp-bootstrap-config-redirect_panasonic ngcp-bootstrap-config-redirect_yealink ngcp-bootstrap-config-redirect_snom/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http ngcp-bootstrap-config-redirect_panasonic ngcp-bootstrap-config-redirect_yealink ngcp-bootstrap-config-redirect_snom ngcp-bootstrap-config-redirect_grandstream],
     element_attr => {
         rel => ['tooltip'],
         title => ['Custom provisioning server URI.'],
