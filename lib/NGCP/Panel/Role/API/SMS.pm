@@ -74,9 +74,10 @@ sub check_resource{
         return;
     }
 
-    my $b_subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
+    my $b_subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
             id => $resource->{subscriber_id},
-        });
+            status => 'active',
+        })->first;
     unless($b_subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
         return;
@@ -86,6 +87,17 @@ sub check_resource{
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
         return;
     }
+    my $lock = NGCP::Panel::Utils::Subscriber::get_provisoning_voip_subscriber_lock_level(
+        c => $c,
+        prov_subscriber => $subscriber
+    );
+    $lock //= 0;
+    my $lockstr = NGCP::Panel::Utils::Subscriber::get_lock_string($lock);
+    unless($lockstr eq 'none') {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber is locked.");
+        return;
+    }
+
     $resource->{subscriber_id} = $subscriber->id;
 
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {

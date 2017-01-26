@@ -4,6 +4,8 @@ use Sipwise::Base;
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::SMS/;
 
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::Utf8;
+use NGCP::Panel::Utils::SMS;
 
 
 __PACKAGE__->set_config();
@@ -101,13 +103,49 @@ sub query_params {
 sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
 
+    my $subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
+            id => $resource->{subscriber_id},
+        });
+    unless($subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber");
+        return;
+    }
+    unless($subscriber->voip_subscriber->status eq 'active') {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber is not active");
+        return;
+    }
+
+    my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
+    try {
+        unless(NGCP::Panel::Utils::SMS::perform_prepaid_billing(c => $c,
+            prov_subscriber => $subscriber,
+            parts => $parts,
+            caller => $resource->{caller},
+            callee => $resource->{callee}
+        )) {
+            $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send sms");
+            return;
+        }
+    } catch($e) {
+        $c->log->error("Failed to determine credit: $e");
+        $self->error($c, HTTP_PAYMENT_REQUIRED, "Failed to determine credit");
+        return;
+    }
+
     my $error_msg = "";
 
+    my $coding;
+    if(NGCP::Panel::Utils::Utf8::is_within_ascii($resource->{text})) {
+        $coding = 0;
+    } else {
+        $coding = 2;
+    }
     NGCP::Panel::Utils::SMS::send_sms(
             c => $c,
             caller => $resource->{caller},
             callee => $resource->{callee},
             text => $resource->{text},
+            coding => $coding,
             err_code => sub {$error_msg = shift;},
         );
 
@@ -125,6 +163,7 @@ sub create_item {
             caller => $resource->{caller},
             callee => $resource->{callee},
             text => $resource->{text},
+            coding => $coding,
             $error_msg ? (status => $error_msg) : (),
         });
     return $item;
