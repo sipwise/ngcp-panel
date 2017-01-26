@@ -86,14 +86,14 @@ sub flush {
 EOF
 }
 
-sub address_reload {
+sub trusted_reload {
     my ($c) = @_;
 
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
     my $ret = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
-<methodName>permissions.addressReload</methodName>
+<methodName>permissions.trustedReload</methodName>
 </methodCall>
 EOF
 }
