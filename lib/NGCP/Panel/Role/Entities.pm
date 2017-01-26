@@ -128,6 +128,7 @@ sub post {
         last unless $self->check_resource($c, undef, undef, $resource, $form, $process_extras);
 
         my $item = $self->create_item($c, $resource, $form, $process_extras);
+        last unless $item;
 
         $guard->commit;
 
