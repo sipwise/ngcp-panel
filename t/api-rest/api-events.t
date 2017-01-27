@@ -118,8 +118,8 @@ my $custcontact = JSON::from_json($res->decoded_content);
 my %subscriber_map = ();
 my %customer_map = ();
 
-#goto SKIP;
-{
+goto SKIP;
+{ #end_ivr:
     my $customer = _create_customer(
         type => "sipaccount",
         );
@@ -147,7 +147,7 @@ my %customer_map = ();
 #$t = time;
 
 #SKIP:
-{
+{ #end_ivr:
 
     my $customer = _create_customer(
         type => "sipaccount",
@@ -218,7 +218,7 @@ my %customer_map = ();
 
 }
 
-{
+{ #end_ivr:
     my $customer = _create_customer(
         type => "sipaccount",
         );
@@ -233,20 +233,20 @@ my %customer_map = ();
                 ],
             }});
     _update_subscriber($subscriber, status => 'terminated');
-    _check_event_history("events generated terminating the susbcriber: ",$subscriber->{id},"%ivr",[
+    _check_event_history("events generated terminating the subscriber: ",$subscriber->{id},"%ivr",[
         { subscriber_id => $subscriber->{id}, type => "start_ivr" },
         { subscriber_id => $subscriber->{id}, type => "end_ivr" },
     ]);
 }
 
 #SKIP:
-{
+{ #pilot_primary_number, primary_number:
 
     my $customer = _create_customer(
         type => "pbxaccount",
         );
     my $cc = "888";
-    my $pilot_ac = undef; #'3'.(scalar keys %subscriber_map);
+    my $pilot_ac = 4; #'3'.(scalar keys %subscriber_map);
     my $pilot_sn = $t.(scalar keys %subscriber_map);
     my $pilot_subscriber = _create_subscriber($customer,
         primary_number => { cc => $cc, ac => $pilot_ac, sn => $pilot_sn },
@@ -254,10 +254,69 @@ my %customer_map = ();
         profile_id => $subscriberprofile->{id},
         profile_set_id => $subscriberprofileset->{id},
         );
-    my $ac = undef; #'3'.(scalar keys %subscriber_map);
+    my $ac = 4; #'3'.(scalar keys %subscriber_map);
     my $sn = ($t+1).(scalar keys %subscriber_map);
     my $subscriber = _create_subscriber($customer,
         primary_number => { cc => $cc, ac => $ac, sn => $sn },
+        profile_id => $subscriberprofile->{id},
+        profile_set_id => $subscriberprofileset->{id},
+        );
+    #_update_subscriber($subscriber,
+    _check_event_history("events when creating a pbx pilot subscriber: ",$pilot_subscriber->{id},"start_profile",[
+        { subscriber_id => $pilot_subscriber->{id}, type => "start_profile",
+          subscriber_profile_id => $subscriberprofile->{id}, subscriber_profile_name => $subscriberprofile->{name},
+          subscriber_profile_set_id => $subscriberprofileset->{id}, subscriber_profile_set_name => $subscriberprofileset->{name},
+          primary_number_cc => $cc, primary_number_ac => $pilot_ac, primary_number_sn => $pilot_sn,
+          pilot_subscriber_id => $pilot_subscriber->{id},
+          pilot_subscriber_profile_id => $subscriberprofile->{id}, pilot_subscriber_profile_name => $subscriberprofile->{name},
+          pilot_subscriber_profile_set_id => $subscriberprofileset->{id}, pilot_subscriber_profile_set_name => $subscriberprofileset->{name},
+          pilot_primary_number_cc => $cc, pilot_primary_number_ac => $pilot_ac, pilot_primary_number_sn => $pilot_sn,
+        },
+    ]);
+    _check_event_history("events when creating a pbx subscriber: ",$subscriber->{id},"start_profile",[
+        { subscriber_id => $subscriber->{id}, type => "start_profile",
+          subscriber_profile_id => $subscriberprofile->{id}, subscriber_profile_name => $subscriberprofile->{name},
+          subscriber_profile_set_id => $subscriberprofileset->{id}, subscriber_profile_set_name => $subscriberprofileset->{name},
+          primary_number_cc => $cc, primary_number_ac => $ac, primary_number_sn => $sn,
+          pilot_subscriber_id => $pilot_subscriber->{id},
+          pilot_subscriber_profile_id => $subscriberprofile->{id}, pilot_subscriber_profile_name => $subscriberprofile->{name},
+          pilot_subscriber_profile_set_id => $subscriberprofileset->{id}, pilot_subscriber_profile_set_name => $subscriberprofileset->{name},
+          pilot_primary_number_cc => $cc, pilot_primary_number_ac => $pilot_ac, pilot_primary_number_sn => $pilot_sn,
+        },
+    ]);
+
+}
+
+SKIP:
+{ #pilot_first_non_primary_alias, susbcriber_first_non_primary_alias:
+
+    my $customer = _create_customer(
+        type => "pbxaccount",
+        );
+    my $cc = "888";
+    my $ac = 5; #'3'.(scalar keys %subscriber_map);
+    my $sn = $t.(scalar keys %subscriber_map);
+    my $pilot_aliases = [
+        { cc => $cc, ac => $ac, sn => $sn.'0001' },
+        { cc => $cc, ac => $ac, sn => $sn.'0002' },
+        { cc => $cc, ac => $ac, sn => $sn.'0003' },
+        { cc => $cc, ac => $ac, sn => $sn.'0004' },
+        { cc => $cc, ac => $ac, sn => $sn.'0005' },
+    ];
+    my $pilot_subscriber = _create_subscriber($customer,
+        primary_number => { cc => $cc, ac => $ac, sn => $sn },
+        alias_numbers => $pilot_aliases,
+        profile_id => $subscriberprofile->{id},
+        profile_set_id => $subscriberprofileset->{id},
+        is_pbx_pilot => JSON::true,
+        );
+    my $ext = '1';
+    my $aliases = [
+        { cc => $cc, ac => $ac, sn => $sn.'0005' },
+    ];
+    my $subscriber = _create_subscriber($customer,
+        pbx_extension => $ext,
+        alias_numbers => $aliases,
         profile_id => $subscriberprofile->{id},
         profile_set_id => $subscriberprofileset->{id},
         );

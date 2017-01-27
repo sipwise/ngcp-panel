@@ -617,6 +617,11 @@ sub update_item {
     }
     delete $resource->{email};
 
+    my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+        c => $c,
+        schema => $schema,
+        subscriber => $subscriber,
+    );
     try {
         NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
             c => $c,
@@ -680,9 +685,12 @@ sub update_item {
         }
         NGCP::Panel::Utils::Events::insert(
             c => $c, schema => $schema, subscriber => $subscriber,
-            type => $type, old => $old_profile, new => $prov_subscriber->profile_id
+            type => $type, old => $old_profile, new => $prov_subscriber->profile_id,
+            %$aliases_before,
         );
     }
+    #NGCP::Panel::Utils::Events::insert_deferred(c => $c, schema => $schema, events_to_create => );
+    #ZZZ
 
     NGCP::Panel::Utils::Subscriber::update_preferences(
         c => $c,

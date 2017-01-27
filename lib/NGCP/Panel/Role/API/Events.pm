@@ -66,6 +66,10 @@ sub hal_from_item {
     $resource{pilot_subscriber_profile_set_id} = NGCP::Panel::Utils::Events::get_relation_value(c => $c, event => $item, type => 'pilot_subscriber_profile_set_id');
     $resource{pilot_subscriber_profile_set_name} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'pilot_subscriber_profile_set_name');
 
+    $resource{first_non_primary_alias_username_before} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'first_non_primary_alias_username_before');
+    $resource{first_non_primary_alias_username_after} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'first_non_primary_alias_username_after');
+    $resource{pilot_first_non_primary_alias_username_before} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'pilot_first_non_primary_alias_username_before');
+    $resource{pilot_first_non_primary_alias_username_after} = NGCP::Panel::Utils::Events::get_tag_value(c => $c, event => $item, type => 'pilot_first_non_primary_alias_username_after');
 
     my $hal = Data::HAL->new(
         links => [
