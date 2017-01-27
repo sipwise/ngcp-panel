@@ -2056,6 +2056,10 @@ msgstr ""
 "Lista di indirizzi email separati da virgola a cui inviare notiche in caso "
 "la soglia venga superata."
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Comma-separated list of e-mail addresses for notification."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "Company"
@@ -4747,6 +4751,14 @@ msgstr "Blocca frode giornaliera"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Fraud daily notify"
 msgstr "Notifica frode giornaliera"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Fraud detection threshold per day in cents."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Fraud detection threshold per month in cents."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Fraud settings successfully changed!"

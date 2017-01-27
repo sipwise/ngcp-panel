@@ -1940,6 +1940,10 @@ msgstr ""
 "Lista separada por comas de direcciones de correo electrónico a las que "
 "mandar notificaciones cuando el umbral se rebasa."
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Comma-separated list of e-mail addresses for notification."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "Company"
@@ -4600,6 +4604,14 @@ msgstr "Antifraude diario: Bloqueo"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Fraud daily notify"
 msgstr "Antifraude diario: Notificación"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Fraud detection threshold per day in cents."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Fraud detection threshold per month in cents."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Fraud settings successfully changed!"
