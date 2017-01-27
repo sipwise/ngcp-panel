@@ -30,7 +30,9 @@ sub _item_rs {
             'contract.id' => $c->user->account_id,
         });
     } elsif ($c->user->roles eq "subscriber") {
-        return;
+        $item_rs = $item_rs->search({
+            'voip_subscriber.uuid' => $c->user->uuid,
+        });
     }
     return $item_rs;
 }

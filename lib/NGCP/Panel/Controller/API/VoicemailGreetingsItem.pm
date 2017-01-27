@@ -11,7 +11,7 @@ sub allowed_methods{
 }
 
 sub allowed_roles {
-    return qw/admin reseller subscriberadmin/;
+    return qw/admin reseller subscriberadmin subscriber/;
 }
 
 sub _set_config{
