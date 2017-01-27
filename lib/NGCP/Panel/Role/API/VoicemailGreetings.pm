@@ -61,7 +61,9 @@ sub _item_rs {
                 { 'voip_subscriber' => 'contract' } } },
         });
     } elsif ($c->user->roles eq "subscriber") {
-        return;  # forbidden
+        $item_rs = $item_rs->search_rs({
+            'voip_subscriber.uuid' => $c->user->uuid,
+        });
     }
     return $item_rs;
 }
@@ -113,6 +115,10 @@ sub check_resource{
             'contract.id' => $c->user->account_id,
         },{
             join => { 'contract' => 'contact'},
+        });
+    } elsif ($c->user->roles eq 'subscriber') {
+        $subscriber_rs = $subscriber_rs->search({
+            'me.uuid' => $c->user->uuid,
         });
     }
     my $billing_subscriber = $subscriber_rs->first;

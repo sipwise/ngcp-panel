@@ -36,7 +36,9 @@ sub _item_rs {
             join => { mailboxuser => { provisioning_voip_subscriber => { voip_subscriber => 'contract' } } }
         });
     } elsif ($c->user->roles eq "subscriber") {
-        return;  # forbidden
+        $item_rs = $item_rs->search({
+            'voip_subscriber.uuid' => $c->user->uuid,
+        });
     }
     return $item_rs;
 }
@@ -73,8 +75,6 @@ sub hal_from_item {
 
 sub resource_from_item {
     my ($self, $c, $item, $form) = @_;
-
-    $form //= $self->get_form($c);
 
     my %resource = ();
     $resource{id} = int($item->id);

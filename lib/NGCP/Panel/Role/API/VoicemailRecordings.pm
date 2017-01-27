@@ -28,6 +28,10 @@ sub _item_rs {
         },{
             join => { mailboxuser => { provisioning_voip_subscriber => { voip_subscriber => 'contract' } } }
         });
+    } elsif ($c->user->roles eq "subscriber") {
+        $item_rs = $item_rs->search({
+            'voip_subscriber.uuid' => $c->user->uuid,
+        });
     }
     return $item_rs;
 }
