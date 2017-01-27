@@ -138,4 +138,25 @@ has_field 'pilot_subscriber_profile_set_name' => (
     required => 0,
 );
 
+has_field 'first_non_primary_alias_username_before' => (
+    type => 'Text',
+    label => 'The subscriber\'s non-primary alias with lowest id, before number updates during the operation.',
+    required => 0,
+);
+has_field 'first_non_primary_alias_username_after' => (
+    type => 'Text',
+    label => 'The subscriber\'s non-primary alias with lowest id, after number updates during the operation.',
+    required => 0,
+);
+has_field 'pilot_first_non_primary_alias_username_before' => (
+    type => 'Text',
+    label => 'The non-primary alias with lowest id of the subscriber\'s pilot subscriber, before number updates during the operation.',
+    required => 0,
+);
+has_field 'pilot_first_non_primary_alias_username_after' => (
+    type => 'Text',
+    label => 'The non-primary alias with lowest id of the subscriber\'s pilot subscriber, after number updates during the operation.',
+    required => 0,
+);
+
 1;
