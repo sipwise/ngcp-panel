@@ -2363,20 +2363,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
                 $prov_subscriber->update($prov_params);
 
-                if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
-                    my $type;
-                    if(defined $prov_subscriber->profile_id && defined $old_profile) {
-                        $type = "update_profile";
-                    } elsif(defined $prov_subscriber->profile_id) {
-                        $type = "start_profile";
-                    } else {
-                        $type = "end_profile";
-                    }
-                    NGCP::Panel::Utils::Events::insert(
-                        c => $c, schema => $schema, subscriber => $subscriber,
-                        type => $type, old => $old_profile, new => $prov_subscriber->profile_id
-                    );
-                }
                 my $new_group_ids = defined $form->value->{group_select} ?
                     decode_json($form->value->{group_select}) : [];
                 NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
@@ -2410,6 +2396,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 } elsif($old_status eq 'locked' && $subscriber->status eq 'active') {
                     $form->values->{lock} ||= 0; # update lock below
                 }
+
+                my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+                    c => $c,
+                    schema => $schema,
+                    subscriber => $subscriber,
+                );
 
                 if(exists $form->params->{alias_select} && $c->stash->{pilot}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
@@ -2524,15 +2516,23 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     level => $form->values->{lock},
                 ) if ($subscriber->provisioning_voip_subscriber);
 
-                #if($lock->first) {
-                #    if ($form->values->{lock} == 0) {
-                #        $lock->delete;
-                #    } else {
-                #        $lock->first->update({ value => $form->values->{lock} });
-                #    }
-                #} elsif($form->values->{lock} > 0) {
-                #    $lock->create({ value => $form->values->{lock} });
-                #}
+                if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
+                    my $type;
+                    if(defined $prov_subscriber->profile_id && defined $old_profile) {
+                        $type = "update_profile";
+                    } elsif(defined $prov_subscriber->profile_id) {
+                        $type = "start_profile";
+                    } else {
+                        $type = "end_profile";
+                    }
+                    NGCP::Panel::Utils::Events::insert(
+                        c => $c, schema => $schema, subscriber => $subscriber,
+                        type => $type, old => $old_profile, new => $prov_subscriber->profile_id,
+                        %$aliases_before,
+                    );
+                }
+                #ready for number change events here
+
             });
             delete $c->session->{created_objects}->{group};
             NGCP::Panel::Utils::Message::info(
@@ -2755,6 +2755,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 }
                 last SWITCH;
             };
+
             # default
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
