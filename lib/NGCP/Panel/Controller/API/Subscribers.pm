@@ -13,6 +13,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::Events qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use UUID;
@@ -375,6 +376,7 @@ sub POST :Allow {
             UUID::generate($uuid_bin);
             UUID::unparse($uuid_bin, $uuid_string);
 
+            my $event_context = {};
             $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                 c => $c,
                 schema => $schema,
@@ -382,6 +384,7 @@ sub POST :Allow {
                 params => $resource,
                 preferences => $preferences,
                 admin_default => 0,
+                event_context => $event_context,
             );
             if($resource->{status} eq 'locked') {
                 NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
@@ -408,7 +411,7 @@ sub POST :Allow {
                 customer     => $customer,
                 subscriber   => $subscriber,
             );
-
+            XXXXX
         } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
             $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
             $c->log->error("failed to create subscriber, number $1 already exists"); # TODO: user, message, trace, ...

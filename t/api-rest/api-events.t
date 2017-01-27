@@ -233,7 +233,7 @@ my %customer_map = ();
                 ],
             }});
     _update_subscriber($subscriber, status => 'terminated');
-    _check_event_history("events generated terminating the susbcriber: ",$subscriber->{id},"%ivr",[
+    _check_event_history("events generated terminating the subscriber: ",$subscriber->{id},"%ivr",[
         { subscriber_id => $subscriber->{id}, type => "start_ivr" },
         { subscriber_id => $subscriber->{id}, type => "end_ivr" },
     ]);
