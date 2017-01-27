@@ -12,6 +12,8 @@ sub insert {
     my $subscriber = $params{subscriber};
     my $old = $params{old};
     my $new = $params{new};
+    my $old_aliases = $params{old_aliases};
+    my $old_pilot_aliases = $params{old_pilot_aliases};
 
     #reload it:
     $subscriber = $schema->resultset('voip_subscribers')->find({
@@ -36,7 +38,7 @@ sub insert {
         exported_at => undef,
     });
 
-    save_e164(
+    save_voip_number(
         schema => $schema,
         event => $event,
         number => $subscriber->primary_number,
@@ -66,6 +68,110 @@ sub insert {
         relations_rs => $relations_rs,
     );
 
+    save_first_non_primary_alias(
+        schema => $schema,
+        event => $event,
+        aliases => $old_aliases,
+        types_prefix => '',
+        types_suffix => '_before',
+        now_hires => $now_hires,
+        tags_rs => $tags_rs,
+    );
+    save_first_non_primary_alias(
+        schema => $schema,
+        event => $event,
+        prov_subscriber => $prov_subscriber,
+        types_prefix => '',
+        types_suffix => '_after',
+        now_hires => $now_hires,
+        tags_rs => $tags_rs,
+    );
+
+    my $pilot_subscriber = _get_pilot_subscriber(
+        c => $c,
+        schema => $schema,
+        subscriber => $subscriber,
+        customer => $customer,
+        prov_subscriber => $prov_subscriber,
+    );
+    if ($pilot_subscriber) {
+        $event->create_related("relation_data", {
+            relation_id => $relations_rs->find({ type => 'pilot_subscriber_id' })->id,
+            val => $pilot_subscriber->id,
+            event_timestamp => $now_hires,
+        });
+        my $pilot_prov_subscriber = $pilot_subscriber->provisioning_voip_subscriber;
+        save_voip_number(
+            schema => $schema,
+            event => $event,
+            number => $pilot_subscriber->primary_number,
+            types_prefix => 'pilot_primary_number_',
+            now_hires => $now_hires,
+            tags_rs => $tags_rs,
+            relations_rs => $relations_rs,
+        );
+        save_subscriber_profile(
+            schema => $schema,
+            event => $event,
+            subscriber_profile => ($pilot_prov_subscriber ? $pilot_prov_subscriber->voip_subscriber_profile : undef),
+            types_prefix => 'pilot_subscriber_profile_',
+            now_hires => $now_hires,
+            tags_rs => $tags_rs,
+            relations_rs => $relations_rs,
+        );
+
+        save_subscriber_profile_set(
+            schema => $schema,
+            event => $event,
+            subscriber_profile_set => ($pilot_prov_subscriber ? $pilot_prov_subscriber->voip_subscriber_profile_set : undef),
+            types_prefix => 'pilot_subscriber_profile_set_',
+            now_hires => $now_hires,
+            tags_rs => $tags_rs,
+            relations_rs => $relations_rs,
+        );
+
+        save_first_non_primary_alias(
+            schema => $schema,
+            event => $event,
+            aliases => $old_pilot_aliases,
+            types_prefix => 'pilot_',
+            types_suffix => '_before',
+            now_hires => $now_hires,
+            tags_rs => $tags_rs,
+        );
+        save_first_non_primary_alias(
+            schema => $schema,
+            event => $event,
+            prov_subscriber => $pilot_prov_subscriber,
+            types_prefix => 'pilot_',
+            types_suffix => '_after',
+            now_hires => $now_hires,
+            tags_rs => $tags_rs,
+        );
+    }
+
+}
+
+sub _get_pilot_subscriber {
+    my %params = @_;
+    my ($c,
+        $schema,
+        $subscriber,
+        $customer,
+        $prov_subscriber,
+        $now_hires) = @params{qw/
+        c
+        schema
+        subscriber
+        customer
+        prov_subscriber
+        now_hires
+    /};
+    $schema //= $c->model('DB');
+    $now_hires //= NGCP::Panel::Utils::DateTime::current_local_hires;
+    $customer //= $subscriber->contract;
+    $prov_subscriber //= $subscriber->provisioning_voip_subscriber;
+    my $pilot_subscriber = undef;
     my $bm_actual = get_actual_billing_mapping(c => $c,schema => $schema, contract => $customer, now => $now_hires);
     if ($bm_actual->billing_mappings->first->product->class eq 'pbxaccount') {
         my $pilot_subscriber;
@@ -78,48 +184,11 @@ sub insert {
                 join => 'provisioning_voip_subscriber',
             })->first;
         }
-
-        if ($pilot_subscriber) {
-            $event->create_related("relation_data", {
-                relation_id => $relations_rs->find({ type => 'pilot_subscriber_id' })->id,
-                val => $pilot_subscriber->id,
-                event_timestamp => $now_hires,
-            });
-            my $pilot_prov_subscriber = $pilot_subscriber->provisioning_voip_subscriber;
-            save_e164(
-                schema => $schema,
-                event => $event,
-                number => $pilot_subscriber->primary_number,
-                types_prefix => 'pilot_primary_number_',
-                now_hires => $now_hires,
-                tags_rs => $tags_rs,
-                relations_rs => $relations_rs,
-            );
-            save_subscriber_profile(
-                schema => $schema,
-                event => $event,
-                subscriber_profile => ($pilot_prov_subscriber ? $pilot_prov_subscriber->voip_subscriber_profile : undef),
-                types_prefix => 'pilot_subscriber_profile_',
-                now_hires => $now_hires,
-                tags_rs => $tags_rs,
-                relations_rs => $relations_rs,
-            );
-
-            save_subscriber_profile_set(
-                schema => $schema,
-                event => $event,
-                subscriber_profile_set => ($pilot_prov_subscriber ? $pilot_prov_subscriber->voip_subscriber_profile_set : undef),
-                types_prefix => 'pilot_subscriber_profile_set_',
-                now_hires => $now_hires,
-                tags_rs => $tags_rs,
-                relations_rs => $relations_rs,
-            );
-        }
     }
-
+    return $pilot_subscriber;
 }
 
-sub save_e164 {
+sub save_voip_number {
     my %params = @_;
     my ($schema,
         $event,
@@ -236,6 +305,107 @@ sub save_subscriber_profile_set {
     }
 }
 
+sub save_first_non_primary_alias {
+    my %params = @_;
+    my ($schema,
+        $event,
+        $aliases,
+        $prov_subscriber,
+        $types_prefix,
+        $types_suffix,
+        $now_hires,
+        $tags_rs) = @params{qw/
+        schema
+        event
+        aliases
+        prov_subscriber
+        types_prefix
+        types_suffix
+        now_hires
+        tags_rs
+    /};
+    my $alias_username = undef;
+    if ($aliases) {
+        #my $alias = shift(sort { $a->{is_primary} <=> $b->{is_primary} || $a->{id} <=> $b->{id}; } @$aliases);
+        my $alias = $aliases->[0];
+        $alias_username = $alias->{username} if $alias;
+    } elsif ($prov_subscriber) {
+        my $alias = _get_aliases_sorted_rs($prov_subscriber)->first;
+        $alias_username = $alias->username if $alias;
+    }
+    if ($alias_username) {
+        $tags_rs //= $schema->resultset('events_tag');
+        $event->create_related("tag_data", {
+            tag_id => $tags_rs->find({ type => $types_prefix.'first_non_primary_alias_username'.$types_suffix })->id,
+            val => $alias_username,
+            event_timestamp => $now_hires,
+        });
+    }
+
+    #if ($aliases) {
+    #    my $alias_username = undef;
+    #    if ('ARRAY' eq ref $aliases) {
+    #        #my $alias = shift(sort { $a->{is_primary} <=> $b->{is_primary} || $a->{id} <=> $b->{id}; } @$aliases);
+    #        my $alias = $aliases->[0];
+    #        $alias_username = $alias->{username} if $alias;
+    #    } else {
+    #        _get_aliases_sorted_rs(
+    #        my $alias = $aliases->search(undef,{
+    #            order_by => { -asc => ['voip_dbaliases.is_primary', 'voip_dbaliases.id'] },
+    #        })->first;
+    #        $alias_username = $alias->username if $alias;
+    #    }
+    #    if ($alias_username) {
+    #        $tags_rs //= $schema->resultset('events_tag');
+    #        $event->create_related("tag_data", {
+    #            tag_id => $tags_rs->find({ type => $types_prefix.'first_non_primary_alias_username'.$types_suffix })->id,
+    #            val => $alias_username,
+    #            event_timestamp => $now_hires,
+    #        });
+    #    }
+    #}
+
+}
+
+sub _get_aliases_sorted_rs {
+    my $prov_subscriber = shift;
+    return $prov_subscriber->voip_dbaliases->search_rs({
+        is_primary => 0,
+    },{
+        #order_by => { -asc => ['is_primary', 'id'] },
+        order_by => { -asc => 'x.is_primary' },
+    });
+}
+
+sub get_aliases_snapshot {
+    my %params = @_;
+    my $c = $params{c};
+    my $schema = $params{schema} // $c->model('DB');
+    my @aliases = ();
+    my @pilot_aliases = ();
+    my $subscriber = $schema->resultset('voip_subscribers')->find({
+        id => $params{subscriber_id},
+    });
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+    foreach my $alias (_get_aliases_sorted_rs($prov_subscriber)->all) {
+        push(@aliases,{ $alias->get_inflated_columns });
+    }
+    my $pilot_subscriber = _get_pilot_subscriber(
+        c => $c,
+        schema => $schema,
+        subscriber => $subscriber,
+        #customer => $customer,
+        prov_subscriber => $prov_subscriber,
+    );
+    if ($pilot_subscriber) {
+        my $pilot_prov_subscriber = $pilot_subscriber->provisioning_voip_subscriber;
+        foreach my $alias (_get_aliases_sorted_rs($pilot_prov_subscriber)->all) {
+            push(@pilot_aliases,{ $alias->get_inflated_columns });
+        }
+    }
+    return { old_aliases => \@aliases, old_pilot_aliases => \@pilot_aliases };
+}
+
 sub get_actual_billing_mapping {
     my %params = @_;
     my ($c,$schema,$contract,$now) = @params{qw/c schema contract now/};
@@ -280,5 +450,3 @@ sub get_tag_value {
 }
 
 1;
-
-# vim: set tabstop=4 expandtab:
