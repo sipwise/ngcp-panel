@@ -677,6 +677,25 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
                             ->upn_rewrite_sets_rs->all;
     $c->stash->{upn_rw_sets} = \@upn_rewrite_sets;
 
+<<<<<<< HEAD
+=======
+    my $vm_recordings_types = [];#type, greeting_exists
+    my $subscriber_vm_recordings = get_inflated_columns_all(
+        $c->stash->{subscriber}->provisioning_voip_subscriber->voicemail_user->voicemail_spools->search_rs(undef,{
+            '+select' => [qw/dir dir/],
+            '+as' => [qw/type greeting_exists/],
+        }),
+        hash => 'type',
+    );
+    foreach my $voicemail_greeting_type (qw/unavail busy/){
+        my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{subscriber}, dir => $voicemail_greeting_type);
+        push @$vm_recordings_types,
+            $subscriber_vm_recordings->{$dir} ? {%{$subscriber_vm_recordings->{$dir}}, type =>  $voicemail_greeting_type }
+            : {greeting_exists => 0, type => $voicemail_greeting_type} ;
+    }
+    $c->stash->{vm_recordings_types} = $vm_recordings_types;
+
+>>>>>>> 61a87b9... TT#9714 susbcriber first non-prim alias for edr records
     if($prov_subscriber->profile_id && (
        $c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
         my @attribute_ids = $prov_subscriber->voip_subscriber_profile->profile_attributes->get_column('attribute_id')->all;
@@ -928,6 +947,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params->{ringtimeout} = $ringtimeout;
     }
 
+<<<<<<< HEAD
     if($c->config->{features}->{cloudpbx}) {
         my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c,
@@ -939,6 +959,8 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         }
     }
 
+=======
+>>>>>>> 61a87b9... TT#9714 susbcriber first non-prim alias for edr records
     my $cf_form;
     if($cf_type eq "cft") {
         $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new(ctx => $c);
@@ -2656,20 +2678,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
                 $prov_subscriber->update($prov_params);
 
-                if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
-                    my $type;
-                    if(defined $prov_subscriber->profile_id && defined $old_profile) {
-                        $type = "update_profile";
-                    } elsif(defined $prov_subscriber->profile_id) {
-                        $type = "start_profile";
-                    } else {
-                        $type = "end_profile";
-                    }
-                    NGCP::Panel::Utils::Events::insert(
-                        c => $c, schema => $schema, subscriber => $subscriber,
-                        type => $type, old => $old_profile, new => $prov_subscriber->profile_id
-                    );
-                }
                 my $new_group_ids = defined $form->value->{group_select} ?
                     decode_json($form->value->{group_select}) : [];
                 NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
@@ -2703,6 +2711,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 } elsif($old_status eq 'locked' && $subscriber->status eq 'active') {
                     $form->values->{lock} ||= 0; # update lock below
                 }
+
+                my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+                    c => $c,
+                    schema => $schema,
+                    subscriber => $subscriber,
+                );
 
                 if(exists $form->params->{alias_select} && $c->stash->{pilot}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
@@ -2817,15 +2831,23 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     level => $form->values->{lock},
                 ) if ($subscriber->provisioning_voip_subscriber);
 
-                #if($lock->first) {
-                #    if ($form->values->{lock} == 0) {
-                #        $lock->delete;
-                #    } else {
-                #        $lock->first->update({ value => $form->values->{lock} });
-                #    }
-                #} elsif($form->values->{lock} > 0) {
-                #    $lock->create({ value => $form->values->{lock} });
-                #}
+                if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
+                    my $type;
+                    if(defined $prov_subscriber->profile_id && defined $old_profile) {
+                        $type = "update_profile";
+                    } elsif(defined $prov_subscriber->profile_id) {
+                        $type = "start_profile";
+                    } else {
+                        $type = "end_profile";
+                    }
+                    NGCP::Panel::Utils::Events::insert(
+                        c => $c, schema => $schema, subscriber => $subscriber,
+                        type => $type, old => $old_profile, new => $prov_subscriber->profile_id,
+                        %$aliases_before,
+                    );
+                }
+                #ready for number change events here
+
             });
             delete $c->session->{created_objects}->{group};
             NGCP::Panel::Utils::Message::info(
@@ -3048,6 +3070,101 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 }
                 last SWITCH;
             };
+<<<<<<< HEAD
+=======
+            /^voicemailgreeting$/ && do {
+                my ($action, $type) = @additions;
+                try{
+                    if( !grep{ $action eq $_ } (qw/edit delete download/) ){
+                        die('Wrong voicemail greeting action.');
+                    }
+                    if( !grep{ $type eq $_ } (qw/unavail busy/) ){
+                        die('Wrong voicemail greeting type.');
+                    }
+                    my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{subscriber}, dir => $type);
+                    $attribute_name = $c->loc('voicemail greeting "'.$type.'"');
+                    $form = NGCP::Panel::Form::Voicemail::Greeting->new;
+                    $params = {};
+                    $c->req->params->{greetingfile} = $c->req->upload('greetingfile');
+                    $form->process(params => $posted ? $c->req->params : $params);
+                    NGCP::Panel::Utils::Navigation::check_form_buttons(
+                        c => $c,
+                        form => $form,
+                        fields => {},
+                        back_uri => $c->req->uri,
+                    );
+                    if('delete' eq $action){
+                        $vm_user->voicemail_spools->search_rs({
+                            'dir'       => $dir,
+                            'msgnum'    => '-1',
+                        })->delete;
+                        NGCP::Panel::Utils::Message::info(
+                            c     => $c,
+                            log   => 'Voicemail greeting '.$type.' for the subscriber_id '.$c->stash->{subscriber}->id.' deleted.',
+                            desc  => $c->loc('Voicemail greeting "'.$type.'" deleted'),
+                        );
+                        NGCP::Panel::Utils::Navigation::back_or($c,
+                            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+                        return;
+                    }elsif('download' eq $action){
+                        my $recording = $vm_user->voicemail_spools->search_rs({
+                            'dir'       => $dir,
+                            'msgnum'    => '-1',
+                        })->first;
+                        if($recording){
+                            $recording = $recording->recording;
+                            $c->res->headers(HTTP::Headers->new(
+                                'Content-Type' => 'audio/x-wav',
+                                #'Content-Type' => 'application/octet-stream',
+                                'Content-Disposition' => sprintf('attachment; filename=%s', "voicemail_".${type}."_".$c->stash->{subscriber}->id.".wav")
+                            ));
+                            $c->res->body($recording);
+                            return;
+                        }
+                    }elsif($posted){
+                        my $greetingfile = delete $form->values->{'greetingfile'};
+                        my $greeting_converted_ref;
+                        try {
+                            NGCP::Panel::Utils::Subscriber::convert_voicemailgreeting(
+                                c => $c,
+                                upload => $greetingfile,
+                                filepath => $greetingfile->tempname,
+                                converted_data_ref => \$greeting_converted_ref );
+                        } catch($e) {
+                            NGCP::Panel::Utils::Message::error(
+                                c    => $c,
+                                log  => $e,
+                                desc => $c->loc($e),
+                            );
+                            NGCP::Panel::Utils::Navigation::back_or($c,
+                                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+                            return;
+                        }
+                        if($form->validated) {
+                            if('edit' eq $action){
+                                $vm_user->voicemail_spools->update_or_create({
+                                    'recording'      => $$greeting_converted_ref,
+                                    'dir'            => $dir,
+                                    'origtime'       => time(),#just to make inflate possible. Really we don't need this value
+                                    'mailboxcontext' => 'default',
+                                    'msgnum'         => '-1',
+                                });
+                            }
+                        }
+                    }
+                } catch($e) {
+                    NGCP::Panel::Utils::Message::error(
+                        c     => $c,
+                        log   => $e,
+                        desc  => $c->loc($e),
+                    );
+                    NGCP::Panel::Utils::Navigation::back_or($c,
+                        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+                    return;
+                }
+                last SWITCH;
+            };
+>>>>>>> 61a87b9... TT#9714 susbcriber first non-prim alias for edr records
             # default
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
