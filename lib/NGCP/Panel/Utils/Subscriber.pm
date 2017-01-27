@@ -311,7 +311,7 @@ sub create_subscriber {
                 ($params->{e164}{ac} || '') .
                 $params->{e164}{sn};
 
-            update_subscriber_numbers(
+            _update_subscriber_numbers(
                 c => $c,
                 schema => $schema,
                 subscriber_id => $billing_subscriber->id,
@@ -623,6 +623,17 @@ sub get_pbx_group_member_name{
 
 sub update_subscriber_numbers {
     my %params = @_;
+    my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+        c => $params{c},
+        schema => $params{schema},
+        subscriber_id => $params{subscriber_id},
+    );
+    _update_subscriber_numbers(@_);
+    return $aliases_before;
+}
+
+sub _update_subscriber_numbers {
+    my %params = @_;
 
     my $c              = $params{c};
     my $schema         = $params{schema};
@@ -815,7 +826,7 @@ sub update_subscriber_numbers {
                 $schema->resultset('voip_dbaliases')->search_rs({
                     username => $old_cc . ($old_ac // '') . $sub->primary_number->sn,
                 })->delete;
-                update_subscriber_numbers(
+                _update_subscriber_numbers(
                     c => $c,
                     schema => $schema,
                     subscriber_id => $sub->id,
