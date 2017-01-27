@@ -157,6 +157,7 @@ sub create_subscriber {
     my $params = $params{params};
     my $administrative = $params{admin_default};
     my $preferences = $params{preferences};
+    my $event_context = $params{event_context} // {};
 
     my $schema = $params{schema} // $c->model('DB');
     my $reseller = $contract->contact->reseller;
@@ -265,6 +266,13 @@ sub create_subscriber {
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
 
+        my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+            c => $params{c},
+            schema => $schema,
+            subscriber => $subscriber,
+        );
+        $event_context->{aliases_before} = $aliases_before;
+
         if(defined $params->{e164range} && ref $params->{e164range} eq "ARRAY") {
             my @alias_numbers = ();
             foreach my $range(@{ $params->{e164range} }) {
@@ -352,16 +360,36 @@ sub create_subscriber {
         }
 
         if($prov_subscriber->profile_id) {
-            NGCP::Panel::Utils::Events::insert(
-                c => $c, schema => $schema, subscriber => $billing_subscriber,
-                type => 'start_profile', old => undef, new => $prov_subscriber->profile_id
-            );
+            my $events_to_create = $event_context->{events_to_create};
+            if (defined $events_to_create) {
+                push(@$events_to_create,{
+                    subscriber_id => $billing_subscriber->id,
+                    type => 'start_profile', old => undef, new => $prov_subscriber->profile_id,
+                    %$aliases_before,
+                });
+            } else {
+                NGCP::Panel::Utils::Events::insert(
+                    c => $c, schema => $schema, subscriber => $billing_subscriber,
+                    type => 'start_profile', old => undef, new => $prov_subscriber->profile_id,
+                    %$aliases_before,
+                );
+            }
         }
         if($prov_subscriber->is_pbx_group) {
-            NGCP::Panel::Utils::Events::insert(
-                c => $c, schema => $schema, subscriber => $billing_subscriber,
-                type => 'start_huntgroup', old => undef, new => $prov_subscriber->profile_id
-            );
+            my $events_to_create = $event_context->{events_to_create};
+            if (defined $events_to_create) {
+                push(@$events_to_create,{
+                    subscriber_id => $billing_subscriber->id,
+                    type => 'start_huntgroup', old => undef, new => $prov_subscriber->profile_id,
+                    %$aliases_before,
+                });
+            } else {
+                NGCP::Panel::Utils::Events::insert(
+                    c => $c, schema => $schema, subscriber => $billing_subscriber,
+                    type => 'start_huntgroup', old => undef, new => $prov_subscriber->profile_id,
+                    %$aliases_before,
+                );
+            }
         }
 
 
@@ -1003,6 +1031,8 @@ sub update_subadmin_sub_aliases {
             });
         }
     }
+
+    return $aliases_before;
 }
 
 sub terminate {
@@ -1013,6 +1043,13 @@ sub terminate {
 
     my $schema = $c->model('DB');
     $schema->txn_do(sub {
+
+        my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+            c => $params{c},
+            schema => $schema,
+            subscriber => $subscriber,
+        );
+
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
         if($prov_subscriber) {
             foreach my $set ($prov_subscriber->voip_cf_destination_sets->all) {

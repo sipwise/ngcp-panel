@@ -842,6 +842,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 if($c->stash->{billing_mapping}->billing_profile->prepaid) {
                     $preferences->{prepaid} = 1;
                 }
+                my $event_context = {};
                 $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,
@@ -849,6 +850,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     params => $form->values,
                     admin_default => 0,
                     preferences => $preferences,
+                    event_context => $event_context,
                 );
                 NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
 
@@ -869,6 +871,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                         subscriber   => $billing_subscriber,
                     );
                 }
+                XXX
             });
 
             delete $c->session->{created_objects}->{domain};
@@ -1356,6 +1359,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 $preferences->{cloud_pbx_hunt_timeout} = $form->values->{pbx_hunt_timeout};
                 $preferences->{cloud_pbx_ext} = $form->values->{pbx_extension};
                 $preferences->{display_name} = ucfirst($form->values->{username});
+                my $event_context = {};
                 my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,
@@ -1363,13 +1367,16 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                     params => $form->values,
                     admin_default => 0,
                     preferences => $preferences,
+                    event_context => $event_context,
                 );
                 NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
                 NGCP::Panel::Utils::Events::insert(
                     c => $c, schema => $schema, type => 'start_huntgroup',
                     subscriber => $billing_subscriber, old_status => undef,
                     new_status => $billing_subscriber->provisioning_voip_subscriber->profile_id,
+                    %{$event_context->{aliases_before}},
                 );
+                XXXX
                 $c->session->{created_objects}->{group} = { id => $billing_subscriber->id };
             });
             NGCP::Panel::Utils::Message::info(
@@ -1477,6 +1484,11 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                         sn => $base_number->sn . $form->values->{pbx_extension},
                     };
                 }
+                my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+                    c => $c,
+                    schema => $schema,
+                    subscriber => $sub,
+                );
                 NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                     c => $c,
                     schema => $schema,
@@ -1495,7 +1507,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                         sadmin => $c->stash->{pilot},
                     );
                 }
-
+                XXX
             });
             NGCP::Panel::Utils::Message::info(
                 c => $c,
