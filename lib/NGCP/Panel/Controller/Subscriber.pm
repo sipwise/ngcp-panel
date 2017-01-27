@@ -696,7 +696,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     foreach my $voicemail_greeting_type (qw/unavail busy/){
         my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{subscriber}, dir => $voicemail_greeting_type);
         push @$vm_recordings_types,
-            $subscriber_vm_recordings->{$dir} ? {%{$subscriber_vm_recordings->{$dir}}, type =>  $voicemail_greeting_type } 
+            $subscriber_vm_recordings->{$dir} ? {%{$subscriber_vm_recordings->{$dir}}, type =>  $voicemail_greeting_type }
             : {greeting_exists => 0, type => $voicemail_greeting_type} ;
     }
     $c->stash->{vm_recordings_types} = $vm_recordings_types;
@@ -953,7 +953,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params->{ringtimeout} = $ringtimeout;
         $params->{destination}->{announcement_id} = $destination ? $destination->announcement_id : '';
     }
-    
+
     my $cf_form;
     if($cf_type eq "cft") {
         $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new(ctx => $c);
@@ -2588,20 +2588,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
                 $prov_subscriber->update($prov_params);
 
-                if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
-                    my $type;
-                    if(defined $prov_subscriber->profile_id && defined $old_profile) {
-                        $type = "update_profile";
-                    } elsif(defined $prov_subscriber->profile_id) {
-                        $type = "start_profile";
-                    } else {
-                        $type = "end_profile";
-                    }
-                    NGCP::Panel::Utils::Events::insert(
-                        c => $c, schema => $schema, subscriber => $subscriber,
-                        type => $type, old => $old_profile, new => $prov_subscriber->profile_id
-                    );
-                }
                 my $new_group_ids = defined $form->value->{group_select} ?
                     decode_json($form->value->{group_select}) : [];
                 NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
@@ -2635,6 +2621,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 } elsif($old_status eq 'locked' && $subscriber->status eq 'active') {
                     $form->values->{lock} ||= 0; # update lock below
                 }
+
+                my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+                    c => $c,
+                    schema => $schema,
+                    subscriber => $subscriber,
+                );
 
                 if(exists $form->params->{alias_select} && $c->stash->{pilot}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
@@ -2749,15 +2741,23 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     level => $form->values->{lock},
                 ) if ($subscriber->provisioning_voip_subscriber);
 
-                #if($lock->first) {
-                #    if ($form->values->{lock} == 0) {
-                #        $lock->delete;
-                #    } else {
-                #        $lock->first->update({ value => $form->values->{lock} });
-                #    }
-                #} elsif($form->values->{lock} > 0) {
-                #    $lock->create({ value => $form->values->{lock} });
-                #}
+                if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
+                    my $type;
+                    if(defined $prov_subscriber->profile_id && defined $old_profile) {
+                        $type = "update_profile";
+                    } elsif(defined $prov_subscriber->profile_id) {
+                        $type = "start_profile";
+                    } else {
+                        $type = "end_profile";
+                    }
+                    NGCP::Panel::Utils::Events::insert(
+                        c => $c, schema => $schema, subscriber => $subscriber,
+                        type => $type, old => $old_profile, new => $prov_subscriber->profile_id,
+                        %$aliases_before,
+                    );
+                }
+                #ready for number change events here
+
             });
             delete $c->session->{created_objects}->{group};
             NGCP::Panel::Utils::Message::info(
@@ -3045,10 +3045,10 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                         my $greetingfile = delete $form->values->{'greetingfile'};
                         my $greeting_converted_ref;
                         try {
-                            NGCP::Panel::Utils::Subscriber::convert_voicemailgreeting( 
-                                c => $c, 
-                                upload => $greetingfile, 
-                                filepath => $greetingfile->tempname, 
+                            NGCP::Panel::Utils::Subscriber::convert_voicemailgreeting(
+                                c => $c,
+                                upload => $greetingfile,
+                                filepath => $greetingfile->tempname,
                                 converted_data_ref => \$greeting_converted_ref );
                         } catch($e) {
                             NGCP::Panel::Utils::Message::error(
