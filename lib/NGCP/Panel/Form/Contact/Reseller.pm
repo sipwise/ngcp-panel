@@ -167,6 +167,15 @@ has_field 'faxnumber' => (
     },
 );
 
+has_field 'timezone' => (
+    type => '+NGCP::Panel::Field::TimezoneSelect',
+    label => 'Timezone',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The timezone of the contact.']
+    },
+);
+
 has_field 'gpp0' => (
     type => 'Text',
     maxlength => 255,
@@ -279,6 +288,7 @@ has_block 'fields' => (
     class => [qw/modal-body/],
     render_list => [qw/firstname lastname email company street postcode city
         country iban bic bankname vatnum comregnum phonenumber mobilenumber faxnumber
+        timezone
         gpp0 gpp1 gpp2 gpp3 gpp4 gpp5 gpp6 gpp7 gpp8 gpp9
         /],
 );
