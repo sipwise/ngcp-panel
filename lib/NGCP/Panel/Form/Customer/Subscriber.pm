@@ -93,7 +93,6 @@ has_field 'administrative' => (
     },
 );
 
-
 has_field 'external_id' => (
     type => 'Text',
     label => 'External ID',
@@ -101,6 +100,15 @@ has_field 'external_id' => (
     element_attr => { 
         rel => ['tooltip'], 
         title => ['An external id, e.g. provided by a 3rd party provisioning'] 
+    },
+);
+
+has_field 'timezone' => (
+    type => '+NGCP::Panel::Field::TimezoneSelect',
+    label => 'Timezone',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The timezone of the subscriber.']
     },
 );
 
@@ -126,7 +134,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/domain e164 email webusername webpassword username password status external_id administrative profile_set/ ],
+    render_list => [qw/domain e164 email webusername webpassword username password status external_id administrative timezone profile_set/ ],
 );
 
 has_block 'actions' => (

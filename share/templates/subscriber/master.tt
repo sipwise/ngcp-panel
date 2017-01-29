@@ -91,6 +91,11 @@
                                 elements.push({ value = subscriber.external_id, desc = c.loc('External #')});
                                 elements.push({ value = subscriber.uuid, desc = c.loc('UUID') });
                             END;
+                            IF subscriber.timezone.name;
+                                elements.push({ value = subscriber.timezone.name, desc = c.loc('Timezone') });
+                            ELSE;
+                                elements.push({ value = c.config.contact.timezone, desc = c.loc('Timezone') });
+                            END;
                             elements.push({ value = subscriber.primary_number.cc _ ' ' _ subscriber.primary_number.ac _ ' ' _ subscriber.primary_number.sn, desc = c.loc('Primary Number') });
 
                         -%]
