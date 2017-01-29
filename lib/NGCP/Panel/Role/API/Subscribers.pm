@@ -254,11 +254,26 @@ sub prepare_resource {
     $resource->{profile}{id} = delete $resource->{profile_id};
     my $subscriber_id = $item ? $item->id : 0;
 
-    if(exists $resource->{alias_numbers} && ref $resource->{alias_numbers} ne "ARRAY") {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid alias_numbers parameter, must be array.");
-        return;
+    if(defined $resource->{e164}) {
+        if( ref $resource->{e164} ne "HASH"){
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid primary_number parameter, must be a hash.');
+            return;
+        }
     }
-    $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
+    if(exists $resource->{alias_numbers}) {
+        if( ref $resource->{alias_numbers} ne "ARRAY"){
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid alias_number parameter, must be an array.');
+            return;
+        }
+        $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
+        foreach my $alias_number (@{$resource->{alias_numbers}}){
+            if( ref $alias_number->{e164} ne "HASH"){
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid alias_number parameter, must be an array of the hashes.');
+                return;
+            }
+        
+        }
+    }
 
     my $form = $self->get_form($c);
     return unless $self->validate_form(
