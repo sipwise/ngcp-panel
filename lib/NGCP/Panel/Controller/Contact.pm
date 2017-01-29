@@ -40,6 +40,19 @@ sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) {
     ]);
 }
 
+sub timezone_ajax :Chained('/') :PathPart('contact/timezone_ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $tz_rs   = $c->model('DB')->resultset('timezones');
+    my $tz_cols = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "timezone", search => 1, title => $c->loc('Timezone') },
+    ]);
+
+    NGCP::Panel::Utils::Datatables::process($c, $tz_rs, $tz_cols);
+
+    $c->detach( $c->view("JSON") );
+}
+
 sub root :Chained('list_contact') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
@@ -139,6 +152,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = { $c->stash->{contact}->get_inflated_columns };
     $params = merge($params, $c->session->{created_objects});
     $params->{country}{id} = delete $params->{country};
+    $params->{timezone}{timezone} = delete $params->{timezone};
     if($c->user->is_superuser && $no_reseller) {
         $form = NGCP::Panel::Form::Contact::Reseller->new;
         $params->{reseller}{id} = $c->user->reseller_id;
@@ -171,6 +185,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             }
             delete $form->values->{reseller};
             $form->values->{country} = $form->values->{country}{id};
+            $form->values->{timezone} = $form->values->{timezone}{timezone} || undef;
             $c->stash->{contact}->update($form->values);
             NGCP::Panel::Utils::Message::info(
                 c => $c,

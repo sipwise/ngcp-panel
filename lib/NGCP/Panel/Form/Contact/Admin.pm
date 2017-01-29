@@ -17,6 +17,7 @@ has_block 'fields' => (
     class => [qw/modal-body/],
     render_list => [qw/reseller firstname lastname email company street postcode city
         country iban bic bankname vatnum comregnum phonenumber mobilenumber faxnumber
+        timezone
         gpp0 gpp1 gpp2 gpp3 gpp4 gpp5 gpp6 gpp7 gpp8 gpp9
         /],
 );
