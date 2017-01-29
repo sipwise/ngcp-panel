@@ -166,12 +166,14 @@ sub POST :Allow {
         my $form = $self->get_form($c);
         $resource->{reseller_id} //= undef;
         $resource->{country}{id} = delete $resource->{country};
+        $resource->{timezone}{name} = delete $resource->{timezone};
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
         );
         $resource->{country} = $resource->{country}{id};
+        $resource->{timezone} = $resource->{timezone}{name};
         my $reseller_id;
         if($c->user->roles eq "admin") {
             $reseller_id = $resource->{reseller_id};

@@ -63,6 +63,7 @@ sub hal_from_contact {
     );
 
     $resource{country}{id} = delete $resource{country};
+    $resource{timezone}{name} = delete $resource{timezone};
     $form //= $self->get_form($c);
     $self->validate_form(
         c => $c,
@@ -71,6 +72,7 @@ sub hal_from_contact {
         run => 0,
     );
     $resource{country} = $resource{country}{id};
+    $resource{timezone} = $resource{timezone}{name};
 
     $resource{id} = int($contact->id);
     $hal->resource({%resource});
@@ -88,6 +90,7 @@ sub update_contact {
     my ($self, $c, $contact, $old_resource, $resource, $form) = @_;
 
     $resource->{country}{id} = delete $resource->{country};
+    $resource->{timezone}{name} = delete $resource->{timezone};
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller_id slip thru
     $resource->{reseller_id} //= undef;
@@ -97,6 +100,7 @@ sub update_contact {
         resource => $resource,
     );
     $resource->{country} = $resource->{country}{id};
+    $resource->{timezone} = $resource->{timezone}{name};
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $resource->{modify_timestamp} = $now;
