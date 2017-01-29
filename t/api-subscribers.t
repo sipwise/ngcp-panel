@@ -144,12 +144,12 @@ my $remote_config = $test_machine->get_catalyst_config;
 #1
     $subscriber->{content}->{primary_number} = $intentional_primary_number;
     ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
-    is($preferences_get->{content}->{cli}, $intentional_cli, "check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
+    is($preferences_get->{content}->{cli}, $intentional_cli, "1. check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
 #/1
 #2
     delete $subscriber->{content}->{primary_number};
     ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
-    is($preferences_get->{content}->{cli}, $intentional_cli, "check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
+    is($preferences_get->{content}->{cli}, $intentional_cli, "2. check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
 #/2
     #now prepare preferences for zero situation, when synchronization will be restarted again
     delete $preferences->{content}->{cli};
@@ -243,6 +243,21 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     }
 }
+#TT#8680
+{
+    diag("8680: check E164 fields format;\n");
+    my $data = clone $test_machine->DATA_ITEM;
+    #TT#9066
+    $data->{primary_number} = ["12123132"];
+    my($res,$content) = $test_machine->request_post( $data);
+    $test_machine->http_code_msg(422, "Pimary number should be a hash", $res, $content);
+    #MT#22853
+    my $data = clone $test_machine->DATA_ITEM;
+    $data->{alias_numbers} = ["49221222899813", "49221222899814", "49221222899814"];
+    my($res,$content) = $test_machine->request_post( $data);
+    $test_machine->http_code_msg(422, "Alias numbers should be the hashs", $res, $content);
+}
+
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 done_testing;
 

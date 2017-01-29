@@ -55,22 +55,22 @@ has_field 'snlength' => (
 
 sub validate {
     my $self = shift;
+
     my $cc = $self->field('cc')->value;
     my $sn = $self->field('snbase')->value;
     my $snlen = $self->field('snlength')->value;
 
-    my %sub_errors = map {$_, 1} (
-        @{ $self->field('cc')->errors },
-        @{ $self->field('ac')->errors },
-        @{ $self->field('snbase')->errors },
-        @{ $self->field('snlength')->errors } );
+    my @sub_fields = qw/cc ac snbase snlength/;
+    my %sub_errors = 
+        map {$_, 1} 
+            map { ($self->field($_) && $self->field($_)->result ) ? @{$self->field($_)->errors} : () } 
+                @sub_fields;
     for my $sub_error( keys %sub_errors ) {
         $self->add_error($sub_error);
     }
-    $self->field('cc')->clear_errors if $self->field('cc');
-    $self->field('ac')->clear_errors if $self->field('ac');
-    $self->field('snbase')->clear_errors if $self->field('snbase');
-    $self->field('snlength')->clear_errors if $self->field('snlength');
+    for my $sub_field (@sub_fields){
+        $self->field($sub_field)->clear_errors if $self->field($sub_field) && $self->field($sub_field)->result;
+    }
 
     if ($self->has_errors) {
         #dont add more errors
