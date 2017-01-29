@@ -152,6 +152,7 @@ sub POST :Allow {
         last unless $resource;
 
         $resource->{country}{id} = delete $resource->{country};
+        $resource->{timezone}{name} = delete $resource->{timezone};
         my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,
@@ -159,6 +160,7 @@ sub POST :Allow {
             form => $form,
         );
         $resource->{country} = $resource->{country}{id};
+        $resource->{timezone} = $resource->{timezone}{name};
 
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;

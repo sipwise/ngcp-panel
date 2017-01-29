@@ -50,6 +50,7 @@ sub hal_from_contact {
     );
 
     $resource{country}{id} = delete $resource{country};
+    $resource{timezone}{name} = delete $resource{timezone};
     $form //= $self->get_form($c);
 
     # TODO: i'd expect reseller to be removed automatically
@@ -61,6 +62,7 @@ sub hal_from_contact {
         run => 0,
     );
     $resource{country} = $resource{country}{id};
+    $resource{timezone} = $resource{timezone}{name};
 
     $resource{id} = int($contact->id);
     $hal->resource({%resource});
@@ -77,6 +79,7 @@ sub update_contact {
     my ($self, $c, $contact, $old_resource, $resource, $form) = @_;
 
     $resource->{country}{id} = delete $resource->{country};
+    $resource->{timezone}{name} = delete $resource->{timezone};
     $form //= $self->get_form($c);
     delete $resource->{reseller_id};
     return unless $self->validate_form(
@@ -85,6 +88,7 @@ sub update_contact {
         resource => $resource,
     );
     $resource->{country} = $resource->{country}{id};
+    $resource->{timezone} = $resource->{timezone}{name};
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $resource->{modify_timestamp} = $now;
