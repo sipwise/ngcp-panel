@@ -240,7 +240,7 @@ sub validate_fields {
         if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
             $resource->{$k} = $resource->{$k} ? 1 : 0;
         }
-        unless(exists $fields->{$k}) {
+        if( (!exists $fields->{$k}) || $fields->{$k}->readonly) {
             delete $resource->{$k};
         }
         $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
