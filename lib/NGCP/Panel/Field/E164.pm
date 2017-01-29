@@ -14,6 +14,7 @@ has_field 'cc' => (
     },
     do_label => 0,
     do_wrapper => 0,
+    #required => 1,
 );
 
 has_field 'ac' => (
@@ -25,6 +26,7 @@ has_field 'ac' => (
     },
     do_label => 0,
     do_wrapper => 0,
+    #required => 1,
 );
 
 has_field 'sn' => (
@@ -36,23 +38,26 @@ has_field 'sn' => (
     },
     do_label => 0,
     do_wrapper => 0,
+    #required => 1,
 );
 
 sub validate {
     my $self = shift;
+
     my $cc = $self->field('cc')->value;
     my $sn = $self->field('sn')->value;
 
-    my %sub_errors = map {$_, 1} (
-        @{ $self->field('cc')->errors },
-        @{ $self->field('ac')->errors },
-        @{ $self->field('sn')->errors } );
+    my @sub_fields = (qw/cc ac sn/);
+    my %sub_errors = 
+        map {$_, 1} 
+            map { ($self->field($_) && $self->field($_)->result ) ? @{$self->field($_)->errors} : () } 
+                @sub_fields;
     for my $sub_error( keys %sub_errors ) {
         $self->add_error($sub_error);
     }
-    $self->field('cc')->clear_errors if $self->field('cc');
-    $self->field('ac')->clear_errors if $self->field('ac');
-    $self->field('sn')->clear_errors if $self->field('sn');
+    for my $sub_field (@sub_fields){
+        $self->field($sub_field)->clear_errors if $self->field($sub_field) && $self->field($sub_field)->result;
+    }
 
     if ($self->has_errors) {
         #dont add more errors

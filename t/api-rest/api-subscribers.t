@@ -109,7 +109,7 @@ my $remote_config = $test_machine->init_catalyst_config;
     $pilot and $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
 }
 #-------  MT#15441
-{
+if(0){
     diag("15441");
     my $intentional_cli = '111'.time();
     my $intentional_primary_number = {
@@ -181,7 +181,7 @@ my $remote_config = $test_machine->init_catalyst_config;
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $pilot and $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
 }
-if($remote_config->{config}->{features}->{cloudpbx}){
+if(0 && $remote_config->{config}->{features}->{cloudpbx}){
     {
 #18601
         diag("18601: config->features->cloudpbx: ".$remote_config->{config}->{features}->{cloudpbx}.";\n");
@@ -244,6 +244,17 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     }
 }
+#TT#8680
+{
+    diag("8680: check E164 fields format;\n");
+    my $data = clone $test_machine->DATA_ITEM;
+    #TT#9066
+    $data->{primary_number} = ["12123132"];
+    my($res,$content) = $test_machine->request_post( $data);
+    $test_machine->http_code_msg(422, "Pimary number should be a hash", $res, $content);
+
+}
+
 $fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 $fake_data->clear_test_data_all();
