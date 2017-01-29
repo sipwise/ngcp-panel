@@ -244,6 +244,21 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     }
 }
+#TT#8680
+{
+    diag("8680: check E164 fields format;\n");
+    my $data = clone $test_machine->DATA_ITEM;
+    #TT#9066
+    $data->{primary_number} = ["12123132"];
+    my($res,$content) = $test_machine->request_post( $data);
+    $test_machine->http_code_msg(422, "Pimary number should be a hash", $res, $content);
+    #MT#22853
+    my $data = clone $test_machine->DATA_ITEM;
+    $data->{alias_numbers} = ["49221222899813", "49221222899814", "49221222899814"];
+    my($res,$content) = $test_machine->request_post( $data);
+    $test_machine->http_code_msg(422, "Alias numbers should be the hashs", $res, $content);
+}
+
 $fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 $fake_data->clear_test_data_all();
