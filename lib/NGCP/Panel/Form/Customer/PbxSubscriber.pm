@@ -138,6 +138,15 @@ has_field 'external_id' => (
     },
 );
 
+has_field 'timezone' => (
+    type => '+NGCP::Panel::Field::TimezoneSelect',
+    label => 'Timezone',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The timezone of the subscriber.']
+    },
+);
+
 has_field 'profile_set' => (
     type => '+NGCP::Panel::Field::SubscriberProfileSet',
     label => 'Subscriber Profile Set',
@@ -169,8 +178,8 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    #render_list => [qw/display_name webusername webpassword username password status external_id profile_set profile/ ],
-    render_list => [qw/e164 display_name email webusername webpassword username password administrative status profile_set profile/ ],
+    #render_list => [qw/display_name webusername webpassword username password status external_id profile_set timezone profile/ ],
+    render_list => [qw/e164 display_name email webusername webpassword username password administrative status timezone profile_set profile/ ],
 );
 
 has_block 'actions' => (

@@ -41,7 +41,7 @@ has_field 'email' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/e164 alias_number alias_number_add email webusername webpassword password external_id administrative status profile_set profile/ ],
+    render_list => [qw/e164 alias_number alias_number_add email webusername webpassword password external_id administrative status timezone profile_set profile/ ],
 );
 
 has_block 'actions' => (

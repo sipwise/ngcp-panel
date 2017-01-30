@@ -23,7 +23,7 @@ has_field 'pbx_extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/domain group_select alias_select pbx_extension display_name email webusername webpassword username password administrative status external_id profile_set profile/ ],
+    render_list => [qw/domain group_select alias_select pbx_extension display_name email webusername webpassword username password administrative status external_id timezone profile_set profile/ ],
 );
 
 override 'field_list' => sub {
