@@ -1210,8 +1210,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         $autoattendant_count--;
                         NGCP::Panel::Utils::Events::insert(
                             schema => $c->model('DB'),
-                            subscriber => $c->stash->{subscriber},
+                            subscriber_id => $c->stash->{subscriber}->id,
                             type => 'end_ivr',
+                            create_event_per_alias => 1,
                         );
                     }
                 } elsif ($autoattendant_count < 0) {
@@ -1219,8 +1220,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         $autoattendant_count++;
                         NGCP::Panel::Utils::Events::insert(
                             schema => $c->model('DB'),
-                            subscriber => $c->stash->{subscriber},
+                            subscriber_id => $c->stash->{subscriber}->id,
                             type => 'start_ivr',
+                            create_event_per_alias => 1,
                         );
                     }
                 }
@@ -1481,8 +1483,9 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                     foreach my $mapping ($set->voip_cf_mappings->all) { # one event per affected mapping
                         NGCP::Panel::Utils::Events::insert(
                             schema => $schema,
-                            subscriber => $c->stash->{subscriber},
+                            subscriber_id => $c->stash->{subscriber}->id,
                             type => $event_type,
+                            create_event_per_alias => 1,
                         );
                     }
                 }
@@ -1536,8 +1539,9 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
                 if ($autoattendant) {
                     NGCP::Panel::Utils::Events::insert(
                         schema => $schema,
-                        subscriber => $c->stash->{subscriber},
+                        subscriber_id => $c->stash->{subscriber}->id,
                         type => 'end_ivr',
+                        create_event_per_alias => 1,
                     );
                 }
             }
@@ -2136,8 +2140,9 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
                 $autoattendant_count--;
                 NGCP::Panel::Utils::Events::insert(
                     schema => $schema,
-                    subscriber => $c->stash->{subscriber},
+                    subscriber_id => $c->stash->{subscriber}->id,
                     type => 'end_ivr',
+                    create_event_per_alias => 1,
                 );
             }
         });
@@ -2751,7 +2756,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         $type = "end_profile";
                     }
                     NGCP::Panel::Utils::Events::insert(
-                        c => $c, schema => $schema, subscriber => $subscriber,
+                        c => $c, schema => $schema, subscriber_id => $subscriber->id,
                         type => $type, old => $old_profile, new => $prov_subscriber->profile_id,
                         %$aliases_before,
                     );

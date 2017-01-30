@@ -684,7 +684,7 @@ sub update_item {
             $type = "end_profile";
         }
         NGCP::Panel::Utils::Events::insert(
-            c => $c, schema => $schema, subscriber => $subscriber,
+            c => $c, schema => $schema, subscriber_id => $subscriber->id,
             type => $type, old => $old_profile, new => $prov_subscriber->profile_id,
             %$aliases_before,
         );

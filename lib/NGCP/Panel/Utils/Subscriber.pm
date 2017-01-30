@@ -369,7 +369,7 @@ sub create_subscriber {
                 });
             } else {
                 NGCP::Panel::Utils::Events::insert(
-                    c => $c, schema => $schema, subscriber => $billing_subscriber,
+                    c => $c, schema => $schema, subscriber_id => $billing_subscriber->id,
                     type => 'start_profile', old => undef, new => $prov_subscriber->profile_id,
                     %$aliases_before,
                 );
@@ -382,12 +382,14 @@ sub create_subscriber {
                     subscriber_id => $billing_subscriber->id,
                     type => 'start_huntgroup', old => undef, new => $prov_subscriber->profile_id,
                     %$aliases_before,
+                    create_event_per_alias => 1,
                 });
             } else {
                 NGCP::Panel::Utils::Events::insert(
-                    c => $c, schema => $schema, subscriber => $billing_subscriber,
+                    c => $c, schema => $schema, subscriber_id => $billing_subscriber->id,
                     type => 'start_huntgroup', old => undef, new => $prov_subscriber->profile_id,
                     %$aliases_before,
+                    create_event_per_alias => 1,
                 );
             }
         }
@@ -1061,6 +1063,7 @@ sub terminate {
                         push(@events_to_create,{
                             subscriber_id => $subscriber->id, type => 'end_ivr',
                             %$aliases_before,%$aliases_after,
+                            create_event_per_alias => 1,
                         });
                     }
                 }
@@ -1075,6 +1078,7 @@ sub terminate {
                     subscriber_id => $subscriber->id,
                     old => $prov_subscriber->profile_id, new => undef,
                     %$aliases_before,%$aliases_after,
+                    create_event_per_alias => 1,
                 });
         }
         if($prov_subscriber && $prov_subscriber->profile_id) {
@@ -1476,13 +1480,15 @@ sub check_cf_ivr {
     my $old_aa = $params{old_aa}; # boolean, false on create
     if ($old_aa && !$new_aa) {
         NGCP::Panel::Utils::Events::insert(
-            schema => $schema, subscriber => $subscriber,
+            schema => $schema, subscriber_id => $subscriber->id,
             type => 'end_ivr',
+            create_event_per_alias => 1,
         );
     } elsif (!$old_aa && $new_aa) {
         NGCP::Panel::Utils::Events::insert(
-            schema => $schema, subscriber => $subscriber,
+            schema => $schema, subscriber_id => $subscriber->id,
             type => 'start_ivr',
+            create_event_per_alias => 1,
         );
     }
     return;
