@@ -170,7 +170,7 @@ sub update_item {
         my $new_aa = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($item);
         foreach ($item->voip_cf_mappings->all) {
             NGCP::Panel::Utils::Subscriber::check_cf_ivr( # one event per affected mapping
-                schema => $schema,
+                c => $c, schema => $schema,
                 subscriber => $item->subscriber->voip_subscriber,
                 old_aa => $old_aa,
                 new_aa => $new_aa,

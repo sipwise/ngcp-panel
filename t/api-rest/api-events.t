@@ -89,6 +89,20 @@ $res = $ua->request($req);
 is($res->code, 200, "fetch POSTed test subscriberprofileset 2");
 my $subscriberprofile2set = JSON::from_json($res->decoded_content);
 
+$req = HTTP::Request->new('POST', $uri.'/api/subscriberprofilesets/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    name => "subscriber_profile_3_set_".$t,
+    reseller_id => $reseller_id,
+    description => "subscriber_profile_3_set_description_".$t,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test subscriberprofileset 3");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test subscriberprofileset 3");
+my $subscriberprofile3set = JSON::from_json($res->decoded_content);
+
 $req = HTTP::Request->new('GET', $uri.'/api/subscriberpreferencedefs/');
 $res = $ua->request($req);
 is($res->code, 200, "fetch profilepreferencedefs");
@@ -129,7 +143,20 @@ $res = $ua->request($req);
 is($res->code, 200, "fetch POSTed test subscriberprofile 2");
 my $subscriberprofile2 = JSON::from_json($res->decoded_content);
 
-
+$req = HTTP::Request->new('POST', $uri.'/api/subscriberprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    name => "subscriber_profile_3_".$t,
+    profile_set_id => $subscriberprofile3set->{id},
+    attributes => \@subscriber_profile_attributes,
+    description => "subscriber_profile_3_description_".$t,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test subscriberprofile 3");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test subscriberprofile 3");
+my $subscriberprofile3 = JSON::from_json($res->decoded_content);
 
 $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
 $req->header('Content-Type' => 'application/json');
@@ -154,9 +181,12 @@ my %customer_map = ();
     my $customer = _create_customer(
         type => "sipaccount",
         );
+    my $cc = 800;
+    my $ac = '1'.(scalar keys %subscriber_map);
+    my $sn = $t;
     my $subscriber = _create_subscriber($customer,
-        primary_number => { cc => 888, ac => '1'.(scalar keys %subscriber_map), sn => $t },
-        );
+        primary_number => { cc => $cc, ac => $ac, sn => $sn },
+    );
 
     my $call_forwards = set_callforwards($subscriber,{ cfu => {
                 destinations => [
@@ -175,6 +205,42 @@ my %customer_map = ();
     ]);
 }
 
+#SKIP:
+{ #end_ivr:
+    my $customer = _create_customer(
+        type => "sipaccount",
+        );
+    my $cc = 800;
+    my $ac = '1'.(scalar keys %subscriber_map);
+    my $sn = $t;
+    my $aliases = [
+            { cc => $cc, ac => $ac, sn => $sn.'0001' },
+            { cc => $cc, ac => $ac, sn => $sn.'0002' },
+        ];
+    my $subscriber = _create_subscriber($customer,
+        primary_number => { cc => $cc, ac => $ac, sn => $sn },
+        alias_numbers => $aliases,
+    );
+
+    my $call_forwards = set_callforwards($subscriber,{ cfu => {
+                destinations => [
+                    { destination => "5678" },
+                    { destination => "autoattendant", },
+                ],
+            }});
+    $call_forwards = set_callforwards($subscriber,{ cfu => {
+                destinations => [
+                    { destination => "5678" },
+                ],
+            }});
+    _check_event_history("multiple alaises - events generated using /api/callforwards: ",$subscriber->{id},"%ivr",[
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
+    ]);
+}
+
 #$t = time;
 
 #SKIP:
@@ -183,8 +249,20 @@ my %customer_map = ();
     my $customer = _create_customer(
         type => "sipaccount",
         );
+    my $cc = 800;
+    my $ac = '2'.(scalar keys %subscriber_map);
+    my $sn = $t;
+    my $aliases = [
+            { cc => $cc, ac => $ac, sn => $sn.'0001' },
+            { cc => $cc, ac => $ac, sn => $sn.'0002' },
+        ];
+    my $subscriber = _create_subscriber($customer,
+        primary_number => { cc => $cc, ac => $ac, sn => $sn },
+        alias_numbers => $aliases,
+    );
     my $subscriber = _create_subscriber($customer,
         primary_number => { cc => 888, ac => '2'.(scalar keys %subscriber_map), sn => $t },
+        alias_numbers => $aliases,
         );
 
     my $destinationset_1 = _create_cfdestinationset($subscriber,"dest1_$t",[{ destination => "1234",
@@ -233,29 +311,45 @@ my %customer_map = ();
         priority => '1',
         simple_destination => undef },
     ]);
-    _check_event_history("events generated by updating /api/cfdestinationsets: ",$subscriber->{id},"%ivr",[
-        { subscriber_id => $subscriber->{id}, type => "start_ivr" },
-        { subscriber_id => $subscriber->{id}, type => "start_ivr" },
-        { subscriber_id => $subscriber->{id}, type => "end_ivr" },
+    _check_event_history("multiple alaises - events generated by updating /api/cfdestinationsets: ",$subscriber->{id},"%ivr",[
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
     ]);
     #2. update cfmappings:
     $mappings = _update_cfmapping($subscriber,"cfu",[]);
-    _check_event_history("events generated by updating /api/cfmappings: ",$subscriber->{id},"%ivr",[
-        { subscriber_id => $subscriber->{id}, type => "start_ivr" },
-        { subscriber_id => $subscriber->{id}, type => "start_ivr" },
-        { subscriber_id => $subscriber->{id}, type => "end_ivr" },
-        { subscriber_id => $subscriber->{id}, type => "end_ivr" },
+    _check_event_history("multiple alaises - events generated by updating /api/cfmappings: ",$subscriber->{id},"%ivr",[
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
     ]);
 
 }
 
+#SKIP:
 { #end_ivr:
     my $customer = _create_customer(
         type => "sipaccount",
         );
+    my $cc = 800;
+    my $ac = '3'.(scalar keys %subscriber_map);
+    my $sn = $t;
+    my $aliases = [
+            { cc => $cc, ac => $ac, sn => $sn.'0001' },
+            { cc => $cc, ac => $ac, sn => $sn.'0002' },
+        ];
     my $subscriber = _create_subscriber($customer,
-        primary_number => { cc => 888, ac => '3'.(scalar keys %subscriber_map), sn => $t },
-        );
+        primary_number => { cc => $cc, ac => $ac, sn => $sn },
+        alias_numbers => $aliases,
+    );
 
     my $call_forwards = set_callforwards($subscriber,{ cfu => {
                 destinations => [
@@ -264,9 +358,11 @@ my %customer_map = ();
                 ],
             }});
     _update_subscriber($subscriber, status => 'terminated');
-    _check_event_history("events generated when terminating the subscriber: ",$subscriber->{id},"%ivr",[
-        { subscriber_id => $subscriber->{id}, type => "start_ivr" },
-        { subscriber_id => $subscriber->{id}, type => "end_ivr" },
+    _check_event_history("multiple alaises - events generated when terminating the subscriber: ",$subscriber->{id},"%ivr",[
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "start_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn} },
+        { subscriber_id => $subscriber->{id}, type => "end_ivr", non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn} },
     ]);
 }
 
@@ -346,6 +442,7 @@ my %customer_map = ();
     my $aliases = [
         { cc => $cc, ac => $ac, sn => $sn.'0003' },
         { cc => $cc, ac => $ac, sn => $sn.'0004' },
+        #{ cc => $cc, ac => $ac, sn => $sn.'0006' },
     ];
     my $subscriber = _create_subscriber($customer,
         pbx_extension => $ext,
@@ -354,8 +451,8 @@ my %customer_map = ();
         profile_set_id => $subscriberprofile1set->{id},
         );
     #_update_subscriber($subscriber,
-    _check_event_history("start_profile when creating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"start_profile",[
-        { subscriber_id => $pilot_subscriber->{id}, type => "start_profile",
+    my %pilot_event = (
+        subscriber_id => $pilot_subscriber->{id},
           subscriber_profile_id => $subscriberprofile1->{id}, subscriber_profile_name => $subscriberprofile1->{name},
           subscriber_profile_set_id => $subscriberprofile1set->{id}, subscriber_profile_set_name => $subscriberprofile1set->{name},
           primary_number_cc => $cc, primary_number_ac => $ac, primary_number_sn => $sn,
@@ -368,10 +465,33 @@ my %customer_map = ();
           first_non_primary_alias_username_after => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_before => undef,
           pilot_first_non_primary_alias_username_after => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
+    );
+    _check_event_history("start_profile when creating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"%profile",[
+        { %pilot_event,
+
+          type => "start_profile",
+          old_status => '',
+          new_status => $subscriberprofile1->{id},
+
+          non_primary_alias_username => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
         },
+        { %pilot_event,
+
+          type => "start_profile",
+          old_status => '',
+          new_status => $subscriberprofile1->{id},
+
+          non_primary_alias_username => $pilot_aliases->[1]->{cc}.$pilot_aliases->[1]->{ac}.$pilot_aliases->[1]->{sn},
+        },
+        #{ %pilot_event,
+
+        #  type => "start_profile",
+
+        #  non_primary_alias_username => $pilot_aliases->[2]->{cc}.$pilot_aliases->[2]->{ac}.$pilot_aliases->[2]->{sn},
+        #},
     ]);
-    _check_event_history("start_profile when creating a pbx extension subscriber w alias: ",$subscriber->{id},"start_profile",[
-        { subscriber_id => $subscriber->{id}, type => "start_profile",
+    my %subscriber_event = (
+        subscriber_id => $subscriber->{id},
           subscriber_profile_id => $subscriberprofile1->{id}, subscriber_profile_name => $subscriberprofile1->{name},
           subscriber_profile_set_id => $subscriberprofile1set->{id}, subscriber_profile_set_name => $subscriberprofile1set->{name},
           primary_number_cc => $cc, primary_number_ac => $ac, primary_number_sn => $sn.$ext,
@@ -384,20 +504,38 @@ my %customer_map = ();
           first_non_primary_alias_username_after => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_before => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
+    );
+    _check_event_history("start_profile when creating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
+        { %subscriber_event,
+
+          type => "start_profile",
+          old_status => '',
+          new_status => $subscriberprofile1->{id},
+
+          non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn},
         },
+        { %subscriber_event,
+
+          type => "start_profile",
+          old_status => '',
+          new_status => $subscriberprofile1->{id},
+
+          non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn},
+        },
+
     ]);
 
     my $new_aliases = [
+        { cc => $cc, ac => $ac, sn => $sn.'0004' },
         { cc => $cc, ac => $ac, sn => $sn.'0005' },
-        { cc => $cc, ac => $ac, sn => $sn.'0006' },
     ];
     _update_subscriber($subscriber,
         alias_numbers => $new_aliases,
         profile_id => $subscriberprofile2->{id},
         profile_set_id => $subscriberprofile2set->{id},
     );
-    _check_event_history("update_profile when updating a pbx extension subscriber w alias: ",$subscriber->{id},"update_profile",[
-        { subscriber_id => $subscriber->{id}, type => "update_profile",
+    %subscriber_event = (
+        subscriber_id => $subscriber->{id},
           subscriber_profile_id => $subscriberprofile2->{id}, subscriber_profile_name => $subscriberprofile2->{name},
           subscriber_profile_set_id => $subscriberprofile2set->{id}, subscriber_profile_set_name => $subscriberprofile2set->{name},
           primary_number_cc => $cc, primary_number_ac => $ac, primary_number_sn => $sn.$ext,
@@ -410,75 +548,203 @@ my %customer_map = ();
           first_non_primary_alias_username_after => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_before => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
+    );
+    _check_event_history("start/update/end_profile when updating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
+        {},{},
+        { %subscriber_event,
+
+          type => "update_profile",
+          old_status => $subscriberprofile1->{id},
+          new_status => $subscriberprofile2->{id},
+
+          non_primary_alias_username => $aliases->[1]->{cc}.$aliases->[1]->{ac}.$aliases->[1]->{sn},
+        },
+        { %subscriber_event,
+
+          type => "start_profile",
+          old_status => '',
+          new_status => $subscriberprofile2->{id},
+
+          non_primary_alias_username => $new_aliases->[1]->{cc}.$new_aliases->[1]->{ac}.$new_aliases->[1]->{sn},
+        },
+        { %subscriber_event,
+
+          type => "end_profile",
+          old_status => $subscriberprofile1->{id},
+          new_status => '',
+
+          non_primary_alias_username => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn},
         },
     ]);
 
     my $new_pilot_aliases = [
+        { cc => $cc, ac => $ac, sn => $sn.'0002' },
         { cc => $cc, ac => $ac, sn => $sn.'0003' },
-        { cc => $cc, ac => $ac, sn => $sn.'0004' },
     ];
     _update_subscriber($pilot_subscriber,
         alias_numbers => $new_pilot_aliases,
-        profile_id => $subscriberprofile2->{id},
-        profile_set_id => $subscriberprofile2set->{id},
+        profile_id => $subscriberprofile3->{id},
+        profile_set_id => $subscriberprofile3set->{id},
     );
-    _check_event_history("update_profile when updating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"update_profile",[
-        { subscriber_id => $pilot_subscriber->{id}, type => "update_profile",
-          subscriber_profile_id => $subscriberprofile2->{id}, subscriber_profile_name => $subscriberprofile2->{name},
-          subscriber_profile_set_id => $subscriberprofile2set->{id}, subscriber_profile_set_name => $subscriberprofile2set->{name},
+    my %pilot_event = (
+        subscriber_id => $pilot_subscriber->{id},
+          subscriber_profile_id => $subscriberprofile3->{id}, subscriber_profile_name => $subscriberprofile3->{name},
+          subscriber_profile_set_id => $subscriberprofile3set->{id}, subscriber_profile_set_name => $subscriberprofile3set->{name},
           primary_number_cc => $cc, primary_number_ac => $ac, primary_number_sn => $sn,
           pilot_subscriber_id => $pilot_subscriber->{id},
-          pilot_subscriber_profile_id => $subscriberprofile2->{id}, pilot_subscriber_profile_name => $subscriberprofile2->{name},
-          pilot_subscriber_profile_set_id => $subscriberprofile2set->{id}, pilot_subscriber_profile_set_name => $subscriberprofile2set->{name},
+          pilot_subscriber_profile_id => $subscriberprofile3->{id}, pilot_subscriber_profile_name => $subscriberprofile3->{name},
+          pilot_subscriber_profile_set_id => $subscriberprofile3set->{id}, pilot_subscriber_profile_set_name => $subscriberprofile3set->{name},
           pilot_primary_number_cc => $cc, pilot_primary_number_ac => $ac, pilot_primary_number_sn => $sn,
 
           first_non_primary_alias_username_before => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_before => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
+    );
+    _check_event_history("start/update/end_profile when updating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"%profile",[
+        {},{},
+        { %pilot_event,
+
+          type => "update_profile",
+          old_status => $subscriberprofile1->{id},
+          new_status => $subscriberprofile3->{id},
+
+          non_primary_alias_username => $pilot_aliases->[1]->{cc}.$pilot_aliases->[1]->{ac}.$pilot_aliases->[1]->{sn},
+        },
+        { %pilot_event,
+
+          type => "start_profile",
+          old_status => '',
+          new_status => $subscriberprofile3->{id},
+
+          non_primary_alias_username => $new_pilot_aliases->[1]->{cc}.$new_pilot_aliases->[1]->{ac}.$new_pilot_aliases->[1]->{sn},
+        },
+        { %pilot_event,
+
+          type => "end_profile",
+          old_status => $subscriberprofile1->{id},
+          new_status => '',
+
+          non_primary_alias_username => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
         },
     ]);
 
     _update_subscriber($subscriber, status => 'terminated');
-    _check_event_history("stop_profile when terminating a pbx extension subscriber w alias: ",$subscriber->{id},"stop_profile",[
-        { subscriber_id => $subscriber->{id}, type => "stop_profile",
+    %subscriber_event = (
+    subscriber_id => $subscriber->{id},
           subscriber_profile_id => $subscriberprofile2->{id}, subscriber_profile_name => $subscriberprofile2->{name},
           subscriber_profile_set_id => $subscriberprofile2set->{id}, subscriber_profile_set_name => $subscriberprofile2set->{name},
           primary_number_cc => $cc, primary_number_ac => $ac, primary_number_sn => $sn.$ext,
           pilot_subscriber_id => $pilot_subscriber->{id},
-          pilot_subscriber_profile_id => $subscriberprofile2->{id}, pilot_subscriber_profile_name => $subscriberprofile2->{name},
-          pilot_subscriber_profile_set_id => $subscriberprofile2set->{id}, pilot_subscriber_profile_set_name => $subscriberprofile2set->{name},
+          pilot_subscriber_profile_id => $subscriberprofile3->{id}, pilot_subscriber_profile_name => $subscriberprofile3->{name},
+          pilot_subscriber_profile_set_id => $subscriberprofile3set->{id}, pilot_subscriber_profile_set_name => $subscriberprofile3set->{name},
           pilot_primary_number_cc => $cc, pilot_primary_number_ac => $ac, pilot_primary_number_sn => $sn,
 
           first_non_primary_alias_username_before => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
           first_non_primary_alias_username_after => undef,
           pilot_first_non_primary_alias_username_before => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
           #would be this:
-          #pilot_first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
+          pilot_first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
           #but since api termination always returns aliases to the pilot:
-          pilot_first_non_primary_alias_username_after => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+          #pilot_first_non_primary_alias_username_after => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+          #pilot_first_non_primary_alias_username_after => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+    ),
+    _check_event_history("end_profile when terminating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
+        {},{},{},{},{},
+        { %subscriber_event,
+
+          type => "update_profile",
+          old_status => $subscriberprofile2->{id},
+          new_status => $subscriberprofile3->{id},
+
+          non_primary_alias_username => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+        },
+        { %subscriber_event,
+
+          type => "update_profile",
+          old_status => $subscriberprofile2->{id},
+          new_status => $subscriberprofile3->{id},
+
+          non_primary_alias_username => $new_aliases->[1]->{cc}.$new_aliases->[1]->{ac}.$new_aliases->[1]->{sn},
         },
     ]);
 
     _update_subscriber($pilot_subscriber, status => 'terminated');
-    _check_event_history("stop_profile when terminating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"stop_profile",[
-        { subscriber_id => $pilot_subscriber->{id}, type => "stop_profile",
-          subscriber_profile_id => $subscriberprofile2->{id}, subscriber_profile_name => $subscriberprofile2->{name},
-          subscriber_profile_set_id => $subscriberprofile2set->{id}, subscriber_profile_set_name => $subscriberprofile2set->{name},
+    my %pilot_event = (
+        subscriber_id => $pilot_subscriber->{id},
+          subscriber_profile_id => $subscriberprofile3->{id}, subscriber_profile_name => $subscriberprofile3->{name},
+          subscriber_profile_set_id => $subscriberprofile3set->{id}, subscriber_profile_set_name => $subscriberprofile3set->{name},
           primary_number_cc => $cc, primary_number_ac => $ac, primary_number_sn => $sn,
           pilot_subscriber_id => $pilot_subscriber->{id},
-          pilot_subscriber_profile_id => $subscriberprofile2->{id}, pilot_subscriber_profile_name => $subscriberprofile2->{name},
-          pilot_subscriber_profile_set_id => $subscriberprofile2set->{id}, pilot_subscriber_profile_set_name => $subscriberprofile2set->{name},
+          pilot_subscriber_profile_id => $subscriberprofile3->{id}, pilot_subscriber_profile_name => $subscriberprofile3->{name},
+          pilot_subscriber_profile_set_id => $subscriberprofile3set->{id}, pilot_subscriber_profile_set_name => $subscriberprofile3set->{name},
           pilot_primary_number_cc => $cc, pilot_primary_number_ac => $ac, pilot_primary_number_sn => $sn,
 
           #would be this:
           #$new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
           #but since api termination always returns aliases to the pilot:
-          first_non_primary_alias_username_before => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+          #first_non_primary_alias_username_before => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+          pilot_first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
           first_non_primary_alias_username_after => undef,
-          pilot_first_non_primary_alias_username_before => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+          #pilot_first_non_primary_alias_username_before => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+          pilot_first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => undef,
+    );
+    _check_event_history("end_profile when terminating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"%profile",[
+        {},{},{},{},{},
+        #aliases ordered by id, so by the order they were created:
+        #id=2:0002
+        #id=6:0003
+        #--
+        #id=4:0004
+        #id=5:0005
+        #-->
+        #id=2:0002
+        #id=4:0004
+        #id=5:0005
+        #id=6:0003
+        { %pilot_event,
+
+          type => "end_profile",
+          old_status => $subscriberprofile3->{id},
+          new_status => '',
+
+          non_primary_alias_username => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
         },
+
+                { %pilot_event,
+
+          type => "end_profile",
+          old_status => $subscriberprofile3->{id},
+          new_status => '',
+
+          non_primary_alias_username => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+        },
+
+
+                { %pilot_event,
+
+          type => "end_profile",
+          old_status => $subscriberprofile3->{id},
+          new_status => '',
+
+          non_primary_alias_username => $new_aliases->[1]->{cc}.$new_aliases->[1]->{ac}.$new_aliases->[1]->{sn},
+        },
+        { %pilot_event,
+
+          type => "end_profile",
+          old_status => $subscriberprofile3->{id},
+          new_status => '',
+
+          non_primary_alias_username => $new_pilot_aliases->[1]->{cc}.$new_pilot_aliases->[1]->{ac}.$new_pilot_aliases->[1]->{sn},
+        },
+
+
+
+
+
+
+
     ]);
 
 }

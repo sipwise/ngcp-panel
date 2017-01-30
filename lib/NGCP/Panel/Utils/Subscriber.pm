@@ -356,22 +356,22 @@ sub create_subscriber {
             NGCP::Panel::Utils::Email::new_subscriber($c, $billing_subscriber, $url);
         }
 
-        if($prov_subscriber->profile_id) {
+        #if($prov_subscriber->profile_id) {
             my $events_to_create = $event_context->{events_to_create};
             if (defined $events_to_create) {
                 push(@$events_to_create,{
                     subscriber_id => $billing_subscriber->id,
-                    type => 'start_profile', old => undef, new => $prov_subscriber->profile_id,
+                    type => 'profile', old => undef, new => $prov_subscriber->profile_id,
                     %$aliases_before,
                 });
             } else {
-                NGCP::Panel::Utils::Events::insert(
-                    c => $c, schema => $schema, subscriber => $billing_subscriber,
-                    type => 'start_profile', old => undef, new => $prov_subscriber->profile_id,
+                NGCP::Panel::Utils::Events::insert_profile_events(
+                    c => $c, schema => $schema, subscriber_id => $billing_subscriber->id,
+                    old => undef, new => $prov_subscriber->profile_id,
                     %$aliases_before,
                 );
             }
-        }
+        #}
         if($prov_subscriber->is_pbx_group) {
             my $events_to_create = $event_context->{events_to_create};
             if (defined $events_to_create) {
@@ -382,7 +382,7 @@ sub create_subscriber {
                 });
             } else {
                 NGCP::Panel::Utils::Events::insert(
-                    c => $c, schema => $schema, subscriber => $billing_subscriber,
+                    c => $c, schema => $schema, subscriber_id => $billing_subscriber->id,
                     type => 'start_huntgroup', old => undef, new => $prov_subscriber->profile_id,
                     %$aliases_before,
                 );
@@ -1062,24 +1062,24 @@ sub terminate {
                     }
                 }
             }
-        }
-        if($prov_subscriber && $prov_subscriber->is_pbx_group) {
-            $schema->resultset('voip_pbx_groups')->search({
-                group_id => $subscriber->provisioning_voip_subscriber->id,
-            })->delete;
-            push(@events_to_create,{
-                    type => 'end_huntgroup',
-                    subscriber_id => $subscriber->id,
+            if($prov_subscriber->is_pbx_group) {
+                $schema->resultset('voip_pbx_groups')->search({
+                    group_id => $subscriber->provisioning_voip_subscriber->id,
+                })->delete;
+                push(@events_to_create,{
+                        type => 'end_huntgroup',
+                        subscriber_id => $subscriber->id,
+                        old => $prov_subscriber->profile_id, new => undef,
+                        %$aliases_before,%$aliases_after,
+                    });
+            }
+            #if($prov_subscriber->profile_id) {
+                push(@events_to_create,{
+                    subscriber_id => $subscriber->id, type => 'profile',
                     old => $prov_subscriber->profile_id, new => undef,
                     %$aliases_before,%$aliases_after,
                 });
-        }
-        if($prov_subscriber && $prov_subscriber->profile_id) {
-            push(@events_to_create,{
-                subscriber_id => $subscriber->id, type => 'stop_profile',
-                old => $prov_subscriber->profile_id, new => undef,
-                %$aliases_before,%$aliases_after,
-            });
+            #}
         }
         if($prov_subscriber && !$prov_subscriber->is_pbx_pilot) {
             my $pilot_rs = $schema->resultset('voip_subscribers')->search({
@@ -1139,8 +1139,7 @@ sub terminate {
                 }
             }
             NGCP::Panel::Utils::Events::insert_deferred(
-                c => $c,
-                schema => $schema,
+                c => $c, schema => $schema,
                 events_to_create => \@events_to_create,
             );
             #ready for number change events here
@@ -1463,18 +1462,21 @@ sub apply_rewrite {
 sub check_cf_ivr {
     my (%params) = @_;
 
+    my $c = $params{c};
+    my $schema = $params{schema} // $c->model('DB');;
     my $subscriber = $params{subscriber};
-    my $schema = $params{schema};
     my $new_aa = $params{new_aa}; # boolean, false on delete
     my $old_aa = $params{old_aa}; # boolean, false on create
     if ($old_aa && !$new_aa) {
         NGCP::Panel::Utils::Events::insert(
-            schema => $schema, subscriber => $subscriber,
+            c => $c, schema => $schema,
+            subscriber_id => $subscriber->id,
             type => 'end_ivr',
         );
     } elsif (!$old_aa && $new_aa) {
         NGCP::Panel::Utils::Events::insert(
-            schema => $schema, subscriber => $subscriber,
+            c => $c, schema => $schema,
+            subscriber_id => $subscriber->id,
             type => 'start_ivr',
         );
     }

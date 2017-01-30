@@ -874,11 +874,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     );
                 }
                 NGCP::Panel::Utils::Events::insert_deferred(
-                    c => $c,
-                    schema => $schema,
+                    c => $c, schema => $schema,
                     events_to_create => \@events_to_create,
                 );
-                #ready for number change events here
             });
 
             delete $c->session->{created_objects}->{domain};
@@ -1379,11 +1377,9 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 );
                 NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
                 NGCP::Panel::Utils::Events::insert_deferred(
-                    c => $c,
-                    schema => $schema,
+                    c => $c, schema => $schema,
                     events_to_create => \@events_to_create,
                 );
-                #ready for number change events here
                 $c->session->{created_objects}->{group} = { id => $billing_subscriber->id };
             });
             NGCP::Panel::Utils::Message::info(
