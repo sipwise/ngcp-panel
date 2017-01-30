@@ -187,8 +187,8 @@ sub update_item {
             while ($autoattendant_count != 0) {
                 $autoattendant_count--;
                 NGCP::Panel::Utils::Events::insert(
-                    schema => $c->model('DB'),
-                    subscriber => $item,
+                    c => $c, schema => $c->model('DB'),
+                    subscriber_id => $item->id,
                     type => 'end_ivr',
                 );
             }
@@ -196,8 +196,8 @@ sub update_item {
             while ($autoattendant_count != 0) {
                 $autoattendant_count++;
                 NGCP::Panel::Utils::Events::insert(
-                    schema => $c->model('DB'),
-                    subscriber => $item,
+                    c => $c, schema => $c->model('DB'),
+                    subscriber_id => $item->id,
                     type => 'start_ivr',
                 );
             }
