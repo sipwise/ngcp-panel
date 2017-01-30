@@ -10834,6 +10834,18 @@ msgid "The new CLI to be used as UPN, when one of the patterns matches."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The non-primary alias with lowest id of the subscriber's pilot subscriber, "
+"after number updates during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The non-primary alias with lowest id of the subscriber's pilot subscriber, "
+"before number updates during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The number of free seconds of the carrier contract for this call."
 msgstr ""
 "Il numero di secondi gratuiti dell´operatore usati per questa chiamata."
@@ -11321,6 +11333,18 @@ msgstr "L´abbonato da usare in questa linea/tasto"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber's customer contract."
 msgstr "Il contratto cliente dell´abbonato."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The subscriber's non-primary alias with lowest id, after number updates "
+"during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The subscriber's non-primary alias with lowest id, before number updates "
+"during the operation."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber's primary number area code."
