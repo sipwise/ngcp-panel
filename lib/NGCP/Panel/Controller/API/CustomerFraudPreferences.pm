@@ -35,7 +35,7 @@ class_has 'query_params' => (
                     my $q = shift;
                     { 'contact.reseller_id' => $q };
                 },
-                second => undef,
+                second => sub {},
             },
         },
         {
@@ -46,7 +46,7 @@ class_has 'query_params' => (
                     my $q = shift;
                     { contact_id => $q };
                 },
-                second => undef,
+                second => sub {},
             },
         },
         {
