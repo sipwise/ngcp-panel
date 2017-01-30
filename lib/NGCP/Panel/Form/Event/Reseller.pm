@@ -159,4 +159,10 @@ has_field 'pilot_first_non_primary_alias_username_after' => (
     required => 0,
 );
 
+has_field 'non_primary_alias_username' => (
+    type => 'Text',
+    label => 'The non-primary alias of an \'update_profile\', \'start_profile\' or \'end_profile\' event to track number changes.',
+    required => 0,
+);
+
 1;
