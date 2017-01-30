@@ -688,22 +688,11 @@ sub update_item {
     $prov_subscriber->update($provisioning_res);
     $prov_subscriber->discard_changes;
 
-    if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
-        my $type;
-        if(defined $prov_subscriber->profile_id && defined $old_profile) {
-            $type = "update_profile";
-        } elsif(defined $prov_subscriber->profile_id) {
-            $type = "start_profile";
-        } else {
-            $type = "end_profile";
-        }
-        NGCP::Panel::Utils::Events::insert(
-            c => $c, schema => $schema, subscriber => $subscriber,
-            type => $type, old => $old_profile, new => $prov_subscriber->profile_id,
-            %$aliases_before,
-        );
-    }
-    #ready for number change events here
+    NGCP::Panel::Utils::Events::insert_profile_events(
+        c => $c, schema => $schema, subscriber_id => $subscriber->id,
+        old => $old_profile, new => $prov_subscriber->profile_id,
+        %$aliases_before,
+    );
 
     NGCP::Panel::Utils::Subscriber::update_preferences(
         c => $c,

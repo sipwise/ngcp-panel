@@ -231,8 +231,8 @@ sub update_item {
             $dset->discard_changes if $dset; # update destinations
             my $new_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($dset);
             NGCP::Panel::Utils::Subscriber::check_cf_ivr(
+                c => $c, schema => $c->model('DB'),
                 subscriber => $item,
-                schema => $c->model('DB'),
                 old_aa => $old_autoattendant,
                 new_aa => $new_autoattendant,
             );
