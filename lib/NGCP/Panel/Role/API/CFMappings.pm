@@ -188,7 +188,7 @@ sub update_item {
                 $autoattendant_count--;
                 NGCP::Panel::Utils::Events::insert(
                     schema => $c->model('DB'),
-                    subscriber => $item,
+                    subscriber_id => $item->id,
                     type => 'end_ivr',
                 );
             }
@@ -197,7 +197,7 @@ sub update_item {
                 $autoattendant_count++;
                 NGCP::Panel::Utils::Events::insert(
                     schema => $c->model('DB'),
-                    subscriber => $item,
+                    subscriber_id => $item->id,
                     type => 'start_ivr',
                 );
             }

@@ -417,7 +417,6 @@ sub POST :Allow {
                 schema => $schema,
                 events_to_create => \@events_to_create,
             );
-            #ready for number change events here
         } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
             $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
             $c->log->error("failed to create subscriber, number $1 already exists"); # TODO: user, message, trace, ...
