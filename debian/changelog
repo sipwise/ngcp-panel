@@ -1,3 +1,33 @@
+ngcp-panel (1.8.10.0+0~mr3.8.10.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [398d5ee] TT#4708 Update year information in copyright info
+  * [3593136] TT#4476 Fix top settings menu for csc
+  * [e0dd0f0] TT#5203 Add banned ips and users API interface
+  * [e7fd1c0] TT#5204 Check that all htable.auth keys are defined
+  * [a7892a7] TT#5415 Don't touch unchanged pbx groups for member to save members order
+  * [6219748] MT#20369 Remove warning about return from sub by last
+  * [4a0bd3f] TT#5415 Backport Generic.pm as base for the further backportings
+  * [e467ab5] TT#5415 Adapt subscribers tests to 3.8
+  * [40b5187] TT#8185 Add reseller_id to the domain for the reseller roles
+  * [c0f97a5] TT#8185 Fix domain deletion for the reseller
+  * [6e8cd01] TT#7029 Make deletion quiet again
+  * [1426d80] TT#7453 Add  readonly time fields to the customers api
+  * [cc153b6] TT#9100 Fix user_unban in the web panel
+
+  [ Gerhard Jungwirth ]
+  * [ca70184] TT#5415 fix backport by using Data::Compare directly
+
+  [ Rene Krenn ]
+  * [1bb4e1e] TT#5559 end_ivr event for panel UI delete callforward btn
+  * [780c866] TT#5559 end_ivr event for panel UI delete destinationset btn
+  * [205c714] TT#8292 api/customerfraudpreferences
+  * [a6b8368] TT#8292 api/customerfraudpreferences filter queries
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 30 Jan 2017 15:35:41 +0100
+
 ngcp-panel (1.8.9.0+0~mr3.8.9.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
