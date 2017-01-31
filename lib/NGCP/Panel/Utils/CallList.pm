@@ -5,6 +5,7 @@ use warnings;
 
 use JSON qw();
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Subscriber;
 
 # owner:
 #     * subscriber (optional)
@@ -25,11 +26,13 @@ use NGCP::Panel::Utils::DateTime;
 #     * rating_status
 #     * type
 sub process_cdr_item {
-    my ($c, $item, $owner) = @_;
+    my ($c, $item, $owner, $params) = @_;
 
     my $sub = $owner->{subscriber};
     my $cust = $owner->{customer};
     my $resource = {};
+
+    $params //= $c->req->params;
 
     $resource->{call_id} = $item->call_id;
 
@@ -45,7 +48,7 @@ sub process_cdr_item {
     if(defined $sub && $sub->uuid eq $item->destination_user_id) {
         $resource->{direction} = "in";
     } elsif (defined $cust && $item->destination_account_id == $cust->id
-        && ( $item->source_account_id != $cust->id || $item->destination_user_id ) ) {
+        && ( $item->source_account_id != $cust->id || $item->destination_user_id ) ) { # ???
         $resource->{direction} = "in";
     } else {
         $resource->{direction} = "out";
@@ -68,13 +71,13 @@ sub process_cdr_item {
         if($src_sub && $src_sub->pbx_extension) {
             $resource->{own_cli} = $src_sub->pbx_extension;
         # for termianted subscribers if there is an alias field (e.g. gpp0), use this
-        } elsif($item->source_account_id && $c->req->param('intra_alias_field')) {
-            my $alias = $item->get_column('source_'.$c->req->param('intra_alias_field'));
+        } elsif($item->source_account_id && $params->{'intra_alias_field'}) {
+            my $alias = $item->get_column('source_'.$params->{'intra_alias_field'});
             $resource->{own_cli} = $alias // $item->source_cli;
             $own_normalize = 0;
         # if there is an alias field (e.g. gpp0), use this
-        } elsif($item->source_account_id && $c->req->param('alias_field')) {
-            my $alias = $item->get_column('source_'.$c->req->param('alias_field'));
+        } elsif($item->source_account_id && $params->{'alias_field'}) {
+            my $alias = $item->get_column('source_'.$params->{'alias_field'});
             $resource->{own_cli} = $alias // $item->source_cli;
             $own_normalize = 1;
         } else {
@@ -87,13 +90,13 @@ sub process_cdr_item {
         if($intra && $dst_sub && $dst_sub->pbx_extension) {
             $resource->{other_cli} = $dst_sub->pbx_extension;
         # for termianted subscribers if there is an alias field (e.g. gpp0), use this
-        } elsif($intra && $item->destination_account_id && $c->req->param('intra_alias_field')) {
-            my $alias = $item->get_column('destination_'.$c->req->param('intra_alias_field'));
+        } elsif($intra && $item->destination_account_id && $params->{'intra_alias_field'}) {
+            my $alias = $item->get_column('destination_'.$params->{'intra_alias_field'});
             $resource->{other_cli} = $alias // $item->destination_user_in;
             $other_normalize = 0;
         # if there is an alias field (e.g. gpp0), use this
-        } elsif($item->destination_account_id && $c->req->param('alias_field')) {
-            my $alias = $item->get_column('destination_'.$c->req->param('alias_field'));
+        } elsif($item->destination_account_id && $params->{'alias_field'}) {
+            my $alias = $item->get_column('destination_'.$params->{'alias_field'});
             $resource->{other_cli} = $alias // $item->destination_user_in;
             $other_normalize = 1;
         } else {
@@ -106,13 +109,13 @@ sub process_cdr_item {
         if($dst_sub && $dst_sub->pbx_extension) {
             $resource->{own_cli} = $dst_sub->pbx_extension;
         # for termianted subscribers if there is an alias field (e.g. gpp0), use this
-        } elsif($item->destination_account_id && $c->req->param('intra_alias_field')) {
-            my $alias = $item->get_column('destination_'.$c->req->param('intra_alias_field'));
+        } elsif($item->destination_account_id && $params->{'intra_alias_field'}) {
+            my $alias = $item->get_column('destination_'.$params->{'intra_alias_field'});
             $resource->{own_cli} = $alias // $item->destination_user_in;
             $own_normalize = 0;
         # if there is an alias field (e.g. gpp0), use this
-        } elsif($item->destination_account_id && $c->req->param('alias_field')) {
-            my $alias = $item->get_column('destination_'.$c->req->param('alias_field'));
+        } elsif($item->destination_account_id && $params->{'alias_field'}) {
+            my $alias = $item->get_column('destination_'.$params->{'alias_field'});
             $resource->{own_cli} = $alias // $item->destination_user_in;
             $own_normalize = 1;
         } else {
@@ -146,13 +149,13 @@ sub process_cdr_item {
         } elsif($intra && $src_sub && $src_sub->pbx_extension) {
             $resource->{other_cli} = $src_sub->pbx_extension;
         # for termianted subscribers if there is an alias field (e.g. gpp0), use this
-        } elsif($intra && $item->source_account_id && $c->req->param('intra_alias_field')) {
-            my $alias = $item->get_column('source_'.$c->req->param('intra_alias_field'));
+        } elsif($intra && $item->source_account_id && $params->{'intra_alias_field'}) {
+            my $alias = $item->get_column('source_'.$params->{'intra_alias_field'});
             $resource->{other_cli} = $alias // $item->source_cli;
             $other_normalize = 0;
         # if there is an alias field (e.g. gpp0), use this
-        } elsif($item->source_account_id && $c->req->param('alias_field')) {
-            my $alias = $item->get_column('source_'.$c->req->param('alias_field'));
+        } elsif($item->source_account_id && $params->{'alias_field'}) {
+            my $alias = $item->get_column('source_'.$params->{'alias_field'});
             $resource->{other_cli} = $alias // $item->source_cli;
             $other_normalize = 1;
         } else {
