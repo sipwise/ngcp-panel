@@ -4958,6 +4958,10 @@ msgid "Generate Certificate"
 msgstr "Genera Certificato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Grandstream"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Greeting type."
 msgstr ""
 
@@ -6467,10 +6471,9 @@ msgstr "Metodo"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Method to configure the provisioning server on the phone. One of http, "
-"redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom."
+"redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom, "
+"redirect_grandstream."
 msgstr ""
-"Metodo per configurare il server di provisioning sul telefono. Scelta tra "
-"http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Minute"
@@ -11463,6 +11466,14 @@ msgid "The timestamp when the rating occured."
 msgstr "La data e ora in cui è avvenuta la tariffazione."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timezone of the contact."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timezone of the subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The top-up amount in Euro/USD/etc."
 msgstr "La somma da ricaricare in Euro/USD/ecc."
 
@@ -11645,6 +11656,11 @@ msgstr "Impostazioni temporali \"%1\" Dettagli"
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Timestamp"
 msgstr "Orario"
+
+#: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: share/templates/subscriber/master.tt
+msgid "Timezone"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "To"
@@ -13109,6 +13125,14 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid ""
+#~ "Method to configure the provisioning server on the phone. One of http, "
+#~ "redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom."
+#~ msgstr ""
+#~ "Metodo per configurare il server di provisioning sul telefono. Scelta tra "
+#~ "http, redirect_panasonic, redirect_yealink, redirect_polycom, "
+#~ "redirect_snom."
 
 #~ msgid "The package this voucher belongs to."
 #~ msgstr "Il piano tariffario a cui appartiene questo voucher."

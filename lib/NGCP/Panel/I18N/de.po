@@ -4811,6 +4811,10 @@ msgid "Generate Certificate"
 msgstr "Erzeuge Zertifikat"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Grandstream"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Greeting type."
 msgstr ""
 
@@ -6251,7 +6255,8 @@ msgstr "Methode"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Method to configure the provisioning server on the phone. One of http, "
-"redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom."
+"redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom, "
+"redirect_grandstream."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11067,6 +11072,14 @@ msgid "The timestamp when the rating occured."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timezone of the contact."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timezone of the subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The top-up amount in Euro/USD/etc."
 msgstr ""
 
@@ -11249,6 +11262,11 @@ msgstr "Zeit-Set \"%1\" Details"
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Timestamp"
 msgstr "Zeitstempel"
+
+#: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: share/templates/subscriber/master.tt
+msgid "Timezone"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "To"
