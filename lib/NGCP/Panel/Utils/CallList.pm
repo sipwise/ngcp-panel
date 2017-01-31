@@ -22,6 +22,7 @@ use NGCP::Panel::Utils::DateTime;
 #     * own_cli
 #     * start_time
 #     * status
+#     * rating_status
 #     * type
 sub process_cdr_item {
     my ($c, $item, $owner) = @_;
@@ -44,7 +45,7 @@ sub process_cdr_item {
     if(defined $sub && $sub->uuid eq $item->destination_user_id) {
         $resource->{direction} = "in";
     } elsif (defined $cust && $item->destination_account_id == $cust->id
-        && ( $item->source_account_id != $cust->id || $item->destination_user_id ) ) {
+        && ( $item->source_account_id != $cust->id ) ) {
         $resource->{direction} = "in";
     } else {
         $resource->{direction} = "out";
