@@ -22,6 +22,7 @@ use NGCP::Panel::Utils::DateTime;
 #     * own_cli
 #     * start_time
 #     * status
+#     * rating_status
 #     * type
 sub process_cdr_item {
     my ($c, $item, $owner) = @_;
@@ -164,7 +165,7 @@ sub process_cdr_item {
 
     # for inbound calls, always show type call, even if it's
     # a call forward
-    if($resource->{direction} eq "in") {
+    if(!$intra && $resource->{direction} eq "in") {
         $resource->{type} = "call";
     } else {
         $resource->{type} = $item->call_type;
