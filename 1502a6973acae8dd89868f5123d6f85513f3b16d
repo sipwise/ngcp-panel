@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_a0bb3871",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-02-01T15:00:39Z",
+      "side": 1,
+      "message": "how is this ubdated? in session_create only a reset callback is passed, i thought inew also decreases with every successful reservation",
+      "range": {
+        "startLine": 232,
+        "startChar": 15,
+        "endLine": 232,
+        "endChar": 26
+      },
+      "revId": "1502a6973acae8dd89868f5123d6f85513f3b16d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_c0b63c8a",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-02-01T15:00:39Z",
+      "side": 1,
+      "message": "what if those fail? maybe enclosing these with eval { session_commit(..) };",
+      "range": {
+        "startLine": 241,
+        "startChar": 44,
+        "endLine": 241,
+        "endChar": 62
+      },
+      "revId": "1502a6973acae8dd89868f5123d6f85513f3b16d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
