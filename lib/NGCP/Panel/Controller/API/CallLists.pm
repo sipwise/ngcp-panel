@@ -205,6 +205,21 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'own_cli',
+            description => 'Filter calls by a specific number that is a part of in our out calls.',
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                my $out_rs = $rs->search_rs({
+                    source_cli => $q
+                });
+                my $in_rs = $rs->search_rs({
+                    destination_user_in => $q
+                });
+                return $out_rs->union_all($in_rs);
+                return $rs;
+            },
+        },
     ];
 }
 
