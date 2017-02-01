@@ -10488,6 +10488,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"The non-primary alias of an 'update_profile', 'start_profile' or "
+"'end_profile' event to track number changes."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "The non-primary alias with lowest id of the subscriber's pilot subscriber, "
 "after number updates during the operation."
 msgstr ""
