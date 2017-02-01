@@ -222,6 +222,38 @@ sub query_params {
                 },
             },
         },
+        {
+            param => 'own_cli',
+            description => 'Filter calls by a specific number that is a part of in our out calls.',
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                my $owner = $c->stash->{owner} // {};
+                return unless $owner;
+                if ($owner->{subscriber}) {
+                    return $rs->search_rs({
+                        -or => [
+                            { source_cli => $q,
+                              source_user_id => $owner->{subscriber}->uuid,
+                            },
+                            { destination_user_in => $q,
+                              destination_user_id => $owner->{subscriber}->uuid,
+                            },
+                        ],
+                    });
+                } elsif ($owner->{customer}) {
+                    return $rs->search_rs({
+                        -or => [
+                            { source_cli => $q,
+                              source_account_id => $owner->{customer}->id,
+                            },
+                            { destination_user_in => $q,
+                              destination_account_id => $owner->{customer}->id,
+                            },
+                        ],
+                    });
+                }
+            },
+        },
     ];
 }
 
