@@ -45,12 +45,18 @@ sub process_cdr_item {
         $resource->{intra_customer} = JSON::false;
         $intra = 0;
     }
-    # out by default
-    if(defined $sub && $sub->uuid eq $item->destination_user_id) {
+    # internal subscriber calls => out
+    if(defined $sub && $sub->uuid eq $item->source_user_id &&
+                       $sub->uuid eq $item->destination_user_id) {
+        $resource->{direction} = "out";
+    # subscriber incoming calls => in
+    } elsif (defined $sub && $sub->uuid eq $item->destination_user_id) {
         $resource->{direction} = "in";
+    # customer incoming calls => in
     } elsif (defined $cust && $item->destination_account_id == $cust->id
         && ( $item->source_account_id != $cust->id ) ) {
         $resource->{direction} = "in";
+    # rest => out
     } else {
         $resource->{direction} = "out";
     }
