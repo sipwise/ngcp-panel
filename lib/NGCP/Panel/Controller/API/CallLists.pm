@@ -205,6 +205,36 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'own_cli',
+            description => 'Filter calls by a specific number that is a part of in our out calls.',
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                my $owner = $c->stash->{owner} // {};
+                if ($owner->{subscriber}) {
+                    my $out_rs = $rs->search_rs({
+                        source_cli => $q,
+                        source_user_id => $owner->{subscriber}->uuid,
+                    });
+                    my $in_rs = $rs->search_rs({
+                        destination_user_in => $q,
+                        destination_user_id => $owner->{subscriber}->uuid,
+                    });
+                    return $out_rs->union_all($in_rs);
+                } elsif ($owner->{customer}) {
+                    my $out_rs = $rs->search_rs({
+                        source_cli => $q,
+                        source_account_id => $owner->{customer}->uuid,
+                    });
+                    my $in_rs = $rs->search_rs({
+                        destination_user_in => $q,
+                        destination_account_id => $owner->{subscriber}->uuid,
+                        source_account_id => { '!=' => $owner->{subscriber}->uuid },
+                    });
+                    return $out_rs->union_all($in_rs);
+                }
+            },
+        },
     ];
 }
 

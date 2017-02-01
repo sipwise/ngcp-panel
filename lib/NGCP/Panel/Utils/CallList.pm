@@ -46,7 +46,7 @@ sub process_cdr_item {
     }
     # out by default
     if(defined $sub && $sub->uuid eq $item->destination_user_id) {
-        $resource->{direction} = "in";
+        $resource->{direction} = "out";
     } elsif (defined $cust && $item->destination_account_id == $cust->id
         && ( $item->source_account_id != $cust->id ) ) {
         $resource->{direction} = "in";
