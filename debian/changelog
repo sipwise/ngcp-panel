@@ -1,3 +1,112 @@
+ngcp-panel (5.2.0.0+0~mr5.2.0.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [875f634] TT#5811 fractional CDR times/durations in panel UI/api
+  * [5633770] TT#5559 api/events, event test with "missing end-events" cases
+  * [9fc990b] TT#6638 fix hanging loading-icon on dashboard
+  * [834de7a] TT#5559 end_ivr event for panel UI delete callforward btn
+  * [01a9825] TT#5559 end_ivr event for panel UI delete destinationset btn
+  * [64cf8d6] TT#7930 consider rewriterule formhandler inflate/defalte in api
+  * [c498f66] TT#6735 TT#7030 TT#5850 record event subscriber numbers
+  * [e32f4a0] TT#8773 remove the right duplicate voucher package field
+  * [05eb8f6] TT#8878 end_ivr event upon terminating a susbcriber
+  * [90f9b84] TT#8292 api/customerfraudpreferences
+  * [61a87b9] TT#9714 susbcriber first non-prim alias for edr records
+  * [7b64604] TT#6735 TT#5850 refactor "profile" events to track number changes
+
+  [ Andreas Granig ]
+  * [d984d92] TT#6638 Show emergency mode in Application Status
+  * [776dd24] TT#2371 Implement SMS forwarding
+  * [d6a6345] TT#6496 Implement SMS notifications for voicemail
+  * [5ca51f9] TT#2371 Implement 3pcc for sms
+
+  [ Gerhard Jungwirth ]
+  * [6a23a76] TT#2370 add internal interface for incoming sms
+  * [5f1ee26] TT#6831 decode utf-16 for incoming sms
+  * [47d1ff2] TT#6831 handle sms legacy currency sign
+  * [1a25aa3] TT#5812 fix calllist direction processing
+  * [872eeff] TT#6831 fix sending sms check param
+  * [5958d3d] TT#7179 emergency mode cli status report
+  * [3fc22bd] TT#4334 adapt soundsets and autoattendants for subadmin
+  * [893943d] TT#4334 adapt api documentation for subadmin
+  * [e0efdd2] TT#4334 remove duplicate column package_id
+  * [0b999d6] TT#4324 voicemail permissions for subadmin
+  * [ab375e6] TT#4334 adapt soundfiles api to subadmin
+  * [36732d3] TT#8657 fix xmlrpc trustedReload
+  * [c37b0ed] TT#4324 voicemail permissions for subscriber
+  * [d96f670] TT#9829 add unit tests for process_cdr_item
+
+  [ Kirill Solomko ]
+  * [fe2a531] TT#5004 rework pbx device firmware data download/upload
+  * [2426f59] TT#5554 CallRouting: fix use caller_in/callee_in for the internal processing
+  * [a1c273a] TT#5554 CallRouting: domain part for caller subscribers
+  * [c956418] TT#7506 MaliciousCall add API filter options
+  * [45af3c0] TT#7497 add /api/faxes filter by sid
+  * [1bbad6a] TT#2651 add /partycallcontrols API
+  * [3e2670d] TT#2651 use $token for /partycallcontrol type=pcc
+  * [2cf06a4] TT#2651 fix $token for /partycallcontrol type=pcc
+  * [a6462d2] TT#2651 fix call_id param name to callid for Utils/Sems/party_call_control
+  * [3308b5f] TT#5826 introduce timezone representation
+  * [a74c57d] TT#5826 add timezone field for Pbx subscriberadmin* edit forms
+
+  [ Irina Peshinskaya ]
+  * [daf92dc] TT#5954 Add Custom Hours option to CF
+  * [9d13bf3] TT#5415 Fix typo
+  * [9ddb64f] TT#6127 Add options into datatables pageSize select
+  * [8c61449] TT#6127 Don't remove datatables values on localStorage cleaning
+  * [69923f3] TT#2393  Fix typo in sset deletion
+  * [574af77] TT#7029 Improvements for fakedata clearance
+  * [f7be40f] TT#7029 Remove redefined methods, inserted by wrong merge
+  * [264e42f] TT#7029 Clear test data more accurate in some collections
+  * [56649aa] TT#6800 Add sandbox script to rename already existing profiles
+  * [37a1996] TT#5954 Readonly SoundGroups interface
+  * [c379dc9] TT#5954 Rename custom hours announcements
+  * [37f6d0e] TT#5954 Add announcement field to the destinations
+  * [27ef7ef] TT#5954 Unify cf_destination creation subroutine in web panel
+  * [c31e254] TT#5953 Voicemail greetings
+  * [2075174] TT#8272 Fix customer creation with invoices and email templates in API
+  * [3dee9d7] TT#5004 Fix pbx devices firmware insertion
+  * [a4e6c77] TT#8272 Collapse copy-pasted code a little
+  * [a5fa8b0] MT#3947 Fix 500 on terminated subscribers for the voicemailsettings
+  * [6268023] TT#8185 Add reseller_id to the domain for the reseller roles
+  * [fcb03e4] TT#8185 Fix domain deletion for the reseller
+  * [d31c66c] TT#7029 Make deletion quiet again
+  * [99ee7da] TT#8272 Add necessary form_validation exceptions for the template fields
+  * [63958c3] TT#7453 Add  readonly time fields to the customers api
+  * [cf58d77] TT#5953 Fix directory format for the voicemail greetings
+  * [3227ed8] TT#5953 More strict like patterns for the voicemail greetings selection
+  * [fecb1b0] TT#8272 Add script to send emails to the new subscribers
+  * [dbd63c2] TT#5953 Implement wav conversion to the GSM for the voicemail greetings
+  * [dfa4a88] TT#7029 Make subscribers API tests more stable
+  * [ae1a4f2] TT#8773 Remove readonly fields from resource in the API::validate_form to fix PATCH
+  * [04ab1bf] TT#8773 Add partycallcontrols into api-root.t
+  * [0ca87e5] TT#9100 Fix user_unban in the web panel
+  * [5053939] TT#9212 Add grandstream provisioning dummy implementation
+  * [f1971bf] TT#8680 Consider E164 empty fields
+
+  [ Alexander Lutay ]
+  * [b9296c2] TT#5559 Fix 563377: add REST API 'events' to api-root.t
+
+  [ Sipwise Jenkins Builder ]
+  * [1307955] TT#4166 I18N dump: snapshot 2016.11.25-07.14.41
+  * [6ec21b4] TT#4166 I18N dump: snapshot 2016.11.30-07.21.09
+  * [4a21b8f] TT#4166 I18N dump: snapshot 2016.12.03-07.34.34
+  * [dc5cc95] TT#4166 I18N dump: snapshot 2016.12.21-08.30.17
+  * [e01fd35] TT#4166 I18N dump: snapshot 2016.12.23-09.10.19
+  * [3c029d1] TT#4166 I18N dump: snapshot 2017.01.05-08.38.01
+  * [49c092a] TT#4166 I18N dump: snapshot 2017.01.12-08.28.36
+  * [0a48d41] TT#4166 I18N dump: snapshot 2017.01.17-06.56.57
+  * [4012257] TT#4166 I18N dump: snapshot 2017.01.19-07.42.54
+  * [1af6f1f] TT#4166 I18N dump: snapshot 2017.01.27-10.23.17
+  * [e9e42d2] TT#4166 I18N dump: snapshot 2017.01.30-08.08.31
+  * [42b06ca] TT#4166 I18N dump: snapshot 2017.01.31-08.01.31
+  * [74348b7] TT#4166 I18N dump: snapshot 2017.02.01-08.02.34
+
+  [ Guillem Jover ]
+  * [bba26ff] TT#8143 Move ngcp-panel insserv override into ngcp-panel init script
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 03 Feb 2017 00:38:07 +0100
+
 ngcp-panel (5.1.0.0+0~mr5.1.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
