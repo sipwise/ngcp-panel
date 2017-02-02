@@ -20,7 +20,9 @@ sub root :Chained('/') :PathPart('grafana') :CaptureArgs() {
 
     my $path = join '/', @fullpath;
     $path .= '?' . $c->req->uri->query if $c->req->uri->query;
-    my $url = "http://127.0.0.1:3000";
+    my $url = $c->config->{grafana}{schema} . '://' .
+              $c->config->{grafana}{host} . ':' .
+              $c->config->{grafana}{port};
     $url .= "/".$path if length $path;
     $c->log->debug("accessing grafana via ngcp-panel proxy, url is $url");
 
