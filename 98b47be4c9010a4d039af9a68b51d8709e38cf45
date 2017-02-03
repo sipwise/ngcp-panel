@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_278917cb",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-02-03T07:12:52Z",
+      "side": 1,
+      "message": "I suggest to put checked items into stash, as commented in the role. So here we can use:\nmy $subscriber \u003d $c-\u003estash-\u003e{checked}-\u003e{subscriber};\n\nIt will allow to unify checking for the POST (creation) and PUT/PATCH (edit).\n\nLater we can collect library of standard checks, like \"is_valid_subscriber\", etc.",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 108,
+        "endChar": 11
+      },
+      "revId": "98b47be4c9010a4d039af9a68b51d8709e38cf45",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_c7a48b59",
+        "filename": "lib/NGCP/Panel/Role/API/SMS.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-02-03T07:12:52Z",
+      "side": 1,
+      "message": "To don\u0027t get (and check) subscribers again, I suggetst to use stash.\n\nSo:\n    $c-\u003estash-\u003e{checked}-\u003e{subscriber} \u003d $subscriber;",
+      "range": {
+        "startLine": 85,
+        "startChar": 0,
+        "endLine": 85,
+        "endChar": 65
+      },
+      "revId": "98b47be4c9010a4d039af9a68b51d8709e38cf45",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
