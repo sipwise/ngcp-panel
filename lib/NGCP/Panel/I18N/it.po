@@ -6353,6 +6353,14 @@ msgid "Max. Subscribers"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Maximum Call Duration (seconds)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Maximum Call Duration (seconds)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum Number of Participants in Conference Room"
 msgstr "Numero massimo di partecipanti alla conferenza"
 
@@ -8677,6 +8685,14 @@ msgstr "Salta Rewrite"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Skip UPN check on Diversion"
 msgstr "Salta controllo UPN su header Diversion"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Skip callee LNP lookup"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Skip callee LNP lookup when receiving a call from this peer."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Slot"
