@@ -55,7 +55,7 @@ sub rpc_https_call{
     my($self, $content, $cfg) = @_;
     $cfg //= $self->rpc_server_params;
     my $c = $self->params->{c};
-    $c->log->debug( "rpc_https_call: host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; content=$content;" );
+    $c->log->debug( "rpc_https_call: host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; query_string=$cfg->{query_string}; content=$content;" );
     #$c->log->debug( Dumper($cfg->{headers}) );
     my( $page, $response_code, %reply_headers, $response_value );
     eval {
@@ -64,9 +64,9 @@ sub rpc_https_call{
         ( $page, $response_code, %reply_headers ) = https_post({
             'host'    => $cfg->{host},
             'port'    => $cfg->{port},
-            'path'    => $cfg->{path},
+            'path'    => $cfg->{path}.($cfg->{query_string}//''),
             'headers' => $cfg->{headers},
-            'Content-Type' => 'text/xml',
+            'Content-Type' => $cfg->{content_type} // 'text/xml',
             'content' => $content,
         },);
         alarm(0);
