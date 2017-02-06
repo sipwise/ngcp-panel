@@ -55,7 +55,7 @@ sub rpc_https_call{
     my($self, $content, $cfg) = @_;
     $cfg //= $self->rpc_server_params;
     my $c = $self->params->{c};
-    $c->log->debug( "rpc_https_call: host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; content=$content;" );
+    $c->log->debug( "rpc_https_call: host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; query_string=$cfg->{query_string}; content=$content;" );
     #$c->log->debug( Dumper($cfg->{headers}) );
     my( $page, $response_code, %reply_headers, $response_value );
     eval {
@@ -64,9 +64,9 @@ sub rpc_https_call{
         ( $page, $response_code, %reply_headers ) = https_post({
             'host'    => $cfg->{host},
             'port'    => $cfg->{port},
-            'path'    => $cfg->{path},
+            'path'    => $cfg->{path}.($cfg->{query_string}//''),
             'headers' => $cfg->{headers},
-            'Content-Type' => 'text/xml',
+            'Content-Type' => $cfg->{content_type} // 'text/xml',
             'content' => $content,
         },);
         alarm(0);
@@ -91,6 +91,7 @@ sub parse_rpc_response_page{
     my $parser = RPC::XML::ParserFactory->new();
     return $parser->parse($page);
 }
+
 sub parse_rpc_response{
     my($self,$rpc_response) = @_;
     return $rpc_response->value->value;
@@ -99,6 +100,7 @@ sub parse_rpc_response{
 sub extract_response_description{
     my($self,$response_value) = @_;
 
+    #polyycom version
     if(('HASH' eq ref $response_value) && $response_value->{faultString}){
         return $response_value->{faultString};
     } else {
@@ -129,6 +131,7 @@ sub get_basic_authorization{
     $authorization =~s/[ \s]//gis;
     return { 'Authorization' => 'Basic '.$authorization };
 }
+
 sub get_bootstrap_uri{
     my ($self) = @_;
     my $uri = $self->params->{redirect_uri};
