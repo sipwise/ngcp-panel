@@ -1923,6 +1923,10 @@ msgid "Cc"
 msgstr "Cc"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Cc delivery"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Cf actions"
 msgstr "azioni Cf"
 
@@ -5951,6 +5955,10 @@ msgstr "Definizione Tasto"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Keys add"
 msgstr "Aggiungi Tasto"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LIID"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP"
@@ -12509,6 +12517,10 @@ msgid "actual"
 msgstr "effettivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "admin"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "after ring timeout"
 msgstr "timeout dopo lo squillo"
 
@@ -12629,6 +12641,18 @@ msgid "carry over only if topped-up timely"
 msgstr "riporta solo se ricaricato periodicamente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "cc_delivery.host"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "cc_delivery.port"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "cc_required"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "cfb"
 msgstr "cfb"
 
@@ -12676,6 +12700,42 @@ msgstr "connesso - registrazione in corso..."
 #: share/templates/subscriber/webphone.tt
 msgid "connecting..."
 msgstr "connessione in corso..."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data.cc_delivery.host"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data.cc_delivery.port"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data.cc_required"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data.iri_delivery"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data.iri_delivery.host"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data.iri_delivery.password"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data.iri_delivery.port"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "data.iri_delivery.username"
+msgstr ""
 
 #: share/templates/helpers/datatables.tt
 msgid "dataTables.default.js"
@@ -12794,6 +12854,10 @@ msgid "hours"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "in"
 msgstr "in"
 
@@ -12820,6 +12884,26 @@ msgstr "ingresso e uscita"
 #: lib/NGCP/Panel/Utils/Preferences.pm
 msgid "ip group sequence successfully generated"
 msgstr "sequenza di gruppi IP creata con successo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "iri_delivery"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "iri_delivery.host"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "iri_delivery.password"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "iri_delivery.port"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "iri_delivery.username"
+msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "is typing..."
@@ -12891,6 +12975,10 @@ msgid "none"
 msgstr "nessuno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "offline"
 msgstr "fuori linea"
 
@@ -12933,6 +13021,10 @@ msgstr "pacchetto: con campo 'billing_profile_id'"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "parallel"
 msgstr "parallelo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "password"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "pbxaccount"
@@ -13079,6 +13171,10 @@ msgid "trough"
 msgstr "attraverso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "type"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "unexported"
 msgstr "non esportato"
 
@@ -13093,6 +13189,10 @@ msgstr "deregistrato."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "upon customer creation"
 msgstr "dopo la creazione del cliente"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "username"
+msgstr ""
 
 #. ($type.'"')
 #: lib/NGCP/Panel/Controller/Subscriber.pm
