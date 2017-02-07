@@ -54,6 +54,7 @@ has_field 'destinations.destination' => (
 has_field 'destinations.simple_destination' => (
     type => 'Text',
     label => 'A simple destination format, e.g. "4312345" if it is a number, or "user@domain" if it is a URI.',
+    readonly => 1,
 );
 
 has_field 'destinations.timeout' => (
