@@ -116,7 +116,7 @@ has_field 'create_timestamp' => (
     readonly => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the creation.']
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) of the creation.']
     },
 );
 
@@ -126,7 +126,7 @@ has_field 'activate_timestamp' => (
     readonly => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the activation.']
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) of the activation.']
     },
 );
 
@@ -136,7 +136,7 @@ has_field 'modify_timestamp' => (
     readonly => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the modification.']
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) of the modification.']
     },
 );
 
@@ -146,7 +146,7 @@ has_field 'terminate_timestamp' => (
     readonly => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the termination.']
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) of the termination.']
     },
 );
 

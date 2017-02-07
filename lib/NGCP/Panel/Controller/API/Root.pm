@@ -363,7 +363,7 @@ sub get_field_poperties :Private{
     unless (defined $desc && length($desc) > 0) {
         $desc = 'to be described ...';
     }
-    return { name => $name, description => $desc, types => \@types, type_original => $field->type };
+    return { name => $name, description => $desc, types => \@types, type_original => $field->type, readonly => $field->readonly };
 }
 sub get_collection_properties {
     my ($self, $form) = @_;
