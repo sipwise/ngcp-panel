@@ -102,7 +102,7 @@ sub PATCH :Allow {
 
         my $dset = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, destinationset => $dset);
-        my $old_resource = $self->hal_from_item($c, $dset, "destinationsets")->resource;
+        my $old_resource = $self->hal_from_item($c, $dset, "cfdestinationsets")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -117,7 +117,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+            my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -157,7 +157,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+            my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
