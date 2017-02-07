@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_143c1a93",
+        "filename": "lib/NGCP/Panel/Utils/DeviceBootstrap/Grandstream.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000017
+      },
+      "writtenOn": "2017-02-07T07:45:13Z",
+      "side": 1,
+      "message": "sub register_content {\n    my $self \u003d shift;\n    $self-\u003e{register_content} \u003d \n        \u0027{\"cid\":\"\u0027.($self-\u003eparams-\u003e{redirect_params}-\u003e{cid})\n        .\u0027\",\"method\":\"redirectDefault\",\"params\":{\"macs\":[\"\u0027\n        .$self-\u003econtent_params-\u003e{mac}.\u0027\"]}}\u0027;\n    #test request\n    #$self-\u003e{register_content} \u003d \u0027{\"cid\":\"\u0027.($self-\u003eparams-\u003e{redirect_params}-\u003e{cid}) // \u00272018\u0027).\u0027\",\"method\":\"listProfile\",\"params\":{}}\u0027;\n\n\n    my ($sign,$time) \u003d $self-\u003eget_request_sign($self-\u003e{register_content});\n    $self-\u003e{rpc_server_params}-\u003e{query_string} \u003d \u0027?sig\u003d\u0027.$sign.\u0027\u0026time\u003d\u0027.$time;\n    return $self-\u003e{register_content};\n}\n\nsub unregister_content {\n    my $self \u003d shift;\n    $self-\u003e{unregister_content} \u003d\n        \u0027{\"cid\":\"\u0027.($self-\u003eparams-\u003e{redirect_params}-\u003e{cid})\n        .\u0027\",\"method\":\"unDeviceProvision\",\"params\":{\"macs\":[\"\u0027\n        .$self-\u003eparams-\u003e{redirect_params}-\u003e{mac}.\u0027\"]}}\u0027;\n\n    my ($sign,$time) \u003d $self-\u003eget_request_sign($self-\u003e{register_content});\n    $self-\u003e{rpc_server_params}-\u003e{query_string} \u003d \u0027?sig\u003d\u0027.$sign.\u0027\u0026time\u003d\u0027.$time;\n    return $self-\u003e{unregister_content};\n}",
+      "range": {
+        "startLine": 35,
+        "startChar": 4,
+        "endLine": 35,
+        "endChar": 20
+      },
+      "revId": "12f0dc7df81cc90de08d12be20c4d4b54f3f4602",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
