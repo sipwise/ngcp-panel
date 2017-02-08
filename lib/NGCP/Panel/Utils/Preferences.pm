@@ -918,11 +918,27 @@ sub get_usr_preference_rs {
     my $attribute = $params{attribute};
     my $prov_subscriber = $params{prov_subscriber};
     my $schema = $params{schema} // $c->model('DB');
+    my $is_subadmin = $params{subscriberadmin};
 
-    my $pref_rs = $schema->resultset('voip_preferences')->find({
-            attribute => $attribute, 'usr_pref' => 1,
-        });
+    my $pref_rs = $schema->resultset('voip_preferences')->search_rs({
+            attribute => $attribute,
+            usr_pref => 1,
+            $is_subadmin ? (expose_to_customer => 1) : (),
+        })->first;
     return unless($pref_rs);
+
+    # filter by allowed attrs from profile
+    if ($is_subadmin && $prov_subscriber && $prov_subscriber->voip_subscriber_profile) {
+        my $found_attr = $prov_subscriber->voip_subscriber_profile
+            ->profile_attributes->search_rs({
+                attribute_id => $pref_rs->id,
+                })->first;
+        unless ($found_attr) {
+            $c->log->debug("get_usr_preference_rs skipping attr '$attribute' not in profile");
+            return;
+        }
+    }
+
     $pref_rs = $pref_rs->voip_usr_preferences;
     if($prov_subscriber) {
         $pref_rs = $pref_rs->search({
@@ -1144,10 +1160,14 @@ sub api_preferences_defs{
     my $schema = $params{schema} // $c->model('DB');
     my $preferences_group = $params{preferences_group};
 
+    my $is_subadmin = ($c->user->roles eq 'subscriberadmin');
+
     my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
         internal => { '!=' => 1 }, # also fetch -1 for ncos, rwr
         $preferences_group => 1,
+        $is_subadmin ? (expose_to_customer => 1) : (),
     });
+
     my $resource = {};
     for my $pref($preferences->all) {
         my $fields = { $pref->get_inflated_columns };
