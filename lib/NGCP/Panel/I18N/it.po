@@ -2573,6 +2573,10 @@ msgstr "Dettagli Cliente per #%1 (%2)"
 msgid "Customer Email"
 msgstr "Email Cliente"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Customer ID for GAPS access. Obtained from Grandstream."
+msgstr ""
+
 #: share/templates/widgets/admin_billing_overview.tt
 #: share/templates/widgets/reseller_billing_overview.tt
 msgid "Customer Revenue"
@@ -2601,6 +2605,10 @@ msgstr "Id cliente dell´abbonato chiamante, se locale."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Customer id of calling subscriber, if local."
 msgstr "Id cliente dell´abbonato chiamato, se locale."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Customer key for GAPS access. Obtained from Grandstream."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Customer not found"
@@ -4828,6 +4836,14 @@ msgstr "From-User"
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/device/list.tt
 msgid "Front Image"
 msgstr "Immagine Frontale"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "GAPS CID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "GAPS Key"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "GET"
