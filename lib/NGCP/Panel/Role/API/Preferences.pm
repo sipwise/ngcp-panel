@@ -63,9 +63,16 @@ sub get_resource {
 
     my $prefs;
     my %profile_attrs = (); # for filtering profiles based list
+    my %profile_allowed_attrs; # for filtering subscriber attrs on its profile
+    my $has_profile = 0;
     my $attr = 0;
     if($type eq "subscribers") {
         $prefs = $item->provisioning_voip_subscriber->voip_usr_preferences;
+        my $profile = $item->provisioning_voip_subscriber->voip_subscriber_profile;
+        if ($profile) {
+            $has_profile = 1;
+            %profile_allowed_attrs = map { $_ => 1 } $profile->profile_attributes->get_column('attribute_id')->all;
+        }
     } elsif($type eq "profiles") {
         $attr = 1;
         %profile_attrs = map { $_ => 1 } $item->profile_attributes->get_column('attribute_id')->all;
@@ -93,6 +100,19 @@ sub get_resource {
     foreach my $pref($prefs->all) {
         my $value;
         my $processed = 0;
+
+        if ($c->user->roles eq 'subscriberadmin') {
+            my $attrname = $pref->attribute->attribute;
+            unless ( $pref->attribute->expose_to_customer ) {
+                $c->log->debug("skipping attribute $attrname, not exposing to customer");
+                next;
+            }
+
+            if ($has_profile && !$profile_allowed_attrs{$pref->attribute_id}) {
+                $c->log->debug("skipping attribute $attrname, not in profile");
+                next;
+            }
+        }
 
         SWITCH: for ($pref->attribute->attribute) {
             /^rewrite_calle[re]_(in|out)_dpid$/ && do {
@@ -292,6 +312,13 @@ sub _item_rs {
             }, {
                 join => { 'contract' => 'contact' },
             });
+        } elsif ($c->user->roles eq 'subscriberadmin') {
+            $item_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+                'contract.id' => $c->user->account_id,
+                'me.status' => { '!=' => 'terminated' },
+            },{
+                join => 'contract',
+            });
         }
     } elsif($type eq "peerings") {
         if($c->user->roles eq "admin") {
@@ -372,6 +399,7 @@ sub get_preference_rs {
             c => $c,
             attribute => $attr,
             prov_subscriber => $elem,
+            ($c->user->roles eq "subscriberadmin") ? (subscriberadmin => 1) : (),
         );
     } elsif($type eq "peerings") {
         $rs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
@@ -441,6 +469,21 @@ sub update_item {
         $accessor = $item->username . '@' . $item->domain->domain;
         $elem = $item->provisioning_voip_subscriber;
         $full_rs = $elem->voip_usr_preferences;
+        if ($c->user->roles eq 'subscriberadmin') {
+            $full_rs = $full_rs->search_rs({
+                'attribute.expose_to_customer' => 1,
+            },{
+                join => 'attribute',
+            });
+
+            if ($elem && $elem->voip_subscriber_profile) {
+                my @allowed_attr_ids = $elem->voip_subscriber_profile->profile_attributes
+                    ->get_column('attribute_id')->all;
+                $full_rs = $full_rs->search_rs({
+                    'attribute.id' => { '-in' => \@allowed_attr_ids },
+                });
+            }
+        }
         $pref_type = 'usr_pref';
         $reseller_id = $item->contract->contact->reseller_id;
     } elsif($type eq "peerings") {
@@ -593,16 +636,16 @@ sub update_item {
 
     foreach my $pref(keys %{ $resource }) {
         next unless(defined $resource->{$pref});
-        my $rs = $self->get_preference_rs($c, $type, $elem, $pref);
-        unless($rs) {
+        my $pref_rs = $self->get_preference_rs($c, $type, $elem, $pref);
+        unless($pref_rs) {
             $c->log->debug("removing unknown preference '$pref' from update");
             next;
         }
-        $rs = $rs->search(undef, {
+        $pref_rs = $pref_rs->search(undef, {
             order_by => { '-asc' => 'id' },
         });
 
-        # TODO: can't we get this via $rs->search_related or $rs->related_resultset?
+        # TODO: can't we get this via $pref_rs->search_related or $pref_rs->related_resultset?
         my $meta = $c->model('DB')->resultset('voip_preferences')->find({
             attribute => $pref, $pref_type => 1,
         });
@@ -744,26 +787,26 @@ sub update_item {
                 };
                 # default
                 if($meta->max_occur != 1) {
-                    $rs->delete;
+                    $pref_rs->delete;
                     foreach my $v(@{ $resource->{$pref} }) {
                         return unless $self->check_pref_value($c, $meta, $v, $pref_type);
 						if(JSON::is_bool($v)){
 							$v =  $v ? 1 : 0 ;
 						}
-                        $rs->create({ value => $v });
+                        $pref_rs->create({ value => $v });
                     }
-                } elsif($rs->first) {
+                } elsif($pref_rs->first) {
                     return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
                     if(JSON::is_bool($resource->{$pref})){
 						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
 					}
-                    $rs->first->update({ value => $resource->{$pref} });
+                    $pref_rs->first->update({ value => $resource->{$pref} });
                 } else {
                     return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
                     if(JSON::is_bool($resource->{$pref})){
 						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
 					}
-                    $rs->create({ value => $resource->{$pref} });
+                    $pref_rs->create({ value => $resource->{$pref} });
                 }
             } # SWITCH
             if ($type eq "subscribers" && ($pref eq 'voicemail_echo_number' || $pref eq 'cli')) {

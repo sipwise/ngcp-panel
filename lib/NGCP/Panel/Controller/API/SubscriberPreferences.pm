@@ -82,7 +82,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -97,6 +97,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -116,7 +117,7 @@ sub GET :Allow {
         for my $subscriber (@$subscribers) {
             next unless($subscriber->provisioning_voip_subscriber);
             my $contract = $subscriber->contract;
-            my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+            my $balance; $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $contract,
                 now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
             $contract_map{$contract->id} = 1;
@@ -182,6 +183,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 1;
