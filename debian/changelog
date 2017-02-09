@@ -1,3 +1,12 @@
+ngcp-panel (1.14.3.8+0~mr4.5.3.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [2f92f36] TT#8292 api/customerfraudpreferences
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Feb 2017 12:55:41 +0100
+
 ngcp-panel (1.14.3.7+0~mr4.5.3.7) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
