@@ -107,6 +107,7 @@ sub extract_response_description{
         return;
     }
 }
+
 sub init_content_params{
     my($self) = @_;
     $self->{content_params} ||= {};
@@ -117,6 +118,7 @@ sub init_content_params{
         $self->content_params->{mac_old} = normalize_mac($self->params->{mac_old});
     }
 }
+
 sub normalize_mac {
     my ($mac) = @_;
     return unless($mac);
@@ -167,6 +169,7 @@ sub bootstrap_uri_mac{
     }
     return $uri;
 }
+
 #separated as this logic also used in other places, so can be moved to other utils module
 sub bootstrap_uri_conf{
     my ($self) = @_;
