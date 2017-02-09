@@ -1,3 +1,12 @@
+ngcp-panel (1.14.3.9+0~mr4.5.3.9) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [c0c42a4] TT#9829 calllist call direction out if intra
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Feb 2017 17:13:33 +0100
+
 ngcp-panel (1.14.3.8+0~mr4.5.3.8) unstable; urgency=medium
 
   [ Rene Krenn ]
