@@ -82,6 +82,7 @@ sub get_devmod_params{
     };
     return $params;
 }
+
 sub get_redirect_processor{
     my ($params) = @_;
     my $c = $params->{c};
@@ -121,6 +122,7 @@ sub devmod_sync_parameters_prefetch{
     }
     return \@parameters;
 }
+
 sub devmod_sync_credentials_prefetch{
     my($c,$devmod,$params) = @_;
     my $schema = $c->model('DB');
@@ -133,6 +135,7 @@ sub devmod_sync_credentials_prefetch{
     }
     return $credentials;
 }
+
 sub devmod_sync_credentials_store{
     my($c,$devmod,$credentials) = @_;
     my $schema = $c->model('DB');
@@ -156,6 +159,7 @@ sub devmod_sync_clear {
         }
     }
 }
+
 sub devmod_sync_parameters_store {
     my($c,$devmod,$sync_parameters) = @_;
     my $schema = $c->model('DB');

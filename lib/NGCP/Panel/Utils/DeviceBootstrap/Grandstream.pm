@@ -32,7 +32,7 @@ sub register_content {
     my $self = shift;
     #TODO: remove actual cid here
     $self->{register_content} = 
-        '{"cid":"'.$self->params->{cid}
+        '{"cid":"'.$self->params->{redirect_params}->{cid}
         .'","method":"redirectDefault","params":{"macs":["'
         .$self->content_params->{mac}.'"]}}';
 
@@ -44,7 +44,7 @@ sub register_content {
 sub unregister_content {   
     my $self = shift;
     $self->{unregister_content} =
-        '{"cid":"'.$self->params->{cid}
+        '{"cid":"'.$self->params->{redirect_params}->{cid}
         .'","method":"unDeviceProvision","params":{"macs":["'
         .$self->content_params->{mac}.'"]}}';
 
@@ -101,7 +101,7 @@ sub get_server_time {
 sub get_request_sign{
     my $self = shift;
     my ($request,$time) = @_;
-    my $key = $self->params->{key};
+    my $key = $self->params->{redirect_params}->{key};
     $time //= $self->get_server_time();
     my $str2sign = $request.$time;
     my ($sign,$sign_error);
