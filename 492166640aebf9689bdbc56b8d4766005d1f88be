@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_299f3861",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-02-13T13:19:16Z",
+      "side": 1,
+      "message": "Not included in this review, so panel can\u0027t restart\n\nCan\u0027t locate NGCP/Rating/Inew/SmsSession.pm in @INC (you may need to install the NGCP::Rating::Inew::SmsSession module)",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 35
+      },
+      "revId": "492166640aebf9689bdbc56b8d4766005d1f88be",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
