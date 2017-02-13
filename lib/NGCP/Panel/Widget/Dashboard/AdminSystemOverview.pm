@@ -27,7 +27,7 @@ sub emergency_mode {
             attribute => 'emergency_mode_enabled',
             prov_domain => $prov_dom,
         );
-        if($em_rs && $em_rs->first) {
+        if($em_rs && $em_rs->first && int($em_rs->first->value) > 0) {
             $c->log->debug("+++++ domain ".$prov_dom->domain." has emergency mode " . $em_rs->first->value);
             $em_count++;
         }
