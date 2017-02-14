@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_5ff34d73",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 932,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-02-14T13:27:32Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 932,
+        "startChar": 25,
+        "endLine": 932,
+        "endChar": 44
+      },
+      "revId": "1175173d196ba9c386e91bed15c0b3bf41e5c2fe",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
