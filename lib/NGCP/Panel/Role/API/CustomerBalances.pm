@@ -16,24 +16,24 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::DateTime;
 
 sub _item_rs {
-    
+
     my ($self, $c, $include_terminated,$now) = @_;
-    
+
     my $item_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
         schema => $c->model('DB'),
         include_terminated => (defined $include_terminated && $include_terminated ? 1 : 0),
         now => $now,
-    );    
+    );
 
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ 
+        $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id
         },{
             join => 'contact',
         });
     }
-    return $item_rs;   
+    return $item_rs;
 
 }
 
@@ -44,9 +44,13 @@ sub get_form {
 
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
-    
+
     my %resource = $item->get_inflated_columns;
+    #$resource{cash_balance} /= 100.0;
+    ##$resource{cash_balance_interval} /= 100.0;
     $resource{cash_balance} /= 100.0;
+    $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
+    $resource{free_time_spent} = delete $resource{free_time_balance_interval};
 
     my $hal = Data::HAL->new(
         links => [
@@ -86,7 +90,7 @@ sub item_by_id {
     return NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
         contract => $self->item_rs($c)->find($id),
         now => $now);
-        
+
 }
 
 sub update_item {
@@ -103,9 +107,9 @@ sub update_item {
         balance => $item,
         now => $now,
         new_cash_balance => $resource->{cash_balance} * 100.0);
-    
+
     $resource->{cash_balance} *= 100.0;
-    # silently forbid to update cash_balance_interval and free_time_balance_interval
+    # ignoring cash_debit and free_time_spent:
     $item->update({
             cash_balance => $resource->{cash_balance},
             free_time_balance => $resource->{free_time_balance},
