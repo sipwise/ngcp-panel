@@ -65,13 +65,20 @@ sub _item_rs {
     my $item_rs;
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
         ->search({ 'me.status' => { '!=' => 'terminated' } });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
             join => { 'contract' => 'contact' },
         });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'contract.id' => $c->user->account_id,
+        }, {
+            join => 'contract',
+        });
+        # TODO should be filtered for subscribers whose profile allows speed_dial?
     }
 
     return $item_rs;
@@ -91,6 +98,18 @@ sub update_item {
     my $billing_subs = $item;
     my $prov_subs = $billing_subs->provisioning_voip_subscriber;
     my $speeddials_rs = $prov_subs->voip_speed_dials;
+
+    if ($prov_subs && $prov_subs->voip_subscriber_profile) {
+        my @allowed_attrs = $prov_subs->voip_subscriber_profile->profile_attributes->get_column('attribute_id')->all;
+        my $found = $c->model('DB')->resultset('voip_preferences')->search_rs({
+            'me.id' => { '-in' => \@allowed_attrs },
+            'attribute' => 'speed_dial',
+            })->first;
+        unless ($found) {
+            $self->error($c, HTTP_FORBIDDEN, "This user is not allowed to modify speeddials.");
+            return;
+        }
+    }
 
     if (ref $resource->{speeddials} ne "ARRAY") {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'speeddials'. Must be an array.");
