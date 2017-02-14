@@ -119,7 +119,7 @@ has_field 'free_time_spent' => (
     #required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The free-time spent during this interval in EUR/USD/etc.']
+        title => ['The free-time spent during this interval in seconds.']
     },
 );
 
