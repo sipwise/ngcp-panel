@@ -17,6 +17,22 @@ sub dispatch {
     my $text = $args{text};
     my $token = $args{token};
 
+    my %url_ph_map = (
+        caller => $from,
+        callee => $to,
+        callid => $id,
+        token  => $token,
+        prefix => $type,
+        suffix => 'in',
+    );
+
+    # apply known placeholders to the url
+    foreach my $v (qw(caller callee callid token prefix suffix)) {
+        my $t = $url_ph_map{$v} // "";
+        $t .= $t ? "/" : "";
+        $url =~ s/(\${$v})/$t/;
+    }
+
     # TODO: dispatch asynchronously!
     my $ua = LWP::UserAgent->new(
             #ssl_opts => { verify_hostname => 0, SSL_verify_mode => 0 },
