@@ -1898,10 +1898,6 @@ msgstr "Saldo"
 msgid "Cash Balance"
 msgstr "Accredito Conto"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Cash Balance (Interval)"
-msgstr "Accredito conto (intervallo)"
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "Cash balance"
 msgstr "Accredito Conto"
@@ -9866,6 +9862,11 @@ msgid "The amount of the voucher in cents of Euro/USD/etc."
 msgstr "L´importo del voucher in centesimi di Euro/USD/ecc."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The amount spent during the current interval in EUR/USD/etc (read-only)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The amount spent during this interval in EUR/USD/etc."
 msgstr "L´importo utilizzato durante questo intervallo in Euro/USD/ecc"
 
@@ -10277,24 +10278,8 @@ msgstr ""
 "interfaccia grafica."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The current cash balance of the customer in EUR/USD/etc for the current "
-"interval (Read-only)."
-msgstr ""
-"L´attuale bilancio del saldo del cliente in EUR/USD/etc per l´intervallo "
-"corrente (sola lettura)"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The current cash balance of the customer in EUR/USD/etc."
 msgstr "L´attuale bilancio del saldo del cliente in EUR/USD/etc."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The current free-time balance of the customer for the current interval in "
-"seconds (Read-only)."
-msgstr ""
-"L´attuale saldo di tempo gratuito del cliente in secondi per il corrente "
-"intervallo (sola lettura)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The current free-time balance of the customer in seconds."
@@ -10583,8 +10568,12 @@ msgid "The fraud detection threshold per month (in cents, e.g. 10000)."
 msgstr "La soglia mensile di rilevazione frode (in cents, es. 10000)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The free-time spent during this interval in EUR/USD/etc."
-msgstr "Il tempo gratuito consumato durante questo intervallo, in EUR/USD/ecc."
+msgid "The free-time spent during the current interval in seconds (read-only)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The free-time spent during this interval in seconds."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The fully qualified domain name (e.g. sip.example.org)."
@@ -13263,6 +13252,27 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Cash Balance (Interval)"
+#~ msgstr "Accredito conto (intervallo)"
+
+#~ msgid ""
+#~ "The current cash balance of the customer in EUR/USD/etc for the current "
+#~ "interval (Read-only)."
+#~ msgstr ""
+#~ "L´attuale bilancio del saldo del cliente in EUR/USD/etc per l´intervallo "
+#~ "corrente (sola lettura)"
+
+#~ msgid ""
+#~ "The current free-time balance of the customer for the current interval in "
+#~ "seconds (Read-only)."
+#~ msgstr ""
+#~ "L´attuale saldo di tempo gratuito del cliente in secondi per il corrente "
+#~ "intervallo (sola lettura)."
+
+#~ msgid "The free-time spent during this interval in EUR/USD/etc."
+#~ msgstr ""
+#~ "Il tempo gratuito consumato durante questo intervallo, in EUR/USD/ecc."
 
 #~ msgid ""
 #~ "Method to configure the provisioning server on the phone. One of http, "

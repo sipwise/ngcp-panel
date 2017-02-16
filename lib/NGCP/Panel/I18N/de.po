@@ -1793,10 +1793,6 @@ msgstr "Guthaben"
 msgid "Cash Balance"
 msgstr "Guthaben-Saldo"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Cash Balance (Interval)"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "Cash balance"
 msgstr ""
@@ -9603,6 +9599,11 @@ msgid "The amount of the voucher in cents of Euro/USD/etc."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The amount spent during the current interval in EUR/USD/etc (read-only)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The amount spent during this interval in EUR/USD/etc."
 msgstr ""
 
@@ -9979,19 +9980,7 @@ msgstr ""
 "dargestellt"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The current cash balance of the customer in EUR/USD/etc for the current "
-"interval (Read-only)."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The current cash balance of the customer in EUR/USD/etc."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"The current free-time balance of the customer for the current interval in "
-"seconds (Read-only)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10248,7 +10237,11 @@ msgid "The fraud detection threshold per month (in cents, e.g. 10000)."
 msgstr "Missbrauchserkennungs-Schwellwert pro Monat (in Cents, z.B. 10000)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The free-time spent during this interval in EUR/USD/etc."
+msgid "The free-time spent during the current interval in seconds (read-only)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The free-time spent during this interval in seconds."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
