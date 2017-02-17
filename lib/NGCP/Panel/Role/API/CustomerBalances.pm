@@ -7,7 +7,7 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Balance::CustomerBalanceAPI;
@@ -52,7 +52,7 @@ sub hal_from_item {
     $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
     $resource{free_time_spent} = delete $resource{free_time_balance_interval};
 
-    my $hal = Data::HAL->new(
+    my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             Data::HAL::Link->new(
                 relation => 'curies',
