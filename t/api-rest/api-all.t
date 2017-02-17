@@ -23,7 +23,7 @@ my @opt_keys = keys %$opt_in;
 print Dumper $opt;
 pod2usage(1) if $opt->{help};
 pod2usage(1) unless( 1
-#    defined $opt->{collections} && defined $opt->{etc} 
+#    defined $opt->{collections} && defined $opt->{etc}
 );
 
 
@@ -86,6 +86,9 @@ my $res = {
     'tests_exclude'         => \%test_exclude,
     'opt'                   => $opt
 };
+
+################################ RUN #############################
+
 foreach my $collection ( sort grep{(! ( scalar keys $opt->{collections} ) ) || $opt->{collections}->{$_} } keys %{$data} ){
     if(!$opt->{collections}->{$collection}){
         if($test_exists{'api-'.$collection.'.t'} && !$opt->{ignore_existence}){
@@ -120,6 +123,7 @@ foreach my $collection ( sort grep{(! ( scalar keys $opt->{collections} ) ) || $
     }
 
     $test_machine->check_bundle();
+
     if($test_machine->{methods}->{collection}->{allowed}->{GET}){
         my $item = $test_machine->get_item_hal();
         #if($item->{content}->{total_count}){

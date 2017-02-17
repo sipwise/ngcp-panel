@@ -7,7 +7,7 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Contact::Admin;
@@ -46,7 +46,7 @@ sub hal_from_contact {
     my ($self, $c, $contact, $form) = @_;
     my %resource = $contact->get_inflated_columns;
 
-    my $hal = Data::HAL->new(
+    my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             Data::HAL::Link->new(
                 relation => 'curies',

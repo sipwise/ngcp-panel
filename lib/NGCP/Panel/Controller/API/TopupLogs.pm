@@ -4,7 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
@@ -210,7 +210,7 @@ sub GET :Allow {
        
         push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
-        my $hal = Data::HAL->new(
+        my $hal = NGCP::Panel::Utils::DataHal->new(
             embedded => [@embedded],
             links => [@links],
         );
