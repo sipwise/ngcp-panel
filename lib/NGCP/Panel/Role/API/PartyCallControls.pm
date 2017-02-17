@@ -7,7 +7,7 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 

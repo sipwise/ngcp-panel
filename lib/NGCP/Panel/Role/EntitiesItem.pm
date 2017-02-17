@@ -10,7 +10,7 @@ use Safe::Isa qw($_isa);
 use Path::Tiny qw(path);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::DateTime;
