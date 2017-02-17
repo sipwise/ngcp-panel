@@ -7,7 +7,7 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Subscriber::RegisteredAPI;
@@ -48,7 +48,7 @@ sub hal_from_item {
     my $resource = $self->resource_from_item($c, $item, $form);
     return unless $resource;
 
-    my $hal = Data::HAL->new(
+    my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             Data::HAL::Link->new(
                 relation => 'curies',

@@ -7,7 +7,7 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Topup::Log;
@@ -45,7 +45,7 @@ sub hal_from_item {
     $resource{cash_balance_before} = $resource{cash_balance_before} / 100.0 if defined $resource{cash_balance_before};
     $resource{cash_balance_after} = $resource{cash_balance_after} / 100.0 if defined $resource{cash_balance_after};
     
-    my $hal = Data::HAL->new(
+    my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             Data::HAL::Link->new(
                 relation => 'curies',

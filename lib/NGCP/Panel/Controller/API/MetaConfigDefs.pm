@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::API::MetaConfigDefs;
 use NGCP::Panel::Utils::Generic qw(:all);
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
@@ -68,7 +68,7 @@ sub GET :Allow {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf('%s', $self->dispatch_path));
 
-        my $hal = Data::HAL->new(
+        my $hal = NGCP::Panel::Utils::DataHal->new(
             links => [@links],
         );
 
