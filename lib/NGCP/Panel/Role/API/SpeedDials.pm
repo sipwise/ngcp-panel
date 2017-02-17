@@ -7,7 +7,7 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
@@ -29,7 +29,7 @@ sub hal_from_item {
     my $p_subs = $item->provisioning_voip_subscriber;
     my $resource = { subscriber_id => $item->id, speeddials => $self->speeddials_from_subscriber($p_subs) };
 
-    my $hal = Data::HAL->new(
+    my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             Data::HAL::Link->new(
                 relation => 'curies',

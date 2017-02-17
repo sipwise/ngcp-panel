@@ -18,7 +18,7 @@ use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use HTTP::Headers::Util qw(split_header_words);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
@@ -809,7 +809,7 @@ sub hal_from_item {
 
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
     my $links = $self->hal_links($c, $item, $resource, $form) // [];
-    my $hal = Data::HAL->new(
+    my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             Data::HAL::Link->new(
                 relation => 'curies',

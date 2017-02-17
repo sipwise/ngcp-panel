@@ -6,7 +6,7 @@ use Sipwise::Base;
 use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Peering::Group;
@@ -32,7 +32,7 @@ sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
     my %resource = $item->get_inflated_columns;
     $resource{contract_id} = delete $resource{peering_contract_id};
-    my $hal = Data::HAL->new(
+    my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             Data::HAL::Link->new(
                 relation => 'curies',

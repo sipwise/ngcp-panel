@@ -9,7 +9,7 @@ use JSON;
 use HTTP::Status qw(:constants);
 use TryCatch;
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use Scalar::Util 'blessed';
 use Storable;
@@ -87,7 +87,7 @@ sub add_journal_item_hal {
         } else {
             $hal = $resource;
         }
-        if (ref $hal eq Data::HAL::) {
+        if (ref $hal eq NGCP::Panel::Utils::DataHal::) {
             $resource = $hal->resource;
         }
         if (!defined $id) {
@@ -254,7 +254,7 @@ sub handle_api_journals_get {
 
         push @links, $controller->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
-        my $hal = Data::HAL->new(
+        my $hal = NGCP::Panel::Utils::DataHal->new(
             embedded => [@embedded],
             links => [@links],
         );
@@ -447,7 +447,7 @@ sub hal_from_journal {
         }
     }
 
-    my $hal = Data::HAL->new(
+    my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             Data::HAL::Link->new(
                 relation => 'curies',
