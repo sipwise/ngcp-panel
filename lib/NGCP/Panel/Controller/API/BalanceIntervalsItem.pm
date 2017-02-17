@@ -147,7 +147,7 @@ sub GET :Allow {
         
         push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
-        my $hal = Data::HAL->new(
+        my $hal = NGCP::Panel::Utils::DataHal->new(
             embedded => [@embedded],
             links => [@links],
         );

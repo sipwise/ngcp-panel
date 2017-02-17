@@ -8,7 +8,7 @@ use boolean qw(true);
 use Safe::Isa qw($_isa);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 #use Path::Tiny qw(path);
 #use TryCatch;
@@ -84,7 +84,7 @@ sub get {
             push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
         }
 
-        my $hal = Data::HAL->new(
+        my $hal = NGCP::Panel::Utils::DataHal->new(
             embedded => [@embedded],
             links => [@links],
         );

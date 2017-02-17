@@ -5,7 +5,7 @@ use Sipwise::Base;
 
 
 use boolean qw(true);
-use Data::HAL qw();
+use NGCP::Panel::Utils::DataHal qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
@@ -130,7 +130,7 @@ sub GET :Allow {
             push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
         }
 
-        my $hal = Data::HAL->new(
+        my $hal = NGCP::Panel::Utils::DataHal->new(
             embedded => [@embedded],
             links => [@links],
         );
