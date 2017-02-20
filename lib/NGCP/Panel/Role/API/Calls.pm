@@ -77,6 +77,7 @@ sub hal_from_item {
             "source_reseller_billing_zone_id", "destination_reseller_billing_zone_id",
             "source_customer_billing_zone_id", "destination_customer_billing_zone_id",
             "start_time", "init_time", # "duration",
+            "call_id",
         ],
     );
 
