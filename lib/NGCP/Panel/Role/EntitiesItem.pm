@@ -11,7 +11,7 @@ use Path::Tiny qw(path);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();

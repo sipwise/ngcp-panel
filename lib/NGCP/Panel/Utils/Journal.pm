@@ -10,7 +10,7 @@ use HTTP::Status qw(:constants);
 use TryCatch;
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use Scalar::Util 'blessed';
 use Storable;
 use IO::Compress::Deflate qw($DeflateError);
@@ -244,13 +244,13 @@ sub handle_api_journals_get {
             push @links,$link;
         }
         push @links,
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
 
         push @links, $controller->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
@@ -449,16 +449,16 @@ sub hal_from_journal {
 
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
             get_journal_relation_link($journal,$journal->resource_id,undef,'collection'),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             get_journal_relation_link($journal,$journal->resource_id,$journal->id,'self'),
-            Data::HAL::Link->new(relation => sprintf('ngcp:%s',$journal->resource_name),
+            NGCP::Panel::Utils::DataHalLink->new(relation => sprintf('ngcp:%s',$journal->resource_name),
                 href => sprintf('/api/%s/%d', $journal->resource_name, $journal->resource_id)),
         ],
         relation => API_JOURNAL_RELATION, #API_JOURNALITEM_RELATION,
@@ -490,12 +490,12 @@ sub get_journal_relation_link {
     }
     if (defined $resource_name) {
         if (defined $id) {
-            return Data::HAL::Link->new(
+            return NGCP::Panel::Utils::DataHalLink->new(
                     relation => ($relation // API_JOURNAL_RELATION), #API_JOURNALITEM_RELATION),
                     href     => sprintf('/api/%s/%d/%s/%d', $resource_name, $item_id,API_JOURNAL_RESOURCE_NAME,$id),
                 );
         } else {
-            return Data::HAL::Link->new(
+            return NGCP::Panel::Utils::DataHalLink->new(
                     relation => ($relation // API_JOURNAL_RELATION),
                     href     => sprintf('/api/%s/%d/%s/', $resource_name, $item_id,API_JOURNAL_RESOURCE_NAME),
                 )
