@@ -205,6 +205,23 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'call_id',
+            description => 'Filter for a particular call_id and sort by call leg depth.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                        call_id => { like => $q.'%' },
+                    };
+                },
+                second => sub {
+                    {
+                        order_by => { -asc => [ "length(call_id)", "start_time" ] },
+                    };
+                },
+            },
+        },
     ];
 }
 
