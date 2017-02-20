@@ -1,3 +1,51 @@
+ngcp-panel (5.0.3.0+0~mr5.0.3.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [2cb9a6f] TT#5559 end_ivr event for panel UI delete callforward btn
+  * [4537138] TT#5559 end_ivr event for panel UI delete destinationset btn
+  * [a9d9ae8] TT#5559 api/events, event test with "missing end-events" cases
+  * [558fd85] TT#6638 fix hanging loading-icon on dashboard
+  * [724e08e] TT#5811 fractional CDR times/durations in panel UI/api
+  * [cfb1e82] TT#7930 consider rewriterule formhandler inflate/defalte in api
+  * [62ac880] TT#6735 TT#7030 TT#5850 record event subscriber numbers
+  * [1f049e4] TT#8878 end_ivr event upon terminating a susbcriber
+  * [029a6e9] TT#8292 api/customerfraudpreferences
+  * [0b2e78c] TT#9714 susbcriber first non-prim alias for edr records
+  * [5108ba4] TT#6735 TT#5850 refactor "profile" events to track number changes
+
+  [ Kirill Solomko ]
+  * [ff8f53f] TT#7506 MaliciousCall add API filter options
+  * [1eb2fb9] TT#7497 add /api/faxes filter by sid
+
+  [ Gerhard Jungwirth ]
+  * [08dd0bf] TT#5812 fix calllist direction processing
+  * [19b3dd7] TT#7179 emergency mode cli status report
+  * [5493fc0] TT#8657 fix xmlrpc trustedReload
+  * [fafb61c] TT#9829 calllist call direction out if intra
+
+  [ Alexander Lutay ]
+  * [674a714] TT#5559 Fix 563377: add REST API 'events' to api-root.t
+
+  [ Andreas Granig ]
+  * [f9ffddf] TT#6638 Show emergency mode in Application Status
+
+  [ Irina Peshinskaya ]
+  * [b3ea82f] TT#8272 Fix customer creation with invoices and email templates in API
+  * [bb021e6] TT#8272 Fix customer creation with invoices and email templates in API
+  * [4b0921f] TT#8185 Add reseller_id to the domain for the reseller roles
+  * [a41850d] TT#8185 Fix domain deletion for the reseller
+  * [0ff61f7] TT#7029 Make deletion quiet again
+  * [1c07bc7] TT#8272 Add necessary form_validation exceptions for the template fields
+  * [354e2ad] TT#7453 Add  readonly time fields to the customers api
+  * [3d2d4bf] TT#8773 Remove readonly fields from resource in the API::validate_form to fix PATCH
+  * [c1e48e9] TT#9100 Fix user_unban in the web panel
+  * [b67eae3] TT#8680 Consider E164 empty fields
+  * [d5202b0] TT#7029 Make subscribers API tests more stable
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Feb 2017 21:02:39 +0100
+
 ngcp-panel (5.0.2.0+0~mr5.0.2.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
