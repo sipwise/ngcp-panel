@@ -21,6 +21,20 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('cdr');
+
+    my $order_by = $c->request->params->{order_by};
+    if (defined $order_by and 'call_depth' eq $order_by) {
+        my $direction = $c->request->params->{order_by_direction} // "asc";
+        if (lc($direction) eq 'desc') {
+            $direction = '-desc';
+        } else {
+            $direction = '-asc';
+        }
+        $item_rs = $item_rs->search(undef, {
+            order_by => { $direction => [ "length(call_id)", "start_time" ] },
+        });
+    }
+
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
