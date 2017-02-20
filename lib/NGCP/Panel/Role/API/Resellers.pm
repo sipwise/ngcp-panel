@@ -8,7 +8,7 @@ use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Form::ResellerAPI qw();
@@ -42,21 +42,21 @@ sub hal_from_reseller {
 
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf('%s', $self->dispatch_path)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $reseller->id)),
-            Data::HAL::Link->new(relation => 'ngcp:contracts', href => sprintf("/api/contracts/%d", $reseller->contract->id)),
-            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/?reseller_id=%d", $reseller->id)),
-            Data::HAL::Link->new(relation => 'ngcp:ncoslevels', href => sprintf("/api/ncoslevels/?reseller_id=%d", $reseller->id)),
-            Data::HAL::Link->new(relation => 'ngcp:soundsets', href => sprintf("/api/soundsets/?reseller_id=%d", $reseller->id)),
-            Data::HAL::Link->new(relation => 'ngcp:rewriterulesets', href => sprintf("/api/rewriterulesets/?reseller_id=%d", $reseller->id)),
-            Data::HAL::Link->new(relation => 'ngcp:pbxdevices', href => sprintf("/api/pbxdevices/?reseller_id=%d", $reseller->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf('%s', $self->dispatch_path)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $reseller->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:contracts', href => sprintf("/api/contracts/%d", $reseller->contract->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/?reseller_id=%d", $reseller->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:ncoslevels', href => sprintf("/api/ncoslevels/?reseller_id=%d", $reseller->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:soundsets', href => sprintf("/api/soundsets/?reseller_id=%d", $reseller->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:rewriterulesets', href => sprintf("/api/rewriterulesets/?reseller_id=%d", $reseller->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:pbxdevices', href => sprintf("/api/pbxdevices/?reseller_id=%d", $reseller->id)),
             $self->get_journal_relation_link($reseller->id),
         ],
         relation => 'ngcp:'.$self->resource_name,

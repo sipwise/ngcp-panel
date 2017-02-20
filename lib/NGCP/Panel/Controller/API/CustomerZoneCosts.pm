@@ -5,7 +5,7 @@ use Sipwise::Base;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
@@ -100,27 +100,27 @@ sub GET :Allow {
             my $hal = $self->hal_from_item($c, $dev);
             $error_flag = 1 unless $hal;
             push @embedded, $hal;
-            push @links, Data::HAL::Link->new(
+            push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d?%s', $self->dispatch_path, $dev->id, $query_string),
             );
         }
         last if $error_flag;
         push @links,
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('%s?page=%s&rows=%s&%s', $self->dispatch_path, $page, $rows, $query_string));
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('%s?page=%s&rows=%s&%s', $self->dispatch_path, $page, $rows, $query_string));
         if(($total_count / $rows) > $page ) {
-            push @links, Data::HAL::Link->new(relation => 'next',
+            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'next',
                                               href => sprintf('%s?page=%d&rows=%d&%s', $self->dispatch_path, $page + 1, $rows, $query_string));
         }
         if($page > 1) {
-            push @links, Data::HAL::Link->new(relation => 'prev',
+            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'prev',
                                               href => sprintf('%s?page=%d&rows=%d&%s', $self->dispatch_path, $page - 1, $rows, $query_string));
         }
 
