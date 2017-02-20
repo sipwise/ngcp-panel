@@ -8,7 +8,7 @@ use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
@@ -51,36 +51,36 @@ sub hal_from_customer {
     my @profile_links = ();
     my @network_links = ();
     foreach my $mapping ($customer->billing_mappings->all) {
-        push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile_id)));
+        push(@profile_links,NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile_id)));
         if ($mapping->network_id) {
-            push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingnetworks', href => sprintf("/api/billingnetworks/%d", $mapping->network_id)));
+            push(@profile_links,NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:billingnetworks', href => sprintf("/api/billingnetworks/%d", $mapping->network_id)));
         }
     }
 
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $customer->id)),
-            Data::HAL::Link->new(relation => 'ngcp:customercontacts', href => sprintf("/api/customercontacts/%d", $customer->contact->id)),
-            Data::HAL::Link->new(relation => 'ngcp:customerpreferences', href => sprintf("/api/customerpreferences/%d", $customer->id)),
-            Data::HAL::Link->new(relation => 'ngcp:customerfraudpreferences', href => sprintf("/api/customerfraudpreferences/%d", $customer->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $customer->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customercontacts', href => sprintf("/api/customercontacts/%d", $customer->contact->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customerpreferences', href => sprintf("/api/customerpreferences/%d", $customer->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customerfraudpreferences', href => sprintf("/api/customerfraudpreferences/%d", $customer->id)),
             @profile_links,
             @network_links,
-            $customer->profile_package_id ? Data::HAL::Link->new(relation => 'ngcp:profilepackages', href => sprintf("/api/profilepackages/%d", $customer->profile_package_id)) : (),
-            Data::HAL::Link->new(relation => 'ngcp:customerbalances', href => sprintf("/api/customerbalances/%d", $customer->id)),
-            Data::HAL::Link->new(relation => 'ngcp:balanceintervals', href => sprintf("/api/balanceintervals/%d", $customer->id)),
-            $customer->invoice_template ? (Data::HAL::Link->new(relation => 'ngcp:invoicetemplates', href => sprintf("/api/invoicetemplates/%d", $customer->invoice_template_id))) : (),
-            $customer->subscriber_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:subscriberemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->subscriber_email_template_id))) : (),
-            $customer->passreset_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:passresetemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->passreset_email_template_id))) : (),
-            $customer->invoice_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:invoiceemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->invoice_email_template_id))) : (),
-            Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?customer_id=%d", $customer->id)),
+            $customer->profile_package_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:profilepackages', href => sprintf("/api/profilepackages/%d", $customer->profile_package_id)) : (),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customerbalances', href => sprintf("/api/customerbalances/%d", $customer->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:balanceintervals', href => sprintf("/api/balanceintervals/%d", $customer->id)),
+            $customer->invoice_template ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:invoicetemplates', href => sprintf("/api/invoicetemplates/%d", $customer->invoice_template_id))) : (),
+            $customer->subscriber_email_template_id ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->subscriber_email_template_id))) : (),
+            $customer->passreset_email_template_id ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:passresetemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->passreset_email_template_id))) : (),
+            $customer->invoice_email_template_id ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:invoiceemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->invoice_email_template_id))) : (),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?customer_id=%d", $customer->id)),
             $self->get_journal_relation_link($customer->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
