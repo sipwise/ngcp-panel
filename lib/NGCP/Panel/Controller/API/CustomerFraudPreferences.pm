@@ -5,7 +5,7 @@ use Sipwise::Base;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
@@ -112,19 +112,19 @@ sub GET :Allow {
         my $form = $self->get_form($c);
         for my $customer ($customer_rs->all) {
             push @embedded, $self->hal_from_item($c, $customer, $form);
-            push @links, Data::HAL::Link->new(
+            push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%d', $c->request->path, $customer->id),
             );
         }
         push @links,
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
 
         push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
 

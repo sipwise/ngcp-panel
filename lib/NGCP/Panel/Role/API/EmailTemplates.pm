@@ -8,7 +8,7 @@ use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::EmailTemplate::Admin;
 use NGCP::Panel::Form::EmailTemplate::Reseller;
@@ -39,16 +39,16 @@ sub hal_from_item {
 
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            $item->reseller_id ? Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)):(),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            $item->reseller_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)):(),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

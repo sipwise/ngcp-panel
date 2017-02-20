@@ -8,7 +8,7 @@ use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Balance::BalanceIntervalAPI;
 use NGCP::Panel::Utils::Contract;
@@ -102,21 +102,21 @@ sub hal_from_balance {
     
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            ($use_root_collection_link ? Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)) :
-                Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/%d/", $self->resource_name, $contract->id)) ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("/api/%s/%d/%d", $self->resource_name, $contract->id, $item->id)),
-            ($is_customer ? ( Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $contract->id)),
-                Data::HAL::Link->new(relation => 'ngcp:customerbalances', href => sprintf("/api/customerbalances/%d", $contract->id)) ) :
-                Data::HAL::Link->new(relation => 'ngcp:contracts', href => sprintf("/api/contracts/%d", $contract->id)) ),
-            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $profile_at_start->id)),
-            #($invoice ? Data::HAL::Link->new(relation => 'ngcp:invoices', href => sprintf("/api/invoices/%d", $invoice->id)) : ()),
+            ($use_root_collection_link ? NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)) :
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/%d/", $self->resource_name, $contract->id)) ),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("/api/%s/%d/%d", $self->resource_name, $contract->id, $item->id)),
+            ($is_customer ? ( NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $contract->id)),
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customerbalances', href => sprintf("/api/customerbalances/%d", $contract->id)) ) :
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:contracts', href => sprintf("/api/contracts/%d", $contract->id)) ),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $profile_at_start->id)),
+            #($invoice ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:invoices', href => sprintf("/api/invoices/%d", $invoice->id)) : ()),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
