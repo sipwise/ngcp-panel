@@ -8,7 +8,7 @@ use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Form::RewriteRule::ApplyAPI;
