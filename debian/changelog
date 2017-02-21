@@ -1,3 +1,12 @@
+ngcp-panel (5.1.1.2+0~mr5.1.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [4552c96] TT#11477 MaliciousCalls API fix param filter by caller/callee/callid
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 21 Feb 2017 18:07:39 +0100
+
 ngcp-panel (5.1.1.1+0~mr5.1.1.1) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
