@@ -49,7 +49,7 @@ sub query_params {
                 first => sub {
                     my $q = shift;
                     {
-                       'me.call_id' => $q,
+                       'me.call_id' => { '!=' => $q },
                     };
                 },
                 second => sub {},
@@ -62,7 +62,7 @@ sub query_params {
                 first => sub {
                     my $q = shift;
                     {
-                       'me.caller' => $q,
+                       'me.caller' => { '!=' => $q },
                     };
                 },
                 second => sub {},
@@ -75,7 +75,7 @@ sub query_params {
                 first => sub {
                     my $q = shift;
                     {
-                       'me.callee' => $q,
+                       'me.callee' => { '!=' => $q },
                     };
                 },
                 second => sub {},
