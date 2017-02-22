@@ -155,11 +155,15 @@ sub _glob_matches {
 
 sub get_number_of_parts {
     my $text = shift;
-    my $maxlen; 
+    my $maxlen;
     if(NGCP::Panel::Utils::Utf8::is_within_ascii($text)) {
-        $maxlen = 160;
+        # multi-part sms consist of 153 char chunks in ascii,
+        # otherwise 160 for single sms
+        $maxlen = length($text) <= 160 ? 160 : 153;
     } else {
-        $maxlen = 70;
+        # multi-part sms consist of 67 char chunks in utf8,
+        # otherwise 70 for single sms
+        $maxlen = length($text) <= 70 ? 70 : 67;
     }
     return ceil(length($text) / $maxlen);
 }
