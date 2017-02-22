@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_4f27f764",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 17
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-02-22T15:20:29Z",
+      "side": 1,
+      "message": "If we can\u0027t provide this module for the CE this should be done in the eval block or using some solution from CPAN, like http://search.cpan.org/dist/Module-Load-Conditional/lib/Module/Load/Conditional.pm",
+      "range": {
+        "startLine": 200,
+        "startChar": 4,
+        "endLine": 200,
+        "endChar": 39
+      },
+      "revId": "2eff3bf540fea1f1f3c284d98723f7a182de5541",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
