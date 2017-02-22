@@ -5,6 +5,7 @@ use LWP::UserAgent;
 use URI;
 use POSIX;
 use UUID;
+use Module::Load::Conditional qw/can_load/;
 
 use NGCP::Panel::Utils::Utf8;
 
@@ -197,7 +198,11 @@ sub perform_prepaid_billing {
     # currently only inew rating supported, let others pass
     return 1 unless($is_prepaid && $prepaid_lib eq "libinewrate");
 
-    use NGCP::Rating::Inew::SmsSession;
+    my $use_list = { 'NGCP::Rating::Inew::SmsSession' => undef };
+    unless(can_load($use_list)) {
+        $c->log->error("Failed to load NGCP::Rating::Inew::SmsSession for sms from $caller to $callee");
+        return;
+    }
     my $amqr = NGCP::Rating::Inew::SmsSession::init(
         $c->config->{libinewrate}->{soap_uri},
         $c->config->{libinewrate}->{openwire_uri},
