@@ -22,6 +22,53 @@
       "revId": "2eff3bf540fea1f1f3c284d98723f7a182de5541",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_ea097996",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 17
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-02-22T16:27:56Z",
+      "side": 1,
+      "message": "my $session_create;\neval {\n  require NGCP::Rating::Inew::SmsSession;\n  $session_create \u003d \\\u0026NGCP::Rating::Inew::SmsSession::session_create;\n};",
+      "parentUuid": "da01753e_4f27f764",
+      "range": {
+        "startLine": 200,
+        "startChar": 4,
+        "endLine": 200,
+        "endChar": 39
+      },
+      "revId": "2eff3bf540fea1f1f3c284d98723f7a182de5541",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_2a04217a",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 17
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-02-22T16:27:56Z",
+      "side": 1,
+      "message": ".. \u003d \u0026$session_create(..) if defined $session_create;",
+      "range": {
+        "startLine": 219,
+        "startChar": 19,
+        "endLine": 219,
+        "endChar": 65
+      },
+      "revId": "2eff3bf540fea1f1f3c284d98723f7a182de5541",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
