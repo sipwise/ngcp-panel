@@ -6874,22 +6874,6 @@ msgid "Read-Only"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the activation."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the creation."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the modification."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Readonly. The datetime (YYYY-MM-DD HH:mm:ss) of the termination."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reason"
 msgstr ""
 
@@ -8935,6 +8919,22 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The date until this voucher is valid."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The datetime (YYYY-MM-DD HH:mm:ss) of the activation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The datetime (YYYY-MM-DD HH:mm:ss) of the creation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The datetime (YYYY-MM-DD HH:mm:ss) of the modification."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The datetime (YYYY-MM-DD HH:mm:ss) of the termination."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
