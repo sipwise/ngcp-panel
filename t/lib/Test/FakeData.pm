@@ -13,6 +13,8 @@ use Clone qw/clone/;
 use File::Slurp qw/read_file/;
 use URI::Escape;
 use Storable;
+use File::Grep qw/fgrep/;
+use feature 'state';
 
 sub BUILD {
     my $self = shift;
@@ -175,6 +177,73 @@ sub build_data_default{
 sub build_data{
     my ($self) = @_;
     my $data = {
+        'admins' => {
+            'data' => {
+                login       => 'api_test_admin',
+                password    => 'api_test_admin',
+                reseller_id => sub { return shift->get_id('resellers',@_); },
+            },
+            'query' => ['login'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{login}); },
+        },
+        'applyrewrites' => {
+            'data' => {
+                direction => "caller_in",
+                number => "test",
+                subscriber_id => sub { return shift->get_id('subscribers',@_); },
+            },
+        },
+        'billingnetworks' => {
+            'data' => {
+                name        => "api_test billingnetworks",
+                description => "api_test billingnetworks",
+                blocks     => [
+                    {ip=>'10.0.5.9',mask=>24},
+                    {ip=>'10.0.6.9',mask=>24},
+                ],
+            },
+        },
+       'callcontrols' => {
+            'data' => {
+                subscriber_id => sub { return shift->get_id('subscribers',@_); },
+                destination   => "api_test",
+            },
+        },
+        'cfsourcesets' => {
+            'data' => {
+                sources => [{source => "test",}],
+                subscriber_id => sub { return shift->get_id('subscribers',@_); },
+                name => "from_test"
+            },
+            'query' => ['name','subscriber_id'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        },
+        'customerlocations' => {
+            'data' => {
+                blocks     => [
+                    {ip=>'10.0.5.9',mask=>24},
+                    {ip=>'10.0.6.9',mask=>24},
+                ],
+                contract_id => sub { return shift->get_id('contracts',@_); },
+                name => "test_api",
+                description => "test_api",
+            },
+            'query' => ['name'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        },
+        'ncoslnpcarriers' => {
+            'data' => {
+                ncos_level_id  => sub { return shift->get_id('ncoslevels',@_); },
+                description => "test_api",
+            },
+        },
+        'ncospatterns' => {
+            'data' => {
+                ncos_level_id  => sub { return shift->get_id('ncoslevels',@_); },
+                description => "test_api",
+                pattern => "aaabbbccc",
+            },
+        },
         'systemcontacts' => {
             'data' => {
                 email     => 'api_test_reseller@reseller.invalid',
@@ -251,13 +320,17 @@ sub build_data{
         },
         'billingprofiles' => {
             'data' => {
-                name        => 'api_test test profile'.time(),
-                handle      => 'api_test_testprofile'.time(),
+                name        => 'api_test'.time(),
+                handle      => 'api_test'.time(),
                 reseller_id => sub { return shift->get_id('resellers',@_); },
             },
             'default' => 'billing_profiles',
             'no_delete_available' => 1,
             'dependency_requires_recreation' => ['resellers'],
+            'uniquizer_cb' => sub { 
+                Test::FakeData::string_uniquizer(\$_[0]->{name});
+                Test::FakeData::string_uniquizer(\$_[0]->{handle});
+            },
         },
         'subscriberprofilesets' => {
             'data' => {
@@ -266,6 +339,7 @@ sub build_data{
                 description => 'api_test_subscriberprofileset',
             },
             'query' => ['name'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
         },
         'subscriberprofiles' => {
             'data' => {
@@ -274,6 +348,7 @@ sub build_data{
                 description    => 'api_test subscriberprofile',
             },
             'query' => ['name'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
         },
         'pbxdeviceconfigs' => {
             'data' => {
@@ -299,6 +374,7 @@ sub build_data{
             },
             'query' => ['name'],
             'no_delete_available' => 1,
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
         },
         'rewriterulesets' => {
             'data' => {
@@ -311,6 +387,7 @@ sub build_data{
                 callee_out_dpid => '4',
             },
             'query' => ['name'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
         },
     };
     $self->process_data($data);
@@ -446,9 +523,12 @@ sub set_data_from_script{
 
 sub load_data_from_script{
     my($self, $collection_name)  = @_;
-    my $collection_file =  dirname($0)."/api-$collection_name.t";
+    my $collection_file =  dirname($0)."/api-$collection_name-collection.t";
+    if(! -e $collection_file){
+        $collection_file =  dirname($0)."/api-${collection_name}.t";
+    }
     my $found = 0;
-    if(-e $collection_file){
+    if(-e $collection_file && fgrep { /set_data_from_script/ } $collection_file ){
         #dirty hack, part 1. To think about Safe
         local @ARGV = qw/load_data_only/;
         our $data_out;
@@ -596,6 +676,7 @@ sub create{
     }
     return $self->get_existent_id($collection_name);
 }
+
 sub create_special_upload{
     my $self = shift;
     return sub {
@@ -673,7 +754,20 @@ sub get_collection_interface{
     $data //= $self->data;
     return $data->{$collection_name}->{collection} ?  $data->{$collection_name}->{collection} : $collection_name;
 }
+sub string_uniquizer{
+    my($field,$data,$additions) = @_;
+    state $i;
+    $i++;
+    $additions //= '';
+    if(ref $field){
+        $$field = $$field.time().$i.$additions;
+    }else{
+        $field = $field.time().$i.$additions;
+    }
+    return $field;
+}
 1;
+
 __END__
 
 Further improvements:
