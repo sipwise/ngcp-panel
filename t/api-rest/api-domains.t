@@ -18,10 +18,11 @@ my $fake_data =  Test::FakeData->new;
 $fake_data->set_data_from_script({
     'domains' => {
         'data' => {
-            domain => 'api_test_domain.api_test_domain',
+            domain => 'api_test.api_test',
             reseller_id => sub { return shift->get_id('resellers',@_); },
         },
         'query' => ['domain'],
+        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{domain}); },
     },
 });
 
