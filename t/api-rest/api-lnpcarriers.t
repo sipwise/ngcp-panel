@@ -17,12 +17,13 @@ $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPT
 $fake_data->set_data_from_script({
     'lnpcarriers' => {
         data => {
-            name               => "apitest_emergency_mapping_cont",
+            name               => "apitest_emrgnc_map",
             prefix             => "111",
             authoritative      => "0",
             skip_rewrite       => "0",
         },
         'query' => ['name'],
+        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
     },
 });
 
