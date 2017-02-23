@@ -18,9 +18,10 @@ $fake_data->set_data_from_script({
     'emergencymappingcontainers' => {
         data => {
             reseller_id => sub { return shift->get_id('resellers', @_); },
-            name               => "apitest_emergency_mapping_cont",
+            name               => "apitest",
         },
         'query' => ['name','reseller_id'],
+        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
     },
 });
 
