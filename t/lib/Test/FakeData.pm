@@ -13,6 +13,7 @@ use Clone qw/clone/;
 use File::Slurp qw/read_file/;
 use URI::Escape;
 use Storable;
+use File::Grep qw/fgrep/;
 
 sub BUILD {
     my $self = shift;
@@ -448,7 +449,7 @@ sub load_data_from_script{
     my($self, $collection_name)  = @_;
     my $collection_file =  dirname($0)."/api-$collection_name.t";
     my $found = 0;
-    if(-e $collection_file){
+    if(-e $collection_file && fgrep { /set_data_from_script/ } $collection_file ){
         #dirty hack, part 1. To think about Safe
         local @ARGV = qw/load_data_only/;
         our $data_out;
