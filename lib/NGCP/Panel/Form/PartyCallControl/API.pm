@@ -73,7 +73,7 @@ has_field 'token' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/subscriber_id destination/],
+    render_list => [qw/callid type caller callee status token/],
 );
 
 1;

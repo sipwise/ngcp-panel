@@ -17,12 +17,13 @@ my $fake_data =  Test::FakeData->new;
 $fake_data->set_data_from_script({
     peeringgroups => {
         data => {
-            name                => 'test_api peering group',
+            name                => 'test_api_p_group',
             priority            => '1',
             description         => 'test_api peering group',
             contract_id => sub { return shift->get_id('contracts',@_); },,
         },
         query => ['name'],
+        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name});},
     },
 });
 
