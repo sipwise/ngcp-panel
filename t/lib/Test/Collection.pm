@@ -348,7 +348,12 @@ sub form_data_item{
 }
 sub get_id_from_created{
     my($self, $created_info) = @_;
-    my $id = $created_info->{location} || '';
+    my $id = $self->get_id_from_location($created_info->{location});
+    return $id;
+}
+sub get_id_from_location{
+    my($self, $location) = @_;
+    my $id = $location // '';
     $id=~s/.*?\D(\d+)$/$1/gis;
     return $id;
 }
@@ -389,6 +394,7 @@ sub get_item_hal{
     my($self,$name,$uri, $reload) = @_;
     $name ||= $self->name;
     my $resitem ;
+    #print Dumper ["get_item_hal",$name,$self->DATA_LOADED->{$name}];
     if(!$uri && !$reload){
         if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
             $resitem = $self->get_created_first;
@@ -403,6 +409,7 @@ sub get_item_hal{
         #print "uri=$uri;";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
         ($reshal,$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name);
+        #print Dumper $reshal;
         if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
             $self->IS_EMPTY_COLLECTION(0);
             $resitem = { 
@@ -648,7 +655,9 @@ sub request_post{
     $req->header('Prefer' => 'return=representation');
     my $res = $self->request($req);
     my $rescontent = $self->get_response_content($res);
-    return wantarray ? ($res,$rescontent,$req,$content) : $res;
+    my $location = $res->header('Location') // '';
+    my $additional_info = { id => $self->get_id_from_location($location) // '' };
+    return wantarray ? ($res,$rescontent,$req,$content,$additional_info) : $res;
 };
 sub request_options{
     my ($self,$uri) = @_;
@@ -670,10 +679,13 @@ sub request_delete{
     if($res->code == 404){
     #todo: if fake data will provide tree of the cascade deletion - it can be checked here, I think
         diag($name.": Item $del_uri is absent already.");
-    }elsif($res->code == 204){
-        diag($name.": Item $del_uri deleted.");
+    }elsif($res->code == 423){
+    #todo: if fake data will provide tree of the cascade deletion - it can be checked here, I think
+        diag($name.": Item '$del_uri' can't be deleted.");
     }elsif(!$self->QUIET_DELETION){
         $self->http_code_msg(204, "$name: check response from DELETE $uri", $res);
+    }elsif($res->code == 204){
+        diag($name.": Item $del_uri deleted.");
     }
     my $content = $self->get_response_content($res);
     if($self->cache_data){
@@ -1075,7 +1087,7 @@ sub check_item_delete{
     return ($req,$res,$content);
 };
 sub check_create_correct{
-    my($self, $number, $uniquizer_cb) = @_;
+    my($self, $number, $uniquizer_cb, $data_in) = @_;
     if(!$self->KEEP_CREATED){
         $self->clear_data_created;
     }
@@ -1083,18 +1095,22 @@ sub check_create_correct{
     my @created = ();
     for(my $i = 1; $i <= $number; ++$i) {
         my $created_info={};
-        my ($res, $content, $req, $content_post) = $self->check_item_post( $uniquizer_cb , undef, { i => $i } );
-        $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
+        my ($res, $content, $req, $content_post) = $self->check_item_post( $uniquizer_cb , $data_in, { i => $i } );
+        if(exists $self->methods->{'item'}->{allowed}->{'GET'}){
+            $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
+        }else{
+            $self->http_code_msg(200, "create test item '".$self->name."' $i",$res,$content);
+        }
         my $location = $res->header('Location');
         if($location){
             #some interfaces (e.g. subscribers) don't provide hal after creation - is it correct, by the way?
             my $get ={};
-            if(!$content){
+            if(!$content && exists $self->methods->{'item'}->{allowed}->{'GET'}){
                 @$get{qw/res_get content_get req_get/} = $self->check_item_get($location,"no object returned after POST");
             }
             $created_info = {
                 num => $i,
-                content => $content ? $content : $get->{content_get},
+                content => $content ? $content : ($get->{content_get} // {}),
                 res => $res,
                 req => $req,
                 location => $location,

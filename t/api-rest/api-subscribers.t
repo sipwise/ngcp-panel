@@ -27,7 +27,7 @@ $fake_data->set_data_from_script({
             password             => 'api_test_password',
             webusername          => 'api_test_webusername',
             webpassword          => undef,
-            domain_id            => sub { return shift->get_id('domains',@_); },,
+            domain_id            => sub { return shift->get_id('domains',@_); },
             #domain_id            =>
             email                => undef,
             external_id          => undef,
