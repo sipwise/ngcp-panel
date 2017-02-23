@@ -13,6 +13,8 @@ use Clone qw/clone/;
 use File::Slurp qw/read_file/;
 use URI::Escape;
 use Storable;
+use File::Grep qw/fgrep/;
+use feature 'state';
 
 sub BUILD {
     my $self = shift;
@@ -175,6 +177,15 @@ sub build_data_default{
 sub build_data{
     my ($self) = @_;
     my $data = {
+        'admins' => {
+            'data' => {
+                login       => 'api_test_admin',
+                password    => 'api_test_admin',
+                reseller_id => sub { return shift->get_id('resellers',@_); },
+            },
+            'query' => ['login'],
+            #'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        },
         'systemcontacts' => {
             'data' => {
                 email     => 'api_test_reseller@reseller.invalid',
@@ -266,6 +277,7 @@ sub build_data{
                 description => 'api_test_subscriberprofileset',
             },
             'query' => ['name'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
         },
         'subscriberprofiles' => {
             'data' => {
@@ -274,6 +286,7 @@ sub build_data{
                 description    => 'api_test subscriberprofile',
             },
             'query' => ['name'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
         },
         'pbxdeviceconfigs' => {
             'data' => {
@@ -299,6 +312,7 @@ sub build_data{
             },
             'query' => ['name'],
             'no_delete_available' => 1,
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
         },
         'rewriterulesets' => {
             'data' => {
@@ -311,6 +325,7 @@ sub build_data{
                 callee_out_dpid => '4',
             },
             'query' => ['name'],
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
         },
     };
     $self->process_data($data);
@@ -447,8 +462,11 @@ sub set_data_from_script{
 sub load_data_from_script{
     my($self, $collection_name)  = @_;
     my $collection_file =  dirname($0)."/api-$collection_name.t";
+    if(! -e $collection_file){
+        $collection_file =  dirname($0)."/api-${collection_name}-collection.t";
+    }
     my $found = 0;
-    if(-e $collection_file){
+    if(-e $collection_file && fgrep { /set_data_from_script/ } $collection_file ){
         #dirty hack, part 1. To think about Safe
         local @ARGV = qw/load_data_only/;
         our $data_out;
@@ -673,7 +691,20 @@ sub get_collection_interface{
     $data //= $self->data;
     return $data->{$collection_name}->{collection} ?  $data->{$collection_name}->{collection} : $collection_name;
 }
+sub string_uniquizer{
+    my($field,$data,$additions) = @_;
+    state $i;
+    $i++;
+    $additions //= '';
+    if(ref $field){
+        $$field = $$field.time().$i.$additions;
+    }else{
+        $field = $field.time().$i.$additions;
+    }
+    return $field;
+}
 1;
+
 __END__
 
 Further improvements:

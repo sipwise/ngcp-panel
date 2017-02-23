@@ -342,6 +342,7 @@ sub get_item_hal{
     my($self,$name,$uri, $reload) = @_;
     $name ||= $self->name;
     my $resitem ;
+    #print Dumper ["get_item_hal",$name,$self->DATA_LOADED->{$name}];
     if(!$uri && !$reload){
         if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
             $resitem = $self->get_created_first;
@@ -356,6 +357,7 @@ sub get_item_hal{
         #print "uri=$uri;";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
         ($reshal,$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name);
+        #print Dumper $reshal;
         if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
             $self->IS_EMPTY_COLLECTION(0);
             $resitem = { 
@@ -1022,7 +1024,7 @@ sub check_item_delete{
     return ($req,$res,$content);
 };
 sub check_create_correct{
-    my($self, $number, $uniquizer_cb) = @_;
+    my($self, $number, $uniquizer_cb, $data_in) = @_;
     if(!$self->KEEP_CREATED){
         $self->clear_data_created;
     }
@@ -1030,7 +1032,7 @@ sub check_create_correct{
     my @created = ();
     for(my $i = 1; $i <= $number; ++$i) {
         my $created_info={};
-        my ($res, $content, $req, $content_post) = $self->check_item_post( $uniquizer_cb , undef, { i => $i } );
+        my ($res, $content, $req, $content_post) = $self->check_item_post( $uniquizer_cb , $data_in, { i => $i } );
         $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
         my $location = $res->header('Location');
         if($location){
