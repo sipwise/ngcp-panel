@@ -210,6 +210,7 @@ sub validate_form {
         unless($form->validated) {
             my $e = join '; ', map {
                 my $in = (defined $_->input && ref $_->input eq 'HASH' && exists $_->input->{id}) ? $_->input->{id} : ($_->input // '');
+                $in //= '';
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'',
                     ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
                     $in,
