@@ -22,6 +22,7 @@ $fake_data->set_data_from_script({
             detail             => "api_test zone",
         },
         'query' => ['zone','billing_profile_id'],
+        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{zone}); },
     },
 });
 
