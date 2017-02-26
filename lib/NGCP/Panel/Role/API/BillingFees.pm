@@ -1,7 +1,10 @@
 package NGCP::Panel::Role::API::BillingFees;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use parent 'NGCP::Panel::Role::API';
 
@@ -77,7 +80,7 @@ sub hal_from_fee {
     return $hal;
 }
 
-sub fee_by_id {
+sub item_by_id {
     my ($self, $c, $id) = @_;
 
     my $item_rs = $self->item_rs($c);

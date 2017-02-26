@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::BillingFeesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
@@ -18,7 +21,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::BillingFees/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::BillingFees/;
 
 sub resource_name{
     return 'billingfees';
@@ -44,21 +47,14 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-sub auto :Private {
-    my ($self, $c) = @_;
-
-    $self->set_body($c);
-    $self->log_request($c);
-}
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingfee => $item);
 
-        my $hal = $self->hal_from_fee($c, $fee);
+        my $hal = $self->hal_from_fee($c, $item);
 
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -72,25 +68,6 @@ sub GET :Allow {
         $c->response->body($response->content);
         return;
     }
-    return;
-}
-
-sub HEAD :Allow {
-    my ($self, $c, $id) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
-
-sub OPTIONS :Allow {
-    my ($self, $c, $id) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Patch => 'application/json-patch+json',
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
 
@@ -108,31 +85,18 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
-        my $old_resource = { $fee->get_inflated_columns };
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingfee => $item);
+        my $old_resource = { $item->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $fee = $self->update_fee($c, $fee, $old_resource, $resource, $form);
-        last unless $fee;
+        $item = $self->update_fee($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
         $guard->commit;
-
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            my $hal = $self->hal_from_fee($c, $fee, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
 }
@@ -144,35 +108,22 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingfee => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $fee->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $fee = $self->update_fee($c, $fee, $old_resource, $resource, $form);
-        last unless $fee;
+        $item = $self->update_fee($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
         $guard->commit;
-
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            my $hal = $self->hal_from_fee($c, $fee, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
 }
@@ -181,11 +132,11 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingfee => $item);
 
         try {
-            $fee->delete;
+            $item->delete;
         } catch($e) {
             $c->log->error("Failed to delete billing fee with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
@@ -198,12 +149,6 @@ sub DELETE :Allow {
         $c->response->body(q());
     }
     return;
-}
-
-sub end : Private {
-    my ($self, $c) = @_;
-
-    $self->log_response($c);
 }
 
 1;

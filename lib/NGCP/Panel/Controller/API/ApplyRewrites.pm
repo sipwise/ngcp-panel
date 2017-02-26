@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::ApplyRewrites;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
@@ -21,7 +24,7 @@ sub allowed_methods{
     return [qw/POST OPTIONS/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::ApplyRewrites/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::ApplyRewrites/;
 
 sub api_description {
     return 'Applies rewrite rules to a given number according to the given direction. It can for example be used to normalize user input to E164 using callee_in direction, or to denormalize E164 to user output using caller_out.';
@@ -56,24 +59,9 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-sub auto :Private {
-    my ($self, $c) = @_;
 
-    $self->set_body($c);
-    $self->log_request($c);
-}
 
-sub OPTIONS :Allow {
-    my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
+
 
 sub POST :Allow {
     my ($self, $c) = @_;
@@ -136,11 +124,7 @@ sub POST :Allow {
 }
 
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-}
 
 1;
 

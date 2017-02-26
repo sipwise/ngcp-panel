@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::CustomersItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
@@ -22,7 +25,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Customers/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Customers/;
 
 sub resource_name{
     return 'customers';
@@ -92,24 +95,9 @@ sub GET :Allow {
     return;
 }
 
-sub HEAD :Allow {
-    my ($self, $c, $id) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
 
-sub OPTIONS :Allow {
-    my ($self, $c, $id) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Patch => 'application/json-patch+json',
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
+
+
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -153,23 +141,11 @@ sub PATCH :Allow {
         last unless $customer;
 
         my $hal = $self->hal_from_customer($c, $customer, $form, $now);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            #my $hal = $self->hal_from_customer($c, $customer, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
     }
     return;
 }
@@ -202,19 +178,7 @@ sub PUT :Allow {
 
         $guard->commit;
 
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            #my $hal = $self->hal_from_customer($c, $customer, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
     }
     return;
 }

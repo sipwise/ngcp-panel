@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::Root;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use Encode qw(encode);
 use Clone qw/clone/;
@@ -12,12 +15,12 @@ use File::Find::Rule;
 use JSON qw(to_json);
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API;
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
+use parent qw/NGCP::Panel::Role::Entities/;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
-
+use TryCatch;
 use NGCP::Panel::Utils::Journal qw();
 
 #with 'NGCP::Panel::Role::API';
@@ -41,13 +44,7 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-sub auto :Private {
-    my ($self, $c) = @_;
 
-    $self->set_body($c);
-    $self->log_request($c);
-    return 1;
-}
 
 sub GET : Allow {
     my ($self, $c) = @_;
@@ -213,12 +210,7 @@ sub GET : Allow {
     return;
 }
 
-sub HEAD : Allow {
-    my ($self, $c) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
+
 
 sub OPTIONS : Allow {
     my ($self, $c) = @_;

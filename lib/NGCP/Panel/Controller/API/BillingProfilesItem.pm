@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::BillingProfilesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
@@ -18,7 +21,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::BillingProfiles/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::BillingProfiles/;
 
 sub resource_name{
     return 'billingprofiles';
@@ -54,21 +57,14 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-sub auto :Private {
-    my ($self, $c) = @_;
-
-    $self->set_body($c);
-    $self->log_request($c);
-}
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile);
+        my $item = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $item);
 
-        my $hal = $self->hal_from_profile($c, $profile);
+        my $hal = $self->hal_from_profile($c, $item);
 
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -82,25 +78,6 @@ sub GET :Allow {
         $c->response->body($response->content);
         return;
     }
-    return;
-}
-
-sub HEAD :Allow {
-    my ($self, $c, $id) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
-
-sub OPTIONS :Allow {
-    my ($self, $c, $id) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Patch => 'application/json-patch+json',
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
 
@@ -119,34 +96,22 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile);
-        my $old_resource = { $profile->get_inflated_columns };
+        my $item = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $item);
+        my $old_resource = { $item->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
-        last unless $profile;
+        $item = $self->update_profile($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_profile($c, $profile, $form);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_profile($c, $item, $form);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            #my $hal = $self->hal_from_profile($c, $profile, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
     }
     return;
 }
@@ -159,53 +124,34 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile );
+        my $item = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $item );
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $profile->get_inflated_columns };
+        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
-        last unless $profile;
+        $item = $self->update_profile($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_profile($c, $profile, $form);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_profile($c, $item, $form);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            #my $hal = $self->hal_from_profile($c, $profile, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'hal' =>$hal, 'preference' => $preference );
     }
     return;
 }
 
 # we don't allow to DELETE a billing profile
 
-
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
-}
-
-sub end : Private {
-    my ($self, $c) = @_;
-
-    $self->log_response($c);
 }
 
 1;

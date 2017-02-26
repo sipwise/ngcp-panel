@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::PbxDevicePreferenceDefs;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
@@ -23,7 +26,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
+use parent qw/NGCP::Panel::Role::Entities/;
 
 sub resource_name{
     return 'pbxdevicepreferencedefs';
@@ -49,12 +52,7 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-sub auto :Private {
-    my ($self, $c) = @_;
 
-    $self->set_body($c);
-    $self->log_request($c);
-}
 
 sub GET :Allow {
     my ($self, $c) = @_;
@@ -85,30 +83,11 @@ sub GET :Allow {
     return;
 }
 
-sub HEAD :Allow {
-    my ($self, $c) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
 
-sub OPTIONS :Allow {
-    my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-}
+
+
 
 1;
 

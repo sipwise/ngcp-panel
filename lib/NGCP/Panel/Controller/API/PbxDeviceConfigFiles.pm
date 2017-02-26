@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::PbxDeviceConfigFiles;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
@@ -30,7 +33,7 @@ sub query_params {
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PbxDeviceFirmwares/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PbxDeviceFirmwares/;
 
 sub resource_name{
     return 'pbxdeviceconfigfiles';
@@ -64,17 +67,7 @@ sub auto :Private {
     return 1;
 }
 
-sub OPTIONS :Allow {
-    my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
+
 
 sub end : Private {
     my ($self, $c) = @_;

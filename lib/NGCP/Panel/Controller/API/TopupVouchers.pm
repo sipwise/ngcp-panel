@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::TopupVouchers;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
@@ -25,7 +28,7 @@ sub allowed_methods{
 
 use NGCP::Panel::Form::Topup::VoucherAPI;
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
+use parent qw/NGCP::Panel::Role::Entities/;
 
 sub api_description {
     return 'Defines topup via voucher codes.';
@@ -60,24 +63,9 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-sub auto :Private {
-    my ($self, $c) = @_;
 
-    $self->set_body($c);
-    $self->log_request($c);
-}
 
-sub OPTIONS :Allow {
-    my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
+
 
 sub POST :Allow {
     my ($self, $c) = @_;
@@ -171,11 +159,7 @@ sub POST :Allow {
     return;
 }
 
-sub end : Private {
-    my ($self, $c) = @_;
 
-    $self->log_response($c);
-}
 
 sub get_form {
     my ($self, $c) = @_;

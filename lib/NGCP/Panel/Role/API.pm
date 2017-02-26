@@ -767,9 +767,9 @@ sub get_query_callbacks{
     my($sub_where,$sub_attributes);
     if($p[0]->{query_type}){
         if('string_like' eq $p[0]->{query_type}){
-            $sub_where = sub {my ($q, $c) = @_; { $p[0]->{param} => { like => $q } };};
+            $sub_where = sub {my ($q, $c) = @_; { 'me.'.$p[0]->{param} => { like => $q } };};
         }elsif('string_eq' eq $p[0]->{query_type}){
-            $sub_where = sub {my ($q, $c) = @_; { $p[0]->{param} => $q };};
+            $sub_where = sub {my ($q, $c) = @_; { 'me.'.$p[0]->{param} => $q };};
         }
     }
     if($p[0]->{query}){

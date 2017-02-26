@@ -1,7 +1,10 @@
 package NGCP::Panel::Role::API::Faxes;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use parent 'NGCP::Panel::Role::API';
 
@@ -14,6 +17,7 @@ use DateTime::Format::Strptime;
 use NGCP::Panel::Form::Subscriber::WebfaxAPI;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Fax;
+use TryCatch;
 
 sub _item_rs {
     my ($self, $c) = @_;

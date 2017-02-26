@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::ContractsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
@@ -22,7 +25,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Contracts/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Contracts/;
 
 sub resource_name{
     return 'contracts';
@@ -73,10 +76,10 @@ sub GET :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         last unless $self->valid_id($c, $id);
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $item = $self->contract_by_id($c, $id);
+        last unless $self->resource_exists($c, contract => $item);
 
-        my $hal = $self->hal_from_contract($c, $contract, undef, NGCP::Panel::Utils::DateTime::current_local);
+        my $hal = $self->hal_from_contract($c, $item, undef, NGCP::Panel::Utils::DateTime::current_local);
         $guard->commit; #potential db write ops in hal_from
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -92,24 +95,9 @@ sub GET :Allow {
     return;
 }
 
-sub HEAD :Allow {
-    my ($self, $c, $id) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
 
-sub OPTIONS :Allow {
-    my ($self, $c, $id) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Patch => 'application/json-patch+json',
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
+
+
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -127,11 +115,11 @@ sub PATCH :Allow {
         last unless $json;
 
         my $now = NGCP::Panel::Utils::DateTime::current_local;
-        my $contract = $self->contract_by_id($c, $id, $now);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $item = $self->contract_by_id($c, $id, $now);
+        last unless $self->resource_exists($c, contract => $item);
         
-        my $old_resource = { $contract->get_inflated_columns };
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        my $old_resource = { $item->get_inflated_columns };
+        my $billing_mapping = $item->billing_mappings->find($item->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
         $old_resource->{billing_profile_definition} = undef;
         delete $old_resource->{profile_package_id};
@@ -139,34 +127,22 @@ sub PATCH :Allow {
         my $resource = $self->apply_patch($c, $old_resource, $json, sub {
             my ($missing_field,$entity) = @_;
             if ($missing_field eq 'billing_profiles') {
-                $entity->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_future_mappings($contract);
+                $entity->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_future_mappings($item);
                 $entity->{billing_profile_definition} //= 'profiles';
             }
         });
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
-        last unless $contract;
+        $item = $self->update_contract($c, $item, $old_resource, $resource, $form, $now);
+        last unless $item;
 
-        my $hal = $self->hal_from_contract($c, $contract, $form, $now);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_contract($c, $item, $form, $now);
+        last unless $self->add_update_journal_item_hal($c, $hal);
         
         $guard->commit;
 
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            #my $hal = $self->hal_from_contract($c, $contract, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'hal' =>$hal, 'preference' => $preference );
     }
     return;
 }
@@ -180,40 +156,28 @@ sub PUT :Allow {
         last unless $preference;
 
         my $now = NGCP::Panel::Utils::DateTime::current_local;
-        my $contract = $self->contract_by_id($c, $id, $now);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $item = $self->contract_by_id($c, $id, $now);
+        last unless $self->resource_exists($c, contract => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $contract->get_inflated_columns };
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        my $old_resource = { $item->get_inflated_columns };
+        my $billing_mapping = $item->billing_mappings->find($item->get_column('bmid'));
         $old_resource->{type} = $billing_mapping->product->class;
 
         my $form = $self->get_form($c);
-        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
-        last unless $contract;
+        $item = $self->update_contract($c, $item, $old_resource, $resource, $form, $now);
+        last unless $item;
         
-        my $hal = $self->hal_from_contract($c, $contract, $form, $now);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_contract($c, $item, $form, $now);
+        last unless $self->add_update_journal_item_hal($c, $hal);
 
         $guard->commit;
 
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            #my $hal = $self->hal_from_contract($c, $contract, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
+        $self->return_representation($c, 'hal' =>$hal, 'preference' => $preference );
     }
     return;
 }
@@ -225,8 +189,8 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $item = $self->contract_by_id($c, $id);
+        last unless $self->resource_exists($c, contract => $item);
 
         # TODO: do we want to prevent deleting used contracts?
         #my $contract_count = $c->model('DB')->resultset('contracts')->search({
@@ -236,7 +200,7 @@ sub DELETE :Allow {
         #    $self->error($c, HTTP_LOCKED, "Contact is still in use.");
         #    last;
         #} else {
-            $contract->delete;
+            $item->delete;
         #}
         $guard->commit;
 

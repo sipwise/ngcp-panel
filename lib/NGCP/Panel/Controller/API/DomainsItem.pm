@@ -1,7 +1,10 @@
 package NGCP::Panel::Controller::API::DomainsItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use Sipwise::Base;
+use strict;
+use warnings;
+
+use TryCatch;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
@@ -21,7 +24,7 @@ sub allowed_methods{
     return [qw/GET OPTIONS HEAD DELETE/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Domains/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Domains/;
 
 sub resource_name{
     return 'domains';
@@ -57,13 +60,7 @@ __PACKAGE__->config(
     action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
 
-sub auto :Private {
-    my ($self, $c) = @_;
 
-    $self->set_body($c);
-    $self->log_request($c);
-    return 1;
-}
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
@@ -87,24 +84,9 @@ sub GET :Allow {
     return;
 }
 
-sub HEAD :Allow {
-    my ($self, $c, $id) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
 
-sub OPTIONS :Allow {
-    my ($self, $c, $id) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Patch => 'application/json-patch+json',
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
+
+
 
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
