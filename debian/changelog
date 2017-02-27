@@ -1,3 +1,43 @@
+ngcp-panel (1.14.4.1+0~mr4.5.4.1) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [57ceb84] TT#8272 Fix customer creation with invoices and email templates in API
+  * [155c867] TT#8185 Add reseller_id to the domain for the reseller roles
+  * [144424a] TT#8185 Fix domain deletion for the reseller
+  * [6b71704] TT#8185 Fix domain deletion for the reseller
+  * [e856f36] TT#7029 Make deletion quiet again
+  * [9233a3d] TT#8272 Add necessary form_validation exceptions for the template fields
+  * [768e8d7] TT#7453 Add  readonly time fields to the customers api
+  * [13b0d60] TT#9100 Fix user_unban in the web panel
+  * [7162944] TT#8680 Consider E164 empty fields
+  * [799ab49] TT#7029 Make subscribers API tests more stable
+
+  [ Kirill Solomko ]
+  * [c70675c] TT#7497 add /api/faxes filter by sid
+  * [f15bc9f] TT#1477 MaliciousCalls API fix param filter by caller/callee/callid
+  * [c19743c] Revert "TT#1477 MaliciousCalls API fix param filter by caller/callee/callid"
+  * [73c5972] TT#11477 MaliciousCalls API fix param filter by caller/callee/callid
+
+  [ Rene Krenn ]
+  * [36eb57f] TT#6735 TT#7030 TT#5850 record event subscriber numbers
+  * [6814e10] TT#8878 end_ivr event upon terminating a susbcriber
+  * [c553d69] TT#8292 api/customerfraudpreferences
+  * [d454f59] TT#9714 susbcriber first non-prim alias for edr records
+  * [ec4da0b] TT#6735 TT#5850 refactor "profile" events to track number changes
+  * [7b59d9c] TT#9850 remove interceptions when terminating a reseller
+
+  [ Gerhard Jungwirth ]
+  * [86103d8] TT#8657 fix xmlrpc trustedReload
+  * [037cc24] TT#9829 calllist call direction out if intra
+
+  [ Andreas Granig ]
+  * [69d2b20] TT#10135 Fix displaying emergency mode indicator
+  * [6ef74ec] TT#1678 Implement SOAP Intercept API as transition
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Feb 2017 21:30:53 +0100
+
 ngcp-panel (1.14.4.0+0~mr4.5.4.0) unstable; urgency=medium
 
   [ Victor Seva ]
