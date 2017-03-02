@@ -102,7 +102,7 @@ sub preprocess_svg_pdf {
 sub preprocess_svg {
     my($svg_ref) = @_;
 
-    $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+    $$svg_ref=~s/(?:{\s*)?<!--\{|\}-->(?:\s*})?//gs;
     $$svg_ref = '<root>'.$$svg_ref.'</root>';
 
     my $xp = XML::XPath->new($$svg_ref);
