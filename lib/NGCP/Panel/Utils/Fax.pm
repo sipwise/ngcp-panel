@@ -140,16 +140,33 @@ sub process_fax_journal_item {
                             : $subscriber;
     my $src_rewrite = 1;
     my $dst_rewrite = 1;
+    # (a) if src and dest belong to same contract:
     if ($src_sub && $dst_sub && $src_sub->contract_id == $dst_sub->contract_id) {
-        if ($prov_src_sub && $prov_src_sub->pbx_extension) {
-            $resource->{caller} = $prov_src_sub->pbx_extension;
-            $src_rewrite = 0;
+        if ($prov_src_sub) {
+            # if there's an extension, use that.
+            if ($prov_src_sub->pbx_extension) {
+                $resource->{caller} = $prov_src_sub->pbx_extension;
+                $src_rewrite = 0;
+            # otherwise if the fax_journal field is the subscriber username, take the primary_number:
+            } elsif ($result->caller eq $prov_src_sub->username && my $primary_number = $src_sub->primary_number) {
+                $resource->{caller} = $primary_number->cc . ($primary_number->ac // '') . $primary_number->sn;
+                $src_rewrite = 0;
+            }
         }
-        if ($prov_dst_sub && $prov_dst_sub->pbx_extension) {
-            $resource->{callee} = $prov_dst_sub->pbx_extension;
-            $dst_rewrite = 0;
+        if ($prov_dst_sub) {
+            # if there's an extension, use that.
+            if ($prov_dst_sub->pbx_extension) {
+                $resource->{callee} = $prov_dst_sub->pbx_extension;
+                $dst_rewrite = 0;
+            # otherwise if the fax_journal field is the subscriber username, take the primary_number:
+            } elsif ($result->callee eq $prov_dst_sub->username && my $primary_number = $dst_sub->primary_number) {
+                $resource->{callee} = $primary_number->cc . ($primary_number->ac // '') . $primary_number->sn;
+                $dst_rewrite = 0;
+            }
         }
     } else {
+        # src and dst do not belong to same contract:
+        # if there is an extension, use it no matter what:
         if ($prov_sub->pbx_extension) {
             if ($dir eq 'out') {
                 $resource->{caller} = $prov_sub->pbx_extension;
@@ -157,6 +174,19 @@ sub process_fax_journal_item {
             } else {
                 $resource->{callee} = $prov_sub->pbx_extension;
                 $dst_rewrite = 0;
+            }
+        #use primary number otherwise, if we fax_journal field is the subscriber username:
+        } else {
+            if ($dir eq 'out') {
+                if ($result->caller eq $prov_sub->username && my $primary_number = $prov_sub->primary_number) {
+                    $resource->{caller} = $primary_number->cc . ($primary_number->ac // '') . $primary_number->sn;
+                    $src_rewrite = 0;
+                }
+            } else {
+                if ($result->callee eq $prov_sub->username && my $primary_number = $prov_sub->primary_number) {
+                    $resource->{callee} = $primary_number->cc . ($primary_number->ac // '') . $primary_number->sn;
+                    $src_rewrite = 0;
+                }
             }
         }
     }
