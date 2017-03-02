@@ -130,8 +130,9 @@ sub process_fax_journal_item {
                      callee => $result->callee };
     my $dir      = $result->direction;
     my $prov_sub = $subscriber->provisioning_voip_subscriber;
-    my $src_sub  = $result->caller_subscriber // undef;
-    my $dst_sub  = $result->callee_subscriber // undef;
+    my $src_sub  = $result->caller_subscriber // undef; #undef, if not local
+    my $dst_sub  = $result->callee_subscriber // undef; #undef, if not local
+    # either src or dst must be local.
     my $prov_src_sub = $src_sub
                             ? $src_sub->provisioning_voip_subscriber
                             : $subscriber;
@@ -140,26 +141,49 @@ sub process_fax_journal_item {
                             : $subscriber;
     my $src_rewrite = 1;
     my $dst_rewrite = 1;
-    if ($src_sub && $dst_sub && $src_sub->contract_id == $dst_sub->contract_id) {
-        if ($prov_src_sub && $prov_src_sub->pbx_extension) {
-            $resource->{caller} = $prov_src_sub->pbx_extension;
-            $src_rewrite = 0;
-        }
-        if ($prov_dst_sub && $prov_dst_sub->pbx_extension) {
-            $resource->{callee} = $prov_dst_sub->pbx_extension;
-            $dst_rewrite = 0;
-        }
-    } else {
+
+    if ($dir eq 'out') {
+        # outgoing fax_journal record: fax_journal item subscriber is the callER
+
+        # caller field:
         if ($prov_sub->pbx_extension) {
-            if ($dir eq 'out') {
-                $resource->{caller} = $prov_sub->pbx_extension;
+            # always set the caller to the extension, if available (pbx)
+            $resource->{caller} = $prov_sub->pbx_extension;
+            $src_rewrite = 0;
+        } elsif ($prov_sub->is_pbx_pilot) {
+            # if no extension, it can be the pbx pilot.
+            if ($resource->{caller} eq $prov_sub->username) {
+                # use its primary number, if the caller field shows a username.
+                my $primary_number = $subscriber->primary_number;
+                $resource->{caller} = $primary_number->cc . ($primary_number->ac // '') . $primary_number->sn;
                 $src_rewrite = 0;
-            } else {
-                $resource->{callee} = $prov_sub->pbx_extension;
-                $dst_rewrite = 0;
             }
+        } else {
+            # otherwise its a regular alias/no pbx, no override.
         }
+
+        # callee field:
+        if ($src_sub && $dst_sub && $src_sub->contract_id == $dst_sub->contract_id) {
+            # for pbx, src and dst are local and belong to same contract
+
+            ####wip
+            if ($prov_dst_sub->pbx_extension) {
+                $resource->{callee} = $prov_dst_sub->pbx_extension;
+                $dst_rewrite = 0;
+            } elsif ($prov_dst_sub->is_pbx_pilot) {
+
+            }
+
+        } else {
+            # otherwise its a regular alias, no override.
+        }
+
+    } else {
+        # incoming fax_journal record: fax_journal item subscriber is the callEE
+
+        #### wip
     }
+
     if ($src_rewrite) {
         if (my $rt_caller = NGCP::Panel::Utils::Subscriber::apply_rewrite(
                                 c => $c,
