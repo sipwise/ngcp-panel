@@ -4,6 +4,7 @@ use Sipwise::Base;
 use LWP::UserAgent;
 use URI;
 use JSON;
+use Encode qw/encode/;
 
 sub dispatch {
     my (%args) = @_;
@@ -40,15 +41,15 @@ sub dispatch {
         );
     $c->log->info("sending pcc request for $type with id $id to $url");
     my $req = HTTP::Request->new(POST => $url);
-    $req->header('Content-Type' => 'application/json');
-    $req->content(to_json({
+    $req->header('Content-Type' => 'application/json;charset=utf-8');
+    $req->content(encode('utf8', to_json({
         actualMsisdn => $to,
         callingMsisdn => $from,
         callid => $id,
         type => $type,
         token => $token,
         $type eq "sms" ? (text => $text) : (),
-    }));
+    })));
     my $res = $ua->request($req);
     $c->log->info("sending pcc request " . ($res->is_success ? "succeeded" : "failed"));
     if ($res->is_success) {
