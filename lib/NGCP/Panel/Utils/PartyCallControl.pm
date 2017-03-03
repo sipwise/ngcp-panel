@@ -30,7 +30,12 @@ sub dispatch {
     # apply known placeholders to the url
     foreach my $v (qw(caller callee callid token prefix suffix)) {
         my $t = $url_ph_map{$v} // "";
-        $t .= $t ? "/" : "";
+
+        # only add trailing slash if not last param (suffix here)
+        unless($v eq "suffix") { 
+            $t .= $t ? "/" : "";
+        }
+
         $url =~ s/(\$\{$v\})/$t/g;
     }
 
