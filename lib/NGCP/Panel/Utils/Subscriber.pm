@@ -1247,6 +1247,8 @@ sub apply_rewrite {
 
     my $c = $params{c};
     my $subscriber = $params{subscriber};
+    my $avp_caller_subscriber = $params{avp_caller_subscriber} // $subscriber;
+    my $avp_callee_subscriber = $params{avp_callee_subscriber} // $subscriber;
     my $callee = $params{number};
     my $dir = $params{direction};
     my $rws_id = $params{rws_id}; # override rewrite rule set
@@ -1326,13 +1328,23 @@ sub apply_rewrite {
         for my $field($match, $replace) {
             #print ">>>>>>>>>>> normalizing $field\n";
             my @avps = ();
-            @avps = ($field =~ /\$\(?avp\(s:calle(?:r|e)_([^\)]+)\)/g);
+            @avps = ($field =~ /\$\(?avp\(s:([^\)]+)\)/g);
             @avps = keys %{{ map { $_ => 1 } @avps }};
             for my $avp(@avps) {
                 if(!exists $cache->{$avp}) {
-                    if($avp eq "cloud_pbx_account_cli_list") {
+                    if($avp eq "caller_cloud_pbx_account_cli_list") {
                         $cache->{$avp} = [];
-                        foreach my $sub($subscriber->contract->voip_subscribers->all) {
+                        foreach my $sub($avp_caller_subscriber->contract->voip_subscribers->all) {
+                            foreach my $num($sub->voip_numbers->search({ status => 'active' })->all) {
+                                my $v = $num->cc . ($num->ac // '') . $num->sn;
+                                unless(grep { $v eq $_ } @{ $cache->{$avp} }) {
+                                    push @{ $cache->{$avp} }, $v;
+                                }
+                            }
+                        }
+                    } elsif($avp eq "callee_cloud_pbx_account_cli_list") {
+                        $cache->{$avp} = [];
+                        foreach my $sub($avp_callee_subscriber->contract->voip_subscribers->all) {
                             foreach my $num($sub->voip_numbers->search({ status => 'active' })->all) {
                                 my $v = $num->cc . ($num->ac // '') . $num->sn;
                                 unless(grep { $v eq $_ } @{ $cache->{$avp} }) {
@@ -1341,21 +1353,23 @@ sub apply_rewrite {
                             }
                         }
                     } else {
+                        my $avp_attr = $avp;
+                        $avp_attr =~ s/^calle(?:r|e)_//;
                         my $pref_rs = undef;
                         if ($sub_type eq 'provisioning') {
                             $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                                c => $c, attribute => $avp,
+                                c => $c, attribute => $avp_attr,
                                 prov_subscriber => $subscriber->provisioning_voip_subscriber,
                             );
                             unless($pref_rs && $pref_rs->count) {
                                 $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                                    c => $c, attribute => $avp,
+                                    c => $c, attribute => $avp_attr,
                                     prov_domain => $subscriber->provisioning_voip_subscriber->domain,
                                 );
                             }
                         } elsif ($sub_type eq 'billing') {
                             $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                                c => $c, attribute => $avp,
+                                c => $c, attribute => $avp_attr,
                                 prov_domain => $subscriber->domain->provisioning_voip_domain,
                             );
                         }
@@ -1373,14 +1387,14 @@ sub apply_rewrite {
                     $orig = shift @{ $orig } if(ref $orig eq "ARRAY");
                     foreach my $v(@{ $val }) {
                         my $tmporig = $orig;
-                        $tmporig =~ s/\$avp\(s:calle(?:r|e)_$avp\)/$v/g;
-                        $tmporig =~ s/\$\(avp\(s:calle(?:r|e)_$avp\)\[\+\]\)/$v/g;
+                        $tmporig =~ s/\$avp\(s:$avp\)/$v/g;
+                        $tmporig =~ s/\$\(avp\(s:$avp\)\[\+\]\)/$v/g;
                         push @{ $field }, $tmporig;
                     }
                 } else {
                     my $orig = $field;
                     $orig = shift @{ $orig } if(ref $orig eq "ARRAY");
-                    $orig =~ s/\$avp\(s:calle(?:r|e)_$avp\)/$val/g;
+                    $orig =~ s/\$avp\(s:$avp\)/$val/g;
                     $field = [] unless(ref $field eq "ARRAY");
                     push @{ $field }, $orig;
                 }
