@@ -40,6 +40,11 @@ sub ip_base :Chained('/') :PathPart('security/ip') :CaptureArgs(1) {
 
 sub ip_unban :Chained('ip_base') :PathPart('unban') :Args(0) {
     my ( $self, $c ) = @_;
+
+    if ($c->user->read_only) {
+        $c->detach('/denied_page');
+    }
+
     my $ip = $c->stash->{ip};
     NGCP::Panel::Utils::Security::ip_unban($c, $ip);
     NGCP::Panel::Utils::Message::info(
@@ -58,6 +63,11 @@ sub user_base :Chained('/') :PathPart('security/user') :CaptureArgs(1) {
 
 sub user_unban :Chained('user_base') :PathPart('unban') :Args(0) {
     my ( $self, $c ) = @_;
+
+    if ($c->user->read_only) {
+        $c->detach('/denied_page');
+    }
+
     my $user = $c->stash->{user};
     NGCP::Panel::Utils::Security::user_unban($c, $user);
     NGCP::Panel::Utils::Message::info(
