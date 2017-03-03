@@ -1247,6 +1247,8 @@ sub apply_rewrite {
 
     my $c = $params{c};
     my $subscriber = $params{subscriber};
+    my $avp_caller_subscriber = $params{avp_caller_subscriber} // $subscriber;
+    my $avp_callee_subscriber = $params{avp_callee_subscriber} // $subscriber;
     my $callee = $params{number};
     my $dir = $params{direction};
     my $rws_id = $params{rws_id}; # override rewrite rule set
@@ -1326,13 +1328,23 @@ sub apply_rewrite {
         for my $field($match, $replace) {
             #print ">>>>>>>>>>> normalizing $field\n";
             my @avps = ();
-            @avps = ($field =~ /\$\(?avp\(s:calle(?:r|e)_([^\)]+)\)/g);
+            @avps = ($field =~ /\$\(?avp\(s:([^\)]+)\)/g);
             @avps = keys %{{ map { $_ => 1 } @avps }};
             for my $avp(@avps) {
                 if(!exists $cache->{$avp}) {
-                    if($avp eq "cloud_pbx_account_cli_list") {
+                    if($avp eq "caller_cloud_pbx_account_cli_list") {
                         $cache->{$avp} = [];
-                        foreach my $sub($subscriber->contract->voip_subscribers->all) {
+                        foreach my $sub($avp_caller_subscriber->contract->voip_subscribers->all) {
+                            foreach my $num($sub->voip_numbers->search({ status => 'active' })->all) {
+                                my $v = $num->cc . ($num->ac // '') . $num->sn;
+                                unless(grep { $v eq $_ } @{ $cache->{$avp} }) {
+                                    push @{ $cache->{$avp} }, $v;
+                                }
+                            }
+                        }
+                    } elsif($avp eq "callee_cloud_pbx_account_cli_list") {
+                        $cache->{$avp} = [];
+                        foreach my $sub($avp_callee_subscriber->contract->voip_subscribers->all) {
                             foreach my $num($sub->voip_numbers->search({ status => 'active' })->all) {
                                 my $v = $num->cc . ($num->ac // '') . $num->sn;
                                 unless(grep { $v eq $_ } @{ $cache->{$avp} }) {
@@ -1341,6 +1353,7 @@ sub apply_rewrite {
                             }
                         }
                     } else {
+                        $avp =~ s/^calle(?r:e)//;
                         my $pref_rs = undef;
                         if ($sub_type eq 'provisioning') {
                             $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
