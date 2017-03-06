@@ -2242,19 +2242,18 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
 
-                my $email = delete $form->params->{email};
-                if($email) {
-                    if($subscriber->contact) {
-                        $subscriber->contact->update({
-                            email => $email,
-                        });
-                    } else {
-                        my $contact = $c->model('DB')->resultset('contacts')->create({
-                            reseller_id => $subscriber->contract->contact->reseller_id,
-                            email => $email,
-                        });
-                        $subscriber->update({ contact_id => $contact->id });
-                    }
+                my $email = delete $form->params->{email} || undef;
+                my $timezone = delete $form->params->{timezone}{name} || undef;
+                if ($subscriber->contact) {
+                    $subscriber->contact->update({
+                        email => $email,
+                    });
+                } elsif ($email || $timezone) {
+                    my $contact = $c->model('DB')->resultset('contacts')->create({
+                        reseller_id => $subscriber->contract->contact->reseller_id,
+                        email => $email,
+                    });
+                    $subscriber->update({ contact_id => $contact->id });
                 }
                 my $prov_params = {};
                 $prov_params->{pbx_extension} = $form->params->{pbx_extension};
