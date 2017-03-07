@@ -1,3 +1,12 @@
+ngcp-panel (1.14.4.2+0~mr4.5.4.2) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [bf6f917] TT#10402 prevent unban with readonly user
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Mar 2017 12:13:40 +0100
+
 ngcp-panel (1.14.4.1+0~mr4.5.4.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
