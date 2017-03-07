@@ -1161,6 +1161,9 @@ sub field_to_destination {
     my $d = $params{destination};
     my $uri = $params{uri};
     my $cf_type = $params{cf_type};
+    my $c = $params{c};  # if not passed, rwr is not applied (web panel, it is done there separately)
+    my $sub = $params{subscriber};
+
     my $vm_prefix = "vmu";
     if(defined $cf_type && $cf_type eq "cfb") {
         $vm_prefix = "vmb";
@@ -1189,6 +1192,13 @@ sub field_to_destination {
         $v =~ s/^sips?://;
         my ($vuser, $vdomain) = split(/\@/, $v);
         $vdomain = $domain unless($vdomain);
+
+        if($c && $c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+            $vuser = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                c => $c, subscriber => $sub, number => $vuser, direction => 'callee_in',
+            );
+        }
+
         $d = 'sip:' . $vuser . '@' . $vdomain;
     }
     return $d;
@@ -1225,10 +1235,16 @@ sub destination_to_field {
 }
 
 sub uri_deflate {
-    my ($v, $sub) = @_;
+    my ($c, $v, $sub) = @_;
+    my $direction = 'caller_out';
     $v =~ s/^sips?://;
     my $t;
     my ($user, $domain) = split(/\@/, $v);
+    if($c && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
+        $user = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+            c => $c, subscriber => $sub, number => $user, direction => $direction,
+        );
+    }
     if($domain eq $sub->domain->domain) {
         $v = $user;
     } else {
