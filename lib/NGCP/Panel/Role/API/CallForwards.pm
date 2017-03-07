@@ -46,8 +46,11 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
+
+    my $allowed_prefs = $self->_get_allowed_prefs($c, $prov_subs);
     @resource{qw/cfu cfb cft cfna cfs/} = ({}) x 5;
     for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
+        next unless ($allowed_prefs->{$item_cf->type});
         $resource{$item_cf->type} = $self->_contents_from_cfm($c, $item_cf, $item);
     }
     if(keys %{$resource{cft}}){
@@ -66,6 +69,12 @@ sub hal_from_item {
         run => 0,
     );
 
+    for my $cf_type (qw/cfu cft cfb cfna cfs/) {
+        unless ($allowed_prefs->{$cf_type}) {
+            delete $resource{$cf_type};
+        }
+    }
+
     $hal->resource(\%resource);
     return $hal;
 }
@@ -79,11 +88,17 @@ sub _item_rs {
             { 'me.status' => { '!=' => 'terminated' } },
             { 'prefetch' => { 'provisioning_voip_subscriber' => 'voip_cf_mappings' },},
         );
-    if($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
             join => { 'contract' => 'contact' },
+        });
+    } elsif ($c->user->roles eq 'subscriberadmin') {
+        $item_rs = $item_rs->search({
+            'contract.id' => $c->user->account_id,
+        }, {
+            join => 'contract',
         });
     }
 
@@ -103,6 +118,7 @@ sub update_item {
     my $prov_subs = $item->provisioning_voip_subscriber;
     die "need provisioning_voip_subscriber" unless $prov_subs;
     my $prov_subscriber_id = $prov_subs->id;
+    my $allowed_prefs = $self->_get_allowed_prefs($c, $prov_subs);
 
     return unless $self->validate_form(
         c => $c,
@@ -113,6 +129,7 @@ sub update_item {
 
     for my $type (qw/cfu cfb cft cfna cfs/) {
         next unless "ARRAY" eq ref $resource->{$type}{destinations};
+        next unless ($allowed_prefs->{$type});
         for my $d (@{ $resource->{$type}{destinations} }) {
             if (exists $d->{timeout} && ! is_int($d->{timeout})) {
                 $c->log->error("Invalid timeout in '$type'");
@@ -144,6 +161,7 @@ sub update_item {
     }
 
     for my $type (qw/cfu cfb cft cfna cfs/) {
+        next unless ($allowed_prefs->{$type});
         my $mapping = $c->model('DB')->resultset('voip_cf_mappings')->search_rs({
             subscriber_id => $prov_subscriber_id,
             type => $type,
@@ -269,7 +287,7 @@ sub update_item {
         }
     }
 
-    if ($resource->{cft}{ringtimeout} && $resource->{cft}{ringtimeout} > 0) {
+    if ($allowed_prefs->{cft} && $resource->{cft}{ringtimeout} && $resource->{cft}{ringtimeout} > 0) {
         my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subs);
 
@@ -316,6 +334,27 @@ sub _contents_from_cfm {
         delete @{$sources[-1]}{'source_set_id', 'id'};
     }
     return {times => \@times, destinations => \@destinations, sources => \@sources};
+}
+
+sub _get_allowed_prefs {
+    my ($self, $c, $prov_subs) = @_;
+
+    my %allowed_prefs = map {$_ => 1} (qw/cfu cfb cft cfna cfs/);
+
+    if ($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        if ($prov_subs && $prov_subs->voip_subscriber_profile) {
+            my $profile = $prov_subs->voip_subscriber_profile;
+            my @allowed_attr_ids = $profile->profile_attributes
+                ->get_column('attribute_id')->all;
+            my @allowed_attrs = $c->model('DB')->resultset('voip_preferences')->search_rs({
+                    'id' => { '-in' => \@allowed_attr_ids },
+                    'attribute' => { '-in' => [qw/cfu cfb cft cfna cfs/]},
+                })->get_column('attribute')->all;
+            %allowed_prefs = map {$_ => 1} @allowed_attrs;
+        }
+    }
+
+    return \%allowed_prefs;
 }
 
 1;
