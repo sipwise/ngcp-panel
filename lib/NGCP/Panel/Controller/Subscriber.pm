@@ -2402,8 +2402,10 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         $params->{profile}{id} = $prov_subscriber->voip_subscriber_profile ?
             $prov_subscriber->voip_subscriber_profile->id : undef;
         $params->{webusername} = $prov_subscriber->webusername;
-        $params->{webpassword} = $prov_subscriber->webpassword;
-        $params->{password} = $prov_subscriber->password;
+        if (($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') && $c->user->show_passwords) {
+            $params->{webpassword} = $prov_subscriber->webpassword;
+            $params->{password} = $prov_subscriber->password;
+        }
         $params->{administrative} = $prov_subscriber->admin;
         if($subscriber->primary_number) {
             $params->{e164}->{cc} = $subscriber->primary_number->cc;
