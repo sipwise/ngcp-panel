@@ -143,7 +143,7 @@ sub _contents_from_cfm {
         my ($d, $duri) = NGCP::Panel::Utils::Subscriber::destination_to_field($dest->destination);
         my $deflated;
         if($d eq "uri") {
-            $deflated = NGCP::Panel::Utils::Subscriber::uri_deflate($duri,$sub) if $d eq "uri";
+            $deflated = NGCP::Panel::Utils::Subscriber::uri_deflate(undef, $duri,$sub) if $d eq "uri";
             $d = $dest->destination;
         }
         push @destinations, {$dest->get_inflated_columns,

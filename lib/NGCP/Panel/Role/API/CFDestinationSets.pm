@@ -29,7 +29,7 @@ sub hal_from_item {
         my ($d, $duri) = NGCP::Panel::Utils::Subscriber::destination_to_field($dest->destination);
         my $deflated;
         if($d eq "uri") {
-            $deflated = NGCP::Panel::Utils::Subscriber::uri_deflate($duri, $item->subscriber->voip_subscriber);
+            $deflated = NGCP::Panel::Utils::Subscriber::uri_deflate($c, $duri, $item->subscriber->voip_subscriber);
             $d = $dest->destination;
         }
         my $destelem = {$dest->get_inflated_columns,
