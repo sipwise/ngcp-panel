@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0b7d60_72e776e5",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 2246,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-03-07T11:45:45Z",
+      "side": 1,
+      "message": "no need?",
+      "revId": "7d0400a2aa37cc086e6b37ab7be70d9ddafa28e5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
