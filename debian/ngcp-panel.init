@@ -11,7 +11,7 @@
 ### END INIT INFO
 
 umask 0022
-
+# shellcheck disable=SC1091
 . /lib/lsb/init-functions
 
 DAEMON=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl
@@ -25,7 +25,6 @@ NAME="ngcp-panel"
 DESC="NGCP-Panel Webapp"
 DEFAULTS=/etc/default/$NAME
 USOCKET=$HOMERUN/ngcp-panel.sock
-LOGERR=/var/log/ngcp/ngcp-panel.log
 NPROC=1
 
 if ! [ -x "$DAEMON" ] ; then
@@ -35,9 +34,9 @@ fi
 
 check_running() {
   if [ -s $PIDFILE ]; then
-    /bin/kill -0 $(cat $PIDFILE) >/dev/null 2>&1
+    /bin/kill -0 "$(cat $PIDFILE)" >/dev/null 2>&1
   else
-    PID=`pidofproc $DAEMON`
+    PID=$(pidofproc $DAEMON)
     if [ -z "$PID" ]; then
         return 1
     fi
@@ -61,6 +60,7 @@ check_for_ongoing_startup() {
   fi
 
   # another init script started but was interrupted?
+  # shellcheck disable=SC2009
   if ! ps -o pid "$startup_pid" | grep -q -- "$startup_pid" ; then
     log_progress_msg "interrupted during startup, forcing start"
     echo "$$" > "${PIDFILE}.startup"
@@ -79,6 +79,7 @@ _start() {
   fi
   rm -f $PIDFILE 2>/dev/null
   check_for_ongoing_startup || return 0
+   # shellcheck disable=SC2086
   start-stop-daemon --start --quiet \
         --pidfile $PIDFILE \
         --exec $DAEMON --chdir $HOMEDIR \
@@ -99,13 +100,14 @@ _stop() {
      return 0
   fi
   if [ -e $PIDFILE ]; then
-      /bin/kill `cat $PIDFILE`;
+      /bin/kill $(cat $PIDFILE);
   else
-      PID=`pidofproc $DAEMON`
+      PID=$(pidofproc $DAEMON)
       if [ -n "$PID" ]; then
-          /bin/kill $PID
+          /bin/kill "$PID"
       fi
   fi
+  # shellcheck disable=SC2034
   for i in 1 2 3 4 5 6 7; do
       log_progress_msg "."
       sleep 1;
@@ -120,7 +122,8 @@ _stop() {
 
 # Load startup options if available
 if [ -f $DEFAULTS ]; then
-   . $DEFAULTS || true
+  # shellcheck disable=SC1090
+  . $DEFAULTS || true
 fi
 
 OPTIONS="--listen $USOCKET --daemon --pidfile $PIDFILE --nproc $NPROC"
