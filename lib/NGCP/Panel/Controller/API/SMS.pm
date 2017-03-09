@@ -133,13 +133,7 @@ sub create_item {
     }
 
     my $error_msg = "";
-
-    my $coding;
-    if(NGCP::Panel::Utils::Utf8::is_within_ascii($resource->{text})) {
-        $coding = 0;
-    } else {
-        $coding = 2;
-    }
+    my $coding = NGCP::Panel::Utils::SMS::get_coding($resource->{text});
     NGCP::Panel::Utils::SMS::send_sms(
             c => $c,
             caller => $resource->{caller},
