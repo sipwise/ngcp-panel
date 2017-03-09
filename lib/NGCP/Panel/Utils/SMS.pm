@@ -9,6 +9,23 @@ use Module::Load::Conditional qw/can_load/;
 
 use NGCP::Panel::Utils::Utf8;
 
+sub get_coding {
+    my $text = shift;
+
+    # if unicode, we have to use utf8 encoding, limiting our
+    # text length to 70; otherwise send as default
+    # encoding, allowing 160 chars
+
+    if(NGCP::Panel::Utils::Utf8::is_within_ascii($text) ||
+       NGCP::Panel::Utils::Utf8::is_within_latin1($text)) {
+        $coding = 0;
+    } else {
+        $coding = 2;
+    }
+
+    return $coding;
+}
+
 sub send_sms {
     my (%args) = @_;
     my $c = $args{c};
@@ -23,14 +40,7 @@ sub send_sms {
     }
 
     unless(defined $coding) {
-        # if unicode, we have to use utf8 encoding, limiting our
-        # text length to 70; otherwise send as default
-        # encoding, allowing 160 chars
-        if(NGCP::Panel::Utils::Utf8::is_within_ascii($text)) {
-            $coding = 0;
-        } else {
-            $coding = 2;
-        }
+        $coding = get_coding($text);
     }
 
     my $schema = $c->config->{sms}{schema};
