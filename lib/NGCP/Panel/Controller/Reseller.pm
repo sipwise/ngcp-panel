@@ -16,6 +16,7 @@ use NGCP::Panel::Utils::Reseller;
 use NGCP::Panel::Utils::BillingNetworks qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Billing qw();
+use NGCP::Panel::Utils::Admin;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -428,6 +429,10 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
     $c->detach('/denied_page') unless $c->request->method eq 'POST';
     $c->detach('/denied_page')
     	if($c->user->read_only);
+
+	my $default_pass = 'defaultresellerpassword';
+	my $saltedpass = NGCP::Panel::Utils::Admin::generate_salted_hash($default_pass);
+
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     my %defaults = (
         contacts => {
@@ -449,7 +454,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
         #    start_date => $now,
         #},
         admins => {
-            md5pass => 'defaultresellerpassword',
+			saltedpass => $saltedpass,
             is_active => 1,
             show_passwords => 1,
             call_data => 1,
@@ -517,7 +522,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
     };
     NGCP::Panel::Utils::Message::info(
         c    => $c,
-        desc => $c->loc('Reseller successfully created with login <b>[_1]</b> and password <b>[_2]</b>, please review your settings below', $defaults{admins}->{login}, $defaults{admins}->{md5pass}),
+        desc => $c->loc('Reseller successfully created with login <b>[_1]</b> and password <b>[_2]</b>, please review your settings below', $defaults{admins}->{login}, $default_pass),
     );
     $c->res->redirect($c->uri_for_action('/reseller/details', [$r{resellers}->id]));
     $c->detach;
