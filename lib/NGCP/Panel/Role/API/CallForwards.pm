@@ -13,6 +13,7 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Form::CFSimpleAPI;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::Preferences;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -47,7 +48,11 @@ sub hal_from_item {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    my $allowed_prefs = $self->_get_allowed_prefs($c, $prov_subs);
+    my $allowed_prefs = NGCP::Panel::Utils::Preferences::get_subscriber_allowed_prefs(
+            c => $c,
+            prov_subscriber => $prov_subs,
+            pref_list => [qw/cfu cfb cft cfna cfs/],
+        );
     @resource{qw/cfu cfb cft cfna cfs/} = ({}) x 5;
     for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
         next unless ($allowed_prefs->{$item_cf->type});
@@ -118,7 +123,11 @@ sub update_item {
     my $prov_subs = $item->provisioning_voip_subscriber;
     die "need provisioning_voip_subscriber" unless $prov_subs;
     my $prov_subscriber_id = $prov_subs->id;
-    my $allowed_prefs = $self->_get_allowed_prefs($c, $prov_subs);
+    my $allowed_prefs = NGCP::Panel::Utils::Preferences::get_subscriber_allowed_prefs(
+            c => $c,
+            prov_subscriber => $prov_subs,
+            pref_list => [qw/cfu cfb cft cfna cfs/],
+        );
 
     return unless $self->validate_form(
         c => $c,
@@ -336,27 +345,6 @@ sub _contents_from_cfm {
         delete @{$sources[-1]}{'source_set_id', 'id'};
     }
     return {times => \@times, destinations => \@destinations, sources => \@sources};
-}
-
-sub _get_allowed_prefs {
-    my ($self, $c, $prov_subs) = @_;
-
-    my %allowed_prefs = map {$_ => 1} (qw/cfu cfb cft cfna cfs/);
-
-    if ($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
-        if ($prov_subs && $prov_subs->voip_subscriber_profile) {
-            my $profile = $prov_subs->voip_subscriber_profile;
-            my @allowed_attr_ids = $profile->profile_attributes
-                ->get_column('attribute_id')->all;
-            my @allowed_attrs = $c->model('DB')->resultset('voip_preferences')->search_rs({
-                    'id' => { '-in' => \@allowed_attr_ids },
-                    'attribute' => { '-in' => [qw/cfu cfb cft cfna cfs/]},
-                })->get_column('attribute')->all;
-            %allowed_prefs = map {$_ => 1} @allowed_attrs;
-        }
-    }
-
-    return \%allowed_prefs;
 }
 
 1;
