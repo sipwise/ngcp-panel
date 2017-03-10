@@ -61,7 +61,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -76,6 +76,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -157,6 +158,7 @@ sub POST :Allow {
         last unless $resource;
 
         my $form = $self->get_form($c);
+        $form->field('subscriber_id')->required(0) if ($c->user->roles eq "subscriber");
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
@@ -167,6 +169,17 @@ sub POST :Allow {
         my $sub = $self->get_subscriber_by_id($c, $resource->{subscriber_id} );
         return unless $sub;
         $resource->{subscriber_id} = $sub->provisioning_voip_subscriber->id;
+
+        my $allowed_prefs = NGCP::Panel::Utils::Preferences::get_subscriber_allowed_prefs(
+            c => $c,
+            prov_subscriber => $sub->provisioning_voip_subscriber,
+            pref_list => ['reminder'],
+        );
+        unless ($allowed_prefs->{reminder}) {
+            $c->log->error("Not permitted to create reminder for this subscriber via subscriber profile");
+            $self->error($c, HTTP_FORBIDDEN, "Not permitted to create reminder");
+            return;
+        }
 
         my $item;
         $item = $c->model('DB')->resultset('voip_reminder')->find({
@@ -205,6 +218,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 1;

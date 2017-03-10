@@ -1194,6 +1194,33 @@ sub api_preferences_defs{
     }
     return $resource;
 }
+
+sub get_subscriber_allowed_prefs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $schema = $params{schema} // $c->model('DB');
+    my $prov_subs = $params{prov_subscriber};
+    my $pref_list = $params{pref_list};
+
+    my %allowed_prefs = map {$_ => 1} @{ $pref_list };
+
+    if ($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        if ($prov_subs && $prov_subs->voip_subscriber_profile) {
+            my $profile = $prov_subs->voip_subscriber_profile;
+            my @result = $profile->profile_attributes->search_rs({
+                'attribute.attribute' => { '-in' => $pref_list },
+            },{
+                join => 'attribute'
+            })->get_column('attribute.attribute')->all;
+            %allowed_prefs = map {$_ => 1} @result;
+        }
+
+    }
+
+    return \%allowed_prefs
+}
+
 1;
 
 =head1 NAME
