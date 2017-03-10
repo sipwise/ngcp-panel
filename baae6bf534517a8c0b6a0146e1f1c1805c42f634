@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7af0899e_c253f26a",
+        "filename": "lib/NGCP/Panel/Controller/SOAP/Intercept.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-03-10T14:38:51Z",
+      "side": 1,
+      "message": "Right, however this SOAP interface is a temporary solution (to be deprecated again end of April) also with very low access frequency, and there is typically only one single LI user. So I don\u0027t bother, to be honest.",
+      "parentUuid": "7af0899e_d7b57632",
+      "range": {
+        "startLine": 93,
+        "startChar": 65,
+        "endLine": 93,
+        "endChar": 71
+      },
+      "revId": "baae6bf534517a8c0b6a0146e1f1c1805c42f634",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7af0899e_1787fe62",
         "filename": "lib/NGCP/Panel/Utils/Admin.pm",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-03-10T08:00:51Z",
       "side": 1,
       "message": "maybe 2^12 rounds will make it to slow? changing this later is cumbersome, requires to soft-migrate again.",
+      "range": {
+        "startLine": 8,
+        "startChar": 11,
+        "endLine": 8,
+        "endChar": 13
+      },
+      "revId": "baae6bf534517a8c0b6a0146e1f1c1805c42f634",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7af0899e_e2738e13",
+        "filename": "lib/NGCP/Panel/Utils/Admin.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-03-10T14:38:51Z",
+      "side": 1,
+      "message": "It goes pretty instant on my VM on my laptop (without having measured it, but I will). Probably depends on the use case: if you use pwd-based authentication on the API, this is certainly a factor, but then again API access should be performed via a client certificate anyways to spare the double round-trip on http level (GET/401/GET/200). For logins on the panel, it shouldn\u0027t matter, it\u0027s done rather infrequent anyways.",
+      "parentUuid": "7af0899e_1787fe62",
       "range": {
         "startLine": 8,
         "startChar": 11,
