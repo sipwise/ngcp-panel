@@ -34,6 +34,9 @@ use NGCP::Panel::Form::Intercept::Delete;
 use Data::Structure::Util qw/unbless/;
 use UUID;
 use Moose;
+use NGCP::Panel::Utils::Admin;
+use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
+
 has 'c' => (is => 'rw', isa => 'Object');
 
 sub _validate {
@@ -67,11 +70,40 @@ sub _auth {
     $self->_validate(NGCP::Panel::Form::Intercept::Authentication->new(ctx => $c), $auth);
 
     try {
+
+        # check for general availability of user first, we need it in
+        # both md5 and bcrypt cases
         my $admin = $c->model('DB')->resultset('admins')->search({
             login => $auth->{username},
-            md5pass => { '=' => \['MD5("'.$auth->{password}.'")'] },
+            is_active => 1,
         })->first;
         die unless($admin && ($admin->is_superuser || $admin->lawful_intercept));
+
+        if(defined $admin->saltedpass) {
+            my ($db_b64salt, $db_b64hash) = split /\$/, $admin->saltedpass;
+            my $salt = de_base64($db_b64salt);
+            my $usr_b64hash = en_base64(bcrypt_hash({
+                key_nul => 1,
+                cost => NGCP::Panel::Utils::Admin::get_bcrypt_cost(),
+                salt => $salt,
+            }, $auth->{password}));
+
+            die unless($usr_b64hash eq $db_b64hash);
+        } else {
+            my $md5admin = $c->model('DB')->resultset('admins')->search({
+                login => $auth->{username},
+                is_active => 1,
+                md5pass => { '=' => \['MD5("'.$auth->{password}.'")'] },
+            })->first;
+            die unless($md5admin && ($md5admin->is_superuser || $md5admin->lawful_intercept));
+
+            # migrate password to bcrypt
+            $admin->update({
+                md5pass => undef,
+                saltedpass => NGCP::Panel::Utils::Admin::get_salted_hash($auth->{password}),
+            });
+        }
+
     } catch($e) {
         die SOAP::Fault
             ->faultcode('Client.Auth.Refused')
