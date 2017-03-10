@@ -9,6 +9,7 @@ use NGCP::Panel::Form::Administrator::APIGenerate qw();
 use NGCP::Panel::Form::Administrator::APIDownDelete qw();
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Admin;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -107,7 +108,8 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
-            $form->values->{md5pass} = delete $form->values->{password};
+            $form->values->{md5pass} = undef;
+            $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -195,7 +197,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             }
             delete $form->values->{password} unless length $form->values->{password};
             if(exists $form->values->{password}) {
-                $form->values->{md5pass} = delete $form->values->{password};
+                $form->values->{md5pass} = undef;
+                $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
             }
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
