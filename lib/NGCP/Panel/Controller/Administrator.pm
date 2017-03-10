@@ -3,12 +3,14 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
 use HTTP::Headers qw();
+use IO::Compress::Zip qw/zip/;
 use NGCP::Panel::Form::Administrator::Reseller;
 use NGCP::Panel::Form::Administrator::Admin;
 use NGCP::Panel::Form::Administrator::APIGenerate qw();
 use NGCP::Panel::Form::Administrator::APIDownDelete qw();
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Admin;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -107,7 +109,8 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
-            $form->values->{md5pass} = delete $form->values->{password};
+            $form->values->{md5pass} = undef;
+            $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -195,7 +198,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             }
             delete $form->values->{password} unless length $form->values->{password};
             if(exists $form->values->{password}) {
-                $form->values->{md5pass} = delete $form->values->{password};
+                $form->values->{md5pass} = undef;
+                $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
             }
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
@@ -253,32 +257,62 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     my ($self, $c) = @_;
     my $serial = $c->stash->{administrator}->ssl_client_m_serial;
-    my $cert;
+    my ($pem, $p12);
     if ($c->req->body_parameters->{'gen.generate'}) {
-        $serial = time;
-        try {
-            $cert = $c->model('CA')->make_client($c, $serial);
-        } catch ($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                data => { $c->stash->{administrator}->get_inflated_columns },
-                desc  => $c->loc("Failed to generate client certificate."),
-            );
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
-        }
         my $updated;
         while (!$updated) {
+            $serial = time;
+            try {
+                $pem = $c->model('CA')->make_client($c, $serial);
+                $p12 = $c->model('CA')->make_pkcs12($c, $serial, $pem, 'sipwise');
+            } catch ($e) {
+                NGCP::Panel::Utils::Message::error(
+                    c => $c,
+                    error => $e,
+                    data => { $c->stash->{administrator}->get_inflated_columns },
+                    desc  => $c->loc("Failed to generate client certificate."),
+                );
+                NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+            }
             try {
                 $c->stash->{administrator}->update({ 
                     ssl_client_m_serial => $serial,
-                    ssl_client_certificate => $cert,
+                    ssl_client_certificate => undef, # not used anymore, clear it just in case
                 });
                 $updated = 1;
             } catch(DBIx::Class::Exception $e where { "$_" =~ qr'Duplicate entry' }) {
                 $serial++;
-            };
+            }
         }
+
+        my $input = {
+            "NGCP-API-client-certificate-$serial.pem" => $pem,
+            "NGCP-API-client-certificate-$serial.p12" => $p12,
+        };
+        my $zip_opts = {
+            AutoClose => 0,
+            Append => 0,
+            Name => "README.txt",
+            CanonicalName => 1,
+            Stream => 1,
+        };
+        my $zipped_file;
+        my $zip = IO::Compress::Zip->new(\$zipped_file, %{ $zip_opts });
+        $zip->write("Use the PEM file for programmatical clients like java, perl, php or curl, and the P12 file for browsers like Firefox or Chrome. The password for the P12 import is 'sipwise'. Handle this file with care, as it cannot be downloaded for a second time! Only a new certificate can be generated if the certificate is lost.\n");
+        foreach my $k(keys %{ $input } ) {
+            $zip_opts->{Name} = $k;
+            $zip_opts->{Append} = 1;
+            $zip->newStream(%{ $zip_opts });
+            $zip->write($input->{$k});
+        }
+        $zip->close();
+
+        $c->res->headers(HTTP::Headers->new(
+            'Content-Type' => 'application/zip',
+            'Content-Disposition' => sprintf('attachment; filename=%s', "NGCP-API-client-certificate-$serial.zip")
+        ));
+        $c->res->body($zipped_file);
+        return;
     } elsif ($c->req->body_parameters->{'ca.verify'} || $c->req->parameters->{'ca.verify'}) {
         my $result = $c->model('CA')->check_ca_errors($c);
         if($result){
@@ -296,30 +330,10 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     } elsif ($c->req->body_parameters->{'del.delete'}) {
-        undef $serial;
-        undef $cert;
         $c->stash->{administrator}->update({ 
-            ssl_client_m_serial => $serial,
-            ssl_client_certificate => $cert,
+            ssl_client_m_serial => undef,
+            ssl_client_certificate => undef,
         });
-    } elsif ($c->req->body_parameters->{'pem.download'}) {
-        $cert = $c->stash->{administrator}->ssl_client_certificate;
-        $serial = $c->stash->{administrator}->ssl_client_m_serial; 
-        $c->res->headers(HTTP::Headers->new(
-            'Content-Type' => 'application/octet-stream',
-            'Content-Disposition' => sprintf('attachment; filename=%s', "NGCP-API-client-certificate-$serial.pem")
-        ));
-        $c->res->body($cert);
-        return;
-    } elsif ($c->req->body_parameters->{'p12.download'}) {
-        $cert = $c->stash->{administrator}->ssl_client_certificate;
-        $serial = $c->stash->{administrator}->ssl_client_m_serial;
-        my $p12 = $c->model('CA')->make_pkcs12($c, $serial, $cert, 'sipwise');
-        $c->res->headers(HTTP::Headers->new(
-            'Content-Type' => 'application/octet-stream',
-            'Content-Disposition' => sprintf('attachment; filename=%s', "NGCP-API-client-certificate-$serial.p12")
-        ));
-        $c->res->body($p12);
         return;
     } elsif ($c->req->body_parameters->{'ca.download'}) {
         my $ca_cert = $c->model('CA')->get_server_cert($c);

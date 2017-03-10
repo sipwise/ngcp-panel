@@ -41,6 +41,7 @@ sub hal_from_item {
 
     my %resource = $item->get_inflated_columns;
     delete $resource{md5pass};
+    delete $resource{saltedpass};
 
     my $hal = Data::HAL->new(
         links => [
@@ -92,7 +93,8 @@ sub update_item {
     );
     delete $resource->{password};
     if(defined $pass) {
-        $resource->{md5pass} = $pass;
+        $resource->{md5pass} = undef;
+        $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
     }
 
     if($c->user->roles eq "reseller" && $resource->{reseller_id} != $c->user->reseller_id) {
