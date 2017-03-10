@@ -8,52 +8,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'pem' => (
-    type => 'Compound',
-    label => 'Download in PEM Format',
-    do_label => 1,
-    do_wrapper => 1,
-    wrapper_class => [qw(row)],
-);
-
-has_field 'pem.download' => (
-    type => 'Submit',
-    value => 'Download PEM',
-    element_class => [qw(btn btn-primary)],
-    do_wrapper => 0,
-    do_label => 0,
-);
-
-has_field 'pem.description' => (
-    type => 'Display',
-    html => '<div class="ngcp-form-desc">X.509 Client Certificate for API Clients (perl, php etc.)</div>',
-    do_wrapper => 0,
-    do_label => 0,
-);
-
-has_field 'p12' => (
-    type => 'Compound',
-    label => 'Download in PKCS12 Format',
-    do_label => 1,
-    do_wrapper => 1,
-    wrapper_class => [qw(row)],
-);
-
-has_field 'p12.download' => (
-    type => 'Submit',
-    value => 'Download PKCS12',
-    element_class => [qw(btn btn-primary)],
-    do_wrapper => 0,
-    do_label => 0,
-);
-
-has_field 'p12.description' => (
-    type => 'Display',
-    html => '<div class="ngcp-form-desc">X.509 Client Certificate for Browsers (Firefox, Chrome etc.). The <strong>password</strong> for the browser import is <strong>sipwise</strong>.</div>',
-    do_wrapper => 0,
-    do_label => 0,
-);
-
 has_field 'ca' => (
     type => 'Compound',
     label => 'Download CA Certificate',
@@ -104,7 +58,7 @@ has_field 'del.description' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(pem p12 ca del)],
+    render_list => [qw(ca del)],
 );
 
 has_field 'close' => (

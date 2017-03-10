@@ -126,6 +126,21 @@ __PACKAGE__->config(
                 use_userdata_from_session => 1,
             }
         },
+        admin_bcrypt => {
+            credential => {
+                class => 'Password',
+                password_field => 'saltedpass',
+                # we handle the salt and hash management manually in Login.pm
+                password_type => 'clear',
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::admins',
+                id_field => 'id',
+                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                use_userdata_from_session => 1,
+            }
+        },
         api_admin_cert => {
             # TODO: should be NoPassword, but it's not available in our catalyst version yet
             credential => {
