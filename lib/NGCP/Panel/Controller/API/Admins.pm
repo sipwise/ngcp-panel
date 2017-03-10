@@ -10,6 +10,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Admin;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
@@ -171,7 +172,8 @@ sub POST :Allow {
         );
         delete $resource->{password};
         if(defined $pass) {
-            $resource->{md5pass} = $pass;
+            $resource->{md5pass} = undef;
+            $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
         }
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {

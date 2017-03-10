@@ -6,7 +6,7 @@ sub roles {
     my ($self) = @_;
 
     if ($self->auth_realm) {
-        for my $auth_type (qw/admin api_admin_cert api_admin_http/) {
+        for my $auth_type (qw/admin_bcrypt admin api_admin_cert api_admin_http/) {
             if ($auth_type eq $self->auth_realm) {
                 $self->_user->is_superuser ? return "admin"
                                            : return "reseller";
