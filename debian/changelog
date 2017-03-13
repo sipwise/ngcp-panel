@@ -1,3 +1,12 @@
+ngcp-panel (1.14.4.3+0~mr4.5.4.3) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [33694af] TT#10950 Fix email saving in edit_master
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Mar 2017 16:12:47 +0100
+
 ngcp-panel (1.14.4.2+0~mr4.5.4.2) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
