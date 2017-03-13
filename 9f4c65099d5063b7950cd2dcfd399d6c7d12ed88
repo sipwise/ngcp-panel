@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7af0899e_83fe0c6a",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 22
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-03-13T12:08:06Z",
+      "side": 1,
+      "message": "this can be dropped as faxserver does not interact with the method directly and instead uses the API interface.",
+      "range": {
+        "startLine": 133,
+        "startChar": 78,
+        "endLine": 133,
+        "endChar": 104
+      },
+      "revId": "9f4c65099d5063b7950cd2dcfd399d6c7d12ed88",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
