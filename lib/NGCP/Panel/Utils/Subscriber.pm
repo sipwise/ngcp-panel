@@ -206,6 +206,8 @@ sub create_subscriber {
             -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
             -distribute => 1, -fatal => 1,
         );
+        #otherwise it breaks xml device configs
+        $params->{password} =~s/[<>&]/,/g;
     }
     if($c->config->{security}->{password_web_autogenerate} && !$params->{webpassword}) {
         $params->{webpassword} = String::MkPasswd::mkpasswd(
