@@ -1,3 +1,12 @@
+ngcp-panel (5.1.1.4+0~mr5.1.1.4) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [320eae1] TT#10131 show passwords only when flag is set
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Mar 2017 13:05:31 +0100
+
 ngcp-panel (5.1.1.3+0~mr5.1.1.3) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
