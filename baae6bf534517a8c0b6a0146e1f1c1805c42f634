@@ -93,6 +93,30 @@
       "revId": "baae6bf534517a8c0b6a0146e1f1c1805c42f634",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aed85c8_4de29904",
+        "filename": "lib/NGCP/Panel/Utils/Admin.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2017-03-14T16:21:44Z",
+      "side": 1,
+      "message": "Actually 12 seems pretty low to me, I\u0027d use a higher cost!",
+      "parentUuid": "7af0899e_e2738e13",
+      "range": {
+        "startLine": 8,
+        "startChar": 11,
+        "endLine": 8,
+        "endChar": 13
+      },
+      "revId": "baae6bf534517a8c0b6a0146e1f1c1805c42f634",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
