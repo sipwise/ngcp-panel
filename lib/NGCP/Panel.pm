@@ -40,6 +40,16 @@ for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.c
 }
 $panel_config //= 'ngcp_panel.conf';
 
+sub get_panel_config{
+    my $config;
+    if( -f $panel_config ){
+        my $catalyst_config = Config::General->new($panel_config);
+        my %config = $catalyst_config->getall();
+        $config = \%config;
+    }
+    return $config;
+}
+
 my $logger_config;
 for my $path(qw#./logging.conf /etc/ngcp-panel/logging.conf#) {
     if(-f $path) {
