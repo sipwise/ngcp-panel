@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_0bbfe1d1",
+        "filename": "lib/NGCP/Panel/Controller/SOAP/Intercept.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-03-15T16:15:45Z",
+      "side": 1,
+      "message": "the part with the regexp here not to be used here?\nsip_username \u003d\u003e NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$num_rs-\u003efirst,$sub-\u003eusername),",
+      "range": {
+        "startLine": 137,
+        "startChar": 32,
+        "endLine": 137,
+        "endChar": 58
+      },
+      "revId": "f2d78401b04d75ffb176fc752d1c00ecb15b95d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
