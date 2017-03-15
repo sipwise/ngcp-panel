@@ -15,7 +15,7 @@ around 'BUILDARGS' => sub {
         $params = { @_ };
     }
     if( !defined $params->{forcearray_underneath} && !defined $params->{_forcearray_underneath} ){
-        $params->{_forcearray_underneath} = { embedded => 1 };
+        $params->{_forcearray_underneath} = { embedded => 0 };
     }
     $class->$orig($params);
 };
