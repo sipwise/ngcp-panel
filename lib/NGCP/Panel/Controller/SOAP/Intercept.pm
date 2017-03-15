@@ -18,7 +18,9 @@ sub thewsdl : GET Path('/SOAP/Intercept.wsdl') :Local :Args() {
 sub index : POST Path('/SOAP/Intercept') {
     my ($self, $c) = @_;
     my $h = Sipwise::SOAP::Intercept->new(c => $c);
-    my $out = SOAP::Transport::LOCAL::Client->new
+    my $server = SOAP::Transport::LOCAL::Client->new;
+    $server->serializer->register_ns('http://dev.sipwise.com/SOAP/Provisioning/Types', 'typens');
+    my $out = $server
         ->dispatch_with({ 'urn:/SOAP/Intercept' => $h })
         ->handle($c->req->body);
     $c->response->content_type('text/xml');
@@ -32,6 +34,7 @@ use NGCP::Panel::Form::Intercept::Create;
 use NGCP::Panel::Form::Intercept::Update;
 use NGCP::Panel::Form::Intercept::Delete;
 use Data::Structure::Util qw/unbless/;
+use NGCP::Panel::Utils::SOAP qw/typed/;
 use UUID;
 use Moose;
 has 'c' => (is => 'rw', isa => 'Object');
@@ -147,7 +150,7 @@ sub create_interception {
                 ->faultstring($e);
         }
     }
-    return $i->id;
+    return typed($c, $i->id);
 }
 
 sub update_interception {
@@ -297,7 +300,7 @@ sub get_interception_by_id {
             ->faultstring("interception ID '$$params{id}' does not exist");
     }
 
-    return {
+    return typed($c, {
         id => $i->id,
         LIID => $i->LIID,
         number => $i->number,
@@ -312,7 +315,7 @@ sub get_interception_by_id {
             host => $i->cc_delivery_host,
             port => $i->cc_delivery_port,
         }
-    };
+    });
 }
 
 sub get_interceptions_by_liid {
@@ -350,7 +353,7 @@ sub get_interceptions_by_liid {
             ->faultcode('Server.Internal')
             ->faultstring($e);
     }
-    return \@interceptions;
+    return typed($c, \@interceptions);
 }
 
 sub get_interceptions_by_number {
@@ -388,7 +391,7 @@ sub get_interceptions_by_number {
             ->faultcode('Server.Internal')
             ->faultstring($e);
     }
-    return \@interceptions;
+    return typed($c, \@interceptions);
 }
 
 sub get_interceptions {
@@ -425,7 +428,7 @@ sub get_interceptions {
             ->faultcode('Server.Internal')
             ->faultstring($e);
     }
-    return \@interceptions;
+    return typed($c, \@interceptions);
 }
 
 
