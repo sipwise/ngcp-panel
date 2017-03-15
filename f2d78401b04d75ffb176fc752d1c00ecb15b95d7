@@ -22,6 +22,30 @@
       "revId": "f2d78401b04d75ffb176fc752d1c00ecb15b95d7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_cb4ae9ab",
+        "filename": "lib/NGCP/Panel/Controller/SOAP/Intercept.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-03-15T16:36:52Z",
+      "side": 1,
+      "message": "Not relevant, as this interface is only driving captagent, not voisniff.",
+      "parentUuid": "ba1f61a0_0bbfe1d1",
+      "range": {
+        "startLine": 137,
+        "startChar": 32,
+        "endLine": 137,
+        "endChar": 58
+      },
+      "revId": "f2d78401b04d75ffb176fc752d1c00ecb15b95d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
