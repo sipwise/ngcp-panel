@@ -66,6 +66,16 @@ sub insert {
         relations_rs => $relations_rs,
     );
 
+        _save_first_non_primary_alias(
+            schema => $schema,
+            event => $event,
+            prov_subscriber => $prov_subscriber,
+            types_prefix => '',
+            types_suffix => '_after',
+            now_hires => $now_hires,
+            tags_rs => $tags_rs,
+        );
+
     my $bm_actual = get_actual_billing_mapping(c => $c,schema => $schema, contract => $customer, now => $now_hires);
     if ($bm_actual->billing_mappings->first->product->class eq 'pbxaccount') {
         my $pilot_subscriber;
@@ -113,6 +123,15 @@ sub insert {
                 now_hires => $now_hires,
                 tags_rs => $tags_rs,
                 relations_rs => $relations_rs,
+            );
+            _save_first_non_primary_alias(
+                schema => $schema,
+                event => $event,
+                prov_subscriber => $pilot_prov_subscriber,
+                types_prefix => 'pilot_',
+                types_suffix => '_after',
+                now_hires => $now_hires,
+                tags_rs => $tags_rs,
             );
         }
     }
@@ -234,6 +253,55 @@ sub save_subscriber_profile_set {
             event_timestamp => $now_hires,
         });
     }
+}
+
+sub _save_first_non_primary_alias {
+    my %params = @_;
+    my ($schema,
+        $event,
+        $aliases,
+        $prov_subscriber,
+        $types_prefix,
+        $types_suffix,
+        $now_hires,
+        $tags_rs) = @params{qw/
+        schema
+        event
+        aliases
+        prov_subscriber
+        types_prefix
+        types_suffix
+        now_hires
+        tags_rs
+    /};
+    my $alias_username = undef;
+    if ($aliases) {
+        #my $alias = shift(sort { $a->{is_primary} <=> $b->{is_primary} || $a->{id} <=> $b->{id}; } @$aliases);
+        my $alias = $aliases->[0]; #expect the ary sorted
+        $alias_username = $alias->{username} if $alias;
+    } elsif ($prov_subscriber) {
+        my $alias = _get_aliases_sorted_rs($prov_subscriber)->first;
+        $alias_username = $alias->username if $alias;
+    }
+    if ($alias_username) {
+        $tags_rs //= $schema->resultset('events_tag');
+        $event->create_related("tag_data", {
+            tag_id => $tags_rs->find({ type => $types_prefix.'first_non_primary_alias_username'.$types_suffix })->id,
+            val => $alias_username,
+            event_timestamp => $now_hires,
+        });
+    }
+
+}
+
+sub _get_aliases_sorted_rs {
+    my ($prov_subscriber) = @_;
+    return $prov_subscriber->voip_dbaliases->search_rs({
+        is_primary => 0,
+    },{
+        #previously in ngcpcfg: #order_by => { -asc => ['is_primary', 'id'] },
+        order_by => { -asc => 'id' },
+    });
 }
 
 sub get_actual_billing_mapping {
