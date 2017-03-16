@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_7c7c6173",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-03-16T10:08:09Z",
+      "side": 1,
+      "message": "you\u0027re going to (among others) catch calls here, which are definitely incoming.",
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
