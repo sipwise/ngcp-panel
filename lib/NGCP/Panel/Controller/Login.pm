@@ -7,7 +7,6 @@ use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::Login;
 use NGCP::Panel::Utils::Admin;
-use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 
 sub index :Path Form {
     my ( $self, $c, $realm ) = @_;
@@ -30,64 +29,7 @@ sub index :Path Form {
         $c->log->debug("*** Login::index user=$user, pass=****, realm=$realm");
         my $res;
         if($realm eq 'admin') {
-            my $dbadmin = $c->model('DB')->resultset('admins')->find({
-                login => $user,
-                is_active => 1,
-            });
-            if(defined $dbadmin && defined $dbadmin->saltedpass) {
-                $c->log->debug("login via bcrypt");
-                my ($db_b64salt, $db_b64hash) = split /\$/, $dbadmin->saltedpass;
-                my $salt = de_base64($db_b64salt);
-                my $usr_b64hash = en_base64(bcrypt_hash({
-                    key_nul => 1,
-                    cost => NGCP::Panel::Utils::Admin::get_bcrypt_cost(),
-                    salt => $salt,
-                }, $pass));
-                # fetch again to load user into session etc (otherwise we could
-                # simply compare the two hashes here :(
-                $res = $c->authenticate(
-                    {
-                        login => $user,
-                        saltedpass => $db_b64salt . '$' . $usr_b64hash,
-                        'dbix_class' => {
-                            searchargs => [{
-                                -and => [
-                                    login => $user,
-                                    is_active => 1,
-                                ],
-                            }],
-                        }
-                    }, 'admin_bcrypt'
-                );
-            } elsif(defined $dbadmin) { # we already know if the username is wrong, no need to check again
-
-                # check md5 and migrate over to bcrypt on success
-                $c->log->debug("login via md5");
-                $res = $c->authenticate(
-                    {
-                        login => $user,
-                        md5pass => $pass,
-                        'dbix_class' => {
-                            searchargs => [{
-                                -and => [
-                                    login => $user,
-                                    is_active => 1,
-                                ],
-                            }],
-                        }
-                    }, 'admin');
-
-                if($res) {
-                    # login ok, time to move user to bcrypt hashing
-                    $c->log->debug("migrating to bcrypt");
-                    my $saltedpass = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
-                    $dbadmin->update({
-                        md5pass => undef,
-                        saltedpass => $saltedpass,
-                    });
-                }
-
-            }
+            $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass);
         } elsif($realm eq 'subscriber') {
             my ($u, $d, $t) = split /\@/, $user;
             if(defined $t) {

@@ -92,6 +92,7 @@ sub _auth {
             }, $auth->{password}));
 
             die unless($usr_b64hash eq $db_b64hash);
+            die unless($admin->is_superuser || $admin->lawful_intercept);
         } else {
             my $md5admin = $c->model('DB')->resultset('admins')->search({
                 login => $auth->{username},
