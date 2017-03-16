@@ -7,6 +7,7 @@ BEGIN { extends 'Catalyst::Controller' }
 use Scalar::Util qw(blessed);
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Statistics qw();
+use NGCP::Panel::Utils::Admin;
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
@@ -153,8 +154,8 @@ sub auto :Private {
             } else {
                 $c->log->debug("++++++ Root::auto API admin request with http auth");
                 my $realm = "api_admin_http";
-                my $res = $c->authenticate({}, $realm);
-
+                my ($user, $pass) = $c->req->headers->authorization_basic;
+                my $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass);
                 unless($c->user_exists && $c->user->is_active)  {
                     $c->user->logout if($c->user);
                     $c->log->debug("+++++ invalid api admin http login");
