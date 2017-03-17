@@ -3,7 +3,6 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
 use HTTP::Headers qw();
-use IO::Compress::Zip qw/zip/;
 use NGCP::Panel::Form::Administrator::Reseller;
 use NGCP::Panel::Form::Administrator::Admin;
 use NGCP::Panel::Form::Administrator::APIGenerate qw();
@@ -259,54 +258,23 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     my $serial = $c->stash->{administrator}->ssl_client_m_serial;
     my ($pem, $p12);
     if ($c->req->body_parameters->{'gen.generate'}) {
-        my $updated;
-        while (!$updated) {
-            $serial = time;
-            try {
-                $pem = $c->model('CA')->make_client($c, $serial);
-                $p12 = $c->model('CA')->make_pkcs12($c, $serial, $pem, 'sipwise');
-            } catch ($e) {
-                NGCP::Panel::Utils::Message::error(
-                    c => $c,
-                    error => $e,
-                    data => { $c->stash->{administrator}->get_inflated_columns },
-                    desc  => $c->loc("Failed to generate client certificate."),
-                );
-                NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
-            }
-            try {
-                $c->stash->{administrator}->update({ 
-                    ssl_client_m_serial => $serial,
-                    ssl_client_certificate => undef, # not used anymore, clear it just in case
-                });
-                $updated = 1;
-            } catch(DBIx::Class::Exception $e where { "$_" =~ qr'Duplicate entry' }) {
-                $serial++;
-            }
+        my $err;
+        my $res = NGCP::Panel::Utils::Admin::generate_client_cert($c, $c->stash->{administrator}, sub {
+            my $e = shift;
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                data => { $c->stash->{administrator}->get_inflated_columns },
+                desc  => $c->loc("Failed to generate client certificate."),
+            );
+            $err = 1;
+        });
+        if($err) {
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
         }
 
-        my $input = {
-            "NGCP-API-client-certificate-$serial.pem" => $pem,
-            "NGCP-API-client-certificate-$serial.p12" => $p12,
-        };
-        my $zip_opts = {
-            AutoClose => 0,
-            Append => 0,
-            Name => "README.txt",
-            CanonicalName => 1,
-            Stream => 1,
-        };
-        my $zipped_file;
-        my $zip = IO::Compress::Zip->new(\$zipped_file, %{ $zip_opts });
-        $zip->write("Use the PEM file for programmatical clients like java, perl, php or curl, and the P12 file for browsers like Firefox or Chrome. The password for the P12 import is 'sipwise'. Handle this file with care, as it cannot be downloaded for a second time! Only a new certificate can be generated if the certificate is lost.\n");
-        foreach my $k(keys %{ $input } ) {
-            $zip_opts->{Name} = $k;
-            $zip_opts->{Append} = 1;
-            $zip->newStream(%{ $zip_opts });
-            $zip->write($input->{$k});
-        }
-        $zip->close();
-
+        $serial = $res->{serial};
+        my $zipped_file = $res->{file};
         $c->res->headers(HTTP::Headers->new(
             'Content-Type' => 'application/zip',
             'Content-Disposition' => sprintf('attachment; filename=%s', "NGCP-API-client-certificate-$serial.zip")

@@ -3,6 +3,7 @@ package NGCP::Panel::Utils::Admin;
 use Sipwise::Base;
 use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 use Data::Entropy::Algorithms qw/rand_bits/;
+use IO::Compress::Zip qw/zip/;
 
 sub get_bcrypt_cost {
     return 13;
@@ -83,6 +84,56 @@ sub perform_auth {
         }
     }
     return $res;
+}
+
+sub generate_client_cert {
+    my ($c, $admin, $error_cb) = @_;
+
+    my $updated;
+    my ($serial, $pem, $p12);
+    while (!$updated) {
+        $serial = time;
+        try {
+            $pem = $c->model('CA')->make_client($c, $serial);
+            $p12 = $c->model('CA')->make_pkcs12($c, $serial, $pem, 'sipwise');
+        } catch ($e) {
+            $error_cb->($e);
+            return;
+        }
+        try {
+            $admin->update({ 
+                ssl_client_m_serial => $serial,
+                ssl_client_certificate => undef, # not used anymore, clear it just in case
+            });
+            $updated = 1;
+        } catch(DBIx::Class::Exception $e where { "$_" =~ qr'Duplicate entry' }) {
+            $serial++;
+        }
+    }
+
+    my $input = {
+        "NGCP-API-client-certificate-$serial.pem" => $pem,
+        "NGCP-API-client-certificate-$serial.p12" => $p12,
+    };
+    my $zip_opts = {
+        AutoClose => 0,
+        Append => 0,
+        Name => "README.txt",
+        CanonicalName => 1,
+        Stream => 1,
+    };
+    my $zipped_file;
+    my $zip = IO::Compress::Zip->new(\$zipped_file, %{ $zip_opts });
+    $zip->write("Use the PEM file for programmatical clients like java, perl, php or curl, and the P12 file for browsers like Firefox or Chrome. The password for the P12 import is 'sipwise'. Handle this file with care, as it cannot be downloaded for a second time! Only a new certificate can be generated if the certificate is lost.\n");
+    foreach my $k(keys %{ $input } ) {
+        $zip_opts->{Name} = $k;
+        $zip_opts->{Append} = 1;
+        $zip->newStream(%{ $zip_opts });
+        $zip->write($input->{$k});
+    }
+    $zip->close();
+
+    return { serial => $serial, file => $zipped_file };
 }
 
 1;
