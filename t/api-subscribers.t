@@ -205,15 +205,21 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{is_pbx_group} = 0;
             delete $_[0]->{alias_numbers};
         });
-        $members->[0]->{content}->{pbx_group_ids} = [];
+        $members->[1]->{content}->{pbx_group_ids} = [];
         diag("1. Check that member will return empty groups after put groups empty");
-        my($member_put,$member_get) = $test_machine->check_put2get($members->[0]->{content},undef,$members->[0]->{location});
+        my($member_put,$member_get) = $test_machine->check_put2get($members->[1]->{content},undef,$members->[1]->{location});
+        is_deeply( $members->[1]->{content}->{pbx_group_ids}, [], "Check that member will return empty groups after put groups empty");
 
-        $members->[0]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (2,1)];
+        $members->[1]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (2,1)];
         diag("2. Check that member will return groups as they were specified");
+        #fix for the  5415 prevents changing members order in the group, this is why resulting groups order for the member may differ from the input
         #($member_put,$member_get) = $test_machine->check_put2get($members->[0]->{content},undef,$members->[0]->{location});
-        my ($res,$content,$request) = $test_machine->request_put(@{$members->[0]}{qw/content location/});
-        $test_machine->http_code_msg(200, "PUT of the members groups was successful", $res, $content);
+
+        my($res,$content) = $test_machine->request_put(@{$members->[1]}{qw/content location/});
+        $test_machine->http_code_msg(200, "PUT for members[1] was successful", $res, $content);
+        my(undef, $members_1_after_touch) = $test_machine->check_item_get($members->[1]->{location});
+        #print Dumper [$members->[1]->{content}, $members_1_after_touch];
+        is_deeply( [sort @{$members->[1]->{content}->{pbx_group_ids}}], [sort @{$members_1_after_touch->{pbx_group_ids}}], "Check member groups after touch - the same cortege");
 
         $groups->[1]->{content}->{pbx_groupmember_ids} = [map { $members->[$_]->{content}->{id} } (2,1,0)];
         diag("3. Check that group will return members as they were specified");
@@ -230,9 +236,13 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->check_put2get($groups->[1]->{content},undef,$groups->[1]->{location});
 
         diag("5415:Touch one of the members;\n");
-        $members->[1]->{content}->{pbx_group_ids} = [ map { $groups->[$_]->{content}->{id} } (2,1)];
-        my($res,$content) = $test_machine->request_put(@{$members->[1]}{qw/content location/});
+        $members->[2]->{content}->{pbx_group_ids} = [ map { $groups->[$_]->{content}->{id} } (2,1)];
+        #my($res,$content) = $test_machine->check_put2get($members->[2]);
+        #fix for the  5415 prevents changing members order in the group, this is why resulting groups order for the member may differ from the input
+        my($res,$content) = $test_machine->request_put(@{$members->[2]}{qw/content location/});
         $test_machine->http_code_msg(200, "PUT for groups was successful", $res, $content);
+        my(undef, $members_2_after_touch) = $test_machine->check_item_get($members->[2]->{location});
+        is_deeply( [sort @{$members->[2]->{content}->{pbx_group_ids}}], [sort @{$members_2_after_touch->{pbx_group_ids}}], "Check member groups after touch - the same cortege");
 
         diag("5415:Check members order in the group;\n");
         my(undef, $group_get_after) = $test_machine->check_item_get($groups->[1]->{location});
