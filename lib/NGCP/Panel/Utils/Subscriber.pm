@@ -444,7 +444,7 @@ sub get_pbx_subscribers_rs{
     );
     return $rs;
 }
-#the method named "item" as it can return both groups or groups members
+
 sub get_pbx_subscribers_ordered_by_ids{
     my %params = @_;
 
@@ -475,6 +475,7 @@ sub get_pbx_subscribers_ordered_by_ids{
     return wantarray ? (\@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef )) : \@items;
 }
 
+#the method named "item" as it can return both groups or groups members
 sub get_subscriber_pbx_items{
     my %params = @_;
 
@@ -562,16 +563,23 @@ sub manage_pbx_groups{
             if(scalar @deleted_ids){
                 #delete all old groups, to support correct order
                 $c->log->debug('Delete groups:'.join(',',@deleted_ids));
+                my @deleted_ids_provisioning = $schema->resultset('provisioning_voip_subscribers')->search_rs(
+                    {
+                        'voip_subscriber.id' => { -in => [ @deleted_ids ] },
+                    },{
+                        join => 'voip_subscriber',
+                    }
+                )->get_column('id')->all();
                 my $member_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c,
                     attribute => 'cloud_pbx_hunt_group',
                 )->search_rs({
-                    subscriber_id => { -in => [ @deleted_ids ] },
+                    subscriber_id => { -in => [ @deleted_ids_provisioning ] },
                     value         => $subscriber_uri,
                 });
 
                 $member_preferences_rs->delete;
-                $prov_subscriber->voip_pbx_groups->search_rs( { group_id => { -in => [@deleted_ids] } } )->delete;
+                $prov_subscriber->voip_pbx_groups->search_rs( { group_id => { -in => [ @deleted_ids_provisioning ] } } )->delete;
             }
             if(scalar @added_ids){
                 $c->log->debug('Added groups:'.join(',',@added_ids));
