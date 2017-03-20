@@ -5,7 +5,7 @@ use Sipwise::Base;
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Admins/;
 
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 use HTTP::Status qw(:constants);
 
 sub allowed_methods{
@@ -26,7 +26,7 @@ __PACKAGE__->set_config();
 sub delete_item {
     my ($self, $c, $item) = @_;
 
-    my $special_user_login = NGCP::Panel::Utils::Admin::get_special_admin_login();
+    my $special_user_login = NGCP::Panel::Utils::Auth::get_special_admin_login();
 
     if($item->login eq $special_user_login) {
         $self->error($c, HTTP_FORBIDDEN, "Cannot delete special user '$special_user_login'");
@@ -56,7 +56,7 @@ sub delete_item {
 sub update_item_model {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-    if($old_resource->{login} eq NGCP::Panel::Utils::Admin::get_special_admin_login()) {
+    if($old_resource->{login} eq NGCP::Panel::Utils::Auth::get_special_admin_login()) {
         my $active = $resource->{is_active};
         $resource = $old_resource;
         $resource->{is_active} = $active;

@@ -35,7 +35,7 @@ use NGCP::Panel::Utils::SOAP qw/typed/;
 use NGCP::Panel::Utils::Interception qw();
 use UUID;
 use Moose;
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 
 has 'c' => (is => 'rw', isa => 'Object');
@@ -85,7 +85,7 @@ sub _auth {
             my $salt = de_base64($db_b64salt);
             my $usr_b64hash = en_base64(bcrypt_hash({
                 key_nul => 1,
-                cost => NGCP::Panel::Utils::Admin::get_bcrypt_cost(),
+                cost => NGCP::Panel::Utils::Auth::get_bcrypt_cost(),
                 salt => $salt,
             }, $auth->{password}));
 
@@ -102,7 +102,7 @@ sub _auth {
             # migrate password to bcrypt
             $admin->update({
                 md5pass => undef,
-                saltedpass => NGCP::Panel::Utils::Admin::generate_salted_hash($auth->{password}),
+                saltedpass => NGCP::Panel::Utils::Auth::generate_salted_hash($auth->{password}),
             });
         }
 

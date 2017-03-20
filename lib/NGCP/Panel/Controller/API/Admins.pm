@@ -10,7 +10,7 @@ use HTTP::Status qw(:constants);
 __PACKAGE__->set_config();
 
 sub api_description {
-    return'Defines admins to log into the system via panel or api.';
+    return 'Defines admins to log into the system via panel or api.';
 }
 
 sub allowed_methods{
