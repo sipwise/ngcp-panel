@@ -1,4 +1,4 @@
-package NGCP::Panel::Utils::Admin;
+package NGCP::Panel::Utils::Auth;
 
 use Sipwise::Base;
 use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
@@ -88,6 +88,92 @@ sub perform_auth {
                 md5pass => undef,
                 saltedpass => $saltedpass,
             });
+        }
+    }
+    return $res;
+}
+
+sub perform_subscriber_auth {
+    my ($c, $user, $domain, $pass) = @_;
+    my $res;
+
+    my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+        webusername => $user,
+        'voip_subscriber.status' => 'active',
+        'domain.domain' => $domain,
+        'contract.status' => 'active',
+    }, {
+        join => ['domain', 'contract', 'voip_subscriber'],
+    });
+
+    my $sub = $authrs->first;
+    if(defined $sub) {
+        my $sub_pass = $sub->webpassword;
+        if (length $sub_pass > 40) {
+            my @splitted_pass = split /\$/, $sub_pass;
+            if (scalar @splitted_pass == 3) {
+                #password is bcrypted with lower cost
+                my ($cost, $db_b64salt, $db_b64hash) = @splitted_pass;
+                my $salt = de_base64($db_b64salt);
+                my $usr_b64hash = en_base64(bcrypt_hash({
+                    key_nul => 1,
+                    cost => $cost,
+                    salt => $salt,
+                }, $pass));
+                if ($db_b64hash eq $usr_b64hash) {
+                    #upgrade password to bigger cost
+                    $salt = rand_bits(128);
+                    my $b64salt = en_base64($salt);
+                    my $b64hash = en_base64(bcrypt_hash({
+                        key_nul => 1,
+                        cost => get_bcrypt_cost(),
+                        salt => $salt,
+                    }, $pass));
+                    $sub->update({webpassword => $b64salt . '$' . $b64hash});
+                    $res = $c->authenticate(
+                        {
+                            webusername => $user,
+                            webpassword => $b64salt . '$' . $b64hash,
+                            'dbix_class' => {
+                                resultset => $authrs
+                            }
+                        },
+                        'subscriber');
+                }
+            }
+            elsif (scalar @splitted_pass == 2) {
+                #password is bcrypted with proper cost
+                my ($db_b64salt, $db_b64hash) = @splitted_pass;
+                my $salt = de_base64($db_b64salt);
+                my $usr_b64hash = en_base64(bcrypt_hash({
+                    key_nul => 1,
+                    cost => get_bcrypt_cost(),
+                    salt => $salt,
+                }, $pass));
+
+                # fetch again to load user into session etc (otherwise we could
+                # simply compare the two hashes here :(
+                $res = $c->authenticate(
+                    {
+                        webusername => $user,
+                        webpassword => $db_b64salt . '$' . $usr_b64hash,
+                        'dbix_class' => {
+                            resultset => $authrs
+                        }
+                    },
+                    'subscriber');
+                }
+        }
+        else {
+            $res = $c->authenticate(
+                {
+                    webusername => $user,
+                    webpassword => $pass,
+                    'dbix_class' => {
+                        resultset => $authrs
+                    }
+                },
+                'subscriber');
         }
     }
     return $res;
