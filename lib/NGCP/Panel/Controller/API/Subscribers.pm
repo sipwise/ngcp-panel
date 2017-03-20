@@ -39,7 +39,7 @@ sub documentation_sample_update {
 }
 
 sub query_params {
-    return [
+    my $params = [
         {
             param => 'profile_id',
             description => 'Search for subscribers having a specific subscriber profile',
@@ -230,7 +230,37 @@ sub query_params {
                 },
                 second => sub {},
             },
-        },    ];
+        },
+    ];
+    foreach my $field (qw/create_timestamp modify_timestamp/){
+        push @$params, {
+            param => $field.'_gt',
+            description => 'Filter for subscriber with '.$field.' greater then specified value',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'provisioning_voip_subscriber.'.$field => { '>=' => $q } };
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        },
+        {
+            param => $field.'_lt',
+            description => 'Filter for subscriber with '.$field.' less then specified value',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'provisioning_voip_subscriber.'.$field => { '<=' => $q } };
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        };
+    }
+    return $params;
 }
 
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Subscribers/;
