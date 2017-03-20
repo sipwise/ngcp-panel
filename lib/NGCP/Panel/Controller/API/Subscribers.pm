@@ -31,7 +31,7 @@ class_has 'api_description' => (
 class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
-    default => sub {[
+    default => sub { my $params = [
         {
             param => 'profile_id',
             description => 'Search for subscribers having a specific subscriber profile',
@@ -186,8 +186,39 @@ class_has 'query_params' => (
                 },
             },
         },
-    ]},
+    ];
+    foreach my $field (qw/create_timestamp modify_timestamp/){
+        push @$params, {
+            param => $field.'_gt',
+            description => 'Filter for subscriber with '.$field.' greater then specified value',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'provisioning_voip_subscriber.'.$field => { '>=' => $q } };
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        },
+        {
+            param => $field.'_lt',
+            description => 'Filter for subscriber with '.$field.' less then specified value',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'provisioning_voip_subscriber.'.$field => { '<=' => $q } };
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        };
+    }
+    return $params;
+    },
 );
+
 
 with 'NGCP::Panel::Role::API::Subscribers';
 
