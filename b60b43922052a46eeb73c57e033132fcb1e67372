@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_72d645c7",
+        "filename": "lib/NGCP/Panel/Role/API/AdminCerts.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-03-20T09:28:49Z",
+      "side": 1,
+      "message": "If you aren\u0027t going to override these methods, they can be removed.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 1
+      },
+      "revId": "b60b43922052a46eeb73c57e033132fcb1e67372",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
