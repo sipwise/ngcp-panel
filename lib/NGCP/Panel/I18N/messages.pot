@@ -2717,22 +2717,6 @@ msgstr ""
 msgid "Download PCAP"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download PEM"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download PKCS12"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download in PEM Format"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download in PKCS12 Format"
-msgstr ""
-
 #: share/templates/billing/list.tt
 msgid "Duplicate"
 msgstr ""
@@ -7073,7 +7057,7 @@ msgstr ""
 msgid "Reseller successfully created"
 msgstr ""
 
-#. ($defaults{admins}->{login}, $defaults{admins}->{md5pass})
+#. ($defaults{admins}->{login}, $default_pass)
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, please review your settings below"
 msgstr ""

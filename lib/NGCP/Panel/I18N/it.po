@@ -3310,22 +3310,6 @@ msgstr "Scarica Quote come CSV"
 msgid "Download PCAP"
 msgstr "Scarica PCAP"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download PEM"
-msgstr "Scarica PEM"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download PKCS12"
-msgstr "Scarica PKCS12"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download in PEM Format"
-msgstr "Scarica in Formato PEM"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download in PKCS12 Format"
-msgstr "Scarica in Formato PKCS12"
-
 #: share/templates/billing/list.tt
 msgid "Duplicate"
 msgstr "Duplica"
@@ -8058,7 +8042,7 @@ msgstr "Rivenditore non trovato"
 msgid "Reseller successfully created"
 msgstr "Rivenditore creato con successo"
 
-#. ($defaults{admins}->{login}, $defaults{admins}->{md5pass})
+#. ($defaults{admins}->{login}, $default_pass)
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid ""
 "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, "
@@ -13252,6 +13236,18 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Download PEM"
+#~ msgstr "Scarica PEM"
+
+#~ msgid "Download PKCS12"
+#~ msgstr "Scarica PKCS12"
+
+#~ msgid "Download in PEM Format"
+#~ msgstr "Scarica in Formato PEM"
+
+#~ msgid "Download in PKCS12 Format"
+#~ msgstr "Scarica in Formato PKCS12"
 
 #~ msgid "Cash Balance (Interval)"
 #~ msgstr "Accredito conto (intervallo)"

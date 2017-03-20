@@ -3181,22 +3181,6 @@ msgstr ""
 msgid "Download PCAP"
 msgstr "PCAP runterladen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download PEM"
-msgstr "PEM runterladen"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download PKCS12"
-msgstr "PKCS12 runterladen"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download in PEM Format"
-msgstr "Im PEM-Format runterladen"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Download in PKCS12 Format"
-msgstr "Im PKCS12-Format runterladen"
-
 #: share/templates/billing/list.tt
 msgid "Duplicate"
 msgstr ""
@@ -7824,7 +7808,7 @@ msgstr "Reseller nicht gefunden."
 msgid "Reseller successfully created"
 msgstr "Reseller erfolgreich erstellt"
 
-#. ($defaults{admins}->{login}, $defaults{admins}->{md5pass})
+#. ($defaults{admins}->{login}, $default_pass)
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid ""
 "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, "
@@ -12830,6 +12814,18 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Download PEM"
+#~ msgstr "PEM runterladen"
+
+#~ msgid "Download PKCS12"
+#~ msgstr "PKCS12 runterladen"
+
+#~ msgid "Download in PEM Format"
+#~ msgstr "Im PEM-Format runterladen"
+
+#~ msgid "Download in PKCS12 Format"
+#~ msgstr "Im PKCS12-Format runterladen"
 
 #~ msgid "Advanced"
 #~ msgstr "Erweitert"
