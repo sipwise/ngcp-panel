@@ -37,7 +37,7 @@ sub documentation_sample {
 }
 
 sub query_params {
-    return [
+    my $params = [
         {
             param => 'status',
             description => 'Filter for customers with a specific status (comma-separated list of statuses to include possible)',
@@ -107,7 +107,33 @@ sub query_params {
                 },
                 second => sub { },
             },
-        },    ];
+        },
+    ];
+    foreach my $field (qw/create_timestamp activate_timestamp modify_timestamp terminate_timestamp/){
+        push @$params, {
+            param => $field.'_gt',
+            description => 'Filter for customers with '.$field.' greater then specified value',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.'.$field => { '>=' => $q } };
+                },
+                second => sub { },
+            },
+        },
+        {
+            param => $field.'_lt',
+            description => 'Filter for customers with '.$field.' less then specified value',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.'.$field => { '<=' => $q } };
+                },
+                second => sub { },
+            },
+        };
+    }
+    return $params;
 }
 
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Customers/;
