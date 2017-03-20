@@ -84,7 +84,7 @@ has_field 'webusername' => (
 );
 
 has_field 'webpassword' => (
-    type => 'Text',
+    type => 'Password',
     label => 'Web Password',
     required => 0,
     element_attr => { 

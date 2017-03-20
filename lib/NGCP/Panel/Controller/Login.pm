@@ -6,7 +6,7 @@ use strict;
 use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::Login;
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 
 sub index :Path Form {
     my ( $self, $c, $realm ) = @_;
@@ -29,7 +29,7 @@ sub index :Path Form {
         $c->log->debug("*** Login::index user=$user, pass=****, realm=$realm");
         my $res;
         if($realm eq 'admin') {
-            $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass);
+            $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass);
         } elsif($realm eq 'subscriber') {
             my ($u, $d, $t) = split /\@/, $user;
             if(defined $t) {
@@ -40,24 +40,7 @@ sub index :Path Form {
             unless(defined $d) {
                 $d = $c->req->uri->host;
             }
-            my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
-                webusername => $u,
-                webpassword => $pass,
-                'voip_subscriber.status' => 'active',
-                'domain.domain' => $d,
-                'contract.status' => 'active',
-            }, {
-                join => ['domain', 'contract', 'voip_subscriber'],
-            });
-            $res = $c->authenticate(
-                {
-                    webusername => $u, 
-                    webpassword => $pass,
-                    'dbix_class' => {
-                        resultset => $authrs
-                    }
-                }, 
-                $realm);
+            $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $pass);
         }
 
         if($res) {

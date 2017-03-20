@@ -10,6 +10,7 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Form::Administrator::Admin;
 use NGCP::Panel::Form::Administrator::Reseller;
 
@@ -94,7 +95,7 @@ sub update_item {
     delete $resource->{password};
     if(defined $pass) {
         $resource->{md5pass} = undef;
-        $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
+        $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
     }
 
     if($c->user->roles eq "reseller" && $resource->{reseller_id} != $c->user->reseller_id) {

@@ -657,10 +657,17 @@ sub update_item {
         status => $resource->{status},
         contact_id => $resource->{contact_id},
     };
+
+    if(defined $resource->{webpassword}) {
+        $resource->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($resource->{webpassword});
+    }
+
     my $provisioning_res = {
         password => $resource->{password},
         webusername => $resource->{webusername},
-        webpassword => $resource->{webpassword},
+        ($resource->{webpassword} ? 
+            (webpassword_hash => $resource->{webpassword}, webpassword => undef) : ()
+        ),
         admin => $resource->{administrative} // 0,
         is_pbx_pilot => $resource->{is_pbx_pilot} // 0,
         is_pbx_group => $resource->{is_pbx_group} // 0,

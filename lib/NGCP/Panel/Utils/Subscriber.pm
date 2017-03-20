@@ -12,6 +12,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Email;
 use NGCP::Panel::Utils::Events;
+use NGCP::Panel::Utils::Auth;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
 use IPC::System::Simple qw/capturex/;
@@ -249,12 +250,16 @@ sub create_subscriber {
             UUID::unparse($pass_bin, $pass_str);
             $params->{password} = $pass_str;
         }
+        if(defined $params->{webpassword}) {
+            $params->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($params->{webpassword});
+        }
         my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
             uuid => $uuid_string,
             username => $params->{username},
             password => $params->{password},
             webusername => $params->{webusername} || $params->{username},
-            webpassword => $params->{webpassword},
+            webpassword_hash => $params->{webpassword},
+            webpassword => undef,
             admin => $params->{administrative} // $administrative,
             account_id => $contract->id,
             domain_id => $prov_domain->id,

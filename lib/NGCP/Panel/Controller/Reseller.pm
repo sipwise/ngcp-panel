@@ -16,7 +16,7 @@ use NGCP::Panel::Utils::Reseller;
 use NGCP::Panel::Utils::BillingNetworks qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Billing qw();
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -431,7 +431,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
     	if($c->user->read_only);
 
 	my $default_pass = 'defaultresellerpassword';
-	my $saltedpass = NGCP::Panel::Utils::Admin::generate_salted_hash($default_pass);
+	my $saltedpass = NGCP::Panel::Utils::Auth::generate_salted_hash($default_pass);
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     my %defaults = (

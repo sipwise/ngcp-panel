@@ -190,7 +190,7 @@ __PACKAGE__->config(
                 #type => 'digest',
                 type => 'basic',
                 username_field => 'webusername',
-                password_field => 'webpassword',
+                password_field => 'webpassword_hash',
                 password_type => 'clear',
             },
             store => {
@@ -219,7 +219,7 @@ __PACKAGE__->config(
         subscriber => {
             credential => {
                 class => 'Password',
-                password_field => 'webpassword',
+                password_field => 'webpassword_hash',
                 password_type => 'clear',
             },
             store => {
