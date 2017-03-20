@@ -162,6 +162,27 @@ has_field 'profile' => (
     },
 );
 
+has_field 'create_timestamp' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) of the creation.']
+    },
+);
+
+has_field 'modify_timestamp' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) of the modification.']
+    },
+);
+
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
