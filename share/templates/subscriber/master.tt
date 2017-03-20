@@ -83,9 +83,6 @@
                                 elements.push({ value = subscriber.contact.email, desc = c.loc('Email Address') });
                             END;
                             elements.push({ value = subscriber.provisioning_voip_subscriber.webusername, desc = c.loc('Web Username') });
-                            IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
-                                elements.push({ value = subscriber.provisioning_voip_subscriber.webpassword, desc = c.loc('Web Password') });
-                            END;
                             elements.push({ value = subscriber.username _ '@' _ subscriber.domain.domain, desc = c.loc('SIP URI') });
                             IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
                                 elements.push({ value = subscriber.provisioning_voip_subscriber.password, desc = c.loc('SIP Password') });

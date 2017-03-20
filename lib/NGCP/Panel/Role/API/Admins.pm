@@ -10,7 +10,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 
 sub item_name{
     return 'admin';
@@ -77,7 +77,7 @@ sub process_form_resource{
     delete $resource->{password};
     if(defined $pass) {
         $resource->{md5pass} = undef;
-        $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
+        $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
     }
     foreach my $f(qw/billing_data call_data is_active is_master is_superuser is_ccare lawful_intercept read_only show_passwords/) {
         $resource->{$f} = (ref $resource->{$f} eq 'JSON::true' || ( defined $resource->{$f} && ( $resource->{$f} eq 'true' || $resource->{$f} eq '1' ) ) ) ? 1 : 0;

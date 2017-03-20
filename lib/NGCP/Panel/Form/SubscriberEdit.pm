@@ -39,7 +39,7 @@ has_field 'webusername' => (
 );
 
 has_field 'webpassword' => (
-    type => 'Text',
+    type => 'Password',
     label => 'Web Password',
     required => 0,
     minlength => 6,

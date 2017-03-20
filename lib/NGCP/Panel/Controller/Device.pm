@@ -1675,13 +1675,30 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
 
     my $sub;
     if($c->config->{deviceprovisioning}->{softphone_webauth}) {
-        $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
-           webusername => $user,
-           'domain.domain' => $domain,
-           webpassword => $pass,
-        },{
-            join => 'domain',
+
+        my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+            webusername => $user,
+            'voip_subscriber.status' => 'active',
+            'domain.domain' => $domain,
+            'contract.status' => 'active',
+        }, {
+            join => ['domain', 'contract', 'voip_subscriber'],
         });
+
+        $sub = $authrs->first;
+        if(defined $sub) {
+            my ($db_b64salt, $db_b64hash) = split /\$/, $sub->webpassword;
+            my $salt = de_base64($db_b64salt);
+            my $usr_b64hash = en_base64(bcrypt_hash({
+                key_nul => 1,
+                cost => NGCP::Panel::Utils::Auth::get_bcrypt_cost(),
+                salt => $salt,
+            }, $pass));
+            unless($usr_b64hash eq $db_b64hash) {
+                # wrong password
+                $sub = undef;
+            }
+        }
         unless($sub) {
             if($c->config->{features}->{debug}) {
                 $c->response->body("404 - webuser authentication failed");
@@ -1694,13 +1711,15 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
         $user = $sub->username;
         $pass = $sub->password;
     } else {
-        $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
-           username => $user,
-           'domain.domain' => $domain,
-           password => $pass,
-        },{
-            join => 'domain',
-        });
+        $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+            username => $user,
+            password => $pass,
+            'voip_subscriber.status' => 'active',
+            'domain.domain' => $domain,
+            'contract.status' => 'active',
+        }, {
+            join => ['domain', 'contract', 'voip_subscriber'],
+        })->first;
         unless($sub) {
             if($c->config->{features}->{debug}) {
                 $c->response->body("404 - sipuser authentication failed");
