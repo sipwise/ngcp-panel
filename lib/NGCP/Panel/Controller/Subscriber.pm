@@ -439,6 +439,7 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
             # and let reset link be valid for a year
             $subscriber->provisioning_voip_subscriber->update({
                 webpassword => undef,
+                webpassword_hash => undef,
             });
             $subscriber->password_resets->create({
                 uuid => $uuid_string,
@@ -592,7 +593,8 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
                     $c->detach('/denied_page');
                 }
                 $subscriber->provisioning_voip_subscriber->update({
-                    webpassword => $form->params->{password},
+                    webpassword_hash => NGCP::Panel::Utils::Auth::generate_salted_hash($form->params->{password}),
+                    webpassword => undef,
                 });
                 $rs->delete;
             });
@@ -2786,7 +2788,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $prov_subscriber->voip_subscriber_profile->id : undef;
         $params->{webusername} = $prov_subscriber->webusername;
         if (($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') && $c->user->show_passwords) {
-            $params->{webpassword} = $prov_subscriber->webpassword;
             $params->{password} = $prov_subscriber->password;
         }
         $params->{administrative} = $prov_subscriber->admin;
@@ -2874,8 +2875,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 my $prov_params = {};
                 $prov_params->{pbx_extension} = $form->params->{pbx_extension};
                 $prov_params->{webusername} = $form->params->{webusername} || undef;
-                $prov_params->{webpassword} = $form->params->{webpassword}
-                    if($form->params->{webpassword});
+                if($form->params->{webpassword}) {
+                    $prov_params->{webpassword_hash} =
+                        NGCP::Panel::Utils::Auth::generate_salted_hash($form->params->{webpassword});
+                    $prov_params->{webpassword} = undef;
+                }
                 $prov_params->{password} = $form->params->{password}
                     if($form->params->{password});
                 if($is_admin) {
@@ -3220,7 +3224,9 @@ sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
             my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
             $schema->txn_do(sub {
                 $prov_subscriber->update({
-                    webpassword => $form->values->{webpassword} });
+                    webpassword_hash => NGCP::Panel::Utils::Auth::generate_salted_hash($form->values->{webpassword}),
+                    webpassword => undef,
+                });
             });
             NGCP::Panel::Utils::Message::info(
                 c    => $c,

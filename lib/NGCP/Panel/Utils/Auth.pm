@@ -1,4 +1,4 @@
-package NGCP::Panel::Utils::Admin;
+package NGCP::Panel::Utils::Auth;
 
 use Sipwise::Base;
 use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
@@ -92,6 +92,50 @@ sub perform_auth {
     }
     return $res;
 }
+
+sub perform_subscriber_auth {
+    my ($c, $user, $domain, $pass) = @_;
+    my $res;
+
+    my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+        webusername => $user,
+        'voip_subscriber.status' => 'active',
+        'domain.domain' => $domain,
+        'contract.status' => 'active',
+    }, {
+        join => ['domain', 'contract', 'voip_subscriber'],
+    });
+
+    my $sub = $authrs->first;
+    if(defined $sub) {
+        my ($db_b64salt, $db_b64hash) = split /\$/, $sub->webpassword_hash;
+        my $salt = de_base64($db_b64salt);
+        my $usr_b64hash = en_base64(bcrypt_hash({
+            key_nul => 1,
+            cost => get_bcrypt_cost(),
+            salt => $salt,
+        }, $pass));
+
+        # fetch again to load user into session etc (otherwise we could
+        # simply compare the two hashes here :(
+        $res = $c->authenticate(
+            {
+                webusername => $user, 
+                webpassword_hash => $db_b64salt . '$' . $usr_b64hash,
+                'dbix_class' => {
+                    resultset => $authrs
+                }
+            }, 
+            'subscriber');
+        # make sure to clear old clear-text password if still there
+        if($res && $sub->webpassword) {
+            $sub->update({
+                webpassword => undef,
+            });
+        }
+    }
+    return $res;
+}                
 
 sub generate_client_cert {
     my ($c, $admin, $error_cb) = @_;

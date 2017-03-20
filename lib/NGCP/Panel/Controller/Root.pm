@@ -9,7 +9,7 @@ use parent 'Catalyst::Controller';
 use Scalar::Util qw(blessed);
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Statistics qw();
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Form qw();
 use DateTime qw();
 use Time::HiRes qw();
@@ -204,9 +204,9 @@ sub auto :Private {
             if ($d) {
                 $c->req->headers->authorization_basic($u,$password);
             }
-            my $res = $c->authenticate({}, $realm);
+            my $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $password);
 
-            if($c->user_exists) {
+            if($res && $c->user_exists) {
                 $d //= $c->req->uri->host;
                 $c->log->debug("++++++ checking '".$c->user->domain->domain."' against '$d'");
                 if ($c->user->domain->domain ne $d) {
@@ -232,7 +232,7 @@ sub auto :Private {
             $c->log->debug("++++++ Root::auto API admin request with http auth");
             my ($user, $pass) = $c->req->headers->authorization_basic;
             #$c->log->debug("user: " . $user . " pass: " . $pass);
-            my $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
+            my $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
             if($res and $c->user_exists and $c->user->is_active)  {
                 $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
             } else {

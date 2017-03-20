@@ -5,7 +5,7 @@ use Sipwise::Base;
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Admins/;
 
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 use HTTP::Status qw(:constants);
 
 sub allowed_methods{

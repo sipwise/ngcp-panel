@@ -7,7 +7,7 @@ use NGCP::Panel::Form;
 use HTTP::Headers qw();
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -109,7 +109,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
             $form->values->{md5pass} = undef;
-            $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
+            $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash(delete $form->values->{password});
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -202,7 +202,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form->values->{password} unless length $form->values->{password};
             if(exists $form->values->{password}) {
                 $form->values->{md5pass} = undef;
-                $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
+                $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash(delete $form->values->{password});
             }
             #should be after other fields, to remove all added values, e.g. reseller_id
             if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Admin::get_special_admin_login()) {
@@ -302,7 +302,7 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     my ($pem, $p12);
     if ($c->req->body_parameters->{'gen.generate'}) {
         my $err;
-        my $res = NGCP::Panel::Utils::Admin::generate_client_cert($c, $c->stash->{administrator}, sub {
+        my $res = NGCP::Panel::Utils::Auth::generate_client_cert($c, $c->stash->{administrator}, sub {
             my $e = shift;
             NGCP::Panel::Utils::Message::error(
                 c => $c,

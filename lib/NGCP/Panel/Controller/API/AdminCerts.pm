@@ -4,7 +4,7 @@ use Sipwise::Base;
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::AdminCerts/;
 
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 
 __PACKAGE__->set_config();
 
@@ -64,7 +64,7 @@ sub create_item {
     }
 
     my $err;
-    my $res = NGCP::Panel::Utils::Admin::generate_client_cert($c, $admin, sub {
+    my $res = NGCP::Panel::Utils::Auth::generate_client_cert($c, $admin, sub {
         my $e = shift;
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to generate client certificate");
         $err = 1;
