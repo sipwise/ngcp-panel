@@ -183,10 +183,10 @@ my %customer_map = ();
     my $customer = _create_customer(
         type => "sipaccount",
         );
-    my $subscriber = _create_subscriber($customer,
-        primary_number => { cc => 888, ac => '2'.(scalar keys %subscriber_map), sn => $t },
-        );
-
+    #my $subscriber = _create_subscriber($customer,
+    #    primary_number => { cc => 888, ac => '2'.(scalar keys %subscriber_map), sn => $t },
+    #    );
+    #
     my $destinationset_1 = _create_cfdestinationset($subscriber,"dest1_$t",[{ destination => "1234",
         timeout => '10',
         priority => '1',
