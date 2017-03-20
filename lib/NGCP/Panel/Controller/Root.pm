@@ -9,12 +9,13 @@ use parent 'Catalyst::Controller';
 use Scalar::Util qw(blessed);
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Statistics qw();
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Form qw();
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
 use HTTP::Status qw(:constants);
+use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 
 use NGCP::Schema qw//;
 
@@ -204,9 +205,9 @@ sub auto :Private {
             if ($d) {
                 $c->req->headers->authorization_basic($u,$password);
             }
-            my $res = $c->authenticate({}, $realm);
+            my $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $password);
 
-            if($c->user_exists) {
+            if($res && $c->user_exists) {
                 $d //= $c->req->uri->host;
                 $c->log->debug("++++++ checking '".$c->user->domain->domain."' against '$d'");
                 if ($c->user->domain->domain ne $d) {
@@ -232,7 +233,7 @@ sub auto :Private {
             $c->log->debug("++++++ Root::auto API admin request with http auth");
             my ($user, $pass) = $c->req->headers->authorization_basic;
             #$c->log->debug("user: " . $user . " pass: " . $pass);
-            my $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
+            my $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
             if($res and $c->user_exists and $c->user->is_active)  {
                 $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
             } else {
@@ -309,7 +310,7 @@ sub auto :Private {
     $topmenu_templates = ['widgets/'.$c->user->roles.'_topmenu_settings.tt'];
     if ($c->user->roles eq 'admin') {
         if (!$c->stash->{openvpn_info}) {
-            my $openvpn_info = NGCP::Panel::Utils::Admin::check_openvpn_status($c);
+            my $openvpn_info = NGCP::Panel::Utils::Auth::check_openvpn_status($c);
             $c->stash(openvpn_info => $openvpn_info);
         }
     }
@@ -460,14 +461,24 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
     }
     my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
         webusername => $u,
-        webpassword => $pass,
         'voip_subscriber.status' => 'active',
         'domain.domain' => $d,
         'contract.status' => 'active',
     }, {
         join => ['domain', 'contract', 'voip_subscriber'],
     });
-    my $auth_user = $authrs->first;
+
+    my $auth_user;
+    if ($authrs->first && $authrs->first->webpassword) {
+        my ($db_b64salt, $db_b64hash) = split /\$/, $authrs->first->webpassword;
+        my $salt = de_base64($db_b64salt);
+        my $usr_b64hash = en_base64(bcrypt_hash({
+            key_nul => 1,
+            cost => NGCP::Panel::Utils::Auth::get_bcrypt_cost(),
+            salt => $salt,
+        }, $pass));
+        $auth_user = $authrs->search({webpassword => $db_b64salt . '$' . $usr_b64hash})->first;
+    }
 
     my $result = {};
 

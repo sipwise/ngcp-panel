@@ -16,7 +16,7 @@ use NGCP::Panel::Utils::BillingNetworks qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::BillingMappings qw();
 use NGCP::Panel::Utils::Billing qw();
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Utils::Phonebook;
 use NGCP::Panel::Utils::TimeSet;
 use NGCP::Panel::Utils::Preferences qw();
@@ -463,8 +463,8 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
     $c->detach('/denied_page')
         if($c->user->read_only);
 
-    my $default_pass = 'defaultresellerpassword';
-    my $saltedpass = NGCP::Panel::Utils::Admin::generate_salted_hash($default_pass);
+	my $default_pass = 'defaultresellerpassword';
+	my $saltedpass = NGCP::Panel::Utils::Auth::generate_salted_hash($default_pass);
 
     my $billing = $c->model('DB');
     my $now = NGCP::Panel::Utils::DateTime::current_local;

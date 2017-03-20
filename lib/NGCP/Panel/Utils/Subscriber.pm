@@ -17,6 +17,7 @@ use NGCP::Panel::Utils::License;
 use NGCP::Panel::Utils::Generic;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::RedisLocationResultSet;
+use NGCP::Panel::Utils::Auth;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
 use HTTP::Status qw(:constants);
@@ -661,6 +662,9 @@ sub create_subscriber {
             UUID::generate($pass_bin);
             UUID::unparse($pass_bin, $pass_str);
             $params->{password} = $pass_str;
+        }
+        if(defined $params->{webpassword}) {
+            $params->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($params->{webpassword});
         }
         my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
             uuid => $uuid_string,

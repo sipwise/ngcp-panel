@@ -41,7 +41,6 @@
                 elements.push({ value = subscriber.contact.email, desc = c.loc('Email Address') });
             END;
             elements.push({ value = subscriber.provisioning_voip_subscriber.webusername, desc = c.loc('Web Username') });
-            elements.push({ value = '******', desc = c.loc('Web Password') });
             elements.push({ value = subscriber.username _ '@' _ subscriber.domain.domain, desc = c.loc('SIP URI') });
             #elements.push({ value = , desc = c.loc('Primary Number') });
 
