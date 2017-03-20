@@ -548,7 +548,7 @@ sub _get_aliases_sorted_rs {
         is_primary => 0,
     },{
         #previously in ngcpcfg: #order_by => { -asc => ['is_primary', 'id'] },
-        order_by => { -asc => 'is_primary' },
+        order_by => { -asc => 'id' },
     });
 }
 
