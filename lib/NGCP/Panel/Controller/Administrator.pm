@@ -7,7 +7,7 @@ use NGCP::Panel::Form;
 use HTTP::Headers qw();
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -44,7 +44,7 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
         @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => $c->loc("Lawful Intercept") });
     }
     $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $cols);
-    $c->stash->{special_admin_login} = NGCP::Panel::Utils::Admin::get_special_admin_login();
+    $c->stash->{special_admin_login} = NGCP::Panel::Utils::Auth::get_special_admin_login();
     return;
 }
 
@@ -109,7 +109,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
             $form->values->{md5pass} = undef;
-            $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
+            $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash(delete $form->values->{password});
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -163,7 +163,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = { $c->stash->{administrator}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
-    if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Admin::get_special_admin_login()){
+    if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Auth::get_special_admin_login()){
        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::AdminSpecial", $c);
     }elsif($c->user->is_superuser) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Admin", $c);
@@ -202,10 +202,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form->values->{password} unless length $form->values->{password};
             if(exists $form->values->{password}) {
                 $form->values->{md5pass} = undef;
-                $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
+                $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash(delete $form->values->{password});
             }
             #should be after other fields, to remove all added values, e.g. reseller_id
-            if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Admin::get_special_admin_login()) {
+            if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Auth::get_special_admin_login()) {
                 foreach my $field ($form->fields){
                     if($field ne 'is_active'){
                         delete $form->values->{$field};
@@ -249,7 +249,7 @@ sub delete_admin :Chained('base') :PathPart('delete') :Args(0) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
-    my $special_user_login = NGCP::Panel::Utils::Admin::get_special_admin_login();
+    my $special_user_login = NGCP::Panel::Utils::Auth::get_special_admin_login();
     if($c->stash->{administrator}->login eq $special_user_login) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
@@ -288,7 +288,7 @@ sub delete_admin :Chained('base') :PathPart('delete') :Args(0) {
 sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     my ($self, $c) = @_;
 
-    my $special_user_login = NGCP::Panel::Utils::Admin::get_special_admin_login();
+    my $special_user_login = NGCP::Panel::Utils::Auth::get_special_admin_login();
     if($c->stash->{administrator}->login eq $special_user_login) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
@@ -302,7 +302,7 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     my ($pem, $p12);
     if ($c->req->body_parameters->{'gen.generate'}) {
         my $err;
-        my $res = NGCP::Panel::Utils::Admin::generate_client_cert($c, $c->stash->{administrator}, sub {
+        my $res = NGCP::Panel::Utils::Auth::generate_client_cert($c, $c->stash->{administrator}, sub {
             my $e = shift;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
@@ -374,7 +374,7 @@ sub toggle_openvpn :Chained('list_admin') :PathPart('openvpn/toggle') :Args(1) {
     my ($self, $c, $set_active) = @_;
 
     unless ($set_active eq 'confirm') {
-        my ($message, $error) = NGCP::Panel::Utils::Admin::toggle_openvpn($c, $set_active);
+        my ($message, $error) = NGCP::Panel::Utils::Auth::toggle_openvpn($c, $set_active);
         if ( $message ) {
             NGCP::Panel::Utils::Message::info(
                 c => $c,

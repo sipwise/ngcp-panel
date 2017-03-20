@@ -79,19 +79,6 @@ sub query_params {
             },
         },
         {
-            param => 'webpassword',
-            description => 'Search for specific webuser login password (exact match)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { 'provisioning_voip_subscriber.webpassword' => $q };
-                },
-                second => sub {
-                    return { join => 'provisioning_voip_subscriber' };
-                },
-            },
-        },
-        {
             param => 'domain',
             description => 'Filter for subscribers in specific domain',
             query => {
@@ -303,6 +290,7 @@ sub GET :Allow {
                 now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
             $contract_map{$contract->id} = 1;
             my $resource = $self->resource_from_item($c, $subscriber, $form);
+            delete $resource->{webpassword}; # since it's encrypted, no point to return it
             push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
