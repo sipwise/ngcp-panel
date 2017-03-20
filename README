@@ -2,7 +2,7 @@ NGCP-Panel
     A completely overhauled provisioning interface for the NGCP system.
 
 NAME
-    Build.PL - NGCP-Panel build system including test fixtures
+    Build.PL - NGCP-Panel build system including test fixtures test
 
 SYNOPSIS
         perl ./Build
