@@ -3,7 +3,7 @@ use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 extends 'NGCP::Panel::Form::Administrator::Reseller';
 
-use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Auth;
 
 for (qw(is_superuser lawful_intercept)) {
     has_field $_ => (type => 'Boolean',);

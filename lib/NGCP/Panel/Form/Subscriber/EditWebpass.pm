@@ -12,7 +12,7 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'webpassword' => (
-    type => 'Text',
+    type => 'Password',
     label => 'Web Password',
     required => 1,
     minlength => 6,
