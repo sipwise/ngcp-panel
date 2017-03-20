@@ -260,10 +260,10 @@ my %customer_map = ();
         primary_number => { cc => $cc, ac => $ac, sn => $sn },
         alias_numbers => $aliases,
     );
-    my $subscriber = _create_subscriber($customer,
-        primary_number => { cc => 888, ac => '2'.(scalar keys %subscriber_map), sn => $t },
-        alias_numbers => $aliases,
-        );
+    #my $subscriber = _create_subscriber($customer,
+    #    primary_number => { cc => 888, ac => '2'.(scalar keys %subscriber_map), sn => $t },
+    #    alias_numbers => $aliases,
+    #    );
 
     my $destinationset_1 = _create_cfdestinationset($subscriber,"dest1_$t",[{ destination => "1234",
         timeout => '10',
@@ -444,6 +444,7 @@ my %customer_map = ();
         { cc => $cc, ac => $ac, sn => $sn.'0004' },
         #{ cc => $cc, ac => $ac, sn => $sn.'0006' },
     ];
+    #make sure cloudpbx = 1
     my $subscriber = _create_subscriber($customer,
         pbx_extension => $ext,
         alias_numbers => $aliases,
@@ -738,12 +739,6 @@ my %customer_map = ();
 
           non_primary_alias_username => $new_pilot_aliases->[1]->{cc}.$new_pilot_aliases->[1]->{ac}.$new_pilot_aliases->[1]->{sn},
         },
-
-
-
-
-
-
 
     ]);
 
