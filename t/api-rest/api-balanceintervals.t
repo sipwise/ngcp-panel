@@ -5,7 +5,6 @@ use threads::shared qw();
 
 #use Sipwise::Base; #causes segfault when creating threads..
 use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
 use JSON qw();
 use Test::More;
 use Time::HiRes; #prevent warning from Time::Warp
@@ -53,18 +52,10 @@ if ($is_local_env) {
 my %config = $catalyst_config->getall();
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
-my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
 
 my ($ua, $req, $res);
-$ua = LWP::UserAgent->new;
-
-$ua->ssl_opts(
-        verify_hostname => 0,
-        SSL_verify_mode => 0,
-    );
-my $user = $ENV{API_USER} // 'administrator';
-my $pass = $ENV{API_PASS} // 'administrator';
-$ua->credentials($netloc, "api_admin_http", $user, $pass);
+use Test::Collection;
+$ua = Test::Collection->new()->ua();
 
 my $req_identifier;
 my $infinite_future;

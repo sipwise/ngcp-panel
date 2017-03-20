@@ -2,7 +2,6 @@ use warnings;
 use strict;
 
 use Net::Domain qw(hostfqdn);
-use LWP::UserAgent;
 use JSON qw();
 use Test::More;
 use URI::Escape qw();
@@ -17,7 +16,6 @@ unless ($ENV{TEST_RTC}) {
 }
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
-my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
 
 my $domain_name = $ENV{TEST_RTC_DOMAIN};
 unless ($domain_name) {
@@ -25,15 +23,9 @@ unless ($domain_name) {
 }
 
 my ($ua, $req, $res, $data);
-$ua = LWP::UserAgent->new;
 
-$ua->ssl_opts(
-        verify_hostname => 0,
-        SSL_verify_mode => 0,
-    );
-my $user = $ENV{API_USER} // 'administrator';
-my $pass = $ENV{API_PASS} // 'administrator';
-$ua->credentials($netloc, "api_admin_http", $user, $pass);
+use Test::Collection;
+$ua = Test::Collection->new()->ua();
 
 my ($domain_id);
 {

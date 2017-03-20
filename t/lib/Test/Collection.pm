@@ -19,6 +19,14 @@ use Data::Dumper;
 use File::Slurp qw/write_file/;
 use Storable;
 use Carp qw(cluck longmess shortmess);
+use IO::Uncompress::Unzip;
+
+has 'crt_path' => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => sub {'/tmp/apicert.pem';},
+);
 
 has 'data_cache_file' => (
     is => 'ro',
@@ -252,7 +260,46 @@ sub init_ua {
         verify_hostname => 0,
         SSL_verify_mode => 0,
     );
+    $self->init_ssl_cert($ua);
     return $ua;
+}
+sub init_ssl_cert {
+    my ($self, $ua) = @_;
+    unless(-f $self->crt_path) {
+        my $res = $ua->post(
+            $self->base_uri . '/api/admincerts/',
+            Content_Type => 'application/json',
+            Content => '{}'
+        );
+        unless($res->is_success) {
+            die "failed to fetch client certificate: " . $res->status_line . "\n";
+        }
+        my $zip = $res->decoded_content;
+        my $z = IO::Uncompress::Unzip->new(\$zip, MultiStream => 0, Append => 1);
+        my $data;
+        while(!$z->eof() && (my $hdr = $z->getHeaderInfo())) {
+            unless($hdr->{Name} =~ /\.pem$/) {
+                # wrong file, just read stream, clear buffer and try next
+                while($z->read($data) > 0) {}
+                $data = undef;
+                $z->nextStream();
+                next;
+            }
+            while($z->read($data) > 0) {}
+            last;
+        }
+        $z->close();
+        unless($data) {
+            die "failed to find PEM file in client certificate zip file\n";
+        }
+        open my $fh, ">:raw", $self->crt_path or die "failed to open " . $self->crt_path . ": $!\n";
+        print $fh $data;
+        close $fh;
+    }
+    $ua->ssl_opts(
+        SSL_cert_file => $self->crt_path,
+        SSL_key_file => $self->crt_path,
+    );
 }
 sub runas {
     my $self = shift;
