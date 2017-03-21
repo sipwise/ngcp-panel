@@ -23,6 +23,7 @@ has_field 'display_name' => (
         rel => ['tooltip'],
         title => ['The person\'s name, which is then used in XMPP contact lists or auto-provisioned phones, and which can be used as network-provided display name in SIP calls.']
     },
+    maxlength => 128,
 );
 
 has_field 'alias_numbers' => (

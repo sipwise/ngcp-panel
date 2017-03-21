@@ -59,6 +59,7 @@ has_field 'display_name' => (
     },
     required => 0,
     label => 'Display Name',
+    maxlength => 128,
 );
 
 has_field 'email' => (
