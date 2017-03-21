@@ -1193,7 +1193,7 @@ sub field_to_destination {
         my ($vuser, $vdomain) = split(/\@/, $v);
         $vdomain = $domain unless($vdomain);
 
-        if($c && $c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        if($c && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
             $vuser = NGCP::Panel::Utils::Subscriber::apply_rewrite(
                 c => $c, subscriber => $sub, number => $vuser, direction => 'callee_in',
             );
