@@ -657,6 +657,24 @@ sub update_item {
 
         try {
             my $vtype = ref $resource->{$pref};
+            my $maxlen = 128;
+
+            if($vtype eq "") {
+                if(length($resource->{$pref}) > $maxlen) {
+                    $c->log->error("preference '$pref' exceeds maximum length of $maxlen characters");
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Preference '$pref' exceeds maximum length of $maxlen characters");
+                    return;
+                }
+            } elsif($vtype eq "ARRAY") {
+                foreach my $a(@{ $resource->{$pref} }) {
+                    if(length($a) > $maxlen) {
+                        $c->log->error("element in preference '$pref' exceeds maximum length of $maxlen characters");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Element in preference '$pref' exceeds maximum length of $maxlen characters");
+                        return;
+                    }
+                }
+            }
+
             if($meta->data_type eq "boolean" && JSON::is_bool($resource->{$pref})) {
                 $vtype = "";
             }

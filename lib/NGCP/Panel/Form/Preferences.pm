@@ -110,6 +110,7 @@ sub field_list {
                 $field = {
                     name => $meta->attribute,
                     type => 'Text',
+                    maxlength => 128,
                 };
             } else {
                 # is only used to add a new field
@@ -118,6 +119,7 @@ sub field_list {
                     type => 'Text',
                     do_label => 0,
                     do_wrapper => 1,
+                    maxlength => 128,
                     element_attr => {
                         class => ['ngcp_pref_input'],
                     }
