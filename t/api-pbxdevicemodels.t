@@ -113,7 +113,7 @@ foreach my $type(qw/extension phone/){
         $_[0]->{json}->{model} .= $type."TEST_".($_[1]->{i} + 3).'_'.$time;
         $_[0]->{json}->{connactable_devices} = $connactable_devices->{ get_connectable_type( $type) }->{ids};
     } );
-    $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
+    $test_machine->check_get2put( { data_cb => sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } } );
 
     $test_machine->check_bundle();
 
