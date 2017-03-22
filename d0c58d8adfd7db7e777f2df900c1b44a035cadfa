@@ -287,6 +287,29 @@
       "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_06c19ae4",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-03-22T15:27:11Z",
+      "side": 1,
+      "message": "if that is needed for the tested case, it should be narrowed ie\n\nif (\u003cown_cli param specified\u003e) {\n  $resource-\u003e{direction} \u003d \"out\"\n} else {\n  $resource-\u003e{direction} \u003d \"in\"\n}",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 38
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
