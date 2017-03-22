@@ -1,0 +1,28 @@
+[% site_config.title = c.loc('Recorded Files') -%]
+
+<div class="row">
+    <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+
+<div class="ngcp-separator"></div>
+
+[%
+    helper.name = c.loc('Recorded files for this call');
+    helper.column_sort = 'id';
+    helper.dt_columns = streams_dt_columns;
+
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_recording_streams', c.req.captures);
+
+    helper.dt_buttons = [
+        { name = c.loc('Play'), uri = "streams/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+    ];
+   
+
+    PROCESS 'helpers/datatables.tt';
+%]
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

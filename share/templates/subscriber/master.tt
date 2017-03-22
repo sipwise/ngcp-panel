@@ -225,6 +225,44 @@ function process_pbx_items(moveId,direction){
         </div>
     </div>
 
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_recordings">[% c.loc('Call Recordings') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_recordings">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Call Recordings');
+    helper.identifier = 'recordings';
+    helper.column_sort = 'id';
+    helper.dt_columns = rec_dt_columns;
+
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_recordings', [c.req.captures.0]);
+
+    
+    IF ((c.user.roles == "admin" || c.user.roles == "reseller") && !c.user.read_only) || c.user.roles == "subscriber" || c.user.roles == "subscriberadmin";
+    helper.dt_buttons = [
+        { name = c.loc('Call Details'), uri = "/subscriber/" _ subscriber.id _ "/calls?callid=' + encodeURIComponent(full.call_id_url) + '", class = 'btn-small btn-tertiary', icon = 'icon-search' },
+        { name = c.loc('Recorded Files'), uri = "details/recording/'+full.id+'/streams", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+        { name = c.loc('Delete'), uri = "details/recording/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+    ELSE;
+    helper.dt_buttons = [
+        { name = c.loc('Call Details'), uri = "/subscriber/" _ subscriber.id _ "/calls?callid=' + encodeURIComponent(full.call_id_url) + '", class = 'btn-small btn-tertiary', icon = 'icon-search' },
+        { name = c.loc('Files'), uri = "details/recording/'+full.id+'/streams", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+    ];
+    END;
+   
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
+
+
+
 
     <div class="accordion-group">
         <div class="accordion-heading">

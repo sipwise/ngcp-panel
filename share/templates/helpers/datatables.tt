@@ -108,25 +108,37 @@ $(document).ready(function() {
             {   "mRender": function ( data, type, full ) {
                     var html = '' +
                     '<div class="sw_actions pull-right">';
-                    [% backuri = backuri | uri%]
-                    [% FOR button IN helper.dt_buttons -%]
-                      [% confirm_delete = button.name == c.loc("Delete") ? 'data-confirm="Delete"' : '' -%]
-                      [% confirm_delete = button.name == c.loc("Terminate") ? 'data-confirm="Terminate"' : confirm_delete -%]
-                      [%IF !( button.uri.search('[\?\&]back=|^javascript:') ); %]
-                        [% button.uri = button.uri _ '?back=' _ backuri %]
-                      [%END%]
-                      [% IF button.condition -%]
-                        if([% button.condition %]) {
-                      [% END -%]
+                    [% 
+                        backuri = backuri | uri;
+                        FOR button IN helper.dt_buttons;
+                            separator = '?';
+                            confirm_delete = button.name == c.loc("Delete") ? 'data-confirm="Delete"' : '';
+                            confirm_delete = button.name == c.loc("Terminate") ? 'data-confirm="Terminate"' : confirm_delete;
+                            IF button.uri.search('\?');
+                                separator = '&';
+                            END;
+                            IF !( button.uri.search('[\?\&]back=|^javascript:') );
+                                button.uri = button.uri _ separator _ 'back=' _ backuri;
+                            END;
+                            IF button.condition;
+                    -%]
+                                if([% button.condition %]) {
+                    [% 
+                            END;
+                    -%]
                         html +=
                            '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %][%IF button.onclick -%] onclick="[%button.onclick%]"[%END%][%IF button.tooltip -%] rel="tooltip" data-original-title="[%button.tooltip%]"[%END%] [% button.attributes %]>' +
                               '<i class="[% button.icon %]"></i> [% button.name %]' +
                             '</a>';
 
-                      [% IF button.condition -%]
+                    [%
+                            IF button.condition;
+                    -%]
                         }
-                      [% END -%]
-                    [% END -%]
+                    [% 
+                            END;
+                        END;
+                    -%]
                     html += '</div>';
                     return html;
                 },
