@@ -93,7 +93,7 @@ foreach my $api (@apis){
     }
     #(undef, $preferences_put->{content}) = $test_machine->request_put($preferences->{content},$preferences->{uri});
     #we don't check read_only flag when update preferences?
-    (undef, $preferences_put->{content}) = $test_machine->check_put2get({data_in=>$preferences->{content},uri=>$preferences->{uri}},undef, 1);
+    (undef, $preferences_put->{content}) = $test_machine->check_put2get({data_in=>$preferences->{content},uri=>$preferences->{uri}},undef, { skip_compare => 1 });
     (undef, $preferences_put->{content}) = $test_machine->request_put($preferences_old,$preferences->{uri});
 }
 
