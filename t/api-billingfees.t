@@ -123,8 +123,8 @@ $test_machine->check_bundle();
     ok(exists $item_first_get->{destination}        && length($item_first_get->{destination}) > 0, "check existence of destination");
 }
 {
-    my($res,$item_put,$req) = $test_machine->check_get2put();
-    $test_machine->check_embedded($item_put->{content});
+    my($put_out,$get_out) = $test_machine->check_get2put();
+    $test_machine->check_embedded($get_out->{content});
 }
 {
     my $t = time;
