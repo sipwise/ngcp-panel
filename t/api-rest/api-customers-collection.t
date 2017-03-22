@@ -63,7 +63,8 @@ SKIP:{
     ($res,$mod_customer) = $test_machine->check_patch_correct( [ { op => 'replace', path => '/subscriber_email_template_id', value => $test_machine->DATA_ITEM->{subscriber_email_template_id} } ] );
     is($mod_customer->{subscriber_email_template_id}, $test_machine->DATA_ITEM->{subscriber_email_template_id}, "check patched subscriber_email_template_id:".$mod_customer->{subscriber_email_template_id});
 
-    ok(length($mod_customer->{subscriber_email_template_id}) > 8 , "check "");
+    ok(length($mod_customer->{create_timestamp}) > 8 , "check create_timestamp not empty ".$mod_customer->{create_timestamp});
+    ok(length($mod_customer->{modify_timestamp}) > 8 , "check modify_timestamp not empty ".$mod_customer->{modify_timestamp});
     
     $test_machine->check_bundle();
 }
