@@ -34,6 +34,24 @@
       "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_06d87a52",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-03-22T10:20:57Z",
+      "side": 1,
+      "message": "P.S. so with the change it will look like\n\ndirection: out\nown_cli: 4312345\nother_cli: malicious_call\n\nwhich respresents what happened.",
+      "parentUuid": "7a1969be_a61fe608",
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
