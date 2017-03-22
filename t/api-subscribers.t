@@ -74,6 +74,8 @@ $test_machine->DATA_ITEM_STORE($fake_data_processed);
 $test_machine->form_data_item();
 
 my $remote_config = $test_machine->get_catalyst_config;
+#modify time changes on every data change, and primary_number_id on every primary number change
+my $put2get_check_params = {ignore_fields => [qw/modify_timestamp create_timestamp primary_number_id/]};
 
 {
 #20369
@@ -103,7 +105,7 @@ my $remote_config = $test_machine->get_catalyst_config;
         $_[0]->{username} .= time().'_'.$_[1]->{i} ;
     } );
     $test_machine->check_bundle();
-    $test_machine->check_get2put();
+    $test_machine->check_get2put(undef,{},$put2get_check_params);
     $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $pilot and $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
@@ -143,12 +145,12 @@ my $remote_config = $test_machine->get_catalyst_config;
 
 #1
     $subscriber->{content}->{primary_number} = $intentional_primary_number;
-    ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
+    ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
     is($preferences_get->{content}->{cli}, $intentional_cli, "1. check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
 #/1
 #2
     delete $subscriber->{content}->{primary_number};
-    ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
+    ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
     is($preferences_get->{content}->{cli}, $intentional_cli, "2. check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
 #/2
     #now prepare preferences for zero situation, when synchronization will be restarted again
@@ -158,7 +160,7 @@ my $remote_config = $test_machine->get_catalyst_config;
     if($remote_config->{config}->{numbermanagement}->{auto_sync_cli}){
     #3
         $subscriber->{content}->{primary_number} = $intentional_primary_number;
-        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
+        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
         is($preferences_get->{content}->{cli}, number_as_string($intentional_primary_number), "check that cli was created on subscriber phones update: $preferences_get->{content}->{cli} == ".number_as_string($intentional_primary_number) );
     #/3
         $intentional_primary_number = {
@@ -168,12 +170,12 @@ my $remote_config = $test_machine->get_catalyst_config;
         };
     #4
         $subscriber->{content}->{primary_number} = $intentional_primary_number;
-        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
+        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params );
         is($preferences_get->{content}->{cli}, number_as_string($intentional_primary_number), "check that cli was updated on subscriber phones update: $preferences_get->{content}->{cli} == ".number_as_string($intentional_primary_number) );
     #/4
     #5
         delete $subscriber->{content}->{primary_number};
-        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put);
+        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
         is($preferences_get->{content}->{cli}, undef, "check that cli was deleted on subscriber phones update");
     #/5
     }
@@ -181,7 +183,7 @@ my $remote_config = $test_machine->get_catalyst_config;
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $pilot and $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
 }
-if($remote_config->{config}->{features}->{cloudpbx}){
+if($remote_config->{features}->{cloudpbx}){
     {
 #18601
         diag("18601: config->features->cloudpbx: ".$remote_config->{config}->{features}->{cloudpbx}.";\n");
@@ -207,13 +209,13 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         });
         $members->[1]->{content}->{pbx_group_ids} = [];
         diag("1. Check that member will return empty groups after put groups empty");
-        my($member_put,$member_get) = $test_machine->check_put2get($members->[1]->{content},undef,$members->[1]->{location});
+        my($member_put,$member_get) = $test_machine->check_put2get($members->[1],undef, $put2get_check_params);
         is_deeply( $members->[1]->{content}->{pbx_group_ids}, [], "Check that member will return empty groups after put groups empty");
 
         $members->[1]->{content}->{pbx_group_ids} = [map { $groups->[$_]->{content}->{id} } (2,1)];
         diag("2. Check that member will return groups as they were specified");
         #fix for the  5415 prevents changing members order in the group, this is why resulting groups order for the member may differ from the input
-        #($member_put,$member_get) = $test_machine->check_put2get($members->[0]->{content},undef,$members->[0]->{location});
+        #($member_put,$member_get) = $test_machine->check_put2get($members->[1], undef, $put2get_check_params);
 
         my($res,$content) = $test_machine->request_put(@{$members->[1]}{qw/content location/});
         $test_machine->http_code_msg(200, "PUT for members[1] was successful", $res, $content);
@@ -223,17 +225,17 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
         $groups->[1]->{content}->{pbx_groupmember_ids} = [map { $members->[$_]->{content}->{id} } (2,1,0)];
         diag("3. Check that group will return members as they were specified");
-        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]->{content},undef,$groups->[1]->{location});
+        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1], undef, $put2get_check_params);
 
         $groups->[1]->{content}->{pbx_groupmember_ids} = [];
         diag("4. Check that group will return empty members after put members empty");
-        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1]->{content},undef,$groups->[1]->{location});
+        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1], undef, $put2get_check_params);
 #5415 WF
         diag("5415: check that groups management doesn't change members order;\n");
 
         diag("5415:Set members order for the group;\n");
         $groups->[1]->{content}->{pbx_groupmember_ids} = [ map { $members->[$_]->{content}->{id} } ( 0, 2, 1 ) ];
-        $test_machine->check_put2get($groups->[1]->{content},undef,$groups->[1]->{location});
+        ($group_put,$group_get)= $test_machine->check_put2get($groups->[1], undef, $put2get_check_params);
 
         diag("5415:Touch one of the members;\n");
         $members->[2]->{content}->{pbx_group_ids} = [ map { $groups->[$_]->{content}->{id} } (2,1)];
@@ -248,7 +250,10 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         my(undef, $group_get_after) = $test_machine->check_item_get($groups->[1]->{location});
 
         is_deeply($groups->[1]->{content}->{pbx_groupmember_ids}, $group_get_after->{pbx_groupmember_ids}, "Check group members order after touching it's member");
-        
+
+#7453 - we have modifications, so we can check modify_timestamp
+        ok(length($members_2_after_touch->{create_timestamp}) > 8 , "check create_timestamp not empty ".$members_2_after_touch->{create_timestamp});
+        ok(length($members_2_after_touch->{modify_timestamp}) > 8 , "check modify_timestamp not empty ".$members_2_after_touch->{modify_timestamp});
         
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     }
