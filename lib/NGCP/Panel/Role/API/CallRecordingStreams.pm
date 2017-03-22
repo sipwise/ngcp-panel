@@ -1,0 +1,152 @@
+package NGCP::Panel::Role::API::CallRecordingStreams;
+use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
+use parent 'NGCP::Panel::Role::API';
+
+use boolean qw(true);
+use NGCP::Panel::Utils::DataHal qw();
+use NGCP::Panel::Utils::DataHalLink qw();
+use HTTP::Status qw(:constants);
+use NGCP::Panel::Form::CallRecording::Stream;
+use NGCP::Panel::Utils::Subscriber;
+
+sub _item_rs {
+    my ($self, $c) = @_;
+
+    my $item_rs = $c->model('DB')->resultset('recording_streams');
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+
+        my $res_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+            'contact.reseller_id' => $c->user->reseller_id
+        }, {
+            join => { 'contract' => 'contact' }
+        });
+
+        $item_rs = $item_rs->search({
+            status => { -in => [qw/completed confirmed/] },
+            'recording_metakeys.key' => 'uuid',
+            'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
+        },{
+            join => { 'recording_call' => 'recording_metakeys' },
+        });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+
+        my $res_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+            'account_id' => $c->user->account_id
+        });
+
+        $item_rs = $item_rs->search({
+            status => { -in => [qw/completed confirmed/] },
+            'recording_metakeys.key' => 'uuid',
+            'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
+        },{
+            join => { 'recording_call' => 'recording_metakeys' },
+        });
+    } elsif ($c->user->roles eq "subscriber") {
+        $item_rs = $item_rs->search({
+            status => { -in => [qw/completed confirmed/] },
+            'recording_metakeys.key' => 'uuid',
+            'recording_metakeys.value' => $c->user->uuid,
+        },{
+            join => { 'recording_call' => 'recording_metakeys' },
+        });
+    }
+
+    if($c->req->params->{subscriber_id}) {
+        my $res_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+            id => $c->req->params->{subscriber_id}
+        });
+        $item_rs = $item_rs->search({
+            'recording_metakeys.key' => 'uuid',
+            'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
+        },{
+            join => { 'recording_call' => 'recording_metakeys' },
+        });
+    }
+    return $item_rs;
+}
+
+sub get_form {
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::CallRecording::Stream->new;
+}
+
+sub hal_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my $hal = NGCP::Panel::Utils::DataHal->new(
+        links => [
+            NGCP::Panel::Utils::DataHalLink->new(
+                relation => 'curies',
+                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+                name => 'ngcp',
+                templated => true,
+            ),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:callrecordings', href => sprintf("/api/callrecordings/%d", $item->call)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:callrecordingfiles', href => sprintf("/api/callrecordingfiles/%d", $item->id)),
+        ],
+        relation => 'ngcp:'.$self->resource_name,
+    );
+
+    my $resource = $self->resource_from_item($c, $item, $form);
+    $hal->resource($resource);
+    return $hal;
+}
+
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my %resource = ();
+    $resource{id} = int($item->id);
+    $resource{type} = $item->output_type;
+    $resource{recording_id} = $item->call;
+    $resource{format} = lc($item->file_format);
+    $resource{sample_rate} = $item->sample_rate;
+    $resource{channels} = $item->channels;
+
+    my $datetime_fmt = DateTime::Format::Strptime->new(
+        pattern => '%F %T',
+    );
+    my $tz = $c->req->param('tz');
+    unless($tz && DateTime::TimeZone->is_valid_name($tz)) {
+        $tz = undef;
+    }
+    if($item->start_timestamp) {
+        if($tz) {
+            $item->start_timestamp->set_time_zone($tz);
+        }
+        $resource{start_time} = $datetime_fmt->format_datetime($item->start_timestamp);
+        # no need to show millisec precision here, I guess...
+        #$resource{start_time} .= '.'.$item->start_timestamp->millisecond
+        #    if $item->start_timestamp->millisecond > 0.0;
+    } else {
+        $resource{start_time} = undef;
+    }
+    if($item->end_timestamp) {
+        if($tz) {
+            $item->end_timestamp->set_time_zone($tz);
+        }
+        $resource{end_time} = $datetime_fmt->format_datetime($item->end_timestamp);
+        #$resource{end_time} .= '.'.$item->end_timestamp->millisecond
+        #    if $item->end_timestamp->millisecond > 0.0;
+    } else {
+        $resource{end_time} = undef;
+    }
+
+    return \%resource;
+}
+
+sub item_by_id {
+    my ($self, $c, $id) = @_;
+    my $item_rs = $self->item_rs($c);
+    return $item_rs->find($id);
+}
+
+1;
+# vim: set tabstop=4 expandtab:

@@ -125,6 +125,18 @@ sub epoch_local {
     );
 }
 
+sub epoch_tz {
+    my $epoch = shift;
+    my $tz = shift;
+    if(!$tz || !DateTime::TimeZone->is_valid_name($tz)) {
+        $tz = DateTime::TimeZone->new(name => 'local');
+    }
+    return DateTime->from_epoch(
+        time_zone => $tz,
+        epoch => $epoch,
+    );
+}
+
 sub from_string {
     my $s = shift;
 
