@@ -310,6 +310,30 @@
       "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_89363de6",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-03-22T16:12:17Z",
+      "side": 1,
+      "message": "thinking of gerhards consideration: when filtering with subscriber_id\u003dmynumber; a callist can look like\n\nsrc:dst\nmynumber:friend1 -\u003eout\nmynumber:friend2 -\u003eout\nfriend3:mynumber -\u003ein\nfriend4:mynumber -\u003ein\n\n\"$sub-\u003euuid eq $item-\u003edestination_user_id\" is true for the lower 2, so you want to declare them as out as well",
+      "parentUuid": "7a1969be_06c19ae4",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 38
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
