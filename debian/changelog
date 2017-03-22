@@ -1,3 +1,84 @@
+ngcp-panel (5.2.1.0+0~mr5.2.1.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [5687a42] TT#4166 I18N dump: snapshot 2017.02.04-08.25.09
+  * [bf4f25b] TT#4166 I18N dump: snapshot 2017.02.07-08.21.34
+  * [0bc2aaa] TT#4166 I18N dump: snapshot 2017.02.08-07.45.18
+  * [1fa7492] TT#4166 I18N dump: snapshot 2017.02.16-08.48.44
+  * [cd030f7] TT#4166 I18N dump: snapshot 2017.02.23-09.07.53
+  * [f4bfa5e] TT#4166 I18N dump: snapshot 2017.03.20-12.16.59
+
+  [ Andreas Granig ]
+  * [e458985] TT#1678 Implement SOAP Intercept API as transition
+  * [dd6f751] TT#10135 Fix displaying emergency mode indicator
+  * [c02a56d] MT#15269 Test script for customer batch creation
+  * [2eff3bf] TT#9702 Implement I-New SMS charging.
+  * [8ca2536] TT#9702 Conditionally load inew charging module
+  * [cfd3a12] TT#10830 Fix calculating multi-part sms chunking
+  * [0424a46] TT#11443 Explicitly set utf-8 encoding for pcc req
+  * [a22231a] TT#10151 Don't add trailing slash in 3pcc api url
+  * [c9ca8ba] TT#12660 Also send latin1 as gsm encoding.
+  * [8ad683d] TT#12601 Move admin pass to bcrypt and drop cert
+  * [fdf32a8] TT#1678 Properly type SOAP responses using WSDL
+  * [5918c16] TT#12601 API must implement bcrypt auth/migration
+  * [b60b439] TT#13249 Implement API to create admin client cert
+  * [d117dc3] TT#13301 Use cached API cert for API test speed-up
+  * [77fb204] TT#13256 Validate length of preference values
+  * [096749e] TT#13262 Fix wrong condition in field_to_destination
+  * [98e4b64] TT#12662 Correctly calculate number of parts
+  * [b4ce615] TT#13249 Fix api client ssl cert test
+
+  [ Jozef Kenyeres ]
+  * [9c91836] TT#9212 Grandstream redirection paramteres included
+
+  [ Gerhard Jungwirth ]
+  * [41fe448] TT#9829 calllist call direction out if intra
+  * [fcacadc] TT#4335 api subscriberpreferences for subadmin
+  * [dec72bb] TT#4335 speeddials subscriberadmin API
+  * [205bffc] TT#10402 prevent unban with readonly user
+  * [9aef1f7] TT#10131 show passwords only when flag is set
+  * [7a5c1eb] TT#4335 callforwards for subadmin API
+
+  [ Irina Peshinskaya ]
+  * [a73fc9d] TT#9212 Grandstream provisioning draft
+  * [1497232] TT#9212 Fix redirect_params access
+  * [d547234] TT#7932 Remove return by last from the pbxdevicefirmwares
+  * [5a80eb6] TT#8950 Decorate readonly fields in the api doc
+  * [a58878e] TT#8773 Remove readonly fields from resource in validate_fields
+  * [9663c1c] TT#9520 Add test script for the SMS API
+  * [41f3240] TT#9309 Introduce local version of the Data::HAL with default forcearray
+  * [2073b9e] TT#9309 Introduce local version of the Data::HAL::Link
+  * [d2cbe01] TT#9309 Switch off force array until other tools became ready
+
+  [ Michael Prokop ]
+  * [7227253] TT#11003 Depend on lsb-base for init script's lsb functions
+  * [b38d114] TT#12251 Fix unescaped left brace in regex of InvoiceTemplate.pm
+
+  [ Guillem Jover ]
+  * [0415bed] TT#2399 Add grafana service config
+
+  [ Rene Krenn ]
+  * [22bd45d] TT#10963 cash_balance_interval not returned in euro
+  * [5007fd5] TT#9850 remove interceptions when terminating a reseller
+  * [351a0b8] MT#23817 TT#11431 call_id missing in api/calls response
+  * [b7daef7] TT#11300 fix api/faxes number normalization for pbx cases
+
+  [ Kirill Solomko ]
+  * [1976535] TT#10151 PartyCallControl apply url placeholders
+  * [a12fe6b] TT#1477 MaliciousCalls API fix param filter by caller/callee/callid
+  * [d652a80] Revert "TT#1477 MaliciousCalls API fix param filter by caller/callee/callid"
+  * [9e48eb7] TT#11477 MaliciousCalls API fix param filter by caller/callee/callid
+
+  [ Victor Seva ]
+  * [771e1f9] MT#22161 update Spanish translation
+  * [6e915be] TT#12665 clean shellcheck warnings
+  * [d3e2662] TT#12973 debian: set proper source format
+
+  [ Alexander Lutay ]
+  * [bc9a195] TT#13249 Fix b60b43: fix api-root.t add admincerts
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 22 Mar 2017 10:57:34 +0100
+
 ngcp-panel (5.2.0.0+0~mr5.2.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
