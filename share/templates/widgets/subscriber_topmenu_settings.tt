@@ -7,6 +7,7 @@
     <ul class="dropdown-menu">
         <li><a href="[% c.uri_for_action('/subscriber/calllist', [c.user.voip_subscriber.id]) %]">[% c.loc('Call List') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/voicemails', [c.user.voip_subscriber.id]) %]">[% c.loc('Voicebox Messages') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/recordings', [c.user.voip_subscriber.id]) %]">[% c.loc('Call Recordings') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/reglist', [c.user.voip_subscriber.id]) %]">[% c.loc('Registered Devices') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/preferences', [c.user.voip_subscriber.id]) %]">[% c.loc('Subscriber Settings') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/webpass', [c.user.voip_subscriber.id]) %]">[% c.loc('User Details') %]</a></li>
