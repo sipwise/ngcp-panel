@@ -1133,16 +1133,23 @@ sub clear_test_data_dependent{
 }
 
 sub check_get2put{
-    my($self, $put_in, $get_in) = @_;
+    my($self, $put_in, $get_in, $params) = @_;
 
     my($put_out,$get_out);
 
+    $params //= {};
     $get_in //= {};
     $put_in //= {};
-    $get_in->{ignore_fields} //= [];
-    $put_in->{ignore_fields} //= [];
+
     $get_in->{uri} //= $put_in->{uri};
     $put_in->{uri} //= $get_in->{uri};
+
+    $get_in->{ignore_fields} //= [];
+    $put_in->{ignore_fields} //= [];
+    $params->{ignore_fields} //= [];
+    my $ignore_fields = [@{$params->{ignore_fields}}, @{$get_in->{ignore_fields}}, @{$put_in->{ignore_fields}}];
+    delete $get_in->{ignore_fields};
+    delete $put_in->{ignore_fields};
 
     @$get_out{qw/response content request/} = $self->check_item_get($get_in->{uri});
     $put_out->{content_in} = clone($get_out->{content});
@@ -1151,7 +1158,7 @@ sub check_get2put{
     # check if put is ok
     (defined $put_in->{data_cb}) and $put_in->{data_cb}->($put_out->{content_in});
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
-    foreach my $field (@{$get_in->{ignore_fields}}, @{$put_in->{ignore_fields}}){
+    foreach my $field (@{$ignore_fields}){
         delete $get_out->{content}->{$field};
         delete $put_out->{content}->{$field};
     }
@@ -1161,17 +1168,27 @@ sub check_get2put{
 }
 
 sub check_put2get{
-    my($self, $put_in, $get_in, $check_cb_or_switch) = @_;
+    my($self, $put_in, $get_in, $params) = @_;
 
     my($put_out,$get_out);
 
+    $params //= {};
     $get_in //= {};
     $put_in->{uri} //= $put_in->{location};
     $get_in->{uri} //= $put_in->{uri};
     $put_in->{uri} //= $get_in->{uri};
     $get_out->{uri} = $get_in->{uri};
+
+    $get_in->{ignore_fields} //= [];
+    $put_in->{ignore_fields} //= [];
+    $params->{ignore_fields} //= [];
+    my $ignore_fields = [@{$params->{ignore_fields}}, @{$get_in->{ignore_fields}}, @{$put_in->{ignore_fields}}];
+    delete $get_in->{ignore_fields};
+    delete $put_in->{ignore_fields};
+
     $put_in->{data_in} //=  $put_in->{content};
     $put_out->{content_in} = $self->process_data($put_in->{data_cb}, $put_in->{data_in});
+
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
     $self->http_code_msg(200, "check_put2get: check put successful",$put_out->{response}, $put_out->{content});
 
@@ -1182,10 +1199,14 @@ sub check_put2get{
     delete $put_out->{content_in}->{_embedded};
     my $item_id = delete $get_out->{content}->{id};
     my $item_id_in = delete $put_out->{content_in}->{id};
-    if('CODE' eq ref $check_cb_or_switch){
-        $check_cb_or_switch->($put_out,$get_out);
+    foreach my $field (@{$ignore_fields}){
+        delete $get_out->{content}->{$field};
+        delete $put_out->{content_in}->{$field};
     }
-    if(!$check_cb_or_switch || 'CODE' eq ref $check_cb_or_switch){
+    if('CODE' eq ref $params->{compare_cb}){
+        $params->{compare_cb}->($put_out,$get_out);
+    }
+    if(!$params->{skip_compare}){
         is_deeply($get_out->{content}, $put_out->{content_in}, "$self->{name}: check_put2get: check PUTed item against GETed item");
     }
     $get_out->{content}->{id} = $item_id;
@@ -1194,13 +1215,23 @@ sub check_put2get{
 }
 
 sub check_post2get{
-    my($self, $post_in, $get_in) = @_;
+    my($self, $post_in, $get_in, $params) = @_;
     $get_in //= {};
     #$post = {data_in=>,data_cb=>};
     #$get = {uri=>}
     #return
     #$post={response,content,request,data,location}
     #$get=={response,content,request,uri}
+
+    $get_in->{ignore_fields} //= [];
+    $post_in->{ignore_fields} //= [];
+    $params->{ignore_fields} //= [];
+    my $ignore_fields = [@{$params->{ignore_fields}}, @{$get_in->{ignore_fields}}, @{$post_in->{ignore_fields}}];
+    delete $get_in->{ignore_fields};
+    delete $post_in->{ignore_fields};
+
+
+
     my($post_out,$get_out);
     @{$post_out}{qw/response content request data/} = $self->check_item_post( $post_in->{data_cb}, $post_in->{data_in} );
     $self->http_code_msg(201, "check_post2get: POST item '".$self->name."' for check_post2get", @{$post_out}{qw/response content/});
@@ -1211,20 +1242,48 @@ sub check_post2get{
 
     delete $get_out->{content}->{_links};
     my $item_id = delete $get_out->{content}->{id};
-    is_deeply($post_out->{data}, $get_out->{content}, "$self->{name}: check_post2get: check POSTed '".$self->name."' against fetched");
+    foreach my $field (@$ignore_fields){
+        delete $get_out->{content}->{$field};
+        delete $post_out->{data}->{$field};
+    }
+    if('CODE' eq ref $params->{compare_cb}){
+        $params->{compare_cb}->($post_out->{data}, $get_out->{content});
+    }
+    if(!$params->{skip_compare}){
+        is_deeply($post_out->{data}, $get_out->{content}, "$self->{name}: check_post2get: check POSTed '".$self->name."' against fetched");
+    }
     $get_out->{content}->{id} = $item_id;
 
     return ($post_out, $get_out);
 }
 sub put_and_get{
-    my($self, $put_in, $get_in) = @_;
+    my($self, $put_in, $get_in,$params) = @_;
     my($put_out,$put_get_out,$get_out);
+
+    $params //= ();
+
+    $get_in->{ignore_fields} //= [];
+    $put_in->{ignore_fields} //= [];
+    $params->{ignore_fields} //= [];
+    my $ignore_fields = [@{$params->{ignore_fields}}, @{$get_in->{ignore_fields}}, @{$put_in->{ignore_fields}}];
+    delete $get_in->{ignore_fields};
+    delete $put_in->{ignore_fields};
+
     @{$put_out}{qw/response content request/} = $self->request_put($put_in->{content},$put_in->{uri});
     @{$put_get_out}{qw/response content request/} = $self->check_item_get($put_in->{uri});
     @{$get_out}{qw/response content request/} = $self->check_item_get($get_in->{uri});
     delete $put_get_out->{content_in}->{_links};
     delete $put_get_out->{content_in}->{_embedded};
-    is_deeply($put_in->{content}, $put_get_out->{content}, "$self->{name}: check that '$put_in->{uri}' was updated on put;");
+    foreach my $field (@$ignore_fields){
+        delete $put_get_out->{content}->{$field};
+        delete $put_in->{content}->{$field};
+    }
+    if('CODE' eq ref $params->{compare_cb}){
+        $params->{compare_cb}->($put_in->{content}, $put_get_out->{content});
+    }
+    if(!$params->{skip_compare}){
+        is_deeply($put_in->{content}, $put_get_out->{content}, "$self->{name}: check put_and_get: check that '$put_in->{uri}' was updated on put;");
+    }
     return ($put_out,$put_get_out,$get_out);
 }
 
