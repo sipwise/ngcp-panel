@@ -8,6 +8,7 @@ use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
 use Data::Dumper;
 use MIME::Base64 qw(encode_base64url decode_base64url);
+use File::Slurp qw/read_file/;
 
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -2245,6 +2246,15 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "origtime", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Time') },
         { name => "duration", search => 1, title => $c->loc('Duration') },
     ]);
+    $c->stash->{rec_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "start_timestamp", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Time') },
+    ]);
+    $c->stash->{streams_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "output_type", title => $c->loc('Type') },
+        { name => "file_format", title => $c->loc('Format') },
+    ]);
     $c->stash->{reg_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
         #left untouchable, although user_agent is always the same by design, see MT 14789 notes
@@ -2292,7 +2302,6 @@ sub voicemails :Chained('master') :PathPart('voicemails') :Args(0) {
         template => 'subscriber/voicemail.tt'
     );
 }
-
 
 sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
     my ($self, $c) = @_;
@@ -3605,6 +3614,31 @@ sub ajax_voicemails :Chained('master') :PathPart('voicemails/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_recordings :Chained('master') :PathPart('recordings/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $rec_rs = $c->model('DB')->resultset('recording_calls')->search({
+        'status' => { -in => ['completed', 'confirmed'] },
+        'recording_metakeys.key' => 'uuid',
+        'recording_metakeys.value' => $c->stash->{subscriber}->uuid,
+    }, {
+        join => 'recording_metakeys'
+    });
+
+    NGCP::Panel::Utils::Datatables::process($c, $rec_rs, $c->stash->{rec_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
+sub ajax_recording_streams :Chained('recording') :PathPart('streams/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $rs = $c->stash->{recording}->recording_streams;
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{streams_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
 sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
     my ($self, $c) = @_;
 
@@ -3702,6 +3736,97 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
 }
+
+sub recording :Chained('master') :PathPart('recording') :CaptureArgs(1) {
+    my ($self, $c, $rec_id) = @_;
+
+    my $rs = $c->model('DB')->resultset('recording_calls')->search({
+         'me.id' => $rec_id,
+         'recording_metakeys.key' => 'uuid',
+         'recording_metakeys.value' => $c->stash->{subscriber}->uuid,
+    },{
+        join => ['recording_streams', 'recording_metakeys'],
+    });
+    unless($rs->first) {
+        NGCP::Panel::Utils::Message::error(
+            c    => $c,
+            log  => "no such recording with id '$rec_id' for uuid ".$c->stash->{subscriber}->uuid,
+            desc => $c->loc('No such recording'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+    }
+    $c->stash->{recording} = $rs->first;
+}
+
+sub recording_streams :Chained('recording') :PathPart('streams') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(
+        template => 'subscriber/recording_streams.tt'
+    );
+}
+
+sub recording_stream :Chained('recording') :PathPart('streams') :CaptureArgs(1) {
+    my ($self, $c, $stream_id) = @_;
+
+    my $stream = $c->stash->{recording}->recording_streams->find($stream_id);
+    unless($stream) {
+        NGCP::Panel::Utils::Message::error(
+            c    => $c,
+            log  => "no such recording with id '$stream_id' for recording id ".$c->stash->{recording}->id,
+            desc => $c->loc('No such recording file'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+    }
+    $c->stash->{stream} = $stream;
+}
+
+sub play_stream :Chained('recording_stream') :PathPart('play') :Args(0) {
+    my ($self, $c) = @_;
+
+    # TODO: fix to be able to select certain stream
+    my $stream = $c->stash->{stream};
+    my $data = read_file($stream->full_filename);
+    my $mime_type;
+    if($stream->file_format eq "wav") {
+        $mime_type = 'audio/x-wav';
+    } elsif($stream->file_format eq "mp3") {
+        $mime_type = 'audio/mpeg';
+    } else {
+        $mime_type = 'application/octet-stream';
+    }
+
+    $c->response->header('Content-Disposition' => 'attachment; filename="call-recording-'.$stream->id.'.'.$stream->file_format.'"');
+    $c->response->content_type($mime_type);
+    $c->response->body($data);
+}
+
+sub delete_recording :Chained('recording') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    try {
+        $c->stash->{recording}->delete;
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { $c->stash->{recording}->get_inflated_columns },
+            desc => $c->loc('Successfully deleted recording'),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete recording'),
+        );
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c,
+        $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+}
+
 
 sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     my ($self, $c, $reg_id) = @_;
