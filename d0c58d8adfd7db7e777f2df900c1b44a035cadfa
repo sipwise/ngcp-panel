@@ -16,6 +16,24 @@
       "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_a61fe608",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-03-22T10:19:40Z",
+      "side": 1,
+      "message": "except that they are not (or from which PoV to pick basically :) )\nit\u0027s a local (internal, and usually the \"application\" call within the same subscriber), and if it is \"in\", that breaks the representation.\n\nA quick example:\n\na call to the \"malicious call number\" shows in the CallList\n\ndirection: in\nother_cli: 4312345\nown_cli: malicious_call\n\nwhere in reality the user physically picked up the phone and dialed \"123\", and for him that was an \"ougoing\" call, not that the \"application server\" called him.",
+      "parentUuid": "ba1f61a0_7c7c6173",
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
