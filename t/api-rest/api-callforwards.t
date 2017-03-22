@@ -107,7 +107,7 @@ SKIP:{
     }
 
     #write cf and check written values
-    my($cf1_put,$cf1_get) = $test_machine->check_put2get({data_in => $test_machine->DATA_ITEM, uri => $cf1single_uri},undef, 1 );
+    my($cf1_put,$cf1_get) = $test_machine->check_put2get({data_in => $test_machine->DATA_ITEM, uri => $cf1single_uri},undef, { skip_compare => 1 } );
     is (ref $cf1_put->{content}, "HASH", "should be hashref");
     is ($cf1_put->{content}->{cfu}{destinations}->[0]->{timeout}, 200, "Check timeout of cft");
     is ($cf1_put->{content}->{cft}{destinations}->[0]->{simple_destination}, "5678", "Check first destination of cft");
@@ -139,7 +139,7 @@ SKIP:{
     is($content->{code}, "400", "check error code in body");
     like($content->{message}, qr/Invalid id/, "check error message in body");
 
-    my($cf2_put,$cf2_get) = $test_machine->check_put2get({data_in => clone($cf1_put->{content}), uri => $cf1single_uri},undef, 1 );
+    my($cf2_put,$cf2_get) = $test_machine->check_put2get({data_in => clone($cf1_put->{content}), uri => $cf1single_uri},undef, { skip_compare => 1 } );
     is_deeply($cf1_put->{content}, $cf2_put->{content}, "check put if unmodified put returns the same");
     $test_machine->check_embedded($cf2_put->{content});
 
