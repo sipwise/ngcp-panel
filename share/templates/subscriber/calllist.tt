@@ -31,9 +31,9 @@ function showCallDetails(callId){
 
 
 <select onChange="changeCalllist(this);" id="Calls_table_external_filter">
-<option value="[% c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]) -%]">Show all calls</option>
-<option value="[% c.uri_for_action('/subscriber/ajax_calls_out', [c.req.captures.0]) -%]">Show outgoing calls only</option>
-<option value="[% c.uri_for_action('/subscriber/ajax_calls_in', [c.req.captures.0]) -%]">Show incoming calls only</option>
+<option value="[% c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0], undef, {callid => callid}) -%]">Show all calls</option>
+<option value="[% c.uri_for_action('/subscriber/ajax_calls_out', [c.req.captures.0], undef, {callid => callid}) -%]">Show outgoing calls only</option>
+<option value="[% c.uri_for_action('/subscriber/ajax_calls_in', [c.req.captures.0], undef, {callid => callid}) -%]">Show incoming calls only</option>
 </select>
 <script>
 function changeCalllist(selection) {
@@ -52,7 +52,7 @@ function changeCalllist(selection) {
     helper.length_change = 1;
     helper.column_sort = 'start_time';
     helper.form_object = form;
-    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]);
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0], undef, {callid => callid_enc});
     helper.show_footer = 1;
 
     IF (c.user.roles == "admin" || c.user.roles == "reseller");
