@@ -220,29 +220,42 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 
 sub ajax :Chained('list_contact') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    
-    NGCP::Panel::Utils::Datatables::process(
-        $c,
-        $c->stash->{contacts}->search_rs(undef, {prefetch=>"contracts"}),
-        $c->stash->{contact_dt_columns},
-        sub {
-            my ($result) = @_;
-            my %data = (deletable => ($result->contracts->all) ? 0 : 1);
-            return %data
-        },
-    );
+    $self->ajax_list_contacts($c, {'reseller' => 'any'});
     
     $c->detach( $c->view("JSON") );
 }
 
 sub ajax_noreseller :Chained('list_contact') :PathPart('ajax_noreseller') :Args(0) {
     my ($self, $c) = @_;
+    $self->ajax_list_contacts($c, {'reseller' => 'no_reseller'});
+    $c->detach( $c->view("JSON") );
+}
 
+sub ajax_reseller :Chained('list_contact') :PathPart('ajax_reseller') :Args(0) {
+    my ($self, $c) = @_;
+    $self->ajax_list_contacts($c, {'reseller' => 'not_empty'});
+    $c->detach( $c->view("JSON") );
+}
+
+sub ajax_list_contacts{
+    my ($self, $c, $params) = @_;
+    $params //= {};
+    my $reseller_query = [];
+    if('any' eq $params->{reseller}){
+        $reseller_query->[0] = undef;
+    }elsif('no_reseller' eq $params->{reseller}){
+        $reseller_query->[0] = { reseller_id => undef,};
+    }elsif('not_empty' eq $params->{reseller}){
+        $reseller_query->[0] = { reseller_id => { '!=' => undef },};
+    }
     NGCP::Panel::Utils::Datatables::process(
         $c,
-        $c->stash->{contacts}->search_rs({
-            reseller_id => undef,
-        }, {prefetch=>"contracts"}),
+        $c->stash->{contacts}->search_rs(
+            $reseller_query->[0], 
+            $reseller_query->[1] ? $reseller_query->[1] : {
+                prefetch=>"contracts"
+            }
+        ),
         $c->stash->{contact_dt_columns},
         sub {
             my ($result) = @_;
@@ -250,8 +263,6 @@ sub ajax_noreseller :Chained('list_contact') :PathPart('ajax_noreseller') :Args(
             return %data
         },
     );
-
-    $c->detach( $c->view("JSON") );
 }
 
 sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) {
