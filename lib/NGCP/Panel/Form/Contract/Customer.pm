@@ -5,7 +5,7 @@ use Storable qw();
 extends 'NGCP::Panel::Form::Contract::Base';
 
 has_field 'contact' => (
-    type => '+NGCP::Panel::Field::Contact',
+    type => '+NGCP::Panel::Field::ContactWithReseller',
     label => 'Contact',
     validate_when_empty => 1,
     element_attr => {
