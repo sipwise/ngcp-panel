@@ -358,6 +358,30 @@
       "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_29baa9e1",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-03-23T10:05:31Z",
+      "side": 1,
+      "message": "sorry for a bit late reply. yes, you are right and thanks alot for the input from your side guys :)\nwe had a phone conversation with Rene yesterday and decided how that would be (gonna post an update to the review today).\nAs for the other changes in the review they will be removed and the review also renamed as the other changes will be done in a different way (as a separate review).",
+      "parentUuid": "7a1969be_e9f091cb",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 38
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
