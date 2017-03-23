@@ -1,3 +1,13 @@
+ngcp-panel (1.14.4.5+0~mr4.5.4.5) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [ff24839] TT#1678 Properly type SOAP responses using WSDL
+  * [a2b3a88] TT#1678 Use plain connection for local wsdl
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 23 Mar 2017 14:46:01 +0100
+
 ngcp-panel (1.14.4.4+0~mr4.5.4.4) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
