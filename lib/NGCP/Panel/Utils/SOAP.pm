@@ -34,7 +34,7 @@ sub typed {
   $function = $3;
 
 
-  my $WSDL = 'https://127.0.0.1:'. $c->config->{intercept}{soap_port} .'/SOAP/' . $package . '.wsdl';
+  my $WSDL = 'http://127.0.0.1:'. $c->config->{intercept}{soap_port} .'/SOAP/' . $package . '.wsdl';
   unless(exists $Wsdls{$package}) {
     $Wsdls{$package} = $Parser->parse_uri($WSDL);
   }
