@@ -1,11 +1,11 @@
 <?php
 
 require_once 'nusoap/nusoap.php';
-#$wsdl = 'https://10.15.17.189:1443/SOAP/Intercept.wsdl';
-$wsdl = 'https://192.168.0.126:1443/SOAP/Intercept.wsdl';
+$wsdl = 'https://10.15.17.233:2443/SOAP/Intercept.wsdl';
+#$wsdl = 'https://192.168.0.126:1443/SOAP/Intercept.wsdl';
 
 $client = new nusoap_client($wsdl, true);
-$client->setCredentials('testuser', 'testpass', 'basic');
+$client->setCredentials('ngcpsoap', 'password', 'basic');
 $error = $client->getError();
 if($error) {
     echo "Error: " . $error;
@@ -54,6 +54,7 @@ if($client->fault) {
         echo "\n\n\n";
     }
 }
+$id = $res;
 
 $res = $client->call('update_interception', 
         array(
@@ -63,7 +64,7 @@ $res = $client->call('update_interception',
                 'type' => 'admin'
             ),
             'parameters' => array(
-                'id' => 1,
+                'id' => $res,
                 'data' => array(
                     'cc_required' => 1,
                     'iri_delivery' => array(
@@ -143,7 +144,7 @@ $res = $client->call('delete_interception',
             'type' => 'admin'
         ),
         'parameters' => array(
-            'id' => 1
+            'id' => $id
         )
     )
 );
@@ -176,7 +177,7 @@ $res = $client->call('get_interception_by_id',
             'type' => 'admin'
         ),
         'parameters' => array(
-            'id' => 1
+            'id' => $id
         )
     )
 );
