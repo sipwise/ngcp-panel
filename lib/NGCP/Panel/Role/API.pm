@@ -147,13 +147,18 @@ sub validate_fields {
         if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
             $resource->{$k} = $resource->{$k} ? 1 : 0;
         }
+        unless(exists $fields->{$k}) {
+            delete $resource->{$k};
+            next;
+        }
         if($run){
             #Prepare resource for the PATCH considering readonly fields.
             #PATCH is supposed to take full item content and so will get readonly fields into resource too. And apply patch.
             #It leads to the situation when we may try to change some not existing fields in the DB
             #All readonly fields are considered as representation only and should never be applied.
-            if( (!exists $fields->{$k}) || $fields->{$k}->readonly) {
+            if($fields->{$k}->readonly) {
                 delete $resource->{$k};
+                next;
             }
         }
         $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
