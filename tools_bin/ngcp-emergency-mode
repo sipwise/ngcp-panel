@@ -187,37 +187,49 @@ foreach my $redis_host(@redis_hosts) {
 
         my $local_dom = URI->new($call{lp})->host;
         my $remote_dom = URI->new($call{rp})->host;
-        if(exists $emergency_domain_names{$local_dom} || exists $emergency_domain_names{$remote_dom}) {
-            DEBUG "Call $cid with local domain $local_dom and remote domain $remote_dom is in emergency domain, checking prio...";
-
-            if($call{ru} =~ /;ep[ab]=yes/) {
-                if(exists $priocalls{$cid}) {
-                    push @{ $priocalls{$cid} }, $tag;
-                } else {
-                    $priocalls{$cid} = [ $tag ];
-                }
-                DEBUG "Call $cid has an emergency priorization leg on tag $tag...";
+        if($call{ru} =~ /;ep[ab]=yes/) {
+            if(exists $priocalls{$cid}) {
+                push @{ $priocalls{$cid} }, { tag => $tag, local_dom => $local_dom, remote_dom => $remote_dom };
             } else {
-                if(exists $nonpriocalls{$cid}) {
-                    push @{ $nonpriocalls{$cid} }, $tag;
-                } else {
-                    $nonpriocalls{$cid} = [ $tag ];
-                }
-                DEBUG "Call $cid has no emergency priorization leg on tag $tag...";
+                $priocalls{$cid} = [ { tag => $tag, local_dom => $local_dom, remote_dom => $remote_dom } ];
             }
+            DEBUG "Call $cid has an emergency priorization leg on tag $tag, caching for emergency domain check...";
         } else {
-            DEBUG "Call $cid local domain $local_dom or remote domain $remote_dom are not in emergency mode, skipping...";
+            if(exists $nonpriocalls{$cid}) {
+                push @{ $nonpriocalls{$cid} }, { tag => $tag, local_dom => $local_dom, remote_dom => $remote_dom };
+            } else {
+                $nonpriocalls{$cid} = [ { tag => $tag, local_dom => $local_dom, remote_dom => $remote_dom } ];
+            }
+            DEBUG "Call $cid has no emergency priorization leg on tag $tag...";
         }
     }
 
     my @nonpriotags = ();
     foreach my $cid (keys %nonpriocalls) {
-        DEBUG "Cross checking call $cid for priorized tag...";
-        if(exists $priocalls{$cid}) {
-            DEBUG "Emergency call $cid found...";
-        } else {
+        DEBUG "Cross checking call $cid for emergency domain...";
+        my $is_emergency_domain = 0;
+        my $is_emergency_call = 0;
+        foreach my $leg(@{ $nonpriocalls{$cid} }) {
+            if(exists $emergency_domain_names{$leg->{local_dom}} ||
+               exists $emergency_domain_names{$leg->{remote_dom}}) {
+                DEBUG "Non-priorized call $cid has leg in emergency domain, cross checking with priorized legs...";
+                $is_emergency_domain = 1;
+            }
+        }
+
+        foreach my $leg(@{ $priocalls{$cid} }) {
+            if($is_emergency_domain ||
+               exists $emergency_domain_names{$leg->{local_dom}} ||
+               exists $emergency_domain_names{$leg->{remote_dom}}) {
+                DEBUG "Priorized call $cid has leg in emergency domain, mark as priorized!";
+                $is_emergency_call = 1;
+            }
+        }
+        unless($is_emergency_call) {
             DEBUG "Normal call $cid found...";
-            push @nonpriotags, @{ $nonpriocalls{$cid} };
+            foreach my $leg(@{ $nonpriocalls{$cid} }) {
+                push @nonpriotags, $leg->{tag};
+            }
         }
     }
 
