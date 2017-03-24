@@ -117,13 +117,13 @@ sub update_customer {
     my ($self, $c, $customer, $old_resource, $resource, $form) = @_;
 
     my $old_hal = $self->hal_from_customer($c, $customer, $form);
-    $c->model('DB')->resultset('journals')->create({
-        type => "update",
-        resource => "customers",
-        resource_id => $customer->id,
-        timestamp => NGCP::Panel::Utils::DateTime::current_local->hires_epoch,
-        content => $self->to_json($old_hal->resource),
-    });
+    #$c->model('DB')->resultset('journals')->create({
+    #    type => "update",
+    #    resource => "customers",
+    #    resource_id => $customer->id,
+    #    timestamp => NGCP::Panel::Utils::DateTime::current_local->hires_epoch,
+    #    content => $self->to_json($old_hal->resource),
+    #});
 
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
@@ -137,10 +137,10 @@ sub update_customer {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Customer is already terminated and cannot be changed.');
         return;
     }
-   
+
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
-    $resource->{contact_id} //= undef; 
+    $resource->{contact_id} //= undef;
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -187,7 +187,7 @@ sub update_customer {
     }
 
     my $oldinvoicetmpl = $old_resource->{invoice_template_id} // 0;
-    if($resource->{invoice_template_id} && 
+    if($resource->{invoice_template_id} &&
        $oldinvoicetmpl != $resource->{invoice_template_id}) {
         my $tmpl = $c->model('DB')->resultset('invoice_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -198,7 +198,7 @@ sub update_customer {
         }
     }
     my $oldsubtmpl = $old_resource->{subscriber_email_template_id} // 0;
-    if($resource->{subscriber_email_template_id} && 
+    if($resource->{subscriber_email_template_id} &&
        $oldsubtmpl != $resource->{subscriber_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -209,7 +209,7 @@ sub update_customer {
         }
     }
     my $oldpasstmpl = $old_resource->{passreset_email_template_id} // 0;
-    if($resource->{passreset_email_template_id} && 
+    if($resource->{passreset_email_template_id} &&
        $oldpasstmpl != $resource->{passreset_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
@@ -220,7 +220,7 @@ sub update_customer {
         }
     }
     my $oldinvtmpl = $old_resource->{invoice_email_template_id} // 0;
-    if($resource->{invoice_email_template_id} && 
+    if($resource->{invoice_email_template_id} &&
        $oldinvtmpl != $resource->{invoice_email_template_id}) {
         my $tmpl = $c->model('DB')->resultset('email_templates')
             ->search({ reseller_id => $custcontact->reseller_id })
