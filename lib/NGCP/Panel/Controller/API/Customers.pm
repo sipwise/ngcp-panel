@@ -19,12 +19,12 @@ require Catalyst::ActionRole::RequireSSL;
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
-    default => 
+    default =>
         'Defines a billing container for end customers. Customers usually have one or more <a href="#subscribers">Subscribers</a>. A <a href="#billingprofiles">Billing Profile</a> is assigned to a customer, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the customer for current and past billing intervals. Customer can be one of the "sipaccount" or "pbxaccount" type. Type should be specified as "type" parameter.',
 );
 class_has 'documentation_sample' => (
     is => 'ro',
-    default => sub { 
+    default => sub {
         {
            "billing_profile_id" => 4,
            "type" => "sipaccount",
@@ -162,7 +162,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -197,7 +197,7 @@ sub POST :Allow {
     {
         my $schema = $c->model('DB');
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -234,7 +234,7 @@ sub POST :Allow {
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
         my $customer;
-        
+
         my $billing_profile_id = delete $resource->{billing_profile_id};
         my $billing_profile = $schema->resultset('billing_profiles')->find($billing_profile_id);
         unless($billing_profile) {
@@ -243,13 +243,13 @@ sub POST :Allow {
         }
         try {
             $customer = $schema->resultset('contracts')->create($resource);
-            $schema->resultset('journals')->create({
-                type => "create",
-                resource => "customers",
-                resource_id => $customer->id,
-                timestamp => $now->hires_epoch,
-                content => undef,
-            });
+            #$schema->resultset('journals')->create({
+            #    type => "create",
+            #    resource => "customers",
+            #    resource_id => $customer->id,
+            #    timestamp => $now->hires_epoch,
+            #    content => undef,
+            #});
         } catch($e) {
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
@@ -264,22 +264,22 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The reseller of the contact doesn't match the reseller of the billing profile");
             last;
         }
-        if($customer->invoice_template_id && 
+        if($customer->invoice_template_id &&
            $customer->invoice_template->reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
-        if($customer->subscriber_email_template_id && 
+        if($customer->subscriber_email_template_id &&
            $customer->subscriber_email_template->reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
-        if($customer->passreset_email_template_id && 
+        if($customer->passreset_email_template_id &&
            $customer->passreset_email_template->reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'passreset_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
-        if($customer->invoice_email_template_id && 
+        if($customer->invoice_email_template_id &&
            $customer->invoice_email_template->reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
