@@ -54,7 +54,7 @@ $req = HTTP::Request->new('GET', $uri.'/api/systemcontacts/?page=1&rows=1');
 $res = $ua->request($req);
 is($res->code, 200, "fetch system contacts");
 my $sysct = JSON::from_json($res->decoded_content);
-my $system_contact_id = $sysct->{_embedded}->{'ngcp:systemcontacts'}->{id};
+my $system_contact_id = $sysct->{_embedded}->{'ngcp:systemcontacts'}->[0]->{id};
 
 # first, create a contact
 $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
@@ -325,7 +325,11 @@ my @allcustomers = ();
     is($res->code, 200, "check put successful");
 
     my $new_customer = JSON::from_json($res->decoded_content);
+    my $old_modify = delete $old_customer->{modify_timestamp};
+    my $new_modify = delete $new_customer->{modify_timestamp};
     is_deeply($old_customer, $new_customer, "check put if unmodified put returns the same");
+    $old_customer->{modify_timestamp} = $old_modify;
+    $new_customer->{modify_timestamp} = $new_modify;
 
     # check if we have the proper links
     ok(exists $new_customer->{_links}->{'ngcp:customercontacts'}, "check put presence of ngcp:customercontacts relation");

@@ -843,7 +843,13 @@ sub check_embedded {
     my($self, $embedded, $check_embedded_cb) = @_;
     defined $check_embedded_cb and $check_embedded_cb->($embedded);
     foreach my $embedded_name(@{$self->embedded_resources}){
-        ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "$self->{name}: check presence of ngcp:$embedded_name relation");
+        if(ref $embedded eq "ARRAY") {
+            foreach my $emb(@{ $embedded }) {
+                ok(exists $emb->{_links}->{'ngcp:'.$embedded_name}, "$self->{name}: check presence of ngcp:$embedded_name relation");
+            }
+        } else {
+            ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "$self->{name}: check presence of ngcp:$embedded_name relation");
+        }
     }
 }
 
