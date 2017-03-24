@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_55bb3672",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-03-24T23:10:41Z",
+      "side": 1,
+      "message": "next;",
+      "revId": "2430ae3e0ff72b939ed67eb5a14e73fab1443cc6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
