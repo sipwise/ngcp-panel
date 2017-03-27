@@ -68,6 +68,10 @@ sub insert_profile_events {
         new_aliases => $params{new_aliases},
         old_pilot_aliases => $params{old_pilot_aliases},
         new_pilot_aliases => $params{new_pilot_aliases},
+        old_primary_alias => $params{old_primary_alias},
+        new_primary_alias => $params{new_primary_alias},
+        old_pilot_primary_alias => $params{old_pilot_primary_alias},
+        new_pilot_primary_alias => $params{new_pilot_primary_alias},
         create_event_per_alias => 0,
         now_hires => $now_hires};
 
@@ -158,6 +162,10 @@ sub insert {
     my $old_pilot_aliases = $params{old_pilot_aliases};
     my $new_aliases = $params{new_aliases}; #to pass cleared aliases upon termination, as aliases are removed via trigger
     my $new_pilot_aliases = $params{new_pilot_aliases};
+    my $old_primary_alias = $params{old_primary_alias};
+    my $new_primary_alias = $params{new_primary_alias};
+    my $old_pilot_primary_alias = $params{old_pilot_primary_alias};
+    my $new_pilot_primary_alias = $params{new_pilot_primary_alias};
     my $create_event_per_alias = $params{create_event_per_alias} // CREATE_EVENT_PER_ALIAS;
     my $event_alias = $params{alias};
     my $now_hires = $params{now_hires} // NGCP::Panel::Utils::DateTime::current_local_hires;
@@ -257,6 +265,25 @@ sub insert {
             tags_rs => $tags_rs,
         );
 
+        _save_primary_alias(
+            schema => $schema,
+            event => $event,
+            (defined $old_primary_alias ? (alias => $old_primary_alias) : (prov_subscriber => $prov_subscriber)),
+            types_prefix => '',
+            types_suffix => '_before',
+            now_hires => $now_hires,
+            tags_rs => $tags_rs,
+        );
+        _save_primary_alias(
+            schema => $schema,
+            event => $event,
+            (defined $new_primary_alias ? (alias => $new_primary_alias) : (prov_subscriber => $prov_subscriber)),
+            types_prefix => '',
+            types_suffix => '_after',
+            now_hires => $now_hires,
+            tags_rs => $tags_rs,
+        );
+
         _save_alias(
             schema => $schema,
             event => $event,
@@ -314,6 +341,25 @@ sub insert {
                 schema => $schema,
                 event => $event,
                 (defined $new_pilot_aliases ? (aliases => $new_pilot_aliases) : (prov_subscriber => $pilot_prov_subscriber)),
+                types_prefix => 'pilot_',
+                types_suffix => '_after',
+                now_hires => $now_hires,
+                tags_rs => $tags_rs,
+            );
+
+            _save_primary_alias(
+                schema => $schema,
+                event => $event,
+                (defined $old_pilot_primary_alias ? (alias => $old_pilot_primary_alias) : (prov_subscriber => $pilot_prov_subscriber)),
+                types_prefix => 'pilot_',
+                types_suffix => '_before',
+                now_hires => $now_hires,
+                tags_rs => $tags_rs,
+            );
+            _save_primary_alias(
+                schema => $schema,
+                event => $event,
+                (defined $new_pilot_primary_alias ? (alias => $new_pilot_primary_alias) : (prov_subscriber => $pilot_prov_subscriber)),
                 types_prefix => 'pilot_',
                 types_suffix => '_after',
                 now_hires => $now_hires,
@@ -519,6 +565,43 @@ sub _save_first_non_primary_alias {
 
 }
 
+sub _save_primary_alias {
+    my %params = @_;
+    my ($schema,
+        $event,
+        $alias,
+        $prov_subscriber,
+        $types_prefix,
+        $types_suffix,
+        $now_hires,
+        $tags_rs) = @params{qw/
+        schema
+        event
+        alias
+        prov_subscriber
+        types_prefix
+        types_suffix
+        now_hires
+        tags_rs
+    /};
+    my $alias_username = undef;
+    if ($alias) {
+        $alias_username = $alias->{username} if $alias;
+    } elsif ($prov_subscriber) {
+        my $alias = _get_primary_alias($prov_subscriber);
+        $alias_username = $alias->username if $alias;
+    }
+    if ($alias_username) {
+        $tags_rs //= $schema->resultset('events_tag');
+        $event->create_related("tag_data", {
+            tag_id => $tags_rs->find({ type => $types_prefix.'primary_alias_username'.$types_suffix })->id,
+            val => $alias_username,
+            event_timestamp => $now_hires,
+        });
+    }
+
+}
+
 sub _save_alias {
     my %params = @_;
     my ($schema,
@@ -552,6 +635,13 @@ sub _get_aliases_sorted_rs {
     });
 }
 
+sub _get_primary_alias {
+    my ($prov_subscriber) = @_;
+    return $prov_subscriber->voip_dbaliases->search_rs({
+        is_primary => 1,
+    },undef)->first;
+}
+
 sub _get_aliases_map {
     my ($aliases, $prov_subscriber) = @_;
     my @alias_usernames = ();
@@ -577,7 +667,9 @@ sub get_aliases_snapshot {
     my $c = $params{c};
     my $schema = $params{schema} // $c->model('DB');
     my @aliases = ();
+    my $primary_alias = undef;
     my @pilot_aliases = ();
+    my $pilot_primary_alias = undef;
     if (ENABLE_EVENTS) {
         my $subscriber = $params{subscriber} // $schema->resultset('voip_subscribers')->find({
             id => $params{subscriber_id},
@@ -586,6 +678,8 @@ sub get_aliases_snapshot {
         foreach my $alias (_get_aliases_sorted_rs($prov_subscriber)->all) {
             push(@aliases,{ $alias->get_inflated_columns });
         }
+        $primary_alias = _get_primary_alias($prov_subscriber);
+        $primary_alias = { $primary_alias->get_inflated_columns } if $primary_alias;
         my $pilot_subscriber = _get_pilot_subscriber(
             c => $c,
             schema => $schema,
@@ -597,9 +691,12 @@ sub get_aliases_snapshot {
             foreach my $alias (_get_aliases_sorted_rs($pilot_prov_subscriber)->all) {
                 push(@pilot_aliases,{ $alias->get_inflated_columns });
             }
+            $pilot_primary_alias = _get_primary_alias($pilot_prov_subscriber);
+            $pilot_primary_alias = { $pilot_primary_alias->get_inflated_columns } if $pilot_primary_alias;
         }
     }
-    return { old_aliases => \@aliases, old_pilot_aliases => \@pilot_aliases };
+    return { old_aliases => \@aliases, old_pilot_aliases => \@pilot_aliases,
+        old_primary_alias => $primary_alias, old_pilot_primary_alias => $pilot_primary_alias };
 }
 
 #sub _get_actual_billing_mapping {
