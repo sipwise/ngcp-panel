@@ -23,7 +23,7 @@ SKIP:
         if ($sub1->{total_count} < 1) {
             skip("Precondition not met: need a subscriber",1);
         }
-        ($sub1_id) = $sub1->{_embedded}->{'ngcp:subscribers'}->[0]->{_links}->{self}{href} =~ m!subscribers/([0-9]*)$!;
+        ($sub1_id) = $sub1->{_embedded}->{'ngcp:subscribers'}->{_links}{self}{href} =~ m!subscribers/([0-9]*)$!;
     }
     cmp_ok ($sub1_id, '>', 0, "should be positive integer");
     
@@ -55,7 +55,7 @@ SKIP:
         if ($cust1->{total_count} < 1) {
             skip("Precondition not met: need a customer",1);
         }
-        ($cust1_id) = $cust1->{_embedded}->{'ngcp:customers'}->[0]->{_links}{self}{href} =~ m!customers/([0-9]*)$!;
+        ($cust1_id) = $cust1->{_embedded}->{'ngcp:customers'}->{_links}{self}{href} =~ m!customers/([0-9]*)$!;
     }
     cmp_ok ($cust1_id, '>', 0, "should be positive integer");
     
@@ -82,7 +82,7 @@ SKIP:
     if ($sub1->{total_count} < 1) {
         skip("Precondition not met: need a subscriber",1);
     }
-    ($sub1_id) = $sub1->{_embedded}->{'ngcp:subscribers'}->[0]->{_links}{self}{href} =~ m!subscribers/([0-9]*)$!;
+    ($sub1_id) = $sub1->{_embedded}->{'ngcp:subscribers'}->{_links}{self}{href} =~ m!subscribers/([0-9]*)$!;
     #$sub1_user = $sub1->{_embedded}->{'ngcp:subscribers'}->{'username'};
     #$sub1_pass = $sub1->{_embedded}->{'ngcp:subscribers'}->{'webpassword'} // '';
 
