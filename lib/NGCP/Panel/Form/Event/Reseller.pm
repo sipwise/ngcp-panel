@@ -165,4 +165,25 @@ has_field 'non_primary_alias_username' => (
     required => 0,
 );
 
+has_field 'primary_alias_username_before' => (
+    type => 'Text',
+    label => 'The subscriber\'s primary alias, before number updates during the operation.',
+    required => 0,
+);
+has_field 'primary_alias_username_after' => (
+    type => 'Text',
+    label => 'The subscriber\'s primary alias, after number updates during the operation.',
+    required => 0,
+);
+has_field 'pilot_primary_alias_username_before' => (
+    type => 'Text',
+    label => 'The primary alias of the subscriber\'s pilot subscriber, before number updates during the operation.',
+    required => 0,
+);
+has_field 'pilot_primary_alias_username_after' => (
+    type => 'Text',
+    label => 'The primary alias of the subscriber\'s pilot subscriber, after number updates during the operation.',
+    required => 0,
+);
+
 1;
