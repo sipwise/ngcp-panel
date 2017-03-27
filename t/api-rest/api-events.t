@@ -1,4 +1,4 @@
-#use Sipwise::Base;
+use Sipwise::Base;
 use Net::Domain qw(hostfqdn);
 use JSON qw();
 use Test::More;
@@ -458,6 +458,11 @@ my %customer_map = ();
           first_non_primary_alias_username_after => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_before => undef,
           pilot_first_non_primary_alias_username_after => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
+
+          primary_alias_username_before => $cc.$ac.$sn,
+          primary_alias_username_after => $cc.$ac.$sn,
+          pilot_primary_alias_username_before => $cc.$ac.$sn,
+          pilot_primary_alias_username_after => $cc.$ac.$sn,
     );
     _check_event_history("start_profile when creating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"%profile",[
         { %pilot_event,
@@ -497,6 +502,12 @@ my %customer_map = ();
           first_non_primary_alias_username_after => $aliases->[0]->{cc}.$aliases->[0]->{ac}.$aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_before => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
+
+          primary_alias_username_before => $cc.$ac.$sn.$ext,
+          primary_alias_username_after => $cc.$ac.$sn.$ext,
+          pilot_primary_alias_username_before => $cc.$ac.$sn,
+          pilot_primary_alias_username_after => $cc.$ac.$sn,
+
     );
     _check_event_history("start_profile when creating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
         { %subscriber_event,
@@ -541,6 +552,11 @@ my %customer_map = ();
           first_non_primary_alias_username_after => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_before => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
+
+          primary_alias_username_before => $cc.$ac.$sn.$ext,
+          primary_alias_username_after => $cc.$ac.$sn.$ext,
+          pilot_primary_alias_username_before => $cc.$ac.$sn,
+          pilot_primary_alias_username_after => $cc.$ac.$sn,
     );
     _check_event_history("start/update/end_profile when updating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
         {},{},
@@ -593,6 +609,12 @@ my %customer_map = ();
           first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_before => $pilot_aliases->[0]->{cc}.$pilot_aliases->[0]->{ac}.$pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
+
+          primary_alias_username_before => $cc.$ac.$sn,
+          primary_alias_username_after => $cc.$ac.$sn,
+          pilot_primary_alias_username_before => $cc.$ac.$sn,
+          pilot_primary_alias_username_after => $cc.$ac.$sn,
+
     );
     _check_event_history("start/update/end_profile when updating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"%profile",[
         {},{},
@@ -641,6 +663,12 @@ my %customer_map = ();
           #but since api termination always returns aliases to the pilot:
           #pilot_first_non_primary_alias_username_after => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
           #pilot_first_non_primary_alias_username_after => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+
+          primary_alias_username_before => $cc.$ac.$sn.$ext,
+          primary_alias_username_after => $cc.$ac.$sn.$ext,
+          pilot_primary_alias_username_before => $cc.$ac.$sn,
+          pilot_primary_alias_username_after => $cc.$ac.$sn,
+
     ),
     _check_event_history("end_profile when terminating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
         {},{},{},{},{},
@@ -682,6 +710,12 @@ my %customer_map = ();
           #pilot_first_non_primary_alias_username_before => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => $new_pilot_aliases->[0]->{cc}.$new_pilot_aliases->[0]->{ac}.$new_pilot_aliases->[0]->{sn},
           pilot_first_non_primary_alias_username_after => undef,
+
+          primary_alias_username_before => $cc.$ac.$sn,
+          primary_alias_username_after => $cc.$ac.$sn,
+          pilot_primary_alias_username_before => $cc.$ac.$sn,
+          pilot_primary_alias_username_after => $cc.$ac.$sn,
+
     );
     _check_event_history("end_profile when terminating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"%profile",[
         {},{},{},{},{},

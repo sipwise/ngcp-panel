@@ -536,7 +536,7 @@ sub update_item {
                 NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
                 return $subscriber;
             } catch($e) {
-                $c->log->error("failed to terminate subscriber id ".$subscriber->id);
+                $c->log->error("failed to terminate subscriber id ".$subscriber->id . ": $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber");
                 return;
             }
