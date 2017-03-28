@@ -1118,6 +1118,8 @@ msgstr "Tasto BLF"
 #: share/templates/subscriber/edit_webpass.tt
 #: share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
+#: share/templates/subscriber/recording.tt
+#: share/templates/subscriber/recording_streams.tt
 #: share/templates/subscriber/reglist.tt
 #: share/templates/subscriber/voicemail.tt
 #: share/templates/subscriber/webphone.tt
@@ -1478,7 +1480,8 @@ msgstr ""
 "la fase di chiamata, inviando un messaggio 302 Redirect durante la fase di "
 "squillo."
 
-#: share/templates/subscriber/calllist.tt
+#: share/templates/subscriber/calllist.tt share/templates/subscriber/master.tt
+#: share/templates/subscriber/recording.tt
 msgid "Call Details"
 msgstr "Dettaglio chiamate"
 
@@ -1641,6 +1644,17 @@ msgstr "Capienza della coda"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Call Queue wrap-up time, sec"
 msgstr "Tempo dopo il quale accettare una nuova chiamata dalla coda, secondi"
+
+#: share/templates/subscriber/master.tt
+#: share/templates/subscriber/recording.tt
+#: share/templates/widgets/subscriber_topmenu_settings.tt
+msgid "Call Recordings"
+msgstr ""
+
+#. (subscriber.username, subscriber.domain.domain)
+#: share/templates/subscriber/recording.tt
+msgid "Call Recordings for %1@%2"
+msgstr ""
 
 #: share/templates/callrouting/result.tt share/templates/callrouting/verify.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -2770,6 +2784,7 @@ msgstr ""
 #: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
+#: share/templates/subscriber/recording.tt
 #: share/templates/subscriber/voicemail.tt share/templates/voucher/list.tt
 msgid "Delete"
 msgstr "Elimina"
@@ -4130,6 +4145,10 @@ msgid "Failed to delete profile package"
 msgstr "Eliminazione del profilo di pacchetto fallita"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete recording"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete registered device"
 msgstr "Eliminazione del dispositivo registrato fallita"
 
@@ -4629,6 +4648,7 @@ msgid "Filename"
 msgstr "Nome File"
 
 #: share/templates/customer/details.tt share/templates/sound/list.tt
+#: share/templates/subscriber/master.tt
 msgid "Files"
 msgstr "Files"
 
@@ -4715,6 +4735,10 @@ msgstr "Forza chiamate in uscita da un utente, o da un peer, verso i peer"
 #: share/templates/login/login.tt
 msgid "Forgot your password?"
 msgstr "Password dimenticata?"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Format"
+msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "Fraud Limits"
@@ -6828,6 +6852,14 @@ msgid "No such auto ccmapping id."
 msgstr "Nessun id ccmapping."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "No such recording"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "No such recording file"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "No such speed dial id."
 msgstr "Nessun id chiamata rapida."
 
@@ -7512,6 +7544,7 @@ msgid "Pin"
 msgstr "Pin"
 
 #: share/templates/sound/handles_list.tt share/templates/subscriber/master.tt
+#: share/templates/subscriber/recording_streams.tt
 #: share/templates/subscriber/voicemail.tt
 msgid "Play"
 msgstr "Riproduci"
@@ -7843,6 +7876,16 @@ msgstr "Chiamate Recenti per UPN"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Record calls"
+msgstr ""
+
+#: share/templates/subscriber/master.tt
+#: share/templates/subscriber/recording.tt
+#: share/templates/subscriber/recording_streams.tt
+msgid "Recorded Files"
+msgstr ""
+
+#: share/templates/subscriber/recording_streams.tt
+msgid "Recorded files for this call"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9379,6 +9422,10 @@ msgstr "ccmapping eliminato con successo"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted destination set"
 msgstr "Set di destinazioni eliminato con successo"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted recording"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted registered device"
@@ -11812,7 +11859,8 @@ msgstr "Martedì"
 
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
-#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Type"
