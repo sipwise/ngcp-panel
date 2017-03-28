@@ -1005,6 +1005,8 @@ msgstr "Botón BLF"
 #: share/templates/subscriber/edit_webpass.tt
 #: share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
+#: share/templates/subscriber/recording.tt
+#: share/templates/subscriber/recording_streams.tt
 #: share/templates/subscriber/reglist.tt
 #: share/templates/subscriber/voicemail.tt
 #: share/templates/subscriber/webphone.tt
@@ -1365,7 +1367,8 @@ msgid ""
 "ignore the redirect message."
 msgstr ""
 
-#: share/templates/subscriber/calllist.tt
+#: share/templates/subscriber/calllist.tt share/templates/subscriber/master.tt
+#: share/templates/subscriber/recording.tt
 msgid "Call Details"
 msgstr ""
 
@@ -1527,6 +1530,17 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Call Queue wrap-up time, sec"
+msgstr ""
+
+#: share/templates/subscriber/master.tt
+#: share/templates/subscriber/recording.tt
+#: share/templates/widgets/subscriber_topmenu_settings.tt
+msgid "Call Recordings"
+msgstr ""
+
+#. (subscriber.username, subscriber.domain.domain)
+#: share/templates/subscriber/recording.tt
+msgid "Call Recordings for %1@%2"
 msgstr ""
 
 #: share/templates/callrouting/result.tt share/templates/callrouting/verify.tt
@@ -2647,6 +2661,7 @@ msgstr ""
 #: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
+#: share/templates/subscriber/recording.tt
 #: share/templates/subscriber/voicemail.tt share/templates/voucher/list.tt
 msgid "Delete"
 msgstr "Borrar"
@@ -3986,6 +4001,10 @@ msgid "Failed to delete profile package"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete recording"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete registered device"
 msgstr ""
 
@@ -4487,6 +4506,7 @@ msgid "Filename"
 msgstr "Nombre de Fichero"
 
 #: share/templates/customer/details.tt share/templates/sound/list.tt
+#: share/templates/subscriber/master.tt
 msgid "Files"
 msgstr "Archivos"
 
@@ -4567,6 +4587,10 @@ msgstr ""
 
 #: share/templates/login/login.tt
 msgid "Forgot your password?"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Format"
 msgstr ""
 
 #: share/templates/customer/details.tt
@@ -6606,6 +6630,14 @@ msgid "No such auto ccmapping id."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "No such recording"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "No such recording file"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "No such speed dial id."
 msgstr "No existe el id de marcado rápido"
 
@@ -7285,6 +7317,7 @@ msgid "Pin"
 msgstr ""
 
 #: share/templates/sound/handles_list.tt share/templates/subscriber/master.tt
+#: share/templates/subscriber/recording_streams.tt
 #: share/templates/subscriber/voicemail.tt
 msgid "Play"
 msgstr "Reproducir"
@@ -7611,6 +7644,16 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Record calls"
+msgstr ""
+
+#: share/templates/subscriber/master.tt
+#: share/templates/subscriber/recording.tt
+#: share/templates/subscriber/recording_streams.tt
+msgid "Recorded Files"
+msgstr ""
+
+#: share/templates/subscriber/recording_streams.tt
+msgid "Recorded files for this call"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9134,6 +9177,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted destination set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted recording"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -11421,7 +11468,8 @@ msgstr "Martes"
 
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
-#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 #: share/templates/subscriber/preferences.tt
 msgid "Type"
