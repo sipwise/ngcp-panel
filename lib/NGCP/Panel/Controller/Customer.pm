@@ -259,7 +259,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                 NGCP::Panel::Utils::Message::info(
                     c => $c,
                     cname => 'create',
-                    desc  => $c->loc('Customer #[_1] successfully created', $contract->id),
+                    desc  => $c->loc('Customer #[_1] successfully created', $contract->id) . ' - <a href="' . $uri . '">' . $c->loc('Details') . '</a>',
                 );
             });
         } catch($e) {
