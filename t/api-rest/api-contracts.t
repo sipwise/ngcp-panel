@@ -207,10 +207,10 @@ my @allcontracts = ();
         # remove any contact we find in the collection for later check
         if(ref $collection->{_links}->{'ngcp:contracts'} eq "HASH") {
             # TODO: handle hashref
-            ok($collection->{_embedded}->{'ngcp:contracts'}->{status} ne "terminated", "check if we don't have terminated contracts in response");
-            ok($collection->{_embedded}->{'ngcp:contracts'}->{type} eq "sippeering" || $collection->{_embedded}->{'ngcp:contracts'}->{type} eq "reseller", "check for correct system contract type");
-            ok(exists $collection->{_embedded}->{'ngcp:contracts'}->{_links}->{'ngcp:systemcontacts'}, "check presence of ngcp:systemcontacts relation");
-            ok(exists $collection->{_embedded}->{'ngcp:contracts'}->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
+            ok($collection->{_embedded}->{'ngcp:contracts'}->[0]->{status} ne "terminated", "check if we don't have terminated contracts in response");
+            ok($collection->{_embedded}->{'ngcp:contracts'}->[0]->{type} eq "sippeering" || $collection->{_embedded}->{'ngcp:contracts'}->[0]->{type} eq "reseller", "check for correct system contract type");
+            ok(exists $collection->{_embedded}->{'ngcp:contracts'}->[0]->{_links}->{'ngcp:systemcontacts'}, "check presence of ngcp:systemcontacts relation");
+            ok(exists $collection->{_embedded}->{'ngcp:contracts'}->[0]->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
             delete $contracts{$collection->{_links}->{'ngcp:contracts'}->{href}};
         } else {
             foreach my $c(@{ $collection->{_links}->{'ngcp:contracts'} }) {
