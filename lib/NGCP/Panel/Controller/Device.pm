@@ -1908,7 +1908,7 @@ sub dev_field_firmware_version_base :Chained('dev_field_firmware_base') :PathPar
 }
 
 sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPart('next') :Args {
-    my ($self, $c, $q) = @_;
+    my ($self, $c, $tmp) = @_;
 
     my $rs = $c->stash->{fw_rs}->search({
         device_id => $c->stash->{dev}->profile->config->device->id,
@@ -1916,13 +1916,9 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
     }, {
         order_by => { -asc => 'version' },
     });
-    if(!defined $q && defined $c->req->params->{q}) {
-        $q = $c->req->params->{q};
-    }
-    if(defined $q) {
-        $q=~s/\.rom$//i; #yealink v > 80 needs filename at the end of the link.
+    if(defined $c->req->params->{q}) {
         $rs = $rs->search({
-            version => { 'like' => $q . '%' },
+            version => { 'like' => $c->req->params->{q} . '%' },
         });
     }
 
@@ -1940,7 +1936,7 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
 }
 
 sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathPart('latest') :Args {
-    my ($self, $c, $q) = @_;
+    my ($self, $c, $tmp) = @_;
 
     my $rs = $c->stash->{fw_rs}->search({
         device_id => $c->stash->{dev}->profile->config->device->id,
@@ -1948,13 +1944,9 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
     }, {
         order_by => { -desc => 'version' },
     });
-    if(!defined $q && defined $c->req->params->{q}) {
-        $q = $c->req->params->{q};
-    }
-    if(defined $q) {
-        $q=~s/\.rom$//i; #yealink v > 80 needs filename at the end of the link.
+    if(defined $c->req->params->{q}) {
         $rs = $rs->search({
-            version => { 'like' => $q . '%' },
+            version => { 'like' => $c->req->params->{q} . '%' },
         });
     }
 
