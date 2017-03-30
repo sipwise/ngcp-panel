@@ -256,6 +256,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                 delete $c->session->{created_objects}->{billing_profile};
                 delete $c->session->{created_objects}->{network};
                 delete $c->session->{created_objects}->{profile_package};
+                my $uri = $c->uri_for_action("/customer/details", [$contract->id]);
                 NGCP::Panel::Utils::Message::info(
                     c => $c,
                     cname => 'create',
