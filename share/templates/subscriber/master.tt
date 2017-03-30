@@ -207,7 +207,7 @@ function process_pbx_items(moveId,direction){
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_voicemails', [c.req.captures.0]);
 
     
-    UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only;
+    IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only;
     helper.dt_buttons = [
         { name = c.loc('Play'), uri = "details/voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
     ];
