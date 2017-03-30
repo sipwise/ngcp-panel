@@ -3030,10 +3030,11 @@ msgstr "Gruppo destinatario"
 msgid "Detail"
 msgstr "Dettaglio"
 
-#: share/templates/customer/details.tt share/templates/customer/list.tt
-#: share/templates/numberblock/block_list.tt share/templates/package/list.tt
-#: share/templates/peering/list.tt share/templates/reseller/details.tt
-#: share/templates/reseller/list.tt share/templates/subscriber/list.tt
+#: lib/NGCP/Panel/Controller/Customer.pm share/templates/customer/details.tt
+#: share/templates/customer/list.tt share/templates/numberblock/block_list.tt
+#: share/templates/package/list.tt share/templates/peering/list.tt
+#: share/templates/reseller/details.tt share/templates/reseller/list.tt
+#: share/templates/subscriber/list.tt
 msgid "Details"
 msgstr "Dettagli"
 
