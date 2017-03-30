@@ -210,11 +210,11 @@ function process_pbx_items(moveId,direction){
     UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only;
     helper.dt_buttons = [
         { name = c.loc('Play'), uri = "details/voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+        { name = c.loc('Delete'), uri = "details/voicemail/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
     ELSE;
     helper.dt_buttons = [
         { name = c.loc('Play'), uri = "details/voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
-        { name = c.loc('Delete'), uri = "details/voicemail/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
     END;
    
