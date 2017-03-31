@@ -1,4 +1,4 @@
-use Sipwise::Base;
+#use Sipwise::Base;
 use Net::Domain qw(hostfqdn);
 use JSON qw();
 use Test::More;

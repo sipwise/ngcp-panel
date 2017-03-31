@@ -30,9 +30,15 @@ sub set_config {
                 %{$self->_set_config($_)},
             } } @{ $self->allowed_methods }
         },
-        action_roles => [qw(HTTPMethods)],
+        #action_roles => [qw(HTTPMethods)],
         %{$self->_set_config()},
     );
+}
+
+sub gather_default_action_roles {
+    my ($self, %args) = @_; my @roles = ();
+    push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
+    return @roles;
 }
 
 sub allowed_roles {
