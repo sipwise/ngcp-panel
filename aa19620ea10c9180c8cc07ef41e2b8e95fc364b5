@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_43b6d9dd",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-03-31T16:57:20Z",
+      "side": 1,
+      "message": "\u0026\u0026 c.user.readonly \u003d\u003d\u003e Delete ?\nMaybe we need \u0026\u0026 !c.user.read_only here then?",
+      "range": {
+        "startLine": 210,
+        "startChar": 67,
+        "endLine": 210,
+        "endChar": 86
+      },
+      "revId": "aa19620ea10c9180c8cc07ef41e2b8e95fc364b5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
