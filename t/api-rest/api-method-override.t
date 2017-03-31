@@ -1,4 +1,4 @@
-use Sipwise::Base;
+#use Sipwise::Base;
 use Net::Domain qw(hostfqdn);
 use JSON qw();
 use Test::More;
@@ -9,8 +9,23 @@ my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
 my ($ua, $req, $res);
 
-use Test::Collection;
-$ua = Test::Collection->new()->ua();
+#use Test::Collection;
+#$ua = Test::Collection->new()->ua();
+
+my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
+my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
+
+use LWP::UserAgent;
+my ($ua, $req, $res);
+$ua = LWP::UserAgent->new;
+
+$ua->ssl_opts(
+        verify_hostname => 0,
+        SSL_verify_mode => 0,
+    );
+my $user = $ENV{API_USER} // 'administrator';
+my $pass = $ENV{API_PASS} // 'administrator';
+$ua->credentials($netloc, "api_admin_http", $user, $pass);
 
 #$ua->add_handler("request_send",  sub {
 #    my ($request, $ua, $h) = @_;

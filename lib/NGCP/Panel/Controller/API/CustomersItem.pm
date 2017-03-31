@@ -55,8 +55,16 @@ __PACKAGE__->config(
             Does => [qw(ACL RequireSSL)],
         }) }
     },
-    action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
+
+sub gather_default_action_roles {
+    #override Catalyst::Controller::gather_default_action_roles to
+    #eliminate default Catalyst::ActionRole::HTTPMethods action role
+    my ($self, %args) = @_; my @roles = ();
+    push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
+    push @roles, 'Catalyst::ActionRole::ConsumesContent' if $args{attributes}->{Consumes};
+    return @roles;
+}
 
 sub auto :Private {
     my ($self, $c) = @_;
