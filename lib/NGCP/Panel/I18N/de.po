@@ -10689,6 +10689,18 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The primary alias of the subscriber's pilot subscriber, after number updates "
+"during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The primary alias of the subscriber's pilot subscriber, before number "
+"updates during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The primary number area code of the subscriber's pilot subscriber."
 msgstr ""
 
@@ -11031,6 +11043,16 @@ msgstr ""
 msgid ""
 "The subscriber's non-primary alias with lowest id, before number updates "
 "during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The subscriber's primary alias, after number updates during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The subscriber's primary alias, before number updates during the operation."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
