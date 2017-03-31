@@ -4,6 +4,7 @@ use strict;
 use Net::Domain qw(hostfqdn);
 use JSON qw();
 use Test::More;
+use Test::ForceArray qw/:all/;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
@@ -228,8 +229,9 @@ my @allrules = ();
 
         # remove any entry we find in the collection for later check
         if(ref $collection->{_links}->{'ngcp:rewriterules'} eq "HASH") {
-            ok(exists $collection->{_embedded}->{'ngcp:rewriterules'}->{_links}->{'ngcp:rewriterules'}, "check presence of ngcp:rewriterules relation");
-            ok(exists $collection->{_embedded}->{'ngcp:rewriterules'}->{_links}->{'ngcp:rewriterulesets'}, "check presence of ngcp:rewriterulesets relation");
+            my $item = get_embedded_item($collection,'rewriterules');
+            ok(exists $item->{_links}->{'ngcp:rewriterules'}, "check presence of ngcp:rewriterules relation");
+            ok(exists $item->{_links}->{'ngcp:rewriterulesets'}, "check presence of ngcp:rewriterulesets relation");
             delete $rules{$collection->{_links}->{'ngcp:rewriterules'}->{href}};
         } else {
             foreach my $c(@{ $collection->{_links}->{'ngcp:rewriterules'} }) {

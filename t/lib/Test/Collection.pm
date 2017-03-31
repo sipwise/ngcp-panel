@@ -1249,12 +1249,29 @@ sub resource_clear_file{
     print "cmd=$cmd;\n";
     `$cmd`;
 }
+
 sub get_id_from_hal{
     my($self,$hal,$name) = @_;
-    $name //= $self->name;
-    (my ($id)) = $hal->{_embedded}->{'ngcp:'.$name}->{_links}{self}{href} =~ m!${name}/([0-9]*)$!;
+    my $embedded = $self->get_embedded_item($hal,$name);
+    (my ($id)) = $embedded->{_links}{self}{href}=~ m!${name}/([0-9]*)$! if $embedded;
     return $id;
 }
+
+sub get_embedded_item{
+    my($self,$hal,$name) = @_;
+    $name //= $self->name;
+    my $embedded = $hal->{_embedded}->{'ngcp:'.$name} ;
+    return 'ARRAY' eq ref $embedded ? $embedded->[0] : $embedded ;
+}
+
+sub get_embedded_forcearray{
+    my($self,$hal,$name) = @_;
+    $name //= $self->name;
+    my $embedded = $hal->{_embedded}->{'ngcp:'.$name} ;
+    return 'ARRAY' eq ref $embedded ? $embedded : [ $embedded ];
+}
+
+
 sub uri2location{
     my($self,$uri) = @_;
     $uri=~s/^.*?(\/api\/.*$)/$1/;

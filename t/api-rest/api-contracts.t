@@ -4,6 +4,7 @@ use Sipwise::Base;
 use Net::Domain qw(hostfqdn);
 use JSON qw();
 use Test::More;
+use Test::ForceArray qw/:all/;
 
 use DateTime qw();
 use DateTime::Format::Strptime qw();
@@ -206,12 +207,13 @@ my @allcontracts = ();
 
         # remove any contact we find in the collection for later check
         if(ref $collection->{_links}->{'ngcp:contracts'} eq "HASH") {
+            my $item = get_embedded_item($collection,'contracts');
             # TODO: handle hashref
-            ok($collection->{_embedded}->{'ngcp:contracts'}->[0]->{status} ne "terminated", "check if we don't have terminated contracts in response");
-            ok($collection->{_embedded}->{'ngcp:contracts'}->[0]->{type} eq "sippeering" || $collection->{_embedded}->{'ngcp:contracts'}->[0]->{type} eq "reseller", "check for correct system contract type");
-            ok(exists $collection->{_embedded}->{'ngcp:contracts'}->[0]->{_links}->{'ngcp:systemcontacts'}, "check presence of ngcp:systemcontacts relation");
-            ok(exists $collection->{_embedded}->{'ngcp:contracts'}->[0]->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
             delete $contracts{$collection->{_links}->{'ngcp:contracts'}->{href}};
+            ok($item->{status} ne "terminated", "check if we don't have terminated contracts in response");
+            ok($item->{type} eq "sippeering" || $item->{type} eq "reseller", "check for correct system contract type");
+            ok(exists $item->{_links}->{'ngcp:systemcontacts'}, "check presence of ngcp:systemcontacts relation");
+            ok(exists $item->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
         } else {
             foreach my $c(@{ $collection->{_links}->{'ngcp:contracts'} }) {
                 delete $contracts{$c->{href}};

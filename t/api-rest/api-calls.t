@@ -18,7 +18,7 @@ SKIP:
     if ($sub1->{total_count} < 1) {
         skip("Precondition not met: need a subscriber",1);
     }
-    ($sub1_id) = $sub1->{_embedded}->{'ngcp:subscribers'}->[0]->{_links}{self}{href} =~ m!subscribers/([0-9]*)$!;
+    $sub1_id = $test_machine->get_id_from_hal($sub1,'subscribers');
 
     cmp_ok ($sub1_id, '>', 0, "should be positive integer");
     

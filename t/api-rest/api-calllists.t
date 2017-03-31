@@ -4,6 +4,7 @@ use warnings;
 use Test::More;
 use Test::Collection;
 use Data::Dumper;
+use Test::ForceArray qw/:all/;
 
 my $test_machine = Test::Collection->new(
     name => 'calllists',
@@ -23,7 +24,7 @@ SKIP:
         if ($sub1->{total_count} < 1) {
             skip("Precondition not met: need a subscriber",1);
         }
-        ($sub1_id) = $sub1->{_embedded}->{'ngcp:subscribers'}->[0]->{_links}->{self}{href} =~ m!subscribers/([0-9]*)$!;
+        $sub1_id = $test_machine->get_id_from_hal($sub1,'subscribers');
     }
     cmp_ok ($sub1_id, '>', 0, "should be positive integer");
 #----    
@@ -71,7 +72,7 @@ SKIP:
         if ($cust1->{total_count} < 1) {
             skip("Precondition not met: need a customer",1);
         }
-        ($cust1_id) = $cust1->{_embedded}->{'ngcp:customers'}->[0]->{_links}{self}{href} =~ m!customers/([0-9]*)$!;
+        $cust1_id = $test_machine->get_id_from_hal($cust1,'customers');;
     }
     cmp_ok ($cust1_id, '>', 0, "should be positive integer");
     
@@ -95,9 +96,9 @@ SKIP:
     if ($sub1->{total_count} < 1) {
         skip("Precondition not met: need a subscriber",1);
     }
-    ($sub1_id) = $sub1->{_embedded}->{'ngcp:subscribers'}->[0]->{_links}{self}{href} =~ m!subscribers/([0-9]*)$!;
-    #$sub1_user = $sub1->{_embedded}->{'ngcp:subscribers'}->{'username'};
-    #$sub1_pass = $sub1->{_embedded}->{'ngcp:subscribers'}->{'webpassword'} // '';
+    $sub1_id = $test_machine->get_id_from_hal($sub1,'subscribers');
+    #$sub1_user = $test_machine->get_embedded_item($sub1,'subscribers')->{'username'};
+    #$sub1_pass = $test_machine->get_embedded_item($sub1,'subscribers')->{'webpassword'} // '';
 
     cmp_ok ($sub1_id, '>', 0, "should be positive integer");
     

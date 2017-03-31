@@ -87,7 +87,7 @@ SKIP:{
     }
 
     $test_machine->check_bundle();
-    my($cf1_id) = $test_machine->get_id_from_hal($cf1->{content_collection}); #($cf1,'callforwards');
+    my $cf1_id = $test_machine->get_id_from_hal($cf1->{content_collection}); #($cf1,'callforwards');
     cmp_ok ($cf1_id, '>', 0, "should be positive integer");
     my $cf1single_uri = "/api/callforwards/$cf1_id";
     my $cf1single;
