@@ -159,8 +159,13 @@ __PACKAGE__->config(
             Path => __PACKAGE__->dispatch_path,
         } } @{ __PACKAGE__->allowed_methods },
     },
-    action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
+
+sub gather_default_action_roles {
+    my ($self, %args) = @_; my @roles = ();
+    push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
+    return @roles;
+}
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -307,7 +312,7 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The contact_id is not a valid ngcp:customercontacts item, but an ngcp:systemcontacts item");
             last;
         }
-        #todo: strange: why do we check this after customer creation? 
+        #todo: strange: why do we check this after customer creation?
         my $tmplfields = $self->get_template_fields_spec();
         foreach my $field (keys %$tmplfields){
             my $field_table_rel = $tmplfields->{$field}->[1];
