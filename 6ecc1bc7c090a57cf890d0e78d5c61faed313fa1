@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_e39b8570",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1921,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-03-31T16:23:39Z",
+      "side": 1,
+      "message": "I would save variable $q as \nmy $q \u003d $c-\u003ereq-\u003eparams-\u003e{q}; \nAs for me it is more maintainable.\nPreviously pir ur;sweer possible as /next/real_version_num.rom\n\nNow they can be something like /next/whatever.rom?q\u003dreal_version\n\nWill we need to test phones with this new format? May it be so, that some will require just clear url with no params?\nMaybe changes would be safer if we just added checking through filenames if no version found?\n\nIf I get it right - our goal for these methods make exact but not prohibitive search.",
+      "range": {
+        "startLine": 1919,
+        "startChar": 0,
+        "endLine": 1921,
+        "endChar": 64
+      },
+      "revId": "6ecc1bc7c090a57cf890d0e78d5c61faed313fa1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
