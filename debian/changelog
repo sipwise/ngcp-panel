@@ -1,3 +1,21 @@
+ngcp-panel (5.2.1.1+0~mr5.2.1.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [4841a3e] TT#5811 MT#15667 MT#15793 api/callist "call_id" param
+  * [cc22af7] TT#12998 fix api-events.t and edr first alias sorting
+
+  [ Andreas Granig ]
+  * [b507c36] TT#10134 Fix emergency prio
+  * [0e56d91] TT#7453 Fix fixing removal of r/o fields and tests
+
+  [ Irina Peshinskaya ]
+  * [4a397a9] TT#9309 Adapt ngcp-panel tests to api forcearray
+  * [31dd159] TT#9309 More careful tests fix for the API embedded forcearray
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Apr 2017 14:31:03 +0200
+
 ngcp-panel (5.2.1.0+0~mr5.2.1.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
