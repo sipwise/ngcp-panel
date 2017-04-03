@@ -1,0 +1,7 @@
+*.debhelper
+*.log
+*.substvars
+/debhelper-build-stamp
+/files
+/ngcp-panel-tools/
+/ngcp-panel/
