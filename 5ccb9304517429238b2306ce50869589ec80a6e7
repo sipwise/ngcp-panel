@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_e6a6f352",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-04T11:48:32Z",
+      "side": 1,
+      "message": "For me readonly situation should looks as:\n\n    IF !(c.user.roles \u003d\u003d \"admin\" || c.user.roles \u003d\u003d \"reseller\") || c.user.read_only;\n\nor\n\n    IF (c.user.roles !\u003d \"admin\" \u0026\u0026 c.user.roles !\u003d \"reseller\") || c.user.read_only;\n\nthat are the same. Second is more clear as for me.",
+      "range": {
+        "startLine": 210,
+        "startChar": 0,
+        "endLine": 210,
+        "endChar": 83
+      },
+      "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
