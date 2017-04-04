@@ -30,9 +30,15 @@ sub set_config {
                 %{$self->_set_config($_)},
             } } @{ $self->allowed_methods }
         },
-        action_roles => [qw(HTTPMethods)],
+        #action_roles => [qw(HTTPMethods)],
         %{$self->_set_config()},
     );
+}
+
+sub gather_default_action_roles {
+    my ($self, %args) = @_; my @roles = ();
+    push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
+    return @roles;
 }
 
 sub get {
@@ -104,7 +110,7 @@ sub put {
         last unless $resource;
         my $old_resource = { $item->get_inflated_columns };
         my $form;
-        
+
         ($item, $form) = $self->update_item($c, $item, $old_resource, $resource, $form );
         last unless $item;
 
