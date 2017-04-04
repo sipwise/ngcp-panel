@@ -221,6 +221,9 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('voip_peer_hosts')->create($resource);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            if($resource->{probe}) {
+                NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+            }
         } catch($e) {
             $c->log->error("failed to create peering server: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
@@ -228,6 +231,17 @@ sub POST :Allow {
         }
 
         $guard->commit;
+
+        try {
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            if($resource->{probe}) {
+                NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+            }
+        } catch($e) {
+            $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            last;
+        }
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));

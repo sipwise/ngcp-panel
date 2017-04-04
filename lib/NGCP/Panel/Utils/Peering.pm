@@ -19,6 +19,20 @@ EOF
     return 1;
 }
 
+sub _sip_dispatcher_reload {
+    my ($self, $c) = @_;
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+    my ($res) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>dispatcher.reload</methodName>
+<params/>
+</methodCall>
+EOF
+
+    return ref $res ? @{ $res } : ();
+}
+
 sub apply_rewrite {
     my (%params) = @_;
 
