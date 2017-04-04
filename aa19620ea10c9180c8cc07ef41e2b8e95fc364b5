@@ -46,6 +46,30 @@
       "revId": "aa19620ea10c9180c8cc07ef41e2b8e95fc364b5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_e64553b4",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-04T09:27:36Z",
+      "side": 1,
+      "message": "for me it was also quite tricky to follow this logic. if you don\u0027t mind, I will change it into an IF-ELSE instead",
+      "parentUuid": "7a1969be_a63b5b37",
+      "range": {
+        "startLine": 210,
+        "startChar": 67,
+        "endLine": 210,
+        "endChar": 86
+      },
+      "revId": "aa19620ea10c9180c8cc07ef41e2b8e95fc364b5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
