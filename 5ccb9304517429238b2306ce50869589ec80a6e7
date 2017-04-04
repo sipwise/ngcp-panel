@@ -46,6 +46,30 @@
       "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_4631c70a",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-04T13:28:49Z",
+      "side": 1,
+      "message": "You see, we can\u0027t just put ! before complex condition  and leave all the same, can we?\n\nMaybe to have the best variant, we should collect all \"positive\" sighs in the condition, so:\n\n\n    IF (c.user.roles \u003d\u003d \"admin\" || c.user.roles \u003d\u003d \"reseller\") \u0026\u0026 ! c.user.read_only;\n    helper.dt_buttons \u003d [\n        { name \u003d c.loc(\u0027Play\u0027), uri \u003d \"details/voicemail/\u0027+full.id+\u0027/play\", class \u003d \u0027btn-small btn-tertiary\u0027, icon \u003d \u0027icon-play\u0027 },\n        { name \u003d c.loc(\u0027Delete\u0027), uri \u003d \"details/voicemail/\u0027+full.id+\u0027/delete\", class \u003d \u0027btn-small btn-secondary\u0027, icon \u003d \u0027icon-trash\u0027 },\n    ];\n    ELSE;\n    helper.dt_buttons \u003d [\n        { name \u003d c.loc(\u0027Play\u0027), uri \u003d \"details/voicemail/\u0027+full.id+\u0027/play\", class \u003d \u0027btn-small btn-tertiary\u0027, icon \u003d \u0027icon-play\u0027 },\n    ];\n    END;",
+      "parentUuid": "7a1969be_264f6b94",
+      "range": {
+        "startLine": 210,
+        "startChar": 0,
+        "endLine": 210,
+        "endChar": 83
+      },
+      "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
