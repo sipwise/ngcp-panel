@@ -70,6 +70,30 @@
       "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_61d02d54",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-04-04T13:55:03Z",
+      "side": 1,
+      "message": "why not swap the blocks otherwise; or use deMorgan to invert (-\u003e a and b \u003d\u003d !(!a or !b) )",
+      "parentUuid": "7a1969be_4631c70a",
+      "range": {
+        "startLine": 210,
+        "startChar": 0,
+        "endLine": 210,
+        "endChar": 83
+      },
+      "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
