@@ -87,7 +87,7 @@ See description how to obtain properties, if any.
 [% ELSE -%]
 <ul id="[% id %]-props">
 [% FOREACH f IN col.fields -%]
-    <li><b>[% f.name %] </b>(<i>[% f.types.join(', ') %]</i>): [% f.description %]</li>
+    <li><b>[% f.name %] </b>(<i>[% f.types.join(', ') | html %]</i>): [% f.description | html %]</li>
 [% END -%]
 </ul>
 [% END -%]
