@@ -50,8 +50,13 @@ __PACKAGE__->config(
             Does => [qw(ACL RequireSSL)],
         }) }        
     },
-    action_roles => [qw(+NGCP::Panel::Role::HTTPMethods)],
 );
+
+sub gather_default_action_roles {
+    my ($self, %args) = @_; my @roles = ();
+    push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
+    return @roles;
+}
 
 sub auto :Private {
     my ($self, $c) = @_;
