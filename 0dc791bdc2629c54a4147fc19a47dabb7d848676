@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_a17ce573",
+        "filename": "lib/NGCP/Panel/Controller/Peering.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-04-04T13:44:04Z",
+      "side": 1,
+      "message": "\u003e is it intentional to change our peering hosts creation as\n \u003e \"disabled\" by default or just a copy/paste ?\n\nThat\u0027s not what this change does. It just disables the capabilities to search for 0|1 in the enabled field, which is pretty pointless, because it will search for occurances of 0 or 1 in all columns where search \u003d\u003e 1, and you won\u0027t get usable filter results.",
+      "parentUuid": "7a1969be_015fb90f",
+      "range": {
+        "startLine": 90,
+        "startChar": 39,
+        "endLine": 90,
+        "endChar": 40
+      },
+      "revId": "0dc791bdc2629c54a4147fc19a47dabb7d848676",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_619b0dca",
         "filename": "lib/NGCP/Panel/Form/Peering/Server.pm",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-04-04T13:08:43Z",
       "side": 1,
       "message": "Note: If \"Enable Probing\" is disabled the peer host is automatically considered as healthy and valid even if it is actually \"down\".",
+      "range": {
+        "startLine": 89,
+        "startChar": 70,
+        "endLine": 89,
+        "endChar": 72
+      },
+      "revId": "0dc791bdc2629c54a4147fc19a47dabb7d848676",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_e1953d89",
+        "filename": "lib/NGCP/Panel/Form/Peering/Server.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-04-04T13:44:04Z",
+      "side": 1,
+      "message": "\u003e Note: If \"Enable Probing\" is disabled the peer host is\n \u003e automatically considered as healthy and valid even if it is\n \u003e actually \"down\".\n\nCorrect, but that\u0027s the whole point, right? If you don\u0027t enable probing, you send requests to this peer without knowing whether it\u0027s up or down.",
+      "parentUuid": "7a1969be_619b0dca",
       "range": {
         "startLine": 89,
         "startChar": 70,
