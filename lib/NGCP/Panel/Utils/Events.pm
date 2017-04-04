@@ -593,6 +593,15 @@ sub _save_primary_alias {
     }
     if ($alias_username) {
         $tags_rs //= $schema->resultset('events_tag');
+        if(!$types_prefix){
+            use Carp qw /longmess/;
+            use Data::Dumper;
+            use DateTime;
+            open(my $fh, ">>/tmp/tt14091.txt") or die ("can't open");
+            print $fh "\n".DateTime->now->strftime("%Y-%m-%d %H:%M:%S").";type=${types_prefix}primary_alias_username${types_suffix};\n";
+            print $fh longmess();
+            close $fh;
+        }
         $event->create_related("tag_data", {
             tag_id => $tags_rs->find({ type => $types_prefix.'primary_alias_username'.$types_suffix })->id,
             val => $alias_username,
