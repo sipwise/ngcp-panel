@@ -22,6 +22,30 @@
       "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_264f6b94",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-04T11:59:54Z",
+      "side": 1,
+      "message": "no why? mine has no negations and in that way is the most readable. at least to me",
+      "parentUuid": "7a1969be_e6a6f352",
+      "range": {
+        "startLine": 210,
+        "startChar": 0,
+        "endLine": 210,
+        "endChar": 83
+      },
+      "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
