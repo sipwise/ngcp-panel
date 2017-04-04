@@ -14,7 +14,7 @@ has_field 'group_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group_id name ip host port transport weight via_route enabled/],
+    render_list => [qw/group_id name ip host port transport weight via_route probe enabled/],
 );
 
 1;

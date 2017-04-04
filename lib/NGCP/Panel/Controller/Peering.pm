@@ -84,9 +84,10 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'host', search => 1, title => $c->loc('Hostname') },
         { name => 'port', search => 1, title => $c->loc('Port') },
         { name => 'transport', search => 1, title => $c->loc('Protocol') },
-        { name => 'weight', search => 1, title => $c->loc('Weight') },
+        { name => 'weight', search => 0, title => $c->loc('Weight') },
         { name => 'via_route', search => 1, title => $c->loc('Via Route Set') },
-        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
+        { name => 'probe', search => 0, title => $c->loc('Probe') },
+        { name => 'enabled', search => 0, title => $c->loc('Enabled') },
     ]);
     $c->stash->{rules_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
@@ -273,9 +274,13 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
                 weight => $form->values->{weight},
                 via_route => $form->values->{via_route},
                 enabled => $form->values->{enabled},
+                probe => $form->values->{probe},
             };
             my $server = $c->stash->{group_result}->voip_peer_hosts->create($dbvalues);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            if($dbvalues->{probe}) {
+                NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+            }
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Peering server successfully created'),
@@ -348,6 +353,7 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
         try {
             $c->stash->{server_result}->update($form->values);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Peering server successfully updated'),
@@ -374,8 +380,12 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
     
     try {
+        my $probe = $c->stash->{server_result}->probe;
         $c->stash->{server_result}->delete;
         NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        if($probe) {
+            NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+        }
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{server_result}->get_inflated_columns },

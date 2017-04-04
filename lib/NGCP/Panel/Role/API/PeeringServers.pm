@@ -86,7 +86,6 @@ sub update_item {
     }
 
     $item->update($resource);
-    NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
     return $item;
 }
 
