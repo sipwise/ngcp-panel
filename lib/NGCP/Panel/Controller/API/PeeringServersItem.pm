@@ -124,6 +124,15 @@ sub PATCH :Allow {
         
         $guard->commit;
 
+        try {
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+        } catch($e) {
+            $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            last;
+        }
+
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
@@ -163,6 +172,14 @@ sub PUT :Allow {
         last unless $item;
 
         $guard->commit; 
+        try {
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+        } catch($e) {
+            $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            last;
+        }
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -188,9 +205,19 @@ sub DELETE :Allow {
     {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, peeringserver => $item);
+        my $probe = $item->probe;
         $item->delete;
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         $guard->commit;
+        try {
+            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            if($probe) {
+                NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+            }
+        } catch($e) {
+            $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            last;
+        }
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
