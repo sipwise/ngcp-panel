@@ -2647,7 +2647,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     ->delete;
                 }
                 if($subscriber->status eq 'locked') {
-                    $form->values->{lock} = 4; # update lock below
+                    $form->values->{lock} ||= 4; # update lock below
                 } elsif($old_status eq 'locked' && $subscriber->status eq 'active') {
                     $form->values->{lock} ||= 0; # update lock below
                 }
