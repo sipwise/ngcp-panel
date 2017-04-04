@@ -22,6 +22,30 @@
       "revId": "b7b066d0693940d7c563fddb9ad75f56ac29bb5f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_a6e35b04",
+        "filename": "t/api-rest/api-method-override.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-04-04T03:47:17Z",
+      "side": 1,
+      "message": "no it\u0027s fine, i don\u0027t run the test from within vm. it expects a cert saved locally somewhere, which i just cant prepare for every fresh vm.",
+      "parentUuid": "7a1969be_b07395e6",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 58
+      },
+      "revId": "b7b066d0693940d7c563fddb9ad75f56ac29bb5f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
