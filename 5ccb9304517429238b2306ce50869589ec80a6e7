@@ -142,6 +142,30 @@
       "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_a18225fe",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-04T16:53:53Z",
+      "side": 1,
+      "message": "I think as all these are personal preferences you should do as you see it the most clear.\n\nI always thought about such situations as about allow or permit decision. So in IF condition it is more clear to collect all signs with the same meaning and join them properly. But you see, it is too personal.",
+      "parentUuid": "7a1969be_01c5f95a",
+      "range": {
+        "startLine": 210,
+        "startChar": 0,
+        "endLine": 210,
+        "endChar": 83
+      },
+      "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
