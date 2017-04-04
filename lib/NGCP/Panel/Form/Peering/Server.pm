@@ -79,6 +79,17 @@ sub build_via_routes {
     return \@options;
 }
 
+has_field 'probe' => (
+    type => 'Boolean',
+    label => 'Enable Probing',
+    default => 0,
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Perform probing via SIP pings to check reachability.'],
+    },
+);
+
 has_field 'enabled' => (
     type => 'Boolean',
     label => 'Enabled',
@@ -99,7 +110,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/ name ip host port transport weight via_route enabled /],
+    render_list => [qw/ name ip host port transport weight via_route probe enabled /],
 );
 
 has_block 'actions' => (
