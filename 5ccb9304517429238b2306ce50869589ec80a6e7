@@ -118,6 +118,30 @@
       "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_01c5f95a",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-04T16:34:13Z",
+      "side": 1,
+      "message": "I still disagree. The condition is correct as I put it.\n\nExplaination:\n\nif user is admin or reseller -\u003e check read_only flag -\u003e if read_only flag is set\n\u003d\u003e he can only play the voicemail\n\nelse part:\nif user is admin or reseller but no read_only flag OR user is not even admin or reseller (there is no read-only flag)\n\u003d\u003e user can delete the voicemail",
+      "parentUuid": "7a1969be_61378db1",
+      "range": {
+        "startLine": 210,
+        "startChar": 0,
+        "endLine": 210,
+        "endChar": 83
+      },
+      "revId": "5ccb9304517429238b2306ce50869589ec80a6e7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
