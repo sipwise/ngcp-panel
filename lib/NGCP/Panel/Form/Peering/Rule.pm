@@ -65,7 +65,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/ callee_prefix callee_pattern caller_pattern description enabled /],
+    render_list => [qw/callee_prefix callee_pattern caller_pattern description enabled/],
 );
 
 has_block 'actions' => (
