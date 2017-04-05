@@ -55,6 +55,17 @@ has_field 'enabled' => (
     },
 );
 
+has_field 'group' => (
+    type => '+NGCP::Panel::Field::PeeringGroupSelect',
+    label => 'Peering Group',
+    not_nullable => 1,
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A peering group the rule belongs to.']
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -65,7 +76,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/ callee_prefix callee_pattern caller_pattern description enabled /],
+    render_list => [qw/ callee_prefix callee_pattern caller_pattern description enabled group/],
 );
 
 has_block 'actions' => (

@@ -34,6 +34,7 @@
     <ul class="dropdown-menu">
         <li>
             <a href="[% c.uri_for('/callroutingverify') %]">[% c.loc('Call Routing Verification') %]</a>
+            <a href="[% c.uri_for('/peeringoverview') %]">[% c.loc('Peering Overview') %]</a>
         </li>
     </ul>
 </li>
