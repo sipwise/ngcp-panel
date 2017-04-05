@@ -22,6 +22,30 @@
       "revId": "6ecc1bc7c090a57cf890d0e78d5c61faed313fa1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_fcee86b3",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1921,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-04-05T14:35:56Z",
+      "side": 1,
+      "message": "\u003e I would save variable $q as\n \u003e my $q \u003d $c-\u003ereq-\u003eparams-\u003e{q};\n \u003e As for me it is more maintainable.\n\nSince we only use it twice in this block, I didn\u0027t see the need for a variable here.\n\n \u003e Previously pir ur;sweer possible as /next/real_version_num.rom\n \u003e \n \u003e Now they can be something like /next/whatever.rom?q\u003dreal_version\n\nThe \"next\" and \"latest\" were supposed to provide, well, the next and latest version. If a device sends a \"q\" param, then it is usually the current version installed on the device. There is no point to provide the current version here, specifically in the \"latest\". And even more so, it completely fails, because we try to find a version based on what the device sent. What if you have a device with a very old firmware, which is not on the system? Then we run into exactly the issue that the server returns 404 because we don\u0027t find a latest version matching the version string the device sent.\n\nAnyways the purpose of the \"q\" param was something entirely different anyways. The idea was to support devices requiring two separate firmwares, e.g. DECT ATAs. They are currently configured on the system with a firmware base_123 and handset_123 for instance, and for fetching the next/latest version, they send a request to firmware/latest?q\u003dbase or firmware/latest?q\u003dhandset in order for the system to fetch the correct one.\n\nNow with the current change in place, any trailing url param is just discarded, so if a device sends firmware/latest/foo.rom?q\u003dbase, then the foo.rom is ignored and we still search for a firmware starting with \"base\".\n\n\n \u003e Will we need to test phones with this new format? May it be so,\n \u003e that some will require just clear url with no params?\n\nDoesn\u0027t matter, the last param is optional here and is never used.\n\n \u003e Maybe changes would be safer if we just added checking through\n \u003e filenames if no version found?\n \u003e \n \u003e If I get it right - our goal for these methods make exact but not\n \u003e prohibitive search.\n\nNo, the goal for latest and next is NOT to look at any firmware version the device might send as suffix, but only use the \"q\" parameter in case a device wants to have a specific variant of the latest or next firmware, like base or handset as described above.",
+      "parentUuid": "7a1969be_e39b8570",
+      "range": {
+        "startLine": 1919,
+        "startChar": 0,
+        "endLine": 1921,
+        "endChar": 64
+      },
+      "revId": "6ecc1bc7c090a57cf890d0e78d5c61faed313fa1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
