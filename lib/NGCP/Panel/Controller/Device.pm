@@ -1041,7 +1041,7 @@ sub devmod_get_annotated_info :Chained('devmod_base') :PathPart('annolines/ajax'
     $self->get_annotated_info($c, $c->stash->{devmod} );
 }
 
-sub get_annotated_info :Privat {
+sub get_annotated_info :Private {
     my ($self, $c, $devmod) = @_;
 
     my $device_info = { $devmod->get_inflated_columns };
