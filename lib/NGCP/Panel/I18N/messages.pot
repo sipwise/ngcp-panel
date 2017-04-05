@@ -6968,12 +6968,164 @@ msgstr ""
 msgid "Reject code"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if block override pin is wrong"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if call relay is detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if callee is blocked by NCOS"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if callee is blocked by caller"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if callee is blocked by caller contract"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if callee is busy"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if callee is locked"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if callee is offline"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if callee is temporarily unavailable"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if callee is unknown"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if caller is blocked by admin"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if caller is blocked by callee"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if caller is locked"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if involved party has no credit"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if max inbound call limit reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if max outbound call limit on peer reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if max outbound call limit reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code if no peering for callee is available"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject code on call forward loop"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject emergency calls from this user or domain."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject reason"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if block override pin is wrong"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if call relay is detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if callee is blocked by NCOS"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if callee is blocked by caller"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if callee is blocked by caller contract"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if callee is busy"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if callee is locked"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if callee is offline"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if callee is temporarily unavailable"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if callee is unknown"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if caller is blocked by admin"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if caller is blocked by callee"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if caller is locked"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if involved party has no credit"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if max inbound call limit reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if max outbound call limit on peer reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if max outbound call limit reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason if no peering for callee is available"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject reason on call forward loop"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
@@ -7239,6 +7391,10 @@ msgstr ""
 
 #: share/templates/peering/list.tt
 msgid "SIP Peering Groups"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SIP Response Codes"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
