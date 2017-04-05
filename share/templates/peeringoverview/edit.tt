@@ -1,0 +1,98 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    if ($('input[name=rule_direction]:checked').attr("value") == "outbound") {
+        $("#control-inbound").hide();
+        $("#control-outbound").show();
+    } else {
+        $("#control-inbound").show();
+        $("#control-outbound").hide();
+    }
+
+    $('input[name$="rule_direction"]').click(function() {
+        if ($(this).attr("value") == "outbound") {
+            $("#control-outbound").show();
+            $("#control-inbound").hide();
+            $('div"#control-direction" input[type=checkbox]').prop('checked', false);
+        }
+        if ($(this).attr("value") == "inbound") {
+            $("#control-outbound").hide();
+            $("#control-inbound").show();
+            $('div"#control-direction" input[type=checkbox]').prop('checked', false);
+        }
+    });
+});
+</script>
+
+[% site_config.title = c.loc('Peering Overview Columns');
+
+    helper.identifier = 'call_routing_verify';
+    helper.close_target = close_target;
+
+    PROCESS "helpers/modal.tt";
+
+    modal_header(m.create_flag=0,
+                 m.name = c.loc("Peering Overview Columns"));
+
+    helper.form = translate_form(form);
+-%]
+
+
+<div class="row">
+
+    [% helper.form.render_start %]
+    <div class="form_messages">
+    </div>
+    <div>
+    <div class="controls">
+    <input type="hidden" name="submitid" id="submitid" value="" /></div>
+    </div>
+
+    [% helper.form.field('rule_direction').render %]
+    <div id="control-rule-direction">
+        <div id="control-outbound">
+            <table width="100%" border="0">
+            [% tmpcol = 0 -%]
+            [% FOREACH field IN helper.form.fields -%]
+                [% IF field.element_attr.type == 'outbound' -%]
+                    [% IF tmpcol mod 2 == 0 -%]
+                        <tr><td>[% field.render -%]</td>
+                    [% ELSE -%]
+                        <td>[% field.render -%]</td></tr>
+                    [% END -%]
+                    [% tmpcol = tmpcol + 1 -%]
+                [% END -%]
+            [% END -%]
+            </table>
+        </div>
+        <div id="control-inbound">
+            <table width="100%" border="0">
+            [% tmpcol = 0 -%]
+            [% FOREACH field IN helper.form.fields -%]
+                [% IF field.element_attr.type == 'inbound' -%]
+                    [% IF tmpcol mod 2 == 0 -%]
+                        <tr><td>[% field.render -%]</td>
+                    [% ELSE -%]
+                        <td>[% field.render -%]</td></tr>
+                    [% END -%]
+                    [% tmpcol = tmpcol + 1 -%]
+                [% END -%]
+            [% END -%]
+            </table>
+        </div>
+    </div>
+
+    [% helper.form.field('save').render %]
+
+    [% helper.form.render_end %]
+    <p></p>
+</div>
+
+</div>
+
+[%
+    modal_footer();
+    modal_script(m.close_target = helper.close_target);
+-%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
