@@ -76,6 +76,7 @@ Depends:
  libmoosex-emulate-class-accessor-fast-perl,
  libmoosex-method-signatures-perl,
  libmoosex-types-perl,
+ libngcp-rating-inew-perl,
  libnet-http-perl,
  libnet-https-any-perl,
  libnet-telnet-perl,
