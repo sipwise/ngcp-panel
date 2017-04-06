@@ -425,6 +425,11 @@ sub _compare_lnpnumber {
     }
 
     if ($expected->{end}) {
+        use Data::Dumper;
+        use Carp qw/longmess/;
+        print Dumper [longmess()];
+        print Dumper [$got->{end},$expected->{end}];
+        print Dumper [$got,$expected];
         $ok = is($got->{end},$expected->{end},$label . "check lnpnumber " . $got->{id} . " end date") && $ok;
     }
 
