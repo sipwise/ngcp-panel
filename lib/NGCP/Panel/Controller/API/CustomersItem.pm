@@ -18,11 +18,14 @@ require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+use Time::HiRes qw/gettimeofday tv_interval/;
+my $g_start;
+
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Customers/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CustomersPerf/;
 
 sub resource_name{
     return 'customers';
@@ -65,6 +68,8 @@ sub gather_default_action_roles {
 
 sub auto :Private {
     my ($self, $c) = @_;
+
+    $g_start = [gettimeofday];
 
     $self->set_body($c);
     $self->log_request($c);
@@ -261,6 +266,8 @@ sub end : Private {
 
     #$self->reset_fake_time($c);
     $self->log_response($c);
+
+    $c->log->info("/api/customers/id took " . tv_interval($g_start, [gettimeofday]));
 }
 
 1;

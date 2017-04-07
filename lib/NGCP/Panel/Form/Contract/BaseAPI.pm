@@ -1,6 +1,6 @@
 package NGCP::Panel::Form::Contract::BaseAPI;
 use HTML::FormHandler::Moose;
-use HTML::FormHandler::Widget::Block::Bootstrap;
+#use HTML::FormHandler::Widget::Block::Bootstrap;
 extends 'HTML::FormHandler';
 
 has_field 'contact_id' => (

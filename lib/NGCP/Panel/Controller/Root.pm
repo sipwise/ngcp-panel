@@ -9,8 +9,10 @@ use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Statistics qw();
 use NGCP::Panel::Utils::Admin;
 use DateTime qw();
-use Time::HiRes qw();
+use Time::HiRes qw/gettimeofday tv_interval/;
 use DateTime::Format::RFC3339 qw();
+
+my $g_start;
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -21,6 +23,9 @@ __PACKAGE__->config(namespace => '');
 sub auto :Private {
     my($self, $c) = @_;
     #exit(0); # just for profiling
+
+    $c->log->info("entering root");
+    $g_start = [gettimeofday];
 
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");
@@ -289,6 +294,8 @@ sub end :Private {
         $c->response->status(500);
         $c->detach($c->view);
     }
+
+    $c->log->info("root took " . tv_interval($g_start, [gettimeofday]));
 }
 
 sub _prune_row {
