@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_77174f52",
+        "filename": "lib/NGCP/Panel/Role/API/CustomersPerf.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-04-07T15:34:38Z",
+      "side": 1,
+      "message": "does it actually work with a raw singleton?\nmy $form;\n\nsub get_form {\n $form \u003d NGCP::Panel::Form::Contract::CustomerAPI-\u003enew unless $form;\n return $form;\n}",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 2
+      },
+      "revId": "0d70b18990bc198dc247832b5e218bc69bd136b0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
