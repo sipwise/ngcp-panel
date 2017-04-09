@@ -2328,6 +2328,7 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
         { name => "direction", search => 1, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")' },
         { name => "source_user", search => 1, title => $c->loc('Caller') },
         { name => "destination_user", search => 1, title => $c->loc('Callee') },
+        { name => "clir", search => 1, title => $c->loc('CLIR') },
         { name => "source_customer_billing_zones_history.detail", search => 1, title => $c->loc('Billing zone') },
         { name => "call_status", search => 1, title => $c->loc('Status') },
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
@@ -3533,6 +3534,7 @@ sub _process_calls_rows {
                 $data{source_user} = uri_unescape($resource->{other_cli});
                 $data{destination_user} = uri_unescape($resource->{own_cli});
             }
+            $data{clir} = $resource->{clir};
             $data{duration} = (defined $result->duration ? sprintf("%.2f s", $result->duration) : "");
             $data{duration} = (defined $result->duration ? NGCP::Panel::Utils::DateTime::sec_to_hms($c,$result->duration,3) : "");
             $data{total_customer_cost} = (defined $result->get_column('total_customer_cost') ? sprintf("%.2f", $result->get_column('total_customer_cost') / 100.0) : "");
