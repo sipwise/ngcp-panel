@@ -41,6 +41,15 @@ has_field 'other_cli' => (
     },
 );
 
+has_field 'clir' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['CLIR indicator for the call'],
+    },
+);
+
 has_field 'status' => (
     type => 'Select',
     required => 1,
