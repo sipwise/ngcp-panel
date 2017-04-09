@@ -20,6 +20,7 @@ use NGCP::Panel::Utils::DateTime;
 #     * intra_customer
 #     * other_cli
 #     * own_cli
+#     * clir
 #     * start_time
 #     * status
 #     * rating_status
@@ -51,6 +52,15 @@ sub process_cdr_item {
         $resource->{direction} = "out";
     }
 
+    my $anonymize = $c->user->roles ne "admin" && !$intra && $item->source_clir;
+    # try to use source_cli first and if it is "anonymous" fall-back to
+    # source_user@source_domain + mask the domain for non-admins
+    my $source_cli = $item->source_cli !~ /anonymous/i
+                        ? $item->source_cli
+                        : $item->source_user . '@' . $item->source_domain;
+    $source_cli = $anonymize ? 'anonymous@anonymous.invalid' : $source_cli;
+    $resource->{clir} = $item->source_clir;
+
     my ($src_sub, $dst_sub);
     my $billing_src_sub = $item->source_subscriber;
     my $billing_dst_sub = $item->destination_subscriber;
@@ -78,7 +88,7 @@ sub process_cdr_item {
             $resource->{own_cli} = $alias // $item->source_cli;
             $own_normalize = 1;
         } else {
-            $resource->{own_cli} = $item->source_cli;
+            $resource->{own_cli} = $source_cli;
             $own_normalize = 1;
         }
         $own_domain = $item->source_domain;
@@ -156,7 +166,7 @@ sub process_cdr_item {
             $resource->{other_cli} = $alias // $item->source_cli;
             $other_normalize = 1;
         } else {
-            $resource->{other_cli} = $item->source_cli;
+            $resource->{other_cli} = $source_cli;
             $other_normalize = 1;
         }
         $other_domain = $item->source_domain;
@@ -181,7 +191,7 @@ sub process_cdr_item {
         ? $billing_dst_sub
         : $billing_src_sub;
 
-    if($resource->{own_cli} !~ /^\d+$/) {
+    if($resource->{own_cli} !~ /(^\d+$|[\@])/) {
         $resource->{own_cli} .= '@'.$own_domain;
     } elsif($own_normalize) {
         if (my $normalized_cli = NGCP::Panel::Utils::Subscriber::apply_rewrite(
@@ -193,7 +203,7 @@ sub process_cdr_item {
 
     if($resource->{direction} eq "in" && $item->source_clir && $intra == 0) {
         $resource->{other_cli} = undef;
-    } elsif(!$other_skip_domain && $resource->{other_cli} !~ /^\d+$/) {
+    } elsif(!$other_skip_domain && $resource->{other_cli} !~ /(^\d+$|[\@])/) {
         $resource->{other_cli} .= '@'.$other_domain;
     } elsif($other_normalize) {
         if (my $normalized_cli = NGCP::Panel::Utils::Subscriber::apply_rewrite(
