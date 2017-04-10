@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_d2cd7188",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-10T09:28:24Z",
+      "side": 1,
+      "message": "here we just pick between either source_cli or if it is as \"anonymous\" in the cdr we pick the \"source_user@source_domain\" instead. that is to fix scenarios where picking always source_cli is not good because it makes no sense in the output for admins if it is \"anonymous\".",
+      "parentUuid": "7a1969be_f28ced81",
+      "range": {
+        "startLine": 63,
+        "startChar": 29,
+        "endLine": 63,
+        "endChar": 55
+      },
+      "revId": "f958e2272dd43d69ee4bd480da2f948e9eedb160",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_b2d9d585",
         "filename": "lib/NGCP/Panel/Utils/CallList.pm",
         "patchSetId": 3
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_92b499f3",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-10T09:28:24Z",
+      "side": 1,
+      "message": "skip_domain is only used for the \"destination\" part is to the internal services (see how it is checked) where we here only change the \"source\".\nalso if there is a call from a voicebox for instance, it will never contain \"clir \u003d 1\" so no changes to be applied there",
+      "parentUuid": "7a1969be_b2d9d585",
+      "revId": "f958e2272dd43d69ee4bd480da2f948e9eedb160",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_1290a994",
         "filename": "lib/NGCP/Panel/Utils/CallList.pm",
         "patchSetId": 3
@@ -53,6 +95,30 @@
       "writtenOn": "2017-04-10T08:29:00Z",
       "side": 1,
       "message": "[^\\@]+",
+      "range": {
+        "startLine": 198,
+        "startChar": 38,
+        "endLine": 198,
+        "endChar": 39
+      },
+      "revId": "f958e2272dd43d69ee4bd480da2f948e9eedb160",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_d2945146",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-10T09:28:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_1290a994",
       "range": {
         "startLine": 198,
         "startChar": 38,
