@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_3287a563",
+        "filename": "lib/NGCP/Panel/Controller/Peering.pm",
+        "patchSetId": 12
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-10T08:12:29Z",
+      "side": 1,
+      "message": "no. would lead back to the create page.",
+      "revId": "a08390586bde03b91c136efe9d6e535e7610d1d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_927c9974",
+        "filename": "lib/NGCP/Panel/Field/PeeringGroupSelect.pm",
+        "patchSetId": 12
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-10T08:12:29Z",
+      "side": 1,
+      "message": "I see, that we often use this, but technically, the line below is sufficient",
+      "revId": "a08390586bde03b91c136efe9d6e535e7610d1d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
