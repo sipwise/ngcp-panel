@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_1281c98f",
+        "filename": "lib/NGCP/Panel/Controller/Peering.pm",
+        "patchSetId": 13
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-10T11:40:23Z",
+      "side": 1,
+      "message": "but it\u0027s the same here and in the others below. it doesn\u0027t work this way. you would just enter the update page again.",
+      "range": {
+        "startLine": 362,
+        "startChar": 52,
+        "endLine": 362,
+        "endChar": 64
+      },
+      "revId": "a755e70115a2653737b7df54d5abf81d6dae86aa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
