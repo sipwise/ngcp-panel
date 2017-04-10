@@ -372,7 +372,7 @@ sub polycom_directory_list :Chained('base') :PathPart('pbx/directory/polycom') :
     my $data =
 '<?xml version="1.0" encoding="utf-8"?>
 <directory>
-  <item-list>
+  <item_list>
 ';
 
 =pod
@@ -402,7 +402,7 @@ bb  buddy block
              <bb>0</bb>
          </item>
     "} @entries;
-    $data .= '</item-list></directory>';
+    $data .= '</item_list></directory>';
 
     $c->log->debug("providing config to $id");
     $c->log->debug($data);
