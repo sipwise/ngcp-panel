@@ -1160,7 +1160,7 @@ sub api_preferences_defs{
     my $schema = $params{schema} // $c->model('DB');
     my $preferences_group = $params{preferences_group};
 
-    my $is_subadmin = ($c->user->roles eq 'subscriberadmin');
+    my $is_subadmin = ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber');
 
     my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
         internal => { '!=' => 1 }, # also fetch -1 for ncos, rwr
