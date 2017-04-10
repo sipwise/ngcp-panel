@@ -105,6 +105,10 @@ sub _item_rs {
         }, {
             join => 'contract',
         });
+    } elsif ($c->user->roles eq 'subscriber') {
+        $item_rs = $item_rs->search({
+            'me.uuid' => $c->user->uuid,
+        });
     }
 
     return $item_rs;
