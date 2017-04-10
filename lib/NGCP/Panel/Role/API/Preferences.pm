@@ -101,7 +101,7 @@ sub get_resource {
         my $value;
         my $processed = 0;
 
-        if ($c->user->roles eq 'subscriberadmin') {
+        if ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') {
             my $attrname = $pref->attribute->attribute;
             unless ( $pref->attribute->expose_to_customer ) {
                 $c->log->debug("skipping attribute $attrname, not exposing to customer");
@@ -319,6 +319,13 @@ sub _item_rs {
             },{
                 join => 'contract',
             });
+        } elsif ($c->user->roles eq 'subscriber') {
+            $item_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+                'me.uuid' => $c->user->uuid,
+                'me.status' => { '!=' => 'terminated' },
+            },{
+                join => 'contract',
+            });
         }
     } elsif($type eq "peerings") {
         if($c->user->roles eq "admin") {
@@ -399,7 +406,7 @@ sub get_preference_rs {
             c => $c,
             attribute => $attr,
             prov_subscriber => $elem,
-            ($c->user->roles eq "subscriberadmin") ? (subscriberadmin => 1) : (),
+            ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") ? (subscriberadmin => 1) : (),
         );
     } elsif($type eq "peerings") {
         $rs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
@@ -469,7 +476,7 @@ sub update_item {
         $accessor = $item->username . '@' . $item->domain->domain;
         $elem = $item->provisioning_voip_subscriber;
         $full_rs = $elem->voip_usr_preferences;
-        if ($c->user->roles eq 'subscriberadmin') {
+        if ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') {
             $full_rs = $full_rs->search_rs({
                 'attribute.expose_to_customer' => 1,
             },{
