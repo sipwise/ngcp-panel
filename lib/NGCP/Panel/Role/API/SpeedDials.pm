@@ -79,6 +79,10 @@ sub _item_rs {
             join => 'contract',
         });
         # TODO should be filtered for subscribers whose profile allows speed_dial?
+    } elsif ($c->user->roles eq "subscriber") {
+        $item_rs = $item_rs->search({
+            'me.uuid' => $c->user->uuid,
+        });
     }
 
     return $item_rs;
