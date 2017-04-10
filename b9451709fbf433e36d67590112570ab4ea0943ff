@@ -16,6 +16,24 @@
       "revId": "b9451709fbf433e36d67590112570ab4ea0943ff",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_124ee9c1",
+        "filename": "lib/NGCP/Panel/Utils/Peering.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-04-10T10:52:09Z",
+      "side": 1,
+      "message": "\u003e underscore means private by convention. this and _sip_lcr_reload\n \u003e should actually not have a leading underscore\n\nRight, but since we use _sip_lcr_reload throughout the code already, I currently stick with the same naming for that as well. Not going to change it as part of this request, as it\u0027s going to clutter the review with unrelated changes.",
+      "parentUuid": "7a1969be_327e85e5",
+      "revId": "b9451709fbf433e36d67590112570ab4ea0943ff",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
