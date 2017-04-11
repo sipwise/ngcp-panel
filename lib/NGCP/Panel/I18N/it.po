@@ -131,6 +131,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Network.pm
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 #: lib/NGCP/Panel/Controller/Package.pm lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
 #: lib/NGCP/Panel/Controller/Product.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -424,6 +425,10 @@ msgid ""
 msgstr ""
 "Il percorso della cartella sul server NFS, dove i file di log verranno "
 "salvati."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A peering group the rule belongs to."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -1452,6 +1457,14 @@ msgstr "CLI"
 msgid "CLI of CloudPBX Pilot Subscriber"
 msgstr "CLI dell´Abbonato Pilota per CloudPBX"
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "CLIR"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CLIR indicator for the call"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CPBX Device Administration"
 msgstr ""
@@ -1713,7 +1726,7 @@ msgstr "Chiamata alle"
 msgid "Callee"
 msgstr "Chiamato"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee Pattern"
 msgstr "Pattern Chiamato"
 
@@ -1726,6 +1739,7 @@ msgid "Callee Peer Override"
 msgstr "Sovrascrivi Peer Chiamato"
 
 #: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
 msgid "Callee Prefix"
 msgstr "Prefisso Chiamato"
 
@@ -1778,7 +1792,7 @@ msgstr "UUID chiamato"
 msgid "Caller"
 msgstr "Chiamante"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller Pattern"
 msgstr "Pattern Chiamante"
 
@@ -2001,6 +2015,10 @@ msgid "Click&Drag on the graphs to zoom individual ranges."
 msgstr "Clicca e trascina sui grafici per ingrandire una determinata zona."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Clir"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/numberblock/profile_list.tt
 #: share/templates/rewrite/set_list.tt
 #: share/templates/subprofile/profile_list.tt
@@ -2061,6 +2079,10 @@ msgstr "Lista Codecs"
 #: share/layout/body.tt
 msgid "Collapse Groups"
 msgstr "Riduci Gruppi"
+
+#: share/templates/peeringoverview/list.tt
+msgid "Columns"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -2779,9 +2801,10 @@ msgstr ""
 #: share/templates/numberblock/block_list.tt
 #: share/templates/numberblock/profile_list.tt share/templates/package/list.tt
 #: share/templates/peering/list.tt share/templates/peering/servers_rules.tt
-#: share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt
-#: share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt
-#: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
+#: share/templates/peeringoverview/list.tt share/templates/reseller/details.tt
+#: share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt
+#: share/templates/sound/handles_list.tt share/templates/sound/list.tt
+#: share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
 #: share/templates/subscriber/recording.tt
@@ -2825,7 +2848,9 @@ msgid "Deployed Devices"
 msgstr "Dispositivi Installati"
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Rewrite.pm
+#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/Sounds.pm
 #: share/templates/rewrite/rules_list.tt
@@ -3325,6 +3350,10 @@ msgstr "Scarica Quote come CSV"
 #: share/templates/callflow/callmap.tt share/templates/subscriber/callmap.tt
 msgid "Download PCAP"
 msgstr "Scarica PCAP"
+
+#: share/templates/peeringoverview/list.tt
+msgid "Download as CSV"
+msgstr ""
 
 #: share/templates/billing/list.tt
 msgid "Duplicate"
@@ -4990,7 +5019,7 @@ msgstr ""
 msgid "Greeting type."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/peeringoverview/list.tt
 #: share/templates/subscriber/pbx_group_items.tt
 msgid "Group"
 msgstr "Gruppo"
@@ -5047,6 +5076,10 @@ msgstr "Nascondere il proprio numero per chiamate in uscita"
 #: share/layout/body.tt
 msgid "Home"
 msgstr "Casa"
+
+#: share/templates/peeringoverview/list.tt
+msgid "Host"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Host:"
@@ -7402,10 +7435,43 @@ msgstr "Password di Autenticazione"
 msgid "Peer Authentication User"
 msgstr "User di Autenticazione"
 
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Group"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Host"
+msgstr ""
+
 #. (server.name)
 #: share/templates/peering/preferences.tt
 msgid "Peer Host \"%1\" - Preferences"
 msgstr "Peer Host \"%1\" - Preferenze"
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer IP"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Port"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Proto"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer State"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Peer auth realm"
@@ -7423,6 +7489,7 @@ msgstr "Errore registrazione peer"
 msgid "Peering Costs"
 msgstr "Costi Peer"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Group"
 msgstr "Gruppo Peer"
@@ -7434,6 +7501,15 @@ msgstr "Gruppi peer eliminati con successo"
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Groups"
 msgstr "Gruppi Peer"
+
+#: share/templates/peeringoverview/list.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Peering Overview"
+msgstr ""
+
+#: share/templates/peeringoverview/edit.tt
+msgid "Peering Overview Columns"
+msgstr ""
 
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Rule"
@@ -7480,6 +7556,10 @@ msgstr "Regola peer creata con successo"
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Peering rule successfully deleted"
 msgstr "Regola peer eliminata con successo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peering rules direction (outbound or inbound)."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Peering server does not exist"
@@ -7668,7 +7748,9 @@ msgstr "Anteprima in PDF"
 msgid "Primary Number"
 msgstr "Numero Primario"
 
-#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Priority"
 msgstr "Priorità"
 
@@ -7918,7 +8000,7 @@ msgstr "Dispositivi Registrati per %1@%2"
 msgid "Reject"
 msgstr "Rifiuta"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject Code"
 msgstr "Codice di Rifiuto"
 
@@ -7926,7 +8008,7 @@ msgstr "Codice di Rifiuto"
 msgid "Reject Emergency Calls"
 msgstr "Rifiuta Chiamate di Emergenza"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject Reason"
 msgstr "Motivo del Rifiuto"
 
@@ -8360,9 +8442,14 @@ msgstr "Reti Rtc"
 msgid "Rtc user id"
 msgstr "Id utente Rtc"
 
+#: share/templates/peeringoverview/list.tt
 #: share/templates/rewrite/rules_list.tt
 msgid "Rule"
 msgstr "Regola"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rule Priority"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rule enabled state."
@@ -9299,6 +9386,11 @@ msgstr "Orario di Inizio"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Start time"
 msgstr "Orario di inizio"
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "State"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "Station Name"
@@ -12529,7 +12621,9 @@ msgstr "Giorni della settimana"
 msgid "Weekly"
 msgstr "Settimanalmente"
 
-#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Weight"
 msgstr "Peso"
 

@@ -123,6 +123,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Network.pm
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 #: lib/NGCP/Panel/Controller/Package.pm lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
 #: lib/NGCP/Panel/Controller/Product.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -381,6 +382,10 @@ msgstr "Пароль для аутентификации на принимающ
 msgid ""
 "A path describing the folder on the NFS server, where the logfiles will be "
 "stored."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A peering group the rule belongs to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -1344,6 +1349,14 @@ msgstr ""
 msgid "CLI of CloudPBX Pilot Subscriber"
 msgstr "CLI основного абонента CloudPBX"
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "CLIR"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CLIR indicator for the call"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CPBX Device Administration"
 msgstr ""
@@ -1601,7 +1614,7 @@ msgstr ""
 msgid "Callee"
 msgstr "Вызываемый"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee Pattern"
 msgstr "Шаблон вызываемого"
 
@@ -1614,6 +1627,7 @@ msgid "Callee Peer Override"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
 msgid "Callee Prefix"
 msgstr "Префикс вызываемого"
 
@@ -1666,7 +1680,7 @@ msgstr ""
 msgid "Caller"
 msgstr "Вызывающий"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller Pattern"
 msgstr "Шаблон звонящего"
 
@@ -1889,6 +1903,10 @@ msgid "Click&Drag on the graphs to zoom individual ranges."
 msgstr "Нажмите и потяните внутри графика для изменения масштаба."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Clir"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/numberblock/profile_list.tt
 #: share/templates/rewrite/set_list.tt
 #: share/templates/subprofile/profile_list.tt
@@ -1949,6 +1967,10 @@ msgstr ""
 #: share/layout/body.tt
 msgid "Collapse Groups"
 msgstr "Свернуть"
+
+#: share/templates/peeringoverview/list.tt
+msgid "Columns"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -2655,9 +2677,10 @@ msgstr ""
 #: share/templates/numberblock/block_list.tt
 #: share/templates/numberblock/profile_list.tt share/templates/package/list.tt
 #: share/templates/peering/list.tt share/templates/peering/servers_rules.tt
-#: share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt
-#: share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt
-#: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
+#: share/templates/peeringoverview/list.tt share/templates/reseller/details.tt
+#: share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt
+#: share/templates/sound/handles_list.tt share/templates/sound/list.tt
+#: share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
 #: share/templates/subscriber/recording.tt
@@ -2699,7 +2722,9 @@ msgid "Deployed Devices"
 msgstr "Развернутые устройства"
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Rewrite.pm
+#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/Sounds.pm
 #: share/templates/rewrite/rules_list.tt
@@ -3197,6 +3222,10 @@ msgstr ""
 #: share/templates/callflow/callmap.tt share/templates/subscriber/callmap.tt
 msgid "Download PCAP"
 msgstr "Скачать PCAP"
+
+#: share/templates/peeringoverview/list.tt
+msgid "Download as CSV"
+msgstr ""
 
 #: share/templates/billing/list.tt
 msgid "Duplicate"
@@ -4842,7 +4871,7 @@ msgstr ""
 msgid "Greeting type."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/peeringoverview/list.tt
 #: share/templates/subscriber/pbx_group_items.tt
 msgid "Group"
 msgstr "Группа"
@@ -4899,6 +4928,10 @@ msgstr "Спрятать свой номер при исходящих звон�
 #: share/layout/body.tt
 msgid "Home"
 msgstr "Дом"
+
+#: share/templates/peeringoverview/list.tt
+msgid "Host"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Host:"
@@ -7175,10 +7208,43 @@ msgstr "Пароль для аутентификации на SIP Транк с�
 msgid "Peer Authentication User"
 msgstr "Имя пользователя для аутентификации на SIP Транк сервере."
 
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Group"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Host"
+msgstr ""
+
 #. (server.name)
 #: share/templates/peering/preferences.tt
 msgid "Peer Host \"%1\" - Preferences"
 msgstr "SIP Транк нода \"%1\" - Настройки"
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer IP"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Port"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer Proto"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer State"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Peer auth realm"
@@ -7196,6 +7262,7 @@ msgstr "Ошибка регистрации SIP Транка"
 msgid "Peering Costs"
 msgstr "Стоимость SIP Транка"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Group"
 msgstr "SIP Транк группа"
@@ -7207,6 +7274,15 @@ msgstr "SIP Транк группа успешно удалена"
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Groups"
 msgstr "SIP Транк группы"
+
+#: share/templates/peeringoverview/list.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Peering Overview"
+msgstr ""
+
+#: share/templates/peeringoverview/edit.tt
+msgid "Peering Overview Columns"
+msgstr ""
 
 #: share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Rule"
@@ -7253,6 +7329,10 @@ msgstr "SIP Транк правило успешно создано"
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Peering rule successfully deleted"
 msgstr "SIP Транк правило успешно удалено"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peering rules direction (outbound or inbound)."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Peering server does not exist"
@@ -7438,7 +7518,9 @@ msgstr "Пред. просмотр как PDF"
 msgid "Primary Number"
 msgstr "Первичный номер"
 
-#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Priority"
 msgstr "Приоритет"
 
@@ -7688,7 +7770,7 @@ msgstr "Зарегистрированное устройство для %1@%2"
 msgid "Reject"
 msgstr "Отклонить"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject Code"
 msgstr ""
 
@@ -7696,7 +7778,7 @@ msgstr ""
 msgid "Reject Emergency Calls"
 msgstr "Отклонять экстренные вызовы"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Reject Reason"
 msgstr ""
 
@@ -8130,9 +8212,14 @@ msgstr ""
 msgid "Rtc user id"
 msgstr ""
 
+#: share/templates/peeringoverview/list.tt
 #: share/templates/rewrite/rules_list.tt
 msgid "Rule"
 msgstr "Правило"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rule Priority"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rule enabled state."
@@ -9054,6 +9141,11 @@ msgstr "Время начала"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Start time"
 msgstr "Время начала"
+
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "State"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "Station Name"
@@ -12140,7 +12232,9 @@ msgstr "По будням"
 msgid "Weekly"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/PeeringOverview.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Weight"
 msgstr "Вес"
 
