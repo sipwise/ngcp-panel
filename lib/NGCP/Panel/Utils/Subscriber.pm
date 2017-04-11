@@ -1464,7 +1464,10 @@ sub apply_rewrite {
         $match = [ $match ] if(ref $match ne "ARRAY");
 
         $replace = shift @{ $replace } if(ref $replace eq "ARRAY");
+        # \1 => ${1}
         $replace =~ s/\\(\d{1})/\${$1}/g;
+        # ${0} => ${&} # meaning the whole matched regex (compatible to sed/POSIX)
+        $replace =~ s/\$\{0\}/\${&}/g;
 
         $replace =~ s/\"/\\"/g;
         $replace = qq{"$replace"};
