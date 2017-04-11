@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_d4d71ebe",
+        "filename": "lib/NGCP/Panel/Controller/API/CallRecordings.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-11T14:11:11Z",
+      "side": 1,
+      "message": "call",
+      "range": {
+        "startLine": 26,
+        "startChar": 101,
+        "endLine": 26,
+        "endChar": 106
+      },
+      "revId": "d05643359da495046f6967dd3d25d803ba96cc05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_34e5d2a8",
+        "filename": "lib/NGCP/Panel/Controller/API/CallRecordingsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-11T14:11:11Z",
+      "side": 1,
+      "message": "cascade streams. delete actual files?",
+      "revId": "d05643359da495046f6967dd3d25d803ba96cc05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_14f9b64d",
+        "filename": "lib/NGCP/Panel/Role/API/CallRecordingStreams.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-11T14:11:11Z",
+      "side": 1,
+      "message": "performance-wise fine, it will always just be one uuid",
+      "revId": "d05643359da495046f6967dd3d25d803ba96cc05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_549a0e15",
+        "filename": "lib/NGCP/Panel/Role/API/CallRecordings.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-11T14:11:11Z",
+      "side": 1,
+      "message": "could also be a join. probably both are fine\n\n(http://stackoverflow.com/questions/2577174/join-vs-sub-query)",
+      "revId": "d05643359da495046f6967dd3d25d803ba96cc05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_94a48658",
+        "filename": "lib/NGCP/Panel/Role/API/CallRecordings.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-11T14:11:11Z",
+      "side": 1,
+      "message": "can be $resultset-\u003eas_query or join",
+      "revId": "d05643359da495046f6967dd3d25d803ba96cc05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
