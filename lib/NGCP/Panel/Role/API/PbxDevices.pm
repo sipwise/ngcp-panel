@@ -85,12 +85,16 @@ sub _item_rs {
     my ($self, $c) = @_;
     my $item_rs = $c->model('DB')->resultset('autoprov_field_devices');
 
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin") {
     } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ 
             'device.reseller_id' => $c->user->reseller_id 
         },{
             'join' => { 'profile' => { 'config' => 'device' } },
+        });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'me.contract_id' => $c->user->account_id,
         });
     }
     return $item_rs;
@@ -109,6 +113,10 @@ sub update_item {
     delete $resource->{id};
     my $schema = $c->model('DB');
 
+    if ($c->user->roles eq 'subscriberadmin') {
+        $resource->{customer_id} = $c->user->account_id;
+    }
+
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -125,7 +133,7 @@ sub update_item {
         id => $resource->{customer_id},
         status => { '!=' => 'terminated' },
     });
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $customer_rs = $customer_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
@@ -157,6 +165,10 @@ sub update_item {
         }
         my $b_subs = $schema->resultset('voip_subscribers')->find($line->{subscriber_id});
         my $p_subs = $b_subs ? $b_subs->provisioning_voip_subscriber : undef;
+        unless ($b_subs && $b_subs->contract_id == $customer->id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id. Subscriber doesn't exist or doesn't belong to this customer.");
+            return;
+        }
         unless ($p_subs) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'. Could not find subscriber.");
             return;

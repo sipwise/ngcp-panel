@@ -79,7 +79,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -181,6 +181,10 @@ sub POST :Allow {
         );
         last unless $resource;
 
+        if ($c->user->roles eq 'subscriberadmin') {
+            $resource->{customer_id} = $c->user->account_id;
+        }
+
         my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,
@@ -226,6 +230,10 @@ sub POST :Allow {
             }
             my $b_subs = $schema->resultset('voip_subscribers')->find($line->{subscriber_id});
             my $p_subs = $b_subs ? $b_subs->provisioning_voip_subscriber : undef;
+            unless ($b_subs && $b_subs->contract_id == $customer->id) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id. Subscriber doesn't exist or doesn't belong to this customer.");
+                return;
+            }
             unless ($p_subs) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'. Could not find subscriber.");
                 return;
