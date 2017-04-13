@@ -22,6 +22,30 @@
       "revId": "94b7b80339f01ab2124e739e5f63926d81aa70f5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_9a030f73",
+        "filename": "lib/NGCP/Panel/Form/Peering/RuleEdit.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-13T14:26:27Z",
+      "side": 1,
+      "message": "good idea. that is only related to the edit part so probably RuleEditAdmin then as we already have similar as \nPbxExtensionSubscriberEditSubadmin.pm\nPbxExtensionSubscriberEditSubadminNoGroup.pm",
+      "parentUuid": "7a1969be_dacd875f",
+      "range": {
+        "startLine": 1,
+        "startChar": 40,
+        "endLine": 1,
+        "endChar": 44
+      },
+      "revId": "94b7b80339f01ab2124e739e5f63926d81aa70f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
