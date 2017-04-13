@@ -18,11 +18,13 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 
 sub set_config {
     my $self = shift;
+    my $allowed_roles = $self->config_allowed_roles;
+    $allowed_roles = 'ARRAY' eq ref $allowed_roles ? $allowed_roles : [$allowed_roles];
     $self->config(
         action => {
             map { $_ => {
                 ACLDetachTo => '/api/root/invalid_user',
-                AllowedRole => [$self->allowed_roles],
+                AllowedRole => $allowed_roles,
                 Args => 1,
                 Does => [qw(ACL RequireSSL)],
                 Method => $_,
@@ -41,8 +43,8 @@ sub gather_default_action_roles {
     return @roles;
 }
 
-sub allowed_roles {
-    return qw/admin reseller/;
+sub config_allowed_roles {
+    return [qw/admin reseller/];
 }
 
 sub get {
