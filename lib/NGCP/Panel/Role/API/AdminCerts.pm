@@ -21,16 +21,6 @@ sub get_form {
     return NGCP::Panel::Form::Administrator::APICert->new(c => $c);
 }
 
-sub hal_links {
-    my($self, $c, $item, $resource, $form) = @_;
-    return [];
-}
-
-sub process_hal_resource {
-    my($self, $c, $item, $resource, $form) = @_;
-    return $resource;
-}
-
 sub _item_rs {
     my ($self, $c) = @_;
     my $item_rs;
