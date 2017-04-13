@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_5abfd7d0",
+        "filename": "lib/NGCP/Panel/Controller/Peering.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-04-13T12:58:53Z",
+      "side": 1,
+      "message": "well changing the form config as required, hmm..\nin other situations, we made two separate forms (one inheriting from the other, and adds the field that shouldnt be part in one of them)",
+      "revId": "445f909d5932103e17aaccf6bdd2780ccb796155",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
