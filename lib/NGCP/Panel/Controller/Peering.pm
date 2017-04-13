@@ -577,7 +577,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
    
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Rule->new(ctx => $c, inactive => ['group']);
+    my $form = NGCP::Panel::Form::Peering::Rule->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -650,6 +650,8 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::Peering::Rule->new(ctx => $c);
+    $form->field('group')->inactive(0);
+    $form->field('group')->required(1);
     $c->stash->{rule}{group}{id} = delete $c->stash->{rule}{group_id};
     $form->process(
         posted => $posted,
@@ -736,7 +738,7 @@ sub inbound_rules_create :Chained('inbound_rules_list') :PathPart('create') :Arg
     my ($self, $c) = @_;
    
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::InboundRule->new(ctx => $c, inactive => ['group']);
+    my $form = NGCP::Panel::Form::Peering::InboundRule->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -810,6 +812,8 @@ sub inbound_rules_edit :Chained('inbound_rules_base') :PathPart('edit') :Args(0)
     
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::Peering::InboundRule->new(ctx => $c);
+    $form->field('group')->inactive(0);
+    $form->field('group')->required(1);
     $c->stash->{rule}{group}{id} = delete $c->stash->{rule}{group_id};
     $form->process(
         posted => $posted,
