@@ -5,7 +5,7 @@ use Sipwise::Base;
 use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form::Peering::Group;
-use NGCP::Panel::Form::Peering::Rule;
+use NGCP::Panel::Form::Peering::RuleAdmin;
 use NGCP::Panel::Form::Peering::RuleEditAdmin;
 use NGCP::Panel::Form::Peering::InboundRule;
 use NGCP::Panel::Form::Peering::InboundRuleEditAdmin;
@@ -589,7 +589,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
    
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Rule->new(ctx => $c);
+    my $form = NGCP::Panel::Form::Peering::RuleAdmin->new(ctx => $c, inactive => ['group']);
     $form->process(
         posted => $posted,
         params => $c->request->params,
