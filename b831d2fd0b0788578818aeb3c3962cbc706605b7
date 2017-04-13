@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_fa3e8328",
+        "filename": "lib/NGCP/Panel/Form/Peering/RuleEditAdmin.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-13T14:35:32Z",
+      "side": 1,
+      "message": "Thank you!",
+      "range": {
+        "startLine": 1,
+        "startChar": 36,
+        "endLine": 1,
+        "endChar": 50
+      },
+      "revId": "b831d2fd0b0788578818aeb3c3962cbc706605b7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
