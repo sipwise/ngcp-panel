@@ -16,6 +16,24 @@
       "revId": "445f909d5932103e17aaccf6bdd2780ccb796155",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_9ab94fec",
+        "filename": "lib/NGCP/Panel/Controller/Peering.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-13T13:02:42Z",
+      "side": 1,
+      "message": "we do that where the API forms inherit the default (GUI) ones, agreed looks quite cumbersome.\nI think a better solution would be to create a new form RuleEdit.pm and InboundRuleEdit.pm inheriting Rule.pm/InboundRule.pm respectively and having the additional column there.",
+      "parentUuid": "7a1969be_5abfd7d0",
+      "revId": "445f909d5932103e17aaccf6bdd2780ccb796155",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
