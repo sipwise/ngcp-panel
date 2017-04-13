@@ -11,8 +11,8 @@ sub allowed_methods{
     return [qw/OPTIONS HEAD GET POST/];
 }
 
-sub allowed_roles {
-    return qw/admin reseller subscriberadmin subscriber/;
+sub config_allowed_roles {
+    return [qw/admin reseller subscriberadmin subscriber/];
 }
 
 sub api_description {
