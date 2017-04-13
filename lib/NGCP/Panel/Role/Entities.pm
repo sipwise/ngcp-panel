@@ -10,12 +10,6 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
-#use Path::Tiny qw(path);
-#use TryCatch;
-#require Catalyst::ActionRole::ACL;
-#require Catalyst::ActionRole::CheckTrailingSlash;
-#require Catalyst::ActionRole::HTTPMethods;
-#require Catalyst::ActionRole::RequireSSL;
 
 
 sub set_config {
