@@ -8,8 +8,8 @@ use NGCP::Panel::Utils::Admin;
 
 __PACKAGE__->set_config();
 
-sub allowed_roles {
-    return qw/admin reseller/;
+sub config_allowed_roles {
+    return [qw/admin reseller/];
 }
 
 sub allowed_methods {
