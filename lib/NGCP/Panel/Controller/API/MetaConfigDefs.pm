@@ -109,12 +109,12 @@ sub GET :Allow {
             my $module = $modules->[$i];
             my $module_item = $module.'Item';
             my $roles = $module->can('config') ? $module->config->{action}->{OPTIONS}->{AllowedRole}:[];
-            (!(ref $roles eq 'ARRAY')) and $roles = [$roles];
+            $roles = 'ARRAY' eq ref $roles ? $roles : [$roles];
             $meta->{collections}->{$collection} = {
                 module => $module,
                 allowed_methods => $module->can('config') ? $module->config->{action} : {},
                 query_params => $module->can('query_params') ? [map {$_->{param}} @{$module->query_params}] : [],
-                allowed_roles => [$roles],
+                allowed_roles => $roles,
                 module_item => $module_item->can('config') ? $module_item : '',
                 allowed_methods_item => $module_item->can('config') ? $module_item->config->{action} : {},
                 #container_item_id => '',
