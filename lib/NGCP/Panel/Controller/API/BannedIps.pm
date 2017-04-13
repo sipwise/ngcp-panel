@@ -4,8 +4,6 @@ package NGCP::Panel::Controller::API::BannedIps;
 use Sipwise::Base;
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::BannedIps/;
 
-
-use NGCP::Panel::Utils::Peering;
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Security;
 
