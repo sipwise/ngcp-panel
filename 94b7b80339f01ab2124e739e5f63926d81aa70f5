@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_dacd875f",
+        "filename": "lib/NGCP/Panel/Form/Peering/RuleEdit.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-13T14:20:37Z",
+      "side": 1,
+      "message": "I would like to suggest to name it RuleAdmin. This is usual for the web ui forms.",
+      "range": {
+        "startLine": 1,
+        "startChar": 40,
+        "endLine": 1,
+        "endChar": 44
+      },
+      "revId": "94b7b80339f01ab2124e739e5f63926d81aa70f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
