@@ -36,6 +36,7 @@ sub hal_from_item {
             NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:pbxdeviceconfigs', href => sprintf("/api/pbxdeviceconfigs/%d", $item->config_id)),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:pbxdevicemodels', href => sprintf("/api/pbxdevicemodels/%d", $item->config->device_id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -61,16 +62,21 @@ sub resource_from_item {
 
     $resource{id} = int($item->id);
     $resource{config_id} = int($item->config_id);
+    $resource{device_id} = int($item->config->device_id) if ($item->config);
     return \%resource;
 }
 
 sub _item_rs {
     my ($self, $c) = @_;
     my $item_rs = $c->model('DB')->resultset('autoprov_profiles');
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin") {
     } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search(
             { 'device.reseller_id' => $c->user->reseller_id, },
+            { prefetch => { 'config' => 'device', }});
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search(
+            { 'device.reseller_id' => $c->user->contract->contact->reseller_id, },
             { prefetch => { 'config' => 'device', }});
     }
 

@@ -20,7 +20,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Specifies a profile to be set in <a href="#pbxdevices">PbxDevices</a>.';
+    return 'Specifies a profile to be set in <a href="#pbxdevices">PbxDevices</a>. This item is read-only to subscriberadmins.';
 };
 
 sub query_params {
@@ -67,7 +67,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -159,6 +159,12 @@ sub OPTIONS :Allow {
 
 sub POST :Allow {
     my ($self, $c) = @_;
+
+    if ($c->user->roles eq 'subscriberadmin') {
+        $c->log->error("role subscriberadmin cannot create pbxdeviceprofiles");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot create pbxdeviceprofile.");
+        return;
+    }
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {

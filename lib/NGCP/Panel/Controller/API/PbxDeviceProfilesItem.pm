@@ -37,7 +37,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
@@ -103,6 +103,13 @@ sub OPTIONS :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
+
+    if ($c->user->roles eq 'subscriberadmin') {
+        $c->log->error("role subscriberadmin cannot edit pbxdeviceprofiles");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot edit pbxdeviceprofile.");
+        return;
+    }
+
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -146,6 +153,13 @@ sub PATCH :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
+
+    if ($c->user->roles eq 'subscriberadmin') {
+        $c->log->error("role subscriberadmin cannot edit pbxdeviceprofiles");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot edit pbxdeviceprofile.");
+        return;
+    }
+
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
