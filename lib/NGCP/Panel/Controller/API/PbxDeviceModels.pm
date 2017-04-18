@@ -25,7 +25,7 @@ sub allowed_methods{
 # curl -v -X POST --user $USER --insecure -F front_image=@sandbox/spa504g-front.jpg -F mac_image=@sandbox/spa504g-back.jpg -F json='{"reseller_id":1, "vendor":"Cisco", "model":"SPA999", "linerange":[{"name": "Phone Keys", "can_private":true, "can_shared":true, "can_blf":true, "keys":[{"labelpos":"top", "x":5110, "y":5120},{"labelpos":"top", "x":5310, "y":5320}]}]}' https://localhost:4443/api/pbxdevicemodels/
 
 sub api_description {
-    return 'Specifies a model to be set in <a href="#pbxdeviceconfigs">PbxDeviceConfigs</a>. Use a Content-Type "multipart/form-data", provide front_image and mac_image parts with the actual images, and an additional json part with the properties specified below, e.g.: <code>curl -X POST --user $USER -F front_image=@/path/to/front.png -F mac_image=@/path/to/mac.png -F json=\'{"reseller_id":...}\' https://example.org:1443/api/pbxdevicemodels/</code>';
+    return 'Specifies a model to be set in <a href="#pbxdeviceconfigs">PbxDeviceConfigs</a>. Use a Content-Type "multipart/form-data", provide front_image and mac_image parts with the actual images, and an additional json part with the properties specified below, e.g.: <code>curl -X POST --user $USER -F front_image=@/path/to/front.png -F mac_image=@/path/to/mac.png -F json=\'{"reseller_id":...}\' https://example.org:1443/api/pbxdevicemodels/</code>. This item is read-only to subscriberadmin.';
 };
 
 sub query_params {
@@ -114,7 +114,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -206,6 +206,11 @@ sub OPTIONS :Allow {
 
 sub POST :Allow {
     my ($self, $c) = @_;
+
+    if ($c->user->roles eq 'subscriberadmin') {
+        $c->log->error("role subscriberadmin cannot create pbxdevicemodels");
+        $c->detach('/denied_page');
+    }
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {
