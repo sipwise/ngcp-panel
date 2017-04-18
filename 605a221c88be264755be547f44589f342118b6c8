@@ -16,6 +16,24 @@
       "revId": "605a221c88be264755be547f44589f342118b6c8",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_a820419c",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1495,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-04-18T09:57:37Z",
+      "side": 1,
+      "message": "ok, nice! only question remaining if this is is also used elsewhere?",
+      "parentUuid": "7a1969be_fd0b1d29",
+      "revId": "605a221c88be264755be547f44589f342118b6c8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
