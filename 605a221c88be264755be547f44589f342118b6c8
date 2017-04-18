@@ -34,6 +34,24 @@
       "revId": "605a221c88be264755be547f44589f342118b6c8",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_885c6527",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1495,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-18T10:08:46Z",
+      "side": 1,
+      "message": "seems it has been like this for a long time in perl. has not such a big impact since call routing handles this correctly (not perl).\n\ncustomer that was affected has been handled by operations.\n\nI can\u0027t think of another such scenario",
+      "parentUuid": "7a1969be_a820419c",
+      "revId": "605a221c88be264755be547f44589f342118b6c8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
