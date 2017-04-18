@@ -11,15 +11,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'contact' => (
-    type => '+NGCP::Panel::Field::Contact',
-    label => 'Contact',
-    validate_when_empty => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The contact id this contract belongs to.']
-    },
-);
 
 has_field 'billing_profile' => (
     type => '+NGCP::Panel::Field::BillingProfile',
@@ -132,7 +123,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
+    render_list => [qw/billing_profile status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
 );
 
 has_block 'actions' => (

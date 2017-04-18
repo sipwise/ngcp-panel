@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Contract::ProductSelect;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Contract::Basic';
+extends 'NGCP::Panel::Form::Contract::Customer';
 
 has_field 'product' => (
     type => '+NGCP::Panel::Field::Product',
