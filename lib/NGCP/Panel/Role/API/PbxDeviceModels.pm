@@ -92,10 +92,17 @@ sub resource_from_item {
 
 sub _item_rs {
     my ($self, $c) = @_;
-    my $item_rs = $c->model('DB')->resultset('autoprov_devices');
-    if($c->user->roles eq "admin") {
+    my $item_rs = $c->model('DB')->resultset('autoprov_devices')
+        ->search_rs(undef,{ prefetch => {autoprov_device_line_ranges => 'annotations'} });
+    if ($c->user->roles eq "admin") {
     } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        my $reseller_id = $c->user->contract->contact->reseller_id;
+        return unless $reseller_id;
+        $item_rs = $item_rs->search({
+            reseller_id => $reseller_id,
+        });
     }
 
     return $item_rs;
