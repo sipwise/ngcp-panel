@@ -15,6 +15,8 @@ use NGCP::Panel::Form::Customer::PbxGroupEdit;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
+use NGCP::Panel::Form::Contract::ProductSelect;
+use NGCP::Panel::Form::Contract::Customer;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -122,7 +124,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     if($c->config->{features}->{cloudpbx}) {
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Contract::Basic->new(ctx => $c);
+        $form = NGCP::Panel::Form::Contract::Customer->new(ctx => $c);
     }
     $form->process(
         posted => $posted,
@@ -376,11 +378,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $params = $params->merge($c->session->{created_objects});
     $c->log->debug('customer/edit');
     if($c->config->{features}->{cloudpbx}) {
-        $c->log->debug('ProductSelect');
+        $c->log->debug('NGCP::Panel::Form::Contract::ProductSelect');
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
-        $c->log->debug('Basic');
-        $form = NGCP::Panel::Form::Contract::Basic->new(ctx => $c);
+        $c->log->debug('NGCP::Panel::Form::Contract::Customer');
+        $form = NGCP::Panel::Form::Contract::Customer->new(ctx => $c);
     }
     $form->process(
         posted => $posted,

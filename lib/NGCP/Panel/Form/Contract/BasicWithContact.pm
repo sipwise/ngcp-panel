@@ -1,11 +1,11 @@
-package NGCP::Panel::Form::Contract::Customer;
+package NGCP::Panel::Form::Contract::BasicWithContact;
 
 use HTML::FormHandler::Moose;
 use Storable qw();
 extends 'NGCP::Panel::Form::Contract::Basic';
 
 has_field 'contact' => (
-    type => '+NGCP::Panel::Field::ContactWithReseller',
+    type => '+NGCP::Panel::Field::Contact',
     label => 'Contact',
     validate_when_empty => 1,
     element_attr => {

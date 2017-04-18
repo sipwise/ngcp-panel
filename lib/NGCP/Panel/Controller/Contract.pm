@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Contract;
 use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
-use NGCP::Panel::Form::Contract::Basic;
+use NGCP::Panel::Form::Contract::BasicWithContact;
 use NGCP::Panel::Form::Contract::PeeringReseller;
 use NGCP::Panel::Form::Contract::ProductSelect;
 use NGCP::Panel::Utils::Message;
@@ -120,7 +120,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
         $is_peering_reseller = 1;
     } else {
-        $form = NGCP::Panel::Form::Contract::Basic->new;
+        $form = NGCP::Panel::Form::Contract::BasicWithContact->new;
         $is_peering_reseller = 0;
     }
     $form->process(
