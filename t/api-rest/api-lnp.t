@@ -141,8 +141,8 @@ $t += 1;
     _terminate_lnp_numbers($number); #delete all
 
     sleep(2);;
-    $now = DateTime->now();
-    $now->set_time_zone( DateTime::TimeZone->new(name => 'local') );
+    #$now = DateTime->now();
+    #$now->set_time_zone( DateTime::TimeZone->new(name => 'local') );
     _check_lnpnumber_history("number $number: ",$number,[
     ],"");
 
@@ -184,6 +184,7 @@ sub _create_lnp_number {
     my $expected_code = delete $further_opts{expected_code} // 201;
     $req = HTTP::Request->new('POST', $uri.'/api/lnpnumbers/');
     $req->header('Content-Type' => 'application/json');
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->content(JSON::to_json({
         carrier_id => $carrier->{id},
         number => 'test'.$t,
@@ -213,6 +214,7 @@ sub _update_lnp_number {
     my $url = $uri.'/api/lnpnumbers/'.$number->{id};
     $req = HTTP::Request->new('PUT', $url);
     $req->header('Content-Type' => 'application/json');
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
         %$number,
@@ -241,16 +243,19 @@ sub _delete_lnp_number {
     $expected_code //= 204;
     my $url = $uri.'/api/lnpnumbers/'.$number->{id};
     $req = HTTP::Request->new('DELETE', $url);
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $res = $ua->request($req);
     if ($expected_code eq '204') {
         is($res->code, 204, "delete test lnp number");
         $req = HTTP::Request->new('GET', $url);
+        $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         $res = $ua->request($req);
         is($res->code, 404, "test lnp number is not found");
         return delete $number_map{$number->{id}};
     } else {
         is($res->code, $expected_code, "delete test lnp number returns $expected_code");
         $req = HTTP::Request->new('GET', $url);
+        $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         $res = $ua->request($req);
         is($res->code, 200, "test lnp number is still found");
         return undef;
@@ -273,6 +278,7 @@ sub _terminate_lnp_numbers {
     }
     my $url = $uri.'/api/lnpnumbers/'._get_query_string(\%params);
     $req = HTTP::Request->new('DELETE', $url);
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $res = $ua->request($req);
     if ($expected_code eq '204') {
         is($res->code, 204, "delete test lnp numbers");
@@ -359,6 +365,7 @@ sub _check_lnpnumber_history {
     my $nexturi = $uri.'/api/lnpnumbers/?page=1&rows=10&order_by_direction=asc&order_by=start'.$actual.$number;
     do {
         $req = HTTP::Request->new('GET',$nexturi);
+        $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         $res = $ua->request($req);
         is($res->code, 200, $label . "fetch lnpnumbers collection page");
         push(@requests,_req_to_debug($req));
@@ -468,5 +475,13 @@ sub _get_query_string {
     }
     return $query;
 };
+
+sub _get_fake_clienttime_now {
+    my $now = DateTime->now();
+    $now->set_time_zone( DateTime::TimeZone->new(name => 'local') );
+    my $s = $now->ymd('-') . ' ' . $now->hms(':');
+    #$s .= '.'.$dt->millisecond if $dt->millisecond > 0.0;
+    return $s;
+}
 
 done_testing;
