@@ -1856,6 +1856,10 @@ msgstr "Tipo di Chiamante, Abbonato o Peer"
 msgid "Callforward controls add"
 msgstr "Aggiungere controllo deviazione chiamata"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callid"
+msgstr ""
+
 #: share/templates/subscriber/webphone.tt
 msgid "Calling"
 msgstr "Chiamata"
@@ -1981,6 +1985,10 @@ msgstr "Cfu"
 #: share/templates/subscriber/edit_webpass.tt
 msgid "Change Password"
 msgstr "Cambia Password"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Channels"
+msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "Chat Status:"
@@ -3617,6 +3625,10 @@ msgid "Enable Prepaid"
 msgstr "Abilita Prepagato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable Probing"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP Session Timers."
 msgstr "Abilita SIP Session Timers."
 
@@ -3677,6 +3689,10 @@ msgstr "Data di Fine"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "End Date/Time"
 msgstr "Data/Ora di Fine"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "End time"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid ""
@@ -4766,7 +4782,7 @@ msgstr "Forza chiamate in uscita da un utente, o da un peer, verso i peer"
 msgid "Forgot your password?"
 msgstr "Password dimenticata?"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Format"
 msgstr ""
 
@@ -7583,6 +7599,12 @@ msgid "Peerings"
 msgstr "Peers"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Perform probing via SIP pings to check reachability. If disabled, calls are "
+"always sent to this peer since the status is not known."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Perform serial forking based on q-value of registered contacts"
 msgstr ""
 "Effettua chiamata seriale in base al valore del parametro 'q' associato al "
@@ -7761,6 +7783,10 @@ msgstr "Priorità (q-value)"
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Private Line"
 msgstr "Linea Privata"
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Probe"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Reseller.pm
@@ -7969,6 +7995,10 @@ msgstr ""
 
 #: share/templates/subscriber/recording_streams.tt
 msgid "Recorded files for this call"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Recording id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8675,6 +8705,10 @@ msgid ""
 msgstr ""
 "Lo stesso di \"ncos\" ma può essere configurato solo da amministratori ed è "
 "applicato con priorità maggiore rispetto alle impostazioni utente."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Sample rate"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Saturday"
@@ -10088,6 +10122,10 @@ msgid "The SIP URI pointing to the current contact of the subscriber."
 msgstr "La URI SIP che punta all´attuale contatto dell´abbonato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The SIP call-id of the recorded call."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The SIP header field to fetch the network-provided-number from for inbound "
 "calls"
@@ -10774,12 +10812,24 @@ msgid "The emergency mapping container this mapping entry belongs to."
 msgstr "Il gruppo di numeri di emergenza a cui questa associazione appartiene"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The encoding format of the stream (one of \"wav\", \"mp3\")."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The end of the invoice period."
 msgstr "La fine del periodo di fatturazione."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The end time in format hh:mm:ss"
 msgstr "L´orario di fine nel formato hh:mm:ss"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The end timestamp of the recording stream."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The end timestamp of the recording."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The event type."
@@ -10880,6 +10930,10 @@ msgid ""
 "The id of the billing profile at the first second of the balance interval."
 msgstr ""
 "L´id del profilo di fatturazione al primo secondo di intervallo di saldo."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The id of the recording session."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -11066,6 +11120,10 @@ msgid "The members (as SIP URIs) of the PBX hunt group."
 msgstr "I membri (come URI SIP) del gruppo di chiamata PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The mixing type of the stream (one of \"single\", \"mixed\")."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The mobile number of the contact."
 msgstr "Il numero di cellulare di questo contatto."
 
@@ -11161,6 +11219,10 @@ msgstr ""
 msgid ""
 "The non-primary alias with lowest id of the subscriber's pilot subscriber, "
 "before number updates during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The number of channels in the stream (e.g. 1 for mono, 2 for stereo)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11474,6 +11536,10 @@ msgid "The routing prefix assigned to this LNP carrier."
 msgstr "Il prefisso di routing assegnato a questo operatore LNP."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The sample rate of the stream (e.g. \"8000\" for 8000Hz)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The secret (readonly)."
 msgstr "La password (solo lettura)"
 
@@ -11546,6 +11612,14 @@ msgid "The start time in format hh:mm:ss"
 msgstr "L´orario di inizio nel formato hh:mm:ss"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The start timestamp of the recording stream."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The start timestamp of the recording."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the call rating, one of ok, unrated, failed."
 msgstr ""
 "Lo stato della tariffazione della chiamata, uno tra ok, non tassato, fallito."
@@ -11569,6 +11643,12 @@ msgstr "Lo stato del processo di esportazione."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the rating process."
 msgstr "Lo stato del processo di tariffazione."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The status of the recording (one of \"recording\", \"completed\", \"confirmed"
+"\")."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the reseller."

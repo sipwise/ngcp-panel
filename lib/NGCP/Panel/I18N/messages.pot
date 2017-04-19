@@ -1425,6 +1425,10 @@ msgstr ""
 msgid "Callforward controls add"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callid"
+msgstr ""
+
 #: share/templates/subscriber/webphone.tt
 msgid "Calling"
 msgstr ""
@@ -1547,6 +1551,10 @@ msgstr ""
 
 #: share/templates/subscriber/edit_webpass.tt
 msgid "Change Password"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Channels"
 msgstr ""
 
 #: share/templates/subscriber/webphone.tt
@@ -2981,6 +2989,10 @@ msgid "Enable Prepaid"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable Probing"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP Session Timers."
 msgstr ""
 
@@ -3026,6 +3038,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "End Date/Time"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "End time"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -4077,7 +4093,7 @@ msgstr ""
 msgid "Forgot your password?"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Format"
 msgstr ""
 
@@ -6639,6 +6655,10 @@ msgid "Peerings"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Perform probing via SIP pings to check reachability. If disabled, calls are always sent to this peer since the status is not known."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Perform serial forking based on q-value of registered contacts"
 msgstr ""
 
@@ -6799,6 +6819,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Private Line"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Probe"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
@@ -6989,6 +7013,10 @@ msgstr ""
 
 #: share/templates/subscriber/recording_streams.tt
 msgid "Recorded files for this call"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Recording id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7583,6 +7611,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Same as \"ncos\", but may only be set by administrators and is applied prior to the user setting."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Sample rate"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8815,6 +8847,10 @@ msgid "The SIP URI pointing to the current contact of the subscriber."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The SIP call-id of the recorded call."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The SIP header field to fetch the network-provided-number from for inbound calls"
 msgstr ""
 
@@ -9311,11 +9347,23 @@ msgid "The emergency mapping container this mapping entry belongs to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The encoding format of the stream (one of \"wav\", \"mp3\")."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The end of the invoice period."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The end time in format hh:mm:ss"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The end timestamp of the recording stream."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The end timestamp of the recording."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9404,6 +9452,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The id of the billing profile at the first second of the balance interval."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The id of the recording session."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9531,6 +9583,10 @@ msgid "The members (as SIP URIs) of the PBX hunt group."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The mixing type of the stream (one of \"single\", \"mixed\")."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The mobile number of the contact."
 msgstr ""
 
@@ -9612,6 +9668,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The non-primary alias with lowest id of the subscriber's pilot subscriber, before number updates during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The number of channels in the stream (e.g. 1 for mono, 2 for stereo)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9883,6 +9943,10 @@ msgid "The routing prefix assigned to this LNP carrier."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The sample rate of the stream (e.g. \"8000\" for 8000Hz)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The secret (readonly)."
 msgstr ""
 
@@ -9935,6 +9999,14 @@ msgid "The start time in format hh:mm:ss"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The start timestamp of the recording stream."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The start timestamp of the recording."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the call rating, one of ok, unrated, failed."
 msgstr ""
 
@@ -9952,6 +10024,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the rating process."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The status of the recording (one of \"recording\", \"completed\", \"confirmed\")."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

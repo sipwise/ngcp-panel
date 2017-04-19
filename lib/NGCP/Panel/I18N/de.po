@@ -1749,6 +1749,10 @@ msgstr ""
 msgid "Callforward controls add"
 msgstr "Ruf-Weiterleitungs-Steuerung hinzufügen"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callid"
+msgstr ""
+
 #: share/templates/subscriber/webphone.tt
 msgid "Calling"
 msgstr "Rufe"
@@ -1876,6 +1880,10 @@ msgstr "Cfu"
 #: share/templates/subscriber/edit_webpass.tt
 msgid "Change Password"
 msgstr "Passwort ändern"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Channels"
+msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "Chat Status:"
@@ -3486,6 +3494,10 @@ msgid "Enable Prepaid"
 msgstr "Aktiviere Prepaid"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable Probing"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP Session Timers."
 msgstr "Aktiviere SIP Session Timers."
 
@@ -3539,6 +3551,10 @@ msgstr "End-Datum"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "End Date/Time"
 msgstr "End-Zeit/Datum"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "End time"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid ""
@@ -4619,7 +4635,7 @@ msgstr ""
 msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Format"
 msgstr ""
 
@@ -7357,6 +7373,12 @@ msgid "Peerings"
 msgstr "Peerings"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Perform probing via SIP pings to check reachability. If disabled, calls are "
+"always sent to this peer since the status is not known."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Perform serial forking based on q-value of registered contacts"
 msgstr ""
 
@@ -7531,6 +7553,10 @@ msgstr "Priorität (q-value)"
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Private Line"
 msgstr "Private Leitung"
+
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Probe"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Reseller.pm
@@ -7735,6 +7761,10 @@ msgstr ""
 
 #: share/templates/subscriber/recording_streams.tt
 msgid "Recorded files for this call"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Recording id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8432,6 +8462,10 @@ msgid ""
 msgstr ""
 "Wie \"ncos\", aber nur setzbar durch Administratoren. Wird vor Benutzer-NCOS-"
 "Stufe überprüft."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Sample rate"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Saturday"
@@ -9822,6 +9856,10 @@ msgid "The SIP URI pointing to the current contact of the subscriber."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The SIP call-id of the recorded call."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The SIP header field to fetch the network-provided-number from for inbound "
 "calls"
@@ -10443,12 +10481,24 @@ msgid "The emergency mapping container this mapping entry belongs to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The encoding format of the stream (one of \"wav\", \"mp3\")."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The end of the invoice period."
 msgstr "Das Ende der Rechnungs-Periode."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The end time in format hh:mm:ss"
 msgstr "Die End-Zeit im Format hh:mm:ss"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The end timestamp of the recording stream."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The end timestamp of the recording."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The event type."
@@ -10547,6 +10597,10 @@ msgstr "Die Hunting-Regel für PBX Hunt-Gruppen"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The id of the billing profile at the first second of the balance interval."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The id of the recording session."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10719,6 +10773,10 @@ msgid "The members (as SIP URIs) of the PBX hunt group."
 msgstr "Die Mitglieder (als SIP URIs) der PBX Hunt-Gruppe"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The mixing type of the stream (one of \"single\", \"mixed\")."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The mobile number of the contact."
 msgstr "Die Handynummer des Kontakts."
 
@@ -10812,6 +10870,10 @@ msgstr ""
 msgid ""
 "The non-primary alias with lowest id of the subscriber's pilot subscriber, "
 "before number updates during the operation."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The number of channels in the stream (e.g. 1 for mono, 2 for stereo)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11105,6 +11167,10 @@ msgid "The routing prefix assigned to this LNP carrier."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The sample rate of the stream (e.g. \"8000\" for 8000Hz)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The secret (readonly)."
 msgstr ""
 
@@ -11167,6 +11233,14 @@ msgid "The start time in format hh:mm:ss"
 msgstr "Die Start-Zeit im Format hh:mm:ss"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The start timestamp of the recording stream."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The start timestamp of the recording."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the call rating, one of ok, unrated, failed."
 msgstr ""
 
@@ -11186,6 +11260,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the rating process."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The status of the recording (one of \"recording\", \"completed\", \"confirmed"
+"\")."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
