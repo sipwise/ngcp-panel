@@ -10,6 +10,11 @@ use DateTime::TimeZone;
 #use URI::Escape qw();
 use warnings;
 
+BEGIN {
+    unshift(@INC,'../../lib');
+}
+use NGCP::Panel::Utils::DateTime qw();
+
 my $is_local_env = 0;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
@@ -67,8 +72,8 @@ $t += 1;
     my $carrier1 = _create_lnp_provider();
     my $carrier2 = _create_lnp_provider();
     my $number = '123'.$t;
-    my $now = DateTime->now();
-    $now->set_time_zone( DateTime::TimeZone->new(name => 'local') );
+    _set_time(NGCP::Panel::Utils::DateTime::from_string('2017-04-18 14:00:00'));
+    my $now = NGCP::Panel::Utils::DateTime::current_local();
     my $start1 = $now->clone->subtract(days=>1);
     my $start2 = $now->clone->subtract(days=>2);
     my $end = $now->clone->add(days=>1);
@@ -102,6 +107,8 @@ $t += 1;
     #_delete_lnp_number($number2);
     #_delete_lnp_provider($carrier1);
     #_delete_lnp_provider($carrier2);
+
+    _set_time();
 }
 
 $t += 1;
@@ -111,8 +118,8 @@ $t += 1;
     my $carrier2 = _create_lnp_provider();
     my $number = '123'.$t;
 
-    my $now = DateTime->now();
-    $now->set_time_zone( DateTime::TimeZone->new(name => 'local') );
+    _set_time(NGCP::Panel::Utils::DateTime::from_string('2017-04-18 14:00:00'));
+    my $now = NGCP::Panel::Utils::DateTime::current_local();
     my $start1 = $now->clone->subtract(days=>2);
     my $start2 = $now->clone->subtract(days=>1);
     my $end = $now->clone->add(days=>5);
@@ -155,6 +162,8 @@ $t += 1;
     #_delete_lnp_number($number2);
     #_delete_lnp_provider($carrier1);
     #_delete_lnp_provider($carrier2);
+
+    _set_time();
 }
 
 $t += 1;
@@ -476,12 +485,26 @@ sub _get_query_string {
     return $query;
 };
 
+sub _set_time {
+    my ($o) = @_;
+    my $dtf = DateTime::Format::Strptime->new(
+            pattern => '%F %T',
+        );
+    if (defined $o) {
+        NGCP::Panel::Utils::DateTime::set_fake_time($o);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        diag("applying fake time offset '$o' - current time: " . $dtf->format_datetime($now));
+    } else {
+        NGCP::Panel::Utils::DateTime::set_fake_time();
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        diag("resetting fake time - current time: " . $dtf->format_datetime($now));
+    }
+}
+
 sub _get_fake_clienttime_now {
-    my $now = DateTime->now();
-    $now->set_time_zone( DateTime::TimeZone->new(name => 'local') );
-    my $s = $now->ymd('-') . ' ' . $now->hms(':');
-    #$s .= '.'.$dt->millisecond if $dt->millisecond > 0.0;
-    return $s;
+    #return NGCP::Panel::Utils::DateTime::to_rfc1123_string(NGCP::Panel::Utils::DateTime::current_local);
+    #with rfc1123 there could be a problem if jenkins runner and test host will not have the same (language) locale
+    return NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local);
 }
 
 done_testing;
