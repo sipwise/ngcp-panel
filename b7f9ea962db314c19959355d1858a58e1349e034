@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_4e79d592",
+        "filename": "lib/NGCP/Panel/Controller/Contact.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-20T12:22:15Z",
+      "side": 1,
+      "message": "Bacause this one is a backport, that needed adaptation. These changes are in other branches already and so should be fixed too. For further tracking it will be new trunk commit with cherry-picks, as usual.",
+      "parentUuid": "7a1969be_ae57a901",
+      "revId": "b7f9ea962db314c19959355d1858a58e1349e034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_83172651",
         "filename": "lib/NGCP/Panel/Controller/Contact.pm",
         "patchSetId": 5
@@ -173,6 +191,24 @@
       "side": 1,
       "message": "with the old version here (in 3.8) we didn\u0027t show the delete button if any contract existed (no matter if terminated). with this version, we show it, when only terminated contracts exist. but this relies on the behaviour of trunk, where the contact gets terminated in this case. would it be deleted, the terminated contracts would get deleted too.\n\nthis has introduced that: https://gerrit.mgm.sipwise.com/#/c/9155/",
       "parentUuid": "7a1969be_ae09692e",
+      "revId": "b7f9ea962db314c19959355d1858a58e1349e034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_4e31d5a1",
+        "filename": "lib/NGCP/Panel/Controller/Contact.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-20T12:22:15Z",
+      "side": 1,
+      "message": "Yes, got it. Thank you , I overlooked it.",
+      "parentUuid": "7a1969be_2e4bb95a",
       "revId": "b7f9ea962db314c19959355d1858a58e1349e034",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
