@@ -1,3 +1,12 @@
+ngcp-panel (5.1.1.6+0~mr5.1.1.6) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [c8bcdad] TT#14360 correctly treat replacement pattern \0
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 20 Apr 2017 14:20:41 +0200
+
 ngcp-panel (5.1.1.5+0~mr5.1.1.5) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
