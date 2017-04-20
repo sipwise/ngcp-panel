@@ -10,10 +10,9 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voip_fax_journal')->search({
-        filename => { '!=' => '' },
         'voip_subscriber.id' => { '!=' => undef },
     },{
-        join => { 'provisioning_voip_subscriber' => 'voip_subscriber' },
+        join => { voip_fax_data => { provisioning_voip_subscriber => 'voip_subscriber' } },
     });
 
     if($c->user->roles eq "admin") {
@@ -21,7 +20,8 @@ sub _item_rs {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id
         },{
-            join => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } }
+            join => { voip_fax_data => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } } }
+
         });
     }
     return $item_rs;
