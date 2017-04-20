@@ -78,6 +78,9 @@ sub send_fax {
 sub get_fax {
     my (%args) = @_;
     my $c = $args{c};
+    # mandatory is $item or $filename
+    # $item - get a stored fax from the db
+    # $filename - get a stored fax from the spool
 
     #moved here due to CE, as it doesn't carry NGCP::fax
     eval { require NGCP::Fax; };
@@ -90,22 +93,37 @@ sub get_fax {
         }
     }
 
-    my ($filename, $format) = @{args}{qw(filename format)};
-    return unless $filename;
-    my $spool = $c->config->{faxserver}{spool_dir} || return;
     my $filepath;
-    foreach my $dir (qw(completed failed)) {
-        my $check_path = sprintf "%s/%s/%s", $spool, $dir, $filename;
-        if (-e $check_path) {
-            $filepath = $check_path;
-            last;
-        }
-    }
-    return unless $filepath;
-
-
     my $content;
     my $ext = 'tif';
+
+    my ($filename, $format, $item) = @{args}{qw(filename format item)};
+    return unless $filename || $item;
+    return unless $item && $item->voip_fax_data->data;
+
+    my $tmp_fh;
+
+    if ($filename) {
+        my $spool = $c->config->{faxserver}{spool_dir} || return;
+        foreach my $dir (qw(completed failed)) {
+            my $check_path = sprintf "%s/%s/%s", $spool, $dir, $filename;
+            if (-e $check_path) {
+                $filepath = $check_path;
+                last;
+            }
+        }
+        return unless $filepath;
+    } else {
+        if ($format) {
+            ($tmp_fh, $filepath) =
+                File::Temp::tempfile( DIR => $cfg->{spool_dir}."/tmp")
+                    or $self->error("Cannot create temp file: $ERRNO");
+            binmode $tmp_fh;
+            print $tmp_fh $item->voip_fax_data->data;
+        } else {
+            return ($item->voip_fax_data->data, $ext);
+        }
+    }
 
     if ($format) {
         my $client = new NGCP::Fax;
@@ -120,6 +138,8 @@ sub get_fax {
         eval { $content = read_file($filepath, binmode => ':raw'); };
         return if $@;
     }
+
+    close $tmp_fh if $tmp_fh;
 
     return ($content, $ext);
 }
