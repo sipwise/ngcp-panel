@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_ee124157",
+        "filename": "lib/NGCP/Panel/Controller/Contact.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-20T10:37:38Z",
+      "side": 1,
+      "message": "agree, I will change here, in trunk and in other branches in separate commit.",
+      "parentUuid": "7a1969be_431d2e73",
+      "revId": "b7f9ea962db314c19959355d1858a58e1349e034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_83172651",
         "filename": "lib/NGCP/Panel/Controller/Contact.pm",
         "patchSetId": 5
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_8e0e2d33",
+        "filename": "lib/NGCP/Panel/Controller/Contact.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-20T10:37:38Z",
+      "side": 1,
+      "message": "Yes, this was just a scheme. I can remove it here and in the trunk, as this commit is a backport with further adaptation in the https://gerrit.mgm.sipwise.com/#/c/12760/.",
+      "parentUuid": "7a1969be_83172651",
+      "range": {
+        "startLine": 255,
+        "startChar": 11,
+        "endLine": 255,
+        "endChar": 32
+      },
+      "revId": "b7f9ea962db314c19959355d1858a58e1349e034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_e30b7a29",
         "filename": "lib/NGCP/Panel/Controller/Contact.pm",
         "patchSetId": 5
@@ -53,6 +95,24 @@
       "writtenOn": "2017-04-20T10:27:47Z",
       "side": 1,
       "message": "I remember we discussed this, but did we really say, it\u0027s okay to delete these, because it would cascade and delete the terminated contracts too?",
+      "revId": "b7f9ea962db314c19959355d1858a58e1349e034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_ae09692e",
+        "filename": "lib/NGCP/Panel/Controller/Contact.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-04-20T10:37:38Z",
+      "side": 1,
+      "message": "Mm - here I\u0027m a little confused. We aren\u0027t delete here anything. It is for the listing. As for me - it is OK not to show contacts connected with terminated customers.\n\nCould you please explain?",
+      "parentUuid": "7a1969be_e30b7a29",
       "revId": "b7f9ea962db314c19959355d1858a58e1349e034",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
