@@ -83,7 +83,7 @@ sub GET :Allow {
 
         my ($content, $ext) = NGCP::Panel::Utils::Fax::get_fax(
                                 c => $c,
-                                filename => $item->filename,
+                                item => $item,
                                 format => $format,
                               );
         last unless $content && $ext;
