@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_ce1ca516",
+        "filename": "lib/NGCP/Panel/Controller/Contact.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-20T12:37:37Z",
+      "side": 1,
+      "message": "ok it is already submitted in some branches",
+      "parentUuid": "7a1969be_4e79d592",
+      "revId": "b7f9ea962db314c19959355d1858a58e1349e034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_83172651",
         "filename": "lib/NGCP/Panel/Controller/Contact.pm",
         "patchSetId": 5
