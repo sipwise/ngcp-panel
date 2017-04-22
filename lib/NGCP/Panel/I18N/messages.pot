@@ -1746,6 +1746,10 @@ msgid "Container"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Contains wildcard list of allowed or denied SIP User-Agents matched against the User-Agent header."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., \"user\" of SIP URI \"user@example.com\") that are (not) allowed to be called by the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
 msgstr ""
 
@@ -4027,6 +4031,10 @@ msgstr ""
 
 #: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/sound/list.tt share/templates/sound/list.tt share/templates/subscriber/master.tt
 msgid "Files"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Filter Mode for SIP User-Agent Filter List"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7224,6 +7232,14 @@ msgstr ""
 msgid "Reject reason on call forward loop"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reject requests w/o User-Agent header"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rejects any request if no User-Agent header is given. Usually goes together with the SIP User-Agent Filter List and Mode preferences."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 msgid "Reminder"
 msgstr ""
@@ -7507,6 +7523,10 @@ msgstr ""
 
 #: share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt
 msgid "SIP URI"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SIP User-Agent Filter List"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8165,6 +8185,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the list of caller and callee rewrite rules which should be applied for incoming and outgoing calls."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specifies the operational mode of the SIP User-Agent Filter List. If unset or set to a false value, it is a blacklist (accept all requests except from user-agents listed in the filter list), with a true value it is a whitelist (reject all requests except from user-agents listed in the filter list)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
