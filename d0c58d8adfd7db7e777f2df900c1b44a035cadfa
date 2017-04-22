@@ -49,6 +49,54 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_69ee4b8d",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-22T09:34:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_26ee568c",
+      "range": {
+        "startLine": 214,
+        "startChar": 20,
+        "endLine": 214,
+        "endChar": 40
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_09e2379f",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-22T09:34:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_26601635",
+      "range": {
+        "startLine": 214,
+        "startChar": 20,
+        "endLine": 214,
+        "endChar": 40
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_267936fd",
         "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
         "patchSetId": 5
@@ -84,6 +132,30 @@
       "side": 1,
       "message": "well tested it on a customer platform and it does not produce duplicates so far.",
       "parentUuid": "7a1969be_267936fd",
+      "range": {
+        "startLine": 223,
+        "startChar": 36,
+        "endLine": 223,
+        "endChar": 45
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_49f38f73",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-22T09:34:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_06f35a74",
       "range": {
         "startLine": 223,
         "startChar": 36,
@@ -143,6 +215,30 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_a9e8437d",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-22T09:34:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_66e84e7d",
+      "range": {
+        "startLine": 227,
+        "startChar": 65,
+        "endLine": 227,
+        "endChar": 69
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_a66c0638",
         "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
         "patchSetId": 5
@@ -190,6 +286,30 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_89ed878e",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-22T09:34:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_46ed528b",
+      "range": {
+        "startLine": 231,
+        "startChar": 50,
+        "endLine": 231,
+        "endChar": 76
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_86690a28",
         "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
         "patchSetId": 5
@@ -225,6 +345,30 @@
       "side": 1,
       "message": "there is a similar block above so I assume that was implemented to filter calls within the same customer for some reason but imho it should be removed indeed.",
       "parentUuid": "7a1969be_86690a28",
+      "range": {
+        "startLine": 232,
+        "startChar": 24,
+        "endLine": 232,
+        "endChar": 84
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_e9019b3a",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-22T09:34:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_a601a63b",
       "range": {
         "startLine": 232,
         "startChar": 24,
@@ -373,6 +517,30 @@
       "side": 1,
       "message": "sorry for a bit late reply. yes, you are right and thanks alot for the input from your side guys :)\nwe had a phone conversation with Rene yesterday and decided how that would be (gonna post an update to the review today).\nAs for the other changes in the review they will be removed and the review also renamed as the other changes will be done in a different way (as a separate review).",
       "parentUuid": "7a1969be_e9f091cb",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 38
+      },
+      "revId": "d0c58d8adfd7db7e777f2df900c1b44a035cadfa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_c9fe5f38",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-22T09:34:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_29baa9e1",
       "range": {
         "startLine": 49,
         "startChar": 8,
