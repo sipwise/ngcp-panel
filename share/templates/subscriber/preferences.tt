@@ -424,6 +424,38 @@ $( document ).ready(function() {
 
                             </td>
                         </tr>
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('T38') %]</td>
+                            <td>
+                                [% faxpref.t38 ? c.loc('yes') : c.loc('no') %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 't38') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>[% c.loc('ECM') %]</td>
+                            <td>
+                                [% faxpref.ecm ? c.loc('yes') : c.loc('no') %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'ecm') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                    [% END -%]
+                                </div>
+
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <!-- mail2fax -->
