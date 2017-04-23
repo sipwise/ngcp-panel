@@ -51,6 +51,8 @@ use NGCP::Panel::Form::Subscriber::UpnRewriteSet;
 use NGCP::Panel::Form::Faxserver::Active;
 use NGCP::Panel::Form::Faxserver::Destination;
 use NGCP::Panel::Form::Faxserver::Name;
+use NGCP::Panel::Form::Faxserver::T38;
+use NGCP::Panel::Form::Faxserver::ECM;
 use NGCP::Panel::Form::MailToFax::Active;
 use NGCP::Panel::Form::MailToFax::ACL;
 use NGCP::Panel::Form::MailToFax::SecretKey;
@@ -3182,6 +3184,30 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 );
                 if($posted && $form->validated) {
                     $faxpref->update({ active => $form->field('active')->value });
+                }
+                last SWITCH;
+            };
+            /^t38$/ && do {
+                $form = NGCP::Panel::Form::Faxserver::T38->new;
+                $params = { 't38' => $faxpref->t38 };
+                $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
+                if($posted && $form->validated) {
+                    $faxpref->update({ t38 => $form->field('t38')->value });
+                }
+                last SWITCH;
+            };
+            /^ecm$/ && do {
+                $form = NGCP::Panel::Form::Faxserver::ECM->new;
+                $params = { 'ecm' => $faxpref->ecm };
+                $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
+                if($posted && $form->validated) {
+                    $faxpref->update({ ecm => $form->field('ecm')->value });
                 }
                 last SWITCH;
             };
