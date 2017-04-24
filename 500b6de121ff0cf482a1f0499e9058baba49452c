@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_db82a6ff",
+        "filename": "lib/NGCP/Panel/Controller/API/PbxDeviceModelsItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-04-24T10:26:53Z",
+      "side": 1,
+      "message": "new to me that denied page can be used in api as well?",
+      "range": {
+        "startLine": 110,
+        "startChar": 8,
+        "endLine": 110,
+        "endChar": 35
+      },
+      "revId": "500b6de121ff0cf482a1f0499e9058baba49452c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
