@@ -46,6 +46,30 @@
       "revId": "d5de51575c36fda2925e6ecd75aa0b1c98bfad16",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_5bf2369b",
+        "filename": "lib/NGCP/Panel/Utils/Fax.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-24T11:18:59Z",
+      "side": 1,
+      "message": "you are right, sorry, that line from the faxserver code and we are in ngcp-panel :)",
+      "parentUuid": "7a1969be_3b73fa4e",
+      "range": {
+        "startLine": 123,
+        "startChar": 27,
+        "endLine": 123,
+        "endChar": 40
+      },
+      "revId": "d5de51575c36fda2925e6ecd75aa0b1c98bfad16",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
