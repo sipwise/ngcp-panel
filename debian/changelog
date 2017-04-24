@@ -1,3 +1,26 @@
+ngcp-panel (1.8.10.1+0~mr3.8.10.1) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [8fbf1b8] TT#8680 Consider E164 empty fields
+  * [e72c73c] TT#8950 Remove readonly  simple_destination from resource
+  * [02b40a6] TT#13267 Use provisioining_voip_subscribers ids to delete pbx groups
+  * [980fb6e] MT#17417 Remove possibility to create subscriber out of the customer view
+  * [fb65622] TT#7453 Don't remove readonly fields from the GET resource (run = 0)
+  * [2103258] TT#7453 Add filters for dates and readonly date related fields to subscriber
+  * [b6bafda] TT#7453 Adapt tests to the date fields in the subscriber
+  * [437b0b0] TT#12197 Use contacts connected to the resellers for the customers creation
+  * [b0c4144] TT#12197 Use contacts connected to the resellers for the customers creation
+
+  [ Rene Krenn ]
+  * [8005574] TT#13823 disable api journal dml stmts in 3.x
+
+  [ Andreas Granig ]
+  * [914be2f] TT#7453 Fix fixing removal of r/o fields and tests
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Apr 2017 15:59:58 +0200
+
 ngcp-panel (1.8.10.0+0~mr3.8.10.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
