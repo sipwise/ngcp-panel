@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_5b2076f7",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-24T11:29:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_3bc5ba5b",
+      "revId": "33af1fc6cf38a2104857df4bd45072421896333f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_1b955e40",
         "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2017-04-24T10:25:46Z",
       "side": 1,
       "message": "to me same as above also applies here: there should be already a customer id filter present at this point ...",
+      "revId": "33af1fc6cf38a2104857df4bd45072421896333f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_fb220200",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-24T11:29:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_1b955e40",
       "revId": "33af1fc6cf38a2104857df4bd45072421896333f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -59,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_bb11aaae",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-24T11:29:51Z",
+      "side": 1,
+      "message": "should be ok with the cleanups.",
+      "parentUuid": "7a1969be_fb916253",
+      "range": {
+        "startLine": 252,
+        "startChar": 39,
+        "endLine": 252,
+        "endChar": 83
+      },
+      "revId": "33af1fc6cf38a2104857df4bd45072421896333f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_3b9c9a69",
         "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
         "patchSetId": 8
@@ -70,6 +130,30 @@
       "writtenOn": "2017-04-24T10:25:46Z",
       "side": 1,
       "message": "... so doesnt it render that destination_user_in filter useless?",
+      "range": {
+        "startLine": 257,
+        "startChar": 39,
+        "endLine": 257,
+        "endChar": 88
+      },
+      "revId": "33af1fc6cf38a2104857df4bd45072421896333f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_1b26fe16",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-24T11:29:51Z",
+      "side": 1,
+      "message": "should be ok with the cleanups.",
+      "parentUuid": "7a1969be_3b9c9a69",
       "range": {
         "startLine": 257,
         "startChar": 39,
