@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_3bc5ba5b",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-24T10:13:55Z",
+      "side": 1,
+      "message": "remove this or, no more function",
+      "revId": "33af1fc6cf38a2104857df4bd45072421896333f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
