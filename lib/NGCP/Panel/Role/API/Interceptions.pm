@@ -181,11 +181,21 @@ sub subresnum_from_number {
     my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
         \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
     );
-    unless($num_rs->first) {
+    if (not $num_rs->first) {
         $c->log->error("invalid number '$number'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist");
         return;
+    } else {
+        my $intercept_num_rs = $c->model('InterceptDB')->resultset('voip_numbers')->search(
+            \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
+        );
+        if(not $intercept_num_rs->first) {
+            $c->log->error("invalid local number '$number'");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist locally");
+            return;
+        }
     }
+
     my $sub = $num_rs->first->subscriber;
     unless($sub) {
         $c->log->error("invalid number '$number', not assigned to any subscriber");

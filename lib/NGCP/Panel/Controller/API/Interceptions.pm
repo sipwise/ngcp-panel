@@ -185,10 +185,19 @@ sub POST :Allow {
         my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
             \[ 'concat(cc,ac,sn) = ?', [ {} => $resource->{number} ]]
         );
-        unless($num_rs->first) {
+        if(not $num_rs->first) {
             $c->log->error("invalid number '$$resource{number}'");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist");
             last;
+        } else {
+            my $intercept_num_rs = $c->model('InterceptDB')->resultset('voip_numbers')->search(
+                \[ 'concat(cc,ac,sn) = ?', [ {} => $resource->{number} ]]
+            );
+            if(not $intercept_num_rs->first) {
+                $c->log->error("invalid local number '$$resource{number}'");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist locally");
+                last;
+            }
         }
 	# use the long way, since with ossbss provisioning, the reseller_id
 	# is not set in this case
