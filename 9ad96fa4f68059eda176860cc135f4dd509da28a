@@ -16,6 +16,29 @@
       "revId": "9ad96fa4f68059eda176860cc135f4dd509da28a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_be407857",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1888,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-04-25T14:28:41Z",
+      "side": 1,
+      "message": "Some time ago I reworked firmware data storing/retreiving to be \"chunked\", to eliminate all the \"max_packet\" issues, etc. for large firmwares.\nMaybe NGCP::Panel::Utils::DeviceFirmware::get_firmware_data() should be called instead or there is another purpose for this part of code ?",
+      "range": {
+        "startLine": 1888,
+        "startChar": 23,
+        "endLine": 1888,
+        "endChar": 68
+      },
+      "revId": "9ad96fa4f68059eda176860cc135f4dd509da28a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
