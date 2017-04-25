@@ -720,9 +720,11 @@ sub devfw_download :Chained('devfw_base') :PathPart('download') :Args(0) {
 
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
     $c->response->content_type('application/octet-stream');
-    $c->response->body(NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
-                        c => $c, fw_id => $fw->id
-                        ));
+    $c->response->body(
+        NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
+            c => $c, 
+            fw_id => $fw->id
+    ));
 }
 
 sub devconf_ajax :Chained('base') :PathPart('config/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -1885,7 +1887,11 @@ sub dev_field_firmware_download :Chained('dev_field_firmware_base') :PathPart('v
 
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
     $c->response->content_type('application/octet-stream');
-    $c->response->body($fw->data);
+    $c->response->body(
+        NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
+            c => $c, 
+            fw_id => $fw->id
+    ));
 }
 
 sub dev_field_firmware_version_base :Chained('dev_field_firmware_base') :PathPart('from') :CaptureArgs(1) {
@@ -1932,7 +1938,11 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
 
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
     $c->response->content_type('application/octet-stream');
-    $c->response->body($fw->data);
+    $c->response->body(
+        NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
+            c => $c, 
+            fw_id => $fw->id
+    ));
 }
 
 sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathPart('latest') :Args {
@@ -1960,7 +1970,11 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
 
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
     $c->response->content_type('application/octet-stream');
-    $c->response->body($fw->data);
+    $c->response->body(
+        NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
+            c => $c, 
+            fw_id => $fw->id
+    ));
 }
 
 
