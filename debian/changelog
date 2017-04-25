@@ -1,3 +1,13 @@
+ngcp-panel (1.14.4.7+0~mr4.5.4.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f728448] TT#14562 apply api-lnp.t docker's time domain to api test node
+  * [3e118f2] TT#14562 move api-lnp.t to a fake time domain
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 25 Apr 2017 13:13:11 +0200
+
 ngcp-panel (1.14.4.6+0~mr4.5.4.6) unstable; urgency=medium
 
   [ Rene Krenn ]
