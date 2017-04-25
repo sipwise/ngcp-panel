@@ -67,9 +67,12 @@ sub GET :Allow {
 
         $c->response->header ('Content-Disposition' => 'attachment; filename="' . $resource->{filename} . '"');
         $c->response->content_type('application/octet-stream');
-        $c->response->body(NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
-                            c => $c, fw_id => $item->id
-                          ));
+        $c->response->body(
+            NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
+                c => $c, 
+                fw_id => $item->id
+            )
+        );
         return;
     }
     return;
