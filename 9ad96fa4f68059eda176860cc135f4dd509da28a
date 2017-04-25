@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_3ef9284e",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1888,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-25T13:26:41Z",
+      "side": 1,
+      "message": "difference to $fw-\u003efirmware_data-\u003efirst-\u003edata? (more efficient?)",
+      "revId": "9ad96fa4f68059eda176860cc135f4dd509da28a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
