@@ -1,3 +1,44 @@
+ngcp-panel (5.1.2.1+0~mr5.1.2.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [56d1175] TT#1477 MaliciousCalls API fix param filter by caller/callee/callid
+  * [8237cdc] Revert "TT#1477 MaliciousCalls API fix param filter by caller/callee/callid"
+  * [8a5e342] TT#11477 MaliciousCalls API fix param filter by caller/callee/callid
+
+  [ Andreas Granig ]
+  * [536487a] TT#10135 Fix displaying emergency mode indicator
+  * [767bb8e] TT#10134 Fix emergency prio
+  * [87ad1a0] TT#7453 Fix fixing removal of r/o fields and tests
+
+  [ Rene Krenn ]
+  * [7a0e374] TT#9850 remove interceptions when terminating a reseller
+  * [8223e48] TT#5811 MT#15667 MT#15793 api/callist "call_id" param
+  * [b57bebb] TT#10963 cash_balance_interval not returned in euro
+  * [dbd7840] MT#23817 TT#11431 call_id missing in api/calls response
+  * [21b78e2] TT#12998 fix api-events.t and edr first alias sorting
+  * [364e813] TT#11300 fix api/faxes number normalization for pbx cases
+  * [578de13] TT#14562 apply api-lnp.t docker's time domain to api test node
+  * [1694c00] TT#14562 move api-lnp.t to a fake time domain
+
+  [ Gerhard Jungwirth ]
+  * [8547ce5] TT#10402 prevent unban with readonly user
+  * [018e4ce] TT#10131 show passwords only when flag is set
+  * [08901dd] TT#9438 correctly htmlescape apidoc properties
+  * [993f3d4] TT#14360 correctly treat replacement pattern \0
+
+  [ Irina Peshinskaya ]
+  * [ae526f9] TT#13267 Use provisioining_voip_subscribers ids to delete pbx groups
+  * [b2c32c7] TT#7453 Don't remove readonly fields from the GET resource (run = 0)
+  * [1d5ce2e] TT#7453 Add filters for dates and readonly date related fields to subscriber
+  * [e9c017f] TT#7453 Adapt tests to the date fields in the subscriber
+  * [a869f09] TT#12197 Use contacts connected to the resellers for the customers creation
+  * [a13803d] TT#9309 Adapt ngcp-panel tests to api forcearray
+  * [bd48502] TT#9309 More careful tests fix for the API embedded forcearray
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 25 Apr 2017 14:22:35 +0200
+
 ngcp-panel (5.1.2.0+0~mr5.1.2.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
