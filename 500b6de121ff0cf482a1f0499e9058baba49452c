@@ -22,6 +22,30 @@
       "revId": "500b6de121ff0cf482a1f0499e9058baba49452c",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_1eb0ac8a",
+        "filename": "lib/NGCP/Panel/Controller/API/PbxDeviceModelsItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-04-25T13:37:52Z",
+      "side": 1,
+      "message": "ups, my mistake",
+      "parentUuid": "7a1969be_db82a6ff",
+      "range": {
+        "startLine": 110,
+        "startChar": 8,
+        "endLine": 110,
+        "endChar": 35
+      },
+      "revId": "500b6de121ff0cf482a1f0499e9058baba49452c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
