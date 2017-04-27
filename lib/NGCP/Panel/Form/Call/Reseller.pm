@@ -189,6 +189,24 @@ has_field 'source_gpp9' => (
     },
 );
 
+has_field 'source_lnp_prefix' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['LNP prefix for the calling peer from looking up the calling party.']
+    },
+);
+
+has_field 'source_user_out' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Calling party username/number as it leaves the system, after applying called party\'s out rewrite rules.']
+    },
+);
+
 has_field 'destination_user_id' => (
     type => 'Text',
     required => 0,
@@ -370,6 +388,24 @@ has_field 'destination_gpp9' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['General Purpose Parameter 9.']
+    },
+);
+
+has_field 'destination_lnp_prefix' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['LNP prefix for the called party or it\'s destination peer.']
+    },
+);
+
+has_field 'destination_user_out' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Called party username/number as it leaves the system, after applying called party\'s out rewrite rules.']
     },
 );
 
