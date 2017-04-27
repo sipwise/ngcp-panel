@@ -2191,6 +2191,10 @@ msgstr "Vertrag erfolgreich beendet"
 msgid "Contracts"
 msgstr "Verträge"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Controls whether to enable/disable NAT pings for a given domain/user"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Cost"
 msgstr ""
@@ -3085,10 +3089,6 @@ msgid "Direction"
 msgstr "Richtung"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Disable NAT SIP pings"
-msgstr "NAT SIP Pings deaktivieren"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Disable PRACK Method"
 msgstr ""
 
@@ -3193,14 +3193,6 @@ msgstr ""
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Domains"
 msgstr "Domains"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"Don't do NAT ping for domain/user. Use with caution: this only makes sense "
-"on the access network which does not need pings (e.g. CDMA)"
-msgstr ""
-"Deaktiviert NAT-Pings für die Domäne oder den Subscriber. Vorsicht: nur bei "
-"Netzen zu empfehlen, die keine Pings benötigen (z.B. CDMA)"
 
 #: share/templates/login/login.tt
 msgid "Don't have an account?"
@@ -6448,6 +6440,10 @@ msgstr "Großbuchstaben müssen enthalten sein"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "NAT and Media Flow Control"
 msgstr "NAT und Medienfluss-Kontrolle"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "NAT pinger"
+msgstr ""
 
 #: share/templates/ncos/pattern_list.tt
 msgid "NCOS LNP Carriers"
@@ -13247,6 +13243,16 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Disable NAT SIP pings"
+#~ msgstr "NAT SIP Pings deaktivieren"
+
+#~ msgid ""
+#~ "Don't do NAT ping for domain/user. Use with caution: this only makes "
+#~ "sense on the access network which does not need pings (e.g. CDMA)"
+#~ msgstr ""
+#~ "Deaktiviert NAT-Pings für die Domäne oder den Subscriber. Vorsicht: nur "
+#~ "bei Netzen zu empfehlen, die keine Pings benötigen (z.B. CDMA)"
 
 #~ msgid "Download PEM"
 #~ msgstr "PEM runterladen"
