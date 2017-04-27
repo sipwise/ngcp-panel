@@ -78,6 +78,18 @@ has_field 'destinations.status' => (
     default => 1,
 );
 
+has_field 't38' => (
+    type => 'Boolean',
+    label => 'T38',
+    required => 0,
+);
+
+has_field 'ecm' => (
+    type => 'Boolean',
+    label => 'ECM',
+    required => 0,
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
