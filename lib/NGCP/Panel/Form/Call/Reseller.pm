@@ -189,6 +189,24 @@ has_field 'source_gpp9' => (
     },
 );
 
+has_field 'source_lnp_prefix' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Prefix (LNP provider) obtained from lookup in the local LNP database.']
+    },
+);
+
+has_field 'source_user_out' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Calling party username/number as it leaves the system for off-net calls (after any rewriting).']
+    },
+);
+
 has_field 'destination_user_id' => (
     type => 'Text',
     required => 0,
@@ -370,6 +388,24 @@ has_field 'destination_gpp9' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['General Purpose Parameter 9.']
+    },
+);
+
+has_field 'destination_lnp_prefix' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Prefix (LNP provider) obtained from lookup in the local LNP database.']
+    },
+);
+
+has_field 'destination_user_out' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Caller party username/number as it leaves the system for off-net calls (after any rewriting).']
     },
 );
 
