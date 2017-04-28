@@ -3259,6 +3259,10 @@ msgstr ""
 msgid "E164range add"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
+msgid "ECM"
+msgstr ""
+
 #: share/templates/administrator/list.tt share/templates/billing/fees.tt
 #: share/templates/billing/list.tt share/templates/billing/peaktimes.tt
 #: share/templates/contact/list.tt share/templates/contract/list.tt
@@ -9690,6 +9694,10 @@ msgstr "Estadísticas del Sistema"
 #: share/templates/widgets/admin_system_overview.tt
 msgid "System Status"
 msgstr "Estado del sistema"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
+msgid "T38"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "TCP"

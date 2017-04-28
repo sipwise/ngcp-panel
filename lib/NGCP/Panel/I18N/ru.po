@@ -3262,6 +3262,10 @@ msgstr "E164 диапазон"
 msgid "E164range add"
 msgstr "добавить E164 диапазон"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
+msgid "ECM"
+msgstr ""
+
 #: share/templates/administrator/list.tt share/templates/billing/fees.tt
 #: share/templates/billing/list.tt share/templates/billing/peaktimes.tt
 #: share/templates/contact/list.tt share/templates/contract/list.tt
@@ -9686,6 +9690,10 @@ msgstr "Статистика системы"
 #: share/templates/widgets/admin_system_overview.tt
 msgid "System Status"
 msgstr "Состояние системы"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
+msgid "T38"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "TCP"
