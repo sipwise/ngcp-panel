@@ -270,7 +270,6 @@ sub perform_prepaid_billing {
             NGCP::Rating::Inew::SmsSession::session_destroy($sess);
         }
         foreach my $sess(@failed_sessions) {
-            NGCP::Rating::Inew::SmsSession::session_sms_discard($sess);
             NGCP::Rating::Inew::SmsSession::session_destroy($sess);
         }
         NGCP::Rating::Inew::SmsSession::destroy($amqr);
