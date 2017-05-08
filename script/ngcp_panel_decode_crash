@@ -16,6 +16,19 @@ __END__
 
 ngcp_panel_decode_crash - decode a crash state from the Web server error log
 
-=head1 USAGE
+=head1 SYNOPSIS
 
-    ngcp_panel_decode_crash < crashfile
+B<ngcp_panel_decode_crash> <I<crashfile>
+
+=head1 DESCRIPTION
+
+This program decodes a crash state from the web server error log.
+
+=head1 AUTHOR
+
+Sipwise Development Team <support@sipwise.com>.
+
+=head1 LICENSE
+
+GPL-3+, Sipwise GmbH, Austria.
+
