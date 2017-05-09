@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -e
 
 I18_DIRS="lib/NGCP/Panel/Role \
 lib/NGCP/Panel/Field \
