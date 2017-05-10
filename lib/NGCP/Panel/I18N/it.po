@@ -1721,6 +1721,12 @@ msgstr "Call-Id"
 msgid "Called at"
 msgstr "Chiamata alle"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Called party username/number as it leaves the system, after applying called "
+"party's out rewrite rules."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee"
@@ -1863,6 +1869,12 @@ msgstr ""
 #: share/templates/subscriber/webphone.tt
 msgid "Calling"
 msgstr "Chiamata"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Calling party username/number as it leaves the system, after applying called "
+"party's out rewrite rules."
+msgstr ""
 
 #: share/templates/subscriber/master.tt
 msgid "Calls history"
@@ -3014,6 +3026,10 @@ msgid "Destination gpp9"
 msgstr "gpp9 Destinatario"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Destination lnp prefix"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Destination reseller billing fee id"
 msgstr "Id quota di fatturazione del rivenditore destinatario"
 
@@ -3044,6 +3060,10 @@ msgstr "Id utente destinatario"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Destination user in"
 msgstr "Utente destinatario entrante"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Destination user out"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -6111,6 +6131,14 @@ msgstr "Numeri portati ancora connessi all´operatore."
 #: lib/NGCP/Panel/Utils/Lnp.pm
 msgid "LNP numbers successfully uploaded"
 msgstr "Numeri portati caricati con successo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP prefix for the called party or it's destination peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP prefix for the calling peer from looking up the calling party."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/layout/body.tt
 msgid "Language"
@@ -9268,6 +9296,10 @@ msgid "Source ip"
 msgstr "Ip sorgente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Source lnp prefix"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Source provider id"
 msgstr "Id operatore sorgente"
 
@@ -9294,6 +9326,10 @@ msgstr "Utente sorgente"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Source user id"
 msgstr "Id utente sorgente"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Source user out"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Source uuid"

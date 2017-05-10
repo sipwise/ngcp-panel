@@ -1293,6 +1293,10 @@ msgstr ""
 msgid "Called at"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Called party username/number as it leaves the system, after applying called party's out rewrite rules."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee"
 msgstr ""
@@ -1431,6 +1435,10 @@ msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "Calling"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Calling party username/number as it leaves the system, after applying called party's out rewrite rules."
 msgstr ""
 
 #: share/templates/subscriber/master.tt
@@ -2448,6 +2456,10 @@ msgid "Destination gpp9"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Destination lnp prefix"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Destination reseller billing fee id"
 msgstr ""
 
@@ -2477,6 +2489,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Destination user in"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Destination user out"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5305,6 +5321,14 @@ msgstr ""
 msgid "LNP numbers successfully uploaded"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP prefix for the called party or it's destination peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "LNP prefix for the calling peer from looking up the calling party."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/layout/body.tt
 msgid "Language"
 msgstr ""
@@ -8115,6 +8139,10 @@ msgid "Source ip"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Source lnp prefix"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Source provider id"
 msgstr ""
 
@@ -8140,6 +8168,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Source user id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Source user out"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
