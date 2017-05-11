@@ -1,4 +1,4 @@
-package NGCP::Panel::AuthenticationStore::SystemRole;
+package NGCP::Panel::Authentication::Store::SystemRole;
 use Sipwise::Base;
 use parent 'Catalyst::Authentication::User::Hash';
 

@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::Admin;
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
+use HTTP::Status qw(:constants);
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -115,6 +116,25 @@ sub auto :Private {
                 unless ($c->user_exists) {
                     $c->log->debug("+++++ invalid api admin system login");
                     $c->log->warn("invalid api system login from '".$c->req->address."'");
+                }
+
+                $self->api_apply_fake_time($c);
+                return 1;
+            } elsif ($c->req->headers->header("Authorization") &&
+                     $c->req->headers->header("Authorization") =~ m/^Bearer /) {
+                $c->log->debug("++++++ Root::auto API request with JWT");
+                my $realm = "api_subscriber_jwt";
+                my $res = $c->authenticate({
+                        'dbix_class' => {
+                            searchargs => [
+                                undef, {join => 'voip_subscriber'},
+                            ],
+                        },
+                    }, $realm);
+
+                unless ($c->user_exists) {
+                    $c->log->debug("+++++ invalid api subscriber JWT login");
+                    # $c->log->warn("invalid api system login from '".$c->req->address."'");
                 }
 
                 $self->api_apply_fake_time($c);
@@ -342,6 +362,75 @@ sub emptyajax :Chained('/') :PathPart('emptyajax') :Args(0) {
         sEcho => $c->request->params->{sEcho} // 1,
     );
     $c->detach( $c->view("JSON") );
+}
+
+sub auth_jwt :Chained('/') :PathPart('auth_jwt') :Args(0) :Method('POST') { # TODO: make this not bail out
+    my ($self, $c) = @_;
+
+    use JSON qw/encode_json decode_json/;
+    use Crypt::JWT qw/encode_jwt/;
+
+    my $user = $c->req->body_data->{username} // '';
+    my $pass = $c->req->body_data->{password} // '';
+
+    my $key = $c->config->{'Plugin::Authentication'}{api_subscriber_jwt}{credential}{jwt_key};
+
+    $c->response->content_type('application/json');
+
+    unless ($key) {
+        $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
+        $c->response->body(encode_json({ code => HTTP_INTERNAL_SERVER_ERROR,
+            message => "No JWT key has been configured" })."\n");
+        $c->log->error("No JWT key has been configured");
+        return;
+    }
+
+    unless ($user && $pass) {
+        $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
+        $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
+            message => "No username or password given" })."\n");
+        $c->log->error("No username or password given");
+        return;
+    }
+
+    my ($u, $d, $t) = split /\@/, $user;
+    if(defined $t) {
+        # in case username is an email address
+        $u = $u . '@' . $d;
+        $d = $t;
+    }
+    unless(defined $d) {
+        $d = $c->req->uri->host;
+    }
+    my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+        webusername => $u,
+        webpassword => $pass,
+        'voip_subscriber.status' => 'active',
+        'domain.domain' => $d,
+        'contract.status' => 'active',
+    }, {
+        join => ['domain', 'contract', 'voip_subscriber'],
+    });
+    my $auth_user = $authrs->first;
+
+    my $result = {};
+
+    if ($auth_user && $auth_user->voip_subscriber) {
+        my $jwt_data = {
+            subscriber_id => $auth_user->voip_subscriber->id,
+            username => $auth_user->webusername,
+        };
+        $result->{jwt} = encode_jwt(
+            payload => $jwt_data,
+            key => $key,
+            alg => "HS256",
+        );
+    }
+
+    $c->res->body(encode_json($result));
+    $c->res->code(200);
+
+    return;
 }
 
 sub api_apply_fake_time :Private {
