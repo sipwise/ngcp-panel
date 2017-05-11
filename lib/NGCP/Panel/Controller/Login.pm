@@ -87,6 +87,7 @@ sub index :Path Form {
     $c->stash(template => 'login/login.tt');
 }
 
+
 __PACKAGE__->meta->make_immutable;
 
 1;
