@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a1371a2_caa66753",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-05-11T18:33:34Z",
+      "side": 1,
+      "message": "for this sso things, isnt they key supposed to be generated once upon login and kept in a table until it expires?",
+      "range": {
+        "startLine": 376,
+        "startChar": 4,
+        "endLine": 376,
+        "endChar": 94
+      },
+      "revId": "a84d097202da998b397a4dde65f5c59dacc7c4f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a1371a2_eaa9a325",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-05-11T18:33:34Z",
+      "side": 1,
+      "message": "better with split limit",
+      "revId": "a84d097202da998b397a4dde65f5c59dacc7c4f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
