@@ -132,7 +132,7 @@ __PACKAGE__->config(
                 class => 'DBIx::Class',
                 user_model => 'DB::admins',
                 id_field => 'id',
-                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
                 use_userdata_from_session => 1,
             }
         },
@@ -147,7 +147,7 @@ __PACKAGE__->config(
                 class => 'DBIx::Class',
                 user_model => 'DB::admins',
                 id_field => 'id',
-                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
                 use_userdata_from_session => 1,
             }
         },
@@ -162,7 +162,7 @@ __PACKAGE__->config(
                 class => 'DBIx::Class',
                 user_model => 'DB::admins',
                 id_field => 'id',
-                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
             },
             use_session => 0,
         },
@@ -180,7 +180,7 @@ __PACKAGE__->config(
                 class => 'DBIx::Class',
                 user_model => 'DB::admins',
                 id_field => 'id',
-                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
             },
             use_session => 0,
         },
@@ -196,8 +196,25 @@ __PACKAGE__->config(
             store => {
                 class => 'DBIx::Class',
                 user_model => 'DB::provisioning_voip_subscribers',
-                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
                 # use_userdata_from_session => 1,
+            },
+            use_session => 0,
+        },
+        api_subscriber_jwt => {
+            credential => {
+                class => '+NGCP::Panel::Authentication::Credential::JWT',
+                username_jwt => 'username',
+                username_field => 'me.webusername',
+                id_jwt => 'subscriber_id',
+                id_field => 'voip_subscriber.id',
+                # jwt_key => '', # to be set in config file
+                debug => 1,
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::provisioning_voip_subscribers',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
             },
             use_session => 0,
         },
@@ -210,7 +227,7 @@ __PACKAGE__->config(
                 password_type => 'clear',
             },
             store => {
-                class => '+NGCP::Panel::AuthenticationStore::System',
+                class => '+NGCP::Panel::Authentication::Store::System',
                 file  => '/etc/default/ngcp-api',
                 group => 'auth_system',
             },
@@ -226,7 +243,7 @@ __PACKAGE__->config(
                 class => 'DBIx::Class',
                 user_model => 'DB::provisioning_voip_subscribers',
                 id_field => 'id',
-                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
                 use_userdata_from_session => 1,
             }
         }
