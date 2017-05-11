@@ -26,6 +26,7 @@ Depends:
  libconfig-general-perl,
  libconvert-ascii85-perl,
  libcrypt-eksblowfish-perl,
+ libcrypt-jwt-perl,
  libcrypt-rc4-perl,
  libcrypt-rijndael-perl,
  libdata-compare-perl,
