@@ -1,4 +1,4 @@
-package NGCP::Panel::AuthenticationStore::RoleFromRealm;
+package NGCP::Panel::Authentication::Store::RoleFromRealm;
 use Sipwise::Base;
 use parent 'Catalyst::Authentication::Store::DBIx::Class::User';
 
@@ -12,7 +12,7 @@ sub roles {
                                            : return "reseller";
             }
         }
-        foreach my $auth_type (qw/subscriber api_subscriber_http/) {
+        foreach my $auth_type (qw/subscriber api_subscriber_http api_subscriber_jwt/) { # TODO: simplify this
             if ($auth_type eq $self->auth_realm) {
                 $self->_user->admin ? return "subscriberadmin"
                                     : return "subscriber";
