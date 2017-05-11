@@ -1,8 +1,8 @@
-package NGCP::Panel::AuthenticationStore::System;
+package NGCP::Panel::Authentication::Store::System;
 use Sipwise::Base;
 use Moose;
 use namespace::autoclean;
-use NGCP::Panel::AuthenticationStore::SystemRole;
+use NGCP::Panel::Authentication::Store::SystemRole;
 use Config::Tiny;
 
 with 'MooseX::Emulate::Class::Accessor::Fast';
@@ -43,7 +43,7 @@ sub new {
                                 } },
                     port => $data{port},
                     user_class => $config->{user_class} ||
-                        "NGCP::Panel::AuthenticationStore::SystemRole",
+                        "NGCP::Panel::Authentication::Store::SystemRole",
                }, $class;
 
     return $self;
@@ -63,12 +63,12 @@ sub find_user {
     if (ref($user) eq "HASH") {
         return $self->user_class->new($user);
     } elsif (ref($user) && blessed($user) &&
-                $user->isa('NGCP::Panel::AuthenticationStore::SystemRole')) {
+                $user->isa('NGCP::Panel::Authentication::Store::SystemRole')) {
         return $user;
     } else {
         Catalyst::Exception->throw(
             "The user '$username' must be a hash reference or an " .
-            "object of class NGCP::Panel::AuthenticationStore::SystemRole");
+            "object of class NGCP::Panel::Authentication::Store::SystemRole");
     }
 
     return;
