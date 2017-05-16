@@ -1,3 +1,90 @@
+ngcp-panel (5.3.1.0+0~mr5.3.1.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [59e1606] TT#13267 Use provisioining_voip_subscribers ids to delete pbx groups
+  * [a1e75d5] TT#7453 Don't remove readonly fields from the GET resource (run = 0)
+  * [a4a0d31] TT#9309 Use config for the DataHal forcearray
+  * [5e8af90] TT#7515 Remove xml symbols from the generated sip passwords
+  * [d43d51d] TT#7453 Add filters for dates and readonly date related fields to subscriber
+  * [35bac73] TT#7453 Adapt tests to the date fields in the subscriber
+  * [7198802] TT#9309 Adapt ngcp-panel tests to api forcearray
+  * [c9799c6] TT#9309 More careful tests fix for the API embedded forcearray
+  * [bec02b0] TT#14051 More debug for the failing tests. To abandon later.
+  * [75e558f] Revert "TT#14051 More debug for the failing tests. To abandon later."
+  * [760a576] TT#5004 Fix firmware data access
+  * [35bad60] TT#12197 Use contacts connected to the resellers for the customers creation
+
+  [ Andreas Granig ]
+  * [03380de] TT#1678 Use plain connection for local wsdl
+  * [ab9d640] TT#1678 Use returned interception id in soap test
+  * [b3374b6] TT#10134 Fix emergency prio
+  * [052e776] TT#7453 Fix fixing removal of r/o fields and tests
+  * [9f16893] TT#13277 Implement panel interface for call rec
+  * [11bf95f] TT#13788 Add link to customer details after create
+  * [2c72f95] TT#13812 Discard latest/next firmware suffix
+  * [80e69e5] TT#14334 Fix showing customer name
+  * [d8c818c] TT#13277 Implement API for call recording
+  * [7a16cf3] TT#8704 Implement peer probing in panel and API
+
+  [ Rene Krenn ]
+  * [0cd86ff] TT#5811 MT#15667 MT#15793 api/callist "call_id" param
+  * [ae1ad38] TT#12998 fix api-events.t and edr first alias sorting
+  * [e154c2e] TT#13788 fix added customer details links uri
+  * [2ffedda] TT#13754 record primary aliases for edr
+  * [72d9c10] TT#13973 fix http method override
+  * [cdd054e] TT#13973 enable method-override test
+  * [802593d] TT#14562 apply api-lnp.t docker's time domain to api test node
+  * [ba018fe] TT#14562 move api-lnp.t to a fake time domain
+  * [b803c1a] TT#11701 check existence of voip number in InterceptionDB
+  * [dde6aca] TT#8162 add source/destination_user_out fields for /api/calls
+
+  [ Gerhard Jungwirth ]
+  * [dedea3b] TT#4335 api reminders via subscriber login
+  * [785712c] TT#9438 correctly htmlescape apidoc properties
+  * [0586bf0] TT#12751 fix readonly condition in template
+  * [8f98cd1] TT#4335 callforwards and speeddials subscriber api
+  * [1c80388] TT#4335 api subscriberpreferences for subscriber
+  * [bb1b419] TT#4336 api pbxdevices for subscriberadmin
+  * [03e1614] TT#14360 correctly treat replacement pattern \0
+  * [2a34ce3] TT#4336 subadmin pbxdeviceprofiles and pbxdevicemodels
+
+  [ Sipwise Jenkins Builder ]
+  * [95cc4f2] TT#4166 I18N dump: snapshot 2017.03.28-08.08.35
+  * [a8662f4] TT#4166 I18N dump: snapshot 2017.03.30-07.46.44
+  * [a27a13d] TT#4166 I18N dump: snapshot 2017.03.31-07.54.20
+  * [8f1e8f4] TT#4166 I18N dump: snapshot 2017.04.05-08.46.23
+  * [6eeaa8e] TT#4166 I18N dump: snapshot 2017.04.11-09.11.09
+  * [48116d5] TT#4166 I18N dump: snapshot 2017.04.19-09.05.16
+  * [5ca08c3] TT#4166 I18N dump: snapshot 2017.04.22-09.51.21
+  * [0cb6d80] TT#4166 I18N dump: snapshot 2017.04.27-09.54.23
+  * [b8d9db1] TT#4166 I18N dump: snapshot 2017.04.28-09.14.08
+  * [f9aec1c] TT#4166 I18N dump: snapshot 2017.05.10-02.52.39
+
+  [ Guillem Jover ]
+  * [bb1bdac] TT#5420 Update packaging
+  * [42db06b] TT#5420 Depend on the now split libngcp-rating-inew-perl package
+  * [6eac9e7] TT#14209 Spell :Private function attribute correctly
+  * [f070476] TT#5420 Depend on the now split libngcp-rating-inew-perl package
+  * [d54752a] TT#15450 Fix POD sections, markup and content
+
+  [ Víctor Seva ]
+  * [9379e91] Revert "TT#5420 Depend on the now split libngcp-rating-inew-perl package"
+
+  [ Kirill Solomko ]
+  * [afa5a60] TT#12659 better representation for anonymous calls. add "clir" field
+  * [fc95931] TT#7332 add "Peering Overview"
+  * [b831d2f] TT#14510 fix Peering Rules form "group" field processing
+  * [24ffcb6] TT#7818 add CallLists own_cli parameter
+  * [7db5632] TT#12661 FaxRecordings add fax retreival from DB
+  * [5b3bfba] TT#12593 add Fax preferences: t38, ecm
+  * [0b5f7c4] TT#12593 add Faxserver T38 and ECM forms
+
+  [ Alexander Lutay ]
+  * [9f18b81] TT#13277 Add api-root.t API tests for call recording
+  * [b3c1418] TT#16000 Ensure we run under 'set -e'
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 16 May 2017 21:39:39 +0200
+
 ngcp-panel (5.3.0.0+0~mr5.3.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
