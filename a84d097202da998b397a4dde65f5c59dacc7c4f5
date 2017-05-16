@@ -98,6 +98,29 @@
       "revId": "a84d097202da998b397a4dde65f5c59dacc7c4f5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a1371a2_78dd8942",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-05-16T12:17:18Z",
+      "side": 1,
+      "message": "considering constant server key, it would be more secure to use use the uuid isntead of id (originating from an autincrement -\u003e number sequence)",
+      "range": {
+        "startLine": 420,
+        "startChar": 41,
+        "endLine": 420,
+        "endChar": 61
+      },
+      "revId": "a84d097202da998b397a4dde65f5c59dacc7c4f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
