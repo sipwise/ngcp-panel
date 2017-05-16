@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3a1371a2_98d96586",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-05-16T10:15:50Z",
+      "side": 1,
+      "message": "there is no need for any table with JWT. Basically it needs a server-side secret (which must be random and have a great entropy) while the web-token itself is just stored client-side.\n\nthis is the global server-side key.\n\na good introduction is on jwt.io",
+      "parentUuid": "3a1371a2_caa66753",
+      "range": {
+        "startLine": 376,
+        "startChar": 4,
+        "endLine": 376,
+        "endChar": 94
+      },
+      "revId": "a84d097202da998b397a4dde65f5c59dacc7c4f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a1371a2_eaa9a325",
         "filename": "lib/NGCP/Panel/Controller/Root.pm",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2017-05-11T18:33:34Z",
       "side": 1,
       "message": "better with split limit",
+      "revId": "a84d097202da998b397a4dde65f5c59dacc7c4f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a1371a2_38d03153",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-05-16T10:15:50Z",
+      "side": 1,
+      "message": "jup, will do",
+      "parentUuid": "3a1371a2_eaa9a325",
       "revId": "a84d097202da998b397a4dde65f5c59dacc7c4f5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
