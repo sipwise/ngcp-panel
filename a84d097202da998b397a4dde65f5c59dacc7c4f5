@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "3a1371a2_d868fd89",
+        "filename": "lib/NGCP/Panel/Authentication/Credential/JWT.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-05-16T12:01:52Z",
+      "side": 1,
+      "message": "important point no password comparison (bcrypt) here",
+      "revId": "a84d097202da998b397a4dde65f5c59dacc7c4f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a1371a2_caa66753",
         "filename": "lib/NGCP/Panel/Controller/Root.pm",
         "patchSetId": 1
