@@ -381,6 +381,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         $c->stash->{subscriber_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
             { name => "id", search => 1, title => $c->loc("#") },
             { name => "username", search => 1, title => $c->loc("Name") },
+            { name => "domain.domain", search => 1, title => $c->loc('Domain') },
             { name => "provisioning_voip_subscriber.pbx_extension", search => 1, title => $c->loc("Extension") },
         ]);
     } else {
