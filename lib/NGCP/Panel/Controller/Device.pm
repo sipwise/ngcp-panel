@@ -1269,7 +1269,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $model = $dev->profile->config->device;
 
     # TODO: only if not set in model config!
-    my $schema = 'https';
+    my $schema = 'http';
     my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
     my $port = $c->config->{deviceprovisioning}->{port} // 1444;
     my $boot_port = $c->config->{deviceprovisioning}->{bootstrap_port} // 1445;
@@ -1522,7 +1522,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
     my $model = $dev->profile->config->device;
 
     # TODO: only if not set in model config!
-    my $schema = 'https';
+    my $schema = 'http';
     my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
     my $port = $c->config->{deviceprovisioning}->{port} // 1444;
     my $boot_port = $c->config->{deviceprovisioning}->{bootstrap_port} // 1445;
