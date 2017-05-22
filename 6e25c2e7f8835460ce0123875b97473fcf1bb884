@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a106d94_e9053115",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-05-22T00:34:35Z",
+      "side": 1,
+      "message": "If I get it right - config is used for the token creation. But here alg is hardcoded?",
+      "range": {
+        "startLine": 213,
+        "startChar": 16,
+        "endLine": 213,
+        "endChar": 30
+      },
+      "revId": "6e25c2e7f8835460ce0123875b97473fcf1bb884",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a106d94_a90b392a",
+        "filename": "lib/NGCP/Panel/Authentication/Credential/JWT.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-05-22T00:34:35Z",
+      "side": 1,
+      "message": "Is still necessary?",
+      "range": {
+        "startLine": 65,
+        "startChar": 4,
+        "endLine": 65,
+        "endChar": 26
+      },
+      "revId": "6e25c2e7f8835460ce0123875b97473fcf1bb884",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a106d94_8908fd2e",
+        "filename": "lib/NGCP/Panel/Controller/Login.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-05-22T00:34:35Z",
+      "side": 1,
+      "message": "As far as I can see - this file can be reverted.",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 0
+      },
+      "revId": "6e25c2e7f8835460ce0123875b97473fcf1bb884",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a106d94_c902f50a",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-05-22T00:34:35Z",
+      "side": 1,
+      "message": "In the panel conf I see only jwt_key",
+      "range": {
+        "startLine": 370,
+        "startChar": 0,
+        "endLine": 372,
+        "endChar": 90
+      },
+      "revId": "6e25c2e7f8835460ce0123875b97473fcf1bb884",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a106d94_2cff5703",
+        "filename": "ngcp_panel.conf",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-05-22T00:34:35Z",
+      "side": 1,
+      "message": "In the Panel::Controller::Root I see:\n\n    my $key \u003d $c-\u003econfig-\u003e{\u0027Plugin::Authentication\u0027}{api_subscriber_jwt}{credential}{jwt_key};\n    my $relative_exp \u003d $c-\u003econfig-\u003e{\u0027Plugin::Authentication\u0027}{api_subscriber_jwt}{credential}{relative_exp};\n    my $alg \u003d $c-\u003econfig-\u003e{\u0027Plugin::Authentication\u0027}{api_subscriber_jwt}{credential}{alg};\n\n\nSo maybe some defaults should be used in the Panel code?",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 22
+      },
+      "revId": "6e25c2e7f8835460ce0123875b97473fcf1bb884",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
