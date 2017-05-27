@@ -2084,6 +2084,10 @@ msgstr "Abbonato CloudPBX"
 msgid "CloudPBX subscriber must have a primary number"
 msgstr "Un Abbonato CloudPBX deve avere un numero primario"
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Cluster Overview"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/Voucher.pm
 msgid "Code"
 msgstr "Codice"
@@ -8583,6 +8587,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SIP Session Timers refresh method."
 msgstr "Metodo di refresh per SIP Session Timers."
+
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "SIP Statistics"
+msgstr ""
 
 #: share/templates/subscriber/edit_webpass.tt
 #: share/templates/subscriber/master.tt
