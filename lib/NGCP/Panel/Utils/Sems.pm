@@ -4,6 +4,26 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::XMLDispatcher;
 use Data::Dumper;
 
+sub _get_outbound_socket {
+    my ($c, $prefs) = @_;
+    my ($contact, $transport);
+    my $peer_rs = $c->model('DB')->resultset('voip_peer_hosts')->search({
+        -or => [ ip => $prefs->{peer_auth_realm}, host => $prefs->{peer_auth_realm} ]
+    });
+    if($peer_rs->count) {
+        my $peer = $peer_rs->first;
+        my $outbound_sock_rs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+            c => $c, attribute => 'outbound_socket',
+            peer_host => $peer);
+        if($outbound_sock_rs->count) {
+            $contact  = substr($outbound_sock_rs->first->value, 4);
+            $transport = ';transport=' . substr($outbound_sock_rs->first->value, 0, 3);
+            return { contact => $contact, transport => $transport };
+        }
+    }
+    return;
+}
+
 sub create_peer_registration {
     my ($c, $prov_subscriber, $prefs) = @_;
 
@@ -24,6 +44,13 @@ sub create_peer_registration {
     my $sid = $prov_subscriber->id;
     my $uuid = $prov_subscriber->uuid;
     my $contact = $c->config->{sip}->{lb_ext};
+    my $transport = '';
+
+    my $outbound_sock = _get_outbound_socket($c, $prefs);
+    if($outbound_sock) {
+        $contact = $outbound_sock->{contact};
+        $transport = $outbound_sock->{transport};
+    }
 
     my @ret = $dispatcher->dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
@@ -34,7 +61,7 @@ sub create_peer_registration {
       <param><value><string>$$prefs{peer_auth_user}</string></value></param>
       <param><value><string>$$prefs{peer_auth_pass}</string></value></param>
       <param><value><string>$$prefs{peer_auth_realm}</string></value></param>
-      <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid</string></value></param>
+      <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid$transport</string></value></param>
     </params>
   </methodCall>
 EOF
@@ -84,6 +111,13 @@ sub update_peer_registration {
     my $sid = $prov_subscriber->id;
     my $uuid = $prov_subscriber->uuid;
     my $contact = $c->config->{sip}->{lb_ext};
+    my $transport = '';
+
+    my $outbound_sock = _get_outbound_socket($c, $prefs);
+    if($outbound_sock) {
+        $contact = $outbound_sock->{contact};
+        $transport = $outbound_sock->{transport};
+    }
 
     use Data::Dumper;
     $c->log->debug("+++++++++++++++++++ old peer auth params: " . Dumper $oldprefs);
@@ -101,7 +135,7 @@ sub update_peer_registration {
       <param><value><string>$$prefs{peer_auth_user}</string></value></param>
       <param><value><string>$$prefs{peer_auth_pass}</string></value></param>
       <param><value><string>$$prefs{peer_auth_realm}</string></value></param>
-      <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid</string></value></param>
+      <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid$transport</string></value></param>
     </params>
   </methodCall>
 EOF
