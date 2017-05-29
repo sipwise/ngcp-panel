@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a106d94_acc6a247",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-05-29T16:39:06Z",
+      "side": 1,
+      "message": "ok so even if it happens for the last part, sessions and part count will difer and code below is fine.",
+      "revId": "b88f4d3a66cc2f21c9dbbf49c6db3b78cb578718",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
