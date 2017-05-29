@@ -234,6 +234,7 @@ sub perform_prepaid_billing {
     # of them!
     my @sessions = ();
     my @failed_sessions = ();
+    my $cancel_reason;
     for(my $i = 0; $i < $parts; ++$i) {
         my $has_credit = 1;
         my $this_session_id = $session_id."-".$i;
@@ -253,6 +254,7 @@ sub perform_prepaid_billing {
         unless($has_credit) {
             $c->log->info("No credit for sms from $caller to $callee with session id $this_session_id");
             push @failed_sessions, $sess;
+	    $cancel_reason = 'insufficient credit';
             last;
         }
         push @sessions, $sess;
@@ -266,6 +268,9 @@ sub perform_prepaid_billing {
         return 1;
     } else {
         foreach my $sess(@sessions) {
+            if (defined($cancel_reason)) {
+                NGCP::Rating::Inew::SmsSession::session_set_cancel_reason($sess, $cancel_reason);
+            }
             NGCP::Rating::Inew::SmsSession::session_sms_discard($sess);
             NGCP::Rating::Inew::SmsSession::session_destroy($sess);
         }
