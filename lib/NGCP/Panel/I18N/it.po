@@ -2708,6 +2708,10 @@ msgstr "Cliente non è stato trovato"
 msgid "Customers"
 msgstr "Clienti"
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "DB Statistics"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Daily"
 msgstr "Giornaliero"
