@@ -335,6 +335,7 @@
 
     [% IF
         c.config.features.cloudpbx &&
+        product.class == 'pbxaccount' &&
         (c.user.roles == 'admin' || c.user.roles == 'reseller' || c.user.roles == 'subscriberadmin')
     -%]
     <div class="accordion-group">
