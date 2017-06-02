@@ -23,7 +23,7 @@ __END__
 
 =head1 NAME
 
-NGCP::Panel::Form::Peering::RuleAPI
+NGCP::Panel::Form::RewriteRule::RuleAPI
 
 =head1 DESCRIPTION
 

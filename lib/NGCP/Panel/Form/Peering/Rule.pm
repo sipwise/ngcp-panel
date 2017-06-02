@@ -55,6 +55,15 @@ has_field 'enabled' => (
     },
 );
 
+has_field 'stopper' => (
+    type => 'Boolean',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Stop processing of further rules if this rule matches.'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -65,7 +74,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/callee_prefix callee_pattern caller_pattern description enabled/],
+    render_list => [qw/callee_prefix callee_pattern caller_pattern description enabled stopper/],
 );
 
 has_block 'actions' => (
