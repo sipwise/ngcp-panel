@@ -15,7 +15,7 @@ has_field 'group_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group_id callee_prefix callee_pattern caller_pattern description enabled/],
+    render_list => [qw/group_id callee_prefix callee_pattern caller_pattern description enabled stopper/],
 );
 
 1;

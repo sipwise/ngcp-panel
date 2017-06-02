@@ -97,7 +97,8 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'callee_pattern', search => 1, title => $c->loc('Callee Pattern') },
         { name => 'caller_pattern', search => 1, title => $c->loc('Caller Pattern') },
         { name => 'description', search => 1, title => $c->loc('Description') },
-        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
+        { name => 'enabled', search => 0, title => $c->loc('Enabled') },
+        { name => 'stopper', search => 0, title => $c->loc('Stopper') },
     ]);
     $c->stash->{inbound_rules_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'priority', search => 0, title => $c->loc('Priority') },
