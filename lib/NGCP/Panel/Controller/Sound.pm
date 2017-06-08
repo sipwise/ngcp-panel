@@ -812,24 +812,7 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
 
                     next unless defined($fres);
 
-                    SWITCH: for ($fres->handle->group->name) {
-                        /^calling_card$/ && do {
-                            NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $fres->set_id, $fres->handle->name);
-                            last SWITCH;
-                        };
-                        /^(pbx|music_on_hold|voucher_recharge|play_balance|conference|digits)$/ && do {
-                            my $service;
-                            if(!$fres->set->contract_id && $_ ne "pbx") {
-                                # app server doesn't know about pbx sets, skip them
-                                $service = "appserver";
-                                NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $fres->set_id, $fres->handle->name);
-                            } else {
-                                $service = "pbx";
-                                NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $fres->set_id, $fres->handle->name);
-                            }
-                            last SWITCH;
-                        };
-                    }
+                    NGCP::Panel::Utils::Sems::clear_audio_cache($c, $fres->set_id, $fres->handle->name, $fres->handle->group->name);
                 }
             });
             NGCP::Panel::Utils::Message::info(
