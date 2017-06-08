@@ -34,6 +34,24 @@
       "revId": "341cae3a46f61a5875e494f126fe2bbd8459a3c0",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dacfb570_554f8c92",
+        "filename": "lib/NGCP/Panel/Controller/Invoice.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-06-08T14:30:56Z",
+      "side": 1,
+      "message": "ok, although, I guess, the svg library should take care of that.",
+      "parentUuid": "dacfb570_55c14ce3",
+      "revId": "341cae3a46f61a5875e494f126fe2bbd8459a3c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
