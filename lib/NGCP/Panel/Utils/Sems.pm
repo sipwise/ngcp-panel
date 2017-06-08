@@ -239,7 +239,7 @@ sub clear_audio_cache {
         @services = (@pbx);
     } elsif ($group_name =~ /^(music_on_hold|digits)$/) {
         @services = (@pbx, "appserver");
-    } elsif ($group_name =~ /^(voucher_recharge|play_balance|conference|calling_card)$/) {
+    } elsif ($group_name =~ /^(malicious_call_identification|voucher_recharge|play_balance|conference|calling_card)$/) {
         @services = ("appserver");
     }
 
