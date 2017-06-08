@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dacfb570_559a2c15",
+        "filename": "lib/NGCP/Panel/Controller/Invoice.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-06-08T13:35:13Z",
+      "side": 1,
+      "message": "so %23 is really, what the database gives us?",
+      "revId": "341cae3a46f61a5875e494f126fe2bbd8459a3c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
