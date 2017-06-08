@@ -16,6 +16,24 @@
       "revId": "341cae3a46f61a5875e494f126fe2bbd8459a3c0",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dacfb570_55c14ce3",
+        "filename": "lib/NGCP/Panel/Controller/Invoice.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-06-08T14:19:12Z",
+      "side": 1,
+      "message": "Yes, but I added encode_entities call too, because I\u0027m not sure about all versions",
+      "parentUuid": "dacfb570_559a2c15",
+      "revId": "341cae3a46f61a5875e494f126fe2bbd8459a3c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
