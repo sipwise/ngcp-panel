@@ -3,7 +3,7 @@ enqueLists.push([{
     res: 'emergency_mode',
     widgetName: "AdminSystemOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         var txt = (data.widget_data > 0 ? "Emergency Mode" : "Ok");
         var col = (data.widget_data > 0 ? "#FFC200" : "#000");
         $("#admin_system_overview_lazy_items_list").prepend('<li>[% c.loc('Applications') %] <strong style="color:' + col + '">' + txt + '</strong></li>');
@@ -12,7 +12,7 @@ enqueLists.push([{
     res: 'system',
     widgetName: "AdminSystemOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         var txt = data.widget_data.text;
         var col = data.widget_data.color;
         $("#admin_system_overview_lazy_items_list").append('<li>[% c.loc('System') %] <strong style="color:' + col + '">' + txt + '</strong></li>');
@@ -21,7 +21,7 @@ enqueLists.push([{
     res: 'hardware',
     widgetName: "AdminSystemOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         var txt = data.widget_data.text;
         var col = data.widget_data.color;
         $("#admin_system_overview_lazy_items_list").append('<li>[% c.loc('Hardware') %] <strong style="color:' + col + '">' + txt + '</strong></li>');
@@ -30,7 +30,7 @@ enqueLists.push([{
     res: 'overall_status',
     widgetName: "AdminSystemOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         var txt = data.widget_data.text;
         var cls = data.widget_data.class;
         $("#admin_system_overview_lazy_loading").remove();

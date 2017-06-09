@@ -1,0 +1,96 @@
+<link rel="stylesheet" href="/css/timeline/timeline.css">
+<link rel="stylesheet" href="/css/timeline/timeline-theme.css">
+
+<script type="text/javascript" src="/js/libs/timeline/timeline-locales.js"></script>
+<script type="text/javascript" src="/js/libs/timeline/timeline-min.js"></script>
+
+<div id="billingmappingsblock_wrapper" class="form-inline no-footer billingmappingsblock_wrapper"></div>
+
+<script type="text/javascript">
+var locale = "[% c.session.lang %]";
+var divId = 'billingmappingsblock_wrapper';
+var ajaxUrl = '/autocomplete/fieldvalue';
+function initBillingMappingsTimeline(divId,ajaxUrl,locale) {
+    var ajaxSettings = $.extend( true, {}, $.ajaxSettings );
+    ajaxSettings.crossDomain = false;
+    ajaxSettings.timeout = 15000; //5000;
+    ajaxSettings.type = "POST";
+    ajaxSettings.async = true;
+    ajaxSettings.dataType = 'json';
+    contentType:"application/json; charset=utf-8",
+    ajaxSettings.cache = true;
+    ajaxSettings.global = false;
+    ajaxSettings.error = null;
+    ajaxSettings.beforeSend = function(jqXHR, settings) {
+        //jqXHR.setRequestHeader('Connection', 'close');
+    };
+    ajaxSettings.complete = function(jqXHR, textStatus) {
+
+    };
+    var options = {
+        style: "range", //"box", "dot"
+        showCurrentTime: true,
+        showCustomTime: false,
+        eventMargin: 10,
+        height: "300px",
+        minHeight: 0, //200px
+        width: "100%",
+        "box.align": "center",
+        showButtonNew: false,
+        showNavigation: false,
+
+        start: null,
+        end: null,
+        min: null,
+        max: null,
+        scale: links.Timeline.StepDate.SCALE.MONTH, //step
+        showMajorLabels: true,
+        showMinorLabels: true,
+        axisOnTop: false,
+        locale: locale,
+        eventMarginAxis: 10,
+
+        cluster: false,
+        clusterMaxItems: 5,
+
+        groupsChangeable: false,
+        groupsOnRight: false,
+        groupsOrder: function(a, b) {},
+        groupsWidth: null, //200px
+        groupMinHeight: 0,
+
+        zoomable: true,
+        animateZoom: true,
+        zoomMax: 315360000000000, //msecs
+        zoomMin: 10, //msecs
+
+        moveable: true,
+        animate: true,
+        dragAreaWidth: 10,
+        editable: false,
+        selectable: false,
+        unselectable: true,
+        timeChangeable: false,
+        snapEvents: false,
+        stackEvents: true,
+        customStackOrder: function(a, b) {}
+    };
+    var timeline = new links.Timeline(document.getElementById(divId), options);
+    //timeline.draw([]);
+    links.events.addListener(timeline, 'rangechanged', function(eventdata) {
+        console.log(['rangechanged',eventdata.start,eventdata.end]);
+        $.ajax($.extend( true, ajaxSettings, {
+            url: ajaxUrl,
+            data: { start: eventdata.start, end: eventdata.end },
+            context: this,
+            success: function(data) {
+                response.call(this, data);
+            }
+        }));
+    });
+    links.events.addListener(timeline, 'timechanged', function(eventdata) {
+        console.log(['timechanged',eventdata.time]);
+    });
+}
+initBillingMappingsTimeline(divId,ajaxUrl,locale);
+</script>

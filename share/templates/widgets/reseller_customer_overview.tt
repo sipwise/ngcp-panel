@@ -3,21 +3,21 @@ enqueLists.push([{
     res: 'contacts_count',
     widgetName: "ResellerCustomerOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Contact') %]' : '[% c.loc('Contacts') %]') + '</li>');
     }
 },{
     res: 'subscribers_count',
     widgetName: "ResellerCustomerOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Subscriber') %]' : '[% c.loc('Subscribers') %]') + '</li>');
     }
 },{
     res: 'customers_count',
     widgetName: "ResellerCustomerOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#reseller_customer_overview_lazy_loading").remove();
         $("#reseller_customer_overview_lazy_items_header").append(
             '<div class="plan-price">' +
