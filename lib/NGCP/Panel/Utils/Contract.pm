@@ -145,9 +145,9 @@ sub get_customer_rs {
     );
 
     $customers = $customers->search({
-            'contact.reseller_id' => { '-not' => undef },
-        },{
-            join => 'contact',
+        'contact.reseller_id' => { '-not' => undef },
+    },{
+        join => 'contact',
     });
 
     if($c->user->roles eq "admin") {
@@ -523,7 +523,7 @@ sub prepare_billing_mappings {
         }
 
         if (!defined $old_resource && $interval_type_counts{'open_any_network'} < 1) {
-            return 0 unless &{$err_code}("An interval without 'start' and 'stop' timestamps and no billing network is required.",$billing_profiles_field);
+            return 0 unless &{$err_code}("An initial interval without 'start' and 'stop' timestamps and no billing network is required.",$billing_profiles_field);
         } elsif (defined $old_resource && $interval_type_counts{'open'} > 0) {
             return 0 unless &{$err_code}("Adding intervals without 'start' and 'stop' timestamps is not allowed.",$billing_profiles_field);
         }
@@ -757,6 +757,59 @@ sub future_billing_mappings {
 
     return $rs->search_rs({start_date => { '>' => $now },});
 
+}
+
+sub get_billingmappings_timeline_data {
+    my ($c,$contract,$range) = @_;
+    unless ($range) {
+        $range = eval { $c->req->body_data; };
+        if ($@) {
+            $c->log->error('error decoding timeline json request: ' . $@);
+        }
+    }
+    my $start;
+    $start = NGCP::Panel::Utils::DateTime::from_string($range->{start}) if $range->{start};
+    my $end;
+    $end = NGCP::Panel::Utils::DateTime::from_string($range->{end}) if $range->{end};
+    $c->log->debug("timeline range $start - $end");
+    #the max start date (of mappings with NULL end date) less than
+    #the visible range end will become the range start:
+    my $max_start_date = $contract->billing_mappings->search({
+        ($end ? (start_date => [ -or =>
+                { '<=' => $end },
+                { '=' => undef },
+            ]) : ()),
+        end_date => { '=' => undef },
+    },{
+        order_by => { '-desc' => ['start_date', 'me.id']}, #NULL start dates at last
+    })->first;
+    #lower the range start, if required:
+    if ($max_start_date) {
+        if ($max_start_date->start_date) {
+            $start = $max_start_date->start_date if (not $start or $max_start_date->start_date < $start);
+        } else {
+            $start = $max_start_date->start_date;
+        }
+    }
+    my $res = $contract->billing_mappings->search({
+        ($end ? (start_date => ($start ? [ -and => {
+                '<=' => $end },{ #hide mappings beginning after range end
+                '>=' => $start   #and beginning before range start (max_start_date).
+            },] : [ -or => {     #if there is a mapping with NULL start only,
+                '<=' => $end },{ #include all mapping beginning before range end.
+                '=' => undef
+            },])) : ()),
+    },{
+        order_by => { '-asc' => ['start_date', 'me.id']},
+        prefetch => [ 'billing_profile' , 'network' ]
+    });
+    my @timeline_events = map {
+        { $_->get_columns,
+          billing_profile => { ($_->billing_profile ? ( name => $_->billing_profile->name, ) : ()) },
+          network => { ($_->network ? ( name => $_->network->name, ) : ()) },
+        };
+    } $res->all;
+    return \@timeline_events;
 }
 
 1;

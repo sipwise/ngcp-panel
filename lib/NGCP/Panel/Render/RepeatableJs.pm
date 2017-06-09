@@ -33,9 +33,9 @@ sub render_repeatable_js {
   var rep_html_enc = $html_str;
   var rep_html = {};
   for(var k in rep_html_enc) {
-    rep_html[k] = \$('<textarea/>').html(rep_html_enc[k]).text();  
+    rep_html[k] = \$('<textarea/>').html(rep_html_enc[k]).text();
   }
-  console.log(rep_html);
+  //console.log(rep_html);
   var rep_level = $level_str;
   \$('.add_element').click(on_add_element);
   function on_add_element() {
@@ -44,7 +44,7 @@ sub render_repeatable_js {
 
     var id_re = new RegExp('\\\\.[0-9]+\\\\.');
     var data_rep_id_0 = data_rep_id.replace(id_re, '.0.');
-    
+
     // create a regex out of index placeholder
     var level = rep_level[data_rep_id_0]
     var re = new RegExp('\{index-' + level + '\}',"g");
@@ -193,4 +193,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
