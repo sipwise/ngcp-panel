@@ -145,9 +145,9 @@ sub get_customer_rs {
     );
 
     $customers = $customers->search({
-            'contact.reseller_id' => { '-not' => undef },
-        },{
-            join => 'contact',
+        'contact.reseller_id' => { '-not' => undef },
+    },{
+        join => 'contact',
     });
 
     if($c->user->roles eq "admin") {

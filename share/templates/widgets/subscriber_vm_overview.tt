@@ -3,7 +3,7 @@ enqueLists.push([{
     res: 'voicemails_slice',
     widgetName: "SubscriberVmOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         var voicemails = data.widget_data;
         if (voicemails.length == 0) {
             $("#subscriber_voicemail_overview_lazy_items_list").append('<li>[% c.loc('No new messages') %]</li>');
@@ -31,7 +31,7 @@ enqueLists.push([{
     res: 'voicemails_count',
     widgetName: "SubscriberVmOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#subscriber_voicemail_overview_lazy_loading").remove();
         $("#subscriber_voicemail_overview_lazy_items_header").append(
             '<div class="plan-price">' +

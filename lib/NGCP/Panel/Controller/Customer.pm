@@ -1237,6 +1237,34 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
     $c->stash(edit_flag => 1);
 }
 
+sub billingmappings_ajax :Chained('base') :PathPart('billingmappings/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $range = $c->req->body_data;
+    my $start = NGCP::Panel::Utils::DateTime::from_string($range->{start});
+    my $end = NGCP::Panel::Utils::DateTime::from_string($range->{end});
+    my $res = $c->stash->{contract_rs}->first->billing_mappings->search({
+        start_date => [ -or =>
+                { '<=' => $end},
+                { '=' => undef},
+            ],
+        end_date => [ -or =>
+                { '>=' => $start},
+                { '=' => undef},
+            ],
+    },{
+        order_by => { '-asc' => ['start_date', 'me.id']}, #asc to have NULLs at beginning
+        prefetch => [ 'billing_profile' , 'network' ]
+    });
+    my @timeline_events = map {
+        { $_->get_columns,
+          billing_profile => { ($_->billing_profile ? $_->billing_profile->get_columns : ()) },
+          network => { ($_->network ? $_->network->get_columns : ()) },
+        };
+    } $res->all;
+    $c->stash(timeline_data => { contract => { $c->stash->{contract}->get_columns }, events => \@timeline_events } );
+    $c->detach( $c->view("JSON") );
+}
+
 sub balanceinterval_ajax :Chained('base') :PathPart('balanceinterval/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $res = $c->stash->{contract}->contract_balances;

@@ -31,6 +31,9 @@ function switchBillingProfileDefinition(field) {
             case 'profiles':
                 hideField('billing_profile');
                 showField('billing_profiles','profile_add');
+                if (typeof window['loadTimeline'] === "function") {
+                    window['loadTimeline']();
+                }
                 switched = 1;
                 break;
             default:
