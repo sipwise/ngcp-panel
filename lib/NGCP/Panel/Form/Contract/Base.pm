@@ -37,7 +37,8 @@ has_field 'billing_profile' => (
 );
 
 has_block 'all_mappings' => (
-    type => '+NGCP::Panel::Block::Contract::ProfileMappings',
+    #type => '+NGCP::Panel::Block::Contract::ProfileMappings',
+    type => '+NGCP::Panel::Block::Contract::ProfileMappingsTimeline',
 );
 
 has_field 'billing_profiles' => (
