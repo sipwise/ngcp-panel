@@ -195,6 +195,11 @@ div.ngcp-interval-row {
 
 div.billingmappingsblock_wrapper {
     margin-left: 180px;
+    margin-bottom: 20px;
+}
+
+div.billingmappingstimeline_wrapper {
+    /*min-height: 300px;*/
 }
 
 div.ngcp-profile-network-row-margin {
@@ -412,7 +417,7 @@ div.dataTables_length label {
     float: left;
     text-align: left;
 }
- 
+
 div.dataTables_filter, div.dataTables_paginate {
     float: right;
 }
@@ -431,11 +436,11 @@ input.ngcp-datepicker {
         float: none;
     }
 }
- 
+
 div.dataTables_info {
     padding-top: 8px;
 }
- 
+
 div.dataTables_paginate {
     float: right;
     margin: 0;

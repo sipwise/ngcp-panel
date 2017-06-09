@@ -17,7 +17,7 @@ $(document).ready(function () {
             }
             i = (i + 1) % enqueLists.length
         }
-        console.log('widget data loading enqueued (' + enqueLists.length + ')');
+        //console.log('widget data loading enqueued (' + enqueLists.length + ')');
     }
 });
 </script>

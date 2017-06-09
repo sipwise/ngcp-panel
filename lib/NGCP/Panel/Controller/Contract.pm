@@ -312,6 +312,15 @@ sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub billingmappings_ajax :Chained('base') :PathPart('billingmappings/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    $c->stash(timeline_data => {
+        contract => { $c->stash->{contract}->get_columns },
+        events => NGCP::Panel::Utils::Contract::get_billingmappings_timeline_data($c,$c->stash->{contract}),
+    });
+    $c->detach( $c->view("JSON") );
+}
+
 sub peering_list :Chained('contract_list') :PathPart('peering') :CaptureArgs(0) {
     my ($self, $c) = @_;
 

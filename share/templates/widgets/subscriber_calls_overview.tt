@@ -3,7 +3,7 @@ enqueLists.push([{
     res: 'calls_slice',
     widgetName: "SubscriberCallsOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         var calls = data.widget_data;
         if (calls.length == 0) {
             $("#subscriber_call_overview_lazy_items_list").append('<li>[% c.loc('No calls yet') %]</li>');
@@ -42,7 +42,7 @@ enqueLists.push([{
     res: 'calls_count',
     widgetName: "SubscriberCallsOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#subscriber_call_overview_lazy_loading").remove();
         $("#subscriber_call_overview_lazy_items_header").append(
             '<div class="plan-price">' +

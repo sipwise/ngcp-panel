@@ -16,8 +16,8 @@ has_field 'contact' => (
 
 has_field 'billing_profile_definition' => (
     type => 'Select',
-    label => 'Set billing profiles',    
-    options => [ 
+    label => 'Set billing profiles',
+    options => [
         { value => 'id', label => 'single (actual billing mapping)' },
         { value => 'profiles', label => 'schedule (billing mapping intervals)' },
         { value => 'package', label => 'package (initial profiles of a profile package)' },
@@ -25,12 +25,13 @@ has_field 'billing_profile_definition' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Choose to set a billing profile package or set billing profiles directly.'],
-        javascript => ' onchange="switchBillingProfileDefinition(this);" ',        
+        javascript => ' onchange="switchBillingProfileDefinition(this);" ',
     },
 );
 
-has_block 'all_mappings' => ( 
-    type => '+NGCP::Panel::Block::Contract::ProfileNetworkMappings',
+has_block 'all_mappings' => (
+    #type => '+NGCP::Panel::Block::Contract::ProfileNetworkMappings',
+    type => '+NGCP::Panel::Block::Contract::ProfileMappingsTimeline',
 );
 
 has_field 'billing_profiles' => (
@@ -94,8 +95,8 @@ sub _inflate_billing_mappings {
     my ($field,$value) = @_;
     my @mappings = ();
     my $datetime_fmt = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
-    );   
+        pattern => '%F %T',
+    );
     foreach my $mapping (@$value) {
         my %row = ();
         $row{start} = (defined $mapping->{start_date} ? $datetime_fmt->format_datetime($mapping->{start_date}) : undef);

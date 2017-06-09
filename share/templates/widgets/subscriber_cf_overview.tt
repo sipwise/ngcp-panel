@@ -3,7 +3,7 @@ enqueLists.push([{
     res: 'cfs',
     widgetName: "SubscriberCFOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         var cfs = data.widget_data;
         var mcount = 0;
         for (var type in cfs) {
