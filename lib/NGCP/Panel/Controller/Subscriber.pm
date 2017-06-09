@@ -2270,7 +2270,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "start_timestamp", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Time') },
     ];
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-        push @{ $rec_cols }, 
+        push @{ $rec_cols },
             { name => "call_id", title => $c->loc('Call-ID') };
     }
     $c->stash->{rec_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $rec_cols);

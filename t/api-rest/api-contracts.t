@@ -145,7 +145,7 @@ my @allcontracts = ();
     $err = JSON::from_json($res->decoded_content);
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /The contact_id is not a valid ngcp:systemcontacts item/, "check error message in body");
-    
+
     # try to create invalid contract without contact
     $req->content(JSON::to_json({
         status => "active",
@@ -227,7 +227,7 @@ my @allcontracts = ();
                 delete $contracts{$c->{_links}->{self}->{href}};
             }
         }
-             
+
     } while($nexturi);
 
     is(scalar(keys %contracts), 0, "check if all test contracts have been found");
@@ -262,13 +262,13 @@ my @allcontracts = ();
     ok(exists $contract->{all_billing_profiles}, "check existence of billing_profiles");
     is_deeply($contract->{all_billing_profiles},[ { profile_id => $billing_profile_id, start => undef, stop => undef} ],"check billing_profiles deeply");
 
-    
+
     # PUT same result again
     my $old_contract = { %$contract };
     delete $contract->{_links};
     delete $contract->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstcontract);
-    
+
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $req->header('Prefer' => "return=minimal");
@@ -297,7 +297,7 @@ my @allcontracts = ();
 
     # check if put is ok
     my $reput_contract = { %$old_contract };
-    delete $reput_contract->{billing_profiles};    
+    delete $reput_contract->{billing_profiles};
     $req->content(JSON::to_json($reput_contract));
     $res = $ua->request($req);
     is($res->code, 200, "check put successful");
@@ -322,7 +322,7 @@ my @allcontracts = ();
     is($mod_contact->{status}, "pending", "check patched replace op");
     is($mod_contact->{_links}->{self}->{href}, $firstcontract, "check patched self link");
     is($mod_contact->{_links}->{collection}->{href}, '/api/contracts/', "check patched collection link");
-    
+
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/status', value => undef } ]
@@ -375,7 +375,7 @@ my @allcontracts = ();
     # TODO: get id from body once the API returns it
     my $second_billing_profile_id = $res->header('Location');
     $second_billing_profile_id =~ s/^.+\/(\d+)$/$1/;
-    
+
     #$req = HTTP::Request->new('POST', $uri.'/api/billingnetworks/');
     #$req->header('Content-Type' => 'application/json');
     #$req->header('Prefer' => 'return=representation');
@@ -394,9 +394,9 @@ my @allcontracts = ();
     #my $billingnetwork_uri = $uri.'/'.$res->header('Location');
     #my $billing_network_id = $res->header('Location');
     #$billing_network_id =~ s/^.+\/(\d+)$/$1/;
-    
+
     my $dtf = DateTime::Format::Strptime->new(
-        pattern => '%F %T', 
+        pattern => '%F %T',
     ); #DateTime::Format::Strptime->new( pattern => '%Y-%m-%d %H:%M:%S' );
     my $now = DateTime->now(
         time_zone => DateTime::TimeZone->new(name => 'local')
@@ -416,7 +416,7 @@ my @allcontracts = ();
         external_id => undef,
         billing_profile_definition => 'profiles',
     };
-    
+
     my @malformed_profilemappings = ( { mappings =>[[ { profile_id => $billing_profile_id,
                                                                 start => $dtf->format_datetime($now),
                                                                 stop => $dtf->format_datetime($now),} ]],
@@ -426,7 +426,7 @@ my @allcontracts = ();
                                                                 start => $dtf->format_datetime($t1),
                                                                 stop => $dtf->format_datetime($t1),} ]],
                                                code => 422,
-                                               msg => "'start' timestamp has to be before 'stop' timestamp"},                                     
+                                               msg => "'start' timestamp has to be before 'stop' timestamp"},
                                  { mappings =>[[ { profile_id => $billing_profile_id,
                                                                 start => undef,
                                                                 stop => $dtf->format_datetime($now),},]],
@@ -436,7 +436,7 @@ my @allcontracts = ();
                                                                 start => $dtf->format_datetime($t1),
                                                                 stop => $dtf->format_datetime($t2),},] , []],
                                                code => 422,
-                                               msg => "An interval without 'start' and 'stop' timestamps is required"},                                
+                                               msg => "An initial interval without 'start' and 'stop' timestamps is required"},
                                  #{ mappings =>[[ { profile_id => $billing_profile_id,
                                  #                               start => undef,
                                  #                               stop => undef,},
@@ -444,7 +444,7 @@ my @allcontracts = ();
                                  #                               start => undef,
                                  #                               stop => undef,}]],
                                  #              code => 422,
-                                 #              msg => "Only a single interval without 'start' and 'stop' timestamps is allowed"},                                   
+                                 #              msg => "Only a single interval without 'start' and 'stop' timestamps is allowed"},
                                  #{ mappings =>[[ { profile_id => $billing_profile_id,
                                  #                               start => undef,
                                  #                               stop => undef,},
@@ -455,13 +455,13 @@ my @allcontracts = ();
                                  #                               start => $dtf->format_datetime($t1),
                                  #                               stop => undef,}]],
                                  #              code => 422,
-                                 #              msg => "Identical 'start' timestamps not allowed"}, 
-                                
-                                
-                                
-                                
+                                 #              msg => "Identical 'start' timestamps not allowed"},
+
+
+
+
                                 );
-    
+
     foreach my $test (@malformed_profilemappings) {
         foreach my $mappings (@{$test->{mappings}}) {
             $data->{billing_profiles} = $mappings;
@@ -470,7 +470,7 @@ my @allcontracts = ();
             is($res->code, $test->{code}, "multi-bill-prof POST: check " . $test->{msg});
         }
     }
-    
+
     $data->{billing_profiles} = [ { profile_id => $second_billing_profile_id,
                                start => undef,
                                stop => undef, },
@@ -484,20 +484,20 @@ my @allcontracts = ();
     $res = $ua->request($req);
     is($res->code, 201, "multi-bill-prof: create test contract");
     my $contracturi = $uri.'/'.$res->header('Location');
-    
+
     $req = HTTP::Request->new('GET', $contracturi);
     $res = $ua->request($req);
     is($res->code, 200, "multi-bill-prof: fetch contract");
     my $contract = JSON::from_json($res->decoded_content);
 
     ok(exists $contract->{billing_profile_id}, "multi-bill-prof: check existence of billing_profile_id");
-    is($contract->{billing_profile_id}, $second_billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");    
+    is($contract->{billing_profile_id}, $second_billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(exists $contract->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
     ok(!exists $contract->{profile_package_id}, "multi-bill-prof: check non-existence of profile_package_id");
     ok(exists $contract->{all_billing_profiles}, "multi-bill-prof: check existence of all_billing_profiles");
     is_deeply($contract->{all_billing_profiles},$data->{billing_profiles},"multi-bill-prof: check billing mappings deeply");
-    
-    
+
+
     $req = HTTP::Request->new('PATCH', $contracturi);
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => 'application/json-patch+json');
@@ -511,7 +511,7 @@ my @allcontracts = ();
                                                                 start => $dtf->format_datetime($t1),
                                                                 stop => $dtf->format_datetime($t1),} ]],
                                                code => 422,
-                                               msg => "'start' timestamp has to be before 'stop' timestamp"},                                    
+                                               msg => "'start' timestamp has to be before 'stop' timestamp"},
                                  { mappings =>[[ { profile_id => $billing_profile_id,
                                                                 start => undef,
                                                                 stop => $dtf->format_datetime($now),},]],
@@ -521,13 +521,13 @@ my @allcontracts = ();
                                  #                               start => $dtf->format_datetime($t1),
                                  #                               stop => $dtf->format_datetime($t2),},] , []],
                                  #              code => 422,
-                                 #              msg => "An interval without 'start' and 'stop' timestamps is required"},                                
+                                 #              msg => "An interval without 'start' and 'stop' timestamps is required"},
                                  { mappings =>[[ { profile_id => $billing_profile_id,
                                                                 start => undef,
                                                                 stop => undef,},
                                                 ]],
                                                code => 422,
-                                               msg => "Adding intervals without 'start' and 'stop' timestamps is not allowed."},                                   
+                                               msg => "Adding intervals without 'start' and 'stop' timestamps is not allowed."},
                                  #{ mappings =>[[ { profile_id => $billing_profile_id,
                                  #                               start => undef,
                                  #                               stop => undef,},
@@ -538,13 +538,13 @@ my @allcontracts = ();
                                  #                               start => $dtf->format_datetime($t1),
                                  #                               stop => undef,}]],
                                  #              code => 422,
-                                 #              msg => "Identical 'start' timestamps not allowed"}, 
-                                
-                                
-                                
-                                
+                                 #              msg => "Identical 'start' timestamps not allowed"},
+
+
+
+
                                 );
-    
+
     foreach my $test (@malformed_profilemappings) {
         foreach my $mappings (@{$test->{mappings}}) {
             $req->content(JSON::to_json(
@@ -554,37 +554,37 @@ my @allcontracts = ();
             is($res->code, $test->{code}, "multi-bill-prof PATCH: check " . $test->{msg});
         }
     }
-    
+
     $req->content(JSON::to_json(
                 [ { op => 'replace', path => '/profile_package_id', value => undef } ]
             ));
     $res = $ua->request($req);
     is($res->code, 422, "multi-bill-prof: test if patching profile_package_id fails");
-    
+
     $req->content(JSON::to_json(
                 [ { op => 'replace', path => '/billing_profile_id', value => $billing_profile_id } ]
             ));
     $res = $ua->request($req);
     is($res->code, 200, "multi-bill-prof: patch test contract with new billing profile");
     my $patched_contract = JSON::from_json($res->decoded_content);
-    
+
     #$req = HTTP::Request->new('GET', $contracturi);
     #$res = $ua->request($req);
     #is($res->code, 200, "multi-bill-prof: fetch patched contract");
     #my $patched_contract = JSON::from_json($res->decoded_content);
-    
+
     ok(exists $patched_contract->{billing_profile_id}, "multi-bill-prof: check existence of billing_profile_id");
     is($patched_contract->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(!exists $patched_contract->{profile_package_id}, "multi-bill-prof: check non-existence of profile_package_id");
     ok(exists $patched_contract->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
     ok(exists $patched_contract->{all_billing_profiles}, "multi-bill-prof: check existence of all_billing_profiles");
     is(scalar @{$patched_contract->{all_billing_profiles}},(scalar @{$data->{billing_profiles}}) + 1,"multi-bill-prof: check if the history of billing mappings shows the correct number of entries");
-    
+
     $req = HTTP::Request->new('PATCH', $contracturi);
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => 'application/json-patch+json');
-    
-    $data->{billing_profiles} = [ 
+
+    $data->{billing_profiles} = [
                                  { profile_id => $billing_profile_id,
                                start => $dtf->format_datetime($t1),
                                stop => $dtf->format_datetime($t2),},
@@ -601,48 +601,48 @@ my @allcontracts = ();
     $res = $ua->request($req);
     is($res->code, 200, "multi-bill-prof: patch test contract");
     $patched_contract = JSON::from_json($res->decoded_content);
-    
+
     $req = HTTP::Request->new('GET', $contracturi);
     $res = $ua->request($req);
     is($res->code, 200, "multi-bill-prof: fetch patched contract");
     #$patched_contract = JSON::from_json($res->decoded_content);
-    is_deeply(JSON::from_json($res->decoded_content),$patched_contract,"multi-bill-prof: check patch return value is up-to-date");    
+    is_deeply(JSON::from_json($res->decoded_content),$patched_contract,"multi-bill-prof: check patch return value is up-to-date");
 
     ok(exists $patched_contract->{billing_profile_id}, "multi-bill-prof: check existence of billing_profile_id");
-    is($patched_contract->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");    
+    is($patched_contract->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(exists $contract->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
-    is_deeply($patched_contract->{billing_profiles},\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");    
+    is_deeply($patched_contract->{billing_profiles},\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
 
     $req = HTTP::Request->new('PUT', $contracturi);
-    $req->header('Prefer' => "return=representation");    
+    $req->header('Prefer' => "return=representation");
     $req->header('Content-Type' => 'application/json');
     $req->content(JSON::to_json($data));
     $res = $ua->request($req);
     is($res->code, 200, "multi-bill-prof: put test contract");
     my $updated_contract = JSON::from_json($res->decoded_content);
-    
+
     $req = HTTP::Request->new('GET', $contracturi);
     $res = $ua->request($req);
     is($res->code, 200, "multi-bill-prof: fetch updated contract");
     #my $updated_contract = JSON::from_json($res->decoded_content);
-    is_deeply(JSON::from_json($res->decoded_content),$updated_contract,"multi-bill-prof: check put return value is up-to-date");   
+    is_deeply(JSON::from_json($res->decoded_content),$updated_contract,"multi-bill-prof: check put return value is up-to-date");
 
     ok(exists $updated_contract->{billing_profile_id}, "multi-bill-prof: check existence of billing_profile_id");
-    is($updated_contract->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");    
+    is($updated_contract->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(exists $updated_contract->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
     is_deeply($updated_contract->{billing_profiles},\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
-    
+
     #$req = HTTP::Request->new('DELETE', $billingnetwork_uri);
     #$res = $ua->request($req);
     #is($res->code, 204, "multi-bill-prof: delete test billingnetwork");
-    
+
     #pop(@expected_mappings);
-    
+
     #$req = HTTP::Request->new('GET', $contracturi);
     #$res = $ua->request($req);
     #is($res->code, 200, "multi-bill-prof: fetch contract");
     ##$patched_contract = JSON::from_json($res->decoded_content);
-    #is_deeply(JSON::from_json($res->decoded_content)->{billing_profiles},\@expected_mappings,"multi-bill-prof: check billing network cascade delete ");  
+    #is_deeply(JSON::from_json($res->decoded_content)->{billing_profiles},\@expected_mappings,"multi-bill-prof: check billing network cascade delete ");
 
     $req = HTTP::Request->new('PATCH', $contracturi);
     $req->header('Prefer' => 'return=representation');
@@ -652,7 +652,7 @@ my @allcontracts = ();
     ));
     $res = $ua->request($req);
     is($res->code, 200, "multi-bill-prof: terminate contract");
-    
+
 }
 
 # terminate
@@ -687,7 +687,7 @@ my @allcontracts = ();
     #$req = HTTP::Request->new('DELETE', $uri.'/'.$syscontact->{_links}->{self}->{href});
     #$res = $ua->request($req);
     #is($res->code, 204, "check deletion of unused contact");
-    
+
     $req = HTTP::Request->new('PATCH', $uri.'/api/billingprofiles/'.$billing_profile_id);
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => 'application/json-patch+json');
@@ -696,7 +696,7 @@ my @allcontracts = ();
     ));
     $res = $ua->request($req);
     is($res->code, 200, "terminate billing profile");
-    
+
 }
 
 # terminate contract 1 should fail

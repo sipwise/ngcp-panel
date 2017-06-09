@@ -1,4 +1,4 @@
-package NGCP::Panel::Block::Contract::ProfileMappings;
+package NGCP::Panel::Block::Contract::ProfileMappingsList;
 
 use parent ("NGCP::Panel::Block::Block");
 

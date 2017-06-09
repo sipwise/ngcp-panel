@@ -3,7 +3,7 @@ enqueLists.push([{
     res: 'registrations_slice',
     widgetName: "SubscriberRegisterOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         var registrations = data.widget_data;
         if (registrations.length == 0) {
             $("#subscriber_registration_overview_lazy_items_list").append('<li>[% c.loc('No devices registered') %]</li>');
@@ -26,7 +26,7 @@ enqueLists.push([{
     res: 'registrations_count',
     widgetName: "SubscriberRegisterOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#subscriber_registration_overview_lazy_loading").remove();
         $("#subscriber_registration_overview_lazy_items_header").append(
             '<div class="plan-price">' +

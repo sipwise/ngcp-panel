@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="/css/timeline/timeline.css">
+<link rel="stylesheet" href="/css/timeline/timeline-theme.css">
+
+<script type="text/javascript" src="/js/libs/timeline/timeline-locales.js"></script>
+<script type="text/javascript" src="/js/libs/timeline/timeline-min.js"></script>
+<script type="text/javascript" src="/js/timeline.js"></script>
+
+<div id="billingmappingsblock_wrapper" class="form-inline no-footer billingmappingsblock_wrapper"></div>
+
+<script type="text/javascript">
+var timeline = null;
+function loadTimeline(url) {
+    if ('[% contract.id %]'.length > 0) {
+        if (timeline == null) {
+            timeline = initBillingMappingsTimeline(
+                'billingmappingsblock_wrapper',
+                url,
+                null,
+                '[% c.session.lang %]',
+                '[% now %]'
+            );
+        }
+        timeline.load();
+    }
+}
+</script>

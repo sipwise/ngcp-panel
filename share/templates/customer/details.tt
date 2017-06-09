@@ -1,3 +1,50 @@
+
+<link rel="stylesheet" href="/css/timeline/timeline.css">
+<link rel="stylesheet" href="/css/timeline/timeline-theme.css">
+
+<script type="text/javascript" src="/js/libs/timeline/timeline-locales.js"></script>
+<script type="text/javascript" src="/js/libs/timeline/timeline-min.js"></script>
+<script type="text/javascript" src="/js/timeline.js"></script>
+
+<script type="text/javascript">
+var timeline = null;
+function loadTimeline() {
+    if ('[% contract.id %]'.length > 0) {
+        if (timeline == null) {
+            timeline = initBillingMappingsTimeline(
+                'billingmappingstimeline_wrapper',
+                '[% c.uri_for_action('/customer/billingmappings_ajax', [ contract.id ]) %]',
+                function(deltaHeight) {
+                    $("#collapse_bilprofs").height("+=" + deltaHeight);
+                },
+                '[% c.session.lang %]',
+                '[% now %]'
+            );
+        }
+        timeline.load();
+    }
+}
+$(function() {
+  $(".collapse").on('shown.bs.collapse', function(e) {
+    if ($(this).is(e.target)) {
+      //console.log(this.id);
+      switch (this.id) {
+        case 'collapse_bilprofs':
+            loadTimeline();
+            break;
+        default:
+
+      }
+    }
+  })
+});
+</script>
+
+
+
+
+
+
 [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
     [% site_config.title = c.loc('Customer Details') -%]
 [% ELSE -%]
@@ -134,7 +181,12 @@
         </div>
         <div class="accordion-body collapse" id="collapse_bilprofs">
             <div class="accordion-inner">
-                <table class="table table-bordered table-striped table-highlight table-hover">
+                <div id="billingmappingstimeline_wrapper" class="billingmappingstimeline_wrapper"></div>
+
+
+
+
+<!--                <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <tr>
                             <th>[% c.loc('actual') %]</th>
@@ -157,7 +209,7 @@
                         </tr>
                         [% END -%]
                     </tbody>
-                </table>
+                </table>-->
             </div>
         </div>
     </div>
