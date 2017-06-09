@@ -3,28 +3,28 @@ enqueLists.push([{
     res: 'domains_count',
     widgetName: "AdminResellerOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Domain') %]' : '[% c.loc('Domains') %]') + '</li>');
     }
 },{
     res: 'customers_count',
     widgetName: "AdminResellerOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Customer') %]' : '[% c.loc('Customers') %]') + '</li>');
     }
 },{
     res: 'subscribers_count',
     widgetName: "AdminResellerOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Subscriber') %]' : '[% c.loc('Subscribers') %]') + '</li>');
     }
 },{
     res: 'resellers_count',
     widgetName: "AdminResellerOverview",
     cb: function(data) {
-        console.log(data);
+        //console.log(data);
         $("#admin_reseller_overview_lazy_loading").remove();
         $("#admin_reseller_overview_lazy_items_header").append(
             '<div class="plan-price">' +

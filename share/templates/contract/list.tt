@@ -31,6 +31,9 @@ function switchBillingProfileDefinition(field) {
             case 'profiles':
                 hideField('billing_profile');
                 showField('billing_profiles','profile_add');
+                if (typeof window['loadTimeline'] === "function") {
+                    window['loadTimeline']('[% c.uri_for_action('/contract/billingmappings_ajax', [ contract.id ]) %]');
+                }
                 switched = 1;
                 break;
             default:
