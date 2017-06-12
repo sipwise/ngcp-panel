@@ -52,6 +52,24 @@
       "revId": "341cae3a46f61a5875e494f126fe2bbd8459a3c0",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dacfb570_fb540fcc",
+        "filename": "lib/NGCP/Panel/Controller/Invoice.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-06-12T11:15:19Z",
+      "side": 1,
+      "message": "SVG strongly believes that it should show %23. When I replaces %23 with # - Template Toolkit started to fail on # processing (comment, from TT PoV). So I added encode_entities and now number string shows # as it should.",
+      "parentUuid": "dacfb570_554f8c92",
+      "revId": "341cae3a46f61a5875e494f126fe2bbd8459a3c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
