@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dacfb570_d647221c",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-06-13T13:46:28Z",
+      "side": 1,
+      "message": "Hello Rene,\nCould you please describe error (maybe in the ticket)? without reproduce it is hard to get sense of the changes in this file.",
+      "range": {
+        "startLine": 147,
+        "startChar": 0,
+        "endLine": 157,
+        "endChar": 5
+      },
+      "revId": "e9b91a71250a68e15ee19eddf68ff3542465eda6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
