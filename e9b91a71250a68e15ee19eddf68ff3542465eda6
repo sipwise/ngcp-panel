@@ -46,6 +46,30 @@
       "revId": "e9b91a71250a68e15ee19eddf68ff3542465eda6",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dacfb570_d66e4296",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-06-13T14:13:48Z",
+      "side": 1,
+      "message": "\"We don\u0027t use billing_mapping. \" -\u003e thats the problem -\u003e in panel\u0027s Subscriber.pm controller\u0027s \"sub_list\" it requires bmid afterwards, thats why i opted against loading the contract directly.\n\nto summrize the issue: encoline ended up having a subscriber linked to a system contract (i guess it got cleared accidentally in the past due to the known bug). obviously they did not noticed anything but only that its not possible to terminate subscribers linked to such contract.\n\nthe only proper way to fix is to set the cleared reseller_id in the affected contact, so the contract reverts to a customer contract again. this however, cannot be done by adjusting panel code.\n\nso this fix is somewhat \"symptoms only\".",
+      "parentUuid": "dacfb570_965d9aec",
+      "range": {
+        "startLine": 147,
+        "startChar": 0,
+        "endLine": 157,
+        "endChar": 5
+      },
+      "revId": "e9b91a71250a68e15ee19eddf68ff3542465eda6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
