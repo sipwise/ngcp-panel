@@ -22,6 +22,30 @@
       "revId": "e9b91a71250a68e15ee19eddf68ff3542465eda6",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dacfb570_965d9aec",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-06-13T14:01:15Z",
+      "side": 1,
+      "message": "As far as I can see - for \"safe\" variant we can just directly get all contracts joined with contacts and simple search. We don\u0027t use billing_mapping. Maybe just role restrictions also should be applied.\n\nBut up to you. Maybe it is the fastest and safest way. What was the error that required these changes I also couldn\u0027t get from the Mantis ticket https://support.sipwise.com/view.php?id\u003d24431, but maybe I just missed something.",
+      "parentUuid": "dacfb570_d647221c",
+      "range": {
+        "startLine": 147,
+        "startChar": 0,
+        "endLine": 157,
+        "endChar": 5
+      },
+      "revId": "e9b91a71250a68e15ee19eddf68ff3542465eda6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
