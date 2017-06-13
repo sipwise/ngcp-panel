@@ -135,20 +135,26 @@ sub get_contract_rs {
 
 sub get_customer_rs {
     my %params = @_;
-    my ($c,$now,$contract_id) = @params{qw/c now contract_id/};
+    my ($c,$now,$contract_id,$safe) = @params{qw/c now contract_id safe/};
 
     my $customers = get_contract_rs(
         schema => $c->model('DB'),
-        include_terminated => $params{include_terminated},
+        include_terminated => ($params{include_terminated} || $safe),
         now => $now,
         contract_id => $contract_id,
     );
 
-    $customers = $customers->search({
-            'contact.reseller_id' => { '-not' => undef },
-        },{
-            join => 'contact',
-    });
+    if($safe) {
+        $customers = $customers->search(undef,{
+                join => 'contact',
+        });
+    } else {
+        $customers = $customers->search({
+                'contact.reseller_id' => { '-not' => undef },
+            },{
+                join => 'contact',
+        });
+    }
 
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
@@ -161,12 +167,12 @@ sub get_customer_rs {
         });
     }
 
-    $customers = $customers->search({
+    $customers = $customers->search(($safe ? undef : {
             '-or' => [
                 'product.class' => 'sipaccount',
                 'product.class' => 'pbxaccount',
             ],
-        },{
+        }),{
             '+select' => 'billing_mappings.id',
             '+as' => 'bmid',
     });

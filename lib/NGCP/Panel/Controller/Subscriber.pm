@@ -165,7 +165,11 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(subscriber => $res);
 
     $c->stash->{contract} = $c->stash->{subscriber}->contract;
-    my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, contract_id => $c->stash->{contract}->id );
+    my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(
+        c => $c,
+        contract_id => $c->stash->{contract}->id,
+        safe => 1,
+    );
     my $contract = $contract_rs->find({
         'me.id' => $c->stash->{contract}->id,
     });
