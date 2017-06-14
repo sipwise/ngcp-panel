@@ -9531,6 +9531,14 @@ msgid "Stop"
 msgstr "Fine"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Stop processing of further rules if this rule matches."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Stopper"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Street"
 msgstr "Via"
 
