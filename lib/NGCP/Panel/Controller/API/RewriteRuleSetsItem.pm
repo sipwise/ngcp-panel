@@ -50,7 +50,7 @@ sub update_item_model {
             my $rewriterules = delete $resource->{rewriterules};
             $item->update($resource);
             if ($rewriterules) {
-                $self->update_rewriterules( $c, $item, $rewriterules );
+                $self->update_rewriterules( $c, $item, $form, $rewriterules );
             }
         } catch($e) {
             $c->log->error("Failed to update rewriterule with id '$id': $e");
