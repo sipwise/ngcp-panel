@@ -60,7 +60,7 @@ sub create_item {
             return;
         }
         if ($rewriterules) {
-            $self->update_rewriterules( $c, $item, $rewriterules );
+            $self->update_rewriterules( $c, $item, $form, $rewriterules );
         }
         $guard->commit;
         NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);

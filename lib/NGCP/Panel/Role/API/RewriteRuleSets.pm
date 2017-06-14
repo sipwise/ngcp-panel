@@ -114,7 +114,7 @@ sub check_duplicate{
 }
 
 sub update_rewriterules{
-    my($self, $c, $item, $rewriterules ) = @_; 
+    my($self, $c, $item, $form, $rewriterules ) = @_; 
 
     my $schema = $c->model('DB');
 
@@ -124,7 +124,7 @@ sub update_rewriterules{
         die;
     }
     $item->voip_rewrite_rules->delete;
-    for my $rule (@{ $rewriterules }) {
+    for my $rule (@{ $form->values->{rewriterules} }) {
         try {
             $item->voip_rewrite_rules->create({
                 priority => $priority++,
