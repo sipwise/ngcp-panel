@@ -52,18 +52,10 @@ $fake_data->set_data_from_script({
         'query' => [['username',{'query_type'=> 'string_like'}]],
         'create_special'=> sub {
             my ($self,$collection_name,$test_machine) = @_;
-            my $data = $self->data->{$collection_name}->{data};
-            my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$data->{customer_id}.'&'.'is_pbx_pilot=1');
+            my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$self->data->{$collection_name}->{data}->{customer_id}.'&'.'is_pbx_pilot=1');
             if($pilot->{total_count} <= 0){
                 undef $pilot;
             }
-            #my $alias_owners = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$data->{customer_id}.'&'.'alias='.join(@${data->{primary_number}}{qw/ac cc sn/}));
-            #my $biggest_primary ;
-            #foreach my $owner($alias_owners){
-            #}
-            #biggest_primary = map { my $owner = $_; my $biggest_primary =  } @$alias_owners){
-            #    foreach
-            #}
             $test_machine->check_create_correct(1, sub{$_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;} );
         },
     },
