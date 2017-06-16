@@ -75,6 +75,11 @@
     </div>
     <div id="content">
         <div class="container">
+            [% IF c.config.general.maintenance_mode -%]
+                <div class="alert alert-error" style="font-size:150%">
+                    <strong>[% c.loc('Maintenance mode is enabled! Please do not perform any write operations until maintenance mode has been switched off!') %]</strong>
+                </div>
+            [% END -%]
             [% content %]
         </div>
     </div>
