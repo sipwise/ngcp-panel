@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dacfb570_c053d36a",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-06-19T12:59:12Z",
+      "side": 1,
+      "message": "@javascript-guys: if you plan to add such timelines also\nin the csc, i suggest to expose this method as a dedicated\nrail in the ngcp-rest-api.\n\nthe query structure is not so trivial, and it\u0027s not possible\nto do this with straight \"?start\u003d..\u0026stop\u003d...\" url query\nparameters for ranges as seen in other sitautions. btw.\nbilling mappings are not directly exposed yet at all.",
+      "range": {
+        "startLine": 762,
+        "startChar": 4,
+        "endLine": 762,
+        "endChar": 37
+      },
+      "revId": "da6390d94753065b202ab587b85ed0b781909e21",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
