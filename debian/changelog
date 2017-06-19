@@ -1,3 +1,32 @@
+ngcp-panel (5.2.2.1+0~mr5.2.2.1) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [215a3d0] TT#9438 correctly htmlescape apidoc properties
+  * [7353889] TT#14360 correctly treat replacement pattern \0
+  * [07c71f2] TT#11548 disallow non-pbx customers to create customer soundsets
+
+  [ Andreas Granig ]
+  * [c6a5425] TT#13812 Discard latest/next firmware suffix
+  * [f9f1338] TT#12264 Use outbound socket on peer registration
+
+  [ Irina Peshinskaya ]
+  * [0e71eae] TT#7453 Don't remove readonly fields from the GET resource (run = 0)
+  * [a4ee122] TT#7453 Add filters for dates and readonly date related fields to subscriber
+  * [ef855ad] TT#7453 Adapt tests to the date fields in the subscriber
+  * [e5e869c] TT#12197 Use contacts connected to the resellers for the customers creation
+  * [98333f0] TT#13267 Use provisioining_voip_subscribers ids to delete pbx groups
+
+  [ Rene Krenn ]
+  * [6faeba2] TT#14562 apply api-lnp.t docker's time domain to api test node
+  * [86c1dc4] TT#14562 move api-lnp.t to a fake time domain
+
+  [ Andrew Pogrebennyk ]
+  * [d66639b] TT#16909 fix sound cache reload when loading default files
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Jun 2017 15:05:46 +0200
+
 ngcp-panel (5.2.2.0+0~mr5.2.2.0) unstable; urgency=medium
 
   [ Rene Krenn ]
