@@ -3452,12 +3452,14 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
     my $params = {};
 
     if(!$posted && $reminder) {
-        $params = { 'time' => $reminder->column_time, recur => $reminder->recur};
+        $params = { 'time' => $reminder->column_time, recur => $reminder->recur, active => $reminder->active};
     }
 
     my $form = NGCP::Panel::Form::Reminder->new;
     $form->process(
-        params => $posted ? $c->req->params : $params
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -3476,12 +3478,14 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
                     $reminder->update({
                         time => $t,
                         recur => $form->field('recur')->value,
+                        active => $form->values->{active},
                     });
                 } else {
                     $c->model('DB')->resultset('voip_reminder')->create({
                         subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id,
                         time => $t,
                         recur => $form->field('recur')->value,
+                        active => $form->values->{active},
                     });
                 }
             } elsif($reminder) {

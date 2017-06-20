@@ -42,6 +42,19 @@ sub query_params {
                 },
             },
         },
+        {
+            param => 'active',
+            description => 'Filter for active or inactive reminders (0|1)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { active => !!$q };
+                },
+                second => sub {
+                    return { };
+                },
+            },
+        },
     ];
 }
 
