@@ -15,7 +15,7 @@ has_field 'subscriber_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/time recur subscriber_id/],
+    render_list => [qw/time recur active subscriber_id/],
 );
 
 1;

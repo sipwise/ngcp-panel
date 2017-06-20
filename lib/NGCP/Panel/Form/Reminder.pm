@@ -35,6 +35,16 @@ has_field 'recur' => (
     },
 );
 
+has_field 'active' => (
+    type => 'Boolean',
+    #required => 1,
+    default => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Enables or disables the reminder. When Repeat is set to once, reminder is also disabled after triggering once.'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -45,7 +55,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/time recur/],
+    render_list => [qw/time recur active/],
 );
 
 has_block 'actions' => (
