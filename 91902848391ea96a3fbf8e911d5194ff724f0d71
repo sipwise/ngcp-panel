@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ad9bd40_5f096b2b",
+        "filename": "t/selenium/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2017-06-21T18:27:56Z",
+      "side": 1,
+      "message": "why twice? the second only should be enough. isn\u0027t it?",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 60,
+        "endChar": 84
+      },
+      "revId": "91902848391ea96a3fbf8e911d5194ff724f0d71",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
