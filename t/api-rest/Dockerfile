@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-jessie:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2016-01-12
+ENV REFRESHED_AT 2017-06-21
 
 # TODO - the release-trunk-jessie is too dynamic yet, though required build deps
 RUN echo "deb https://deb.sipwise.com/autobuild/ release-trunk-jessie main" >>/etc/apt/sources.list
@@ -23,7 +23,7 @@ RUN apt-get install --assume-yes \
 RUN adduser --disabled-password --gecos="REST-API Testuser" testuser
 
 WORKDIR /tmp/
-COPY control /tmp/
+COPY t/api-rest/control /tmp/
 RUN mk-build-deps /tmp/control
 RUN dpkg --force-depends -i /tmp/ngcp-panel-tests-rest-api-build-deps_1.0_all.deb
 RUN apt-get --assume-yes -f install
