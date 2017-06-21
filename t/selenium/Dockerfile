@@ -29,7 +29,7 @@ RUN wget -O selenium-server-standalone-2.47.1.jar http://selenium-release.storag
 RUN ln -s selenium-server-standalone-2.47.1.jar selenium-server-standalone.jar
 
 WORKDIR /tmp/
-COPY control /tmp/
+COPY t/selenium/control /tmp/
 RUN mk-build-deps /tmp/control
 RUN dpkg --force-depends -i /tmp/ngcp-panel-tests-selenium-build-deps_1.0_all.deb
 RUN apt-get --assume-yes -f install

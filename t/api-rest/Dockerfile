@@ -23,7 +23,7 @@ RUN apt-get install --assume-yes \
 RUN adduser --disabled-password --gecos="REST-API Testuser" testuser
 
 WORKDIR /tmp/
-COPY control /tmp/
+COPY t/api-rest/control /tmp/
 RUN mk-build-deps /tmp/control
 RUN dpkg --force-depends -i /tmp/ngcp-panel-tests-rest-api-build-deps_1.0_all.deb
 RUN apt-get --assume-yes -f install
