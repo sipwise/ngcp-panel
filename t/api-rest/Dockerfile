@@ -16,6 +16,7 @@ RUN apt-get install --assume-yes \
 	devscripts \
         git \
         libtap-formatter-junit-perl \
+        libdata-printer-perl \
         lsof \
         net-tools \
         vim-tiny \
@@ -24,7 +25,7 @@ RUN apt-get install --assume-yes \
 RUN adduser --disabled-password --gecos="REST-API Testuser" testuser
 
 WORKDIR /tmp/
-COPY control /tmp/
+COPY t/api-rest/control /tmp/
 RUN mk-build-deps /tmp/control
 RUN dpkg --force-depends -i /tmp/ngcp-panel-tests-rest-api-build-deps_1.0_all.deb
 RUN apt-get --assume-yes -f install
@@ -33,9 +34,6 @@ RUN apt-get --assume-yes -f install
 RUN wget http://deb.sipwise.com/files/libtest-pretty-perl_0.31-1~bpo80+1_all.deb
 RUN dpkg --force-depends -i libtest-pretty-perl_0.31-1~bpo80+1_all.deb
 RUN apt-get --assume-yes -f install
-
-# useful for debugging tests
-RUN apt-get -y install libdata-printer-perl
 
 RUN apt-get clean
 
@@ -61,7 +59,7 @@ WORKDIR /home/testuser
 #
 # Use the existing docker image:
 # % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie
-# % docker run --rm -i -t -v $(pwd)/../..:/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie:latest bash
+# % docker run --rm -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie:latest bash
 #
 # Inside docker:
 #   su - testuser
