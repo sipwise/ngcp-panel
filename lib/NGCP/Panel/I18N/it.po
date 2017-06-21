@@ -6359,6 +6359,12 @@ msgstr "Informazioni di localizzazione incapsulate MIME nel messaggio INVITE"
 msgid "Mail2Fax"
 msgstr "Mail2Fax"
 
+#: share/layout/body.tt
+msgid ""
+"Maintenance mode is enabled! Please do not perform any write operations "
+"until maintenance mode has been switched off!"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Make this profile automatically the default profile for new subscribers "
