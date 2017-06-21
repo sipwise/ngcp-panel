@@ -11,6 +11,7 @@ Homepage: http://sipwise.com/
 Package: ngcp-panel
 Architecture: all
 Depends: gettext,
+         ghostscript,
          gnutls-bin,
          libboolean-perl,
          libcatalyst-actionrole-acl-perl,
