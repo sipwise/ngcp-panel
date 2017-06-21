@@ -1,3 +1,12 @@
+ngcp-panel (5.2.2.2+0~mr5.2.2.2) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [5cb08b0] TT#17761 Add ghostscript as dependency to ngcp-panel for invoice generation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Jun 2017 17:47:58 +0200
+
 ngcp-panel (5.2.2.1+0~mr5.2.2.1) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
