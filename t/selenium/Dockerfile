@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-jessie:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2016-01-12
+ENV REFRESHED_AT 2017-06-21
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -29,7 +29,7 @@ RUN wget -O selenium-server-standalone-2.47.1.jar http://selenium-release.storag
 RUN ln -s selenium-server-standalone-2.47.1.jar selenium-server-standalone.jar
 
 WORKDIR /tmp/
-COPY control /tmp/
+COPY t/selenium/control /tmp/
 RUN mk-build-deps /tmp/control
 RUN dpkg --force-depends -i /tmp/ngcp-panel-tests-selenium-build-deps_1.0_all.deb
 RUN apt-get --assume-yes -f install
@@ -47,7 +47,7 @@ RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4" >/home/selenium/.bash_his
 RUN echo "su - selenium" >/root/.bash_history
 EXPOSE 5999
 
-COPY jenkins_docker_run /home/selenium/
+COPY t/selenium/jenkins_docker_run /home/selenium/
 
 WORKDIR /home/selenium
 
@@ -55,12 +55,14 @@ WORKDIR /home/selenium
 # Instructions for usage
 # ----------------------
 # When you want to build the base image from scratch (jump to the next section if you don't want to build yourself!):
-# % docker build --tag="ngcp-panel-tests-selenium-jessie" .
-# % docker run --rm -p 5999:5999 -i -t -v $(pwd)/../..:/code:rw ngcp-panel-tests-selenium-jessie:latest bash
+# NOTE: run the following command from root folder of git repository:
+# % docker build --tag="ngcp-panel-tests-selenium-jessie" -f t/selenium/.
+# % docker build --tag="ngcp-panel-tests-selenium-jessie" -f t/selenium/Dockerfile .
+# % docker run --rm -p 5999:5999 -i -t -v $(pwd):/code:rw ngcp-panel-tests-selenium-jessie:latest bash
 #
 # Use the existing docker image:
 # % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-selenium-jessie
-# % docker run --rm -p 5999:5999 -i -t -v $(pwd)/../..:/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-selenium-jessie:latest bash
+# % docker run --rm -p 5999:5999 -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-selenium-jessie:latest bash
 #
 # Inside docker:
 #   su - selenium
