@@ -13,6 +13,7 @@ Package: ngcp-panel
 Architecture: all
 Depends:
  gettext,
+ ghostscript,
  gnutls-bin,
  grafana,
  libboolean-perl,
