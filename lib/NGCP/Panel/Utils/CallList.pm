@@ -249,6 +249,104 @@ sub process_cdr_item {
 
 
 
+sub call_list_suppressions {
+    my ($c,$rs,$mode) = @_;
+    my $stmt;
+    my $hide = $c->user->roles eq "subscriber";
+    #'disabled','filter_outgoing','filter_incoming','obfuscate_outgoing','obfuscate_incoming'
+    my %search_cond ();
+    my %search_xtra = ();
+    if ($hide) {
+        if ($mode == 1) {
+            $stmt = _get_call_list_suppressions_sq('source_domain','destination_user_in',qw(filter_outgoing));
+        } elsif ($mode == 1) {
+
+        } else {
+            return $rs;
+        }
+        $search_cond{'-not-exists'} = \$stmt;
+    } else {
+        if ($mode =~ /outgoing$/) {
+            $stmt = _get_call_list_suppressions_sq('source_domain','destination_user_in',qw(filter_outgoing obfuscate_outgoing));
+            $search_xtra{'+select'} = \$stmt;
+            $search_xtra{'+as'} = 'suppression_label';
+        } elsif ($mode =~ /incoming$/) {
+            $stmt = _get_call_list_suppressions_sq('destination_domain','source_cli',qw(filter_incoming obfuscate_incoming));
+            $search_xtra{'+select'} = \$stmt;
+            $search_xtra{'+as'} = 'suppression_label';
+        } else {
+            return $rs;
+        }
+        $search_xtra{'+select'} = \$stmt;
+        $search_xtra{'+as'} = 'suppression_label';
+    }
+    if ($mode =~ /outgoing$/) {
+        my @modes = qw(filter_outgoing obfuscate_outgoing);
+        $stmt = "select if(mode == ,,label) from billing.call_list_suppressions where (domain is null or domain = me.source_domain)".
+            "and mode in (".join(',',map { '"'.$_.'"'; } @modes).") and me.destination_user_in regexp pattern limit 1";
+    } elsif ($mode =~ /incoming$/) {
+        my @modes = qw(filter_incoming obfuscate_incoming);
+        $stmt = "select label from billing.call_list_suppressions where (domain is null or domain = me.destination_domain)".
+            "and mode in (".join(',',map { '"'.$_.'"'; } @modes).") and me.source_cli regexp pattern limit 1";
+    } else {
+        return $rs;
+    }
+    return $rs->search_rs({
+        ($c->user->roles eq "subscriber" ? (
+        'suppression_label' => { '!=' => undef, },
+    ) : () )},{
+        '+select' => \$stmt,
+        '+as' => 'suppression_label',
+    });
+    my
+    if($c->user->roles eq "subscriber") {
+
+    }
+    } elsif($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({
+            -or => [
+                { source_provider_id => $c->user->reseller->contract_id },
+                { destination_provider_id => $c->user->reseller->contract_id },
+            ],
+        });
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            -or => [
+                { 'source_account_id' => $c->user->account_id },
+                { 'destination_account_id' => $c->user->account_id },
+            ],
+        });
+    } else {
+
+
+
+    my %search_cond = {};
+    if ($mode =~ /^filter$/) {
+
+    my %search_xtra = {};
+
+            $search_cond{'suppression_label'} = { '!=' => undef, };
+        $search_xtra{'+select'} = \'select label from billing.call_list_suppressions where (domain is null or domain = me.source_domain) and mode = "$mode" and me.destination_user_in regexp pattern limit 1';
+        $search_xtra{'+as'} = 'suppression_label';
+
+    "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`network_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
+
+            '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                           { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
+    $rs = $rs->search_rs({
+        source_user_id => $c->user->voip_subscriber->uuid,
+    },{
+        source_user_id => $c->user->voip_subscriber->uuid,
+    });
+}
+
+sub _get_call_list_suppressions_sq {
+    my ($domain_col,$number_col,@modes) = @_;
+    return "select label from billing.call_list_suppressions where (domain is null or domain = me.$domain_col)".
+        " and mode in (".join(',',map { '"'.$_.'"'; } @modes).") and me.$number_col regexp pattern limit 1";
+
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
