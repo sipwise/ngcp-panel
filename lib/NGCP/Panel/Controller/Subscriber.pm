@@ -3585,14 +3585,14 @@ sub _process_calls_rows {
 sub ajax_calls :Chained('calllist_master') :PathPart('list/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $callid = $c->stash->{callid};
-    my $out_rs = $c->model('DB')->resultset('cdr')->search({
+    my $out_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$c->model('DB')->resultset('cdr')->search({
         source_user_id => $c->stash->{subscriber}->uuid,
         ($callid ? (call_id => $callid) : ()),
-    });
-    my $in_rs = $c->model('DB')->resultset('cdr')->search({
+    }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
+    my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$c->model('DB')->resultset('cdr')->search({
         destination_user_id => $c->stash->{subscriber}->uuid,
         ($callid ? (call_id => $callid) : ()),
-    });
+    }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
     my $rs = $out_rs->union_all($in_rs);
 
     _process_calls_rows($c,$rs);
@@ -3603,9 +3603,9 @@ sub ajax_calls :Chained('calllist_master') :PathPart('list/ajax') :Args(0) {
 sub ajax_calls_in :Chained('calllist_master') :PathPart('list/ajax/in') :Args(0) {
     my ($self, $c) = @_;
 
-    my $rs = $c->model('DB')->resultset('cdr')->search({
+    my $rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$c->model('DB')->resultset('cdr')->search({
         destination_user_id => $c->stash->{subscriber}->uuid,
-    });
+    }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
 
     _process_calls_rows($c,$rs);
 
@@ -3615,9 +3615,9 @@ sub ajax_calls_in :Chained('calllist_master') :PathPart('list/ajax/in') :Args(0)
 sub ajax_calls_out :Chained('calllist_master') :PathPart('list/ajax/out') :Args(0) {
     my ($self, $c) = @_;
 
-    my $rs = $c->model('DB')->resultset('cdr')->search({
+    my $rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$c->model('DB')->resultset('cdr')->search({
         source_user_id => $c->stash->{subscriber}->uuid,
-    });
+    }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
 
     _process_calls_rows($c,$rs);
 
