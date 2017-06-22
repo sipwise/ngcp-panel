@@ -740,7 +740,7 @@ sub apply_query_params {
         return $item_rs;
     }
 
-    foreach my $param(keys %{ $c->req->query_params }) {
+    foreach my $param(_get_sorted_query_params($c,$query_params)) {
         my @p = grep { $_->{param} eq $param } @{ $query_params };
         #todo: we can generate default filters for all item_rs fields here
         #the only reason not to do this is a security
@@ -759,7 +759,32 @@ sub apply_query_params {
             }
         }
     }
+    #use DBIx::Class::ResultSet::Explain qw();
+    #$c->log->debug(DBIx::Class::ResultSet::Explain::explain($item_rs));
+    use DBIx::Class::Helper::ResultSet::Explain qw();
+    use Data::Dumper;
+    $c->log->debug(Dumper(DBIx::Class::Helper::ResultSet::Explain::explain($item_rs)));
     return $item_rs;
+}
+
+sub _get_sorted_query_params {
+
+    my ($c,$query_params) = @_;
+    use Data::Dumper;
+    $c->log->debug('request params: ' . Dumper($c->req->query_params));
+    $c->log->debug('request param keys: ' . Dumper(keys %{$c->req->query_params}));
+    $c->log->debug('supported filters: ' . Dumper($query_params));
+    my %query_params_map = map { $_->{param} => $_; } @$query_params;
+    $c->log->debug('supported filter map: ' . Dumper(\%query_params_map));
+    my @sorted = sort {
+        #$a = (exists $query_params_map{$a} and exists $query_params_map{$a}->{new_rs});
+        #$b = (exists $query_params_map{$b} and exists $query_params_map{$b}->{new_rs});
+        (exists $query_params_map{$a} and exists $query_params_map{$a}->{new_rs}) <=> (exists $query_params_map{$b} and exists $query_params_map{$b}->{new_rs});
+    } keys %{$c->req->query_params};
+    $c->log->debug('request params: ' . Dumper($c->req->query_params));
+    $c->log->debug('request params sorted: ' . Dumper(\@sorted));
+    return @sorted;
+
 }
 
 sub get_query_callbacks{

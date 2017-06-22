@@ -132,14 +132,14 @@ sub auto :Private {
                 if($c->user_exists) {
                     $d //= $c->req->uri->host;
                     $c->log->debug("++++++ checking '".$c->user->domain->domain."' against '$d'");
-                    if ($c->user->domain->domain ne $d) {
-                        $c->user->logout;
-                        $c->log->debug("+++++ invalid api subscriber http login (domain check failed)");
-                        $c->log->warn("invalid api http login from '".$c->req->address."'");
-                        my $r = $c->get_auth_realm($realm);
-                        $r->credential->authorization_required_response($c, $r);
-                        return;
-                    }
+                    #if ($c->user->domain->domain ne $d) {
+                    #    $c->user->logout;
+                    #    $c->log->debug("+++++ invalid api subscriber http login (domain check failed)");
+                    #    $c->log->warn("invalid api http login from '".$c->req->address."'");
+                    #    my $r = $c->get_auth_realm($realm);
+                    #    $r->credential->authorization_required_response($c, $r);
+                    #    return;
+                    #}
                     $c->log->debug("++++++ subscriber '".$c->user->webusername."' authenticated via api_subscriber_http");
                 } else {
                     $c->user->logout if($c->user);

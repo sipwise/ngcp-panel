@@ -15,6 +15,7 @@ use DateTime::Format::Strptime;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::CallList qw();
 use NGCP::Panel::Form::CallList::Subscriber;
 
 sub _item_rs {
@@ -33,25 +34,31 @@ sub _item_rs {
     } elsif($c->user->roles eq "subscriberadmin") {
         $item_rs = $item_rs->search({
             -or => [
-                { 'source_account_id' => $c->user->account_id },
-                { 'destination_account_id' => $c->user->account_id },
+                { source_account_id => $c->user->account_id },
+                { destination_account_id => $c->user->account_id },
             ],
         });
+        if (not exists $c->req->query_params->{subscriber_id}) {
+            $item_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$item_rs,NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
+        }
     } else {
-        my $out_rs = $item_rs->search_rs({
+        my $out_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$item_rs->search_rs({
             source_user_id => $c->user->voip_subscriber->uuid,
-        });
-        my $in_rs = $item_rs->search_rs({
+        }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
+        my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$item_rs->search_rs({
             destination_user_id => $c->user->voip_subscriber->uuid,
-        });
+        }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
         $item_rs = $out_rs->union_all($in_rs);
     }
+
     $item_rs = $item_rs->search({
         -not => [
             { 'destination_domain_in' => 'vsc.local' },
         ],
     });
+
     return $item_rs;
+
 }
 
 sub get_form {
