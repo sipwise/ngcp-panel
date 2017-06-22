@@ -13,6 +13,7 @@ use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 use DateTime::TimeZone;
+use NGCP::Panel::Utils::CallList qw();
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
@@ -37,15 +38,17 @@ sub query_params {
             description => 'Filter for calls for a specific subscriber. Either this or customer_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific subscriber in order to properly determine the direction of calls.',
             new_rs => sub {
                 my ($c,$q,$rs) = @_;
-                my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($q);
-                if ($subscriber) {
-                    my $out_rs = $rs->search_rs({
-                        source_user_id => $subscriber->uuid,
-                    });
-                    my $in_rs = $rs->search_rs({
-                        destination_user_id => $subscriber->uuid,
-                    });
-                    return $out_rs->union_all($in_rs);
+                if ($c->user->roles ne "subscriber") {
+                    my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($q);
+                    if ($subscriber) {
+                        my $out_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            source_user_id => $subscriber->uuid,
+                        }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
+                        my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            destination_user_id => $subscriber->uuid,
+                        }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
+                        return $out_rs->union_all($in_rs);
+                    }
                 }
                 return $rs;
             },
@@ -53,17 +56,17 @@ sub query_params {
         {
             param => 'customer_id',
             description => 'Filter for calls for a specific customer. Either this or subscriber_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific customer. For calls within the same customer_id, the direction will always be "out".',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return {
-                        -or => [
-                            'source_account_id' => $q,
-                            'destination_account_id' => $q,
-                        ],
-                    };
-                },
-                second => sub {},
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                if ($c->user->roles ne "subscriber" and $c->user->roles ne "subscriberadmin" and not exists $c->req->query_params->{subscriber_id}) {
+                    return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            -or => [
+                                'source_account_id' => $q,
+                                'destination_account_id' => $q,
+                            ],
+                        },undef),NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
+                }
+                return $rs;
             },
         },
         {
@@ -224,35 +227,39 @@ sub query_params {
         },
         {
             param => 'own_cli',
-            description => 'Filter calls by a specific number that is a part of in our out calls.',
-            new_rs => sub {
-                my ($c,$q,$rs) = @_;
-                my $owner = $c->stash->{owner} // {};
-                return unless $owner;
-                if ($owner->{subscriber}) {
-                    return $rs->search_rs({
-                        -or => [
-                            { source_cli => $q,
-                              source_user_id => $owner->{subscriber}->uuid,
-                            },
-                            { destination_user_in => $q,
-                              destination_user_id => $owner->{subscriber}->uuid,
-                            },
-                        ],
-                    });
-                } elsif ($owner->{customer}) {
-                    return $rs->search_rs({
-                        -or => [
-                            { source_cli => $q,
-                              source_account_id => $owner->{customer}->id,
-                            },
-                            { destination_user_in => $q,
-                              destination_account_id => $owner->{customer}->id,
-                            },
-                        ],
-                    });
-                }
+            description => 'Filter calls by a specific number that is a part of in or out calls.',
+            query => {
+                first => sub {
+                    my ($q,$c) = @_;
+                    my $owner = $c->stash->{owner} // {};
+                    return unless $owner;
+                    if ($owner->{subscriber}) {
+                        return {
+                            -or => [
+                                { source_cli => $q,
+                                  source_user_id => $owner->{subscriber}->uuid,
+                                },
+                                { destination_user_in => $q,
+                                  destination_user_id => $owner->{subscriber}->uuid,
+                                },
+                            ],
+                        };
+                    } elsif ($owner->{customer}) {
+                        return {
+                            -or => [
+                                { source_cli => $q,
+                                  source_account_id => $owner->{customer}->id,
+                                },
+                                { destination_user_in => $q,
+                                  destination_account_id => $owner->{customer}->id,
+                                },
+                            ],
+                        };
+                    }
+                },
+                second => sub {},
             },
+
         },
     ];
 }

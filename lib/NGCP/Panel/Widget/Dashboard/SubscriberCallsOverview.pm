@@ -6,6 +6,7 @@ use strict;
 use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::Strptime;
 use URI::Escape;
+use NGCP::Panel::Utils::CallList qw();
 
 sub template {
     return 'widgets/subscriber_calls_overview.tt';
@@ -23,12 +24,12 @@ sub filter {
 sub _prepare_calls {
     my ($self, $c) = @_;
 
-    my $out_rs = $c->model('DB')->resultset('cdr')->search({
+    my $out_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$c->model('DB')->resultset('cdr')->search_rs({
         source_user_id => $c->user->uuid,
-    });
-    my $in_rs = $c->model('DB')->resultset('cdr')->search({
+    }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
+    my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$c->model('DB')->resultset('cdr')->search_rs({
         destination_user_id => $c->user->uuid,
-    });
+    }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
     my $calls_rs = $out_rs->union_all($in_rs);
 
     $c->stash(calls_rs => $calls_rs);
@@ -70,7 +71,7 @@ sub calls_slice {
                 $resource{source_user_id} = $call->{source_user_id};
                 $resource{start_time} = $datetime_fmt->format_datetime($call->{start_time});
                 $resource{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$call->{duration});
-                \%resource;
+                NGCP::Panel::Utils::CallList::suppress_cdr_fields($c,\%resource,$_);
             } $c->stash->{calls_rs}->search(undef, {
                     order_by => { -desc => 'me.start_time' },
             })->slice(0, 4)->all ];
