@@ -9,6 +9,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
+use NGCP::Panel::Utils::CallList qw();
 use NGCP::Panel::Form::Invoice::Invoice;
 use HTML::Entities;
 
@@ -253,7 +254,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     $call->{destination_user_in} =~s/%23/#/g;
                     $call->{destination_user_in} = encode_entities($call->{destination_user_in}, '<>&"#');
                     $call->{source_customer_cost} += 0.0; # make sure it's a number
-                    $call;
+                    NGCP::Panel::Utils::CallList::suppress_cdr_fields($c,$call,$_);
                 } $calllist_rs->all ];
 
                 #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));

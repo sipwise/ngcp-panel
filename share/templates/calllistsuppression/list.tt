@@ -1,0 +1,38 @@
+[% site_config.title = c.loc('Global Call List Suppressions') -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/calllistsuppression/download') %]"><i class="icon-star"></i> [% c.loc('Download CSV') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/calllistsuppression/upload') %]"><i class="icon-star"></i> [% c.loc('Upload CSV') %]</a>
+    </span>
+</div>
+
+[% back_created = 1 -%]
+
+[%
+    helper.name = c.loc('Call List Suppression');
+    helper.identifier = "call_list_suppression";
+    helper.messages = messages;
+    helper.dt_columns = calllistsuppression_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.length_change = 1;
+    helper.ajax_uri = c.uri_for_action('/calllistsuppression/ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Delete'), uri = "/calllistsuppression/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Edit'), uri = "/calllistsuppression/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create call list suppression'), uri = c.uri_for_action('/calllistsuppression/create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
