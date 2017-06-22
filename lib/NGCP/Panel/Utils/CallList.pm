@@ -7,6 +7,12 @@ use JSON qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 
+use constant SUPPRESS_OUTGOING => 1;
+use constant SUPPRESS_INCOMING => 2;
+
+my $source_cli_obfuscated_colname = 'source_cli_obfuscated';
+my $destination_user_in_obfuscated_colname = 'destination_user_in_obfuscated';
+
 # owner:
 #     * subscriber (optional)
 #     * customer
@@ -247,7 +253,71 @@ sub process_cdr_item {
     return $resource;
 }
 
+sub _is_show_suppressions {
+    my $c = shift;
+    return ($c->user->roles eq "admin" or $c->user->roles eq "reseller");
+}
 
+sub call_list_suppressions {
+    my ($c,$rs,$mode) = @_;
+    #'disabled','filter_outgoing','filter_incoming','obfuscate_outgoing','obfuscate_incoming'
+    my %search_cond = ();
+    my %search_xtra = ();
+    if (_is_show_suppressions($c)) {
+        if (defined $mode and SUPPRESS_OUTGOING == $mode) {
+            $search_xtra{'+select'} = [
+                { '' => \[ 'me.source_cli' ] , -as => $source_cli_obfuscated_colname },
+                { '' => \[ _get_call_list_suppressions_sq('outgoing',qw(filter_outgoing obfuscate_outgoing)) ] , -as => $destination_user_in_obfuscated_colname },
+            ];
+        } elsif (defined $mode and SUPPRESS_INCOMING == $mode) {
+            $search_xtra{'+select'} = [
+                { '' => \[ _get_call_list_suppressions_sq('incoming',qw(filter_incoming obfuscate_incoming)) ] , -as => $source_cli_obfuscated_colname },
+                { '' => \[ 'me.destination_user_in' ] , -as => $destination_user_in_obfuscated_colname },
+            ];
+        } else {
+            $search_xtra{'+select'} = [
+                { '' => \[ 'me.source_cli' ] , -as => $source_cli_obfuscated_colname },
+                { '' => \[ 'me.destination_user_in' ] , -as => $destination_user_in_obfuscated_colname },
+            ];
+        }
+    } else {
+        if (defined $mode and SUPPRESS_OUTGOING == $mode) {
+            $search_xtra{'+select'} = [
+                { '' => \[ 'me.source_cli' ] , -as => $source_cli_obfuscated_colname },
+                { '' => \[ _get_call_list_suppressions_sq('outgoing',qw(obfuscate_outgoing)) ] , -as => $destination_user_in_obfuscated_colname },
+            ];
+            $search_cond{'-not-exists'} = \[ _get_call_list_suppressions_sq('outgoing',qw(filter_outgoing)) ];
+        } elsif (defined $mode and SUPPRESS_INCOMING == $mode) {
+            $search_xtra{'+select'} = [
+                { '' => \[ _get_call_list_suppressions_sq('incoming',qw(obfuscate_incoming)) ] , -as => $source_cli_obfuscated_colname },
+                { '' => \[ 'me.destination_user_in' ] , -as => $destination_user_in_obfuscated_colname },
+            ];
+            $search_cond{'-not-exists'} = \[ _get_call_list_suppressions_sq('incoming',qw(filter_incoming)) ];
+        } else {
+            $search_xtra{'+select'} = [
+                { '' => \[ 'me.source_cli' ] , -as => $source_cli_obfuscated_colname },
+                { '' => \[ 'me.destination_user_in' ] , -as => $destination_user_in_obfuscated_colname },
+            ];
+        }
+    }
+    return $rs->search_rs(\%search_cond,\%search_xtra);
+}
+
+sub _get_call_list_suppressions_sq {
+    my ($direction,@modes) = @_;
+    my $domain_col;
+    my $number_col;
+    if ('incoming' eq $direction) {
+        $domain_col = 'destination_domain';
+        $number_col = 'source_cli';
+    } else {
+        $domain_col = 'source_domain';
+        $number_col = 'destination_user_in';
+    }
+    return "select label from billing.call_list_suppressions where direction = \"$direction\" and mode in (".join(',',map { '"'.$_.'"'; } @modes).")".
+        " and (domain == \"\" or domain = me.$domain_col) and me.$number_col regexp pattern limit 1";
+
+}
 
 1;
 
