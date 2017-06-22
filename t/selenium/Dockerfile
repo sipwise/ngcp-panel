@@ -1,32 +1,36 @@
 # DOCKER_NAME=ngcp-panel-tests-selenium-jessie
-FROM docker.mgm.sipwise.com/sipwise-jessie:latest
+FROM docker.mgm.sipwise.com/sipwise-stretch:latest
+# Using Stretch for Java 8 (to don't use unpredictible jessie-backports)
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2017-06-21
+ENV REFRESHED_AT 2017-06-22
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
 	devscripts \
         fluxbox \
         git \
-        iceweasel \
+        firefox-esr \
         libtap-formatter-junit-perl \
+        libtest-www-selenium-perl \
         lsof \
         net-tools \
-        openjdk-7-jre-headless \
+        openjdk-8-jre-headless \
         vim-tiny \
         vnc4server \
         wget \
         xterm
 
+# libtest-www-selenium-perl might be unnecessary.
+
 RUN adduser --disabled-password --gecos=Selenium-User selenium
 
 WORKDIR /home/selenium
-RUN wget -O selenium-server-standalone-2.47.1.jar http://selenium-release.storage.googleapis.com/2.47/selenium-server-standalone-2.47.1.jar
-RUN ln -s selenium-server-standalone-2.47.1.jar selenium-server-standalone.jar
+RUN wget -O selenium-server-standalone-3.4.0.jar https://selenium-release.storage.googleapis.com/3.4/selenium-server-standalone-3.4.0.jar
+RUN ln -s selenium-server-standalone-3.4.0.jar selenium-server-standalone.jar
 
 WORKDIR /tmp/
 COPY t/selenium/control /tmp/
@@ -34,11 +38,17 @@ RUN mk-build-deps /tmp/control
 RUN dpkg --force-depends -i /tmp/ngcp-panel-tests-selenium-build-deps_1.0_all.deb
 RUN apt-get --assume-yes -f install
 
-RUN wget http://deb.sipwise.com/files/libselenium-remote-driver-perl_0.26-1~bpo80+1_all.deb
-RUN dpkg --force-depends -i libselenium-remote-driver-perl_0.26-1~bpo80+1_all.deb
-RUN apt-get --assume-yes -f install
+## Not available in stretch
+#RUN wget http://deb.sipwise.com/files/libselenium-remote-driver-perl_0.26-1~bpo80+1_all.deb
+#RUN dpkg --force-depends -i libselenium-remote-driver-perl_0.26-1~bpo80+1_all.deb
+#RUN apt-get --assume-yes -f install
+
+WORKDIR /home/selenium/
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.17.0/geckodriver-v0.17.0-linux64.tar.gz
+RUN tar -xvf geckodriver-v0.17.0-linux64.tar.gz
 
 # for prove execution by developers
+WORKDIR /tmp
 RUN wget http://deb.sipwise.com/files/libtest-pretty-perl_0.31-1~bpo80+1_all.deb
 RUN dpkg --force-depends -i libtest-pretty-perl_0.31-1~bpo80+1_all.deb
 RUN apt-get --assume-yes -f install

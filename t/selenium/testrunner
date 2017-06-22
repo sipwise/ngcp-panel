@@ -7,6 +7,7 @@ fi
 
 set -e
 set -u
+set -x
 
 PASSWORD="selenium"
 
@@ -37,8 +38,14 @@ fi
 
 # selenium
 pkill -f '/usr/bin/java -jar /home/selenium/selenium-server-standalone.jar' || true
-# NOTE: this could silently fail because selenium-server-standalone.jar is missing a daemonize option
-DISPLAY=:99 /usr/bin/java -jar /home/selenium/selenium-server-standalone.jar -trustAllSSLCertificates -log /home/selenium/selenium.log &
+DISPLAY=:99 /usr/bin/java -Dwebdriver.gecko.driver=/home/selenium/geckodriver -jar /home/selenium/selenium-server-standalone.jar -log /home/selenium/selenium.log &
+
+echo "Firefox version:"
+firefox --version
+echo "Selenium version:"
+ls -la /home/selenium/selenium-server-standalone.jar
+echo "Java version:"
+java -version
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
