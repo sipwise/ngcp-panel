@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ad9bd40_284d4f73",
+        "filename": "t/selenium/admin-login.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-06-23T20:04:55Z",
+      "side": 1,
+      "message": "remote_server_addr + port are the defaults, right?\nMaybe we can/shall set (all) the defaults in Selenium::Remote::Driver::FirefoxExtensions instead of setting them in every single test file?",
+      "revId": "e1b5405203373b5ffab016145eec965b8079d784",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ad9bd40_68575703",
+        "filename": "t/selenium/controller_billing.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-06-23T20:04:55Z",
+      "side": 1,
+      "message": "The \"sleep\" is an antipattern and I\u0027m afraid they will cause flaky test (results). :-/ If they are needed this feels like a bug in geckodriver/Selenium-Remote-Driver to me?",
+      "revId": "e1b5405203373b5ffab016145eec965b8079d784",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
