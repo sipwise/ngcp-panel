@@ -1,0 +1,9 @@
+Code-Review+1: Alexander Lutay <alutay@sipwise.com>
+Code-Review+1: Gerhard Jungwirth <gjungwirth@sipwise.com>
+Code-Review+2: Víctor Seva <vseva@sipwise.com>
+Verified+1: Jenkins Jenkins
+Submitted-by: Michael Prokop <mprokop@sipwise.com>
+Submitted-at: Fri, 23 Jun 2017 22:07:29 +0200
+Reviewed-on: http://gerrit.mgm.sipwise.com/14036
+Project: ngcp-panel
+Branch: refs/heads/master
