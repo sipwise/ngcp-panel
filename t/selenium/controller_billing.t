@@ -3,13 +3,19 @@ use strict;
 
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag todo_skip)];
-use Selenium::Remote::Driver::Extensions qw();
+use Selenium::Remote::Driver::FirefoxExtensions;
 
-diag("Init");
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
-my $d = Selenium::Remote::Driver::Extensions->new (
-    'browser_name' => $browsername,
-    'proxy' => {'proxyType' => 'system'} );
+
+my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
+    browser_name => $browsername,
+    remote_server_addr => '127.0.0.1',
+    port => '4444',
+    extra_capabilities => {
+        acceptInsecureCerts => \1,
+    },
+    proxy => {proxyType => 'system'},
+);
 
 $d->login_ok();
 
@@ -21,26 +27,30 @@ $d->find_element("Billing", 'link_text')->click();
 diag("Create a billing profile");
 $d->find_element('//*[@id="masthead"]//h2[contains(text(),"Billing Profiles")]')->click();
 $d->find_element('Create Billing Profile', 'link_text')->click();
-$d->find_element('name', 'id')->send_keys('mytestprofile');
-$d->fill_element('handle', 'name', 'mytestprofile');
-$d->find_element('fraud_interval_lock', 'id');
+$d->find_element('#name', 'css')->send_keys('mytestprofile');
+$d->fill_element('[name=handle]', 'css', 'mytestprofile');
+$d->find_element('#fraud_interval_lock', 'css');
 $d->find_element('//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]')->click();
 $d->find_element('//div[contains(@class,modal-body)]//table[@id="reselleridtable"]/tbody/tr[1]/td//input[@type="checkbox"]')->click();
 $d->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
+sleep 2; diag ("6");
 
 diag("Search nonexisting billing profile");
 my $searchfield = $d->find_element('#billing_profile_table_filter label input', 'css');
 ok($searchfield);
 $searchfield->send_keys('donotfindme');
-
+sleep 2; diag ("7"); # gjungwirth: sleep is neccessary here
 diag("Verify that nothing is shown");
+
 my $elem = $d->find_element('#billing_profile_table td.dataTables_empty', 'css');
 ok($elem);
 is($elem->get_text, 'No matching records found');
+sleep 2; diag ("10");
 
 diag('Search for "mytestprofile" in billing profile');
 $searchfield->clear();
 $searchfield->send_keys('mytestprofile');
+sleep 2; diag ("11");
 #sleep 1;
 #$d->find_element('#billing_profile_table tr.sw_action_row', css);
 ok($d->find_element('//table[@id="billing_profile_table"]//tr[1]/td[2][contains(text(),"mytestprofile")]'));
@@ -50,15 +60,19 @@ my $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile"
 ok($row);
 my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Edit")]');
 ok($edit_link);
+sleep 2; diag ("12");
 $d->move_to(element => $row);
+sleep 2; diag ("13");
 $edit_link->click();
+sleep 2; diag ("14");
 
 diag("Edit mytestprofile");
-$elem = $d->find_element('name', 'id');
+$elem = $d->find_element('#name', 'css');
 ok($elem);
 is($elem->get_value, "mytestprofile");
-$d->fill_element('interval_charge', 'id', '3.2');
-$d->find_element('save', 'id')->click();
+$d->fill_element('#interval_charge', 'css', '3.2');
+$d->find_element('#save', 'css')->click();
+sleep 1;
 
 diag('Open "Fees" for mytestprofile');
 $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/..');
@@ -79,9 +93,9 @@ $d->find_element('save', 'name')->click();
 diag("Back to orignial form (create billing fees)");
 #sleep 2; # give ajax time to load
 $d->select_if_unselected('//div[contains(@class,"modal")]//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//input[@type="checkbox"]');
-$d->fill_element('source', 'id', '.*');
-$d->fill_element('destination', 'name', '.+');
-$d->find_element('save', 'id')->click();
+$d->fill_element('#source', 'css', '.*');
+$d->fill_element('#destination', 'css', '.+');
+$d->find_element('#save', 'css')->click();
 
 diag("Delete billing fee");
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..//a[contains(@class,"btn-primary") and contains(text(),"Edit")]');
@@ -108,7 +122,7 @@ ok($row);
 $d->move_to(element => $row);
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//a[contains(text(),"Delete")]')->click();
 $d->find_text("Are you sure?");
-$d->find_element('dataConfirmOK', 'id')->click();
+$d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Go to Billing page (again)");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -140,7 +154,7 @@ $d->find_element('add', 'name')->click();
 $d->find_element('//div[contains(@class,"modal")]//i[@class="icon-trash"]/..')->click();
 
 diag('skip was here');
-$d->find_element('mod_close', 'id')->click();
+$d->find_element('#mod_close', 'css')->click();
 
 diag("Create a Date Definition");
 $d->find_element('Create Special Off-Peak Date', 'link_text')->click();
@@ -157,7 +171,7 @@ ok($edit_link);
 sleep 2 if ($browsername eq "htmlunit");
 $edit_link->click();
 $d->find_text("Are you sure?");
-$d->find_element('dataConfirmOK', 'id')->click();
+$d->find_element('#dataConfirmOK', 'css')->click();
 
 done_testing;
 # vim: filetype=perl
