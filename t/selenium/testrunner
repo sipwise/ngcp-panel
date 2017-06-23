@@ -27,18 +27,20 @@ OUTPUT_DIRECTORY="${2:-/code/}"
 echo "Setting VNC password"
 printf '%s\n%s\n\n' "${PASSWORD}" "${PASSWORD}" | vncpasswd >/dev/null
 PASSWORD_ENCODED=$(hexdump -v -e '"\\""x" 1/1 "%02X"' < "${HOME}/.vnc/passwd")
-xvnc_process=$(pgrep -f 'Xvnc4 :99' || true)
+xvnc_process=$(pgrep -f 'Xtigervnc :99' || true)
 if [ -n "${xvnc_process:-}" ] ; then
-  echo "Warning: existing VNC server found, not restarting Xvnc4 process (PID: $xvnc_process)."
+  echo "Warning: existing VNC server found, not restarting Xtigervnc process (PID: $xvnc_process)."
 else
   echo "Starting VNCserver on display :99"
-  vncserver -geometry 1280x1024 :99
+  vncserver -localhost no -geometry 1280x1024 :99
 fi
 
-# selenium
-pkill -f '/usr/bin/java -jar /home/selenium/selenium-server-standalone.jar' || true
-# NOTE: this could silently fail because selenium-server-standalone.jar is missing a daemonize option
-DISPLAY=:99 /usr/bin/java -jar /home/selenium/selenium-server-standalone.jar -trustAllSSLCertificates -log /home/selenium/selenium.log &
+echo "Firefox version:"
+firefox --version
+
+# ensure we don't leave any process behind causing problems with re-execution
+pkill -f 'geckodriver' || true
+DISPLAY=:99 ~/geckodriver &
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
