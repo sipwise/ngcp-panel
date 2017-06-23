@@ -22,6 +22,30 @@
       "revId": "106f65bb89e085f4139f45493e490ff3d0d4df68",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ad9bd40_85b9e6eb",
+        "filename": "lib/NGCP/Panel/Form/Reminder.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-06-23T13:13:13Z",
+      "side": 1,
+      "message": "https://gerrit.mgm.sipwise.com/#/c/13920/",
+      "parentUuid": "9ad9bd40_6526a26a",
+      "range": {
+        "startLine": 44,
+        "startChar": 53,
+        "endLine": 44,
+        "endChar": 128
+      },
+      "revId": "106f65bb89e085f4139f45493e490ff3d0d4df68",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
