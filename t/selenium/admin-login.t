@@ -2,14 +2,19 @@ use warnings;
 use strict;
 
 use lib 't/lib';
-use Test::More import => [qw(done_testing is diag)];
-use Selenium::Remote::Driver::Extensions qw();
+use Test::More import => [qw(done_testing is diag ok)];
+use Selenium::Remote::Driver::FirefoxExtensions;
 
-diag("Init");
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
-my $d = Selenium::Remote::Driver::Extensions->new (
-    'browser_name' => $browsername,
-    'proxy' => {'proxyType' => 'system'} );
+
+my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
+    browser_name => $browsername,
+    extra_capabilities => {
+        acceptInsecureCerts => \1,
+    },
+);
+
+ok(1, "Instantiation ok");
 
 $d->login_ok();
 

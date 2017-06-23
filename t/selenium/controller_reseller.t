@@ -3,13 +3,16 @@ use strict;
 
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag)];
-use Selenium::Remote::Driver::Extensions qw();
+use Selenium::Remote::Driver::FirefoxExtensions;
 
-diag("Init");
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
-my $d = Selenium::Remote::Driver::Extensions->new (
-    'browser_name' => $browsername,
-    'proxy' => {'proxyType' => 'system'} );
+
+my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
+    browser_name => $browsername,
+    extra_capabilities => {
+        acceptInsecureCerts => \1,
+    },
+);
 
 $d->login_ok();
 
@@ -34,27 +37,27 @@ is($d->find_element('//table[@id="Resellers_table"]//tr[1]/td[1]')->get_text(), 
 
 diag("Going to create a reseller");
 $d->find_element('Create Reseller', 'link_text')->click();
-$d->find_element('save', 'id')->click();
+$d->find_element('#save', 'css')->click();
 $d->find_text("Contract field is required");
 $d->find_text("Name field is required");
-$d->find_element('mod_close', 'id')->click();
+$d->find_element('#mod_close', 'css')->click();
 
 diag("Click Edit on the first reseller shown (first row)");
 sleep 1; #prevent a StaleElementReferenceException
 my $row = $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]');
 ok($row);
-$d->move_to(element => $row);
+$d->move_action(element => $row);
 my $btn = $d->find_child_element($row, './/a[contains(text(),"Edit")]');
 ok($btn);
 $btn->click();
 #is($d->find_element("name", id)->get_attribute("value"), "reseller 1");
-$d->find_element('mod_close', 'id')->click();
+$d->find_element('#mod_close', 'css')->click();
 
 diag("Click Terminate on the first reseller shown");
 sleep 1; #prevent a StaleElementReferenceException
 $row = $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]');
 ok($row);
-$d->move_to(element => $row);
+$d->move_action(element => $row,xoffset=>1); # 1 because if the mouse doesn't move, the buttons don't appear
 $btn = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
 ok($btn);
 $btn->click();

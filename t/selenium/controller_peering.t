@@ -3,13 +3,16 @@ use strict;
 
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag todo_skip)];
-use Selenium::Remote::Driver::Extensions qw();
+use Selenium::Remote::Driver::FirefoxExtensions;
 
-diag("Init");
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
-my $d = Selenium::Remote::Driver::Extensions->new (
-    'browser_name' => $browsername,
-    'proxy' => {'proxyType' => 'system'} );
+
+my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
+    browser_name => $browsername,
+    extra_capabilities => {
+        acceptInsecureCerts => \1,
+    },
+);
 
 $d->login_ok();
 
@@ -25,38 +28,41 @@ $d->find_element('Create Peering Group', 'link_text')->click();
 diag("Create a Peering Contract");
 $d->find_element('//input[@type="button" and @value="Create Contract"]')->click();
 $d->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]//input[@type="checkbox"]');
+my $elem = $d->find_element('//table[@id="billing_profileidtable"]');
+$d->scroll_to_element($elem);
 $d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->find_element('//div[contains(@class,"modal-body")]//div//select[@id="status"]/option[@value="active"]')->click();
 $d->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
 $d->find_text('Create Peering Group'); # Should go back to prev form
 
-$d->fill_element('name', 'id', 'testinggroup');
-$d->fill_element('description', 'id', 'A group created for testing purposes');
+$d->fill_element('#name', 'css', 'testinggroup');
+$d->fill_element('#description', 'css', 'A group created for testing purposes');
 $d->select_if_unselected('//table[@id="contractidtable"]/tbody/tr[1]//input[@type="checkbox"]');
-$d->find_element('save', 'id')->click();
+$d->find_element('#save', 'css')->click();
+sleep 1;
 
 diag("Edit Servers/Rules of testinggroup");
 my $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "testinggroup")]/..)[1]');
 ok($row);
 my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Details")]');
 ok($edit_link);
-$d->move_to(element => $row);
+$d->move_action(element => $row);
 $edit_link->click();
 
 diag("Create a Peering Rule");
 $d->find_element('//a[contains(text(),"Create Outbound Peering Rule")]')->click();
-$d->fill_element('callee_prefix', 'id', '43');
-$d->fill_element('callee_pattern', 'id', '^sip');
-$d->fill_element('caller_pattern', 'id', '999');
-$d->fill_element('description', 'id', 'for testing purposes');
-$d->find_element('save', 'id')->click();
+$d->fill_element('#callee_prefix', 'css', '43');
+$d->fill_element('#callee_pattern', 'css', '^sip');
+$d->fill_element('#caller_pattern', 'css', '999');
+$d->fill_element('#description', 'css', 'for testing purposes');
+$d->find_element('#save', 'css')->click();
 
 diag("Create a Peering Server");
 $d->find_element('//a[contains(text(),"Create Peering Server")]')->click();
-$d->fill_element('name', 'id', 'mytestserver');
-$d->fill_element('ip', 'id', '10.0.0.100');
-$d->fill_element('host', 'id', 'sipwise.com');
-$d->find_element('save', 'id')->click();
+$d->fill_element('#name', 'css', 'mytestserver');
+$d->fill_element('#ip', 'css', '10.0.0.100');
+$d->fill_element('#host', 'css', 'sipwise.com');
+$d->find_element('#save', 'css')->click();
 $d->find_text('Peering server successfully created');
 
 my $server_rules_uri = $d->get_current_url();
@@ -70,7 +76,7 @@ $edit_link = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserve
 $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserver")]/..');
 ok($row);
 ok($edit_link);
-$d->move_to(element => $row);
+$d->move_action(element => $row);
 $edit_link->click();
 
 diag('Open the tab "Number Manipulations"');
@@ -81,12 +87,12 @@ $row = $d->find_element('//table/tbody/tr/td[normalize-space(text()) = "inbound_
 ok($row);
 $edit_link = $d->find_child_element($row, '(./../td//a)[2]');
 ok($edit_link);
-$d->move_to(element => $row);
+$d->move_action(element => $row);
 $edit_link->click();
 
 diag('Change to "P-Asserted-Identity');
 $d->find_element('//div[contains(@class,"modal-body")]//select[@id="inbound_upn"]/option[@value="pai_user"]')->click();
-$d->find_element('save', 'id')->click();
+$d->find_element('#save', 'css')->click();
 $d->find_text('Preference inbound_upn successfully updated');
 
 diag("Go back to Servers/Rules");
@@ -103,10 +109,10 @@ $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "mytestserver")]/
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
-$d->move_to(element => $row);
+$d->move_action(element => $row);
 $delete_link->click();
 $d->find_text("Are you sure?");
-$d->find_element('dataConfirmOK', 'id')->click();
+$d->find_element('#dataConfirmOK', 'css')->click();
 $d->find_text("successfully deleted"); # delete does not work
 
 diag("Delete the previously created Peering Rule");
@@ -115,10 +121,10 @@ $row = $d->find_element('//table[@id="PeeringRules_table"]/tbody/tr[1]');
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
-$d->move_to(element => $row);
+$d->move_action(element => $row);
 $delete_link->click();
 $d->find_text("Are you sure?");
-$d->find_element('dataConfirmOK', 'id')->click();
+$d->find_element('#dataConfirmOK', 'css')->click();
 
 diag('skip was here');
 ok($d->find_text("successfully deleted"));
@@ -131,10 +137,10 @@ $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "testinggroup")]/
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
-$d->move_to(element => $row);
+$d->move_action(element => $row);
 $delete_link->click();
 $d->find_text("Are you sure?");
-$d->find_element('dataConfirmOK', 'id')->click();
+$d->find_element('#dataConfirmOK', 'css')->click();
 
 diag('skip was here');
 ok($d->find_text("successfully deleted"));
