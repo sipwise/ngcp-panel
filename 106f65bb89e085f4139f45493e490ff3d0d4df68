@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ad9bd40_6526a26a",
+        "filename": "lib/NGCP/Panel/Form/Reminder.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-06-23T12:43:37Z",
+      "side": 1,
+      "message": "just curious: where can i find this logic?",
+      "range": {
+        "startLine": 44,
+        "startChar": 53,
+        "endLine": 44,
+        "endChar": 128
+      },
+      "revId": "106f65bb89e085f4139f45493e490ff3d0d4df68",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
