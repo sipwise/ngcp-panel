@@ -3,14 +3,20 @@ use strict;
 
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag skip like)];
-use Selenium::Remote::Driver::Extensions qw();
 use TryCatch;
+use Selenium::Remote::Driver::FirefoxExtensions;
 
-diag("Init");
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
-my $d = Selenium::Remote::Driver::Extensions->new (
-    'browser_name' => $browsername,
-    'proxy' => {'proxyType' => 'system'} );
+
+my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
+    browser_name => $browsername,
+    remote_server_addr => '127.0.0.1',
+    port => '4444',
+    extra_capabilities => {
+        acceptInsecureCerts => \1,
+    },
+    proxy => {proxyType => 'system'},
+);
 
 $d->login_ok();
 

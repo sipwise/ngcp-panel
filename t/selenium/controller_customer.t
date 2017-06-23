@@ -3,13 +3,19 @@ use warnings;
 
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag todo_skip)];
-use Selenium::Remote::Driver::Extensions qw();
+use Selenium::Remote::Driver::FirefoxExtensions;
 
-diag("Init");
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
-my $d = Selenium::Remote::Driver::Extensions->new (
-    'browser_name' => $browsername,
-    'proxy' => {'proxyType' => 'system'} );
+
+my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
+    browser_name => $browsername,
+    remote_server_addr => '127.0.0.1',
+    port => '4444',
+    extra_capabilities => {
+        acceptInsecureCerts => \1,
+    },
+    proxy => {proxyType => 'system'},
+);
 
 $d->login_ok();
 
@@ -25,24 +31,30 @@ diag("Create a Customer");
 $d->find_element('//*[@id="masthead"]//h2[contains(text(),"Customers")]');
 $d->find_element('Create Customer', 'link_text')->click();
 $d->fill_element('#contactidtable_filter input', 'css', 'thisshouldnotexist');
+sleep 1;
 $d->find_element('#contactidtable tr > td.dataTables_empty', 'css');
 $d->fill_element('#contactidtable_filter input', 'css', 'default-customer');
+sleep 1;
 $d->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]/td[contains(text(),"default-customer")]/..//input[@type="checkbox"]');
 $d->fill_element('#billing_profileidtable_filter input', 'css', 'thisshouldnotexist');
+sleep 1;
 $d->find_element('#billing_profileidtable tr > td.dataTables_empty', 'css');
 $d->fill_element('#billing_profileidtable_filter input', 'css', 'Default Billing Profile');
+sleep 1;
 $d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td[contains(text(),"Default Billing Profile")]/..//input[@type="checkbox"]');
 eval { #lets only try this
     $d->select_if_unselected('//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
 };
-$d->fill_element('external_id', 'id', $rnd_id);
-$d->find_element('save', 'id')->click();
+$d->fill_element('#external_id', 'css', $rnd_id);
+$d->find_element('#save', 'css')->click();
 
 diag("Open Details for our just created Customer");
 sleep 2; #Else we might search on the previous page
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+sleep 1;
 $d->find_element('#Customer_table tr > td.dataTables_empty', 'css');
 $d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
+sleep 1;
 my $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
 ok($row);
 my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Details")]');
