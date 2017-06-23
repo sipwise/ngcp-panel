@@ -3,13 +3,16 @@ use strict;
 
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag)];
-use Selenium::Remote::Driver::Extensions qw();
+use Selenium::Remote::Driver::FirefoxExtensions;
 
-diag("Init");
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
-my $d = Selenium::Remote::Driver::Extensions->new (
-    'browser_name' => $browsername,
-    'proxy' => {'proxyType' => 'system'} );
+
+my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
+    browser_name => $browsername,
+    extra_capabilities => {
+        acceptInsecureCerts => \1,
+    },
+);
 
 $d->login_ok();
 
@@ -20,6 +23,7 @@ diag("Search nonexisting reseller");
 my $searchfield = $d->find_element('#Resellers_table_filter label input', 'css');
 ok($searchfield);
 $searchfield->send_keys('donotfindme');
+sleep 1;
 
 diag("Verify that nothing is shown");
 my $elem = $d->find_element('#Resellers_table td.dataTables_empty', 'css');
@@ -29,15 +33,16 @@ is($elem->get_text,'No matching records found');
 diag('Search for "1" in resellers');
 $searchfield->clear();
 $searchfield->send_keys('active');
+sleep 1;
 $d->find_element('#Resellers_table tr.sw_action_row', 'css');
 is($d->find_element('//table[@id="Resellers_table"]//tr[1]/td[1]')->get_text(), '1');
 
 diag("Going to create a reseller");
 $d->find_element('Create Reseller', 'link_text')->click();
-$d->find_element('save', 'id')->click();
+$d->find_element('#save', 'css')->click();
 $d->find_text("Contract field is required");
 $d->find_text("Name field is required");
-$d->find_element('mod_close', 'id')->click();
+$d->find_element('#mod_close', 'css')->click();
 
 diag("Click Edit on the first reseller shown (first row)");
 sleep 1; #prevent a StaleElementReferenceException

@@ -3,14 +3,17 @@ use strict;
 
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag skip like)];
-use Selenium::Remote::Driver::Extensions qw();
 use TryCatch;
+use Selenium::Remote::Driver::FirefoxExtensions;
 
-diag("Init");
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
-my $d = Selenium::Remote::Driver::Extensions->new (
-    'browser_name' => $browsername,
-    'proxy' => {'proxyType' => 'system'} );
+
+my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
+    browser_name => $browsername,
+    extra_capabilities => {
+        acceptInsecureCerts => \1,
+    },
+);
 
 $d->login_ok();
 
@@ -51,19 +54,19 @@ SKIP: {
     $edit_link->click();
 
     diag("Try to change this to a value which is not a number");
-    my $formfield = $d->find_element('concurrent_max', 'id');
+    my $formfield = $d->find_element('#concurrent_max', 'css');
     ok($formfield);
     $formfield->clear();
     $formfield->send_keys('thisisnonumber');
-    $d->find_element("save", 'id')->click();
+    $d->find_element("#save", 'css')->click();
 
     diag('Type 789 and click Save');
     $d->find_text('Value must be an integer');
-    $formfield = $d->find_element('concurrent_max', 'id');
+    $formfield = $d->find_element('#concurrent_max', 'css');
     ok($formfield);
     $formfield->clear();
     $formfield->send_keys('789');
-    $d->find_element('save', 'id')->click();
+    $d->find_element('#save', 'css')->click();
 }
 
 done_testing;
