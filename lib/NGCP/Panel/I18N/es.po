@@ -3567,6 +3567,12 @@ msgstr ""
 msgid "Enables lawful interception for the subscriber."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Enables or disables the reminder. When Repeat is set to once, reminder is "
+"also disabled after triggering once."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "End"

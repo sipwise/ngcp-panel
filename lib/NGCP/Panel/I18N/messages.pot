@@ -349,7 +349,7 @@ msgstr ""
 msgid "Activate timestamp"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/Administrator.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt
 msgid "Active"
 msgstr ""
 
@@ -3054,6 +3054,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enables lawful interception for the subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enables or disables the reminder. When Repeat is set to once, reminder is also disabled after triggering once."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm lib/NGCP/Panel/Utils/DbStrings.pm
