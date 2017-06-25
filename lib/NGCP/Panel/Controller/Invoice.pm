@@ -235,7 +235,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     my $call = {$_->get_inflated_columns};
                     $call->{start_time} = $call->{start_time}->epoch;
                     $call->{destination_user_in} =~s/%23/#/g;
-                    $call->{destination_user_in} = encode_entities($call->{destination_user_in}, '<>&"#');
+                    #$call->{destination_user_in} = encode_entities($call->{destination_user_in}, '<>&"#');
                     $call->{source_customer_cost} += 0.0; # make sure it's a number
                     $call;
                 } $calllist_rs->all ];
