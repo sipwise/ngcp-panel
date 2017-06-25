@@ -93,7 +93,7 @@
                 END;
                 IF f.masklen;
                     l = f.masklen > val.length ? val.length : f.masklen;
-                    val = val.substr(l - 1, val.length - 1, f.mask);
+                    val = val.substr(l - 1, val.length - 1, f.mask) | html_entity('<>&"#');
                 END;
                 '<text font-family="' _ fontfamily  _ '" font-size="' _ fontsize  _ apply_units('fontsize') _ '" x="' _ x _ apply_units('position') _ '" y="' _ y _ apply_units('position') _ '" text-anchor="'_ anc _'">';
                     val;
