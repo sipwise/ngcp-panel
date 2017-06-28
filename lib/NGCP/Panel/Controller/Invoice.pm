@@ -147,6 +147,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
 
+    my $schema = $c->model('DB');
     my $form;
     $form = NGCP::Panel::Form::Invoice::Invoice->new(ctx => $c);
     $form->process(
@@ -162,228 +163,38 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
     );
     if($posted && $form->validated) {
         try {
-            my $schema = $c->model('DB');
+            my $contract_id = $form->values->{contract}{id};
+            delete $form->values->{customer};
+            my $tmpl_id = $form->values->{template}{id};
+            delete $form->values->{template};
+            my $period = delete $form->values->{period};
+            my($customer,$tmpl,$stime,$etime,$invoice_data);
+
+            ($contract_id,$customer,$tmpl,$stime,$etime,$invoice_data) = NGCP::Panel::Utils::Invoice::check_invoice_data($c, {
+                contract_id  => $contract_id,
+                tmpl_id      => $tmpl_id,
+                period_start => undef,
+                period_end   => undef,
+                period       => $period,
+            });
+
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
-                my $contract_id = $form->values->{contract}{id};
-                my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, contract_id => $contract_id);
-                my $customer = $customer_rs->find({ 'me.id' => $contract_id });
-                unless($customer) {
-                    NGCP::Panel::Utils::Message::error(
-                        c => $c,
-                        error => "invalid contract_id $contract_id",
-                        desc  => $c->loc('Customer not found'),
-                    );
-                    die;
-                }
-                delete $form->values->{contract};
-                $form->values->{contract_id} = $contract_id;
-
-                my $tmpl_id = $form->values->{template}{id};
-                delete $form->values->{template};
-
-                my $tmpl = $schema->resultset('invoice_templates')->search({
-                    id => $tmpl_id,
+                NGCP::Panel::Utils::Invoice::create_invoice($c,{
+                    contract_id  => $contract_id,
+                    customer     => $customer,
+                    stime        => $stime,
+                    etime        => $etime,
+                    tmpl         => $tmpl,
+                    invoice_data => $invoice_data,
                 });
-                if($c->user->roles eq "admin") {
-                } elsif($c->user->roles eq "reseller") {
-                    $tmpl = $tmpl->search({
-                        reseller_id => $c->user->reseller_id,
-                    });
-                }
-                $tmpl = $tmpl->first;
-                unless($tmpl) {
-                    NGCP::Panel::Utils::Message::error(
-                        c => $c,
-                        error => "invalid template id $tmpl_id",
-                        desc  => $c->loc('Invoice template not found'),
-                    );
-                    die;
-                }
-                unless($tmpl->data) {
-                    NGCP::Panel::Utils::Message::error(
-                        c => $c,
-                        error => "invalid template id $tmpl_id, data is empty",
-                        desc  => $c->loc('Invoice template does not have an SVG stored yet'),
-                    );
-                    die;
-                }
-
-                unless($customer->contact->reseller_id == $tmpl->reseller_id) {
-                    NGCP::Panel::Utils::Message::error(
-                        c => $c,
-                        error => "template id ".$tmpl->id." has different reseller than contract id $contract_id",
-                        desc  => $c->loc('Template and customer must belong to same reseller'),
-                    );
-                    die;
-                }
-
-                my $stime = NGCP::Panel::Utils::DateTime::from_string(
-                    delete $form->values->{period}
-                )->truncate(to => 'month');
-                my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
-
-                #this has to be refactored  - select a contract balance instead of a "period"
-                my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
-                        contract => $customer,
-                        stime => $stime,
-                        etime => $etime,);
-                $stime = $balance->start;
-                $etime = $balance->end;
-                my $bm_actual = NGCP::Panel::Utils::ProfilePackages::get_actual_billing_mapping(c => $c, contract => $customer, now => $balance->start);
-                my $billing_profile = $bm_actual->billing_mappings->first->billing_profile;
-
-                my $zonecalls = NGCP::Panel::Utils::Contract::get_contract_zonesfees(
-                    c => $c,
-                    contract_id => $contract_id,
-                    stime => $stime,
-                    etime => $etime,
-                    in => 0,
-                    out => 1,
-                    group_by_detail => 1,
-                );
-                my $calllist_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
-                    c => $c,
-                    customer_contract_id => $contract_id,
-                    stime => $stime,
-                    etime => $etime,
-                );
-                my $calllist = [ map {
-                    my $call = {$_->get_inflated_columns};
-                    $call->{start_time} = $call->{start_time}->epoch;
-                    $call->{destination_user_in} =~s/%23/#/g;
-                    #$call->{destination_user_in} = encode_entities($call->{destination_user_in}, '<>&"#');
-                    $call->{source_customer_cost} += 0.0; # make sure it's a number
-                    NGCP::Panel::Utils::CallList::suppress_cdr_fields($c,$call,$_);
-                } $calllist_rs->all ];
-
-                #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-                #my $billing_profile = $billing_mapping->billing_profile;
-                #try {
-                #   $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
-                #               c => $c,
-                #               profile => $billing_profile,
-                #               contract => $customer,
-                #               stime => $stime,
-                #               etime => $etime
-                #   );
-                #} catch($e) {
-                #    NGCP::Panel::Utils::Message::error(
-                #        c => $c,
-                #        error => $e,
-                #        desc  => $c->loc('Failed to get contract balance.'),
-                #    );
-                #    die;
-                #}
-
-                my $invoice_amounts = NGCP::Panel::Utils::Invoice::get_invoice_amounts(
-                    customer_contract => {$customer->get_inflated_columns},
-                    billing_profile   => {$billing_profile->get_inflated_columns},
-                    contract_balance  => {$balance->get_inflated_columns},
-                );
-                @{$form->values}{qw/amount_net amount_vat amount_total/} = @$invoice_amounts{qw/amount_net amount_vat amount_total/};
-
-                # generate tmp serial here, derive one from after insert
-                $form->values->{serial} = "tmp".time.int(rand(99999));
-                $form->values->{data} = undef;
-
-                #maybe inflation should be applied? Generation failed here, although the latest schema applied.
-                $form->values->{period_start} = $stime->ymd.' '. $stime->hms;
-                $form->values->{period_end} = $etime->ymd.' '. $etime->hms;
-                my $invoice;
-                try {
-                    $invoice = $schema->resultset('invoices')->create($form->values);
-                } catch($e) {
-                    NGCP::Panel::Utils::Message::error(
-                        c => $c,
-                        error => $e,
-                        desc  => $c->loc('Failed to save invoice meta data.'),
-                    );
-                    die;
-                }
-                #sprintf("INV%04d%02d%07d", $stime->year, $stime->month, $invoice->id);
-                #to make it unified for web and cron script
-                my $serial = NGCP::Panel::Utils::Invoice::get_invoice_serial($c,{
-                    invoice=>{
-                        period_start => $stime,
-                        period_end   => $etime,
-                        id           => $invoice->id,
-                }});
-
-                my $svg = $tmpl->data;
-                utf8::decode($svg);
-                my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
-                my $out = '';
-                my $pdf = '';
-                my $vars = {};
-
-                # TODO: index 170 seems the upper limit here, then the calllist breaks
-
-                $vars->{rescontact} = { $customer->contact->reseller->contract->contact->get_inflated_columns };
-                $vars->{customer} = { $customer->get_inflated_columns };
-                $vars->{custcontact} = { $customer->contact->get_inflated_columns };
-                $vars->{billprof} = { $billing_profile->get_inflated_columns };
-
-                NGCP::Panel::Utils::Invoice::prepare_contact_data($vars->{billprof});
-                NGCP::Panel::Utils::Invoice::prepare_contact_data($vars->{custcontact});
-                NGCP::Panel::Utils::Invoice::prepare_contact_data($vars->{rescontact});
-
-                $vars->{invoice} = {
-                    period_start => $stime,
-                    period_end => $etime,
-                    serial => $serial,
-                    amount_net => $form->values->{amount_net},
-                    amount_vat => $form->values->{amount_vat},
-                    amount_total => $form->values->{amount_total},
-                };
-                $vars->{calls} = $calllist,
-                $vars->{zones} = {
-                    totalcost => $balance->cash_balance_interval,
-                    data => [ values(%{ $zonecalls }) ],
-                };
-
-                try {
-
-                    $t->process(\$svg, $vars, \$out) || do {
-                        my $error = $t->error();
-                        my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
-                        NGCP::Panel::Utils::Message::error(
-                            c     => $c,
-                            log   => $msg,
-                            desc  => $c->loc('Failed to render template. Type is [_1], info is [_2].', $error->type, $error->info),
-                        );
-                        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
-                        return;
-                    };
-                    NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$out);
-
-                    NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
-                } catch($e) {
-                    NGCP::Panel::Utils::Message::error(
-                        c     => $c,
-                        log   => $e,
-                        desc  => $c->loc('Failed to render invoice'),
-                    );
-                    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
-                    return;
-                }
-
-                $invoice->update({
-                    serial => $serial,
-                    data => $pdf,
-                });
-                NGCP::Panel::Utils::Message::info(
-                    c     => $c,
-                    cname => 'create',
-                    log   => $vars->{invoice},
-                    desc  => $c->loc('Invoice #[_1] successfully created', $invoice->id),
-                );
             });
+
         } catch($e) {
             NGCP::Panel::Utils::Message::error(
-                c => $c,
+                c     => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create invoice.'),
+                desc  => $c->loc('Failed to create invoice'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
