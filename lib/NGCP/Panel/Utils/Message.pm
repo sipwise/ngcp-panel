@@ -150,6 +150,12 @@ sub error {
         $msg      = "$desc (@$error[0])";
         $usr_text = "$desc (@$error[0])";
     }
+    elsif (ref($error) eq "HASH" && $error->{showdetails})
+    {
+        my $error_msg = $error->{error} ? ' '.$error->{error} : '';
+        $msg      = "$desc ($error->{showdetails}$error_msg)";
+        $usr_text = "$desc ($error->{showdetails})";
+    }
     elsif (not $error->isa('DBIx::Class::Exception'))
     {
         $msg      = "$desc ($error)";
