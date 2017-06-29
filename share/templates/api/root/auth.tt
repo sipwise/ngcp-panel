@@ -8,6 +8,8 @@
   [% END -%]
 </h[% level %]>
 
+[%- current_http_realm = IF is_admin_api ; 'api_admin_http' ; ELSE ; 'api_subscriber_http' ; END -%]
+
 <p>
 The access level of this API user is
 <b>[% SWITCH c.user.roles %]
@@ -21,11 +23,13 @@ The access level of this API user is
 <p>
 Authentication and authorization on the Sipwise NGCP HTTP API is performed via
 <b>HTTP Basic Auth</b>
-[% IF is_admin_api %] or <b>SSL Client Certificates</b>[% END %].
+[% IF is_admin_api %] or <b>SSL Client Certificates</b>[% END -%]
+[% IF is_subscriber_api %] or <b>JSON Web Token (JWT)</b>[% END -%]
+.
 </p>
 
 <h[% level + 1 %]>HTTP Basic Auth</h[% level + 1 %]>
-You can authenticate against the API using your normal <b>NGCP Panel</b> administrator or reseller login credentials with the realm <span>api_admin_http</span>.
+You can authenticate against the API using your normal <b>NGCP Panel</b> [% IF is_admin_api %]administrator or reseller[% ELSE %]subscriber[% END %] login credentials with the realm <span>[% current_http_realm %]</span>.
 
 <h[% level + 2 %]>Examples</h[% level + 2 %]>
 <div class="examples">
@@ -45,7 +49,7 @@ for more information about SSL Certificates.
 
 <h5>Using Perl LWP::UserAgent</h5>
 <p>
-With LWP::UserAgent, set the credentials using the <span>credentials()</span> function. The first parameter is your server (credentials are only sent if the host:port in the request matches the one specified here), the second one is the realm (always <span>api_admin_http</span>), the third one is your username, and the fourth is the password.
+With LWP::UserAgent, set the credentials using the <span>credentials()</span> function. The first parameter is your server (credentials are only sent if the host:port in the request matches the one specified here), the second one is the realm (always <span>[% current_http_realm %]</span>), the third one is your username, and the fourth is the password.
 
 <code>
 #!/usr/bin/perl -w
@@ -55,7 +59,7 @@ use LWP::UserAgent;
 my $ua = LWP::UserAgent->new();
 # set to 0 if using a self-signed certificate
 $ua->ssl_opts(verify_hostname => 1);
-$ua->credentials('example.org:1443', 'api_admin_http', 'myuser', 'mypassword');
+$ua->credentials('example.org:1443', '[% current_http_realm %]', 'myuser', 'mypassword');
 
 my $res = $ua->get('https://example.org:1443/api/');
 if($res->is_success) {
@@ -180,4 +184,44 @@ else {
 
   </div>
 [% END %]
+
+[% IF is_subscriber_api %]
+  <h[% level + 1 %]>JSON Web Token (JWT)</h[% level + 1 %]>
+  Using a dedicated URL, you can request a JSON Web token, which can subsequently be used to authenticate/authorize further API requests. The body of the token contains the following data:
+  <ul>
+    <li><b>subscriber_uuid</b>: a unique identifier of the logged in entity</li>
+    <li><b>username</b>: The web username of the logged in user (without domain)</li>
+  </ul>
+
+  For a detailed introduction and more information see the <a href="https://jwt.io/">JWT Website</a>.
+
+  <h[% level + 2 %]>Examples</h[% level + 2 %]>
+  <div class="examples">
+
+    <h5>Using cURL on the Shell</h5>
+    <p>
+    Send a POST request with a JSON body, containing your valid credentials.
+
+    <code>
+    curl -i -X POST -H 'Content-Type: application/json' 'https://example.org/login_jwt/' --data-binary '{"username":"myuser","password":mypassword}'
+    </code>
+    Response (Example):
+    <code>
+    {"subscriber_id":1,"jwt":"eyJhbGciOiJIUzI1NiJ9.eyJzdWJzY3JpYmVyX3V1aWQiOiIyZDU3YjYwNC0zZjViLTQ2N2UtYjRjMC1lNjhlOWI0N2JhZTAiLCJ1c2VybmFtZSI6IjQzOTkxMDAyIn0.boNrKnCjbh4MyxpcDi8dmnFzWwFh4xm8-aWuKv08SKM"}
+    </code>
+
+    As you can see, the <i>subscriber_id</i> of the logged in user is sent along. This can be used by the API consumer to fetch further details about the subscriber from the appropriate collection.
+
+    Then authenticate to any API requests using the Authorization Header with the Bearer scheme.
+
+    <code>
+    curl -i -H 'Authorization: Bearer &lt;json_web_token&gt;' -X GET --header 'Accept: application/hal+json' 'https://10.15.17.196/api/collection/
+    </code>
+
+    Additionally use the <span>--insecure</span> option if you are testing against a self-signed server certificate.
+    </p>
+
+  </div>
+[% END %]
+
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
