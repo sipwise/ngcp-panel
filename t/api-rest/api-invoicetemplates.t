@@ -20,7 +20,7 @@ $fake_data->set_data_from_script({
             'reseller_id'     =>  sub { return shift->get_id('resellers',@_); },
             'name'            => 'api_test invoice template name'.time(),
             'type'            => 'svg',
-            'data'            => 'api_test email template',
+            'data'            => 'api_test invoice template',
         },
         'query' => ['name'],
     },
