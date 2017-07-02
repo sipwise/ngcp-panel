@@ -30,10 +30,12 @@ sub send_fax {
     if ($c->config->{faxserver}{hosts}) {
         my @hosts = split(/,\s*/, $c->config->{faxserver}{hosts});
         my $port = $c->config->{faxserver}{port};
+        $c->log->debug("faxserver port $port hosts: " . join(',',@hosts));        
         my $ping = new Net::Ping('tcp', 1);
         $ping->port_number($port);
         do {
             my $host = $hosts[rand @hosts];
+            $c->log->debug("pinging $host:$port");
             if ($ping->ping($host)) {
                 $sendfax_args{host} = $host;
                 $sendfax_args{port} = $port;
@@ -66,11 +68,14 @@ sub send_fax {
     $sendfax_args{files} = [];
     if($args{upload}){
         push @{$sendfax_args{files}}, eval { $args{upload}->tempname };
+        $c->log->debug('error to retrieve tempfile of upload: ' . @_) if @_;
     }
     if($args{data}){
         $sendfax_args{input} = [\$args{data}];
     }
     my $client = new NGCP::Fax;
+    use Data::Dumper;
+    $c->log->debug('invoke send_fax with args: ' . Dumper(\%sendfax_args));
     $client->send_fax(\%sendfax_args);
     $c->log->debug("webfax: res=$res;");
 }
