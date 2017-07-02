@@ -2330,7 +2330,7 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
         { name => "direction", search => 1, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")' },
         { name => "source_user", search => 1, title => $c->loc('Caller') },
         { name => "destination_user", search => 1, title => $c->loc('Callee') },
-        { name => "clir", search => 1, title => $c->loc('CLIR') },
+        { name => "clir", search => 0, title => $c->loc('CLIR') },
         { name => "source_customer_billing_zones_history.detail", search => 1, title => $c->loc('Billing zone') },
         { name => "call_status", search => 1, title => $c->loc('Status') },
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
