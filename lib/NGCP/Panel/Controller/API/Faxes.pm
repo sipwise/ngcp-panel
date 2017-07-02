@@ -211,6 +211,7 @@ sub POST :Allow {
         last unless $self->require_wellformed_json($c, 'application/json', $json_utf8 );
         my $resource = JSON::from_json($json_utf8, { utf8 => 0 });
         $resource->{faxfile} = $self->get_upload($c, 'faxfile');
+        $c->log->debug("upload received");
 
         my $form = $self->get_form($c);
         last unless $self->validate_form(
@@ -219,6 +220,7 @@ sub POST :Allow {
             form => $form,
             exceptions => [qw/subscriber_id/],
         );
+        $c->log->debug("form validated");
         my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});
         unless($billing_subscriber) {
             $c->log->error("invalid subscriber id $$resource{subscriber_id} for fax send");
@@ -234,6 +236,7 @@ sub POST :Allow {
             last;
         }
         try {
+            $c->log->debug("contacting fax server");
             my $output = NGCP::Panel::Utils::Fax::send_fax(
                 c => $c,
                 subscriber => $billing_subscriber,
