@@ -33,6 +33,7 @@ sub set_config {
             } } @{ $self->allowed_methods }
         },
         #action_roles => [qw(HTTPMethods)],
+        log_response => 1,
         %{$self->_set_config()},
     );
 }
@@ -186,8 +187,9 @@ sub options {
 
 sub end :Private {
     my ($self, $c) = @_;
-
-    $self->log_response($c);
+    if($self->config->{log_response}){
+        $self->log_response($c);
+    }
 }
 
 sub GET {

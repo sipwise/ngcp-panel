@@ -1,24 +1,15 @@
 package NGCP::Panel::Controller::API::Invoices;
-use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
-
-use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
-use HTTP::Headers qw();
+use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Utils::DateTime;
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Invoices/;
+
+__PACKAGE__->set_config();
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD/];
+    return [qw/GET POST OPTIONS HEAD/];
 }
 
 sub api_description {
@@ -76,126 +67,42 @@ sub query_params {
         {
             param => 'serial',
             description => 'Filter for invoices matching a serial (patterns allowed)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { serial => { like => $q }};
-                },
-                second => sub {},
-            },
+            query_type  => 'string_like',
         },
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Invoices/;
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
 
-sub resource_name{
-    return 'invoices';
-}
-sub dispatch_path{
-    return '/api/invoices/';
-}
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-invoices';
-}
-
-__PACKAGE__->config(
-    action => {
-        map { $_ => {
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
-            Args => 0,
-            Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
-            Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
-    },
-);
-
-sub gather_default_action_roles {
-    my ($self, %args) = @_; my @roles = ();
-    push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
-    return @roles;
-}
-
-sub auto :Private {
-    my ($self, $c) = @_;
-
-    $self->set_body($c);
-    $self->log_request($c);
-}
-
-sub GET :Allow {
-    my ($self, $c) = @_;
-    my $page = $c->request->params->{page} // 1;
-    my $rows = $c->request->params->{rows} // 10;
-    {
-        my $items = $self->item_rs($c);
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
-        my (@embedded, @links);
-        my $form = $self->get_form($c);
-        for my $item ($items->all) {
-            push @embedded, $self->hal_from_item($c, $item, $form);
-            push @links, NGCP::Panel::Utils::DataHalLink->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
-            );
-        }
-        push @links,
-            NGCP::Panel::Utils::DataHalLink->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
-        if(($total_count / $rows) > $page ) {
-            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
-        }
-        if($page > 1) {
-            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
-        }
-
-        my $hal = NGCP::Panel::Utils::DataHal->new(
-            embedded => [@embedded],
-            links => [@links],
-        );
-        $hal->resource({
-            total_count => $total_count,
+    my $contract_id = $form->values->{customer_id};
+    my $tmpl_id = $form->values->{template_id};
+    my $period_start = $form->values->{period_start};
+    my $period_end = $form->values->{period_end};
+    my $period = $form->values->{period};
+    my $item;
+    try {
+        my($contract_id,$customer,$tmpl,$stime,$etime,$invoice_data) = NGCP::Panel::Utils::Invoice::check_invoice_data($c, {
+            contract_id  => $contract_id,
+            tmpl_id      => $tmpl_id,
+            period_start => $period_start,
+            period_end   => $period_end,
+            period       => $period,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
-            HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
+        $item = NGCP::Panel::Utils::Invoice::create_invoice($c,{
+            contract_id  => $contract_id,
+            customer     => $customer,
+            stime        => $stime,
+            etime        => $etime,
+            tmpl         => $tmpl,
+            invoice_data => $invoice_data,
+        });
+    } catch($e) {
+        my $http_code = 'HASH' eq ref $e && $e->{httpcode} ? $e->{httpcode} : HTTP_INTERNAL_SERVER_ERROR;
+        $self->error($c, $http_code, $e);
         return;
     }
-    return;
-}
-
-sub HEAD :Allow {
-    my ($self, $c) = @_;
-    $c->forward(qw(GET));
-    $c->response->body(q());
-    return;
-}
-
-sub OPTIONS :Allow {
-    my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
-
-sub end : Private {
-    my ($self, $c) = @_;
-
-    $self->log_response($c);
+    return $item;
 }
 
 1;
