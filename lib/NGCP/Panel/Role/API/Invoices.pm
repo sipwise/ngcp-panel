@@ -1,16 +1,28 @@
 package NGCP::Panel::Role::API::Invoices;
-use NGCP::Panel::Utils::Generic qw(:all);
+
+use parent qw/NGCP::Panel::Role::API/;
 
 use Sipwise::Base;
+use NGCP::Panel::Utils::Generic qw(:all);
 
-use parent 'NGCP::Panel::Role::API';
-
-
-use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Invoice::InvoiceAPI;
+
+sub item_name{
+    return 'invoice';
+}
+
+sub resource_name{
+    return 'invoices';
+}
+
+sub dispatch_path{
+    return '/api/invoices/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-invoices';
+}
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -29,49 +41,14 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Invoice::InvoiceAPI->new(ctx => $c);
+    return (NGCP::Panel::Form::Invoice::InvoiceAPI->new(ctx => $c),['customer_id','template_id']);
 }
 
-sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
-    my %resource = $item->get_inflated_columns;
-    $resource{customer_id} = delete $resource{contract_id};
-
-    my $hal = NGCP::Panel::Utils::DataHal->new(
-        links => [
-            NGCP::Panel::Utils::DataHalLink->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    $form //= $self->get_form($c);
-
-    $self->validate_form(
-        c => $c,
-        resource => \%resource,
-        form => $form,
-        run => 0,
-        exceptions => [qw/customer_id/],
-    );
-
-    $resource{id} = int($item->id);
-    $hal->resource({%resource});
-    return $hal;
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
+sub hal_links {
+    my($self, $c, $item, $resource, $form) = @_;
+    return [
+        NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)),
+    ];
 }
 
 1;
