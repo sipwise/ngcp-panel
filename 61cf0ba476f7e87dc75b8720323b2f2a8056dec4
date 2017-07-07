@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7adec928_2d74799b",
+        "filename": "lib/NGCP/Panel/Form/Invoice/InvoiceAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-07-07T17:52:12Z",
+      "side": 1,
+      "message": "typo?",
+      "range": {
+        "startLine": 56,
+        "startChar": 29,
+        "endLine": 56,
+        "endChar": 32
+      },
+      "revId": "61cf0ba476f7e87dc75b8720323b2f2a8056dec4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
