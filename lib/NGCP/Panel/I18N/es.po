@@ -98,9 +98,11 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
-#: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Contact.pm
-#: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm
-#: lib/NGCP/Panel/Controller/Device.pm lib/NGCP/Panel/Controller/Domain.pm
+#: lib/NGCP/Panel/Controller/Billing.pm
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+#: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Contract.pm
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Device.pm
+#: lib/NGCP/Panel/Controller/Domain.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 #: lib/NGCP/Panel/Controller/Invoice.pm
@@ -184,7 +186,8 @@ msgid "(Base) IP Address"
 msgstr "Dirección (Base) IP"
 
 #: lib/NGCP/Panel/Controller/Voucher.pm lib/NGCP/Panel/Utils/Billing.pm
-#: lib/NGCP/Panel/Utils/EmergencyMapping.pm lib/NGCP/Panel/Utils/Lnp.pm
+#: lib/NGCP/Panel/Utils/CallList.pm lib/NGCP/Panel/Utils/EmergencyMapping.pm
+#: lib/NGCP/Panel/Utils/Lnp.pm
 msgid ", but skipped the following line numbers: "
 msgstr ", pero omitir los siguientes números: "
 
@@ -385,6 +388,13 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A regular expression matching the From URI."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"A regular expression the dialed number (CDR 'destination user in') has to "
+"match in case of 'outgoing' direction, or the inbound number (CDR 'source "
+"cli') in case of 'incoming' direction."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -990,6 +1000,7 @@ msgid "BLF Key"
 msgstr "Botón BLF"
 
 #: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt
+#: share/templates/calllistsuppression/list.tt
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
 #: share/templates/device/list.tt share/templates/device/preferences.tt
@@ -1532,6 +1543,14 @@ msgstr "Desvíos de llamada configurados"
 msgid "Call List"
 msgstr "Lista de llamadas"
 
+#: share/templates/calllistsuppression/list.tt
+msgid "Call List Suppression"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Call List Suppressions"
+msgstr ""
+
 #. (subscriber.username, subscriber.domain.domain, subscriber.primary_number.cc, subscriber.primary_number.ac, subscriber.primary_number.sn)
 #: share/templates/subscriber/calllist.tt
 msgid "Call List for %1@%2 (%3 %4 %5)"
@@ -1583,6 +1602,26 @@ msgstr "Call From"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Call id"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Call list suppression does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Call list suppression successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Call list suppression successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Call list suppression successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/CallList.pm
+msgid "Call list suppressions successfully uploaded"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2434,6 +2473,10 @@ msgstr ""
 msgid "Create Zone"
 msgstr "Crear Zona"
 
+#: share/templates/calllistsuppression/list.tt
+msgid "Create call list suppression"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Create timestamp"
 msgstr ""
@@ -2704,7 +2747,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/administrator/list.tt
 #: share/templates/billing/fees.tt share/templates/billing/peaktimes.tt
-#: share/templates/billing/zones.tt share/templates/contact/list.tt
+#: share/templates/billing/zones.tt
+#: share/templates/calllistsuppression/list.tt share/templates/contact/list.tt
 #: share/templates/customer/details.tt share/templates/device/list.tt
 #: share/templates/domain/list.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
@@ -3108,6 +3152,7 @@ msgstr ""
 msgid "Dir"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Direction"
 msgstr "Dirección"
@@ -3168,6 +3213,7 @@ msgstr "No molestar"
 msgid "Documentation"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Domain.pm
 #: lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3241,6 +3287,7 @@ msgstr "Descargar certificado CA"
 msgid "Download CA Certificate"
 msgstr "Descargar certificado CA"
 
+#: share/templates/calllistsuppression/list.tt
 #: share/templates/emergencymapping/list.tt share/templates/lnp/list.tt
 msgid "Download CSV"
 msgstr ""
@@ -3293,9 +3340,10 @@ msgstr ""
 
 #: share/templates/administrator/list.tt share/templates/billing/fees.tt
 #: share/templates/billing/list.tt share/templates/billing/peaktimes.tt
-#: share/templates/contact/list.tt share/templates/contract/list.tt
-#: share/templates/customer/details.tt share/templates/customer/list.tt
-#: share/templates/device/list.tt share/templates/emailtemplate/list.tt
+#: share/templates/calllistsuppression/list.tt share/templates/contact/list.tt
+#: share/templates/contract/list.tt share/templates/customer/details.tt
+#: share/templates/customer/list.tt share/templates/device/list.tt
+#: share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/pref_table.tt share/templates/lnp/list.tt
 #: share/templates/ncos/list.tt share/templates/ncos/pattern_list.tt
@@ -3812,6 +3860,10 @@ msgstr ""
 msgid "Failed to create billing zone"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Failed to create call list suppression"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Contact.pm
 msgid "Failed to create contact"
 msgstr ""
@@ -3999,6 +4051,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Failed to delete billing zone"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Failed to delete call list suppression."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -4328,6 +4384,10 @@ msgstr ""
 msgid "Failed to update billing voucher"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Failed to update call list suppression"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update ccmappings"
 msgstr ""
@@ -4513,6 +4573,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Failed to upload LNP numbers"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Failed to upload call list suppressions"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
@@ -4922,6 +4986,10 @@ msgstr "Generar"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Generate Certificate"
 msgstr "Generar Certificado"
+
+#: share/templates/calllistsuppression/list.tt
+msgid "Global Call List Suppressions"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Grandstream"
@@ -5542,6 +5610,10 @@ msgstr ""
 msgid "Invalid billing zone id detected"
 msgstr "Id de zona de facturación inválida detectada"
 
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "Invalid call list suppression id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Contact.pm
 msgid "Invalid contact id detected"
 msgstr "Id de contacto inválido detectado"
@@ -5960,6 +6032,11 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "LNP prefix for the calling peer from looking up the calling party."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Label"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/layout/body.tt
@@ -6409,6 +6486,7 @@ msgstr ""
 msgid "Mobile Push Expiry Timeout"
 msgstr "Tiempo de espera del Push a Móvil"
 
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Mode"
 msgstr "Modo"
@@ -6703,6 +6781,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "No LNP number file specified!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
+msgid "No call list suppression file specified!"
 msgstr ""
 
 #: share/templates/widgets/subscriber_calls_overview.tt
@@ -7231,6 +7313,7 @@ msgid ""
 "Obtained from Yealink."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pattern"
@@ -10524,6 +10607,10 @@ msgid "The detailed name for the zone (e.g. US Mobile Numbers)."
 msgstr "Nombre pormenorizado de la zona (e.g. US Mobile Numbers)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The direction of calls this call list suppression applies to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The direction rule set to apply, one of caller_in, callee_in, caller_out, "
 "callee_out, caller_lnp, callee_lnp"
@@ -10531,6 +10618,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The domain id this subscriber belongs to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The domain of subscribers, this call list suppression applies to. An empty "
+"domain means to apply it to subscribers of any domain."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11182,6 +11275,12 @@ msgid "The reminder recurrence (one of never, weekdays, always)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The replacement string in case of obfuscation mode. Admin and reseller users "
+"see it for filter mode suppressions."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller id for which to download the CSV."
 msgstr ""
 
@@ -11513,6 +11612,13 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber's profile."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The suppression mode. For subscriber and subscriber admins, filtering means "
+"matching calls are not listed at all, while obfuscation means the number is "
+"replaced by the given label."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12027,6 +12133,7 @@ msgstr ""
 msgid "Upload"
 msgstr "Subir"
 
+#: share/templates/calllistsuppression/list.tt
 #: share/templates/emergencymapping/list.tt share/templates/lnp/list.tt
 msgid "Upload CSV"
 msgstr ""
@@ -12041,6 +12148,10 @@ msgstr "Subir tarifas como CSV"
 
 #: share/templates/voucher/list.tt
 msgid "Upload Vouchers as CSV"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Upload calllistsuppression"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12838,6 +12949,10 @@ msgid "destination"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "disabled"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "discard"
 msgstr ""
 
@@ -12867,6 +12982,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "failed"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "filter"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -12956,6 +13075,10 @@ msgstr "entrante"
 #: share/templates/error_page.tt
 msgid "incident number:"
 msgstr "número de incidencia:"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "incoming"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt
 msgid "incoming and outgoing"
@@ -13056,6 +13179,10 @@ msgstr "ninguno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "obfuscate"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
