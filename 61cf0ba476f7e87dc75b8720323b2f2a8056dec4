@@ -22,6 +22,30 @@
       "revId": "61cf0ba476f7e87dc75b8720323b2f2a8056dec4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7adec928_cdd95585",
+        "filename": "lib/NGCP/Panel/Form/Invoice/InvoiceAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-07-08T14:01:50Z",
+      "side": 1,
+      "message": "Yes, thank you. Copy-paste.",
+      "parentUuid": "7adec928_2d74799b",
+      "range": {
+        "startLine": 56,
+        "startChar": 29,
+        "endLine": 56,
+        "endChar": 32
+      },
+      "revId": "61cf0ba476f7e87dc75b8720323b2f2a8056dec4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
