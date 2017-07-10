@@ -35,6 +35,8 @@ sub set_config {
         #action_roles => [qw(HTTPMethods)],
         log_response => 1,
         %{$self->_set_config()},
+        #log_response = 0|1 - don't log response body
+        #own_transaction_control = {post|put|patch|delete|all => 1|0}
     );
 }
 
@@ -54,7 +56,10 @@ sub get {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
         my $header_accept = $c->request->header('Accept');
-        if(defined $header_accept && ($header_accept ne 'application/json')) {
+        if(defined $header_accept 
+            && ($header_accept ne 'application/json') 
+            && ($header_accept ne '*/*')
+        ) {
             $self->return_requested_type($c,$id,$item);
             return;
         }
@@ -76,7 +81,7 @@ sub get {
 
 sub patch {
     my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $guard = $self->get_transaction_control($c);
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
@@ -94,11 +99,14 @@ sub patch {
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form;
-        ($item,$form) = $self->update_item($c, $item, $old_resource, $resource, $form);
+        my ($form, $form_exceptions, $process_extras);
+
+        ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
-        $guard->commit;
+        $self->complete_transaction($c);
+        $self->post_process_commit($c, 'patch', $item, $old_resource, $resource, $form, $process_extras);
+
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
@@ -106,7 +114,7 @@ sub patch {
 
 sub put {
     my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $guard = $self->get_transaction_control($c);
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
@@ -124,12 +132,13 @@ sub put {
         last unless $resource;
         my $old_resource = { $item->get_inflated_columns };
         #TODO: MOVE form exceptions to proper forms as property
-        my ($form, $form_exceptions);
+        my ($form, $form_exceptions, $process_extras);
 
-        ($item, $form, $form_exceptions) = $self->update_item($c, $item, $old_resource, $resource, $form );
+        ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
-        $guard->commit;
+        $self->complete_transaction($c);
+        $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference, 'form_exceptions' => $form_exceptions );
     }
@@ -140,13 +149,15 @@ sub put {
 sub delete {
     my ($self, $c, $id) = @_;
 
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $guard = $self->get_transaction_control($c);
     {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
 
         $self->delete_item($c, $item );
-        $guard->commit;
+
+        $self->complete_transaction($c);
+        $self->post_process_commit($c, 'delete', $item);
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
