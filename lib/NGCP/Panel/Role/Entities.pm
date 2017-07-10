@@ -34,6 +34,8 @@ sub set_config {
         },
         #action_roles => [qw(HTTPMethods)],
         %{$self->_set_config()},
+        #log_response = 0|1 - don't log response body
+        #own_transaction_control->{PUT|POST|PATCH|DELETE} = 0|1 - don't start transaction guard
     );
 }
 
@@ -109,7 +111,7 @@ sub get {
 sub post {
     my ($self) = shift;
     my ($c) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $guard = $self->get_transaction_control($c);
     {
         my $method_config = $self->config->{action}->{POST};
         my ($resource) = $self->get_valid_data(
@@ -119,7 +121,11 @@ sub post {
             uploads    =>  $method_config->{Uploads} // [] ,
         );
         last unless $resource;
-        my ($form, $form_exceptions) = $self->get_form($c);
+        #instead of type parameter get_form can check request method
+        my ($form, $form_exceptions) = $self->get_form($c, 'add');
+        if(!$form_exceptions && $form->can('form_exceptions')){
+            $form_exceptions = $form->form_exceptions;
+        }
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
@@ -136,8 +142,10 @@ sub post {
         my $item = $self->create_item($c, $resource, $form, $process_extras);
         last unless $item;
 
-        $guard->commit;
+        $self->complete_transaction($c);
 
+        $self->post_process_commit($c, 'create', $item, undef, $resource, $form, $process_extras);
+        
         $self->return_representation_post($c, 'item' => $item, 'form' => $form, 'form_exceptions' => $form_exceptions );
     }
     return;
