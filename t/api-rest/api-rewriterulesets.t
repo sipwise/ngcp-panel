@@ -1,3 +1,102 @@
+use strict;
+use warnings;
+
+use Test::Collection;
+use Test::FakeData;
+use Test::More;
+use Data::Dumper;
+
+#init test_machine
+my $test_machine = Test::Collection->new(
+    name => 'rewriterulesets',
+    embedded_resources => []
+);
+$test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
+$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH DELETE)};
+
+my $fake_data =  Test::FakeData->new;
+$fake_data->set_data_from_script({
+    rewriterulesets => {
+        'data' => {
+            reseller_id     => sub { return shift->get_id('resellers',@_); },
+            name            => 'api_test',
+            description     => 'api_test rule set description',
+            caller_in_dpid  => '1',
+            callee_in_dpid  => '2',
+            caller_out_dpid => '3',
+            callee_out_dpid => '4',
+            rewriterules    => [{
+                    match_pattern   => '^1111$',
+                    replace_pattern => '2221',
+                    description     => 'test_api rewrite rule 1',
+                    direction       => 'in',#out
+                    field           => 'caller',#calee
+                    priority        => '2',
+                    enabled         => '1',
+                },{
+                    match_pattern   => '^1112$',
+                    replace_pattern => '2222',
+                    description     => 'test_api rewrite rule 2',
+                    direction       => 'in',#out
+                    field           => 'caller',#calee
+                    priority        => '3',
+                    enabled         => '1',
+                },{
+                    match_pattern   => '^1113$',
+                    replace_pattern => '2223',
+                    description     => 'test_api rewrite rule 3',
+                    direction       => 'in',#out
+                    field           => 'caller',#calee
+                    priority        => '1',
+                    enabled         => '1',
+                },
+            ],
+        },
+        'query' => ['name'],
+        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+    },
+});
+
+#for item creation test purposes /post request data/
+$test_machine->DATA_ITEM_STORE($fake_data->process('rewriterulesets'));
+
+$test_machine->form_data_item( );
+# create 3 new field pbx devices from DATA_ITEM
+my $sets = $test_machine->check_create_correct( 3, sub{ $_[0]->{name} .=  $_[1]->{i}.time(); } );
+$test_machine->check_get2put();
+$test_machine->check_bundle();
+print Dumper $sets;
+for(my $i=0; $i < scalar @$sets; $i++){
+    my $set = $sets->[$i];
+    my $rewriterules = $sets->[$i]->{content}->{rewriterules};
+    my $priority = -1;
+    for(my $j=0; $j < scalar @{$rewriterules}; $j++){
+        my $priority_new = $rewriterules->[$j]->{priority};
+        diag("Check priority order $i:$j: $priority < $priority_new");
+        ok($priority < $priority_new) ;
+    }
+}
+
+# try to create model without reseller_id
+{
+    my ($res, $err) = $test_machine->check_item_post(sub{delete $_[0]->{reseller_id};});
+    is($res->code, 422, "create model without reseller_id");
+    is($err->{code}, "422", "check error code in body");
+    ok($err->{message} =~ /field='reseller_id'/, "check error message in body");
+}
+
+
+$test_machine->clear_test_data_all();
+
+done_testing;
+
+__DATA__
+
+
+
+
+
+
 use warnings;
 use strict;
 
@@ -21,24 +120,7 @@ my $user = $ENV{API_USER} // 'administrator';
 my $pass = $ENV{API_PASS} // 'administrator';
 $ua->credentials($netloc, "api_admin_http", $user, $pass);
 
-# OPTIONS tests
-{
-    $req = HTTP::Request->new('OPTIONS', $uri.'/api/rewriterulesets/');
-    $res = $ua->request($req);
-    is($res->code, 200, "check options request");
-    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-rewriterulesets", "check Accept-Post header in options response");
-    my $opts = JSON::from_json($res->decoded_content);
-    my @hopts = split /\s*,\s*/, $res->header('Allow');
-    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
-    foreach my $opt(qw( GET HEAD OPTIONS POST )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
-    }
-}
-
-my $reseller_id = 1;
-
-# first, we create a rewriteruleset
+t, we create a rewriteruleset
 $req = HTTP::Request->new('POST', $uri.'/api/rewriterulesets/');
 $req->header('Content-Type' => 'application/json');
 $req->header('Prefer' => 'return=representation');
@@ -111,92 +193,6 @@ my @allrules = ();
     my $err = JSON::from_json($res->decoded_content);
     is($err->{code}, "422", "check error code in body");
     like($err->{message}, qr/Invalid 'reseller_id'/, "check error message in body");
-
-    # try to create rule with invalid set_id
-    $req = HTTP::Request->new('POST', $uri.'/api/rewriterules/');
-    $req->header('Content-Type' => 'application/json');
-    $req->content(JSON::to_json({
-        set_id => 999999,
-        description => "test rule $t",
-        direction => "in",
-        field => "caller",
-        match_pattern => "test pattern $t",
-        replace_pattern => "test_replace_$t",
-    }));
-    $res = $ua->request($req);
-    is($res->code, 422, "create rule with invalid set_id");
-    $err = JSON::from_json($res->decoded_content);
-    is($err->{code}, "422", "check error code in body");
-    like($err->{message}, qr/Invalid 'set_id'/, "check error message in body");
-
-    # try to create rule with negative set_id
-    $req = HTTP::Request->new('POST', $uri.'/api/rewriterules/');
-    $req->header('Content-Type' => 'application/json');
-    $req->content(JSON::to_json({
-        set_id => -100,
-        description => "test rule $t",
-        direction => "in",
-        field => "caller",
-        match_pattern => "test pattern $t",
-        replace_pattern => "test_replace_$t",
-    }));
-    $res = $ua->request($req);
-    is($res->code, 422, "create rule with negative set_id");
-    $err = JSON::from_json($res->decoded_content);
-    is($err->{code}, "422", "check error code in body");
-    like($err->{message}, qr/(Invalid|Validation failed).*'set_id'/, "check error message in body");
-
-    # try to create rule with missing match_pattern
-    $req = HTTP::Request->new('POST', $uri.'/api/rewriterules/');
-    $req->header('Content-Type' => 'application/json');
-    $req->content(JSON::to_json({
-        set_id => $rewriteruleset_id,
-        description => "test rule $t",
-        direction => "in",
-        field => "caller",
-        #match_pattern => "test pattern $t",
-        replace_pattern => "test_replace_$t",
-    }));
-    $res = $ua->request($req);
-    is($res->code, 422, "create rule with missing match_pattern");
-    $err = JSON::from_json($res->decoded_content);
-    is($err->{code}, "422", "check error code in body");
-    like($err->{message}, qr/field='match_pattern'/, "check error message in body");
-
-    # try to create rule with invalid direction and field
-    $req = HTTP::Request->new('POST', $uri.'/api/rewriterules/');
-    $req->header('Content-Type' => 'application/json');
-    $req->content(JSON::to_json({
-        set_id => $rewriteruleset_id,
-        description => "test rule $t",
-        direction => "foo",
-        field => "bar",
-        match_pattern => "test pattern $t",
-        replace_pattern => "test_replace_$t",
-    }));
-    $res = $ua->request($req);
-    is($res->code, 422, "create rule with invalid direction and field");
-    $err = JSON::from_json($res->decoded_content);
-    is($err->{code}, "422", "check error code in body");
-    like($err->{message}, qr/field='direction'/, "check error message in body");
-    like($err->{message}, qr/field='field'/, "check error message in body");
-
-    # try to create rule without set_id
-    $req = HTTP::Request->new('POST', $uri.'/api/rewriterules/');
-    $req->header('Content-Type' => 'application/json');
-    $req->content(JSON::to_json({
-        #set_id => $rewriteruleset_id,
-        description => "test rule $t",
-        direction => "in",
-        field => "caller",
-        match_pattern => "test pattern $t",
-        replace_pattern => "test_replace_$t",
-    }));
-    $res = $ua->request($req);
-    is($res->code, 422, "create rule without set_id");
-    $err = JSON::from_json($res->decoded_content);
-    is($err->{code}, "422", "check error code in body");
-    like($err->{message}, qr/Required: 'set_id'|set_id.*required/, "check error message in body");
 
     # iterate over rules collection to check next/prev links and status
     my $nexturi = $uri.'/api/rewriterules/?page=1&rows=5';

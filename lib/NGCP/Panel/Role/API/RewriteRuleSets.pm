@@ -1,41 +1,48 @@
 package NGCP::Panel::Role::API::RewriteRuleSets;
-use NGCP::Panel::Utils::Generic qw(:all);
+
+use parent qw/NGCP::Panel::Role::API/;
 
 use Sipwise::Base;
-
-use parent 'NGCP::Panel::Role::API';
-
-
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
-use JSON::Types;
-use NGCP::Panel::Form::RewriteRule::AdminSet;
+
+use NGCP::Panel::Form::RewriteRule::AdminSetAPI;
 use NGCP::Panel::Form::RewriteRule::ResellerSet;
-use NGCP::Panel::Form::RewriteRule::Rule;
+
+sub item_name{
+    return 'rewriteruleset';
+}
+
+sub resource_name{
+    return 'rewriterulesets';
+}
+
+sub dispatch_path{
+    return '/api/rewriterulesets/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-rewriterulesets';
+}
 
 sub get_form {
     my ($self, $c, $type) = @_;
 
     if ($type && $type eq "rules") {
-        return NGCP::Panel::Form::RewriteRule::Rule->new;
+        return (NGCP::Panel::Form::RewriteRule::RuleAPI->new);
     }
     if($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::RewriteRule::AdminSet->new;
+        return (NGCP::Panel::Form::RewriteRule::AdminSetAPI->new( ctx => $c), [qw/reseller_id/]);
     } else {
-        return NGCP::Panel::Form::RewriteRule::ResellerSet->new;
+        return (NGCP::Panel::Form::RewriteRule::ResellerSet->new( ctx => $c), [qw/reseller_id/]);
     }
 }
 
-sub hal_from_item {
-    my ($self, $c, $item, $type) = @_;
-    my $form;
+sub post_process_hal_resource {
+    my($self, $c, $item, $resource, $form) = @_;
     my $rwr_form = $self->get_form($c, "rules");
-    
-    my %resource = $item->get_inflated_columns;
     my @rewriterules;
-    for my $rule ( $item->voip_rewrite_rules->all ) {
+    for my $rule ( $item->voip_rewrite_rules->search_rs(undef, { order_by => { '-asc' => 'priority' } } )->all ) {
         my $rule_resource = { $rule->get_inflated_columns };
         return unless $self->validate_form(
             c => $c,
@@ -43,71 +50,45 @@ sub hal_from_item {
             resource => $rule_resource,
             run => 0,
         );
+        delete $rule_resource->{set_id};
         push @rewriterules, $rule_resource;
     }
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-    $resource{rewriterules} = \@rewriterules;
-    $hal->resource(\%resource);
-    return $hal;
+    $resource->{rewriterules} = \@rewriterules;
+    return $resource;
 }
 
 sub _item_rs {
     my ($self, $c, $type) = @_;
     my $item_rs;
 
-    if($type eq "rulesets") {
-        if($c->user->roles eq "admin") {
-            $item_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets');
-        } elsif($c->user->roles eq "reseller") {
-            $item_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets')
-                ->search_rs({reseller_id => $c->user->reseller_id});
-        }
-    } else {
-        die "You should not reach this";
+    if($c->user->roles eq "admin") {
+        $item_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets');
+    } elsif($c->user->roles eq "reseller") {
+        $item_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets')
+            ->search_rs({reseller_id => $c->user->reseller_id});
     }
     return $item_rs;
 }
 
-sub item_by_id {
-    my ($self, $c, $id, $type) = @_;
-
-    my $item_rs = $self->item_rs($c, $type);
-    return $item_rs->find($id);
+sub process_form_resource{
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    my $reseller_id;
+    if($c->user->roles eq "admin") {
+        try {
+            $reseller_id = $resource->{reseller_id}
+                 || $c->user->contract->contact->reseller_id;
+         }
+    } elsif($c->user->roles eq "reseller") {
+        $reseller_id = $c->user->reseller_id;
+    }
+    $resource->{reseller_id} = $reseller_id;
+    return $resource;
 }
 
-sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
-
-    delete $resource->{id};
-
-    if($c->user->roles eq "reseller") {
-        $resource->{reseller_id} = $old_resource->{reseller_id}; # prohibit change
-    }
-
-    if($old_resource->{reseller_id} != $resource->{reseller_id}) {
+sub check_resource{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    my $schema = $c->model('DB');
+    if(!$old_resource || ( $old_resource->{reseller_id} != $resource->{reseller_id}) ) {
         my $reseller = $c->model('DB')->resultset('resellers')
             ->find($resource->{reseller_id});
         unless($reseller) {
@@ -115,28 +96,47 @@ sub update_item {
             return;
         }
     }
+    return 1;
+}
 
-    if ($resource->{rewriterules}) {
-        $item->voip_rewrite_rules->delete;
-        my $i = 30;
-        for my $rule (@{ $resource->{rewriterules} }) {
+sub check_duplicate{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    my $schema = $c->model('DB');
+    my $existing_item = $schema->resultset('voip_rewrite_rule_sets')->search_rs({
+        name => $resource->{name}
+    })->first;
+    if ($existing_item && (!$item || $item->id != $existing_item->id)) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Ruleset with this 'name' already exists.");
+        return;
+    }
+    return 1;
+}
+
+sub update_rewriterules{
+    my($self, $c, $item, $rewriterules ) = @_; 
+
+    my $schema = $c->model('DB');
+
+    my $priority = 30;
+    if (ref($rewriterules) ne "ARRAY") {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "rewriterules must be an array.");
+        die;
+    }
+    $item->voip_rewrite_rules->delete;
+    for my $rule (@{ $rewriterules }) {
+        try {
             $item->voip_rewrite_rules->create({
+                priority => $priority++,
                 %{ $rule },
-                priority => $i++,
             });
+        } catch($e) {
+            $c->log->error("failed to create rewriterules: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewrite rules.");
+            die;
         }
     }
 
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-    );
-    #TODO: priority not accessible here
-    $item->update($resource);
-
-    return $item;
 }
-
 1;
 # vim: set tabstop=4 expandtab:
