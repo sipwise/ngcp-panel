@@ -849,7 +849,6 @@ sub hal_from_item {
         $form_exceptions = $params->{form_exceptions};
     }
     my $resource = $self->resource_from_item($c, $item, $form);
-
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
     my $links = $self->hal_links($c, $item, $resource, $form) // [];
     my $hal = NGCP::Panel::Utils::DataHal->new(
@@ -878,6 +877,7 @@ sub hal_from_item {
         );
     }
     $resource->{id} = $self->get_item_id($c, $item);
+    $resource = $self->post_process_hal_resource($c, $item, $resource, $form);
     $hal->resource({%$resource});
     return $hal;
 }
@@ -888,10 +888,13 @@ sub update_item {
     ($form, $form_exceptions, $process_extras) = @{$params}{qw/form form_exceptions process_extras/};
 
     if(!$form){
-        ($form, $form_exceptions) = $self->get_form($c);
+        ($form, $form_exceptions) = $self->get_form($c, 'edit');
     }
 
     if($form){
+        if(!$form_exceptions && $form->can('form_exceptions')){
+            $form_exceptions = $form->form_exceptions;
+        }
         return unless $self->validate_form(
             c => $c,
             resource => $resource,
@@ -964,6 +967,11 @@ sub process_hal_resource {
     return $resource;
 }
 
+sub post_process_hal_resource {
+    my($self, $c, $item, $resource, $form) = @_;
+    return $resource;
+}
+
 sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
     return [];
@@ -1002,7 +1010,55 @@ sub update_item_model{
     return $item;
 }
 
+sub post_process_commit{
+    my($self, $c, $action, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    return;
+}
 
+sub check_transaction_control{
+    my($self, $c, $action, $step, %params) = @_;
+    my $res = 1;
+    my $config = $self->config->{own_transaction_control};
+    if(!$config){
+        $res = 1;
+    }else{
+        if($config->{ALL}){
+            $res = 0;
+        }elsif( ('HASH' eq $self->config->{own_transaction_control}->{$action} && $self->config->{own_transaction_control}->{$action}->{$step} )
+            || $self->config->{own_transaction_control}->{$action}){
+            $res = 0;
+        }
+    }
+    return $res;
+}
+
+sub get_transaction_control{
+    my $self = shift;
+    my($c, $action, $step, %params) = @_;
+    my $schema = $params{schema} // $c->model('DB');
+    $action //= uc $c->request->method;
+    $step //= 'init';
+    if($self->check_transaction_control($c, $action, $step, %params)){
+        #todo: put it into class variables?
+        $c->stash->{transaction_quard} = $schema->txn_scope_guard;
+        return $c->stash->{transaction_quard};
+    }
+    return;
+}
+
+sub complete_transaction{
+    my $self = shift;
+    my($c, $action, $step, %params) = @_;
+    my $schema = $params{schema} // $c->model('DB');
+    my $guard = $params{guard} // $c->stash->{transaction_quard};
+    $action //= uc $c->request->method;
+    $step //= 'commit';
+    if($self->check_transaction_control($c, $action, $step, %params)){
+        $guard->commit;
+        $c->stash->{transaction_quard} = undef;
+    }
+    return;
+}
 #------ accessors ---
 
 sub dispatch_path {
