@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7adec928_cd507561",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-07-10T13:50:33Z",
+      "side": 1,
+      "message": "You see, default value is an empty array:\n\nhere, below:\n\nsub query_params {\n    return [\n    ];\n}\n\nso all controllers, that inherit from Entities (\u003d\u003e API.pm) and don\u0027t define query_params method, should return exactly empty array, not an undefined value.",
+      "range": {
+        "startLine": 776,
+        "startChar": 8,
+        "endLine": 776,
+        "endChar": 29
+      },
+      "revId": "f4ee3b2c64c027a142eb11ff39999b95cca61d75",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
