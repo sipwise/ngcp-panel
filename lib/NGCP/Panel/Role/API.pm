@@ -867,7 +867,8 @@ sub hal_from_item {
         );
     }
     $resource->{id} = $self->get_item_id($c, $item);
-    $hal->resource({%$resource});
+    $resource->{id} = $self->get_item_id($c, $item);
+    $resource = $self->post_process_hal_resource($c, $item, $resource, $form);
     return $hal;
 }
 
@@ -881,6 +882,9 @@ sub update_item {
     }
 
     if($form){
+        if(!$form_exceptions && $form->can('form_exceptions')){
+            $form_exceptions = $form->form_exceptions;
+        }
         return unless $self->validate_form(
             c => $c,
             resource => $resource,
@@ -953,6 +957,11 @@ sub process_hal_resource {
     return $resource;
 }
 
+sub post_process_hal_resource {
+    my($self, $c, $item, $resource, $form) = @_;
+    return $resource;
+}
+
 sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
     return [];
@@ -991,6 +1000,10 @@ sub update_item_model{
     return $item;
 }
 
+sub post_process_commit{
+    my($c, $action, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    return;
+}
 
 #------ accessors ---
 

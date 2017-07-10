@@ -24,6 +24,10 @@ sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-invoices';
 }
 
+sub config_allowed_roles {
+    return [qw/admin reseller/];
+}
+
 sub _item_rs {
     my ($self, $c) = @_;
 

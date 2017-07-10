@@ -35,6 +35,8 @@ sub set_config {
         #action_roles => [qw(HTTPMethods)],
         log_response => 1,
         %{$self->_set_config()},
+        #log_response = 0|1 - don't log response body
+        #own_transaction_control = {post|put|patch|delete|all => 1|0}
     );
 }
 
@@ -94,11 +96,14 @@ sub patch {
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form;
-        ($item,$form) = $self->update_item($c, $item, $old_resource, $resource, $form);
+        my ($form, $form_exceptions, $process_extras);
+
+        ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
         $guard->commit;
+        $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
+
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
@@ -124,12 +129,13 @@ sub put {
         last unless $resource;
         my $old_resource = { $item->get_inflated_columns };
         #TODO: MOVE form exceptions to proper forms as property
-        my ($form, $form_exceptions);
+        my ($form, $form_exceptions, $process_extras);
 
-        ($item, $form, $form_exceptions) = $self->update_item($c, $item, $old_resource, $resource, $form );
+        ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
         $guard->commit;
+        $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference, 'form_exceptions' => $form_exceptions );
     }
@@ -147,6 +153,7 @@ sub delete {
 
         $self->delete_item($c, $item );
         $guard->commit;
+        $self->post_process_commit($c, 'delete', $item);
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
