@@ -772,7 +772,10 @@ sub _get_sorted_query_params {
     #$c->log->debug('request params: ' . Dumper($c->req->query_params));
     #$c->log->debug('request param keys: ' . Dumper(keys %{$c->req->query_params}));
     #$c->log->debug('supported filters: ' . Dumper($query_params));
-    my %query_params_map = map { $_->{param} => $_; } @$query_params;
+    my %query_params_map = ();
+    if (defined $query_params) {
+        %query_params_map = map { $_->{param} => $_; } @$query_params;
+    }
     #$c->log->debug('supported filter map: ' . Dumper(\%query_params_map));
     my @sorted = sort {
         (exists $query_params_map{$a} and exists $query_params_map{$a}->{new_rs}) <=> (exists $query_params_map{$b} and exists $query_params_map{$b}->{new_rs});
