@@ -30,6 +30,7 @@ sub set_config {
         },
         #action_roles => [qw(HTTPMethods)],
         %{$self->_set_config()},
+        #log_response = 0|1 - don't log response body
     );
 }
 
@@ -116,6 +117,9 @@ sub post {
         );
         last unless $resource;
         my ($form, $form_exceptions) = $self->get_form($c);
+        if(!$form_exceptions && $form->can('form_exceptions')){
+            $form_exceptions = $form->form_exceptions;
+        }
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
@@ -133,7 +137,9 @@ sub post {
         last unless $item;
 
         $guard->commit;
-
+        $guard->commit;
+        $self->post_process_commit($c, 'create', $item, undef, $resource, $form, $process_extras);
+        
         $self->return_representation_post($c, 'item' => $item, 'form' => $form, 'form_exceptions' => $form_exceptions );
     }
     return;
