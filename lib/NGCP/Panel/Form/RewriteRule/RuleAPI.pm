@@ -12,10 +12,19 @@ has_field 'set_id' => (
     },
 );
 
+has_field 'priority' => (
+    type => 'PosInteger',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The rewrite rule priority.']
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/set_id match_pattern replace_pattern description direction enabled field/],
+    render_list => [qw/set_id match_pattern replace_pattern description direction enabled priority field/],
 );
 
 1;
