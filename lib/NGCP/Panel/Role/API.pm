@@ -774,7 +774,11 @@ sub _get_sorted_query_params {
     #$c->log->debug('supported filters: ' . Dumper($query_params));
     my %query_params_map = ();
     if (defined $query_params) {
-        %query_params_map = map { $_->{param} => $_; } @$query_params;
+        foreach my $param (@$query_params) {
+            if (exists $param->{param} and defined $param->{param}) {
+                $query_params_map{$param->{param}} = $param;
+            }
+        }
     }
     #$c->log->debug('supported filter map: ' . Dumper(\%query_params_map));
     my @sorted = sort {
