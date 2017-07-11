@@ -325,7 +325,7 @@ sub get_role_credentials{
         $pass //= $ENV{API_PASS_RESELLER} // 'api_test';
         $realm = 'api_admin_http';
     #}elsif($role eq 'subscriber'){
-    ##   I suggest here the same way as for admin and reseller - trough ENV variables
+    ##   I suggest here the same way as for admin and reseller - through ENV variables
     #    $user //= $self->subscriber_user;
     #    $pass //= $self->subscriber_pass;
     #    $realm = 'subscriber';

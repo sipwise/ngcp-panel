@@ -543,7 +543,7 @@ sub form_strings {
     $c->loc('Bootstrap Sync HTTP Method');
     $c->loc('Lock Level');
     $c->loc('active');
-    $c->loc('trough');
+    $c->loc('through');
     $c->loc('Via Route');
     $c->loc('Customer');
     $c->loc('An external id, e.g. provided by a 3rd party provisioning.');

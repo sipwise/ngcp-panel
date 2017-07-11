@@ -12015,7 +12015,7 @@ msgid "topright"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "trough"
+msgid "through"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

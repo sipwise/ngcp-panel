@@ -13372,8 +13372,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 #, fuzzy
-msgid "trough"
-msgstr "trough"
+msgid "through"
+msgstr "through"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "type"

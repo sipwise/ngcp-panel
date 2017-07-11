@@ -144,7 +144,7 @@ has_field 'period.row.hour.from' => (
 );
 has_field 'period.row.hour.to' => (
     type => 'Hour',
-    label => 'trough',
+    label => 'through',
     empty_select => '',
     wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
 );
