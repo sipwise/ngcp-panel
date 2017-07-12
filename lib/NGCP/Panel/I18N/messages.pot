@@ -12015,10 +12015,6 @@ msgid "topright"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "through"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "type"
 msgstr ""
 
