@@ -36,8 +36,8 @@ RUN dpkg --force-depends -i /home/selenium/ngcp-panel-tests-selenium-build-deps_
 RUN apt-get --assume-yes -f install
 
 # the connection between firefox and our selenium tests
-RUN wget https://deb.sipwise.com/files/libselenium-remote-driver-perl_1.20-0.1~bpo9+1sipwise1_all.deb
-RUN dpkg --force-depends -i libselenium-remote-driver-perl_1.20-0.1~bpo9+1sipwise1_all.deb
+RUN wget https://deb.sipwise.com/files/libselenium-remote-driver-perl_1.20-0.1~bpo9+1sipwise1.1_all.deb
+RUN dpkg --force-depends -i libselenium-remote-driver-perl_1.20-0.1~bpo9+1sipwise1.1_all.deb
 RUN apt-get --assume-yes -f install
 RUN wget https://deb.sipwise.com/files/geckodriver-v0.17.0-linux64.tar.gz
 RUN tar xvf geckodriver-v0.17.0-linux64.tar.gz
