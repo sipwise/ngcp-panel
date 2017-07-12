@@ -22,6 +22,30 @@
       "revId": "c959c260a4f053244a9782765b44b89af35f3cf3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7adec928_3395bae4",
+        "filename": "lib/NGCP/Panel/I18N/es.po",
+        "patchSetId": 2
+      },
+      "lineNbr": 13371,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-07-12T10:13:38Z",
+      "side": 0,
+      "message": "Inadvertently, sorry. Fixed in new patchset.",
+      "parentUuid": "7adec928_d3d736be",
+      "range": {
+        "startLine": 13371,
+        "startChar": 0,
+        "endLine": 13371,
+        "endChar": 9
+      },
+      "revId": "c959c260a4f053244a9782765b44b89af35f3cf3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
