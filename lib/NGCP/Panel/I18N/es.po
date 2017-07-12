@@ -13368,12 +13368,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "topright"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-#, fuzzy
-msgid "through"
-msgstr "through"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "type"

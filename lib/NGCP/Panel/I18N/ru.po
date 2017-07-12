@@ -13383,10 +13383,6 @@ msgid "topright"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "through"
-msgstr "через"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "type"
 msgstr ""
 
