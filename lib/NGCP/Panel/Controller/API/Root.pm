@@ -205,10 +205,13 @@ sub GET : Allow {
         foreach my $rel(keys %{ $c->stash->{collections} }) {
             my $r = $c->stash->{collections}->{$rel};
             foreach my $k(qw/
-                    actions item_actions fields query_params sorting_cols
+                    actions item_actions fields sorting_cols
             /) {
                 $body->{$rel}->{$k} = $r->{$k};
             }
+            $body->{$rel}->{query_params} = [
+                map { $_->{param} } @{ $r->{query_params} }
+            ];
         }
         $c->response->body(JSON::to_json($body, { pretty => 1 }));
         $c->response->headers(HTTP::Headers->new(
