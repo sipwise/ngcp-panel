@@ -200,13 +200,30 @@ sub GET : Allow {
 
     }
 
-    $c->stash(template => 'api/root.tt');
-    $c->forward($c->view);
-    $c->response->headers(HTTP::Headers->new(
-        Content_Language => 'en',
-        Content_Type => 'application/xhtml+xml',
-        #$self->collections_link_headers,
-    ));
+    if($c->req->header('Accept') && $c->req->header('Accept') eq 'application/json') {
+        my $body = {};
+        foreach my $rel(keys %{ $c->stash->{collections} }) {
+            my $r = $c->stash->{collections}->{$rel};
+            foreach my $k(qw/
+                    actions item_actions fields query_params sorting_cols
+            /) {
+                $body->{$rel}->{$k} = $r->{$k};
+            }
+        }
+        $c->response->body(JSON::to_json($body, { pretty => 1 }));
+        $c->response->headers(HTTP::Headers->new(
+            Content_Language => 'en',
+            Content_Type => 'application/json',
+        ));
+    } else {
+        $c->stash(template => 'api/root.tt');
+        $c->forward($c->view);
+        $c->response->headers(HTTP::Headers->new(
+            Content_Language => 'en',
+            Content_Type => 'application/xhtml+xml',
+            #$self->collections_link_headers,
+        ));
+    }
     return;
 }
 
