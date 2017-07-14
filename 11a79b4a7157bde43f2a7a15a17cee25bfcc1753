@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7adec928_1b48d45a",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-07-14T12:01:00Z",
+      "side": 1,
+      "message": "Don\u0027t we want to show query string or sorting fields?",
+      "range": {
+        "startLine": 216,
+        "startChar": 12,
+        "endLine": 216,
+        "endChar": 53
+      },
+      "revId": "11a79b4a7157bde43f2a7a15a17cee25bfcc1753",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
