@@ -1,3 +1,73 @@
+ngcp-panel (5.4.1.0+0~mr5.4.1.0) unstable; urgency=medium
+
+  [ Guillem Jover ]
+  * [9f5f4a6] TT#16450 Demote libngcp-rating-inew-perl to a Recommends
+  * [5c3f1eb] TT#2399 Add a dependency on grafana
+
+  [ Andreas Granig ]
+  * [8c80ba6] TT#2399 Switch from RRD page to grafana
+  * [3ac41ba] TT#12264 Use outbound socket on peer registration
+  * [168f6d5] TT#2399 Link to grafana db dashboard
+  * [abe78df] TT#18754 Implement json response for api-root
+  * [be32192] TT#18754 Fix jsonifying of query params in api-root
+
+  [ Sipwise Jenkins Builder ]
+  * [0884da1] TT#4166 I18N dump: snapshot 2017.05.27-03.14.58
+  * [7f81877] TT#4166 I18N dump: snapshot 2017.06.01-02.53.56
+  * [ecf16f4] TT#4166 I18N dump: snapshot 2017.06.14-03.04.46
+  * [587d20e] TT#4166 I18N dump: snapshot 2017.06.21-02.58.07
+  * [41bb993] TT#4166 I18N dump: snapshot 2017.06.24-02.53.53
+  * [7e09bfc] TT#4166 I18N dump: snapshot 2017.07.07-02.08.04
+
+  [ Richard Fuchs ]
+  * [3ea205a] TT#14570 don't cancel rating sessions that were not established
+  * [863a125] TT#14570 supply SMS session cancel reason (no credit)
+
+  [ Gerhard Jungwirth ]
+  * [f1e8892] TT#11548 disallow non-pbx customers to create customer soundsets
+  * [4ab72cb] TT#13784 add peering rules stopper flag
+  * [00f8334] MT#16806 show maintenance mode banner
+  * [106f65b] TT#17258 add active flag to reminders
+  * [ba3548d] TT#16003 implement JWT auth
+  * [12c323f] TT#16003 document api jwt login
+
+  [ Alexander Lutay ]
+  * [39e4469] TT#16910 Remove unnecessary debian/missing-sources/stanzaio_v7.3.4.tar.gz
+  * [a09f683] TT#17761 Add ghostscript as dependency to ngcp-panel for invoice generation
+  * [cccc6a9] TT#17032 prove STDERR output is not a part of Jenkins's result XML
+
+  [ Andrew Pogrebennyk ]
+  * [258edb9] TT#16909 fix sound cache reload when loading default files
+
+  [ Irina Peshinskaya ]
+  * [337e027] TT#17068 Fix phone symbol # in the generated invoice
+  * [fd79802] TT#17068 Move # processing to TT
+  * [a16cdad] TT#7515 Fix directory template format for the polycom
+
+  [ Rene Krenn ]
+  * [da6390d] TT#5557 timeline views for billing mappings
+  * [dbb551b] TT#18306 exclude panel callist clir from search
+  * [d6632b5] TT#14755 call list suppressions
+  * [f0d1350] TT#18308 more detailed POST /api/faxes debug msgs
+  * [f4ee3b2] TT#14755 safe filter param sorting
+  * [34d8404] TT#14755 filter param sorting safe against malformed params
+
+  [ Victor Seva ]
+  * [8994522] TT#17502 docker: fix relative path from new context
+  * [eec8dd3] TT#17642 docker: follow policy to include NGCP repository
+
+  [ Michael Prokop ]
+  * [2b021ef] TT#17853 Fix selenium related toolchain, replacing selenium with geckodriver
+  * [67f2e54] TT#17853 Use Selenium::Remote::Driver with further patches to address bugs/incompatibilities
+
+  [ raxelsen ]
+  * [c959c26] TT#18501 Fix ngcp-panel typo in timeset dialogue
+
+  [ Sergii Kipot ]
+  * [05d3447] TT#18501 Fix c959c260: Remove duplicate message definition
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Jul 2017 22:45:13 +0200
+
 ngcp-panel (5.4.0.0+0~mr5.4.0.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
