@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7adec928_fef076cb",
+        "filename": "debian/control",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2017-07-17T10:56:17Z",
+      "side": 1,
+      "message": "package is missing in jessie, available jessie-backports+ only",
+      "range": {
+        "startLine": 55,
+        "startChar": 1,
+        "endLine": 55,
+        "endChar": 18
+      },
+      "revId": "7560cb7fa8278f9f034c2ce77518e218682d76de",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
