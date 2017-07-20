@@ -116,6 +116,9 @@ sub post {
             media_type =>  $method_config->{ContentType} // 'application/json',
             uploads    =>  $method_config->{Uploads} // [] ,
         );
+        use Data::Dumper;
+        $c->log->debug("post:1:");
+        $c->log->debug(Dumper($resource));
         last unless $resource;
         #instead of type parameter get_form can check request method
         my ($form, $form_exceptions) = $self->get_form($c, 'add');
