@@ -171,6 +171,9 @@ sub validate_form {
     my $run = $params{run} // 1;
     my $exceptions = $params{exceptions} // [];
     my $form_params = $params{form_params} // {};
+        use Data::Dumper;
+        $c->log->debug("validate_form:1:");
+        $c->log->debug(Dumper($resource));
 
     if(!@$exceptions && $form->can('validation_exceptions')){
         $exceptions = $form->validation_exceptions;
@@ -199,6 +202,9 @@ sub validate_form {
     if($run) {
         # check keys/vals
         $form->process(params => $resource, posted => 1, %{$form_params} );
+        use Data::Dumper;
+        $c->log->debug("validate_form:2:");
+        $c->log->debug(Dumper($resource));
         unless($form->validated) {
             my $e = join '; ', map {
                 my $in = (defined $_->input && ref $_->input eq 'HASH' && exists $_->input->{id}) ? $_->input->{id} : ($_->input // '');
@@ -227,7 +233,10 @@ sub validate_form {
 
 sub validate_fields {
     my ($self, $c, $resource, $fields, $run) = @_;
-
+    use Data::Dumper;
+    $c->log->debug(Dumper("validate_fields"));
+    $c->log->debug(Dumper($resource));
+    $c->log->debug(Dumper([keys %$fields]));
     for my $k (keys %{ $resource }) {
         #if($resource->{$k}->$_isa('JSON::XS::Boolean') || $resource->{$k}->$_isa('JSON::PP::Boolean')) {
         if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
@@ -259,6 +268,9 @@ sub validate_fields {
         if (defined $resource->{$k} &&
                 $fields->{$k}->$_isa('HTML::FormHandler::Field::Repeatable') &&
                 "ARRAY" eq ref $resource->{$k} ) {
+    $c->log->debug(Dumper("Repeatable"));
+    $c->log->debug(Dumper([keys %$fields]));
+    $c->log->debug(Dumper($k));
             for my $elem (@{ $resource->{$k} }) {
                 my ($subfield_instance) = $fields->{$k}->fields;
                 my %subfields = map { $_->name => $_ } $subfield_instance->fields;
