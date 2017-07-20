@@ -86,7 +86,7 @@ for(my $i=0; $i < scalar @$sets; $i++){
 }
 
 
-$test_machine->clear_test_data_all();
+#$test_machine->clear_test_data_all();
 
 done_testing;
 
