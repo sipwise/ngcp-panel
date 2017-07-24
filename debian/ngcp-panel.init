@@ -77,8 +77,8 @@ _start() {
     log_end_msg 0
     exit 0
   fi
-  rm -f $PIDFILE 2>/dev/null
   check_for_ongoing_startup || return 0
+  rm -f "$PIDFILE" 2>/dev/null
   start-stop-daemon --start --quiet \
         --pidfile $PIDFILE \
         --exec $DAEMON --chdir $HOMEDIR \
