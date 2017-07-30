@@ -18,6 +18,14 @@ sub api_description {
     return 'Shows a journal of sent and received messages. New messages can be sent by issuing a POST request to the api collection.';
 }
 
+sub dispatch_path{
+    return '';
+}
+
+sub _set_config{
+    return {};
+}
+
 sub query_params {
     return [
         {
