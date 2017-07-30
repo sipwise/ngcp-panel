@@ -48,14 +48,16 @@ sub build_destinations {
         push @options, { label => 'Call Through', value => 'callthrough' }
             if($c->config->{features}->{callthrough});
         if($c->config->{features}->{cloudpbx} && $c->stash->{pbx}){
-            push @options, 
+            push @options,
                 { label => 'Auto Attendant', value => 'autoattendant' },
                 { label => 'Office Hours Announcement', value => 'officehours' };
         }
-        push @options, 
+        push @options,
             { label => 'Custom Announcement', value => 'customhours' };
-         push @options, { label => 'Local Subscriber', value => 'localuser' }
+        push @options, { label => 'Local Subscriber', value => 'localuser' }
             if($c->config->{features}->{callthrough} || $c->config->{features}->{callingcard} );
+        push @options, { label => 'Secretary Manager', value => 'secretarymanager' }
+            if($c->config->{features}->{secretary_manager});
     }
     push @options, { label => 'URI/Number', value => 'uri' };
 
@@ -119,7 +121,7 @@ sub validate_destination{
     my ( $self, $field ) = @_;
     my $result = 0;
     (my($uri_field)) = grep {'destination' eq $_->name} ($field->field('uri')->fields);
-    if( 'uri' eq $field->field('destination')->value 
+    if( 'uri' eq $field->field('destination')->value
         && !$uri_field->value ){
         $uri_field->add_error($uri_field->label . " is empty");
         $result = 0;
