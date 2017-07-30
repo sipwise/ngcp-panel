@@ -40,7 +40,7 @@ sub cfs {
             my @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
                 { order_by => { -asc => 'priority' }})->all;
             foreach my $d (@dset) {
-                my $as_string = NGCP::Panel::Utils::Subscriber::destination_as_string($c, $d);
+                my $as_string = NGCP::Panel::Utils::Subscriber::destination_as_string($c, $d, $prov_subscriber);
                 delete @$d{keys %$d};
                 $d->{as_string} = $as_string;
             }

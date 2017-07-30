@@ -367,9 +367,13 @@ sub get_uploads {
 sub require_preference {
     my ($self, $c) = @_;
     return 'minimal' unless $c->request->header('Prefer');
+    my $ngcp_ua_header = $c->request->header("NGCP-UserAgent") // '';
     my @preference = grep { 'return' eq $_->[0] } split_header_words($c->request->header('Prefer'));
     return $preference[0][1]
-        if 1 == @preference && ('minimal' eq $preference[0][1] || 'representation' eq $preference[0][1]);
+        if 1 == @preference && $preference[0][1] =~ /^(minimal|representation)$/;
+    return $preference[0][1]
+        if 1 == @preference && $preference[0][1] eq 'internal' &&
+                $ngcp_ua_header eq "NGCP::API::Client";
     $self->error($c, HTTP_BAD_REQUEST, "Header 'Prefer' must be either 'return=minimal' or 'return=representation'.");
 }
 
@@ -429,6 +433,13 @@ sub valid_id {
     my ($self, $c, $id) = @_;
     return 1 if is_int($id);
     $self->error($c, HTTP_BAD_REQUEST, "Invalid id in request URI");
+    return;
+}
+
+sub valid_uuid {
+    my ($self, $c, $uuid) = @_;
+    return 1 if $uuid =~ /^[a-f0-9\-]+$/;
+    $self->error($c, HTTP_BAD_REQUEST, "Invalid uuid in request URI");
     return;
 }
 
