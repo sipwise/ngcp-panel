@@ -661,12 +661,14 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             }
             my @sources = ();
             my $sset_name = undef;
+            my $sset_mode = undef;
             if($map->source_set) {
                 @sources = map { { $_->get_columns } } $map->source_set->voip_cf_sources->all;
                 foreach my $s(@sources) {
                     $s->{as_string} = $s->{source};
                 }
                 $sset_name = $map->source_set->name;
+                $sset_mode = $map->source_set->mode;
             }
             push @{ $cfs->{$type} }, {
                 destinations => \@dset,
@@ -674,7 +676,8 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
                 periods => \@tset,
                 tset_name => $tset_name,
                 sources => \@sources,
-                sset_name => $sset_name };
+                sset_name => $sset_name,
+                sset_mode => $sset_mode };
         }
     }
     $c->stash(cf_destinations => $cfs);
@@ -1588,7 +1591,7 @@ sub preferences_callforward_sourceset :Chained('base') :PathPart('preferences/so
                 foreach my $s(@sources) {
                     $s->{as_string} = $s->{source};
                 }
-                push @sets, { name => $set->name, id => $set->id, sources => \@sources };
+                push @sets, { name => $set->name, mode => $set->mode, id => $set->id, sources => \@sources };
             }
         }
     }
@@ -1634,6 +1637,7 @@ sub preferences_callforward_sourceset_create :Chained('base') :PathPart('prefere
                 if(@fields) {
                     my $set = $prov_subscriber->voip_cf_source_sets->create({
                         name => $form->field('name')->value,
+                        mode => $form->field('mode')->value,
                     });
                     foreach my $src(@fields) {
                         my $s = $src->field('source')->value;
@@ -1708,6 +1712,7 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
     my $params;
     unless($posted) {
         $params->{name} = $set->name;
+        $params->{mode} = $set->mode;
         my @sources;
         for my $src($set->voip_cf_sources->all) {
             push @sources, {
@@ -1751,6 +1756,9 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
                 }
                 if($form->field('name')->value ne $set->name) {
                     $set->update({name => $form->field('name')->value});
+                }
+                if($form->field('mode')->value ne $set->mode) {
+                    $set->update({mode => $form->field('mode')->value});
                 }
                 $set->voip_cf_sources->delete_all;
 
