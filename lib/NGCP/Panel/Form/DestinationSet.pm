@@ -71,6 +71,8 @@ sub build_destinations {
             { label => 'Custom Announcement', value => 'customhours' };
         push @options, { label => 'Local Subscriber', value => 'localuser' }
             if($c->config->{features}->{callthrough} || $c->config->{features}->{callingcard} );
+        push @options, { label => 'Do not Disturb', value => 'dnd' }
+            if($c->config->{features}->{dnd});
     }
     push @options, { label => 'URI/Number', value => 'uri' };
 
