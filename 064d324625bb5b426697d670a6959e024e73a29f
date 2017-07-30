@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5adbc538_43bfdad0",
+        "filename": "lib/NGCP/Panel/Form/CFSourceSetAPI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-07-30T19:39:35Z",
+      "side": 1,
+      "message": "label, for apidoc",
+      "revId": "064d324625bb5b426697d670a6959e024e73a29f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
