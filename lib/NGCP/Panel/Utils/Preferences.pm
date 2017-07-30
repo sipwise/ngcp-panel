@@ -724,32 +724,6 @@ sub create_preference_form {
             }
             $c->response->redirect($base_uri);
             return 1;
-        } elsif ($attribute eq "lock") {
-            my $v = $form->field($attribute)->value;
-            #undef $v if (defined $v && $v eq '');
-            try {
-                NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
-                        c => $c,
-                        prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
-                        level => $v,
-                    );
-                NGCP::Panel::Utils::Message::info(
-                    c => $c,
-                    data  => \%log_data,
-                    desc  => $c->loc('Preference [_1] successfully updated', $attribute),
-                );
-            } catch($e) {
-                   NGCP::Panel::Utils::Message::error(
-                        c => $c,
-                        error => $e,
-                        data  => \%log_data,
-                        desc  => $c->loc('Failed to update preference [_1]', $attribute),
-                    );
-                    $c->response->redirect($base_uri);
-                    return 1;
-            }
-            $c->response->redirect($base_uri);
-            return 1;
         } else {
             if( ($c->stash->{preference_meta}->data_type ne 'enum' &&
                 (!defined $form->field($attribute)->value || $form->field($attribute)->value eq '')) ||
@@ -1132,10 +1106,6 @@ sub set_provisoning_voip_subscriber_first_int_attr_value {
     my $c = $params{c};
     my $prov_subscriber= $params{prov_subscriber};
     my $new_value = $params{value};
-    if (defined $new_value) {
-        $new_value =~ s/^\s+|\s+$//g;
-        undef $new_value if $new_value eq '';
-    }
     my $attribute = $params{attribute};
 
     return unless $prov_subscriber;
@@ -1147,12 +1117,12 @@ sub set_provisoning_voip_subscriber_first_int_attr_value {
     );
     try {
         if($rs->first) {
-            if(($new_value // 0) == 0) {
+            if($new_value == 0) {
                 $rs->first->delete;
             } else {
                 $rs->first->update({ value => $new_value });
             }
-        } elsif(($new_value // 0) > 0) {
+        } elsif($new_value > 0) {
             $rs->create({ value => $new_value });
         } # nothing to do for level 0, if no lock is set yet
     } catch($e) {

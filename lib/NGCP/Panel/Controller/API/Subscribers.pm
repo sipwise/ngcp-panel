@@ -231,6 +231,17 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'uuid',
+            description => 'Fetch a subscriber by uuid.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'uuid' => $q };
+                },
+                second => sub {},
+            },
+        },
     ];
     foreach my $field (qw/create_timestamp modify_timestamp/){
         push @$params, {
