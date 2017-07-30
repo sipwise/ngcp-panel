@@ -27,6 +27,19 @@ has_field 'name' => (
     },
 );
 
+has_field 'mode' => (
+    type => 'Select',
+    options => [
+        {value => 'whitelist', label => 'whitelist'},
+        {value => 'blacklist', label => 'blacklist'},
+    ],
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The source set mode']
+    },
+);
+
 has_field 'sources' => (
     type => 'Repeatable',
     element_attr => {

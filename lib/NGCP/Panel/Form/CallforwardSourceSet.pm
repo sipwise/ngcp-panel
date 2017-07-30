@@ -21,6 +21,19 @@ has_field 'name' => (
     },
 );
 
+has_field 'mode' => (
+    type => 'Select',
+    options => [
+        {value => 'whitelist', label => 'whitelist'},
+        {value => 'blacklist', label => 'blacklist'},
+    ],
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The source set mode']
+    },
+);
+
 has_field 'source' => (
     type => 'Repeatable',
     setup_for_js => 1,
@@ -69,7 +82,7 @@ has_field 'source_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(name source source_add)],
+    render_list => [qw(name mode source source_add)],
 );
 
 has_field 'save' => (

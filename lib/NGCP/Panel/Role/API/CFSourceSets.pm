@@ -125,6 +125,7 @@ sub update_item {
     try {
         $item->update({
                 name => $resource->{name},
+                mode => $resource->{mode},
                 subscriber_id => $subscriber->id,
             })->discard_changes;
         $item->voip_cf_sources->delete;

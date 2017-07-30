@@ -348,7 +348,8 @@ sub _contents_from_cfm {
         push @sources, {$source->get_inflated_columns};
         delete @{$sources[-1]}{'source_set_id', 'id'};
     }
-    return {times => \@times, destinations => \@destinations, sources => \@sources};
+    return {times => \@times, destinations => \@destinations,
+            sources => \@sources, sources_mode => $sourceset_item->mode};
 }
 
 1;
