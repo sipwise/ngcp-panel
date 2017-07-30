@@ -27,6 +27,14 @@ has_field 'name' => (
     },
 );
 
+has_field 'mode' => (
+    type => 'Select',
+    options => [
+        {value => 'whitelist', label => 'whitelist'},
+        {value => 'blacklist', label => 'blacklist'},
+    ],
+);
+
 has_field 'sources' => (
     type => 'Repeatable',
     element_attr => {

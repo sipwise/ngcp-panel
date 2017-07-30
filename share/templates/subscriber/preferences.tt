@@ -185,7 +185,7 @@ $( document ).ready(function() {
                                         [% c.loc('all sources'); %]
                                         [% jdx = jdx + 1 %]
                                     [% ELSE -%]
-                                        [% maps.sset_name -%]
+                                        [% maps.sset_name -%] ([% maps.sset_mode -%])
                                         [% sset_unique_id = cf.type _ idx _ jdx _ maps.id _ 's' -%]
                                         <a href="#" data-toggle="modal" data-target="#[% sset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
                                         [% modal_header_dynamic(m.header = c.loc('Sourceset "[_1]" Details', maps.sset_name), m.id=sset_unique_id) %]
@@ -988,6 +988,7 @@ $( document ).ready(function() {
         <thead>
             <tr>
                 <th>[% c.loc('Name') %]</th>
+                <th>[% c.loc('Mode') %]</th>
                 <th>[% c.loc('Values') %]</th>
                 <th></th>
             </tr>
@@ -996,6 +997,7 @@ $( document ).ready(function() {
         [% FOREACH set IN cf_source_sets -%]
             <tr class="sw_action_row">
                 <td>[% set.name %]</td>
+                <td>[% set.mode %]</td>
                 <td>
                     [% FOREACH source IN set.sources -%]
                         [% source.as_string %]<br/>
