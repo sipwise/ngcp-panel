@@ -84,6 +84,18 @@ sub destination_as_string {
         return "Office Hours Announcement";
     } elsif($dest =~ /^sip:custom-hours\@app\.local$/) {
         return "Custom Announcement";
+    } elsif($dest =~ /\@secretarymanager\.local$/) {
+        my $sn_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'secretary_numbers',
+                prov_subscriber => $subscriber);
+        my @sn_list = ();
+        if ($sn_rs) {
+            foreach my $l ($sn_rs->all) {
+                next if $l->value =~ /^#/;
+                push @sn_list, $l->value;
+            }
+        }
+        return "SM to " . (@sn_list ? join(',', @sn_list) : 'unknown');
     } else {
         my $d = $dest;
         $d =~ s/^sips?://;
@@ -1205,6 +1217,8 @@ sub field_to_destination {
         $d = "sip:office-hours\@app.local";
     } elsif($d eq "customhours") {
         $d = "sip:custom-hours\@app.local";
+    } elsif($d eq "secretarymanager") {
+        $d = "sip:$number\@secretarymanager.local";
     } else {
         my $v = $uri;
         $v =~ s/^sips?://;
@@ -1245,6 +1259,8 @@ sub destination_to_field {
         $d = 'officehours';
     } elsif($d =~ /^sip:custom-hours\@app\.local$/) {
         $d = 'customhours';
+    } elsif($d =~ /\@secretarymanager\.local$/) {
+        $d = 'secretarymanager';
     } else {
         $duri = $d;
         $d = 'uri';
