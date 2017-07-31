@@ -1,3 +1,15 @@
+ngcp-panel (5.4.2.0+0~mr5.4.2.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [8bc8f74] TT#14755 remove call list suppression feature
+
+  [ Alexander Lutay ]
+  * [ba904ed] TT#19300 Fix ngcp-panel start race condition on server boot
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 31 Jul 2017 14:36:20 +0200
+
 ngcp-panel (5.4.1.0+0~mr5.4.1.0) unstable; urgency=medium
 
   [ Guillem Jover ]
