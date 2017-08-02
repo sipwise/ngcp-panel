@@ -327,6 +327,7 @@ sub _contents_from_cfm {
     my $timeset_item = $cfm_item->time_set;
     my $dset_item = $cfm_item->destination_set;
     my $sourceset_item = $cfm_item->source_set;
+    my $sourceset_mode = $sourceset_item ? $sourceset_item->mode : 'whitelist';
     for my $time ($timeset_item ? $timeset_item->voip_cf_periods->all : () ) {
         push @times, {$time->get_inflated_columns};
         delete @{$times[-1]}{'time_set_id', 'id'};
@@ -349,7 +350,7 @@ sub _contents_from_cfm {
         delete @{$sources[-1]}{'source_set_id', 'id'};
     }
     return {times => \@times, destinations => \@destinations,
-            sources => \@sources, sources_mode => $sourceset_item->mode};
+            sources => \@sources, sources_mode => $sourceset_mode};
 }
 
 1;
