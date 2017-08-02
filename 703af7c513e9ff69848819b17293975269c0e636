@@ -22,6 +22,30 @@
       "revId": "703af7c513e9ff69848819b17293975269c0e636",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5adbc538_acdc0b76",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 18
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-08-02T13:46:09Z",
+      "side": 1,
+      "message": "Sorry, I didn\u0027t find where is the second place?",
+      "parentUuid": "5adbc538_71abc089",
+      "range": {
+        "startLine": 18,
+        "startChar": 21,
+        "endLine": 18,
+        "endChar": 86
+      },
+      "revId": "703af7c513e9ff69848819b17293975269c0e636",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
