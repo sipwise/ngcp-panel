@@ -4833,6 +4833,13 @@ msgstr "Per Contratto #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"For a list of possible values, see the \"lock\" field in the API doc for /"
+"api/subscribers. A lock value of \"none\" will not be returned to the "
+"caller. Read-only setting."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "For incoming calls from this peer, find the destination subscriber by a uuid "
 "parameter in R-URI which has been sent in Contact at outbound registration."
 msgstr ""
@@ -6710,6 +6717,7 @@ msgstr "Timeout Scadenza Mobile Push"
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: share/templates/subscriber/preferences.tt
 msgid "Mode"
 msgstr "Modo"
 
@@ -8936,15 +8944,6 @@ msgstr "Aggiungi Notifca Rinnovo Chiave Segreta"
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Security Bans"
 msgstr "Blocchi di Sicurezza"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"See \"lock_voip_account_subscriber\" for a list of possible values. A lock "
-"value of \"none\" will not be returned to the caller. Read-only setting."
-msgstr ""
-"Vedere \"lock_voip_account_subscriber\" per una lista di possibili valori. "
-"Un valore di blocco \"none\" non sarà ritornato al chiamante. Valore in Sola-"
-"Lettura."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Select"
@@ -11807,6 +11806,10 @@ msgstr ""
 "associato al costo di fatturazione del rivenditore."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The source set mode"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The start of the invoice period."
 msgstr "L´inizio del periodo di tariffazione."
 
@@ -13864,6 +13867,15 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid ""
+#~ "See \"lock_voip_account_subscriber\" for a list of possible values. A "
+#~ "lock value of \"none\" will not be returned to the caller. Read-only "
+#~ "setting."
+#~ msgstr ""
+#~ "Vedere \"lock_voip_account_subscriber\" per una lista di possibili "
+#~ "valori. Un valore di blocco \"none\" non sarà ritornato al chiamante. "
+#~ "Valore in Sola-Lettura."
 
 #~ msgid "Disable NAT SIP pings"
 #~ msgstr "Disabilita NAT SIP pings"

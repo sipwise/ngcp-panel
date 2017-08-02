@@ -4690,6 +4690,13 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"For a list of possible values, see the \"lock\" field in the API doc for /"
+"api/subscribers. A lock value of \"none\" will not be returned to the "
+"caller. Read-only setting."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "For incoming calls from this peer, find the destination subscriber by a uuid "
 "parameter in R-URI which has been sent in Contact at outbound registration."
 msgstr ""
@@ -6494,6 +6501,7 @@ msgstr "Mobile Push Gültigkeits-Zeitüberschreitung"
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: share/templates/subscriber/preferences.tt
 msgid "Mode"
 msgstr "Modus"
 
@@ -8693,14 +8701,6 @@ msgstr ""
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Security Bans"
 msgstr "Sicherheits-Sperren"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"See \"lock_voip_account_subscriber\" for a list of possible values. A lock "
-"value of \"none\" will not be returned to the caller. Read-only setting."
-msgstr ""
-"Siehe \"lock_voip_account_subscriber\" für eine Liste möglicher Werte. Ein "
-"Wert von \"none\" wird nicht zurückgeliefert. Schreibgeschützt."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Select"
@@ -11428,6 +11428,10 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The source set mode"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The start of the invoice period."
 msgstr "Der Start der Rechnungsperiode."
 
@@ -13442,6 +13446,14 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid ""
+#~ "See \"lock_voip_account_subscriber\" for a list of possible values. A "
+#~ "lock value of \"none\" will not be returned to the caller. Read-only "
+#~ "setting."
+#~ msgstr ""
+#~ "Siehe \"lock_voip_account_subscriber\" für eine Liste möglicher Werte. "
+#~ "Ein Wert von \"none\" wird nicht zurückgeliefert. Schreibgeschützt."
 
 #~ msgid "Disable NAT SIP pings"
 #~ msgstr "NAT SIP Pings deaktivieren"

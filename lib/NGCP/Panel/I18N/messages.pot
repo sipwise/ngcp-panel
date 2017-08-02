@@ -4146,6 +4146,10 @@ msgid "For Contract #"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "For a list of possible values, see the \"lock\" field in the API doc for /api/subscribers. A lock value of \"none\" will not be returned to the caller. Read-only setting."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "For incoming calls from this peer, find the destination subscriber by a uuid parameter in R-URI which has been sent in Contact at outbound registration."
 msgstr ""
 
@@ -5804,7 +5808,7 @@ msgstr ""
 msgid "Mobile Push Expiry Timeout"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/CallListSuppression.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 msgid "Mode"
 msgstr ""
 
@@ -7807,10 +7811,6 @@ msgstr ""
 
 #: share/templates/security/list.tt share/templates/widgets/admin_topmenu_settings.tt
 msgid "Security Bans"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "See \"lock_voip_account_subscriber\" for a list of possible values. A lock value of \"none\" will not be returned to the caller. Read-only setting."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10160,6 +10160,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The source billing zone id (from billing.billing_zones_history) attached to the reseller billing cost."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The source set mode"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
