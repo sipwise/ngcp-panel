@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5adbc538_71abc089",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 18
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-02T07:37:48Z",
+      "side": 1,
+      "message": "check effectively occurs twice?",
+      "range": {
+        "startLine": 18,
+        "startChar": 21,
+        "endLine": 18,
+        "endChar": 86
+      },
+      "revId": "703af7c513e9ff69848819b17293975269c0e636",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
