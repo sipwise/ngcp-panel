@@ -726,7 +726,7 @@ sub create_preference_form {
             return 1;
         } elsif ($attribute eq "lock") {
             my $v = $form->field($attribute)->value;
-            undef $v if (defined $v && $v eq '');
+            #undef $v if (defined $v && $v eq '');
             try {
                 NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                         c => $c,
@@ -1132,6 +1132,7 @@ sub set_provisoning_voip_subscriber_first_int_attr_value {
     my $c = $params{c};
     my $prov_subscriber= $params{prov_subscriber};
     my $new_value = $params{value};
+    undef $new_value if (defined $new_value && $new_value eq '');
     my $attribute = $params{attribute};
 
     return unless $prov_subscriber;
