@@ -641,8 +641,12 @@ sub update_item {
         };
     }
 
+    my %nullable = (
+        lock => 1,
+    );
+
     foreach my $pref(keys %{ $resource }) {
-        next unless(defined $resource->{$pref});
+        next if (not defined $resource->{$pref} and not $nullable{$pref});
         my $pref_rs = $self->get_preference_rs($c, $type, $elem, $pref);
         unless($pref_rs) {
             $c->log->debug("removing unknown preference '$pref' from update");
@@ -667,14 +671,14 @@ sub update_item {
             my $maxlen = 128;
 
             if($vtype eq "") {
-                if(length($resource->{$pref}) > $maxlen) {
+                if(defined $resource->{$pref} and length($resource->{$pref}) > $maxlen) {
                     $c->log->error("preference '$pref' exceeds maximum length of $maxlen characters");
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Preference '$pref' exceeds maximum length of $maxlen characters");
                     return;
                 }
             } elsif($vtype eq "ARRAY") {
                 foreach my $a(@{ $resource->{$pref} }) {
-                    if(length($a) > $maxlen) {
+                    if(defined $a and length($a) > $maxlen) {
                         $c->log->error("element in preference '$pref' exceeds maximum length of $maxlen characters");
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Element in preference '$pref' exceeds maximum length of $maxlen characters");
                         return;
@@ -808,6 +812,16 @@ sub update_item {
                         $rs->create({ value => $aig_group_id });
                     }
                     # in contrast to panel, it does not drop the allowed_ips_grp pref, if empty ipnets.
+                    last SWITCH;
+                };
+                /^lock$/ && do {
+                    my $v = $resource->{$pref};
+                    return unless $self->check_pref_value($c, $meta, $v, $pref_type);
+                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                        c => $c,
+                        prov_subscriber => $elem,
+                        level => $v, # || 0
+                    );
                     last SWITCH;
                 };
                 # default

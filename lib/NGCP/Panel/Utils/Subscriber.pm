@@ -108,6 +108,14 @@ sub destination_as_string {
 sub lock_provisoning_voip_subscriber {
     my %params = @_;
 
+    if ($params{c} and $params{prov_subscriber}) {
+        if ($params{level}) {
+            $params{c}->log->debug('set subscriber ' . $params{prov_subscriber}->username . ' lock level: ' . $params{level});
+        } else {
+            $params{c}->log->debug('remove subscriber ' . $params{prov_subscriber}->username . ' lock level');
+        }
+    }
+
     NGCP::Panel::Utils::Preferences::set_provisoning_voip_subscriber_first_int_attr_value(%params,
         value => $params{level},
         attribute => 'lock'
