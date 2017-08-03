@@ -93,6 +93,7 @@ my @allcustomers = ();
         }));
         $res = $ua->request($req);
         is($res->code, 201, "create test customer $i");
+        diag($res->header('Location') . ' created');
         $customers{$res->header('Location') // ''} = 1;
         push @allcustomers, $res->header('Location');
         $firstcustomer = $res->header('Location') unless $firstcustomer;
@@ -188,14 +189,15 @@ my @allcustomers = ();
     ok($err->{message} =~ /field='max_subscribers'/, "check error message in body");
 
     # iterate over customers collection to check next/prev links and status
-    my $nexturi = $uri.'/api/customers/?page=1&rows=5&status=active';
+    my $nexturi = $uri.'/api/customers/?page=1&rows=5&order_by=id&status=active&contact_id=' . $custcontact->{id};
     do {
         $res = $ua->get($nexturi);
         is($res->code, 200, "fetch contacts page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
-        is($selfuri, $nexturi, "check _links.self.href of collection");
+        #is($selfuri, $nexturi, "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
+        is_deeply({ $colluri->query_form },{ URI->new($nexturi)->query_form },"check _links.self.href of collection");
 
         ok($collection->{total_count} > 0, "check 'total_count' of collection");
 
@@ -226,16 +228,19 @@ my @allcustomers = ();
 
         # remove any contact we find in the collection for later check
         if(ref $collection->{_links}->{'ngcp:customers'} eq "HASH") {
-            my $item = get_embedded_item($collection,'customers');
+            delete $customers{$collection->{_links}->{'ngcp:customers'}->{href}};
+            diag('drop ' . $collection->{_links}->{'ngcp:customers'}->{href});
             ok( $item->{type} eq "sipaccount" || $item->{type} eq "pbxaccount", "check for correct customer contract type");
             ok($item->{status} ne "terminated", "check if we don't have terminated customers in response");
             ok(exists $item->{_links}->{'ngcp:customercontacts'}, "check presence of ngcp:customercontacts relation");
             ok(exists $item->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
             ok(exists $item->{_links}->{'ngcp:customerbalances'}, "check presence of ngcp:customerbalances relation");
-            delete $customers{$collection->{_links}->{'ngcp:customers'}->{href}};
+            delete $customers{$item->{_links}->{self}->{href}};
+            diag('drop ' . $item->{_links}->{self}->{href});
         } else {
             foreach my $c(@{ $collection->{_links}->{'ngcp:customers'} }) {
                 delete $customers{$c->{href}};
+                diag('drop ' . $c->{href});
             }
             foreach my $c(@{ $collection->{_embedded}->{'ngcp:customers'} }) {
                 ok($c->{type} eq "sipaccount" || $c->{type} eq "pbxaccount", "check for correct customer contract type");
@@ -245,12 +250,16 @@ my @allcustomers = ();
                 ok(exists $c->{_links}->{'ngcp:customerbalances'}, "check presence of ngcp:contractbalances relation");
 
                 delete $customers{$c->{_links}->{self}->{href}};
+                diag('drop ' . $c->{_links}->{self}->{href});
             }
         }
 
     } while($nexturi);
 
     is(scalar(keys %customers), 0, "check if all test customers have been found");
+    foreach my $loc (keys %customers) {
+        diag("not listed: $loc");
+    }
 }
 
 # test contacts item
