@@ -810,6 +810,16 @@ sub update_item {
                     # in contrast to panel, it does not drop the allowed_ips_grp pref, if empty ipnets.
                     last SWITCH;
                 };
+                /^lock$/ && do {
+                    my $v = $resource->{$pref};
+                    return unless $self->check_pref_value($c, $meta, $v, $pref_type);
+                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                        c => $c,
+                        prov_subscriber => $item->provisioning_voip_subscriber,
+                        level => $v, # || 0
+                    );
+                    last SWITCH;
+                };
                 # default
                 if($meta->max_occur != 1) {
                     $pref_rs->delete;
