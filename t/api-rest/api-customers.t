@@ -230,6 +230,7 @@ my @allcustomers = ();
         if(ref $collection->{_links}->{'ngcp:customers'} eq "HASH") {
             delete $customers{$collection->{_links}->{'ngcp:customers'}->{href}};
             diag('drop ' . $collection->{_links}->{'ngcp:customers'}->{href});
+            my $item = get_embedded_item($collection,'customers');
             ok( $item->{type} eq "sipaccount" || $item->{type} eq "pbxaccount", "check for correct customer contract type");
             ok($item->{status} ne "terminated", "check if we don't have terminated customers in response");
             ok(exists $item->{_links}->{'ngcp:customercontacts'}, "check presence of ngcp:customercontacts relation");
