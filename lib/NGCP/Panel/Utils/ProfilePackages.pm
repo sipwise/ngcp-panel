@@ -927,7 +927,7 @@ sub set_subscriber_lock_level {
         NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
             c => $c,
             prov_subscriber => $subscriber->provisioning_voip_subscriber,
-            level => $lock_level // 0,
+            level => $lock_level, # // 0, should be put into parens
         ) if ($subscriber->provisioning_voip_subscriber);
     }
 }
