@@ -846,6 +846,11 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 }
                 my @events_to_create = ();
                 my $event_context = { events_to_create => \@events_to_create };
+
+                if($form->values->{lock} && ( $form->values->{lock} > 0 ) ){
+                    $form->values->{status} = 'locked';
+                }
+
                 $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,
@@ -855,6 +860,19 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     preferences => $preferences,
                     event_context => $event_context,
                 );
+
+                if($billing_subscriber->status eq 'locked') {
+                    $form->values->{lock} ||= 4;
+                } else {
+                    $form->values->{lock} = 0;
+                }
+
+                NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                    c => $c,
+                    prov_subscriber => $billing_subscriber->provisioning_voip_subscriber,
+                    level => $form->values->{lock},
+                ) if ($billing_subscriber->provisioning_voip_subscriber);
+
                 NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
 
                 if($pbx && !$pbxadmin && $form->value->{alias_select}) {
