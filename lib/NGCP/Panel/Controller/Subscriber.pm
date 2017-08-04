@@ -2761,8 +2761,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     );
                 }
 
-                $form->values->{lock} ||= 0;
                 NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c, contract => $subscriber->contract);
+
+                $form->values->{lock} ||= 0;
                 NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                     c => $c,
                     prov_subscriber => $subscriber->provisioning_voip_subscriber,
