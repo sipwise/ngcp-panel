@@ -1132,7 +1132,10 @@ sub set_provisoning_voip_subscriber_first_int_attr_value {
     my $c = $params{c};
     my $prov_subscriber= $params{prov_subscriber};
     my $new_value = $params{value};
-    undef $new_value if (defined $new_value && $new_value eq '');
+    if (defined $new_value) {
+        $new_value =~ s/^\s+|\s+$//g;
+        undef $new_value if $new_value eq '';
+    }
     my $attribute = $params{attribute};
 
     return unless $prov_subscriber;
