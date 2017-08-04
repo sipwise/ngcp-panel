@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5adbc538_8641eb0d",
+        "filename": "lib/NGCP/Panel/Controller/API/CallForwardsDNDItem.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-04T14:50:51Z",
+      "side": 1,
+      "message": "ok, nice; you observed big leap in speed actually?",
+      "range": {
+        "startLine": 133,
+        "startChar": 16,
+        "endLine": 133,
+        "endChar": 41
+      },
+      "revId": "143228f37f3f644742ec6f3cc033804da48b988b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5adbc538_a646e721",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-04T14:50:51Z",
+      "side": 1,
+      "message": "will it also be used from kamailio?",
+      "range": {
+        "startLine": 376,
+        "startChar": 35,
+        "endLine": 376,
+        "endChar": 54
+      },
+      "revId": "143228f37f3f644742ec6f3cc033804da48b988b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
