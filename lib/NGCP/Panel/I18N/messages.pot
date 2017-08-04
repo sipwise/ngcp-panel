@@ -3941,7 +3941,7 @@ msgid "Failed to update peering server"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
+#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Failed to update preference %1"
 msgstr ""
 
@@ -6897,7 +6897,7 @@ msgid "Preference %1 successfully deleted"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
+#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Preference %1 successfully updated"
 msgstr ""
 
