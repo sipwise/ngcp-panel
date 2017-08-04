@@ -123,6 +123,12 @@ has_field 'administrative' => (
     },
 );
 
+has_field 'lock' => (
+    type => '+NGCP::Panel::Field::SubscriberLockSelect',
+    label => 'Lock Level',
+    validate_when_empty => 1,
+);
+
 has_field 'status' => (
     type => '+NGCP::Panel::Field::SubscriberStatusSelect',
     label => 'Status',
@@ -180,7 +186,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     #render_list => [qw/display_name webusername webpassword username password status external_id profile_set timezone profile/ ],
-    render_list => [qw/e164 display_name email webusername webpassword username password administrative status timezone profile_set profile/ ],
+    render_list => [qw/e164 display_name email webusername webpassword username password administrative lock status timezone profile_set profile/ ],
 );
 
 has_block 'actions' => (

@@ -17,7 +17,7 @@ has_field 'pbx_extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group_select alias_select pbx_extension display_name email webusername webpassword username password status profile/ ],
+    render_list => [qw/group_select alias_select pbx_extension display_name email webusername webpassword username password lock status profile/ ],
 );
 
 sub field_list {
