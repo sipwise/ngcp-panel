@@ -77,6 +77,12 @@ has_field 'password' => (
     },
 );
 
+has_field 'lock' => (
+    type => '+NGCP::Panel::Field::SubscriberLockSelect',
+    label => 'Lock Level',
+    validate_when_empty => 1,
+);
+
 has_field 'status' => (
     type => '+NGCP::Panel::Field::SubscriberStatusSelect',
     label => 'Status',
@@ -134,7 +140,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/domain e164 email webusername webpassword username password status external_id administrative timezone profile_set/ ],
+    render_list => [qw/domain e164 email webusername webpassword username password lock status external_id administrative timezone profile_set/ ],
 );
 
 has_block 'actions' => (
