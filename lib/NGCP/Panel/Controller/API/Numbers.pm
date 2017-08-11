@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::CFMappings;
+package NGCP::Panel::Controller::API::Numbers;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
@@ -10,6 +10,8 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
+use Path::Tiny qw(path);
+use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
@@ -20,48 +22,75 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Specifies callforward mappings of a subscriber, where multiple mappings can be specified per type (cfu, cfb, cft, cfna, cfs) ' . 
-        'Each mapping consists of a destinationset name (see <a href="#cfdestinationsets">CFDestinationSets</a>), a timeset name ' .
-        '(see <a href="#cftimesets">CFTimeSets</a>) and a sourceset name (see <a href="#cfsourcesets">CFSourceSets</a>).';
-}
+    return 'Allows to list and re-assign numbers (primary and aliases) between subscribers in an atomic operation.'
+};
 
 sub query_params {
     return [
+        {
+            param => 'reseller_id',
+            description => 'Filter for numbers assigned to subscribers belonging to a specific reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'contact.reseller_id' => $q };
+                },
+                second => sub {
+                    { join => { 'subscriber' => { 'contract' => 'contact' } } };
+                },
+            },
+
+        },
+        {
+            param => 'customer_id',
+            description => 'Filter for numbers assigned to subscribers of a specific customer.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'subscriber.contract_id' => $q };
+                },
+                second => sub {
+                    return { join => 'subscriber' };
+                },
+            },
+        },
+        {
+            param => 'subscriber_id',
+            description => 'Filter for numbers assigned to a specific subscriber.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'subscriber_id' => $q };
+                },
+                second => sub {
+                    return { };
+                },
+            },
+        },
+        {
+            param => 'type',
+            description => 'Filter for number type, either "primary" or "alias".',
+        },
     ];
 }
 
-sub documentation_sample {
-    return  {
-        cfb => [{
-            "destinationset" => "quickset_cfb",
-            "timeset" => undef,
-            "sourceset" => undef,
-        }],
-        cfna => [],
-        cft => [],
-        cft_ringtimeout => "200",
-        cfu => [],
-        cfs => [],
-    } ;
-}
-
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::CFMappings/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Numbers/;
 
 sub resource_name{
-    return 'cfmappings';
+    return 'numbers';
 }
 sub dispatch_path{
-    return '/api/cfmappings/';
+    return '/api/numbers/';
 }
 sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-cfmappings';
+    return 'http://purl.org/sipwise/ngcp-api/#rel-numbers';
 }
 
 __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -89,15 +118,15 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $items = $self->item_rs($c); # items is actually a voip_subscribers
-
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        my $numbers = $self->item_rs($c);
+        (my $total_count, $numbers) = $self->paginate_order_collection($c, $numbers);
         my (@embedded, @links);
-        for my $subs ($items->all) {
-            push @embedded, $self->hal_from_item($c, $subs, "cfmappings");
+        my $form = $self->get_form($c);
+        for my $domain ($numbers->all) {
+            push @embedded, $self->hal_from_item($c, $domain, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('%s%d', $self->dispatch_path, $subs->id),
+                href     => sprintf('/%s%d', $c->request->path, $domain->id),
             );
         }
         push @links,
@@ -108,12 +137,12 @@ sub GET :Allow {
                 templated => true,
             ),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('%s?page=%s&rows=%s', $self->dispatch_path, $page, $rows));
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
         if(($total_count / $rows) > $page ) {
-            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'next', href => sprintf('%s?page=%d&rows=%d', $self->dispatch_path, $page + 1, $rows));
+            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
         }
         if($page > 1) {
-            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'prev', href => sprintf('%s?page=%d&rows=%d', $self->dispatch_path, $page - 1, $rows));
+            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
         }
 
         my $hal = NGCP::Panel::Utils::DataHal->new(
@@ -123,6 +152,8 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
+        my $rname = $self->resource_name;
+
         my $response = HTTP::Response->new(HTTP_OK, undef, 
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
@@ -155,7 +186,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
-    return 1;
+    return;
 }
 
 1;
