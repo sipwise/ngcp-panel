@@ -57,11 +57,15 @@ WORKDIR /home/testuser
 # % docker build --tag="ngcp-panel-tests-rest-api-jessie" -f t/api-rest/Dockerfile .
 # % docker run --rm -i -t -v $(pwd):/code:rw ngcp-panel-tests-rest-api-jessie:latest bash
 #
-# Use the existing docker image:
+# Use the existing docker image (run from ngcp-panel base directory):
 # % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie
 # % docker run --rm -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie:latest bash
 #
 # Inside docker:
 #   su - testuser
-#   cd /code && ./t/api-rest/testrunner $IP_OF_NGCP_SYSTEM # IP_OF_NGCP_SYSTEM can be e.g. IP of a `vagrant up ce-trunk` system (eth1)
+#   cd /code
+# To run the full test suite:
+#   ./t/api-rest/testrunner $IP_OF_NGCP_SYSTEM # IP_OF_NGCP_SYSTEM can be e.g. IP of a `vagrant up ce-trunk` system (eth1)
+# To run only a particular test (e.g. the api-customers.t):
+#   ./t/api-rest/testrunner $IP_OF_NGCP_SYSTEM ./t/api-rest/api-customers.t
 ################################################################################

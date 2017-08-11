@@ -13,6 +13,7 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use Test::More;
 use NGCP::Panel::Form::Subscriber::SubscriberAPI;
+use NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
@@ -21,7 +22,13 @@ use NGCP::Panel::Utils::Events;
 sub get_form {
     my ($self, $c) = @_;
 
-    return NGCP::Panel::Form::Subscriber::SubscriberAPI->new(ctx => $c);
+    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+        $c->log->error("++++ admin form");
+        return NGCP::Panel::Form::Subscriber::SubscriberAPI->new(ctx => $c);
+    } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $c->log->error("++++ subscriber form");
+        return NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI->new(ctx => $c);
+    }
 }
 
 sub resource_from_item {
@@ -106,14 +113,31 @@ sub resource_from_item {
 
     $resource{customer_id} = int(delete $resource{contract_id});
     $resource{id} = int($item->id);
-    $resource{uuid} = $item->uuid;
-    $resource{domain} = $item->domain->domain;
+
+    # don't leak internal info to subscribers via API for those fields
+    # not filtered via forms
+    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+        $resource{uuid} = $item->uuid;
+        $resource{domain} = $item->domain->domain;
+
+        my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => 'lock',
+            prov_subscriber => $item->provisioning_voip_subscriber);
+        if($pref->first) {
+            #cast to Numeric accordingly to the form field type and customer note in the ticket #10313
+            $resource{lock} = 0 + $pref->first->value;
+        }
+    }
 
     return \%resource;
 }
 
 sub hal_from_item {
     my ($self, $c, $item, $resource, $form) = @_;
+    my $is_sub = 1;
+    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+        $is_sub = 0;
+    }
 
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
@@ -126,18 +150,24 @@ sub hal_from_item {
             NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+
+            # available also to subscribers
             NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberpreferences', href => sprintf("/api/subscriberpreferences/%d", $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:domains', href => sprintf("/api/domains/%d", $item->domain->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)),
-            ($item->provisioning_voip_subscriber && $item->provisioning_voip_subscriber->profile_set_id) ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberprofilesets', href => sprintf("/api/subscriberprofilesets/%d", $item->provisioning_voip_subscriber->profile_set_id))) : (),
-            ($item->provisioning_voip_subscriber && $item->provisioning_voip_subscriber->profile_id) ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberprofiles', href => sprintf("/api/subscriberprofiles/%d", $item->provisioning_voip_subscriber->profile_id))) : (),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?subscriber_id=%d", $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:voicemailsettings', href => sprintf("/api/voicemailsettings/%d", $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberregistrations', href => sprintf("/api/subscriberregistrations/?subscriber_id=%d", $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:reminders', href => sprintf("/api/reminders/?subscriber_id=%d", $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:callforwards', href => sprintf("/api/callforwards/%d", $item->id)),
-            #NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:trustedsources', href => sprintf("/api/trustedsources/%d", $item->contract->id)),
-            $self->get_journal_relation_link($item->id),
+
+            # only available to admins/resellers
+            ($is_sub ? () : (
+                ($item->provisioning_voip_subscriber && $item->provisioning_voip_subscriber->profile_set_id) ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberprofilesets', href => sprintf("/api/subscriberprofilesets/%d", $item->provisioning_voip_subscriber->profile_set_id))) : (),
+                ($item->provisioning_voip_subscriber && $item->provisioning_voip_subscriber->profile_id) ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberprofiles', href => sprintf("/api/subscriberprofiles/%d", $item->provisioning_voip_subscriber->profile_id))) : (),
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:domains', href => sprintf("/api/domains/%d", $item->domain->id)),
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?subscriber_id=%d", $item->id)),
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberregistrations', href => sprintf("/api/subscriberregistrations/?subscriber_id=%d", $item->id)),
+                #NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:trustedsources', href => sprintf("/api/trustedsources/%d", $item->contract->id)),
+                $self->get_journal_relation_link($item->id),
+            )),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -163,6 +193,17 @@ sub _item_rs {
         }, {
             join => { 'contract' => 'contact' },
         });
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'contract_id' => $c->user->account_id,
+        });
+    } elsif($c->user->roles eq "subscriber") {
+        $item_rs = $item_rs->search({
+            'id' => $c->user->voip_subscriber->id,
+        });
+    } else {
+        $self->error($c, HTTP_FORBIDDEN, "Invalid authentication role");
+        return;
     }
 
     return $item_rs;
@@ -229,8 +270,8 @@ sub prepare_resource {
     my $groups = [];
     my $groupmembers = [];
     my $domain;
-    if($resource->{domain}) {
-        $domain = $c->model('DB')->resultset('domains')
+    if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $resource->{domain}) {
+        $domain = $schema->resultset('domains')
             ->search({ domain => $resource->{domain} });
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
@@ -247,6 +288,19 @@ sub prepare_resource {
         }
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
+    } elsif($c->user->roles eq "subscriberadmin") {
+        my $pilot = $schema->resultset('provisioning_voip_subscribers')->search({
+            account_id => $c->user->account_id,
+            is_pbx_pilot => 1,
+        })->first;
+        if($pilot) {
+            $domain = $pilot->domain;
+            $resource->{domain_id} = $pilot->domain_id;
+        } else {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unable to find PBX pilot for this customer.");
+            return;
+        }
+        $resource->{customer_id} = $pilot->account_id;
     }
     $resource->{e164} = delete $resource->{primary_number};
     $resource->{status} //= 'active';
@@ -509,6 +563,11 @@ sub prepare_resource {
 
 sub update_item {
     my ($self, $c, $schema, $item, $full_resource, $resource, $form) = @_;
+
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
 
     my $subscriber = $item;
     my $customer = $full_resource->{customer};

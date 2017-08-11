@@ -111,14 +111,14 @@ has 'name' => (
     is => 'rw',
     isa => 'Str',
 );
-#has 'subscriber_user' => (
-#    is => 'rw',
-#    isa => 'Str',
-#);
-#has 'subscriber_pass' => (
-#    is => 'rw',
-#    isa => 'Str',
-#);
+has 'subscriber_user' => (
+    is => 'rw',
+    isa => 'Str',
+);
+has 'subscriber_pass' => (
+    is => 'rw',
+    isa => 'Str',
+);
 has 'embedded_resources' => (
     is => 'rw',
     isa => 'ArrayRef',
@@ -260,7 +260,9 @@ sub init_ua {
         verify_hostname => 0,
         SSL_verify_mode => 0,
     );
-    $self->init_ssl_cert($ua);
+    if($role eq "default" || $role eq "admin" || $role eq "reseller") {
+        $self->init_ssl_cert($ua);
+    }
     return $ua;
 }
 sub init_ssl_cert {
@@ -309,6 +311,7 @@ sub runas {
     my($user,$pass,$role,$realm) = $self->get_role_credentials($role_in);
     $self->runas_role($role);
     $self->ua->credentials( $uri, $realm, $user, $pass);
+    return $self;
 }
 sub get_role_credentials{
     my $self = shift;
@@ -324,11 +327,10 @@ sub get_role_credentials{
         $user //= $ENV{API_USER_RESELLER} // 'api_test';
         $pass //= $ENV{API_PASS_RESELLER} // 'api_test';
         $realm = 'api_admin_http';
-    #}elsif($role eq 'subscriber'){
-    ##   I suggest here the same way as for admin and reseller - through ENV variables
-    #    $user //= $self->subscriber_user;
-    #    $pass //= $self->subscriber_pass;
-    #    $realm = 'subscriber';
+    }elsif($role eq 'subscriber'){
+        $user = $self->subscriber_user;
+        $pass = $self->subscriber_pass;
+        $realm = 'api_subscriber_http';
     }
     return($user,$pass,$role,$realm);
 }

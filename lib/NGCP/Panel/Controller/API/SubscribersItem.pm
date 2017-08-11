@@ -43,7 +43,7 @@ __PACKAGE__->config(
     action => {
         (map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
@@ -124,6 +124,12 @@ sub OPTIONS :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
+
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
+
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');        
     my $guard = $schema->txn_scope_guard;
@@ -177,6 +183,12 @@ sub PUT :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
+
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
+
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
     my $guard = $schema->txn_scope_guard;
@@ -238,6 +250,12 @@ sub PATCH :Allow {
 
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
+
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
+
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $subscriber = $self->item_by_id($c, $id);
