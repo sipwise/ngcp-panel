@@ -1,0 +1,25 @@
+[
+    {
+        "name": "pbx pilot subscriber",
+        "type": "subscribers",
+        "depends": [
+            "filled pbxaccount customer",
+            "domain"
+        ],
+        "data": {
+            "username": "pbx_pilot_user_${sid}",
+            "password": "pbx_pilot_pass_${sid}",
+            "webusername": "pbx_pilot_webuser_${sid}",
+            "webpassword": "pbx_pilot_webpass_${sid}",
+            "display_name": "pbx pilot display ${sid}",
+            "primary_number": {
+                "cc": "43", "ac": "999", "sn": "${sid}"
+            },
+            "is_pbx_pilot": true,
+            "administrative": true,
+            "domain_id": "${domain}",
+            "customer_id": "${filled pbxaccount customer}",
+            "status": "active"
+        }
+    }
+]

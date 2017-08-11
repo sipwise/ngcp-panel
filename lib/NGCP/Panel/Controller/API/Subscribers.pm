@@ -279,7 +279,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -386,6 +386,22 @@ sub OPTIONS :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
+    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+    } elsif($c->user->roles eq "subscriber") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    } elsif($c->user->roles eq "subscriberadmin") {
+        unless($c->config->{features}->{cloudpbx}) {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            return;
+        }
+        my $customer = $self->get_customer($c, $c->user->account_id);
+        if($customer->get_column('product_class') ne 'pbxaccount') {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            return;
+        }
+    }
+
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
     my $guard = $schema->txn_scope_guard;
@@ -407,7 +423,7 @@ sub POST :Allow {
         $resource = $r->{resource};
 
         try {
-            my ($uuid_bin, $uuid_string); #what for?
+            my ($uuid_bin, $uuid_string);
             UUID::generate($uuid_bin);
             UUID::unparse($uuid_bin, $uuid_string);
 
