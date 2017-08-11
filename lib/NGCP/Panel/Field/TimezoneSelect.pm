@@ -1,7 +1,7 @@
 package NGCP::Panel::Field::TimezoneSelect;
 use Moose;
 use HTML::FormHandler::Moose;
-use DateTime::TimeZone;
+use NGCP::Panel::Utils::DateTime;
 extends 'HTML::FormHandler::Field::Compound';
 
 has_field 'name' => (
@@ -27,7 +27,8 @@ sub validate {
         return;
     }
 
-    unless(grep { /^\Q$value\E$/ } DateTime::TimeZone->all_names) {
+    #unless(grep { /^\Q$value\E$/ } DateTime::TimeZone->all_names) {
+    unless (NGCP::Panel::Utils::DateTime::is_valid_timezone_name($value)) {
         $self->add_error(sprintf 'Invalid timezone name: %s', $value);
     }
     return;
