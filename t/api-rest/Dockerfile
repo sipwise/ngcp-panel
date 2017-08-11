@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-jessie:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2017-08-21
+ENV REFRESHED_AT 2017-08-28
 
 # files that get-code generates
 COPY t/api-rest/sources.list.d/builddeps.list /etc/apt/sources.list.d/
@@ -17,6 +17,9 @@ RUN apt-get install --assume-yes \
         git \
         libtap-formatter-junit-perl \
         libdata-printer-perl \
+        libfile-find-rule-perl \
+        libtest-deep-perl \
+        libjson-pointer-perl \
         lsof \
         net-tools \
         vim-tiny \
@@ -57,11 +60,15 @@ WORKDIR /home/testuser
 # % docker build --tag="ngcp-panel-tests-rest-api-jessie" -f t/api-rest/Dockerfile .
 # % docker run --rm -i -t -v $(pwd):/code:rw ngcp-panel-tests-rest-api-jessie:latest bash
 #
-# Use the existing docker image:
+# Use the existing docker image (run from ngcp-panel base directory):
 # % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie
 # % docker run --rm -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie:latest bash
 #
 # Inside docker:
 #   su - testuser
-#   cd /code && ./t/api-rest/testrunner $IP_OF_NGCP_SYSTEM # IP_OF_NGCP_SYSTEM can be e.g. IP of a `vagrant up ce-trunk` system (eth1)
+#   cd /code
+# To run the full test suite:
+#   ./t/api-rest/testrunner $IP_OF_NGCP_SYSTEM # IP_OF_NGCP_SYSTEM can be e.g. IP of a `vagrant up ce-trunk` system (eth1)
+# To run only a particular test (e.g. the api-customers.t):
+#   ./t/api-rest/testrunner $IP_OF_NGCP_SYSTEM ./t/api-rest/api-customers.t
 ################################################################################

@@ -70,7 +70,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -182,7 +182,9 @@ sub POST :Allow {
 
         my $tset;
 
-        unless(defined $resource->{subscriber_id}) {
+        if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+            $resource->{subscriber_id} = $c->user->voip_subscriber->id;
+        } elsif(!defined $resource->{subscriber_id}) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
             last;
         }

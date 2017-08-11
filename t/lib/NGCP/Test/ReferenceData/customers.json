@@ -1,0 +1,44 @@
+[
+    {
+        "name": "sipaccount customer",
+        "type": "customers",
+        "depends": [
+            "default customercontact",
+            "customer billingprofile"
+        ],
+        "data": {
+            "billing_profile_id": "${customer billingprofile}",
+            "contact_id": "${default customercontact}",
+            "type": "sipaccount",
+            "status": "active"
+        }
+    },
+    {
+        "name": "pbxaccount customer",
+        "type": "customers",
+        "depends": [
+            "default customercontact",
+            "customer billingprofile"
+        ],
+        "data": {
+            "billing_profile_id": "${customer billingprofile}",
+            "contact_id": "${default customercontact}",
+            "type": "pbxaccount",
+            "status": "active"
+        }
+    },
+    {
+        "name": "filled pbxaccount customer",
+        "type": "customers",
+        "depends": [
+            "default customercontact",
+            "customer billingprofile"
+        ],
+        "data": {
+            "billing_profile_id": "${customer billingprofile}",
+            "contact_id": "${default customercontact}",
+            "type": "pbxaccount",
+            "status": "active"
+        }
+    }
+]
