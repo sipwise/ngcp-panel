@@ -458,7 +458,7 @@ sub POST :Allow {
             last;
         } catch($e) {
             $c->log->error("failed to create subscriber: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber: $e");
             last;
         }
 
