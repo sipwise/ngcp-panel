@@ -1,0 +1,10 @@
+[
+    {
+        "name": "default systemcontact",
+        "type": "systemcontacts",
+        "depends": [],
+        "data": {
+            "email": "systemcontact_${sid}@example.org"
+        }
+    }
+]

@@ -1,0 +1,11 @@
+[
+    {
+        "name": "domain",
+        "type": "domains",
+        "depends": [ "reseller" ],
+        "data": {
+            "reseller_id" : "${reseller}",
+            "domain": "example_${sid}.org"
+        }
+    }
+]
