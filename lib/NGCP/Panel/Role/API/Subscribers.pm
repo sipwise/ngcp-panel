@@ -49,8 +49,10 @@ sub resource_from_item {
     delete $resource{contact_id};
     if($item->contact) {
         $resource{email} = $item->contact->email;
+        $resource{timezone} = $item->contact->timezone;
     } else {
         $resource{email} = undef;
+        $resource{timezone} = undef;
     }
 
 
@@ -609,18 +611,25 @@ sub update_item {
         }
     }
 
-    if($resource->{email}) {
+    unless (NGCP::Panel::Utils::DateTime::is_valid_timezone_name($value)) {
+
+    if($resource->{email} || $resource->{timezone}) {
         my $contact = $subscriber->contact;
-        if($contact && $contact->email ne $resource->{email}) {
+        unless ($contact) {
+            $contact = $schema->resultset('contacts')->create({
+                reseller_id => $subscriber->contract->contact->reseller_id,
+            });
+        }
+        if(not $contact->email or ($contact->email ne $resource->{email})) {
             $contact->update({
                 email => $resource->{email},
             });
-        } elsif(!$contact) {
-            $contact = $schema->resultset('contacts')->create({
-                reseller_id => $subscriber->contract->contact->reseller_id,
-                email => $resource->{email},
+        }
+        if(not $contact->timezone or ($contact->timezone ne $resource->{timezone})) {
+            $contact->update({
+                timezone => $resource->{timezone},
             });
-        } # else old email == new email, nothing to do
+        }
         $resource->{contact_id} = $contact->id;
     } elsif($subscriber->contact) {
         try {
