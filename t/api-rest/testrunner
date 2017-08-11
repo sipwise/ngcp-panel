@@ -39,7 +39,9 @@ fi
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
 
+export CATALYST_SERVER_SUB="https://${SERVER}:443"
 export CATALYST_SERVER="https://${SERVER}:1443"
+export NGCP_SESSION_ID="$(printf %03d $((RANDOM % 1000)))$(date +%s)"
 RC=0
 
 if [ "${FORMAT}" = "junit" ] ; then

@@ -79,6 +79,11 @@ sub _item_rs {
                 } , {
                     join => {'subscriber' => {'contract' => 'contact'} },
                 });
+    } elsif($c->user->role eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $item_rs = $c->model('DB')->resultset('voip_cf_time_sets')
+            ->search_rs({
+                    'subscriber_id' => $c->user->id,
+                });
     }
 
     return $item_rs;

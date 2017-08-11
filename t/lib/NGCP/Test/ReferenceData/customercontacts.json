@@ -1,0 +1,11 @@
+[
+    {
+        "name": "default customercontact",
+        "type": "customercontacts",
+        "depends": [ "reseller" ],
+        "data": {
+            "email": "customercontact_${sid}@example.org",
+            "reseller_id": "${reseller}"
+        }
+    }
+]

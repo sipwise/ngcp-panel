@@ -43,7 +43,7 @@ __PACKAGE__->config(
     action => {
         (map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
@@ -76,6 +76,12 @@ sub GET :Allow {
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        if($c->user->roles eq "subscriberadmin") {
+            unless($c->user->account_id == $id) {
+                $self->error($c, HTTP_FORBIDDEN, "Invalid customer id");
+                return;
+            }
+        }
         last unless $self->valid_id($c, $id);
         my $customer = $self->customer_by_id($c, $id);
         last unless $self->resource_exists($c, customer => $customer);

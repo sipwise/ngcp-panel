@@ -1,0 +1,14 @@
+[
+    {
+        "name": "reseller",
+        "type": "resellers",
+        "depends": [
+            "reseller contract"
+        ],
+        "data": {
+            "contract_id": "${reseller contract}",
+            "name": "reseller_${sid}",
+            "status": "active"
+        }
+    }
+]
