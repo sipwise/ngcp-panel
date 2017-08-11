@@ -88,6 +88,10 @@ sub _item_rs {
         }, {
             join => { 'contract' => 'contact' },
         });
+    } elsif($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'uuid' => $c->user->uuid,
+        });
     }
 
     return $item_rs;

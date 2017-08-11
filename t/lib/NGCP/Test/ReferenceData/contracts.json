@@ -1,0 +1,44 @@
+[
+    {
+        "name": "reseller contract",
+        "type": "contracts",
+        "depends": [
+            "default systemcontact",
+            "system billingprofile"
+        ],
+        "data": {
+            "billing_profile_id": "${system billingprofile}",
+            "contact_id": "${default systemcontact}",
+            "type": "reseller",
+            "status": "active"
+        }
+    },
+    {
+        "name": "locked reseller contract",
+        "type": "contracts",
+        "depends": [
+            "default systemcontact",
+            "system billingprofile"
+        ],
+        "data": {
+            "billing_profile_id": "${system billingprofile}",
+            "contact_id": "${default systemcontact}",
+            "type": "reseller",
+            "status": "locked"
+        }
+    },
+    {
+        "name": "unused reseller contract",
+        "type": "contracts",
+        "depends": [
+            "default systemcontact",
+            "system billingprofile"
+        ],
+        "data": {
+            "billing_profile_id": "${system billingprofile}",
+            "contact_id": "${default systemcontact}",
+            "type": "reseller",
+            "status": "active"
+        }
+    }
+]

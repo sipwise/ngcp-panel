@@ -1,0 +1,22 @@
+[
+    {
+        "name": "system billingprofile",
+        "type": "billingprofiles",
+        "depends": [],
+        "data": {
+            "handle": "ref_sys_billprof_${sid}",
+            "name": "ref_sys_billprof_${sid}",
+            "reseller_id": 1
+        }
+    },
+    {
+        "name": "customer billingprofile",
+        "type": "billingprofiles",
+        "depends": [ "reseller" ],
+        "data": {
+            "reseller_id" : "${reseller}",
+            "handle": "ref_cust_billprof_${sid}",
+            "name": "ref_cust_billprof_${sid}"
+        }
+    }
+]

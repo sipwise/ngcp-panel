@@ -110,6 +110,15 @@ has_field 'add_vat' => (
     default => 0,
 );
 
+has_field 'subadmin_self_admin' => (
+    type => 'Boolean',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether to allow a subscriberadmin of a PBX customer to self-admin the customer (e.g. creating new seats and groups, changing settings of other subscribers within same customer).']
+    },
+    default => 0,
+);
+
 has_field 'create_timestamp' => (
     type => '+NGCP::Panel::Field::DateTime',
     required => 0,

@@ -19,10 +19,20 @@ has_field 'max_subscribers' => (
     },
 );
 
+has_field 'subadmin_self_admin' => (
+    type => 'Boolean',
+    label => 'Subadmin Self-Admin',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether to allow a subscriberadmin of a PBX customer to self-admin the customer (e.g. creating new seats and groups, changing settings of other subscribers within same customer).']
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile_definition billing_profile billing_profiles profile_add profile_package product max_subscribers status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
+    render_list => [qw/contact billing_profile_definition billing_profile billing_profiles profile_add profile_package product max_subscribers subadmin_self_admin status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
 );
 
 sub validate {
