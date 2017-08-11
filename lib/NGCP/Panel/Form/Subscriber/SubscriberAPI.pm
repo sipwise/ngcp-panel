@@ -31,7 +31,7 @@ has_field 'alias_numbers' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
@@ -85,7 +85,7 @@ has_field 'pbx_group_ids' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
@@ -100,7 +100,7 @@ has_field 'pbx_groupmember_ids' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
@@ -183,6 +183,16 @@ has_field 'modify_timestamp' => (
     },
 );
 
+has_field 'timezone' => (
+    type => 'Text',
+    label => 'Timezone',
+    required => 0,
+    maxlength => 80,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The timezone of the subscriber. See http://search.cpan.org/dist/DateTime-TimeZone/lib/DateTime/TimeZone/Catalog.pm for a full list of valid timezone names.']
+    },
+);
 
 has_field 'save' => (
     type => 'Submit',
@@ -195,7 +205,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group_ids pbx_groupmember_ids is_pbx_pilot display_name profile_set profile/ ],
+    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group_ids pbx_groupmember_ids is_pbx_pilot display_name profile_set profile timezone/ ],
 );
 
 has_block 'actions' => (
