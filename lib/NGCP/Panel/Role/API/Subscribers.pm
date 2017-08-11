@@ -17,6 +17,7 @@ use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Events;
+use NGCP::Panel::Utils::DateTime;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -49,8 +50,10 @@ sub resource_from_item {
     delete $resource{contact_id};
     if($item->contact) {
         $resource{email} = $item->contact->email;
+        $resource{timezone} = $item->contact->timezone;
     } else {
         $resource{email} = undef;
+        $resource{timezone} = undef;
     }
 
 
@@ -528,6 +531,11 @@ sub update_item {
         return;
     }
 
+    if ($resource->{timezone} && !NGCP::Panel::Utils::DateTime::is_valid_timezone_name($resource->{timezone})) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "invalid timezone name.");
+        return;
+    }
+
     if($subscriber->status ne $resource->{status}) {
         if($resource->{status} eq 'locked') {
             $resource->{lock} = 4;
@@ -609,18 +617,23 @@ sub update_item {
         }
     }
 
-    if($resource->{email}) {
+    if($resource->{email} || $resource->{timezone}) {
         my $contact = $subscriber->contact;
-        if($contact && $contact->email ne $resource->{email}) {
+        unless ($contact) {
+            $contact = $schema->resultset('contacts')->create({
+                reseller_id => $subscriber->contract->contact->reseller_id,
+            });
+        }
+        if(not $contact->email or ($contact->email ne $resource->{email})) {
             $contact->update({
                 email => $resource->{email},
             });
-        } elsif(!$contact) {
-            $contact = $schema->resultset('contacts')->create({
-                reseller_id => $subscriber->contract->contact->reseller_id,
-                email => $resource->{email},
+        }
+        if(not $contact->timezone or ($contact->timezone ne $resource->{timezone})) {
+            $contact->update({
+                timezone => $resource->{timezone},
             });
-        } # else old email == new email, nothing to do
+        }
         $resource->{contact_id} = $contact->id;
     } elsif($subscriber->contact) {
         try {
@@ -632,6 +645,7 @@ sub update_item {
         $resource->{contact_id} = undef; # mark for clearance
     }
     delete $resource->{email};
+    delete $resource->{timezone};
 
     my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
         c => $c,

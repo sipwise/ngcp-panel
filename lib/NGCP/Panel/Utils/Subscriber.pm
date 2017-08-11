@@ -12,6 +12,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Email;
 use NGCP::Panel::Utils::Events;
+use NGCP::Panel::Utils::DateTime qw();
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
 use IPC::System::Simple qw/capturex/;
@@ -197,8 +198,7 @@ sub create_subscriber {
         }
         $profile_set = $profile_set_rs->find($params->{profile_set}{id});
         unless($profile_set) {
-            $c->log->error("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
-            return;
+            die("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
         }
         if($params->{profile}{id}) {
             $profile = $profile_set->voip_subscriber_profiles->find({
@@ -211,6 +211,10 @@ sub create_subscriber {
                 set_default => 1,
             });
         }
+    }
+    $params->{timezone} = $params->{timezone}->{name} if 'HASH' eq ref $params->{timezone};
+    if ($params->{timezone} && !NGCP::Panel::Utils::DateTime::is_valid_timezone_name($params->{timezone})) {
+        die("invalid timezone name '$params->{timezone}' detected");
     }
 
     # if there is a contract default sound set, use it.
@@ -243,14 +247,24 @@ sub create_subscriber {
         UUID::unparse($uuid_bin, $uuid_string);
 
         my $contact;
-        if($params->{email}) {
+
+        if($params->{email} || $params->{timezone}) {
             $contact = $c->model('DB')->resultset('contacts')->create({
                 reseller_id => $contract->contact->reseller_id,
-                email => $params->{email},
             });
-            delete $params->{email};
+            if($params->{email}) {
+                $contact->update({
+                    email => $params->{email},
+                });
+            }
+            if($params->{timezone}) {
+                $contact->update({
+                    timezone => $params->{timezone},
+                });
+            }
         }
-
+        delete $params->{email};
+        delete $params->{timezone};
 
         # TODO: check if we find a reseller and contract and domains
 

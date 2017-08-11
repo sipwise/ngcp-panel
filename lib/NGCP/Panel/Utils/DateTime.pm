@@ -12,8 +12,20 @@ use DateTime::Format::Strptime;
 use POSIX qw(floor fmod);
 
 use constant RFC_1123_FORMAT_PATTERN => '%a, %d %b %Y %T %Z';
+use constant TIMEZONE_MAP => { map { $_ => 1; } DateTime::TimeZone->all_names };
 
 my $is_fake_time = 0;
+
+sub is_valid_timezone_name {
+    my ($tz,$all) = shift;
+    return 0 unless $tz;
+    if ($all) {
+        return DateTime::TimeZone->is_valid_name($tz);
+    } else {
+        return 0 unless exists TIMEZONE_MAP->{$tz};
+        return 1;
+    }
+}
 
 sub current_local {
     if ($is_fake_time) {
@@ -128,7 +140,8 @@ sub epoch_local {
 sub epoch_tz {
     my $epoch = shift;
     my $tz = shift;
-    if(!$tz || !DateTime::TimeZone->is_valid_name($tz)) {
+    #if(!$tz || !DateTime::TimeZone->is_valid_name($tz)) {
+    if(not is_valid_timezone_name($tz,1)) {
         $tz = DateTime::TimeZone->new(name => 'local');
     }
     return DateTime->from_epoch(
