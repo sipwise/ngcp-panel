@@ -2264,6 +2264,11 @@ msgstr "Gruppo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Contains a list of numbers used in the \"Manager Secretary\" call forwardings"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Contains wildcard list of allowed or denied SIP User-Agents matched against "
 "the User-Agent header."
 msgstr ""
@@ -7169,6 +7174,10 @@ msgid "Numbers"
 msgstr "Numeri"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Numbers used in the \"Manager Secretary\" call forwardings"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm share/layout/body.tt
 msgid "OK"
 msgstr "OK"
@@ -8939,6 +8948,10 @@ msgstr "Notifca Rinnovo Chiave Segreta"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Secret renew notify add"
 msgstr "Aggiungi Notifca Rinnovo Chiave Segreta"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Secretary numbers"
+msgstr ""
 
 #: share/templates/security/list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -11891,6 +11904,10 @@ msgid "The subscriber ID."
 msgstr "L´ID dell´abbonato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber UUID."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber contract's reseller."
 msgstr ""
 
@@ -12101,6 +12118,13 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The timezone of the subscriber."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The timezone of the subscriber. See http://search.cpan.org/dist/DateTime-"
+"TimeZone/lib/DateTime/TimeZone/Catalog.pm for a full list of valid timezone "
+"names."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12727,6 +12751,10 @@ msgid ""
 msgstr ""
 "Nome utente usato per configurare la bootstrap url del server di "
 "reindirizzamento Yealink. Ottenuta da Yealink."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Uuid"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
 #: lib/NGCP/Panel/Utils/DbStrings.pm
