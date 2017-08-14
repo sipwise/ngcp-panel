@@ -87,6 +87,7 @@ $ua = Test::Collection->new()->ua();
         lnpnumbers => 1,
         mailtofaxsettings => 1,
         maliciouscalls => 1,
+        managersecretary => 1,
         metaconfigdefs => 1,
         ncoslevels => 1,
         ncoslnpcarriers => 1,
