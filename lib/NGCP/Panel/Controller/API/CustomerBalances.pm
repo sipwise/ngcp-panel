@@ -40,7 +40,7 @@ sub query_params {
                     { join => 'contact' };
                 },
             },
-        },  
+        },
         {
             param => 'contact_id',
             description => 'Filter for contracts with a specific contact id',
@@ -83,8 +83,24 @@ sub query_params {
                     { 'domain.domain' => { '=' => $q } };
                 },
                 second => sub {
-                    { join => { voip_subscribers => 'domain' },
-                      distinct => 1,
+                    {
+                        join => { voip_subscribers => 'domain' },
+                        distinct => 1,
+                    };
+                },
+            },
+        },
+        {
+            param => 'prepaid',
+            description => 'Filter for contracts with a prepaid billing profile',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'billing_profile.prepaid' => ($q ? 1 : 0) };
+                },
+                second => sub {
+                    {
+                        join => { billing_mappings_actual => { billing_mappings => 'billing_profile' } },
                     };
                 },
             },
@@ -143,7 +159,7 @@ sub GET :Allow {
         (my $total_count, $items_rs) = $self->paginate_order_collection($c, $items_rs);
         my $items = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
             rs => $items_rs,
-            contract_id_field => 'id');        
+            contract_id_field => 'id');
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $item (@$items) {
@@ -163,7 +179,7 @@ sub GET :Allow {
                 templated => true,
             ),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
-            
+
         push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
         #    NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
         #if(($total_count / $rows) > $page ) {
@@ -180,7 +196,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
