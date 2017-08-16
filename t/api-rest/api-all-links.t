@@ -28,7 +28,7 @@ $ua = Test::Collection->new()->ua();
     my @hopts = split /\s*,\s*/, $res->header('Allow');
 
     my @links = $res->header('Link');
-    my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash)"$!;
+    my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash|managersecretary)"$!;
     foreach my $link(@links) {
         (my ($relname)) = ($link =~ $rex);
         # now get this rel
