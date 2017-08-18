@@ -2266,28 +2266,15 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 if($is_admin) {
                     $prov_params->{admin} = $form->values->{administrative} // $prov_subscriber->admin;
                 }
-
-
-                if($form->params->{display_name}) {
-                    my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                            c => $c, attribute => 'display_name',
-                            prov_subscriber => $prov_subscriber);
-                    if($display_pref->first) {
-                        $display_pref->first->update({ value => $form->params->{display_name} });
-                    } else {
-                        $display_pref->create({ value => $form->params->{display_name} });
+                NGCP::Panel::Utils::Subscriber::update_preferences(
+                    c => $c,
+                    prov_subscriber => $prov_subscriber,
+                    'preferences'   => {
+                        display_name  => $form->params->{display_name},
+                        cloud_pbx_ext => $form->params->{pbx_extension},
+                        #this call will delete the cloud_pbx_ext preference if form param is empty, but form validation shouldn't allow empty value
                     }
-                }
-                if(defined $form->params->{pbx_extension}) {
-                    my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                            c => $c, attribute => 'cloud_pbx_ext',
-                            prov_subscriber => $prov_subscriber);
-                    if($pref->first) {
-                        $pref->first->update({ value => $form->params->{pbx_extension} });
-                    } else {
-                        $pref->create({ value => $form->params->{pbx_extension} });
-                    }
-                }
+                );
 
                 my $old_profile = $prov_subscriber->profile_id;
                 my ($profile_set, $profile);
