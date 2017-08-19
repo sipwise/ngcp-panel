@@ -2617,7 +2617,7 @@ msgstr "Kunden ID des anrufenden Subscribers, wenn lokal."
 msgid "Customer key for GAPS access. Obtained from Grandstream."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Customer not found"
 msgstr "Kunde nicht gefunden"
 
@@ -3918,13 +3918,13 @@ msgstr ""
 msgid "Failed to create inbound peering rule"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Invoice.pm
+msgid "Failed to create invoice"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to create invoice template"
 msgstr ""
-
-#: lib/NGCP/Panel/Controller/Invoice.pm
-msgid "Failed to create invoice."
-msgstr "Rechnung erstellen Fehlgeschlagen"
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to create location."
@@ -4228,7 +4228,7 @@ msgstr ""
 msgid "Failed to generate manual ip group sequence"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to get contract balance."
 msgstr "Vertrags-Saldo nicht gefunden."
 
@@ -4260,17 +4260,13 @@ msgstr "Anzeigen der Vorschau fehlgeschlagen."
 msgid "Failed to recover web password"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
-msgid "Failed to render invoice"
-msgstr "Rechnung erzeugen fehlgeschlagen"
-
 #. ($error->type . ', info is ' . $error->info)
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to render template. Type is "
 msgstr "Vorlage übersetzen fehlgeschlagen. Typ ist "
 
 #. ($error->type, $error->info)
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to render template. Type is %1, info is %2."
 msgstr "Vorlage übersetzen fehlgeschlagen. Typ ist %1, Info ist %2."
 
@@ -4282,7 +4278,7 @@ msgstr ""
 msgid "Failed to save Call Forward"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to save invoice meta data."
 msgstr "Rechnungs-Metadaten speichern fehlgeschlagen."
 
@@ -5813,7 +5809,7 @@ msgid "Invoice"
 msgstr "Rechnung"
 
 #. ($invoice->id)
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice #%1 successfully created"
 msgstr "Rechnung #%1 erfolgreich erstellt"
 
@@ -5849,6 +5845,10 @@ msgstr "Rechnung existiert nicht"
 msgid "Invoice email template id"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Invoice period."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Invoice successfully deleted"
 msgstr "Rechnung erfolgreich gelöscht"
@@ -5862,7 +5862,7 @@ msgstr "Rechnungsvorlage %1"
 msgid "Invoice template does not exist"
 msgstr "Diese Rechnungsvorlage existiert nicht."
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice template does not have an SVG stored yet"
 msgstr "Rechnungsvorlage hat kein gespeichertes SVG"
 
@@ -5870,7 +5870,7 @@ msgstr "Rechnungsvorlage hat kein gespeichertes SVG"
 msgid "Invoice template id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice template not found"
 msgstr "Rechnungsvorlage nicht gefunden"
 
@@ -9876,7 +9876,7 @@ msgstr ""
 msgid "Template"
 msgstr "Vorlage"
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Template and customer must belong to same reseller"
 msgstr "Vorlage und Kunde müssen dem selben Reseller zugewiesen sein."
 
@@ -11669,6 +11669,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The system name, appearing in the output when acting as an SNMP Agent."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The template is used to generate invoice."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13474,6 +13478,12 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Failed to create invoice."
+#~ msgstr "Rechnung erstellen Fehlgeschlagen"
+
+#~ msgid "Failed to render invoice"
+#~ msgstr "Rechnung erzeugen fehlgeschlagen"
 
 #~ msgid ""
 #~ "See \"lock_voip_account_subscriber\" for a list of possible values. A "

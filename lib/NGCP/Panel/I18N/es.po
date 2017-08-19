@@ -2612,7 +2612,7 @@ msgstr ""
 msgid "Customer key for GAPS access. Obtained from Grandstream."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Customer not found"
 msgstr ""
 
@@ -3917,12 +3917,12 @@ msgstr ""
 msgid "Failed to create inbound peering rule"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
-msgid "Failed to create invoice template"
+#: lib/NGCP/Panel/Controller/Invoice.pm
+msgid "Failed to create invoice"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
-msgid "Failed to create invoice."
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
+msgid "Failed to create invoice template"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
@@ -4227,7 +4227,7 @@ msgstr ""
 msgid "Failed to generate manual ip group sequence"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to get contract balance."
 msgstr ""
 
@@ -4259,17 +4259,13 @@ msgstr ""
 msgid "Failed to recover web password"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
-msgid "Failed to render invoice"
-msgstr ""
-
 #. ($error->type . ', info is ' . $error->info)
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to render template. Type is "
 msgstr ""
 
 #. ($error->type, $error->info)
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to render template. Type is %1, info is %2."
 msgstr ""
 
@@ -4281,7 +4277,7 @@ msgstr ""
 msgid "Failed to save Call Forward"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to save invoice meta data."
 msgstr ""
 
@@ -5815,7 +5811,7 @@ msgid "Invoice"
 msgstr ""
 
 #. ($invoice->id)
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice #%1 successfully created"
 msgstr ""
 
@@ -5851,6 +5847,10 @@ msgstr ""
 msgid "Invoice email template id"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Invoice period."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Invoice successfully deleted"
 msgstr ""
@@ -5864,7 +5864,7 @@ msgstr ""
 msgid "Invoice template does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice template does not have an SVG stored yet"
 msgstr ""
 
@@ -5872,7 +5872,7 @@ msgstr ""
 msgid "Invoice template id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice template not found"
 msgstr ""
 
@@ -9883,7 +9883,7 @@ msgstr ""
 msgid "Template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Template and customer must belong to same reseller"
 msgstr ""
 
@@ -11666,6 +11666,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The system name, appearing in the output when acting as an SNMP Agent."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The template is used to generate invoice."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

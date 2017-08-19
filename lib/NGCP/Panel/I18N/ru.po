@@ -2612,7 +2612,7 @@ msgstr "Идентификатор клиента вызывающего або�
 msgid "Customer key for GAPS access. Obtained from Grandstream."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Customer not found"
 msgstr "Клиент не найден"
 
@@ -3917,13 +3917,13 @@ msgstr ""
 msgid "Failed to create inbound peering rule"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Invoice.pm
+msgid "Failed to create invoice"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to create invoice template"
 msgstr ""
-
-#: lib/NGCP/Panel/Controller/Invoice.pm
-msgid "Failed to create invoice."
-msgstr "Не удалось создать счёт-фактуру."
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to create location."
@@ -4227,7 +4227,7 @@ msgstr ""
 msgid "Failed to generate manual ip group sequence"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to get contract balance."
 msgstr "Не удалось получить баланс контракта."
 
@@ -4259,17 +4259,13 @@ msgstr "Не удалось создать предварительный про
 msgid "Failed to recover web password"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
-msgid "Failed to render invoice"
-msgstr "Не удалось сгенерировать счёт-фактуру"
-
 #. ($error->type . ', info is ' . $error->info)
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to render template. Type is "
 msgstr "Не удалось сгенерировать счёт-фактуру. Тип "
 
 #. ($error->type, $error->info)
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to render template. Type is %1, info is %2."
 msgstr ""
 
@@ -4281,7 +4277,7 @@ msgstr ""
 msgid "Failed to save Call Forward"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to save invoice meta data."
 msgstr "Не удалось сохранить метаданные счёт-фактуры."
 
@@ -5816,7 +5812,7 @@ msgid "Invoice"
 msgstr "Счёт-фактура"
 
 #. ($invoice->id)
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice #%1 successfully created"
 msgstr ""
 
@@ -5852,6 +5848,10 @@ msgstr "Счёт-фактура не существует"
 msgid "Invoice email template id"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Invoice period."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Invoice successfully deleted"
 msgstr "Счёт-фактура успешно удалена"
@@ -5865,7 +5865,7 @@ msgstr "Шаблон счёт-фактуры %1"
 msgid "Invoice template does not exist"
 msgstr "Шаблон счёт-фактуры не существует"
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice template does not have an SVG stored yet"
 msgstr "Шаблон счёт-фактуры не содержит SVG"
 
@@ -5873,7 +5873,7 @@ msgstr "Шаблон счёт-фактуры не содержит SVG"
 msgid "Invoice template id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice template not found"
 msgstr "Шаблон счёт-фактуры не найден"
 
@@ -9879,7 +9879,7 @@ msgstr ""
 msgid "Template"
 msgstr "Шаблон"
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Template and customer must belong to same reseller"
 msgstr "Шаблон и клиент должны принадлежать одному реселлеру"
 
@@ -11687,6 +11687,10 @@ msgid "The system name, appearing in the output when acting as an SNMP Agent."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The template is used to generate invoice."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The temporal unit for the \"timely\" interval."
 msgstr ""
 
@@ -13489,6 +13493,12 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "да"
+
+#~ msgid "Failed to create invoice."
+#~ msgstr "Не удалось создать счёт-фактуру."
+
+#~ msgid "Failed to render invoice"
+#~ msgstr "Не удалось сгенерировать счёт-фактуру"
 
 #~ msgid ""
 #~ "See \"lock_voip_account_subscriber\" for a list of possible values. A "

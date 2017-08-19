@@ -2724,7 +2724,7 @@ msgstr "Id cliente dell´abbonato chiamato, se locale."
 msgid "Customer key for GAPS access. Obtained from Grandstream."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Customer not found"
 msgstr "Cliente non trovato"
 
@@ -4061,13 +4061,13 @@ msgstr "Creazione del gruppo dei numeri di emergenza fallita."
 msgid "Failed to create inbound peering rule"
 msgstr "Creazione regola peer in ingresso fallita."
 
+#: lib/NGCP/Panel/Controller/Invoice.pm
+msgid "Failed to create invoice"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to create invoice template"
 msgstr "Creazione del modello fattura fallita"
-
-#: lib/NGCP/Panel/Controller/Invoice.pm
-msgid "Failed to create invoice."
-msgstr "Creazione della fattura fallita."
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to create location."
@@ -4371,7 +4371,7 @@ msgstr "Generazione del gruppo di sequenza IP fallita"
 msgid "Failed to generate manual ip group sequence"
 msgstr "Generazione manuale del gruppo di sequenza IP fallita"
 
-#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to get contract balance."
 msgstr "Richiesta del saldo del contratto fallita"
 
@@ -4403,17 +4403,13 @@ msgstr "Creazione dell´anteprima del modello fallita"
 msgid "Failed to recover web password"
 msgstr "Recupero della password web fallito"
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
-msgid "Failed to render invoice"
-msgstr "Generazione della fattura fallita"
-
 #. ($error->type . ', info is ' . $error->info)
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to render template. Type is "
 msgstr "Generazione del modello fallita. Il tipo è "
 
 #. ($error->type, $error->info)
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to render template. Type is %1, info is %2."
 msgstr "Generazione del modello fallita. Il tipo è %1, info è %2."
 
@@ -4425,7 +4421,7 @@ msgstr "Reset password web fallita"
 msgid "Failed to save Call Forward"
 msgstr "Salvataggio deviazione di chiamata fallito"
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to save invoice meta data."
 msgstr "Salvataggio meta data della fattura fallito"
 
@@ -6007,7 +6003,7 @@ msgid "Invoice"
 msgstr "Fattura"
 
 #. ($invoice->id)
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice #%1 successfully created"
 msgstr "Fattura #%1 creata con successo"
 
@@ -6043,6 +6039,10 @@ msgstr "La Fattura non esiste"
 msgid "Invoice email template id"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Invoice period."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Invoice successfully deleted"
 msgstr "Fattura eliminata con successo"
@@ -6056,7 +6056,7 @@ msgstr "Modello Fattura %1"
 msgid "Invoice template does not exist"
 msgstr "Il Modello Fattura non esiste"
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice template does not have an SVG stored yet"
 msgstr "Il Modello Fattura non ha ancora un SVG salvato"
 
@@ -6064,7 +6064,7 @@ msgstr "Il Modello Fattura non ha ancora un SVG salvato"
 msgid "Invoice template id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Invoice template not found"
 msgstr "Modello fattura non trovato"
 
@@ -10131,7 +10131,7 @@ msgstr "Etichetta"
 msgid "Template"
 msgstr "Modello"
 
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Template and customer must belong to same reseller"
 msgstr "Modello e Cliente devono appartenere allo stesso rivenditore"
 
@@ -12061,6 +12061,10 @@ msgstr ""
 "Il nome di sistema, sarà fornito in output quando agirà come SNMP Agent."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The template is used to generate invoice."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The temporal unit for the \"timely\" interval."
 msgstr "L´unità temporale per l´intervallo \"temporale\""
 
@@ -13895,6 +13899,12 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Failed to create invoice."
+#~ msgstr "Creazione della fattura fallita."
+
+#~ msgid "Failed to render invoice"
+#~ msgstr "Generazione della fattura fallita"
 
 #~ msgid ""
 #~ "See \"lock_voip_account_subscriber\" for a list of possible values. A "
