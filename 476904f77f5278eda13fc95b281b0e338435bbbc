@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab399f4_3d7e7be5",
+        "filename": "lib/NGCP/Panel/Controller/Reseller.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-08-22T10:33:44Z",
+      "side": 1,
+      "message": "I will leave some comments here, not to fix, but just as thoughts.\n\nSo - Why we couldn\u0027t use try/catch here too?",
+      "range": {
+        "startLine": 320,
+        "startChar": 0,
+        "endLine": 320,
+        "endChar": 22
+      },
+      "revId": "476904f77f5278eda13fc95b281b0e338435bbbc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_5d832fcc",
+        "filename": "lib/NGCP/Panel/Controller/Reseller.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-08-22T10:33:44Z",
+      "side": 1,
+      "message": "I think we need some code style for indention",
+      "range": {
+        "startLine": 345,
+        "startChar": 0,
+        "endLine": 346,
+        "endChar": 79
+      },
+      "revId": "476904f77f5278eda13fc95b281b0e338435bbbc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
