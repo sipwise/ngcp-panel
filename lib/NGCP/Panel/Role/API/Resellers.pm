@@ -131,17 +131,25 @@ sub update_reseller {
             contract_id => $resource->{contract_id},
         });
 
-    NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
-        old_resource => $old_resource,
-        resource => $resource,
-        config => $c->config,
-        reseller_item => $reseller,
-        err_code => sub {
-            my ($msg, $debug) = @_;
-            $c->log->debug($debug) if $debug;
-            $c->log->warn($msg);
-            return;
-        });
+    eval {
+        NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+            old_resource => $old_resource,
+            resource => $resource,
+            config => $c->config,
+            reseller_item => $reseller,
+            err_code => sub {
+                my ($msg, $debug) = @_;
+                $c->log->debug($debug) if $debug;
+                $c->log->warn($msg);
+                die $msg,"\n";
+            });
+    };
+    my $rtc_err = $@ // '';
+    if ($rtc_err && $resource->{status} eq 'terminated') {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
+                        "Could not terminate rtc_user: $rtc_err");
+        return;
+    }
 
     # TODO: should we lock reseller admin logins if reseller gets terminated?
     # or terminate all his customers and delete non-billing data?
