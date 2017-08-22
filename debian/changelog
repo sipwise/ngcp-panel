@@ -1,3 +1,17 @@
+ngcp-panel (1.8.12.0+0~mr3.8.12.0) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [99d64de] TT#17761 Add ghostscript as dependency to ngcp-panel for invoice generation
+  * [45194f9] TT#19300 Fix ngcp-panel start race condition on server boot
+
+  [ Irina Peshinskaya ]
+  * [0e03944] TT#17068 Fix phone symbol # in the generated invoice
+  * [3e3e01f] TT#17068 Move # processing to TT
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 22 Aug 2017 11:01:25 +0200
+
 ngcp-panel (1.8.11.0+0~mr3.8.11.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
