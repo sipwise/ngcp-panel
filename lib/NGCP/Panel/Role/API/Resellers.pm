@@ -87,6 +87,11 @@ sub update_reseller {
 
     $form //= $self->get_form($c);
     $resource->{contract_id} //= undef;
+    if(defined $resource->{contract_id} && !is_int($resource->{contract_id})) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contract_id', not a number");
+        return;
+    }
+
     return unless $self->validate_form(
         c => $c,
         form => $form,
