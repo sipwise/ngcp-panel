@@ -8514,10 +8514,6 @@ msgstr "Rivenditore non trovato"
 msgid "Reseller not found."
 msgstr "Rivenditore non trovato"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm
-msgid "Reseller successfully created"
-msgstr "Rivenditore creato con successo"
-
 #. ($defaults{admins}->{login}, $default_pass)
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid ""
@@ -8526,6 +8522,10 @@ msgid ""
 msgstr ""
 "Rivenditore creato con successo con utente di accesso <b>%1</b> e password "
 "<b>%2</b>, prego rivedere la configurazione di seguito"
+
+#: lib/NGCP/Panel/Controller/Reseller.pm
+msgid "Reseller successfully created."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Reseller successfully updated"
@@ -13899,6 +13899,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Reseller successfully created"
+#~ msgstr "Rivenditore creato con successo"
 
 #~ msgid "Failed to create invoice."
 #~ msgstr "Creazione della fattura fallita."

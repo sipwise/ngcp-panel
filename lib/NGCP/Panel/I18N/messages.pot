@@ -7474,13 +7474,13 @@ msgstr ""
 msgid "Reseller not found."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm
-msgid "Reseller successfully created"
-msgstr ""
-
 #. ($defaults{admins}->{login}, $default_pass)
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, please review your settings below"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm
+msgid "Reseller successfully created."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm

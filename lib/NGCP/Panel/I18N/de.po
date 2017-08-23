@@ -8280,10 +8280,6 @@ msgstr "Reseller nicht gefunden"
 msgid "Reseller not found."
 msgstr "Reseller nicht gefunden."
 
-#: lib/NGCP/Panel/Controller/Reseller.pm
-msgid "Reseller successfully created"
-msgstr "Reseller erfolgreich erstellt"
-
 #. ($defaults{admins}->{login}, $default_pass)
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid ""
@@ -8292,6 +8288,10 @@ msgid ""
 msgstr ""
 "Reseller erfolgreich erstellt, Login ist <b>%1</b> und Passwort ist  <b>%2</"
 "b>, bitte Einstellungen unten überprüfen und anpassen."
+
+#: lib/NGCP/Panel/Controller/Reseller.pm
+msgid "Reseller successfully created."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Reseller successfully updated"
@@ -13478,6 +13478,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Reseller successfully created"
+#~ msgstr "Reseller erfolgreich erstellt"
 
 #~ msgid "Failed to create invoice."
 #~ msgstr "Rechnung erstellen Fehlgeschlagen"
