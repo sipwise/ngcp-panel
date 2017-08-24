@@ -46,6 +46,30 @@
       "revId": "08f2ac83171cbcc5b3957cc196b2469ef6a9d23a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_838804e9",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-08-24T09:27:52Z",
+      "side": 1,
+      "message": "Kirill, it doesn\u0027t work though because in my tests, when sending no or an invalid Content-Type, I receive an error 400  back saying that the content is missing or invalid, where in fact I expect a 415 saying the content type must be application/json.\n\nThis fix makes sure the correct error is returned.\n\nTested with resellers resource, which is not yet migrated to the new framework of Irina, JFYI.",
+      "parentUuid": "fab399f4_6335b045",
+      "range": {
+        "startLine": 89,
+        "startChar": 4,
+        "endLine": 89,
+        "endChar": 59
+      },
+      "revId": "08f2ac83171cbcc5b3957cc196b2469ef6a9d23a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
