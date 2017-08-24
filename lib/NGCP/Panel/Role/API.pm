@@ -86,7 +86,10 @@ sub get_valid_post_data {
     my $c = $params{c};
     my $media_type = $params{media_type};
     my $json =  $self->get_valid_raw_post_data(%params);
+    return unless $self->valid_media_type($c, $media_type);
+    return unless $self->require_preference($c);
     return unless $self->require_wellformed_json($c, $media_type, $json);
+
     return JSON::from_json($json, { utf8 => 1 });
 }
 
