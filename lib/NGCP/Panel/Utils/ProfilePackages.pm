@@ -191,7 +191,7 @@ sub _create_next_balance {
     return catchup_contract_balances(c => $c,
                         contract => $contract,
                         old_package => $new_package, #$old_package,
-                        now => NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end)->clone->add(seconds => 1),
+                        now => _add_second(NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end)->clone,1),
                         #suppress_underrun => 1,
                         #suppress_notopup_discard => 1,
                         is_create_next => 1,
@@ -247,7 +247,7 @@ sub catchup_contract_balances {
     my $last_balance = $contract->contract_balances->search(undef,{ order_by => { '-desc' => 'end'},})->first;
     my $last_profile;
     while ($last_balance && !NGCP::Panel::Utils::DateTime::is_infinite_future($last_balance->end) && NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end) < $now) { #comparison takes 100++ sec if loaded lastbalance contains +inf
-        my $start_of_next_interval = NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end)->clone->add(seconds => 1);
+        my $start_of_next_interval = _add_second(NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end)->clone,1);
 
         if ($has_package && !$is_notopup_expiration_calculated) {
             #we have two queries here, so do it only if really creating contract_balances
@@ -714,7 +714,7 @@ sub _get_free_ratio {
         }
         #my $ctime = (defined $now ? $now->clone : NGCP::Panel::Utils::DateTime::current_local);
         #$ctime->truncate(to => 'day') if $ctime->clone->truncate(to => 'day') > $stime;
-        my $start_of_next_interval = $etime->clone->add(seconds => 1);
+        my $start_of_next_interval = _add_second($etime->clone,1);
         return ($start_of_next_interval->epoch - $ctime->epoch) / ($start_of_next_interval->epoch - $stime->epoch);
     }
     return 1.0;
@@ -729,7 +729,7 @@ sub _get_balance_interval_start_end {
     unless ($last_etime) { #initial interval
         $stime = _get_interval_start($ctime,$start_mode);
     } else {
-        $stime = $last_etime->clone->add(seconds => 1);
+        $stime = _add_second($last_etime->clone,1);
     }
 
     if (defined $stime) {
@@ -828,6 +828,17 @@ sub _add_interval {
     return undef;
 }
 
+sub _add_second {
+    
+    my ($dt,$skip_leap_seconds) = @_;
+    $dt->add(seconds => 1);
+    while ($skip_leap_seconds and $dt->second() >= 60) {
+        $dt->add(seconds => 1);
+    }
+    return $dt;
+
+}
+
 sub _get_notopup_expiration {
     my %params = @_;
     my($contract,$start_mode,$notopup_discard_intervals,$interval_unit,$last_balance)= @params{qw/contract $start_mode notopup_discard_intervals interval_unit last_balance/};
@@ -849,7 +860,7 @@ sub _get_notopup_expiration {
                     $start = $last_balance_w_topup->start;
                 } else {
                     # count expiration from the start of the next interval:
-                    $start = $last_balance_w_topup->end->clone->add(seconds => 1);
+                    $start = _add_second($last_balance_w_topup->end->clone,1);
                 }
             }
         }
@@ -901,7 +912,7 @@ sub get_timely_range {
             $timely_end = _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),$package->balance_interval_unit,$package->balance_interval_value,
                         _START_MODE_PRESERVE_EOM->{$package->balance_interval_start_mode} ? NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp) : undef)->subtract(seconds => 1);
         }
-        $timely_start = _add_interval($timely_end,$timely_duration_unit,-1 * $timely_duration_value)->add(seconds => 1);
+        $timely_start = _add_second(_add_interval($timely_end,$timely_duration_unit,-1 * $timely_duration_value),1);
         $timely_start = NGCP::Panel::Utils::DateTime::set_local_tz($balance->start) if $timely_start < NGCP::Panel::Utils::DateTime::set_local_tz($balance->start);
 
         $is_timely = ($now >= $timely_start && $now <= $timely_end ? 1 : 0);
