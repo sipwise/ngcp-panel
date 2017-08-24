@@ -43,6 +43,8 @@ has_field 'sn' => (
 
 sub validate {
     my $self = shift;
+    my $c = $self->form->ctx;
+    return unless($c);
 
     my $cc = $self->field('cc')->value;
     my $sn = $self->field('sn')->value;
@@ -56,7 +58,25 @@ sub validate {
         $self->add_error($sub_error);
     }
     for my $sub_field (@sub_fields){
-        $self->field($sub_field)->clear_errors if $self->field($sub_field) && $self->field($sub_field)->result;
+        my $field = $self->field($sub_field);
+        $field->clear_errors if $field && $field->result;
+        my $has_field = (defined $field && defined $field->value) ? 1 : 0;
+        my $len = $has_field ? length($field->value) : 0;
+        my $pattern = $c->config->{number_format}->{$sub_field . "_regex"};
+
+        # check for max size as set in DB schema
+        if($sub_field eq "cc" && $len > 4) {
+            $field->add_error("value must not exceed 4 digits but is $len");
+        } elsif($sub_field eq "ac" && $len > 7) {
+            $field->add_error("value must not exceed 7 digits but is $len");
+        } elsif($sub_field eq "sn" && $len > 31) {
+            $field->add_error("value must not exceed 31 digits but is $len");
+        }
+
+        # check for particular user-defined regex
+        if($pattern && $has_field && $field !~ /$pattern/) {
+            $field->add_error("value does not match required $sub_field pattern");
+        }
     }
 
     if ($self->has_errors) {
