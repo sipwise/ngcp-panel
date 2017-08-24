@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab399f4_83b564cf",
+        "filename": "lib/NGCP/Panel/Utils/ProfilePackages.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 836,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-08-24T08:41:10Z",
+      "side": 1,
+      "message": "$dt-\u003esubtract(seconds \u003d\u003e 1); \n?",
+      "range": {
+        "startLine": 836,
+        "startChar": 13,
+        "endLine": 836,
+        "endChar": 16
+      },
+      "revId": "52da4430ff417233f781465a97f18310f8eeb737",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
