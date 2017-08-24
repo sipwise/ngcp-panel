@@ -56,7 +56,17 @@ sub validate {
         $self->add_error($sub_error);
     }
     for my $sub_field (@sub_fields){
-        $self->field($sub_field)->clear_errors if $self->field($sub_field) && $self->field($sub_field)->result;
+        my $field = $self->field($sub_field);
+        $field->clear_errors if $field && $field->result;
+        my $len = (defined $field && defined $field->value) ?
+            length($field->value) : 0;
+        if($sub_field eq "cc" && $len > 4) {
+            $field->add_error("value must not exceed 4 digits but is $len");
+        } elsif($sub_field eq "ac" && $len > 7) {
+            $field->add_error("value must not exceed 7 digits but is $len");
+        } elsif($sub_field eq "sn" && $len > 31) {
+            $field->add_error("value must not exceed 31 digits but is $len");
+        }
     }
 
     if ($self->has_errors) {
