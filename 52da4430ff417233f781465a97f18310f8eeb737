@@ -22,6 +22,53 @@
       "revId": "52da4430ff417233f781465a97f18310f8eeb737",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_03d8741c",
+        "filename": "lib/NGCP/Panel/Utils/ProfilePackages.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 836,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-24T09:13:23Z",
+      "side": 1,
+      "message": "intention is to make it roll over to 00:00 of next day.\nafter adding this, the tests pass as expected.",
+      "parentUuid": "fab399f4_83b564cf",
+      "range": {
+        "startLine": 836,
+        "startChar": 13,
+        "endLine": 836,
+        "endChar": 16
+      },
+      "revId": "52da4430ff417233f781465a97f18310f8eeb737",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_8303a472",
+        "filename": "lib/NGCP/Panel/Utils/ProfilePackages.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 913,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-24T09:13:23Z",
+      "side": 1,
+      "message": "btw. this subtractions to roll back to 23:59:59 are safe, as with the fixed dbis storage datetimeparser/formatter, leap second datetimes will be properly corrected.",
+      "range": {
+        "startLine": 913,
+        "startChar": 205,
+        "endLine": 913,
+        "endChar": 213
+      },
+      "revId": "52da4430ff417233f781465a97f18310f8eeb737",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
