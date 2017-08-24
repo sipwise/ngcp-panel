@@ -66,6 +66,10 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "\"Manager Secretary\" call forwardings toggle"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "\"Music on Hold\" - if set to true and a music on hold file is provided, a "
 "calling party gets that file played when put on hold"
@@ -12075,6 +12079,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Tuesday"
 msgstr "Вторник"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Turns on and off \"Manager Secretary\" call forwardings"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
