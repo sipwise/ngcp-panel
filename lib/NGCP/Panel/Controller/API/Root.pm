@@ -158,12 +158,16 @@ sub GET : Allow {
         my ($form) = $full_mod->get_form($c);
 
         my $sorting_cols = [];
-        my $item_rs;
-        try {
-            $item_rs = $full_mod->item_rs($c, "");
-        }
-        if ($item_rs) {
-            $sorting_cols = [$item_rs->result_source->columns];
+        if (my $order_by_cols = eval { $full_mod->order_by_cols(); }) {
+            $sorting_cols = [ keys %$order_by_cols ];
+        } else {
+            my $item_rs;
+            try {
+                $item_rs = $full_mod->item_rs($c, "");
+            }
+            if ($item_rs) {
+                $sorting_cols = [$item_rs->result_source->columns];
+            }
         }
         my ($form_fields,$form_fields_upload) = $form ? $self->get_collection_properties($form) : ([],[]);
 
