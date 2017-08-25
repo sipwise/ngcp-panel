@@ -16,6 +16,23 @@
       "revId": "90340caae05e0c7c2db989babc6b0147c7422c42",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_696d9104",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-25T17:34:19Z",
+      "side": 0,
+      "message": "i\u0027m still curious, if placing a die() instead of self-\u003eerror here would also do the trick",
+      "revId": "90340caae05e0c7c2db989babc6b0147c7422c42",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
