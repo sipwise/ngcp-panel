@@ -134,6 +134,7 @@ sub post {
 
         $guard->commit;
 
+        return if defined $c->stash->{api_error_message};
         $self->return_representation_post($c, 'item' => $item, 'form' => $form, 'form_exceptions' => $form_exceptions );
     }
     return;
