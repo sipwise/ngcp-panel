@@ -553,18 +553,18 @@ sub paginate_order_collection_rs {
         page => $page,
         rows => $rows,
     });
-    if ($order_by && $item_rs->result_source->has_column($order_by)) {
-        my $me = $item_rs->current_source_alias;
+    if ($order_by && ((my $explicit = ($self->can('order_by_cols') && exists $self->order_by_cols()->{$order_by})) or $item_rs->result_source->has_column($order_by))) {
+        my $col = ($explicit ? $self->order_by_cols()->{$order_by} : $item_rs->current_source_alias . '.' . $order_by);
         if (lc($direction) eq 'desc') {
             $item_rs = $item_rs->search(undef, {
-                order_by => {-desc => "$me.$order_by"},
+                order_by => {-desc => $col},
             });
-            $c->log->debug("ordering by $me.$order_by DESC");
+            $c->log->debug("ordering by $col DESC");
         } else {
             $item_rs = $item_rs->search(undef, {
-                order_by => "$me.$order_by",
+                order_by => "$col",
             });
-            $c->log->debug("ordering by $me.$order_by");
+            $c->log->debug("ordering by $col");
         }
     }
     return ($total_count, $item_rs);
@@ -984,7 +984,7 @@ sub get_form {
 
 sub get_item_id{
     my($self, $c, $item, $resource, $form) = @_;
-    return int($item->id);
+    return int(blessed $item ? $item->id : $item->{id});
 }
 
 sub item_by_id {
