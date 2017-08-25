@@ -335,55 +335,59 @@ sub _is_show_suppressions {
 
 sub call_list_suppressions_rs {
 
-    my ($c,$rs,$mode) = @_;
+    my ($c,$rs,$mode,
+        $source_cli_suppression_id_colname,
+        $destination_user_in_suppression_id_colname) = @_;
     return $rs unless ENABLE_SUPPRESSIONS;
+    $source_cli_suppression_id_colname //= SOURCE_CLI_SUPPRESSION_ID_COLNAME;
+    $destination_user_in_suppression_id_colname //= DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME;
     my %search_cond = ();
     my %search_xtra = ();
     if (_is_show_suppressions($c)) {
         if (defined $mode and SUPPRESS_OUT == $mode) {
             $search_xtra{'+select'} = [
-                #{ '' => \[ 'me.source_cli' ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                { '' => \[ 'NULL' ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                { '' => \[ _get_call_list_suppression_sq('outgoing',qw(filter obfuscate)) ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
+                #{ '' => \[ 'me.source_cli' ] , -as => $source_cli_suppression_id_colname },
+                { '' => \[ 'NULL' ] , -as => $source_cli_suppression_id_colname },
+                { '' => \[ _get_call_list_suppression_sq('outgoing',qw(filter obfuscate)) ] , -as => $destination_user_in_suppression_id_colname },
             ];
         } elsif (defined $mode and SUPPRESS_IN == $mode) {
             $search_xtra{'+select'} = [
-                { '' => \[ _get_call_list_suppression_sq('incoming',qw(filter obfuscate)) ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                #{ '' => \[ 'me.destination_user_in' ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
-                { '' => \[ 'NULL' ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
+                { '' => \[ _get_call_list_suppression_sq('incoming',qw(filter obfuscate)) ] , -as => $source_cli_suppression_id_colname },
+                #{ '' => \[ 'me.destination_user_in' ] , -as => $destination_user_in_suppression_id_colname },
+                { '' => \[ 'NULL' ] , -as => $destination_user_in_suppression_id_colname },
             ];
         } elsif (defined $mode and SUPPRESS_INOUT == $mode) {
             $search_xtra{'+select'} = [
-                { '' => \[ _get_call_list_suppression_sq('incoming',qw(filter obfuscate)) ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                { '' => \[ _get_call_list_suppression_sq('outgoing',qw(filter obfuscate)) ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
+                { '' => \[ _get_call_list_suppression_sq('incoming',qw(filter obfuscate)) ] , -as => $source_cli_suppression_id_colname },
+                { '' => \[ _get_call_list_suppression_sq('outgoing',qw(filter obfuscate)) ] , -as => $destination_user_in_suppression_id_colname },
             ];
         } else {
             $search_xtra{'+select'} = [
-                #{ '' => \[ 'me.source_cli' ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                { '' => \[ 'NULL' ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                #{ '' => \[ 'me.destination_user_in' ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
-                { '' => \[ 'NULL' ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
+                #{ '' => \[ 'me.source_cli' ] , -as => $source_cli_suppression_id_colname },
+                { '' => \[ 'NULL' ] , -as => $source_cli_suppression_id_colname },
+                #{ '' => \[ 'me.destination_user_in' ] , -as => $destination_user_in_suppression_id_colname },
+                { '' => \[ 'NULL' ] , -as => $destination_user_in_suppression_id_colname },
             ];
         }
     } else {
         if (defined $mode and SUPPRESS_OUT == $mode) {
             $search_xtra{'+select'} = [
-                #{ '' => \[ 'me.source_cli' ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                { '' => \[ 'NULL' ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                { '' => \[ _get_call_list_suppression_sq('outgoing',qw(obfuscate)) ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
+                #{ '' => \[ 'me.source_cli' ] , -as => $source_cli_suppression_id_colname },
+                { '' => \[ 'NULL' ] , -as => $source_cli_suppression_id_colname },
+                { '' => \[ _get_call_list_suppression_sq('outgoing',qw(obfuscate)) ] , -as => $destination_user_in_suppression_id_colname },
             ];
             $search_cond{'-not exists'} = \[ '('._get_call_list_suppression_sq('outgoing',qw(filter)).')' ];
         } elsif (defined $mode and SUPPRESS_IN == $mode) {
             $search_xtra{'+select'} = [
-                { '' => \[ _get_call_list_suppression_sq('incoming',qw(obfuscate)) ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                #{ '' => \[ 'me.destination_user_in' ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
-                { '' => \[ 'NULL' ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
+                { '' => \[ _get_call_list_suppression_sq('incoming',qw(obfuscate)) ] , -as => $source_cli_suppression_id_colname },
+                #{ '' => \[ 'me.destination_user_in' ] , -as => $destination_user_in_suppression_id_colname },
+                { '' => \[ 'NULL' ] , -as => $destination_user_in_suppression_id_colname },
             ];
             $search_cond{'-not exists'} = \[ '('._get_call_list_suppression_sq('incoming',qw(filter)).')' ];
         } elsif (defined $mode and SUPPRESS_INOUT == $mode) {
             $search_xtra{'+select'} = [
-                { '' => \[ _get_call_list_suppression_sq('incoming',qw(obfuscate)) ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                { '' => \[ _get_call_list_suppression_sq('outgoing',qw(obfuscate)) ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
+                { '' => \[ _get_call_list_suppression_sq('incoming',qw(obfuscate)) ] , -as => $source_cli_suppression_id_colname },
+                { '' => \[ _get_call_list_suppression_sq('outgoing',qw(obfuscate)) ] , -as => $destination_user_in_suppression_id_colname },
             ];
             $search_cond{'-and'} = [
                 { '-not exists' => \[ '('._get_call_list_suppression_sq('incoming',qw(filter)).')' ] },
@@ -391,10 +395,10 @@ sub call_list_suppressions_rs {
             ];
         } else {
             $search_xtra{'+select'} = [
-                #{ '' => \[ 'me.source_cli' ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                { '' => \[ 'NULL' ] , -as => SOURCE_CLI_SUPPRESSION_ID_COLNAME },
-                #{ '' => \[ 'me.destination_user_in' ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
-                { '' => \[ 'NULL' ] , -as => DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME },
+                #{ '' => \[ 'me.source_cli' ] , -as => $source_cli_suppression_id_colname },
+                { '' => \[ 'NULL' ] , -as => $source_cli_suppression_id_colname },
+                #{ '' => \[ 'me.destination_user_in' ] , -as => $destination_user_in_suppression_id_colname },
+                { '' => \[ 'NULL' ] , -as => $destination_user_in_suppression_id_colname },
             ];
         }
     }
