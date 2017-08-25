@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab399f4_29c71914",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-25T15:33:25Z",
+      "side": 1,
+      "message": "this means the effective fix",
+      "range": {
+        "startLine": 127,
+        "startChar": 8,
+        "endLine": 130,
+        "endChar": 9
+      },
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_e948c1ce",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-25T15:33:25Z",
+      "side": 1,
+      "message": "will a column be added?",
+      "range": {
+        "startLine": 179,
+        "startChar": 8,
+        "endLine": 179,
+        "endChar": 15
+      },
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_891105af",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-25T15:33:25Z",
+      "side": 1,
+      "message": "not",
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_898825e9",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-25T15:33:25Z",
+      "side": 1,
+      "message": "waht is the effect of swapping those blocks?",
+      "range": {
+        "startLine": 282,
+        "startChar": 8,
+        "endLine": 294,
+        "endChar": 9
+      },
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_e94d21c6",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-25T15:33:25Z",
+      "side": 1,
+      "message": "also \"set\" if empty now?",
+      "range": {
+        "startLine": 317,
+        "startChar": 77,
+        "endLine": 317,
+        "endChar": 83
+      },
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_094b35b1",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-25T15:33:25Z",
+      "side": 1,
+      "message": "maybe enclosing in an trycatch",
+      "range": {
+        "startLine": 319,
+        "startChar": 11,
+        "endLine": 319,
+        "endChar": 67
+      },
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
