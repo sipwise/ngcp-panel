@@ -141,7 +141,9 @@ sub post {
         $self->complete_transaction($c);
 
         $self->post_process_commit($c, 'create', $item, undef, $resource, $form, $process_extras);
-        
+
+        return if defined $c->stash->{api_error_message};
+
         $self->return_representation_post($c, 'item' => $item, 'form' => $form, 'form_exceptions' => $form_exceptions );
     }
     return;

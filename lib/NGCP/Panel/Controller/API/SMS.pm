@@ -115,33 +115,50 @@ sub create_item {
         return;
     }
 
-    my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
+    my $session;
     try {
-        unless(NGCP::Panel::Utils::SMS::perform_prepaid_billing(c => $c,
+        my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
+        $session = NGCP::Panel::Utils::SMS::init_prepaid_billing(c => $c,
             prov_subscriber => $subscriber,
             parts => $parts,
             caller => $resource->{caller},
             callee => $resource->{callee}
-        )) {
-            $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send sms");
-            return;
+        );
+        unless ($session && $session->{status} eq 'ok') {
+            die($session->{reason} //
+                "Internal server error when preparing sms billing");
+        }
+
+        $session->{coding} = NGCP::Panel::Utils::SMS::get_coding($resource->{text});
+
+        NGCP::Panel::Utils::SMS::send_sms(
+                c => $c,
+                caller => $resource->{caller},
+                callee => $resource->{callee},
+                text => $resource->{text},
+                coding => $session->{coding},
+                err_code => sub {
+                    $session->{reason} = shift;
+                    $session->{status} = 'failed';
+                }
+        );
+
+        NGCP::Panel::Utils::SMS::perform_prepaid_billing(c => $c,
+            session => $session
+        );
+
+        if ($session->{status} eq 'failed') {
+            die $session->{reason}."\n";
         }
     } catch($e) {
-        $c->log->error("Failed to determine credit: $e");
-        $self->error($c, HTTP_PAYMENT_REQUIRED, "Failed to determine credit");
-        return;
+        $c->log->error($e);
+        if ($session && $session->{reason} eq 'insufficient credit') {
+            $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send the sms");
+        } else {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
+                "An internal error has occured when sending the sms, please contact the platform administrator or try again later");
+        }
     }
-
-    my $error_msg = "";
-    my $coding = NGCP::Panel::Utils::SMS::get_coding($resource->{text});
-    NGCP::Panel::Utils::SMS::send_sms(
-            c => $c,
-            caller => $resource->{caller},
-            callee => $resource->{callee},
-            text => $resource->{text},
-            coding => $coding,
-            err_code => sub {$error_msg = shift;},
-        );
 
     # TODO: agranig: we need to return an item here, otherwise it fails
     #if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
@@ -152,14 +169,16 @@ sub create_item {
 
     my $rs = $self->item_rs($c);
     my $item = $rs->create({
-            subscriber_id => $resource->{subscriber_id},
-            direction => 'out',
-            caller => $resource->{caller},
-            callee => $resource->{callee},
-            text => $resource->{text},
-            coding => $coding,
-            $error_msg ? (status => $error_msg) : (),
-        });
+        subscriber_id => $resource->{subscriber_id},
+        direction => 'out',
+        caller => $resource->{caller},
+        callee => $resource->{callee},
+        text   => $resource->{text},
+        coding => $session->{coding},
+        status => $session->{status} // '',
+        reason => $session->{reason} // '',
+    });
+
     return $item;
 }
 
