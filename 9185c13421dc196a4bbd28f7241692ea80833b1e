@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fab399f4_e9a9a125",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-08-25T17:05:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fab399f4_891105af",
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab399f4_898825e9",
         "filename": "lib/NGCP/Panel/Utils/SMS.pm",
         "patchSetId": 1
@@ -123,6 +141,30 @@
       "writtenOn": "2017-08-25T15:33:25Z",
       "side": 1,
       "message": "also \"set\" if empty now?",
+      "range": {
+        "startLine": 317,
+        "startChar": 77,
+        "endLine": 317,
+        "endChar": 83
+      },
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_09a7b550",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-08-25T17:05:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fab399f4_e94d21c6",
       "range": {
         "startLine": 317,
         "startChar": 77,
