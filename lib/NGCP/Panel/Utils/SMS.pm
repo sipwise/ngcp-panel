@@ -70,7 +70,7 @@ sub send_sms {
     if ($res->is_success) {
         return 1;
     } else {
-        &{$err_code}("Error with send_sms: " . $res->status_line);
+        &{$err_code}("Error sending sms: " . $res->status_line);
         return;
     }
 }
@@ -180,7 +180,7 @@ sub get_number_of_parts {
     return ceil(length($text) / $maxlen);
 }
 
-sub perform_prepaid_billing {
+sub init_prepaid_billing {
     my (%args) = @_;
     my $c = $args{c};
     my $prov_subscriber = $args{prov_subscriber};
@@ -191,6 +191,16 @@ sub perform_prepaid_billing {
     my ($uuid, $session_id);
     UUID::generate($uuid);
     UUID::unparse($uuid, $session_id);
+
+    my $session = {
+        caller => $caller,
+        callee => $callee,
+        status => 'ok',
+        reason => 'accepted',
+        parts  => [],
+        sid    => $session_id,
+        rpc    => $parts,
+    };
 
     my ($prepaid_lib, $is_prepaid);
     my $prepaid_pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
@@ -212,11 +222,21 @@ sub perform_prepaid_billing {
     }
 
     # currently only inew rating supported, let others pass
-    return 1 unless($is_prepaid && $prepaid_lib eq "libinewrate");
+    unless ($is_prepaid && $prepaid_lib eq "libinewrate") {
+        $session->{reason} = 'not prepaid/libinewrate';
+        return $session;
+    }
 
     my $use_list = { 'NGCP::Rating::Inew::SmsSession' => undef };
     unless(can_load(modules => $use_list, nocache => 0, autoload => 0)) {
-        $c->log->error("Failed to load NGCP::Rating::Inew::SmsSession for sms from $caller to $callee");
+        $c->log->error(sprintf
+            "Failed to load NGCP::Rating::Inew::SmsSession for sms=%s from=%s to=%s",
+                $session_id, $caller, $callee
+        );
+        $session->{status} = 'failed';
+        $session->{reason} =
+            sprintf 'failed to init sms session sid=%s from=%s to=%s',
+                $session_id, $caller,$callee;
         return;
     }
     my $amqr = NGCP::Rating::Inew::SmsSession::init(
@@ -224,62 +244,85 @@ sub perform_prepaid_billing {
         $c->config->{libinewrate}->{openwire_uri},
     );
     unless($amqr) {
-        $c->log->error("Failed to create sms amqr handle from $caller to $callee");
+        $c->log->error(sprintf
+            "Failed to create sms amqr handle for sms sid=%s from=%s to=%s",
+                $session_id, $caller, $callee
+        );
+        $session->{status} = 'failed';
+        $session->{reason} =
+            sprintf 'failed to create sms session sid=%s from=%s to=%s',
+                $session_id, $caller, $callee;
         return;
     }
+    $session->{amqr_h} = $amqr;
+
     # Reserve credit for each part, and then commit each reservation.
     # If we can charge multiple times within one session - perfect.
     # Otherwise we have to create one session per part, store it in an
     # array, then after all reservations were successful, commit each
     # of them!
-    my @sessions = ();
-    my @failed_sessions = ();
-    my $cancel_reason;
     for(my $i = 0; $i < $parts; ++$i) {
         my $has_credit = 1;
         my $this_session_id = $session_id."-".$i;
+
         my $sess = NGCP::Rating::Inew::SmsSession::session_create(
             $amqr, $this_session_id, $caller, $callee, sub {
                 $has_credit = 0;
         });
+
         unless($sess) {
             $c->log->error("Failed to create sms rating session from $caller to $callee with session id $this_session_id");
+            $session->{status} = 'failed';
+            $session->{reason} = 'failed to create sms session';
             last;
         }
-        unless(NGCP::Rating::Inew::SmsSession::session_sms_reserve($sess)) {
-            $c->log->error("Failed to reserve sms session from $caller to $callee with session id $this_session_id");
-            push @failed_sessions, $sess;
-            last;
-        }
+
+        push @{$session->{parts}}, $sess;
+
         unless($has_credit) {
             $c->log->info("No credit for sms from $caller to $callee with session id $this_session_id");
-            push @failed_sessions, $sess;
-	    $cancel_reason = 'insufficient credit';
+            $session->{status} = 'failed';
+            $session->{reason} = 'insufficient credit';
             last;
         }
-        push @sessions, $sess;
+
+        unless(NGCP::Rating::Inew::SmsSession::session_sms_reserve($sess)) {
+            $c->log->error("Failed to reserve sms session from $caller to $callee with session id $this_session_id");
+            $session->{status} = 'failed';
+            $session->{reason} = 'failed to reserve sms session';
+            last;
+        }
     }
-    if(@sessions == $parts) {
-        foreach my $sess(@sessions) {
+    return $session;
+}
+
+sub perform_prepaid_billing {
+    my (%args) = @_;
+    my $c = $args{c};
+    my $session = $args{session} // return;
+    my ($amqr, $rpc, $status, $reason, $parts) =
+        @{$session}{qw(amqr_h rpc status reason parts)};
+
+    return unless $session;
+    return unless $amqr;
+
+    $reason //= 'unknown';
+
+    if ($status eq 'ok' && $rpc == $#{$parts}+1) {
+        foreach my $sess (@{$parts}) {
             NGCP::Rating::Inew::SmsSession::session_sms_commit($sess);
             NGCP::Rating::Inew::SmsSession::session_destroy($sess);
         }
         NGCP::Rating::Inew::SmsSession::destroy($amqr);
-        return 1;
     } else {
-        foreach my $sess(@sessions) {
-            if (defined($cancel_reason)) {
-                NGCP::Rating::Inew::SmsSession::session_set_cancel_reason($sess, $cancel_reason);
-            }
+        foreach my $sess (@{$parts}) {
+            NGCP::Rating::Inew::SmsSession::session_set_cancel_reason($sess, $reason);
             NGCP::Rating::Inew::SmsSession::session_sms_discard($sess);
             NGCP::Rating::Inew::SmsSession::session_destroy($sess);
         }
-        foreach my $sess(@failed_sessions) {
-            NGCP::Rating::Inew::SmsSession::session_destroy($sess);
-        }
         NGCP::Rating::Inew::SmsSession::destroy($amqr);
-        return;
     }
+    return;
 }
 
 1;

@@ -16,7 +16,7 @@ sub item_name {
     return 'sms';
 }
 
-sub resource_name{
+sub resource_name {
     return 'sms';
 }
 
@@ -66,7 +66,7 @@ sub _item_rs {
     return $item_rs;
 }
 
-sub check_resource{
+sub check_resource {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     unless(defined $resource->{subscriber_id}) { # TODO: might check in form
@@ -91,7 +91,7 @@ sub check_resource{
         c => $c,
         prov_subscriber => $subscriber
     );
-    $lock //= 0;
+    $lock ||= 0; # can be an empty string
     my $lockstr = NGCP::Panel::Utils::Subscriber::get_lock_string($lock);
     unless($lockstr eq 'none') {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber is locked.");
