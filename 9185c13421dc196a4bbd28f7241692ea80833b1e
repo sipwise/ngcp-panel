@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "fab399f4_099095eb",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-08-25T17:04:05Z",
+      "side": 1,
+      "message": "it already exists in the db.table",
+      "parentUuid": "fab399f4_e948c1ce",
+      "range": {
+        "startLine": 179,
+        "startChar": 8,
+        "endLine": 179,
+        "endChar": 15
+      },
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab399f4_891105af",
         "filename": "lib/NGCP/Panel/Utils/SMS.pm",
         "patchSetId": 1
@@ -122,6 +146,30 @@
       "writtenOn": "2017-08-25T15:33:25Z",
       "side": 1,
       "message": "maybe enclosing in an trycatch",
+      "range": {
+        "startLine": 319,
+        "startChar": 11,
+        "endLine": 319,
+        "endChar": 67
+      },
+      "revId": "9185c13421dc196a4bbd28f7241692ea80833b1e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_89bbc571",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-08-25T17:04:05Z",
+      "side": 1,
+      "message": "it is caught by the outside try catch, not sure if there is a reason for it here",
+      "parentUuid": "fab399f4_094b35b1",
       "range": {
         "startLine": 319,
         "startChar": 11,
