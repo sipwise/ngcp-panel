@@ -8337,6 +8337,10 @@ msgstr "Übersetzungsregeln-Set"
 msgid "Rewrite Rule Sets"
 msgstr "Übersetzungsregeln-Sets"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewrite Rules"
+msgstr ""
+
 #. (set_result.name)
 #: share/templates/rewrite/rules_list.tt
 msgid "Rewrite Rules for %1"
@@ -8381,6 +8385,10 @@ msgstr "Übersetzungsregel erfolgreich gelöscht"
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule successfully updated"
 msgstr "Übersetzungsregel erfolgreich aktualisiert"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewriterules"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ring Timeout for CFT"
@@ -11376,6 +11384,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller who can use the Ruleset."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The rewrite rule priority."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

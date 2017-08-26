@@ -8571,6 +8571,10 @@ msgstr "Set di Rewrite Rule"
 msgid "Rewrite Rule Sets"
 msgstr "Rewrite Rule"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewrite Rules"
+msgstr ""
+
 #. (set_result.name)
 #: share/templates/rewrite/rules_list.tt
 msgid "Rewrite Rules for %1"
@@ -8615,6 +8619,10 @@ msgstr "Rewrite rule eliminata con successo"
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule successfully updated"
 msgstr "Rewrite rule caricata con successo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewriterules"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ring Timeout for CFT"
@@ -11745,6 +11753,10 @@ msgstr "Il rivenditore a cui appartiene il set audio."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller who can use the Ruleset."
 msgstr "Il rivenditore in grado di usare il Ruleset. "
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The rewrite rule priority."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The rewrite rule set this rule belongs to."
