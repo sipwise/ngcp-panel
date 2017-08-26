@@ -8334,6 +8334,10 @@ msgstr "Grupo de reglas de reescritura"
 msgid "Rewrite Rule Sets"
 msgstr "Grupos de reglas de reescritura"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewrite Rules"
+msgstr ""
+
 #. (set_result.name)
 #: share/templates/rewrite/rules_list.tt
 msgid "Rewrite Rules for %1"
@@ -8378,6 +8382,10 @@ msgstr "Regla de reescritura eliminada con éxito"
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule successfully updated"
 msgstr "Regla de reescritura modificada con éxito"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewriterules"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ring Timeout for CFT"
@@ -11371,6 +11379,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller who can use the Ruleset."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The rewrite rule priority."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

@@ -7519,6 +7519,10 @@ msgstr ""
 msgid "Rewrite Rule Sets"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewrite Rules"
+msgstr ""
+
 #. (set_result.name)
 #: share/templates/rewrite/rules_list.tt
 msgid "Rewrite Rules for %1"
@@ -7562,6 +7566,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewriterules"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10120,6 +10128,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The reseller who can use the Ruleset."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The rewrite rule priority."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
