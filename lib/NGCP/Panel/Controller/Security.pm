@@ -4,6 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Security;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -78,7 +80,6 @@ sub user_unban :Chained('user_base') :PathPart('unban') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/security'));
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

@@ -40,7 +40,6 @@ it under the same terms as Perl itself.
 
 =cut
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 # vim: set tabstop=4 expandtab:

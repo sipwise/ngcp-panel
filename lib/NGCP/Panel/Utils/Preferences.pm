@@ -334,6 +334,7 @@ sub create_preference_form {
         }
     }
 
+    # this form is somewhat special, treat it without caching
     my $form = NGCP::Panel::Form::Preferences->new({
         ctx => $c,
         fields_data => [{

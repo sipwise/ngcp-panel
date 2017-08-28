@@ -3,6 +3,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use HTML::Entities;
 use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
@@ -23,44 +25,6 @@ use NGCP::Panel::Utils::Fax;
 use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
-use NGCP::Panel::Form::SubscriberEdit;
-use NGCP::Panel::Form::CallforwardSourceSet;
-use NGCP::Panel::Form::CCMapEntries;
-use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
-use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin;
-use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup;
-use NGCP::Panel::Form::SubscriberCFSimple;
-use NGCP::Panel::Form::SubscriberCFTSimple;
-use NGCP::Panel::Form::SubscriberCFAdvanced;
-use NGCP::Panel::Form::SubscriberCFTAdvanced;
-use NGCP::Panel::Form::DestinationSet;
-use NGCP::Panel::Form::TimeSet;
-use NGCP::Panel::Form::Voicemail::Pin;
-use NGCP::Panel::Form::Voicemail::Email;
-use NGCP::Panel::Form::Voicemail::Pager;
-use NGCP::Panel::Form::Voicemail::Attach;
-use NGCP::Panel::Form::Voicemail::Delete;
-use NGCP::Panel::Form::Voicemail::Greeting;
-use NGCP::Panel::Form::Reminder;
-use NGCP::Panel::Form::Subscriber::AutoAttendant;
-use NGCP::Panel::Form::Subscriber::EditWebpass;
-use NGCP::Panel::Form::Subscriber::Location;
-use NGCP::Panel::Form::Subscriber::SpeedDial;
-use NGCP::Panel::Form::Subscriber::TrustedSource;
-use NGCP::Panel::Form::Subscriber::UpnRewriteSet;
-use NGCP::Panel::Form::Faxserver::Active;
-use NGCP::Panel::Form::Faxserver::Destination;
-use NGCP::Panel::Form::Faxserver::Name;
-use NGCP::Panel::Form::Faxserver::T38;
-use NGCP::Panel::Form::Faxserver::ECM;
-use NGCP::Panel::Form::MailToFax::Active;
-use NGCP::Panel::Form::MailToFax::ACL;
-use NGCP::Panel::Form::MailToFax::SecretKey;
-use NGCP::Panel::Form::MailToFax::SecretKeyRenew;
-use NGCP::Panel::Form::MailToFax::SecretRenewNotify;
-use NGCP::Panel::Form::Subscriber::Webfax;
-use NGCP::Panel::Form::Subscriber::ResetPassword;
-use NGCP::Panel::Form::Subscriber::RecoverPassword;
 
 use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
@@ -252,7 +216,7 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
-    my $form = NGCP::Panel::Form::Subscriber::Webfax->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::Webfax", $c);
     my $posted = ($c->request->method eq 'POST');
 
     my $params = {};
@@ -468,7 +432,7 @@ sub reset_webpassword_nosubscriber :Chained('/') :PathPart('resetwebpassword') :
         unless($c->config->{security}->{password_allow_recovery});
 
     my $posted = $c->req->method eq "POST";
-    my $form = NGCP::Panel::Form::Subscriber::RecoverPassword->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::RecoverPassword", $c);
     my $params = {};
     $form->process(
         posted => $posted,
@@ -561,7 +525,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
         }
     }
 
-    my $form = NGCP::Panel::Form::Subscriber::ResetPassword->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::ResetPassword", $c);
     my $params = {
         uuid => $uuid_string,
     };
@@ -962,9 +926,9 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
 
     my $cf_form;
     if($cf_type eq "cft") {
-        $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new(ctx => $c);
+        $cf_form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberCFTSimple", $c);
     } else {
-        $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new(ctx => $c);
+        $cf_form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberCFSimple", $c);
     }
 
     $cf_form->process(
@@ -1126,9 +1090,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 
     my $cf_form;
     if($cf_type eq "cft") {
-        $cf_form = NGCP::Panel::Form::SubscriberCFTAdvanced->new(ctx => $c);
+        $cf_form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberCFTAdvanced", $c);
     } else {
-        $cf_form = NGCP::Panel::Form::SubscriberCFAdvanced->new(ctx => $c);
+        $cf_form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberCFAdvanced", $c);
     }
 
     my @maps = ();
@@ -1307,7 +1271,7 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
-    my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::DestinationSet", $c);
 
     my $posted = ($c->request->method eq 'POST');
 
@@ -1423,7 +1387,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
     }
 
     $c->stash->{cf_tmp_params} = $params;
-    my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::DestinationSet", $c);
     $form->process(
         posted => $posted,
         params => $c->req->params,
@@ -1614,7 +1578,7 @@ sub preferences_callforward_sourceset_create :Chained('base') :PathPart('prefere
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
-    my $form = NGCP::Panel::Form::CallforwardSourceSet->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CallforwardSourceSet", $c);
 
     my $posted = ($c->request->method eq 'POST');
 
@@ -1723,7 +1687,7 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
         $params->{source} = \@sources;
     }
 
-    my $form = NGCP::Panel::Form::CallforwardSourceSet->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CallforwardSourceSet", $c);
     $form->process(
         posted => $posted,
         params => $c->req->params,
@@ -1887,7 +1851,7 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
-    my $form = NGCP::Panel::Form::TimeSet->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet", $c);
 
     my $posted = ($c->request->method eq 'POST');
 
@@ -1979,7 +1943,7 @@ sub preferences_callforward_timeset_base :Chained('base') :PathPart('preferences
 sub preferences_callforward_timeset_edit :Chained('preferences_callforward_timeset_base') :PathPart('edit') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
-    my $form = NGCP::Panel::Form::TimeSet->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet", $c);
 
     my $posted = ($c->request->method eq 'POST');
 
@@ -2394,20 +2358,20 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         if($subscriber->provisioning_voip_subscriber->is_pbx_pilot) {
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
-                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup->new(ctx => $c);
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup", $c);
             } else {
                 $is_admin = 1;
-                $form = NGCP::Panel::Form::Customer::PbxSubscriberEdit->new(ctx => $c);
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxSubscriberEdit", $c);
             }
         } else {
             $base_number = $c->stash->{pilot}->primary_number;
 
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
-                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin", $c);
             } else {
                 $is_admin = 1;
-                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c, inactive => ['domain']);
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriber", $c);
             }
             $pbx_ext = 1;
         }
@@ -2416,9 +2380,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         if($c->user->roles eq 'subscriberadmin') {
             $subadmin_pbx = 1;
             $c->stash(customer_id => $subscriber->contract->id);
-            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup->new(ctx => $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup", $c);
         } else {
-            $form = NGCP::Panel::Form::SubscriberEdit->new(ctx => $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberEdit", $c);
             $is_admin = 1;
         }
     }
@@ -2882,7 +2846,7 @@ sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
 
-    my $form = NGCP::Panel::Form::Subscriber::EditWebpass->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::EditWebpass", $c);
     my $posted = ($c->request->method eq 'POST');
 
 
@@ -2947,7 +2911,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     try {
         SWITCH: for ($attribute) {
             /^pin$/ && do {
-                $form = NGCP::Panel::Form::Voicemail::Pin->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voicemail::Pin", $c);
                 $params = { 'pin' => $vm_user->password };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -2959,7 +2923,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 last SWITCH;
             };
             /^email$/ && do {
-                $form = NGCP::Panel::Form::Voicemail::Email->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voicemail::Email", $c);
                 $params = { 'email' => $vm_user->email };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -2971,7 +2935,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 last SWITCH;
             };
             /^pager$/ && do {
-                $form = NGCP::Panel::Form::Voicemail::Pager->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voicemail::Pager", $c);
                 $params = { 'sms_number' => $vm_user->pager };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -2983,7 +2947,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 last SWITCH;
             };
             /^attach$/ && do {
-                $form = NGCP::Panel::Form::Voicemail::Attach->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voicemail::Attach", $c);
                 $params = { 'attach' => $vm_user->attach eq 'yes' ? 1 : 0 };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -2995,7 +2959,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 last SWITCH;
             };
             /^delete$/ && do {
-                $form = NGCP::Panel::Form::Voicemail::Delete->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voicemail::Delete", $c);
                 $params = { 'delete' => $vm_user->get_column('delete') eq 'yes' ? 1 : 0 };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3021,7 +2985,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                     }
                     my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{subscriber}, dir => $type);
                     $attribute_name = $c->loc('voicemail greeting "'.$type.'"');
-                    $form = NGCP::Panel::Form::Voicemail::Greeting->new;
+                    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voicemail::Greeting", $c);
                     $params = {};
                     $c->req->params->{greetingfile} = $c->req->upload('greetingfile');
                     $form->process(params => $posted ? $c->req->params : $params);
@@ -3160,7 +3124,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
     try {
         SWITCH: for ($attribute) {
             /^name$/ && do {
-                $form = NGCP::Panel::Form::Faxserver::Name->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::Name", $c);
                 $params = { 'name' => $faxpref->name };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3172,7 +3136,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 last SWITCH;
             };
             /^active$/ && do {
-                $form = NGCP::Panel::Form::Faxserver::Active->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::Active", $c);
                 $params = { 'active' => $faxpref->active };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3184,7 +3148,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 last SWITCH;
             };
             /^t38$/ && do {
-                $form = NGCP::Panel::Form::Faxserver::T38->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::T38", $c);
                 $params = { 't38' => $faxpref->t38 };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3196,7 +3160,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 last SWITCH;
             };
             /^ecm$/ && do {
-                $form = NGCP::Panel::Form::Faxserver::ECM->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::ECM", $c);
                 $params = { 'ecm' => $faxpref->ecm };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3208,7 +3172,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 last SWITCH;
             };
             /^destinations$/ && do {
-                $form = NGCP::Panel::Form::Faxserver::Destination->new;
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::Destination", $c);
                 unless($posted) {
                     my @dests = ();
                     for my $dest($prov_subscriber->voip_fax_destinations->all) {
@@ -3299,7 +3263,7 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
             $mtf_pref ||= $mtf_pref_rs->create({});
             SWITCH: for ($attribute) {
                 /^active$/ && do {
-                    $form = NGCP::Panel::Form::MailToFax::Active->new;
+                    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::MailToFax::Active", $c);
                     $params = { 'active' => $mtf_pref->active };
                     $form->process(params => $posted ? $c->req->params : $params);
                     NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3311,7 +3275,7 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
                     last SWITCH;
                 };
                 /^secret_key$/ && do {
-                    $form = NGCP::Panel::Form::MailToFax::SecretKey->new;
+                    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::MailToFax::SecretKey", $c);
                     $params = { secret_key => $mtf_pref->secret_key };
                     $form->process(params => $posted ? $c->req->params : $params);
                     NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3326,7 +3290,7 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
                     last SWITCH;
                 };
                 /^secret_key_renew$/ && do {
-                    $form = NGCP::Panel::Form::MailToFax::SecretKeyRenew->new;
+                    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::MailToFax::SecretKeyRenew", $c);
                     $params = { secret_key_renew => $mtf_pref->secret_key_renew, };
                     $form->process(params => $posted ? $c->req->params : $params);
                     NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3340,7 +3304,7 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
                     last SWITCH;
                 };
                 /^secret_renew_notify$/ && do {
-                    $form = NGCP::Panel::Form::MailToFax::SecretRenewNotify->new;
+                    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::MailToFax::SecretRenewNotify", $c);
                     unless($posted) {
                         my @notify_list = ();
                         for my $notify($prov_subscriber->voip_mail_to_fax_secrets_renew_notify->all) {
@@ -3367,7 +3331,7 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
                     last SWITCH;
                 };
                 /^acl$/ && do {
-                    $form = NGCP::Panel::Form::MailToFax::ACL->new;
+                    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::MailToFax::ACL", $c);
                     unless($posted) {
                         my @acl_list = ();
                         for my $acl($prov_subscriber->voip_mail_to_fax_acls->all) {
@@ -3451,7 +3415,7 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
         $params = { 'time' => $reminder->column_time, recur => $reminder->recur, active => $reminder->active};
     }
 
-    my $form = NGCP::Panel::Form::Reminder->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Reminder", $c);
     $form->process(
         posted => $posted,
         params => $c->req->params,
@@ -3945,7 +3909,7 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
     my $posted = ($c->request->method eq 'POST');
     my $ret;
 
-    my $form = NGCP::Panel::Form::Subscriber::Location->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::Location", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params
@@ -3992,7 +3956,7 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
     my $trusted_rs = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_trusted_sources;
     my $params = {};
 
-    my $form = NGCP::Panel::Form::Subscriber::TrustedSource->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::TrustedSource", $c);
     $form->process(
         posted => $posted,
         params => $posted ? $c->req->params : {}
@@ -4071,7 +4035,7 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
         };
     }
 
-    my $form = NGCP::Panel::Form::Subscriber::TrustedSource->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::TrustedSource", $c);
     $form->process(
         params => $posted ? $c->req->params : $params
     );
@@ -4146,7 +4110,7 @@ sub create_upn_rewrite :Chained('base') :PathPart('preferences/upnrewrite/create
     my $upn_rws_rs = $c->stash->{subscriber}->provisioning_voip_subscriber->upn_rewrite_sets_rs;
     my $params = {};
 
-    my $form = NGCP::Panel::Form::Subscriber::UpnRewriteSet->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::UpnRewriteSet", $c);
     $form->process(
         posted => $posted,
         params => $c->req->params,
@@ -4223,7 +4187,7 @@ sub edit_upn_rewrite :Chained('upn_rewrite_base') :PathPart('edit') {
         upn_rewrite_sources => [ $upn_rws->upn_rewrite_sources->all ],
     };
 
-    my $form = NGCP::Panel::Form::Subscriber::UpnRewriteSet->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::UpnRewriteSet", $c);
     $form->process(
         params => $c->req->params,
         posted => $posted,
@@ -4342,7 +4306,7 @@ sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $slots = $prov_subscriber->voip_speed_dials;
     $c->stash->{used_sd_slots} = $slots;
-    my $form = NGCP::Panel::Form::Subscriber::SpeedDial->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SpeedDial", $c);
     my $params = {};
 
     $form->process(
@@ -4444,7 +4408,7 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $slots = $prov_subscriber->voip_speed_dials;
     $c->stash->{used_sd_slots} = $slots;
-    my $form = NGCP::Panel::Form::Subscriber::SpeedDial->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SpeedDial", $c);
 
     my $params;
     $params->{slot} = $c->stash->{speeddial}->slot;
@@ -4558,7 +4522,7 @@ sub edit_autoattendant :Chained('base') :PathPart('preferences/speeddial/edit') 
     my $posted = ($c->request->method eq 'POST');
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $slots = $prov_subscriber->voip_pbx_autoattendants;
-    my $form = NGCP::Panel::Form::Subscriber::AutoAttendant->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::AutoAttendant", $c);
 
     my $params = {};
     unless($posted) {
@@ -4686,7 +4650,7 @@ sub edit_ccmapping :Chained('base') :PathPart('preferences/ccmappings/edit') :Ar
     my $posted = ($c->request->method eq 'POST');
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $ccmappings = $prov_subscriber->voip_cc_mappings;
-    my $form = NGCP::Panel::Form::CCMapEntries->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CCMapEntries", $c);
 
     my $params = {};
     unless($posted) {
@@ -4853,7 +4817,6 @@ it under the same terms as Perl itself.
 
 =cut
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

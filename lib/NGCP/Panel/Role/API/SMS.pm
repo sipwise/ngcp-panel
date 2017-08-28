@@ -10,7 +10,6 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::SMS;
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::SMSAPI;
 
 sub item_name {
     return 'sms';
@@ -22,7 +21,7 @@ sub resource_name {
 
 sub get_form {
     my ($self, $c) = @_;
-    return (NGCP::Panel::Form::SMSAPI->new, ['subscriber_id']);
+    return (NGCP::Panel::Form::get("NGCP::Panel::Form::SMSAPI", $c), ['subscriber_id']);
 }
 
 sub hal_links {

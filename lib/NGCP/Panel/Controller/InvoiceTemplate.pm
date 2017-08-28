@@ -3,12 +3,12 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use File::Type;
 use MIME::Base64 qw(encode_base64);
 
 use NGCP::Panel::Utils::InvoiceTemplate;
-use NGCP::Panel::Form::Invoice::TemplateAdmin;
-use NGCP::Panel::Form::Invoice::TemplateReseller;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -100,9 +100,9 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
 
     my $form;
     if($c->user->roles eq "admin" && !$reseller_id) {
-        $form = NGCP::Panel::Form::Invoice::TemplateAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Invoice::TemplateAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::Invoice::TemplateReseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Invoice::TemplateReseller", $c);
         if($c->user->roles eq "admin") {
             my $reseller = $c->model('DB')->resultset('resellers')->find($reseller_id);
             unless($reseller) {
@@ -182,9 +182,9 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
 
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::Invoice::TemplateAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Invoice::TemplateAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::Invoice::TemplateReseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Invoice::TemplateReseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -410,7 +410,6 @@ sub embed_image :Chained('/') :PathPart('invoicetemplate/embedimage') :Args(0) {
 
 
 
-__PACKAGE__->meta->make_immutable;
 1;
 
 # vim: set tabstop=4 expandtab:

@@ -11,13 +11,12 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::Faxserver::API;
 use NGCP::Panel::Utils::Subscriber;
 
 sub get_form {
     my ($self, $c, $type) = @_;
 
-    return NGCP::Panel::Form::Faxserver::API->new(ctx => $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::API", $c);
 }
 
 sub hal_from_item {

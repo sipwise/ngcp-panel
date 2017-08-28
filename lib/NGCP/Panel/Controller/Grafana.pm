@@ -4,6 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use LWP::UserAgent;
 my $ua = LWP::UserAgent->new(max_redirect => 0);
 $ua->timeout(3);
@@ -41,7 +43,6 @@ sub root :Chained('/') :PathPart('grafana') :CaptureArgs() {
 }
 
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 
