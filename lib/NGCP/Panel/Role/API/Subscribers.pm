@@ -12,8 +12,7 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use Test::More;
-use NGCP::Panel::Form::Subscriber::SubscriberAPI;
-use NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI;
+use NGCP::Panel::Form;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
@@ -24,9 +23,9 @@ sub get_form {
     my ($self, $c) = @_;
 
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-        return NGCP::Panel::Form::Subscriber::SubscriberAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberAPI", $c);
     } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        return NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI", $c);
     }
 }
 

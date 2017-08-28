@@ -11,7 +11,6 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use DateTime::Format::Strptime;
-use NGCP::Panel::Form::Subscriber::WebfaxAPI;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Fax;
 
@@ -36,7 +35,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Subscriber::WebfaxAPI->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::WebfaxAPI", $c);
 }
 
 sub hal_from_item {

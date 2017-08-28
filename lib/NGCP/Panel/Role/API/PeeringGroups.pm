@@ -9,7 +9,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Peering::Group;
 use NGCP::Panel::Utils::Peering;
 
 sub resource_name{return 'peeringgroups';}
@@ -25,7 +24,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Peering::Group->new(ctx => $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::Group", $c);
 }
 
 sub hal_from_item {

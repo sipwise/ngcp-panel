@@ -9,10 +9,7 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 use JSON::Types qw();
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;

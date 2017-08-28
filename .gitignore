@@ -41,3 +41,4 @@ NGCP-Panel-*
 .perlcritic-history
 ngcp_panel_local.conf
 api-rest.pretty
+nytprof

@@ -10,7 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Peering::RuleAPI;
 use NGCP::Panel::Utils::Peering;
 
 sub _item_rs {
@@ -21,7 +20,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Peering::RuleAPI->new(ctx => $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::RuleAPI", $c);
 }
 
 sub hal_from_item {

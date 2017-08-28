@@ -4,6 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Callflow;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Message;
@@ -172,7 +174,6 @@ sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
 
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 
