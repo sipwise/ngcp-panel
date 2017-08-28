@@ -18,28 +18,21 @@
     [% IF range.name == "Phone Keys" or range.name == "Attendant Console 1" -%]
       [% key = lr + line.keynum -%]
       [% reg_key.$key = 1 -%]
-      [% IF line.type == "private" %]
+      [% IF line.type == "private" ||  line.type == "shared" %]
         [% reg_line = reg_line + 1 -%]
     reg.[% reg_line %].address="[% line.username %]@[% line.domain %]"
     reg.[% reg_line %].auth.userId="[% line.username %]"
     reg.[% reg_line %].auth.password="[% line.password %]"
     reg.[% reg_line %].displayName="[% line.displayname %]"
     reg.[% reg_line %].label="[% line.username %]"
-    reg.[% reg_line %].type="private"
     lineKey.[% key + 1 -%].category="Line"
     lineKey.[% key + 1 -%].index="[% reg_line %]"
+      [% ELSIF line.type == "private" %]
+    reg.[% reg_line %].type="private"
       [% ELSIF line.type == "shared" -%]
-        [% reg_line = reg_line + 1 -%]
-    reg.[% reg_line %].address="[% line.username %]@[% line.domain %]"
-    reg.[% reg_line %].auth.userId="[% line.username %]"
-    reg.[% reg_line %].auth.password="[% line.password %]"
-    reg.[% reg_line %].displayName="[% line.displayname %]"
-    reg.[% reg_line %].label="[% line.username %]"
     reg.[% reg_line %].type="shared"
     reg.[% reg_line %].bargeInEnabled="1"
     reg.[% reg_line %].strictLineSeize="1"
-    lineKey.[% key + 1 -%].category="Line"
-    lineKey.[% key + 1 -%].index="[% reg_line %]"
       [% ELSIF line.type == "blf" -%]
       [% shared_line = shared_line + 1 -%]
     attendant.resourceList.[% shared_line %].address="[% line.username %]@[% line.domain %]"
