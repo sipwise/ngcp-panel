@@ -10,7 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Balance::CustomerBalanceAPI;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::DateTime;
@@ -39,7 +38,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Balance::CustomerBalanceAPI->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Balance::CustomerBalanceAPI", $c);
 }
 
 sub hal_from_item {

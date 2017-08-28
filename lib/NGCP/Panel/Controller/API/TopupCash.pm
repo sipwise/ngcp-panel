@@ -12,8 +12,6 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::Voucher;
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
@@ -23,7 +21,7 @@ sub allowed_methods{
     return [qw/POST OPTIONS/];
 }
 
-use NGCP::Panel::Form::Topup::CashAPI;
+use NGCP::Panel::Form;
 
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
@@ -182,7 +180,7 @@ sub end : Private {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Topup::CashAPI->new(ctx => $c);
+    return NGCP::Panel::Form::get('NGCP::Panel::Form::Topup::CashAPI', $c);
 }
 
 1;

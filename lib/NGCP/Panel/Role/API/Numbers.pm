@@ -10,22 +10,20 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::Number::AdminAPI qw();
-use NGCP::Panel::Form::Number::ResellerAPI qw();
-use NGCP::Panel::Form::Number::SubadminAPI qw();
+use NGCP::Panel::Form;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::Number::AdminAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Number::AdminAPI", $c);
     } elsif($c->user->roles eq "reseller") {
-        #return NGCP::Panel::Form::Number::ResellerAPI->new(ctx => $c);
+        #return NGCP::Panel::Form::get("NGCP::Panel::Form::Number::ResellerAPI", $c);
         # there is currently no difference in the form
-        return NGCP::Panel::Form::Number::SubadminAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Number::SubadminAPI", $c);
     } elsif($c->user->roles eq "subscriberadmin") {
-        return NGCP::Panel::Form::Number::SubadminAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Number::SubadminAPI", $c);
     }
     return;
 }

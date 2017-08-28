@@ -6,7 +6,7 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Form::Device::ModelAPI;
+use NGCP::Panel::Form;
 
 use NGCP::Panel::Utils::Device;
 use NGCP::Panel::Utils::DeviceBootstrap;
@@ -51,7 +51,7 @@ sub hal_links{
 sub get_form {
     my ($self, $c) = @_;
     #use_fields_for_input_without_param
-    return (NGCP::Panel::Form::Device::ModelAPI->new(ctx => $c));
+    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Device::ModelAPI", $c));
 }
 
 sub _item_rs {

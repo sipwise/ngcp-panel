@@ -10,10 +10,8 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller;
 use NGCP::Panel::Utils::Rtc;
-use Path::Tiny qw(path);
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;

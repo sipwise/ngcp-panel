@@ -29,10 +29,7 @@ sub index : POST Path('/SOAP/Intercept') {
 
 package Sipwise::SOAP::Intercept;
 use Sipwise::Base;
-use NGCP::Panel::Form::Intercept::Authentication;
-use NGCP::Panel::Form::Intercept::Create;
-use NGCP::Panel::Form::Intercept::Update;
-use NGCP::Panel::Form::Intercept::Delete;
+use NGCP::Panel::Form;
 use Data::Structure::Util qw/unbless/;
 use NGCP::Panel::Utils::SOAP qw/typed/;
 use UUID;
@@ -70,7 +67,7 @@ sub _auth {
     my ($self, $auth) = @_;
     my $c = $self->c;
 
-    $self->_validate(NGCP::Panel::Form::Intercept::Authentication->new(ctx => $c), $auth);
+    $self->_validate(NGCP::Panel::Form::get("NGCP::Panel::Form::Intercept::Authentication", $c), $auth);
 
     try {
 
@@ -120,7 +117,7 @@ sub create_interception {
     my $c = $self->c;
 
     $self->_auth($auth);
-    $self->_validate(NGCP::Panel::Form::Intercept::Create->new(ctx => $c), $params);
+    $self->_validate(NGCP::Panel::Form::get("NGCP::Panel::Form::Intercept::Create", $c), $params);
 
     my $i;
     my $num;
@@ -191,7 +188,7 @@ sub update_interception {
     my $c = $self->c;
 
     $self->_auth($auth);
-    $self->_validate(NGCP::Panel::Form::Intercept::Update->new(ctx => $c), $params);
+    $self->_validate(NGCP::Panel::Form::get("NGCP::Panel::Form::Intercept::Update", $c), $params);
 
     my $i;
     try {
@@ -257,7 +254,7 @@ sub delete_interception {
     my $c = $self->c;
 
     $self->_auth($auth);
-    $self->_validate(NGCP::Panel::Form::Intercept::Delete->new(ctx => $c), $params);
+    $self->_validate(NGCP::Panel::Form::get("NGCP::Panel::Form::Intercept::Delete", $c), $params);
 
     my $i;
     try {

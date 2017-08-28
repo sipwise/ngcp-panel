@@ -5,13 +5,8 @@ use DateTime::Format::ISO8601;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::BillingProfile::Admin;
-use NGCP::Panel::Form::BillingProfile::Reseller;
-use NGCP::Panel::Form::BillingFee;
-use NGCP::Panel::Form::BillingZone;
-use NGCP::Panel::Form::BillingPeaktimeWeekdays;
-use NGCP::Panel::Form::BillingPeaktimeSpecial;
-use NGCP::Panel::Form::BillingFeeUpload;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -138,12 +133,12 @@ sub process_edit :Private {
     if( $duplicate ) {
         NGCP::Panel::Utils::Billing::get_billing_profile_uniq_params( params => $params );
         if($c->user->is_superuser) {
-            $form = NGCP::Panel::Form::BillingProfile::Admin->new(ctx => $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingProfile::Admin", $c);
         } else {
-            $form = NGCP::Panel::Form::BillingProfile::Reseller->new(ctx => $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingProfile::Reseller", $c);
         }
     } else {
-        $form = NGCP::Panel::Form::BillingProfile::Reseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingProfile::Reseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -227,9 +222,9 @@ sub process_create :Private {
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser && !$no_reseller) {
-        $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingProfile::Admin", $c);
     } else {
-        $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingProfile::Reseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -403,7 +398,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     my $profile_id = $c->stash->{profile}->{id};
-    my $form = NGCP::Panel::Form::BillingFee->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingFee", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -442,7 +437,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
 sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::BillingFeeUpload->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingFeeUpload", $c);
     my $upload = $c->req->upload('upload_fees');
     my $posted = $c->req->method eq 'POST';
     my @params = ( upload_fees => $posted ? $upload : undef, );
@@ -521,7 +516,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     my $params = $c->stash->{fee};
     $params->{billing_zone}{id} = delete $params->{billing_zone_id};
     $params = merge($params, $c->session->{created_objects});
-    my $form = NGCP::Panel::Form::BillingFee->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingFee", $c);
     $form->field('billing_zone')->field('id')->ajax_src('../../zones/ajax');
     $form->process(
         posted => $posted,
@@ -593,7 +588,7 @@ sub zones_ajax :Chained('zones_list') :PathPart('ajax') :Args(0) {
 sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::BillingZone->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingZone", $c);
     my $posted = ($c->request->method eq 'POST');
     $form->process(
         posted => $posted,
@@ -726,7 +721,7 @@ sub peaktime_weekdays_base :Chained('peaktimes_list') :PathPart('weekday') :Capt
 sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::BillingPeaktimeWeekdays->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingPeaktimeWeekdays", $c);
     $form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
@@ -767,7 +762,7 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
         );
     }
 
-    $form = NGCP::Panel::Form::BillingPeaktimeWeekdays->new
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingPeaktimeWeekdays", $c)
         unless $form->has_errors;
 
     $self->load_weekdays($c);
@@ -844,7 +839,7 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
 
     my $data_res = $c->stash->{special_result};
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::BillingPeaktimeSpecial->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingPeaktimeSpecial", $c);
     my $params = { $data_res->get_inflated_columns };
     $form->process(
         posted => $posted,
@@ -908,7 +903,7 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
     $self->load_weekdays($c);
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::BillingPeaktimeSpecial->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingPeaktimeSpecial", $c);
     my $params = {};
     $form->process(
         posted => $posted,
@@ -947,7 +942,6 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
     $c->stash(peaktimes_special_createflag => 1);
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

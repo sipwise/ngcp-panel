@@ -13,11 +13,10 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::BillingNetworks qw();
-use NGCP::Panel::Form::BillingNetwork::NetworkAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::BillingNetwork::NetworkAPI->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::BillingNetwork::NetworkAPI", $c);
 }
 
 sub hal_from_item {

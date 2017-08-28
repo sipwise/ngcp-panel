@@ -9,7 +9,7 @@ use NGCP::Panel::Utils::CallList qw();
 use NGCP::Panel::Utils::DateTime qw();
 use DateTime::Format::Strptime qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Conversation::API qw();
+use NGCP::Panel::Form;
 
 use Tie::IxHash;
 
@@ -633,7 +633,7 @@ sub _get_alias {
 
 sub get_form {
     my ($self, $c) = @_;
-    return (NGCP::Panel::Form::Conversation::API->new(ctx => $c),['id']);
+    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Conversation::API", $c),['id']);
 }
 
 sub process_hal_resource {
