@@ -13,13 +13,13 @@ use HTTP::Status qw(:constants);
 use JSON qw();
 use File::Type;
 use Data::Dumper;
-use NGCP::Panel::Form::Device::ModelAPI;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
 
 sub get_form {
     my ($self, $c) = @_;
     #use_fields_for_input_without_param
+    require NGCP::Panel::Form::Device::ModelAPI;
     return NGCP::Panel::Form::Device::ModelAPI->new(ctx => $c);
 }
 

@@ -10,12 +10,12 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::MailToFax::API;
 use NGCP::Panel::Utils::Subscriber;
 
 sub get_form {
     my ($self, $c, $type) = @_;
 
+    require NGCP::Panel::Form::MailToFax::API;
     return NGCP::Panel::Form::MailToFax::API->new(ctx => $c);
 }
 

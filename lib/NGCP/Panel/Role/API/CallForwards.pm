@@ -11,13 +11,13 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::CFSimpleAPI;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
 
 sub get_form {
     my ($self, $c) = @_;
 
+    require NGCP::Panel::Form::CFSimpleAPI;
     return NGCP::Panel::Form::CFSimpleAPI->new(ctx => $c);
 }
 

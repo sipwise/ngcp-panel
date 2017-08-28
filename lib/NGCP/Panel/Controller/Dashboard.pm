@@ -5,6 +5,8 @@ use strict;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 sub dashb_index :Path :Args(0) {
     my ($self, $c) = @_;
 
@@ -61,7 +63,6 @@ sub ajax :Path('ajax') :Args(1) {
     $c->detach( $c->view("JSON") );
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

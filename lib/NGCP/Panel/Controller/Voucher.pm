@@ -6,9 +6,8 @@ use DateTime::Format::ISO8601;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::Voucher::Admin;
-use NGCP::Panel::Form::Voucher::Reseller;
-use NGCP::Panel::Form::Voucher::Upload;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
@@ -167,9 +166,9 @@ sub edit :Chained('base') :PathPart('edit') {
     }
     $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Voucher::Admin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voucher::Admin", $c);
     } else {
-        $form = NGCP::Panel::Form::Voucher::Reseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voucher::Reseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -246,9 +245,9 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Voucher::Admin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voucher::Admin", $c);
     } else {
-        $form = NGCP::Panel::Form::Voucher::Reseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voucher::Reseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -312,7 +311,7 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
     $c->detach('/denied_page')
         unless($c->user->billing_data);
     
-    my $form = NGCP::Panel::Form::Voucher::Upload->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voucher::Upload", $c);
     my $upload = $c->req->upload('upload_vouchers');
     my $posted = $c->req->method eq 'POST';
     my @params = (
@@ -395,6 +394,5 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
     $c->stash(form => $form);
 }
 
-__PACKAGE__->meta->make_immutable;
 1;
 # vim: set tabstop=4 expandtab:

@@ -10,7 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::EmergencyMapping::Mapping;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -28,6 +27,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
+    require NGCP::Panel::Form::EmergencyMapping::Mapping;
     return NGCP::Panel::Form::EmergencyMapping::Mapping->new(ctx => $c);
 }
 

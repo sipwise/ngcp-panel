@@ -4,15 +4,14 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::MySQL;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList qw();
-
-use NGCP::Panel::Form::CallListSuppression::Suppression;
-use NGCP::Panel::Form::CallListSuppression::Upload;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -83,7 +82,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $posted = ($c->request->method eq 'POST');
     my $params = { $sup->get_inflated_columns };
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::CallListSuppression::Suppression->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CallListSuppression::Suppression", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -139,7 +138,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     my $form;
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::CallListSuppression::Suppression->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CallListSuppression::Suppression", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -210,7 +209,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub upload :Chained('list') :PathPart('upload') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::CallListSuppression::Upload->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CallListSuppression::Upload", $c);
     my $upload = $c->req->upload('upload_calllistsuppression');
     my $posted = $c->req->method eq 'POST';
     my @params = ( upload_lnp => $posted ? $upload : undef, );
@@ -290,6 +289,5 @@ sub download :Chained('list') :PathPart('download') :Args(0) {
     return;
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;

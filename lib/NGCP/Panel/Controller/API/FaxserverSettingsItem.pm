@@ -10,9 +10,6 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::ValidateJSON qw();
-use NGCP::Panel::Utils::DateTime;
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 use Clone qw/clone/;
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;

@@ -10,8 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::EmergencyMapping::Container;
-use NGCP::Panel::Form::EmergencyMapping::ContainerAdmin;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -30,8 +28,10 @@ sub get_form {
     my $form;
     
     if($c->user->roles eq "reseller") {
+        require NGCP::Panel::Form::EmergencyMapping::Container;
         $form = NGCP::Panel::Form::EmergencyMapping::Container->new(ctx => $c);
     } else {
+        require NGCP::Panel::Form::EmergencyMapping::ContainerAdmin;
         $form = NGCP::Panel::Form::EmergencyMapping::ContainerAdmin->new(ctx => $c);
     }
     return $form;

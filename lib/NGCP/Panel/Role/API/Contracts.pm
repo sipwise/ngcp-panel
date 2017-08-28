@@ -13,7 +13,6 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
-use NGCP::Panel::Form::Contract::ContractAPI qw();
 
 sub _item_rs {
     my ($self, $c, $include_terminated,$now) = @_;
@@ -36,6 +35,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
+    require NGCP::Panel::Form::Contract::ContractAPI;
     return NGCP::Panel::Form::Contract::ContractAPI->new;
 }
 
