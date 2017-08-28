@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab399f4_f4f098cb",
+        "filename": "lib/NGCP/Panel/Controller/API/Numbers.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-28T16:03:33Z",
+      "side": 1,
+      "message": "dont see where it is implemented?",
+      "range": {
+        "startLine": 71,
+        "startChar": 22,
+        "endLine": 71,
+        "endChar": 26
+      },
+      "revId": "9fb0976ab2f7396b205a3f7dc9a20e4aba47a0dd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_54bf84d0",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-28T16:03:33Z",
+      "side": 1,
+      "message": "why not posinteger for api?",
+      "range": {
+        "startLine": 38,
+        "startChar": 13,
+        "endLine": 38,
+        "endChar": 40
+      },
+      "revId": "9fb0976ab2f7396b205a3f7dc9a20e4aba47a0dd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_14eeecec",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-28T16:03:33Z",
+      "side": 1,
+      "message": "using this in a query param is slow",
+      "range": {
+        "startLine": 82,
+        "startChar": 19,
+        "endLine": 82,
+        "endChar": 29
+      },
+      "revId": "9fb0976ab2f7396b205a3f7dc9a20e4aba47a0dd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
