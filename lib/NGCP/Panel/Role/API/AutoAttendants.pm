@@ -10,7 +10,6 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use Test::More;
-use NGCP::Panel::Form::Subscriber::AutoAttendantAPI;
 use NGCP::Panel::Utils::Subscriber;
 
 sub get_form {

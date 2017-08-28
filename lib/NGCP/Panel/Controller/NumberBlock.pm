@@ -4,9 +4,9 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use JSON qw(decode_json encode_json);
-use NGCP::Panel::Form::NumberBlock::BlockAdmin;
-use NGCP::Panel::Form::NumberBlock::BlockReseller;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
@@ -93,9 +93,9 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
 
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::NumberBlock::BlockAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NumberBlock::BlockAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::NumberBlock::BlockReseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NumberBlock::BlockReseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -168,9 +168,9 @@ sub block_edit :Chained('block_base') :PathPart('edit') :Does(ACL) :ACLDetachTo(
 
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::NumberBlock::BlockAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NumberBlock::BlockAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::NumberBlock::BlockReseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NumberBlock::BlockReseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -251,7 +251,6 @@ sub block_delete :Chained('block_base') :PathPart('delete') :Does(ACL) :ACLDetac
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/numberblock'));
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

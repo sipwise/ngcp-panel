@@ -4,8 +4,9 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Statistics;
-use NGCP::Panel::Form::Statistics;
 use NGCP::Panel::Utils::Navigation;
 
 use Sys::Hostname;
@@ -50,7 +51,7 @@ sub index :Chained('/') :PathPart('statistics') :Args(0) {
     }
     $c->stash->{folders} = $subdirs;
 
-    my $form = NGCP::Panel::Form::Statistics->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Statistics", $c);
     $form->process(
         posted => ($c->req->method eq 'POST'),
         params => { host => $selected_host, folder => $selected_folder },
@@ -146,7 +147,6 @@ sub supportstatus :Chained('/') :PathPart('statistics/supportstatus') :Args() {
     return;
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

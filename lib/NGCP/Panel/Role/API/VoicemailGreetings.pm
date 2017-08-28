@@ -6,7 +6,6 @@ use Sipwise::Base;
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::Subscriber;
-use NGCP::Panel::Form::Voicemail::GreetingAPI;
 
 sub item_name {
     return 'voicemailgreetings';

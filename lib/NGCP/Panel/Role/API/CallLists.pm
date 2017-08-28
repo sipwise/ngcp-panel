@@ -16,7 +16,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::CallList qw();
-use NGCP::Panel::Form::CallList::Subscriber;
 
 sub _item_rs {
     my ($self, $c) = @_;

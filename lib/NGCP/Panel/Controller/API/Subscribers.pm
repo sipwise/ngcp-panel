@@ -14,8 +14,6 @@ use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Events qw();
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 use UUID;
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;

@@ -6,11 +6,8 @@ use Sipwise::Base;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Fax;
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 use File::Basename;
 use File::Type;
 require Catalyst::ActionRole::ACL;

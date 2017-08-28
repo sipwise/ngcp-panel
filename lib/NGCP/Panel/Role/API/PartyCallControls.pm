@@ -11,7 +11,6 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Form::PartyCallControl::API;
 
 sub _item_rs {
 }

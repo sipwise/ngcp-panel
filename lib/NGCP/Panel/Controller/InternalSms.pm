@@ -3,6 +3,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
+
+use NGCP::Panel::Form;
 use Time::Period;
 use File::FnMatch qw(:fnmatch);
 use Encode qw/decode/;
@@ -243,7 +245,6 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
     return;
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

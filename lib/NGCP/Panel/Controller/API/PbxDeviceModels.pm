@@ -10,7 +10,6 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use Data::Dumper;
-use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
 require Catalyst::ActionRole::ACL;

@@ -15,7 +15,6 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Subscriber qw();
-use NGCP::Panel::Form::Contract::CustomerAPI qw();
 
 sub _item_rs {
     my ($self, $c, $now) = @_;

@@ -12,8 +12,6 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract qw();
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;

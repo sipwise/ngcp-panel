@@ -4,8 +4,8 @@ use Geography::Countries qw/countries country CNT_I_FLAG CNT_I_CODE2/;
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::Contact::Reseller;
-use NGCP::Panel::Form::Contact::Admin;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime qw();
@@ -65,13 +65,13 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser && $no_reseller) {
-        $form = NGCP::Panel::Form::Contact::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Reseller", $c);
         $params->{reseller}{id} = $c->user->reseller_id;
         # we'll delete this after validation, as we don't need the reseller in this case
     } elsif($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Contact::Admin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Admin", $c);
     } else {
-        $form = NGCP::Panel::Form::Contact::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Reseller", $c);
         $params->{reseller}{id} = $c->user->reseller_id;
     }
     $form->process(
@@ -154,13 +154,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $params->{country}{id} = delete $params->{country};
     $params->{timezone}{name} = delete $params->{timezone};
     if($c->user->is_superuser && $no_reseller) {
-        $form = NGCP::Panel::Form::Contact::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Reseller", $c);
         $params->{reseller}{id} = $c->user->reseller_id;
     } elsif($c->user->is_superuser && $c->stash->{contact}->reseller) {
-        $form = NGCP::Panel::Form::Contact::Admin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Admin", $c);
         $params->{reseller}{id} = $c->stash->{contact}->reseller_id;
     } else {
-        $form = NGCP::Panel::Form::Contact::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Reseller", $c);
     }
 
     $form->process(
@@ -376,7 +376,6 @@ sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) {
 }
 
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

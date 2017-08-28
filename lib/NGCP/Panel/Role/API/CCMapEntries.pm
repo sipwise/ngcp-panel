@@ -11,9 +11,7 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::CFSimpleAPI;
 use NGCP::Panel::Utils::Subscriber;
-use NGCP::Panel::Form::CCMapEntries;
 
 sub get_form {
     my ($self, $c) = @_;

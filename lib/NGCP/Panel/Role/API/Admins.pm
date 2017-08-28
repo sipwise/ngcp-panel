@@ -10,8 +10,6 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::Administrator::Admin;
-use NGCP::Panel::Form::Administrator::Reseller;
 
 sub _item_rs {
     my ($self, $c) = @_;
