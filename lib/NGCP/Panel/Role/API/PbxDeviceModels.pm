@@ -13,7 +13,6 @@ use HTTP::Status qw(:constants);
 use JSON qw();
 use File::Type;
 use Data::Dumper;
-use NGCP::Panel::Form::Device::ModelAPI;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
 

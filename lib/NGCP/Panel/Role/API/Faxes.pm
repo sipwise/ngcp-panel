@@ -11,7 +11,6 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use DateTime::Format::Strptime;
-use NGCP::Panel::Form::Subscriber::WebfaxAPI;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Fax;
 

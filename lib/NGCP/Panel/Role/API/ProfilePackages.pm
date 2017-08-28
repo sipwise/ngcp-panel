@@ -13,7 +13,6 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Reseller qw();
-use NGCP::Panel::Form::ProfilePackage::PackageAPI;
 
 sub get_form {
     my ($self, $c) = @_;

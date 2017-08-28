@@ -13,7 +13,6 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::BillingNetworks qw();
-use NGCP::Panel::Form::BillingNetwork::NetworkAPI;
 
 sub get_form {
     my ($self, $c) = @_;

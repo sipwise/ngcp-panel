@@ -10,7 +10,6 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::SMS;
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::SMSAPI;
 
 sub item_name {
     return 'sms';

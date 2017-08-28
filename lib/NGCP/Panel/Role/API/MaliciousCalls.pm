@@ -10,8 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::MaliciousCall::Admin;
-use NGCP::Panel::Form::MaliciousCall::Reseller;
 use Data::Dumper;
 
 sub _item_rs {

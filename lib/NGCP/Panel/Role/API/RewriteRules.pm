@@ -6,7 +6,6 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Form::RewriteRule::RuleAPI;
 
 sub item_name{
     return 'rewriterule';

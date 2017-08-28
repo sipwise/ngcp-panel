@@ -10,7 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::EmergencyMapping::Mapping;
 
 sub _item_rs {
     my ($self, $c) = @_;

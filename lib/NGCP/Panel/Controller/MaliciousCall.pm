@@ -4,8 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::MaliciousCall::Reseller;
-use NGCP::Panel::Form::MaliciousCall::Admin;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -121,6 +121,5 @@ sub delete :Chained('base') :PathPart('delete') {
     $c->response->redirect($c->uri_for());
 }
 
-__PACKAGE__->meta->make_immutable;
 1;
 # vim: set tabstop=4 expandtab:

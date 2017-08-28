@@ -4,12 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::SubscriberProfile::SetAdmin;
-use NGCP::Panel::Form::SubscriberProfile::SetReseller;
-use NGCP::Panel::Form::SubscriberProfile::Profile;
-use NGCP::Panel::Form::SubscriberProfile::SetCloneReseller;
-use NGCP::Panel::Form::SubscriberProfile::SetCloneAdmin;
-use NGCP::Panel::Form::SubscriberProfile::ProfileClone;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Preferences;
@@ -102,9 +98,9 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) :Does(ACL) :ACL
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::SubscriberProfile::SetAdmin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::SetAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::SubscriberProfile::SetReseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::SetReseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -165,9 +161,9 @@ sub set_edit :Chained('set_base') :PathPart('edit') :Does(ACL) :ACLDetachTo('/de
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::SubscriberProfile::SetAdmin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::SetAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::SubscriberProfile::SetReseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::SetReseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -260,9 +256,9 @@ sub set_clone :Chained('set_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::SubscriberProfile::SetCloneAdmin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::SetCloneAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::SubscriberProfile::SetCloneReseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::SetCloneReseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -385,7 +381,7 @@ sub profile_create :Chained('profile_list') :PathPart('create') :Args(0) :Does(A
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
-    my $form = NGCP::Panel::Form::SubscriberProfile::Profile->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::Profile", $c);
     #$form->create_structure($form->field_names);
     $form->process(
         posted => $posted,
@@ -453,7 +449,7 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
     foreach my $old_attr($profile->profile_attributes->all) {
         $params->{attribute}{$old_attr->attribute->attribute} = $old_attr->attribute->id;
     }
-    my $form = NGCP::Panel::Form::SubscriberProfile::Profile->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::Profile", $c);
     #$form->create_structure($form->field_names);
     $form->process(
         posted => $posted,
@@ -631,7 +627,7 @@ sub profile_clone :Chained('profile_base') :PathPart('clone') :Does(ACL) :ACLDet
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{profile}->get_inflated_columns };
     $params = merge($params, $c->session->{created_objects});
-    my $form = NGCP::Panel::Form::SubscriberProfile::ProfileClone->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::ProfileClone", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -763,7 +759,6 @@ sub load_preference_list :Private {
 
 
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

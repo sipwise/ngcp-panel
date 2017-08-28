@@ -12,7 +12,6 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::ContractLocations qw();
-use NGCP::Panel::Form::Customer::LocationAPI;
 
 sub get_form {
     my ($self, $c) = @_;

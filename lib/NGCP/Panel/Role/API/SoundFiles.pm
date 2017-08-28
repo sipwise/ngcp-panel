@@ -11,7 +11,6 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use File::Temp qw(tempfile);
-use NGCP::Panel::Form::Sound::FileAPI;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Sems;
 

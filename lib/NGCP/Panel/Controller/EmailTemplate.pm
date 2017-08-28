@@ -4,8 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::EmailTemplate::Reseller;
-use NGCP::Panel::Form::EmailTemplate::Admin;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Email;
 use NGCP::Panel::Utils::Message;
 
@@ -73,9 +73,9 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::EmailTemplate::Admin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmailTemplate::Admin", $c);
     } elsif($c->user->roles eq "reseller") {
-        $form = NGCP::Panel::Form::EmailTemplate::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmailTemplate::Reseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -193,9 +193,9 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::EmailTemplate::Admin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmailTemplate::Admin", $c);
     } elsif($c->user->roles eq "reseller") {
-        $form = NGCP::Panel::Form::EmailTemplate::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmailTemplate::Reseller", $c);
     } 
     $form->process(
         posted => $posted,
@@ -266,6 +266,5 @@ sub send_test :Chained('tmpl_list') :PathPart('test') :Args(0) {
     $c->res->redirect($c->uri_for('/'));
 }
 
-__PACKAGE__->meta->make_immutable;
 1;
 # vim: set tabstop=4 expandtab:

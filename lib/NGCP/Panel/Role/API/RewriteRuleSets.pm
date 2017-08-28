@@ -6,9 +6,6 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Form::RewriteRule::AdminSetAPI;
-use NGCP::Panel::Form::RewriteRule::ResellerSet;
-
 sub item_name{
     return 'rewriteruleset';
 }
@@ -27,6 +24,7 @@ sub relation{
 
 sub get_form {
     my ($self, $c, $type) = @_;
+
 
     if ($type && $type eq "rules") {
         return (NGCP::Panel::Form::RewriteRule::RuleAPI->new);
