@@ -13,15 +13,14 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
 
-use NGCP::Panel::Form::CallForward::CFTimeSetSubAPI;
-use NGCP::Panel::Form::CallForward::CFTimeSetAPI;
+use NGCP::Panel::Form;
 
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
-        return NGCP::Panel::Form::CallForward::CFTimeSetSubAPI->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFTimeSetSubAPI", $c);
     } else {
-        return NGCP::Panel::Form::CallForward::CFTimeSetAPI->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFTimeSetAPI", $c);
     }
 }
 

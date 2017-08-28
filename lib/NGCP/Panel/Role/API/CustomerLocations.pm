@@ -12,11 +12,10 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::ContractLocations qw();
-use NGCP::Panel::Form::Customer::LocationAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Customer::LocationAPI->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::LocationAPI", $c);
 }
 
 sub hal_from_item {

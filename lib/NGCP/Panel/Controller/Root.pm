@@ -21,7 +21,6 @@ __PACKAGE__->config(namespace => '');
 
 sub auto :Private {
     my($self, $c) = @_;
-    #exit(0); # just for profiling
 
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");
@@ -471,7 +470,6 @@ sub api_apply_fake_time :Private {
     }
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

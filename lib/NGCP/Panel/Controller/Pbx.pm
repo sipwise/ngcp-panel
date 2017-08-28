@@ -6,8 +6,6 @@ use parent 'Catalyst::Controller';
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Utils::InvoiceTemplate;
-use NGCP::Panel::Form::Invoice::Invoice;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -436,6 +434,5 @@ sub _get_dirsearch_rs :Private {
 }
 
 
-__PACKAGE__->meta->make_immutable;
 1;
 # vim: set tabstop=4 expandtab:

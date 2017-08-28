@@ -7,10 +7,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API::PeeringGroups/;
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;

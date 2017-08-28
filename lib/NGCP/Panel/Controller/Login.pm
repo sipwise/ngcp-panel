@@ -5,7 +5,8 @@ use strict;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::Login;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Admin;
 
 sub index :Path Form {
@@ -15,7 +16,7 @@ sub index :Path Form {
         unless($realm && $realm eq 'admin');
 
     my $posted = ($c->req->method eq 'POST');
-    my $form = NGCP::Panel::Form::Login->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Login", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -87,7 +88,6 @@ sub index :Path Form {
     $c->stash(template => 'login/login.tt');
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

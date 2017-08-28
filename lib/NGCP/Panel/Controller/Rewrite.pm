@@ -4,10 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::RewriteRule::AdminSet;
-use NGCP::Panel::Form::RewriteRule::ResellerSet;
-use NGCP::Panel::Form::RewriteRule::CloneSet;
-use NGCP::Panel::Form::RewriteRule::Rule;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Rewrite;
 use NGCP::Panel::Utils::Navigation;
@@ -82,9 +80,9 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::RewriteRule::AdminSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::AdminSet", $c);
     } else {
-        $form = NGCP::Panel::Form::RewriteRule::ResellerSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::ResellerSet", $c);
     }
     $form->process(
         posted => $posted,
@@ -152,7 +150,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{set_result}->get_inflated_columns };
     $params = merge($params, $c->session->{created_objects});
-    my $form = NGCP::Panel::Form::RewriteRule::CloneSet->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::CloneSet", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -213,9 +211,9 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::RewriteRule::AdminSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::AdminSet", $c);
     } else {
-        $form = NGCP::Panel::Form::RewriteRule::ResellerSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::ResellerSet", $c);
     }
     $form->process(
         posted => $posted,
@@ -405,7 +403,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::RewriteRule::Rule->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::Rule", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -464,7 +462,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::RewriteRule::Rule->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::Rule", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -499,7 +497,6 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     $c->stash(create_flag => 1);
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

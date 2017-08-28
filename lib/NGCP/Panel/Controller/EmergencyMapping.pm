@@ -4,18 +4,13 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::EmergencyMapping;
 use NGCP::Panel::Utils::MySQL;
-
-use NGCP::Panel::Form::EmergencyMapping::Container;
-use NGCP::Panel::Form::EmergencyMapping::ContainerAdmin;
-use NGCP::Panel::Form::EmergencyMapping::Mapping;
-use NGCP::Panel::Form::EmergencyMapping::Upload;
-use NGCP::Panel::Form::EmergencyMapping::UploadAdmin;
-use NGCP::Panel::Form::EmergencyMapping::Download;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -113,9 +108,9 @@ sub emergency_container_edit :Chained('emergency_container_base') :PathPart('edi
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "reseller") {
-        $form = NGCP::Panel::Form::EmergencyMapping::Container->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::Container", $c);
     } else {
-        $form = NGCP::Panel::Form::EmergencyMapping::ContainerAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::ContainerAdmin", $c);
     }
     $form->process(
         posted => $posted,
@@ -185,9 +180,9 @@ sub emergency_container_create :Chained('list') :PathPart('emergency_container_c
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "reseller") {
-        $form = NGCP::Panel::Form::EmergencyMapping::Container->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::Container", $c);
     } else {
-        $form = NGCP::Panel::Form::EmergencyMapping::ContainerAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::ContainerAdmin", $c);
     }
     $form->process(
         posted => $posted,
@@ -319,7 +314,7 @@ sub emergency_mapping_edit :Chained('emergency_mapping_base') :PathPart('edit') 
     my $params = $c->stash->{emergency_mapping};
     $params->{emergency_container}{id} = delete $params->{emergency_container_id};
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::EmergencyMapping::Mapping->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::Mapping", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -392,7 +387,7 @@ sub emergency_mapping_create :Chained('list') :PathPart('emergency_mapping_creat
     my $form;
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::EmergencyMapping::Mapping->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::Mapping", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -485,9 +480,9 @@ sub emergency_mappings_upload :Chained('list') :PathPart('upload') :Args(0) {
 
     my $form;
     if($c->user->roles eq "reseller") {
-        $form = NGCP::Panel::Form::EmergencyMapping::Upload->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::Upload", $c);
     } else {
-        $form = NGCP::Panel::Form::EmergencyMapping::UploadAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::UploadAdmin", $c);
     }
     my $upload = $c->req->upload('upload_mapping');
     my $posted = $c->req->method eq 'POST';
@@ -563,7 +558,7 @@ sub emergency_mappings_download :Chained('list') :PathPart('download') :Args(0) 
     if($c->user->roles eq "reseller") {
         $reseller_id = $c->user->reseller_id;
     } else {
-        $form = NGCP::Panel::Form::EmergencyMapping::Download->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::Download", $c);
     }
     my $posted = $c->req->method eq 'POST';
     my $params = {};
@@ -597,6 +592,5 @@ sub emergency_mappings_download :Chained('list') :PathPart('download') :Args(0) 
     return;
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;

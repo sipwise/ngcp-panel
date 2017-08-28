@@ -5,27 +5,22 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
-use NGCP::Panel::Form::CallForward::CFDestinationSetAPI;
-use NGCP::Panel::Form::CallForward::CFDestinationSetSubadminAPI;
-use NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI;
+use NGCP::Panel::Form;
 
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "subscriber") {
-        return NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI", $c);
     } elsif($c->user->roles eq "subscriberadmin") {
-        # TODO: allow subadmin to manipulate other subs?
-        #return NGCP::Panel::Form::CallForward::CFDestinationSetSubadminAPI->new;
-        return NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI", $c);
     } else {
-        return NGCP::Panel::Form::CallForward::CFDestinationSetAPI->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFDestinationSetAPI", $c);
     }
 }
 

@@ -3,6 +3,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
@@ -10,7 +12,6 @@ use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Utils::CallList qw();
-use NGCP::Panel::Form::Invoice::Invoice;
 use HTML::Entities;
 
 
@@ -149,7 +150,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
 
     my $schema = $c->model('DB');
     my $form;
-    $form = NGCP::Panel::Form::Invoice::Invoice->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Invoice::Invoice", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -244,7 +245,6 @@ sub download :Chained('base') :PathPart('download') {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
 }
 
-__PACKAGE__->meta->make_immutable;
 1;
 
 # vim: set tabstop=4 expandtab:

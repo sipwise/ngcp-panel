@@ -10,9 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Sound::AdminSet;
-use NGCP::Panel::Form::Sound::ResellerSet;
-use NGCP::Panel::Form::Sound::SubadminSet;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -36,11 +33,11 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::Sound::AdminSet->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::AdminSet", $c);
     } elsif($c->user->roles eq "reseller") {
-        return NGCP::Panel::Form::Sound::ResellerSet->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::ResellerSet", $c);
     } elsif ($c->user->roles eq "subscriberadmin") {
-        return NGCP::Panel::Form::Sound::SubadminSet->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::SubadminSet", $c);
     }
 }
 

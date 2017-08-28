@@ -17,7 +17,7 @@ use NGCP::Panel::Utils::Rtc;
 sub get_form {
     my ($self) = @_;
 
-    #return NGCP::Panel::Form::Rtc::NetworksAdmin->new;
+    #return NGCP::Panel::Form::get("NGCP::Panel::Form::Rtc::NetworksAdmin", $c);
     return;
 }
 

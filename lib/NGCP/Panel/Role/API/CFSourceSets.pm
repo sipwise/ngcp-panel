@@ -13,19 +13,17 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
 
-use NGCP::Panel::Form::CallForward::CFSourceSetSubAPI;
-#use NGCP::Panel::Form::CallForward::CFSourceSetSubadminAPI;
-use NGCP::Panel::Form::CallForward::CFSourceSetAPI;
+use NGCP::Panel::Form;
 
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "subscriber") {
-        return NGCP::Panel::Form::CallForward::CFSourceSetSubAPI->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFSourceSetSubAPI", $c);
     } elsif($c->user->roles eq "subscriberadmin") {
-        #return NGCP::Panel::Form::CallForward::CFSourceSetSubadminAPI->new;
-        return NGCP::Panel::Form::CallForward::CFSourceSetSubAPI->new;
+        #return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFSourceSetSubadminAPI", $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFSourceSetSubAPI", $c);
     } else {
-        return NGCP::Panel::Form::CallForward::CFSourceSetAPI->new;
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFSourceSetAPI", $c);
     }
 }
 
