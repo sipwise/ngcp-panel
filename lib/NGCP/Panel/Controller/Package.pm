@@ -4,8 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::ProfilePackage::Admin;
-use NGCP::Panel::Form::ProfilePackage::Reseller;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::ProfilePackages qw();
@@ -75,9 +75,9 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::ProfilePackage::Admin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::ProfilePackage::Admin", $c);
     } else {
-        $form = NGCP::Panel::Form::ProfilePackage::Reseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::ProfilePackage::Reseller", $c);
     }
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
@@ -174,7 +174,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::ProfilePackage::Reseller->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::ProfilePackage::Reseller", $c);
     my $params = $c->stash->{package};
     $params->{initial_profiles} = $c->stash->{initial_profiles};
     $params->{underrun_profiles} = $c->stash->{underrun_profiles};
@@ -367,6 +367,5 @@ sub ajax_underrun_profiles :Chained('details_ajax') :PathPart('underrun_profiles
     $c->detach( $c->view("JSON") );
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;

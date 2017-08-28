@@ -4,12 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::Peering::Group;
-use NGCP::Panel::Form::Peering::Rule;
-use NGCP::Panel::Form::Peering::RuleEditAdmin;
-use NGCP::Panel::Form::Peering::InboundRule;
-use NGCP::Panel::Form::Peering::InboundRuleEditAdmin;
-use NGCP::Panel::Form::Peering::Server;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::DialogicImg;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -121,7 +117,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Group->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::Group", $c);
     my $params = { $c->stash->{group_result}->get_inflated_columns };
     $params->{contract}{id} = delete $params->{peering_contract_id};
     $params = merge($params, $c->session->{created_objects});
@@ -190,7 +186,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Group->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::Group", $c);
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     $form->process(
@@ -255,7 +251,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Server->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::Server", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -340,7 +336,7 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Server->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::Server", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -590,7 +586,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
    
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::Rule->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::Rule", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -662,7 +658,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::RuleEditAdmin->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::RuleEditAdmin", $c);
     $c->stash->{rule}{group}{id} = delete $c->stash->{rule}{group_id};
     $form->process(
         posted => $posted,
@@ -749,7 +745,7 @@ sub inbound_rules_create :Chained('inbound_rules_list') :PathPart('create') :Arg
     my ($self, $c) = @_;
    
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::InboundRule->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::InboundRule", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -822,7 +818,7 @@ sub inbound_rules_edit :Chained('inbound_rules_base') :PathPart('edit') :Args(0)
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Peering::InboundRuleEditAdmin->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::InboundRuleEditAdmin", $c);
     $c->stash->{rule}{group}{id} = delete $c->stash->{rule}{group_id};
     $form->process(
         posted => $posted,
@@ -950,7 +946,6 @@ sub inbound_rules_down :Chained('inbound_rules_base') :PathPart('down') :Args(0)
 }
 
 
-__PACKAGE__->meta->make_immutable;
 
 1;
 

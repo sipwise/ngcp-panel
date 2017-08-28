@@ -6,7 +6,6 @@ use parent 'NGCP::Panel::Role::API';
 
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Administrator::APICert;
 
 sub item_name {
     return 'admincerts';
@@ -18,7 +17,7 @@ sub resource_name{
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Administrator::APICert->new(c => $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::APICert", $c);
 }
 
 sub _item_rs {

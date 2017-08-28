@@ -16,7 +16,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::CallList qw();
-use NGCP::Panel::Form::CallList::Subscriber;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -63,7 +62,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CallList::Subscriber->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::CallList::Subscriber", $c);
 }
 
 sub hal_from_item {

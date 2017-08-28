@@ -11,11 +11,11 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::Capabilities::API;
+use NGCP::Panel::Form;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Capabilities::API->new(ctx => $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Capabilities::API", $c);
 }
 
 sub hal_from_item {

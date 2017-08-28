@@ -4,16 +4,14 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::Lnp;
 use NGCP::Panel::Utils::MySQL;
 use NGCP::Panel::Utils::DateTime;
-
-use NGCP::Panel::Form::Lnp::Carrier;
-use NGCP::Panel::Form::Lnp::Number;
-use NGCP::Panel::Form::Lnp::Upload;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -123,7 +121,7 @@ sub carrier_edit :Chained('carrier_base') :PathPart('edit') {
     my $form;
     my $params = $c->stash->{carrier};
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::Lnp::Carrier->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Lnp::Carrier", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -169,7 +167,7 @@ sub carrier_create :Chained('list') :PathPart('carrier_create') :Args(0) {
     my $form;
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::Lnp::Carrier->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Lnp::Carrier", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -285,7 +283,7 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
     $params->{end} //= '';
     $params->{end} =~ s/T\d{2}:\d{2}:\d{2}$//;
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::Lnp::Number->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Lnp::Number", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -356,7 +354,7 @@ sub number_create :Chained('list') :PathPart('number_create') :Args(0) {
     my $form;
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::Lnp::Number->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Lnp::Number", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -444,7 +442,7 @@ sub number_delete :Chained('number_base') :PathPart('delete') :Args(0) {
 sub numbers_upload :Chained('list') :PathPart('upload') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::Lnp::Upload->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Lnp::Upload", $c);
     my $upload = $c->req->upload('upload_lnp');
     my $posted = $c->req->method eq 'POST';
     my @params = ( upload_lnp => $posted ? $upload : undef, );
@@ -524,6 +522,5 @@ sub numbers_download :Chained('list') :PathPart('download') :Args(0) {
     return;
 }
 
-__PACKAGE__->meta->make_immutable;
 
 1;

@@ -10,7 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Sound::HandleAPI;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -25,7 +24,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Sound::HandleAPI->new(ctx => $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::HandleAPI", $c);
 }
 
 sub item_by_id {

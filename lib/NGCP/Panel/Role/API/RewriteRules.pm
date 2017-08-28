@@ -6,7 +6,6 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Form::RewriteRule::RuleAPI;
 
 sub item_name{
     return 'rewriterule';
@@ -46,7 +45,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return ( NGCP::Panel::Form::RewriteRule::RuleAPI->new, ['set_id'] );
+    return ( NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::RuleAPI", $c), ['set_id'] );
 }
 
 sub hal_links{

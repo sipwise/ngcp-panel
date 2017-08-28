@@ -10,14 +10,13 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 
-use NGCP::Panel::Form::Rtc::AppsAdmin;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Rtc;
 
 sub get_form {
     my ($self, $c) = @_;
 
-    return NGCP::Panel::Form::Rtc::AppsAdmin->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Rtc::AppsAdmin", $c);
 }
 
 sub hal_from_item {
