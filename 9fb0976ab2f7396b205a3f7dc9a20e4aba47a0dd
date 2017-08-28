@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "fab399f4_b4cd4089",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-08-28T16:05:54Z",
+      "side": 1,
+      "message": "ah sry, it\u0027s the domain name.. so Text :-) it is checked later anyway, and prevents too big internal html stuff",
+      "parentUuid": "fab399f4_54bf84d0",
+      "range": {
+        "startLine": 38,
+        "startChar": 13,
+        "endLine": 38,
+        "endChar": 40
+      },
+      "revId": "9fb0976ab2f7396b205a3f7dc9a20e4aba47a0dd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab399f4_14eeecec",
         "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
         "patchSetId": 4
