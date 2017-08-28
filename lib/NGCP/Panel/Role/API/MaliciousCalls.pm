@@ -10,8 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::MaliciousCall::Admin;
-use NGCP::Panel::Form::MaliciousCall::Reseller;
 use Data::Dumper;
 
 sub _item_rs {
@@ -32,8 +30,10 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
+        require NGCP::Panel::Form::MaliciousCall::Admin;
         return NGCP::Panel::Form::MaliciousCall::Admin->new;
     } elsif($c->user->roles eq "reseller") {
+        require NGCP::Panel::Form::MaliciousCall::Reseller;
         return NGCP::Panel::Form::MaliciousCall::Reseller->new;
     }
 }

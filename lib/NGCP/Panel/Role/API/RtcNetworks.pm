@@ -10,13 +10,13 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 
-use NGCP::Panel::Form::Rtc::NetworksAdmin;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Rtc;
 
 sub get_form {
     my ($self, $c) = @_;
 
+    require NGCP::Panel::Form::Rtc::NetworksAdmin;
     return NGCP::Panel::Form::Rtc::NetworksAdmin->new;
 }
 

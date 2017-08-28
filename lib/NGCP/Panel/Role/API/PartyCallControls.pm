@@ -11,13 +11,13 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Form::PartyCallControl::API;
 
 sub _item_rs {
 }
 
 sub get_form {
     my ($self, $c) = @_;
+    require NGCP::Panel::Form::PartyCallControl::API;
     return NGCP::Panel::Form::PartyCallControl::API->new;
 }
 

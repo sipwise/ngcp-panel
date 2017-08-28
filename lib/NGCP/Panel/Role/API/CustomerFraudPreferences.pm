@@ -10,11 +10,11 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::CustomerFraudPreferences::PreferencesAPI;
 use NGCP::Panel::Utils::Contract qw();
 
 sub get_form {
     my ($self, $c) = @_;
+    require NGCP::Panel::Form::CustomerFraudPreferences::PreferencesAPI;
     return NGCP::Panel::Form::CustomerFraudPreferences::PreferencesAPI->new;
 }
 

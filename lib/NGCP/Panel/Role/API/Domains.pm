@@ -10,16 +10,16 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::Domain::Admin qw();
-use NGCP::Panel::Form::Domain::Reseller qw();
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
+        require NGCP::Panel::Form::Domain::Admin;
         return NGCP::Panel::Form::Domain::Admin->new;
     } elsif($c->user->roles eq "reseller") {
+        require NGCP::Panel::Form::Domain::Reseller;
         return NGCP::Panel::Form::Domain::Reseller->new;
     }
     return;

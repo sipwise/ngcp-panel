@@ -11,8 +11,6 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::DateTime;
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;

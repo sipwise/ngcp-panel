@@ -10,8 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::EmailTemplate::Admin;
-use NGCP::Panel::Form::EmailTemplate::Reseller;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -27,8 +25,10 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
+        require NGCP::Panel::Form::EmailTemplate::Admin;
         return NGCP::Panel::Form::EmailTemplate::Admin->new;
     } elsif($c->user->roles eq "reseller") {
+        require NGCP::Panel::Form::EmailTemplate::Reseller;
         return NGCP::Panel::Form::EmailTemplate::Reseller->new;
     }
 }

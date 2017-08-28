@@ -10,7 +10,6 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::ManagerSecretaryAPI;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
 use Readonly;
@@ -21,6 +20,7 @@ Readonly my $dset_name => 'ms_autoset';
 sub get_form {
     my ($self, $c) = @_;
 
+    require NGCP::Panel::Form::ManagerSecretaryAPI;
     return NGCP::Panel::Form::ManagerSecretaryAPI->new(ctx => $c);
 }
 

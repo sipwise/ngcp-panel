@@ -12,10 +12,10 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
-use NGCP::Panel::Form::CFTimeSetAPI;
 
 sub get_form {
     my ($self, $c) = @_;
+    require NGCP::Panel::Form::CFTimeSetAPI;
     return NGCP::Panel::Form::CFTimeSetAPI->new;
 }
 

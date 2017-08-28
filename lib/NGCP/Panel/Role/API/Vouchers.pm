@@ -10,8 +10,6 @@ use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Voucher::AdminAPI;
-use NGCP::Panel::Form::Voucher::ResellerAPI;
 use NGCP::Panel::Utils::Voucher;
 
 sub _item_rs {
@@ -28,8 +26,10 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
+        require NGCP::Panel::Form::Voucher::AdminAPI;
         return NGCP::Panel::Form::Voucher::AdminAPI->new;
     } elsif($c->user->roles eq "reseller") {
+        require NGCP::Panel::Form::Voucher::ResellerAPI;
         return NGCP::Panel::Form::Voucher::ResellerAPI->new;
     }
 }

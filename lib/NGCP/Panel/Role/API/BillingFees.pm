@@ -12,7 +12,6 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::BillingFee::API;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -37,6 +36,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
+    require NGCP::Panel::Form::BillingFee::API;
     return NGCP::Panel::Form::BillingFee::API->new(ctx => $c);
 }
 

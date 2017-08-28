@@ -40,3 +40,4 @@ SIGNATURE
 NGCP-Panel-*
 .perlcritic-history
 ngcp_panel_local.conf
+nytprof

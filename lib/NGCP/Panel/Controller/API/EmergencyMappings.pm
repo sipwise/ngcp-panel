@@ -10,8 +10,6 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 
 use NGCP::Panel::Utils::EmergencyMapping;
 use NGCP::Panel::Utils::MySQL;
