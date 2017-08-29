@@ -30,7 +30,6 @@ has_field 'unit' => (
     do_wrapper => 0,  
 );
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

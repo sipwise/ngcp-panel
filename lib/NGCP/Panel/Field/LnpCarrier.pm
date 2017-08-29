@@ -29,5 +29,4 @@ sub validate {
         if(!$self->has_errors && $value->{id} !~ /^\d+$/);
 }
 
-no Moose;
 1;

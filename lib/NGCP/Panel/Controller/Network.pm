@@ -4,8 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::BillingNetwork::Admin;
-use NGCP::Panel::Form::BillingNetwork::Reseller;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::BillingNetworks qw();
@@ -74,9 +74,9 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::BillingNetwork::Admin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingNetwork::Admin", $c);
     } else {
-        $form = NGCP::Panel::Form::BillingNetwork::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingNetwork::Reseller", $c);
     }
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
@@ -165,7 +165,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::BillingNetwork::Reseller->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingNetwork::Reseller", $c);
     my $params = $c->stash->{network};
     $params->{blocks} = $c->stash->{network_blocks};
     $params->{reseller}{id} = delete $params->{reseller_id};

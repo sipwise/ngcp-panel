@@ -1,8 +1,8 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 
 use strict;
-use Moose;
 use Digest::MD5 qw/md5_hex/;
+use Moose;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'register_model_content' => (

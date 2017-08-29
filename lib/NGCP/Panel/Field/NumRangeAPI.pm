@@ -30,7 +30,6 @@ sub validate {
     return;
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

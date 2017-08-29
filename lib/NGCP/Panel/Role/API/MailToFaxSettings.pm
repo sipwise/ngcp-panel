@@ -4,19 +4,19 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::MailToFax::API;
 use NGCP::Panel::Utils::Subscriber;
 
 sub get_form {
     my ($self, $c, $type) = @_;
 
-    return NGCP::Panel::Form::MailToFax::API->new(ctx => $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::MailToFax::API", $c);
 }
 
 sub hal_from_item {

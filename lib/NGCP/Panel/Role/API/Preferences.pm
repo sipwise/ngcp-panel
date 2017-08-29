@@ -4,6 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 
 use boolean qw(true);

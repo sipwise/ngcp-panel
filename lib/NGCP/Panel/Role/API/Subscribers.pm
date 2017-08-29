@@ -4,6 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 
 use boolean qw(true);
@@ -12,8 +13,6 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use Test::More;
-use NGCP::Panel::Form::Subscriber::SubscriberAPI;
-use NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
@@ -25,10 +24,10 @@ sub get_form {
 
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
         $c->log->error("++++ admin form");
-        return NGCP::Panel::Form::Subscriber::SubscriberAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberAPI", $c);
     } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         $c->log->error("++++ subscriber form");
-        return NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI", $c);
     }
 }
 
@@ -64,7 +63,8 @@ sub resource_from_item {
         $resource{timezone} = undef;
     }
 
-
+    $c->log->debug("+++++++++++++++++++ timezone");
+    use Data::Dumper; $c->log->debug(Dumper \%resource);
     $form //= $self->get_form($c);
     last unless $self->validate_form(
         c => $c,

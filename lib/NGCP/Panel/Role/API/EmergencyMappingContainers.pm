@@ -4,14 +4,13 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::EmergencyMapping::Container;
-use NGCP::Panel::Form::EmergencyMapping::ContainerAdmin;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -30,9 +29,9 @@ sub get_form {
     my $form;
     
     if($c->user->roles eq "reseller") {
-        $form = NGCP::Panel::Form::EmergencyMapping::Container->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::Container", $c);
     } else {
-        $form = NGCP::Panel::Form::EmergencyMapping::ContainerAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmergencyMapping::ContainerAdmin", $c);
     }
     return $form;
 }

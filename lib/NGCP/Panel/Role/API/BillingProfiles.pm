@@ -4,6 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 
 use boolean qw(true);
@@ -13,7 +14,6 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::BillingProfile::PeaktimeAPI qw();
 use NGCP::Panel::Utils::Billing qw();
 
 sub _item_rs {
@@ -41,7 +41,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::BillingProfile::PeaktimeAPI->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::BillingProfile::PeaktimeAPI", $c);
 }
 
 sub hal_from_profile {

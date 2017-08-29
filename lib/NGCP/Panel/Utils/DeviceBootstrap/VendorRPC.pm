@@ -1,13 +1,13 @@
 package NGCP::Panel::Utils::DeviceBootstrap::VendorRPC;
 
 use strict;
+use Moose;
 use URI::Escape;
 use MIME::Base64 qw/encode_base64/;
 use Net::HTTPS::Any qw/https_post/;
 use RPC::XML::ParserFactory 'XML::LibXML';
 use RPC::XML;
 use Data::Dumper;
-use Moose;
 
 has 'params' => (
     is => 'rw',

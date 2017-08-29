@@ -4,7 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::CallRouting::Verify;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Peering;
@@ -25,7 +26,7 @@ sub root :PathPart('/') :CaptureArgs(0) {
 sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
     my ( $self, $c ) = @_;
 
-    my $form = NGCP::Panel::Form::CallRouting::Verify->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CallRouting::Verify", $c);
     my $params = merge({}, $c->session->{created_objects});
     my $posted = ($c->req->method eq 'POST');
     my $data = $c->req->params;

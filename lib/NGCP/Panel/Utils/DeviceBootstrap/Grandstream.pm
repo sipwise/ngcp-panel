@@ -1,13 +1,13 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Grandstream;
 
 use strict;
-use Moose;
 use Data::Dumper;
 
 use JSON;
 use LWP::UserAgent;
 use HTTP::Request::Common;
 use IPC::Run3;
+use Moose;
 
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 

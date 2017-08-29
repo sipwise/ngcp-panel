@@ -6,8 +6,7 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Form::RewriteRule::AdminSetAPI;
-use NGCP::Panel::Form::RewriteRule::ResellerSet;
+use NGCP::Panel::Form;
 
 sub item_name{
     return 'rewriteruleset';
@@ -29,12 +28,12 @@ sub get_form {
     my ($self, $c, $type) = @_;
 
     if ($type && $type eq "rules") {
-        return (NGCP::Panel::Form::RewriteRule::RuleAPI->new);
+        return (NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::RuleAPI", $c));
     }
     if($c->user->roles eq "admin") {
-        return (NGCP::Panel::Form::RewriteRule::AdminSetAPI->new( ctx => $c), [qw/reseller_id/]);
+        return (NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::AdminSetAPI", $c));
     } else {
-        return (NGCP::Panel::Form::RewriteRule::ResellerSet->new( ctx => $c), [qw/reseller_id/]);
+        return (NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::ResellerSet", $c));
     }
 }
 

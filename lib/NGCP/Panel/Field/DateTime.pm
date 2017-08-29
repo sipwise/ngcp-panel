@@ -15,7 +15,6 @@ sub datetime_deflate {
                 }
 }
 
-no Moose;
 1;
 
 =head1 NAME

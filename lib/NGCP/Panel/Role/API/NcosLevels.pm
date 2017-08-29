@@ -4,14 +4,13 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::NCOS::ResellerLevelAPI;
-use NGCP::Panel::Form::NCOS::AdminLevelAPI;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -27,9 +26,9 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::NCOS::AdminLevelAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::AdminLevelAPI", $c);
     } elsif($c->user->roles eq "reseller") {
-        return NGCP::Panel::Form::NCOS::ResellerLevelAPI->new(ctx => $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::ResellerLevelAPI", $c);
     }
 }
 

@@ -4,6 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 
 use boolean qw(true);
@@ -15,7 +16,6 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Subscriber qw();
-use NGCP::Panel::Form::Contract::CustomerAPI qw();
 
 sub _item_rs {
     my ($self, $c, $now) = @_;
@@ -31,7 +31,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Contract::CustomerAPI->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::CustomerAPI", $c);
 }
 
 sub hal_from_customer {

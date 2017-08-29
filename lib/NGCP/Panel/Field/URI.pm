@@ -98,7 +98,6 @@ sub uri_deflate {
     return $v;    
 }
 
-no Moose;
 1;
 __PACKAGE__->meta->make_immutable;
 use namespace::autoclean

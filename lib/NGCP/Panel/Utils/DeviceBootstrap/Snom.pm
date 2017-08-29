@@ -1,8 +1,8 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Snom;
 
 use strict;
-use Moose;
 use Data::Dumper;
+use Moose;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 sub rpc_server_params{

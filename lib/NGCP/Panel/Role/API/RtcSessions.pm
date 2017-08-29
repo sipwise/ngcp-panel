@@ -4,6 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
@@ -17,7 +18,7 @@ use NGCP::Panel::Utils::Rtc;
 sub get_form {
     my ($self) = @_;
 
-    #return NGCP::Panel::Form::Rtc::NetworksAdmin->new;
+    #return NGCP::Panel::Form::get("NGCP::Panel::Form::Rtc::NetworksAdmin", $c);
     return;
 }
 

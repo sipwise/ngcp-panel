@@ -22,7 +22,6 @@ sub validate {
     return 1;
 }
 
-no Moose;
 1;
 
 =head1 NAME

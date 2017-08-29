@@ -3,11 +3,12 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
-use NGCP::Panel::Form::Invoice::Invoice;
 
 sub auto :Private {
     my ($self, $c) = @_;

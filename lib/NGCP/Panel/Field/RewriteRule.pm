@@ -99,7 +99,6 @@ sub inflate_replace_pattern {
     return $value;
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

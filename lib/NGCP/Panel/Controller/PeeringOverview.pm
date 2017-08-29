@@ -4,7 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::PeeringOverview::Columns;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
@@ -95,7 +96,7 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
 sub edit :Chained('list') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::PeeringOverview::Columns->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::PeeringOverview::Columns", $c);
     my $params = $c->session->{created_objects}{peeringoverview}{states} // {};
     my $posted = ($c->req->method eq 'POST');
     my $data = $c->req->params;

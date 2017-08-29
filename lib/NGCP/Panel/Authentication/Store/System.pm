@@ -1,10 +1,10 @@
 package NGCP::Panel::Authentication::Store::System;
 use Sipwise::Base;
-use Moose;
 use namespace::autoclean;
 use NGCP::Panel::Authentication::Store::SystemRole;
 use Config::Tiny;
 
+use Moose;
 with 'MooseX::Emulate::Class::Accessor::Fast';
 use Scalar::Util qw( blessed );
 

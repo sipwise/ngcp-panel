@@ -4,6 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Callflow;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Message;

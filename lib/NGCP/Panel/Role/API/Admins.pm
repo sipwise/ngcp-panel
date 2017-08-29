@@ -4,14 +4,13 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::Administrator::Admin;
-use NGCP::Panel::Form::Administrator::Reseller;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -29,9 +28,9 @@ sub get_form {
     my ($self, $c) = @_;
     my $form;
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::Administrator::Admin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Admin", $c);
     } else {
-        $form = NGCP::Panel::Form::Administrator::Reseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Reseller", $c);
     }
     return $form;
 }

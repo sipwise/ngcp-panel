@@ -4,8 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::MaliciousCall::Reseller;
-use NGCP::Panel::Form::MaliciousCall::Admin;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {

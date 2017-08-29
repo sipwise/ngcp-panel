@@ -10,7 +10,6 @@ sub validate {
         if(!$self->has_errors && $value < 0);
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

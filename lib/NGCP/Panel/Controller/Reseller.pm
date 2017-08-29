@@ -2,12 +2,11 @@ package NGCP::Panel::Controller::Reseller;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
+
+use NGCP::Panel::Form;
 use DateTime qw();
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use File::Type;
-use NGCP::Panel::Form::Reseller;
-use NGCP::Panel::Form::ResellerRtc;
-use NGCP::Panel::Form::Reseller::Branding;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Message;
@@ -84,9 +83,9 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
     my $can_rtc = exists $c->config->{rtc};
     my $form;
     if ($can_rtc) {
-        $form = NGCP::Panel::Form::ResellerRtc->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::ResellerRtc", $c);
     } else {
-        $form = NGCP::Panel::Form::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Reseller", $c);
     }
     $form->process(
         posted => $posted,
@@ -279,9 +278,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
     my $can_rtc = exists $c->config->{rtc};
     my $form;
     if ($can_rtc) {
-        $form = NGCP::Panel::Form::ResellerRtc->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::ResellerRtc", $c);
     } else {
-        $form = NGCP::Panel::Form::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Reseller", $c);
     }
 
     # we need this in the ajax call to not filter it as used contract
@@ -574,7 +573,7 @@ sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL)
     my $branding = $reseller->branding;
 
     my $posted = $c->request->method eq 'POST';
-    my $form = NGCP::Panel::Form::Reseller::Branding->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Reseller::Branding", $c);
 
     if($posted) {
         $c->req->params->{logo} = $c->req->upload('logo');

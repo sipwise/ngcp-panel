@@ -5,6 +5,8 @@ use strict;
 
 use parent 'Catalyst::Controller';
 
+use NGCP::Panel::Form;
+
 sub dashb_index :Path :Args(0) {
     my ($self, $c) = @_;
 
