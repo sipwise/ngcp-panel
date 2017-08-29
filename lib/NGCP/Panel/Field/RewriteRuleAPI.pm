@@ -12,7 +12,6 @@ has_field 'priority' => (
     },
 );
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

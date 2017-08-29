@@ -4,11 +4,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::NCOS::ResellerLevel;
-use NGCP::Panel::Form::NCOS::AdminLevel;
-use NGCP::Panel::Form::NCOS::Pattern;
-use NGCP::Panel::Form::NCOS::Lnp;
-use NGCP::Panel::Form::NCOS::Extra;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
@@ -97,9 +94,9 @@ sub edit :Chained('base') :PathPart('edit') {
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::NCOS::AdminLevel->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::AdminLevel", $c);
     } else {
-        $form = NGCP::Panel::Form::NCOS::ResellerLevel->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::ResellerLevel", $c);
     }
     $form->process(
         posted => $posted,
@@ -181,9 +178,9 @@ sub create :Chained('levels_list') :PathPart('create') :Args(0) {
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::NCOS::AdminLevel->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::AdminLevel", $c);
     } else {
-        $form = NGCP::Panel::Form::NCOS::ResellerLevel->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::ResellerLevel", $c);
     }
     $form->process(
         posted => $posted,
@@ -310,7 +307,7 @@ sub pattern_edit :Chained('pattern_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::NCOS::Pattern->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::Pattern", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -371,7 +368,7 @@ sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::NCOS::Pattern->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::Pattern", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -410,7 +407,7 @@ sub pattern_edit_extra :Chained('pattern_list') :PathPart('edit_extra') :Args(0)
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::NCOS::Extra->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::Extra", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -482,7 +479,7 @@ sub lnp_edit :Chained('lnp_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::NCOS::Lnp->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::Lnp", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -547,7 +544,7 @@ sub lnp_create :Chained('pattern_list') :PathPart('lnp/create') :Args(0) :Allowe
     }
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::NCOS::Lnp->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::Lnp", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,

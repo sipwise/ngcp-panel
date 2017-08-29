@@ -6,7 +6,7 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Invoice::InvoiceAPI;
+use NGCP::Panel::Form;
 
 sub item_name{
     return 'invoice';
@@ -45,7 +45,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return (NGCP::Panel::Form::Invoice::InvoiceAPI->new(ctx => $c),['customer_id','template_id']);
+    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Invoice::InvoiceAPI", $c));
 }
 
 sub hal_links {

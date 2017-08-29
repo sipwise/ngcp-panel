@@ -16,7 +16,6 @@ sub build_options {
     ];
 }
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

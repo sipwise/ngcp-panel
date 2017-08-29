@@ -7,11 +7,6 @@ use Crypt::Rijndael;
 use Digest::MD5 qw/md5_hex/;
 use Storable qw/freeze/;
 use JSON qw(decode_json encode_json);
-use NGCP::Panel::Form::Device::Model;
-use NGCP::Panel::Form::Device::ModelAdmin;
-use NGCP::Panel::Form::Device::Firmware;
-use NGCP::Panel::Form::Device::Config;
-use NGCP::Panel::Form::Device::Profile;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
@@ -20,6 +15,8 @@ use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::HTTP;
 
 use parent 'Catalyst::Controller';
+
+use NGCP::Panel::Form;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -165,9 +162,9 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
     my $posted = ($c->request->method eq 'POST');
     my $form;
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Device::ModelAdmin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::ModelAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::Device::Model->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Model", $c);
     }
 
     my $params = {};
@@ -356,9 +353,9 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     $params = merge($params, $c->session->{created_objects});
     $c->stash(edit_model => 1); # to make front_image optional
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Device::ModelAdmin->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::ModelAdmin", $c);
     } else {
-        $form = NGCP::Panel::Form::Device::Model->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Model", $c);
     }
     if($posted) {
         $c->req->params->{front_image} = $c->req->upload('front_image');
@@ -547,7 +544,7 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Device::Firmware->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Firmware", $c);
 
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
@@ -659,7 +656,7 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
     if($posted) {
         $c->req->params->{data} = $c->req->upload('data');
     }
-    $form = NGCP::Panel::Form::Device::Firmware->new;
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Firmware", $c);
 
     $form->process(
         posted => $posted,
@@ -739,7 +736,7 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Device::Config->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Config", $c);
 
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
@@ -838,7 +835,7 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
     my $params = { $c->stash->{devconf}->get_inflated_columns };
     $params->{device}{id} = delete $params->{device_id};
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::Device::Config->new;
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Config", $c);
 
     $form->process(
         posted => $posted,
@@ -906,7 +903,7 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Device::Profile->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Profile", $c);
 
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
@@ -1113,7 +1110,7 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
     my $params = { $c->stash->{devprof}->get_inflated_columns };
     $params->{config}{id} = delete $params->{config_id};
     $params = merge($params, $c->session->{created_objects});
-    $form = NGCP::Panel::Form::Device::Profile->new;
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Profile", $c);
 
     $form->process(
         posted => $posted,

@@ -23,7 +23,6 @@ has_field 'create' => (
     element_attr => { onclick => 'this.form.submit();return false;' }, #without this, only the first create button works
 );
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

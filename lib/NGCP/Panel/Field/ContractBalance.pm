@@ -15,7 +15,6 @@ has_field 'id' => (
     table_fields => ['id', 'x', 'y'],
 );
 
-no Moose;
 1;
 
 # vim: set tabstop=4 expandtab:

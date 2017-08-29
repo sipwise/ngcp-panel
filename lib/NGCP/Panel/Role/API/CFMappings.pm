@@ -4,6 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 
 use boolean qw(true);
@@ -13,11 +14,10 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
-use NGCP::Panel::Form::CFMappingsAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CFMappingsAPI->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::CFMappingsAPI", $c);
 }
 
 sub hal_from_item {

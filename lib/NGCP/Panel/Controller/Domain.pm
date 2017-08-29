@@ -5,9 +5,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::Domain::Reseller;
-use NGCP::Panel::Form::Domain::ResellerPbx;
-use NGCP::Panel::Form::Domain::Admin;
+use NGCP::Panel::Form;
+
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Prosody;
@@ -81,12 +80,12 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
             );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
         }
-        $form = NGCP::Panel::Form::Domain::ResellerPbx->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Domain::ResellerPbx", $c);
         $pbx = 1;
     } elsif($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Domain::Admin->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Domain::Admin", $c);
     } else {
-        $form = NGCP::Panel::Form::Domain::Reseller->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Domain::Reseller", $c);
     }
     my $params = { %{ $c->session->{created_objects} } };
     delete $params->{domain} if exists $params->{domain};
@@ -205,7 +204,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Domain::Reseller->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Domain::Reseller", $c);
     $form->process(
         posted => 1,
         params => $posted ? $c->request->params : $c->stash->{domain},

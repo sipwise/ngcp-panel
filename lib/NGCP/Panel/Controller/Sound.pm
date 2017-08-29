@@ -5,11 +5,8 @@ use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
 
-use NGCP::Panel::Form::Sound::AdminSet;
-use NGCP::Panel::Form::Sound::ResellerSet;
-use NGCP::Panel::Form::Sound::CustomerSet;
-use NGCP::Panel::Form::Sound::File;
-use NGCP::Panel::Form::Sound::LoadDefault;
+use NGCP::Panel::Form;
+
 use File::Type;
 use File::Slurp;
 use File::Basename;
@@ -175,11 +172,11 @@ sub edit :Chained('base') :PathPart('edit') {
     $params->{contract}{id} = delete $params->{contract_id};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::Sound::AdminSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::AdminSet", $c);
     } elsif($c->user->roles eq "reseller") {
-        $form = NGCP::Panel::Form::Sound::ResellerSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::ResellerSet", $c);
     } else {
-        $form = NGCP::Panel::Form::Sound::CustomerSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::CustomerSet", $c);
     }
     unless ($c->config->{features}->{cloudpbx} || $params->{contract}{id} ) {
         my $form_render_list = $form->block('fields')->render_list;
@@ -323,7 +320,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::Sound::AdminSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::AdminSet", $c);
         if($contract_id) {
             my $contract = $c->model('DB')->resultset('contracts')->find($contract_id);
             if($contract) {
@@ -332,7 +329,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
             }
         }
     } elsif($c->user->roles eq "reseller") {
-        $form = NGCP::Panel::Form::Sound::ResellerSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::ResellerSet", $c);
         if($contract_id) {
             my $contract = $c->model('DB')->resultset('contracts')->find($contract_id);
             if($contract && $contract->contact->reseller_id == $c->user->reseller_id) {
@@ -340,7 +337,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
             }
         }
     } else {
-        $form = NGCP::Panel::Form::Sound::CustomerSet->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::CustomerSet", $c);
     }
     unless ($c->config->{features}->{cloudpbx}) {
         my $form_render_list = $form->block('fields')->render_list;
@@ -553,7 +550,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
         soundfile => $posted ? $upload : undef,
     );
     my $file_result = $c->stash->{file_result};
-    my $form = NGCP::Panel::Form::Sound::File->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::File", $c);
     $form->process(
         posted => $posted,
         params => \%params,
@@ -720,7 +717,7 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
 sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args(0) {
     my ($self, $c) = @_;
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Sound::LoadDefault->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::LoadDefault", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,

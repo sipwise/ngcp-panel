@@ -1,11 +1,11 @@
 package NGCP::Panel::Utils::XMLDispatcher;
 
+use Moose;
 use Sipwise::Base;
 use NGCP::Schema;
 use Net::HTTP;
 use Errno;
 
-use Moose;
 
 has 'schema' => (
     is => 'rw',
@@ -150,7 +150,6 @@ sub _unqueue {
     $self->schema->resultset('xmlqueue')->find($id)->delete;
 }
 
-no Moose;
 
 1;
 

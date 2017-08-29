@@ -3,8 +3,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'Catalyst::Controller';
-use NGCP::Panel::Form::Contract::Contract;
-use NGCP::Panel::Form::Contract::PeeringReseller;
+
+use NGCP::Panel::Form;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -147,10 +147,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     if (defined $billing_mapping->product &&
         grep {$billing_mapping->product->handle eq $_}
             ("SIP_PEERING", "PSTN_PEERING", "VOIP_RESELLER") ) {
-        $form = NGCP::Panel::Form::Contract::PeeringReseller->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
         $is_peering_reseller = 1;
     } else {
-        $form = NGCP::Panel::Form::Contract::Contract->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Contract", $c);
         $is_peering_reseller = 0;
     }
     $form->process(
@@ -354,7 +354,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
         delete $params->{contact};
     }
     $c->stash->{type} = 'sippeering';
-    my $form = NGCP::Panel::Form::Contract::PeeringReseller->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -504,7 +504,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
         delete $params->{contact};
     }
     $c->stash->{type} = 'reseller';
-    my $form = NGCP::Panel::Form::Contract::PeeringReseller->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,

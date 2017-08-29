@@ -4,6 +4,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
+use NGCP::Panel::Form;
 
 
 use boolean qw(true);
@@ -11,7 +12,6 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use File::Temp qw(tempfile);
-use NGCP::Panel::Form::Sound::FileAPI;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Sems;
 
@@ -61,7 +61,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Sound::FileAPI->new;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::FileAPI", $c);
 }
 
 sub hal_from_item {

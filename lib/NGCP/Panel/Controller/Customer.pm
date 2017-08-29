@@ -2,24 +2,10 @@ package NGCP::Panel::Controller::Customer;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
+
+use NGCP::Panel::Form;
 use JSON qw(decode_json encode_json);
 use IPC::System::Simple qw/capturex EXIT_ANY $EXITVAL/;
-use NGCP::Panel::Form::CustomerFraudPreferences::CustomerMonthlyFraud;
-use NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud;
-use NGCP::Panel::Form::Balance::CustomerBalance;
-use NGCP::Panel::Form::Customer::Subscriber;
-use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
-use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
-use NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin;
-use NGCP::Panel::Form::Customer::PbxGroupEdit;
-use NGCP::Panel::Form::Customer::PbxGroup;
-use NGCP::Panel::Form::Customer::PbxFieldDevice;
-use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
-use NGCP::Panel::Form::Customer::Location;
-use NGCP::Panel::Form::Contract::Customer;
-use NGCP::Panel::Form::Contract::ProductSelect;
-use NGCP::Panel::Form::Topup::Cash;
-use NGCP::Panel::Form::Topup::Voucher;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -180,9 +166,9 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     }
 
     if($c->config->{features}->{cloudpbx}) {
-        $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::ProductSelect", $c);
     } else {
-        $form = NGCP::Panel::Form::Contract::Customer->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Customer", $c);
         $c->stash->{type} = 'sipaccount';
     }
     $form->process(
@@ -505,10 +491,10 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
     #$c->log->debug('customer/edit');
     if($c->config->{features}->{cloudpbx}) {
         #$c->log->debug('ProductSelect');
-        $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::ProductSelect", $c);
     } else {
         #$c->log->debug('Basic');
-        $form = NGCP::Panel::Form::Contract::Customer->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Customer", $c);
     }
     $form->process(
         posted => $posted,
@@ -738,12 +724,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         # we need to create a pilot subscriber first
         unless($c->stash->{pilot}) {
             $pbxadmin = 1;
-            $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxAdminSubscriber", $c);
         } else {
             if($c->user->roles eq "subscriberadmin") {
-                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin->new(ctx => $c);
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin", $c);
             } else {
-                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c);
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriber", $c);
             }
             NGCP::Panel::Utils::Subscriber::prepare_alias_select(
                 c => $c,
@@ -759,7 +745,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             );
         }
     } else {
-        $form = NGCP::Panel::Form::Customer::Subscriber->new(ctx => $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::Subscriber", $c);
     }
 
     $params = merge($params, $c->session->{created_objects});
@@ -927,9 +913,9 @@ sub edit_fraud :Chained('base_restricted') :PathPart('fraud/edit') :Args(1) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     if($type eq "month") {
-        $form = NGCP::Panel::Form::CustomerFraudPreferences::CustomerMonthlyFraud->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CustomerFraudPreferences::CustomerMonthlyFraud", $c);
     } elsif($type eq "day") {
-        $form = NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud->new;
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::CustomerFraudPreferences::CustomerDailyFraud", $c);
     } else {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
@@ -1016,7 +1002,7 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
     my $contract = $c->stash->{contract};
     my $now = $c->stash->{now};
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Balance::CustomerBalance->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Balance::CustomerBalance", $c);
     my $params = { $balance->get_inflated_columns };
 #        cash_balance => $balance->cash_balance,
 #        free_time_balance => $balance->free_time_balance,
@@ -1073,7 +1059,7 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
     my $contract = $c->stash->{contract};
     my $now = $c->stash->{now};
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Topup::Cash->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Topup::Cash", $c);
     my $params = {};
 
     $form->process(
@@ -1167,7 +1153,7 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
     my $contract = $c->stash->{contract};
     my $now = $c->stash->{now};
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Topup::Voucher->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Topup::Voucher", $c);
     my $params = {};
 
     $form->process(
@@ -1352,7 +1338,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
         );
     }
     my $form;
-    $form = NGCP::Panel::Form::Customer::PbxGroup->new(ctx => $c);
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxGroup", $c);
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     $form->process(
@@ -1462,7 +1448,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $form;
-    $form = NGCP::Panel::Form::Customer::PbxGroupEdit->new;
+    $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxGroupEdit", $c);
     my $params = { $c->stash->{pbx_group}->provisioning_voip_subscriber->get_inflated_columns };
     $params = merge($params, $c->session->{created_objects});
 
@@ -1573,7 +1559,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
         },{
             join => { 'config' => 'device' },
         });
-    my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxFieldDevice", $c);
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     $form->process(
@@ -1687,7 +1673,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         },{
             join => { 'config' => 'device' },
         });
-    my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxFieldDevice", $c);
     my $params = { $c->stash->{pbx_device}->get_inflated_columns };
     my @lines = ();
     foreach my $line($c->stash->{pbx_device}->autoprov_field_device_lines->all) {
@@ -1835,7 +1821,7 @@ sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
 sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::Customer::PbxFieldDeviceSync->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxFieldDeviceSync", $c);
     my $posted = ($c->req->method eq 'POST');
 
     my $dev = $c->stash->{pbx_device};
@@ -1993,7 +1979,7 @@ sub location_create :Chained('base_restricted') :PathPart('location/create') :Ar
 
     my $contract = $c->stash->{contract};
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Customer::Location->new;
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::Location", $c);
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
     $form->process(
@@ -2078,7 +2064,7 @@ sub location_edit :Chained('location_base') :PathPart('edit') :Args(0) {
 
     my $contract = $c->stash->{contract};
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Customer::Location->new(ctx => $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::Location", $c);
     my $params = $c->stash->{location};
     $params->{blocks} = $c->stash->{location_blocks};
     $params = merge($params, $c->session->{created_objects});

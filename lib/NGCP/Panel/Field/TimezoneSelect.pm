@@ -35,5 +35,4 @@ sub validate {
 }
 
 
-no Moose;
 1;

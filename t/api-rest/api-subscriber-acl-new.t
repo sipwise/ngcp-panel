@@ -6,7 +6,7 @@ use Test::More;
 use JSON qw/from_json to_json/;
 use Data::Dumper;
 
-my $test = NGCP::Test->new;
+my $test = NGCP::Test->new(log_debug => 0);
 my $t = $test->generate_sid();
 my $c = $test->client();
 
@@ -182,7 +182,7 @@ my $items;
             primary_number alias_numbers pbx_extension
             display_name email
             pbx_group_ids is_pbx_pilot is_pbx_group 
-            username webusername
+            username webusername timezone
         /],
         expected_result => { code => 200 }
     );
@@ -331,7 +331,7 @@ my $items;
             primary_number alias_numbers pbx_extension
             display_name email
             pbx_group_ids is_pbx_pilot is_pbx_group 
-            username webusername
+            username webusername timezone
         /],
     );
     $item = $sub_res->pop_created_item();

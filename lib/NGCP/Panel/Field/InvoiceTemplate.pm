@@ -15,5 +15,4 @@ has_field 'id' => (
     table_fields => ['id', 'reseller_name', 'name'],
 );
 
-no Moose;
 1;

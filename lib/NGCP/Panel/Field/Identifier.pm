@@ -16,7 +16,6 @@ sub validate {
     return 0;
 }
 
-no Moose;
 1;
 
 =head1 NAME

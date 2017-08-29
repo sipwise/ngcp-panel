@@ -24,5 +24,4 @@ has_field 'create' => (
 );
 =cut
 
-no Moose;
 1;

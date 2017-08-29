@@ -261,6 +261,21 @@ sub validate_fields {
                 "ARRAY" eq ref $resource->{$k} ) {
             for my $elem (@{ $resource->{$k} }) {
                 my ($subfield_instance) = $fields->{$k}->fields;
+                #if($k eq "alias_numbers") {
+                    open my $fh, ">>", "/tmp/validate.log";
+                    use Data::Dumper;
+                    $Data::Dumper::Indent = 1;
+                    $Data::Dumper::Maxdepth = 3;
+                    $Data::Dumper::Sortkeys = 1;
+
+                    my $txt = Dumper $fields->{$k};
+                    #$txt =~ s/\s+/ /gs;
+                    print $fh "$txt\n\n";
+                    close $fh;
+                #}
+                #unless(defined $subfield_instance) {
+                #    $c->log->error("++++++ subfield issue with $k");
+                #}
                 my %subfields = map { $_->name => $_ } $subfield_instance->fields;
                 $self->validate_fields($c, $elem, \%subfields, $run);
             }

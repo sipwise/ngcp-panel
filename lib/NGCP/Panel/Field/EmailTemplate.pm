@@ -22,5 +22,4 @@ has_field 'create' => (
     element_class => [qw/btn btn-tertiary pull-right/],
 );
 
-no Moose;
 1;

@@ -14,5 +14,4 @@ has_field 'id' => (
     table_fields => ['id', 'name', 'priority', 'description'],
 );
 
-no Moose;
 1;

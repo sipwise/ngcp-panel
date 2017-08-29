@@ -23,7 +23,6 @@ sub allowed_methods{
     return [qw/POST OPTIONS/];
 }
 
-use NGCP::Panel::Form::Topup::VoucherAPI;
 
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
