@@ -13,6 +13,7 @@ use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Email;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime qw();
+use NGCP::Panel::Utils::License;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
 use IPC::System::Simple qw/capturex/;
@@ -186,6 +187,11 @@ sub create_subscriber {
             ->find($params->{domain}{id} // $params->{domain_id});
     my $prov_domain = $schema->resultset('voip_domains')
             ->find({domain => $billing_domain->domain});
+
+    if (my $status = NGCP::Panel::Utils::License::is_license_error()) {
+        $c->log->warn("invalid license status: $status");
+        # die("invalid license status: $status");
+    }
 
     my ($profile_set, $profile);
     if($params->{profile_set}{id}) {
