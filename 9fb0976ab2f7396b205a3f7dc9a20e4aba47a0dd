@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fab399f4_6f575103",
+        "filename": "lib/NGCP/Panel/Controller/API/Numbers.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-08-30T08:20:54Z",
+      "side": 1,
+      "message": "\u003e dont see where it is implemented?\n\nOops. See latest patch set in item_rs.",
+      "parentUuid": "fab399f4_f4f098cb",
+      "range": {
+        "startLine": 71,
+        "startChar": 22,
+        "endLine": 71,
+        "endChar": 26
+      },
+      "revId": "9fb0976ab2f7396b205a3f7dc9a20e4aba47a0dd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab399f4_54bf84d0",
         "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
         "patchSetId": 4
