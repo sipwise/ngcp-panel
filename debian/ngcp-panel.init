@@ -14,6 +14,7 @@ umask 0022
 # shellcheck disable=SC1091
 . /lib/lsb/init-functions
 
+INTERP=/usr/bin/perl
 DAEMON=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl
 HOMEDIR=/usr/share/ngcp-panel
 export HOME=$HOMEDIR
@@ -77,12 +78,18 @@ _start() {
     log_end_msg 0
     exit 0
   fi
+  if check_running; then
+    log_progress_msg "already running"
+    log_end_msg 0
+    exit 0
+  fi
   check_for_ongoing_startup || return 0
   rm -f "$PIDFILE" 2>/dev/null
    # shellcheck disable=SC2086
-  start-stop-daemon --start --quiet \
+  start-stop-daemon --start --quiet --oknodo \
+        --startas $DAEMON \
         --pidfile $PIDFILE \
-        --exec $DAEMON --chdir $HOMEDIR \
+        --exec $INTERP --chdir $HOMEDIR \
         --user $USER --group $GROUP --chuid $USER:$GROUP \
         -- $OPTIONS >/dev/null || log_failure_msg "error"
   rm -f "${PIDFILE}.startup"
@@ -99,25 +106,10 @@ _stop() {
      log_progress_msg " not running"
      return 0
   fi
-  if [ -e $PIDFILE ]; then
-      /bin/kill "$(cat $PIDFILE)";
-  else
-      PID=$(pidofproc $DAEMON)
-      if [ -n "$PID" ]; then
-          /bin/kill "$PID"
-      fi
-  fi
-  # shellcheck disable=SC2034
-  for i in 1 2 3 4 5 6 7; do
-      log_progress_msg "."
-      sleep 1;
-      if ! check_running ; then
-          return 0
-      fi
-  done
-  if check_running ; then
-      return 1
-  fi
+  start-stop-daemon --stop --quiet --oknodo --retry 5 \
+      --pidfile $PIDFILE \
+      --exec $INTERP \
+      --user $USER
 }
 
 # Load startup options if available
@@ -134,11 +126,6 @@ mkdir -p $HOMERUN && chown -R $USER:$GROUP $HOMERUN && chmod 0755 $HOMERUN
 case "$1" in
   start)
         log_daemon_msg "Starting $DESC"
-        if check_running; then
-            log_progress_msg "already running"
-            log_end_msg 0
-            exit 0
-        fi
         _start; status="$?"
         log_end_msg $status
         exit $status
