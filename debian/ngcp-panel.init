@@ -14,6 +14,7 @@ umask 0022
 # shellcheck disable=SC1091
 . /lib/lsb/init-functions
 
+INTERP=/usr/bin/perl
 DAEMON=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl
 HOMEDIR=/usr/share/ngcp-panel
 export HOME=$HOMEDIR
@@ -81,8 +82,9 @@ _start() {
   rm -f "$PIDFILE" 2>/dev/null
    # shellcheck disable=SC2086
   start-stop-daemon --start --quiet \
+        --startas $DAEMON \
         --pidfile $PIDFILE \
-        --exec $DAEMON --chdir $HOMEDIR \
+        --exec $INTERP --chdir $HOMEDIR \
         --user $USER --group $GROUP --chuid $USER:$GROUP \
         -- $OPTIONS >/dev/null || log_failure_msg "error"
   rm -f "${PIDFILE}.startup"
