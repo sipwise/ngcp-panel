@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab399f4_616845f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-09-04T15:43:57Z",
+      "side": 1,
+      "message": "It\u0027s a bit tricky to connect this message with detailed message below and actual code change. Wouldn\u0027t be it better just to put here \"Call start-stop-daemon correctly\" as in other similar commits?",
+      "range": {
+        "startLine": 7,
+        "startChar": 9,
+        "endLine": 7,
+        "endChar": 47
+      },
+      "revId": "41a884641516732a761af777da0cb5f0a6875eb6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
