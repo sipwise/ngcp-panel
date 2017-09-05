@@ -10736,6 +10736,10 @@ msgid "The contract's subscribers' lock levels before the top-up."
 msgstr "Il livello di blocco del contratto dell´abbonato prima della ricarica."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The conversation event type: call/voicemail/sms/fax/xmpp."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The cost for the called party customer towards the reseller."
 msgstr "I costo verso il rivenditore per il chiamato."
 
@@ -11487,6 +11491,12 @@ msgstr "Data opzionale di disattivazione del porting, in formato YYYY-MM-DD."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"The original conversation record id - cdr id/voicemail id/sms id/fax journal "
+"record id/prosody message archive mgmt (mam) record id."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "The parameters appended to the sync URI when setting the provisioning "
 "server, e.g. server.uri/$MA. The server.uri variable is automatically "
 "expanded during provisioning time."
@@ -12111,6 +12121,10 @@ msgstr "La data e ora dell´inizio della conversazione."
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The timestamp of the call initiation."
 msgstr "La data e ora in cui è iniziata la chiamata."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timestamp of the conversation event."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The timestamp of the event."
