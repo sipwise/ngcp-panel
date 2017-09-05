@@ -82,6 +82,14 @@ $max_fields = scalar keys %sms_fields if ((scalar keys %sms_fields) > $max_field
 $max_fields = scalar keys %fax_fields if ((scalar keys %fax_fields) > $max_fields);
 $max_fields = scalar keys %xmpp_fields if ((scalar keys %xmpp_fields) > $max_fields);
 
+my %enabled_conversations = (
+    call => 1,
+    voicemail => 1,
+    sms => 1,
+    fax => 1,
+    xmpp => 0,
+);
+
 sub item_name{
     return 'conversation';
 }
@@ -150,7 +158,7 @@ sub _item_rs {
     my $item_rs;
     my $type_param = ((exists $params->{type}) ? ($params->{type} // '') : undef);
     foreach my $type (qw(call voicemail sms fax xmpp)) {
-        if ((not defined $type_param) or index(lc($type_param),$type) > -1) {
+        if ($enabled_conversations{$type} and ((not defined $type_param) or index(lc($type_param),$type) > -1)) {
             my $sub_name = '_get_' . $type . '_rs';
             my $rs = $self->$sub_name(
                 c => $c,

@@ -61,6 +61,7 @@ $ua = Test::Collection->new()->ua();
         cfsourcesets => 1,
         cftimesets => 1,
         contracts => 1,
+        conversations => 1,
         customerbalances => 1,
         customercontacts => 1,
         customerfraudevents => 1,
