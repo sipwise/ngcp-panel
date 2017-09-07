@@ -5272,10 +5272,16 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "If set, the UPN of the calling party is not checked against the allowed CLIs "
-"provisioned for this subscriber if a Diversion or History-Info header is "
-"provided in an incoming call. This can be used to allow diversion on the "
-"subscriber device and transporting the originally calling party number on "
-"the second leg. Use with caution as it might allow for number spoofing."
+"provisioned for the subscriber if a Diversion or History-Info header that "
+"meets the selected criteria has been sent by the calling subscriber. The "
+"recommended mode here, for example when connecting external PBX to NGCP, is "
+"\"If user in received Diversion or History-Info header is in caller's alias "
+"list\", as this validates the forwarding number in received Diversion/"
+"History-Info header against subscriber's aliases and is a safer choice than "
+"enabling UPN check bypass when any header is present. If any mode other than "
+"\"Never\" is selected, the forwarding number in the History-Info header is "
+"checked and the History-Info is rewritten if it doesn't match any alias "
+"numbers."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8935,7 +8941,7 @@ msgid "Skip Rewrite"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Skip UPN check on Diversion"
+msgid "Skip UPN check if received Diversion/History-Info header"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
