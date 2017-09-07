@@ -39,8 +39,8 @@ RUN apt-get --assume-yes -f install
 RUN wget https://deb.sipwise.com/files/libselenium-remote-driver-perl_1.20-0.1~bpo9+1sipwise1.1_all.deb
 RUN dpkg --force-depends -i libselenium-remote-driver-perl_1.20-0.1~bpo9+1sipwise1.1_all.deb
 RUN apt-get --assume-yes -f install
-RUN wget https://deb.sipwise.com/files/geckodriver-v0.17.0-linux64.tar.gz
-RUN tar xvf geckodriver-v0.17.0-linux64.tar.gz
+RUN wget https://deb.sipwise.com/files/geckodriver-v0.18.0-linux64.tar.gz
+RUN tar xvf geckodriver-v0.18.0-linux64.tar.gz
 
 # firefox-esr 52.2.0esr-1~deb9u1 from Debian/stretch fails with geckodriver e.g. in click events
 RUN wget https://deb.sipwise.com/files/firefox-54.0.tar.bz2
