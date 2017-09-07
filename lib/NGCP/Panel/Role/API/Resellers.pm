@@ -126,9 +126,6 @@ sub update_reseller {
             return;
         }
     }
-    if($old_resource->{status} ne $resource->{status}) {
-        NGCP::Panel::Utils::Reseller::_handle_reseller_status_change($c, $reseller);
-    }
 
     $reseller->update({
             name => $resource->{name},
@@ -154,6 +151,10 @@ sub update_reseller {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
                         "Could not terminate rtc_user: $rtc_err");
         return;
+    }
+
+    if($old_resource->{status} ne $resource->{status}) {
+        NGCP::Panel::Utils::Reseller::_handle_reseller_status_change($c, $reseller);
     }
 
     # TODO: should we lock reseller admin logins if reseller gets terminated?
