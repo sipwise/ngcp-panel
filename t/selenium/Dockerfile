@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-stretch:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2017-06-23
+ENV REFRESHED_AT 2017-09-12
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -36,11 +36,13 @@ RUN dpkg --force-depends -i /home/selenium/ngcp-panel-tests-selenium-build-deps_
 RUN apt-get --assume-yes -f install
 
 # the connection between firefox and our selenium tests
-RUN wget https://deb.sipwise.com/files/libselenium-remote-driver-perl_1.20-0.1~bpo9+1sipwise1.1_all.deb
-RUN dpkg --force-depends -i libselenium-remote-driver-perl_1.20-0.1~bpo9+1sipwise1.1_all.deb
-RUN apt-get --assume-yes -f install
+# this is a workaround until upstream released v1.21:
+RUN wget https://deb.sipwise.com/files/libselenium-remote-driver-perl_1.20-0.1-git-16.orig.tar.xz
+RUN tar xvf libselenium-remote-driver-perl_1.20-0.1-git-16.orig.tar.xz
+RUN apt-get --assume-yes -f install libarchive-zip-perl libfile-which-perl libhttp-message-perl libio-string-perl libjson-perl liblist-moreutils-perl libmoo-perl libnamespace-clean-perl libsub-install-perl libtest-longstring-perl libtest-time-perl libtry-tiny-perl libwww-perl libxml-simple-perl
 RUN wget https://deb.sipwise.com/files/geckodriver-v0.18.0-linux64.tar.gz
 RUN tar xvf geckodriver-v0.18.0-linux64.tar.gz
+RUN ln -s /home/selenium/geckodriver /usr/bin/geckodriver
 
 # firefox-esr 52.2.0esr-1~deb9u1 from Debian/stretch fails with geckodriver e.g. in click events
 RUN wget https://deb.sipwise.com/files/firefox-54.0.tar.bz2
@@ -54,7 +56,8 @@ RUN wget https://deb.sipwise.com/files/libtest-pretty-perl_0.32-0.1~bpo9+1_all.d
 RUN dpkg --force-depends -i libtest-pretty-perl_0.32-0.1~bpo9+1_all.deb
 RUN apt-get --assume-yes -f install
 
-RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4" >/home/selenium/.bash_history
+# this is a workaround with PERL5LIB= ... until we've a proper libselenium-remote-driver-perl package again
+RUN echo "cd /code && PERL5LIB=/home/selenium/Selenium-Remote-Driver/lib/ ./t/selenium/testrunner 1.2.3.4" >/home/selenium/.bash_history
 RUN echo "su - selenium" >/root/.bash_history
 EXPOSE 5999
 
