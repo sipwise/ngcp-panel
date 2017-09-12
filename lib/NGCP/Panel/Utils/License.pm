@@ -8,8 +8,11 @@ sub get_license_status {
     my ($ref) = @_;
 
     my $fd;
-    if (!open($fd, '<', '/proc/ngcp/check')) {
-        return 'missing';
+    {
+        no autodie qw(open);
+        if (!open($fd, '<', '/proc/ngcp/check')) {
+            return 'missing';
+        }
     }
     my $status = <$fd>;
     close($fd);
