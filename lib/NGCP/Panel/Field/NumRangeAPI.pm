@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::NumRangeAPI;
-use Moose;
 use Sipwise::Base;
+use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Text';
 
 has 'min_start' => (isa => 'Int', default => 0, is => 'rw');

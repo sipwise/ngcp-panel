@@ -53,19 +53,19 @@ sub unregister_content {
     return $self->{unregister_content};
 }
 
-override 'parse_rpc_response_page' => sub {
+around 'parse_rpc_response_page' => sub {
     my($self, $page) = @_;
     my $res = JSON::from_json($page);
     return $res;
 };
 
-override 'parse_rpc_response' => sub {
+around 'parse_rpc_response' => sub {
     my($self,$rpc_response) = @_;
     return $rpc_response;
 };
 
 #Todo: unify it with snome and vendor version somehow and move to VendorRPC.pm
-override 'extract_response_description' => sub {
+around 'extract_response_description' => sub {
     my($self,$rpc_value) = @_;
     my $res = '';
 

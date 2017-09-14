@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::SubscriberLockSelect;
-use Moose;
 use Sipwise::Base;
+use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Select';
 
 sub build_options {

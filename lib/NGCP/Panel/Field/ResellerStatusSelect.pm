@@ -1,5 +1,5 @@
 package NGCP::Panel::Field::ResellerStatusSelect;
-use Moose;
+use HTML::FormHandler::Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Select';
 

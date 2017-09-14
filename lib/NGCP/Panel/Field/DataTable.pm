@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::DataTable;
-use Moose;
 use HTML::FormHandler::Moose;
 use Template;
 use JSON;

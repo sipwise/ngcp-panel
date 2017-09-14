@@ -1,7 +1,7 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Snom;
 
 use strict;
-use Moose;
+use Moo;
 use Data::Dumper;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
@@ -50,7 +50,7 @@ sub unregister_content {
 </methodCall>";
     return $self->{unregister_content};
 }
-override 'extract_response_description' => sub {
+around 'extract_response_description' => sub {
     my($self,$rpc_value) = @_;
     my $c = $self->params->{c};
     my $res = '';
@@ -70,7 +70,7 @@ override 'extract_response_description' => sub {
     return $res;
 };
 
-override 'process_bootstrap_uri' => sub {
+around 'process_bootstrap_uri' => sub {
     my($self,$uri) = @_;
     $uri = super($uri);
     $uri = $self->bootstrap_uri_mac($uri);
@@ -78,7 +78,7 @@ override 'process_bootstrap_uri' => sub {
     return $self->content_params->{uri};
 };
 
-override 'bootstrap_uri_mac' => sub {
+around 'bootstrap_uri_mac' => sub {
     my($self, $uri) = @_;
     if ($uri !~/\{mac\}$/){
         if ($uri !~/\/$/){
