@@ -1,13 +1,14 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 
 use strict;
-use Moose;
+use Moo;
+use Types::Standard qw(Str);
 use Digest::MD5 qw/md5_hex/;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'register_model_content' => (
     is => 'rw',
-    isa => 'Str',
+    isa => Str,
     accessor => '_register_model_content',
 );
 sub rpc_server_params{
@@ -74,7 +75,7 @@ sub register_model_content {
     return $self->{register_model_content};
 }
 
-override 'process_bootstrap_uri' => sub {
+around 'process_bootstrap_uri' => sub {
     my($self,$uri) = @_;
     $uri = super($uri);
     $self->content_params->{uri} = $uri;

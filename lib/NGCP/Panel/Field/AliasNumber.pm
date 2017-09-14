@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::AliasNumber;
-use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Repeatable';
 
