@@ -23,6 +23,9 @@ fi
 SERVER="${1}"
 OUTPUT_DIRECTORY="${2:-/code/}"
 
+# workaround for new Selenium::Remote::Driver (see Dockerfile)
+export PERL5LIB=/home/selenium/Selenium-Remote-Driver/lib/
+
 # vnc
 echo "Setting VNC password"
 printf '%s\n%s\n\n' "${PASSWORD}" "${PASSWORD}" | vncpasswd >/dev/null
