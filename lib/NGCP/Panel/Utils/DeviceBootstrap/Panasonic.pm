@@ -1,7 +1,7 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 
 use strict;
-use Moose;
+use Moo;
 use Data::Dumper;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
@@ -44,7 +44,7 @@ sub unregister_content {
     return $self->{unregister_content};
 }
 
-override 'process_bootstrap_uri' => sub {
+around 'process_bootstrap_uri' => sub {
     my($self,$uri) = @_;
     $uri = super($uri);
     $uri = $self->bootstrap_uri_mac($uri);

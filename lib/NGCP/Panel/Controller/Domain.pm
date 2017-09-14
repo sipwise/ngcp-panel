@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::XMLDispatcher;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -402,8 +403,7 @@ sub load_preference_list :Private {
 
 sub _sip_domain_reload {
     my ($self, $c) = @_;
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    my ($res) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+    my ($res) = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>domain.reload</methodName>

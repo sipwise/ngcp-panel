@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::Identifier;
-use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Text';
 

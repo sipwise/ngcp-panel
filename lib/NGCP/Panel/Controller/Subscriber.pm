@@ -26,7 +26,6 @@ use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
 
-use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
 
 =head1 NAME

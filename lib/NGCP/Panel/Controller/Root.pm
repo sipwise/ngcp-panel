@@ -1,8 +1,10 @@
 package NGCP::Panel::Controller::Root;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose;
 
-BEGIN { extends 'Catalyst::Controller' }
+use warnings;
+use strict;
+
+use parent 'Catalyst::Controller';
 
 use Scalar::Util qw(blessed);
 use NGCP::Panel::Utils::DateTime qw();

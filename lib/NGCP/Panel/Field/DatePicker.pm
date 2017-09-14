@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::DatePicker;
-use Moose;
 use HTML::FormHandler::Moose;
 use Template;
 extends 'HTML::FormHandler::Field';

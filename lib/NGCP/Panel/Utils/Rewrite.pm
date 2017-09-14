@@ -7,8 +7,7 @@ use NGCP::Panel::Utils::XMLDispatcher;
 
 sub sip_dialplan_reload {
     my ($c) = @_;
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+    NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>dialplan.reload</methodName>

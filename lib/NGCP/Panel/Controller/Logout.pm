@@ -1,8 +1,10 @@
 package NGCP::Panel::Controller::Logout;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Moose;
 
-BEGIN { extends 'Catalyst::Controller'; }
+use strict;
+use warnings;
+
+use parent 'Catalyst::Controller';
 
 =head1 NAME
 

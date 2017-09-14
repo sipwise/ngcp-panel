@@ -233,11 +233,10 @@ foreach my $redis_host(@redis_hosts) {
         }
     }
 
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
     my $c = DummyController->new;
     foreach my $tag(@nonpriotags) {
         DEBUG "Tearing down normal call tag $tag for call id $tag2cid{$tag}...";
-        my @ret = $dispatcher->dispatch($c, "appserver", 1, 1, <<EOF);
+        my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", 1, 1, <<EOF);
 <?xml version="1.0" encoding="UTF-8"?>
 <methodCall>
   <methodName>di</methodName>

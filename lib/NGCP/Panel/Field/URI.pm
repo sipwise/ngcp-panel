@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::URI;
-use Moose;
 
 use Sipwise::Base;
 use HTML::FormHandler::Moose;

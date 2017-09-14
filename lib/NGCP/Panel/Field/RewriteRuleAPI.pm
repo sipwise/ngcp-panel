@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::RewriteRuleAPI;
-use Moose;
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Field::RewriteRule';
 
