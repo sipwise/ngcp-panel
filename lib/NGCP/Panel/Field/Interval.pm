@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::Interval;
-use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 

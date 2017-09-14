@@ -1,22 +1,13 @@
 package NGCP::Panel::Utils::XMLDispatcher;
 
 use Sipwise::Base;
-use NGCP::Schema;
 use Net::HTTP;
 use Errno;
 
-use Moose;
-
-has 'schema' => (
-    is => 'rw',
-    isa => 'DBIx::Class::Schema',
-    default => sub { return NGCP::Schema->connect() },
-);
-
 sub dispatch {
-	my ($self, $c, $target, $all, $sync, $body) = @_;
+	my ($c, $target, $all, $sync, $body, $schema) = @_;
 
-    my $schema = $self->schema;
+    $schema //= $c->model('DB');
     $c->log->info("dispatching to target $target, all=$all, sync=$sync");
     $c->log->debug("dispatching body $body");
 
@@ -87,14 +78,14 @@ sub dispatch {
 			next;
 		}
 
-		$self->_queue(join("::", "%TG%", $meth, $ip, $port, $path, $hostid), $body);
+		_queue(join("::", "%TG%", $meth, $ip, $port, $path, $hostid), $body, $schema);
 		push(@ret, [$hostid, -1]);
 	}
 
 	if (!$all) {
 		# failure on all hosts
 		$sync and return;
-		$self->_queue($target, $body);
+		_queue($target, $body, $schema);
 		return [$target, -1];
 	}
 
@@ -102,9 +93,9 @@ sub dispatch {
 }
 
 sub _queue {
-	my ($self, $target, $body) = @_;
+	my ($target, $body, $schema) = @_;
 
-	$self->schema->resultset('xmlqueue')->create({
+	$schema->resultset('xmlqueue')->create({
 	    target => $target,
 	    body => $body,
 	    ctime => \"unix_timestamp()",
@@ -113,22 +104,22 @@ sub _queue {
 }
 
 sub queuerunner {
-	my ($self) = @_;
+	my ($schema) = @_;
 
 	for (;; sleep(1)) {
-		my $row = $self->_dequeue;
+		my $row = _dequeue($schema);
 		$row or next;
 
-		my @ret = $self->dispatch($row->target, 0, 1, $row->body);
+		my @ret = dispatch(undef, $row->target, 0, 1, $row->body, $schema);
 
-		@ret and $self->_unqueue($row->id);
+		@ret and _unqueue($row->id, $schema);
 	}
 }
 
 sub _dequeue {
-	my ($self) = @_;
+	my ($schema) = @_;
 
-	my $row = $self->schema->resultset('xmlqueue')->search({
+	my $row = $schema->resultset('xmlqueue')->search({
 	        next_try => {'<=' => \'unix_timestamp()'},
         },{
             order_by => 'id'
@@ -145,12 +136,10 @@ sub _dequeue {
 }
 
 sub _unqueue {
-	my ($self, $id) = @_;
+	my ($id, $schema) = @_;
 
-    $self->schema->resultset('xmlqueue')->find($id)->delete;
+    $schema->resultset('xmlqueue')->find($id)->delete;
 }
-
-no Moose;
 
 1;
 

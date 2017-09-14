@@ -37,8 +37,6 @@ sub create_peer_registration {
         $all = 0;
     }
 
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-
     $c->log->debug("creating peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
 
     my $sid = $prov_subscriber->id;
@@ -52,7 +50,7 @@ sub create_peer_registration {
         $transport = $outbound_sock->{transport};
     }
 
-    my @ret = $dispatcher->dispatch($c, "appserver", $all, 1, <<EOF);
+    my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
     <methodName>db_reg_agent.createRegistration</methodName>
@@ -75,7 +73,7 @@ EOF
 
         # remove reg from successsful backends
         foreach my $ret (grep {!$$_[1]} @ret) { # successful backends
-            $dispatcher->dispatch($c, $$ret[0], 1, 1, <<EOF);
+            NGCP::Panel::Utils::XMLDispatcher::dispatch($c, $$ret[0], 1, 1, <<EOF);
 <?xml version="1.0"?>
       <methodCall>
         <methodName>db_reg_agent.removeRegistration</methodName>
@@ -104,8 +102,6 @@ sub update_peer_registration {
         $all = 0;
     }
 
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-
     $c->log->debug("trying to update peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
 
     my $sid = $prov_subscriber->id;
@@ -126,7 +122,7 @@ sub update_peer_registration {
     $c->log->debug("+++++++++++++++++++ uuid=$uuid");
     $c->log->debug("+++++++++++++++++++ contact=$contact");
 
-    my @ret = $dispatcher->dispatch($c, "appserver", $all, 1, <<EOF);
+    my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
     <methodName>db_reg_agent.updateRegistration</methodName>
@@ -149,7 +145,7 @@ EOF
 
         # undo update on successsful backends
         foreach my $ret (grep {!$$_[1]} @ret) { # successful backends
-            $dispatcher->dispatch($c, $$ret[0], 1, 1, <<EOF);
+            NGCP::Panel::Utils::XMLDispatcher::dispatch($c, $$ret[0], 1, 1, <<EOF);
 <?xml version="1.0"?>
       <methodCall>
         <methodName>db_reg_agent.updateRegistration</methodName>
@@ -182,15 +178,13 @@ sub delete_peer_registration {
         $all = 0;
     }
 
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-
     $c->log->debug("trying to delete peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
 
     my $sid = $prov_subscriber->id;
     my $uuid = $prov_subscriber->uuid;
     my $contact = $c->config->{sip}->{lb_ext};
 
-    my @ret = $dispatcher->dispatch($c, "appserver", $all, 1, <<EOF);
+    my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
       <methodCall>
         <methodName>db_reg_agent.removeRegistration</methodName>
@@ -209,7 +203,7 @@ EOF
 
         # remove reg from successsful backends
         foreach my $ret (grep {!$$_[1]} @ret) { # successful backends
-            $dispatcher->dispatch($c, $ret[0], 1, 1, <<EOF);
+            NGCP::Panel::Utils::XMLDispatcher::dispatch($c, $ret[0], 1, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
     <methodName>db_reg_agent.createRegistration</methodName>
@@ -252,9 +246,7 @@ sub clear_audio_cache {
 sub _clear_audio_cache_service {
     my ($c, $service, $sound_set_id, $handle_name) = @_;
 
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-
-    my @ret = $dispatcher->dispatch($c, $service, 1, 1, <<EOF );
+    my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, $service, 1, 1, <<EOF );
 <?xml version="1.0"?>
   <methodCall>
     <methodName>postDSMEvent</methodName>
@@ -310,8 +302,7 @@ sub dial_out {
     my $caller_domain = $prov_subscriber->domain->domain;
     my $caller_password = $prov_subscriber->password;
 
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    my $ret = $dispatcher->dispatch($c, "appserver", 0, 1, <<EOF );
+    my $ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", 0, 1, <<EOF );
 <?xml version="1.0"?>
 <methodCall>
   <methodName>dial_auth_b2b</methodName>
@@ -348,9 +339,8 @@ sub party_call_control {
         @{$data}{qw(caller callee callid status token)};
 
     my $service = 'appserver';
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
 
-    my @ret = $dispatcher->dispatch($c, $service, 1, 1, <<EOF );
+    my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, $service, 1, 1, <<EOF );
 <?xml version="1.0"?>
   <methodCall>
     <methodName>postDSMEvent</methodName>

@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::Domain;
-use Moose;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 

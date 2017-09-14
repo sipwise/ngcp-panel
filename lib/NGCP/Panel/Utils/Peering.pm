@@ -7,8 +7,7 @@ use warnings;
 sub _sip_lcr_reload {
     my(%params) = @_;
     my($c) = @params{qw/c/};
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+    NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>lcr.reload</methodName>
@@ -21,8 +20,7 @@ EOF
 
 sub _sip_dispatcher_reload {
     my ($self, $c) = @_;
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    my ($res) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+    my ($res) = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>dispatcher.reload</methodName>

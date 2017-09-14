@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::SubscriberStatusSelect;
-use Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Select';
 

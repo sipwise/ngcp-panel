@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::TimezoneSelect;
-use Moose;
 use HTML::FormHandler::Moose;
 use NGCP::Panel::Utils::DateTime;
 extends 'HTML::FormHandler::Field::Compound';

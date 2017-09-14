@@ -4,13 +4,14 @@ use strict;
 use URI::Escape;
 use XML::Mini::Document;;
 use Data::Dumper;
-use Moose;
+use Moo;
+use Types::Standard qw(Str);
 
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'register_subscriber_content' => (
     is => 'rw',
-    isa => 'Str',
+    isa => Str,
     accessor => '_register_subscriber_content',
 );
 sub rpc_server_params{
@@ -81,14 +82,14 @@ sub unregister_content {
 </request>";
     return $self->{unregister_content};
 }
-override 'parse_rpc_response_page' => sub {
+around 'parse_rpc_response_page' => sub {
     my($self, $page) = @_;
     my $xmlDoc = XML::Mini::Document->new();
     $xmlDoc->parse($page);
     my $ref = $xmlDoc->toHash();
     return $ref;
 };
-override 'parse_rpc_response' => sub {
+around 'parse_rpc_response' => sub {
     my($self, $rpc_response) = @_;
     my $c = $self->params->{c};
     my $ret = 0;
