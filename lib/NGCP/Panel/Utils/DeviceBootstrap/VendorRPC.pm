@@ -7,29 +7,30 @@ use Net::HTTPS::Any qw/https_post/;
 use RPC::XML::ParserFactory 'XML::LibXML';
 use RPC::XML;
 use Data::Dumper;
-use Moose;
+use Moo;
+use Types::Standard qw(HashRef Str);
 
 has 'params' => (
     is => 'rw',
-    isa => 'HashRef',
+    isa => HashRef,
 );
 has 'content_params' => (
     is => 'rw',
-    isa => 'HashRef',
+    isa => HashRef,
 );
 has 'rpc_server_params' => (
     is => 'rw',
-    isa => 'HashRef',
+    isa => HashRef,
     accessor => '_rpc_server_params',
 );
 has 'register_content' => (
     is => 'rw',
-    isa => 'Str',
+    isa => Str,
     accessor => '_register_content',
 );
 has 'unregister_content' => (
     is => 'rw',
-    isa => 'Str',
+    isa => Str,
     accessor => '_unregister_content',
 );
 

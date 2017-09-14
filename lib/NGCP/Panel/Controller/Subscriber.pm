@@ -62,7 +62,6 @@ use NGCP::Panel::Form::Subscriber::Webfax;
 use NGCP::Panel::Form::Subscriber::ResetPassword;
 use NGCP::Panel::Form::Subscriber::RecoverPassword;
 
-use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
 
 =head1 NAME

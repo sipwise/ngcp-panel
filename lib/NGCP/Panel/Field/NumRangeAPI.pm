@@ -1,5 +1,4 @@
 package NGCP::Panel::Field::NumRangeAPI;
-use Moose;
 use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Text';
 

@@ -13,7 +13,6 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use Test::More;
 use NGCP::Panel::Form::Subscriber::SubscriberAPI;
-use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Events;

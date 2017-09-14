@@ -13,7 +13,6 @@ use NGCP::Panel::Form::Sound::LoadDefault;
 use File::Type;
 use File::Slurp;
 use File::Basename;
-use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Sems;

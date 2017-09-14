@@ -8,7 +8,6 @@ use NGCP::Panel::Utils::DateTime;
 
 sub list_banned_ips  {
     my ( $c ) = @_;
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
     my $xml_parser = XML::LibXML->new();
 
     my $ip_xml = <<'EOF';
@@ -21,7 +20,7 @@ sub list_banned_ips  {
 </methodCall>
 EOF
 
-    my $ip_res = $dispatcher->dispatch($c, "loadbalancer", 1, 1, $ip_xml);
+    my $ip_res = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "loadbalancer", 1, 1, $ip_xml);
 
     my @ips = ();
     for my $host (grep {$$_[1]} @$ip_res) {
@@ -40,7 +39,6 @@ EOF
 sub list_banned_users  {
     my ( $c, %params ) = @_;
 
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
     my $xml_parser = XML::LibXML->new();
 
     my $user_xml = <<'EOF';
@@ -53,7 +51,7 @@ sub list_banned_users  {
 </methodCall>
 EOF
 
-    my $user_res = $dispatcher->dispatch($c, "loadbalancer", 1, 1, $user_xml);
+    my $user_res = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "loadbalancer", 1, 1, $user_xml);
     my @users = ();
     my $usr = {};
     for my $host (grep {$$_[1]} @$user_res) {
@@ -97,7 +95,6 @@ sub ip_unban {
     my ( $c, $ip ) = @_;
     my $decoder = URI::Encode->new;
     $ip = $decoder->decode($ip);
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
 
     my $xml = <<"EOF";
 <?xml version="1.0" ?>
@@ -110,14 +107,13 @@ sub ip_unban {
 </methodCall>
 EOF
 
-    $dispatcher->dispatch($c, "loadbalancer", 1, 1, $xml);
+    NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "loadbalancer", 1, 1, $xml);
 }
 
 sub user_unban {
     my ( $c, $user ) = @_;
     my $decoder = URI::Encode->new;
     $user = $decoder->decode($user);
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
 
     my @keys = ($user.'::auth_count', $user.'::last_auth');
     foreach my $key (@keys) {
@@ -132,7 +128,7 @@ sub user_unban {
 </methodCall>
 EOF
 
-        $dispatcher->dispatch($c, "loadbalancer", 1, 1, $xml);
+        NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "loadbalancer", 1, 1, $xml);
     }
 }
 
