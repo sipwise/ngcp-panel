@@ -209,33 +209,15 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                         $form->values->{$_.'_type'} = $ft->mime_type($form->values->{$_});
                     }
                 }
-                my $connectable_models = delete $form->values->{connectable_models};
+                #this deletion should be before store_and_process_device_model_before_ranges, as $form->values will be used in the insert sql
                 my $linerange = delete $form->values->{linerange};
-
-                my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $form->values);
-                my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, undef, $form->values);
-                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->values);
-                my $devmod = $schema->resultset('autoprov_devices')->create($form->values);
-                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $devmod, $credentials);
-                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $devmod, $sync_parameters);
-                NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $devmod);
-                if(defined $connectable_models) {
-                    NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $devmod, decode_json($connectable_models) );
+                #perparation of the connectable_models before store_and_process_device_model_before_ranges call
+                if(defined $form->values->{connectable_models}){
+                    $form->values->{connectable_models} = decode_json($connectable_models);
                 }
+                my $devmod = NGCP::Panel::Utils::Device::store_and_process_device_model_before_ranges($c, undef, $form->values);
 
-                foreach my $range(@{ $linerange }) {
-                    delete $range->{id};
-                    $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
-                    my $keys = delete $range->{keys};
-                    my $r = $devmod->autoprov_device_line_ranges->create($range);
-                    my $i = 0;
-                    foreach my $label(@{ $keys }) {
-                        $label->{line_index} = $i++;
-                        $label->{position} = delete $label->{labelpos};
-                        delete $label->{id};
-                        $r->annotations->create($label);
-                    }
-                }
+
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{device} = { id => $devmod->id };
             });
@@ -401,23 +383,13 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                     }
                 }
 
-                my $linerange = delete $form->values->{linerange};
-                my $connectable_models = delete $form->values->{connectable_models};
-                my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $c->stash->{devmod}, $form->values);
-                my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $c->stash->{devmod}, $form->values);
-                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->values);
-
-                $c->stash->{devmod}->update($form->values);
-
-                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $c->stash->{devmod}, $credentials);
-                $schema->resultset('autoprov_sync')->search_rs({
-                    device_id => $c->stash->{devmod}->id,
-                })->delete;
-                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $c->stash->{devmod}, $sync_parameters);
-                NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $c->stash->{devmod} );
-                if(defined $connectable_models) {
-                    NGCP::Panel::Utils::Device::process_connectable_models($c, 0, $c->stash->{devmod}, decode_json($connectable_models) );
+                if(defined $form->values->{connectable_models}){
+                    $form->values->{connectable_models} = decode_json($connectable_models);
                 }
+
+                NGCP::Panel::Utils::Device::store_and_process_device_model_before_ranges($c, $c->stash->{devmod}, $form->values);
+
+                my $linerange = delete $form->values->{linerange};
                 my @existing_range = ();
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
                 foreach my $range(@{ $linerange }) {

@@ -18,8 +18,7 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 
 sub set_config {
     my $self = shift;
-    my $allowed_roles = $self->config_allowed_roles;
-    $allowed_roles = 'ARRAY' eq ref $allowed_roles ? $allowed_roles : [$allowed_roles];
+    my $allowed_roles = $self->get_allowed_roles();
     $self->config(
         action => {
             map { $_ => {
@@ -175,6 +174,8 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    $self->check_method_allowed_roles($c);
+
 }
 
 sub head {

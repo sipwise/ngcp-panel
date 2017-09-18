@@ -404,6 +404,71 @@ sub allowed_methods_filtered {
         return $self->allowed_methods;
     }
 }
+#
+#allowed_roles = [qw/admin subscriber /]
+#
+#allowed_roles = {
+#    Allow => {
+#        Common => qw//,
+#        POST  => qw//,
+#    },
+#    Deny => {
+#        Common => qw//,
+#        PUT  => qw//,        
+#    }
+#    ...
+#}
+
+sub get_allowed_roles {
+    my($self, $method) = @_;
+
+    #All deny rules have priorities above any Allow rule. 
+    #It means that method related Allow doesn't have sense
+    #Because anyway all Allow roles should be listed in Common section
+
+    my $roles_config = $self->config_allowed_roles;
+    my @allowed_roles;
+    if('HASH' eq ref $roles_config){
+        my @denied_roles;
+        my $allowed_roles = $roles_config->{Allow}->{Common};
+        push @allowed_roles, 'ARRAY' eq ref $allowed_roles ? @$allowed_roles : $allowed_roles;
+        my $denied_roles = $roles_config->{Deny}->{Common};
+        push @denied_roles, 'ARRAY' eq ref $denied_roles ? @$denied_roles : $denied_roles;
+        if($method){
+            $denied_roles = $roles_config->{Deny}->{$method};
+            push @denied_roles, 'ARRAY' eq ref $denied_roles ? @$denied_roles : $denied_roles;
+        }
+        my %denied_roles;
+        $denied_roles{@denied_roles} = @denied_roles;
+        @allowed_roles = grep { ! exists $denied_roles{$_} } @allowed_roles;
+    }else{
+        push @allowed_roles, 'ARRAY' eq ref $roles_config ? @$roles_config : $roles_config;
+    }
+    my %allowed_roles_norm;
+    $allowed_roles_norm{@allowed_roles} = @allowed_roles'
+    return [keys %allowed_roles_norm];
+}
+
+sub check_method_allowed_roles{
+    my($self, $c, $method, $role) = @_;
+    $method //= $c->request->method;
+    $role //= $c->user->roles;
+    my $allowed_roles = $self->get_allowed_roles($c, $method);
+    if(!grep {$_ eq $role} @$allowed_roles){
+        my $action;
+        if($method eq 'POST'){
+            $action = 'create';
+        }elsif($method eq 'DELETE'){
+            $action = 'delete';
+        }else{
+            $action = 'update';
+        }
+        $c->log->error("role $role cannot $action ".$self->resource_name);
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot $action ".$self->item_name.".");
+        return;    
+    }
+    return 1;
+}
 
 # sub allowed_methods {
     # my ($self) = @_;
