@@ -15,6 +15,8 @@ use URI::Escape;
 use Storable;
 use File::Grep qw/fgrep/;
 use feature 'state';
+use Storable;
+use File::Temp qw(tempfile);
 
 sub BUILD {
     my $self = shift;
@@ -576,6 +578,7 @@ sub load_data_from_script{
     my $found = 0;
     if(-e $collection_file && fgrep { /set_data_from_script/ } $collection_file ){
         #dirty hack, part 1. To think about Safe
+        my ($fh, $filename) = tempfile();
         local @ARGV = qw/load_data_only/;
         our $data_out;
         do $collection_file;

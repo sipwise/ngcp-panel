@@ -17,7 +17,7 @@ sub dispatch{
         $c->log->info("skipping '$action', disabled by configuration");
         return;
     }
-    
+
     my $params = {
         %{get_devmod_params($c, $fdev->profile->config->device)},
         mac => $fdev->identifier,
@@ -32,7 +32,7 @@ sub dispatch_devmod{
         $c->log->info("skipping '$action', disabled by configuration");
         return;
     }
-    
+
     my $params = get_devmod_params($c,$devmod);
     return _dispatch($c, $action, $params);
 }
@@ -41,7 +41,7 @@ sub _dispatch{
     my $redirect_processor = get_redirect_processor($params);
     my $ret;
     if($redirect_processor){
-        $c->log->debug( "action=$action;" );        
+        $c->log->debug( "action=$action;" );
         if($redirect_processor->can($action)){
             $ret = $redirect_processor->$action();
         }else{
@@ -50,13 +50,13 @@ sub _dispatch{
             }
             $ret = $redirect_processor->redirect_server_call($action);
         }
-        $c->log->debug( "ret=$ret;" );        
+        $c->log->debug( "ret=$ret;" );
     }
     return $ret;
 }
 sub get_devmod_params{
     my($c, $devmod) = @_;
-    
+
     my $credentials = $devmod->autoprov_redirect_credentials;
     my $vcredentials;
     if($credentials){
@@ -123,6 +123,26 @@ sub devmod_sync_parameters_prefetch{
     return \@parameters;
 }
 
+sub devmod_sync_parameters_prefetch_api{
+    my($c,$item,$resource) = @_;
+    $resource //= {};
+    my $schema = $c->model('DB');
+    my $bootstrap_method = $item->get_column('bootstrap_method');
+    my $bootstrap_params_rs = $schema->resultset('autoprov_sync')->search_rs({
+        'autoprov_sync_parameters.bootstrap_method' => $bootstrap_method,
+        'me.device_id' => $item->id,
+    },{
+        join => 'autoprov_sync_parameters',
+        select => [qw/autoprov_sync_parameters.parameter_name me.parameter_value/],
+        as => [qw/parameter_name parameter_value/]
+    });
+    foreach ($bootstrap_params_rs->all){
+        my $param_name = 'bootstrap_config_'.$bootstrap_method.'_'.$_->get_column('parameter_name');
+        $resource->{$param_name} = $_->parameter_value;
+    }
+    return $resource;
+}
+
 sub devmod_sync_credentials_prefetch{
     my($c,$devmod,$params) = @_;
     my $schema = $c->model('DB');
@@ -144,7 +164,7 @@ sub devmod_sync_credentials_store{
     });
     if(!$credentials_rs->first){
         $credentials->{device_id} = $devmod->id;
-        $schema->resultset('autoprov_redirect_credentials')->create($credentials);    
+        $schema->resultset('autoprov_redirect_credentials')->create($credentials);
     }else{
         delete $credentials->{device_id};
         $credentials_rs->update($credentials);
