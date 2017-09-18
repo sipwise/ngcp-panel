@@ -9,6 +9,122 @@ use IO::String;
 our $denwaip_masterkey = '@newrocktech2007';
 our $denwaip_magic_head = "\x40\x40\x40\x24\x24\x40\x40\x40\x40\x40\x40\x24\x24\x40\x40\x40";
 
+sub store_and_process_device_model {
+    my ($c, $item, $resource) = @_;
+
+    my $just_created = $item ? 0 : 1;
+
+    #this deletion should be db->create
+    my $linerange = delete $resource->{linerange};
+
+    my $connectable_models = delete $resource->{connectable_models};
+    my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $item, $resource);
+    my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $item, $resource);
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $resource);
+    if($item){
+        $item->update($resource);
+        $c->model('DB')->resultset('autoprov_sync')->search_rs({
+            device_id => $item->id,
+        })->delete;
+    }else{
+        $item = $c->model('DB')->resultset('autoprov_devices')->create($resource);
+    }
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
+    NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $item);
+    if(defined $connectable_models) {
+        NGCP::Panel::Utils::Device::process_connectable_models($c, $just_created, $item, $connectable_models);
+    }
+    if($just_created){
+        NGCP::Panel::Utils::Device::create_device_model_ranges($c, $item, $linerange);    
+    }else{
+        NGCP::Panel::Utils::Device::update_device_model_ranges($c, $item, $linerange);
+    }
+    return $item;
+}
+
+sub create_device_model_ranges {
+    my ($c, $item, $linerange) = @_;
+    foreach my $range(@{ $linerange }) {
+        delete $range->{id};
+        $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
+        my $keys = delete $range->{keys};
+        my $r = $item->autoprov_device_line_ranges->create($range);
+        my $i = 0;
+        foreach my $label(@{ $keys }) {
+            $label->{line_index} = $i++;
+            $label->{position} = delete $label->{labelpos};
+            delete $label->{id};
+            $r->annotations->create($label);
+        }
+    }
+}
+
+sub update_device_model_ranges {
+    my ($c, $item, $linerange) = @_;
+    my @existing_range = ();
+    my $range_rs = $item->autoprov_device_line_ranges;
+    foreach my $range(@{ $linerange }) {
+        next unless(defined $range);
+        if(defined $range->{id}) {
+            my $range_by_id = $c->model('DB')->resultset('autoprov_device_line_ranges')->find($range->{id});
+            if( $range_by_id && ( $range_by_id->device_id != $item->id ) ){
+            #this is extension linerange, stop processing this linerange completely
+            #we should care about it here due to backward compatibility, so API user still can make GET => PUT without excluding extension ranges
+                next;
+            }
+        }
+        my $keys = delete $range->{keys};
+        $range->{num_lines} = @{ $keys }; # backward compatibility
+        my $range_db;
+        if(defined $range->{id}) {
+            # should be an existing range, do update
+            $range_db = $range_rs->find($range->{id});
+            delete $range->{id};
+            unless($range_db) {#really this is strange situation
+                $range_db = $range_rs->create($range);
+            } else {
+                # formhandler only passes set check-boxes, so explicitely unset here
+                $range->{can_private} //= 0;
+                $range->{can_shared} //= 0;
+                $range->{can_blf} //= 0;
+                $range_db->update($range);
+            }
+        } else {
+            # new range
+            $range_db = $range_rs->create($range);
+        }
+        $range_db->annotations->delete;
+        my $i = 0;
+        foreach my $label(@{ $keys }) {
+            next unless(defined $label);
+            $label->{line_index} = $i++;
+            $label->{position} = delete $label->{labelpos};
+            delete $label->{id};
+            $range_db->annotations->create($label);
+        }
+
+        push @existing_range, $range_db->id; # mark as valid (delete others later)
+
+        # delete field device line assignments with are out-of-range or use a
+        # feature which is not supported anymore after edit
+        foreach my $fielddev_line($c->model('DB')->resultset('autoprov_field_device_lines')
+            ->search({ linerange_id => $range_db->id })->all) {
+            if($fielddev_line->key_num >= $range_db->num_lines ||
+               ($fielddev_line->line_type eq 'private' && !$range_db->can_private) ||
+               ($fielddev_line->line_type eq 'shared' && !$range_db->can_shared) ||
+               ($fielddev_line->line_type eq 'blf' && !$range_db->can_blf)) {
+
+               $fielddev_line->delete;
+           }
+        }
+    }
+    # delete invalid range ids (e.g. removed ones)
+    $range_rs->search({
+        id => { 'not in' => \@existing_range },
+    })->delete_all;
+}
+
 sub process_connectable_models{
     my ($c, $just_created, $devmod, $connectable_models_in) = @_;
     my $schema = $c->model('DB');
