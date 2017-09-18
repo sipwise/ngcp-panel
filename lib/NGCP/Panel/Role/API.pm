@@ -404,6 +404,63 @@ sub allowed_methods_filtered {
         return $self->allowed_methods;
     }
 }
+#
+#old: allowed_roles = [qw/admin subscriber /]
+#
+#from now also possible: allowed_roles = {
+#    Allow => {
+#        Common => qw//,
+#        POST  => qw//,
+#    },
+#    Deny => {
+#        Common => qw//,
+#        PUT  => qw//,        
+#    }
+#    ...
+#}
+
+sub get_allowed_roles {
+    my($self, $method) = @_;
+
+    my $roles_config = $self->config_allowed_roles;
+    my ($allowed_roles_default,$allowed_roles_per_methods);
+
+    if('HASH' eq ref $roles_config){
+        $allowed_roles_default = delete $roles_config->{Default};
+        $allowed_roles_per_methods = {map {
+            $_ => $roles_config->{$_} // $allowed_roles_default,
+        } @{ $self->allowed_methods }};
+    }else{
+        $allowed_roles_default = 'ARRAY' eq ref $roles_config ? $roles_config : [$roles_config];
+        $allowed_roles_per_methods = {map {
+            $_ => $allowed_roles_default,
+        } @{ $self->allowed_methods }};
+    }
+    return $method ? $allowed_roles_per_methods->{$method} : $allowed_roles_per_methods;
+}
+
+sub check_method_allowed_roles{
+    my($self, $c, $method, $role) = @_;
+    $method //= $c->request->method;
+    $role //= $c->user->roles;
+    my $allowed_roles = $self->get_allowed_roles($method);
+    if(!grep {$_ eq $role} @$allowed_roles){
+        my $action;
+        if($method eq 'POST'){
+            $action = 'create';
+        }elsif($method eq 'DELETE'){
+            $action = 'delete';
+        }elsif($method eq 'GET'){
+            $action = 'view';
+        }else{
+            $action = 'update';
+        }
+        $c->log->error("role $role cannot $action ".$self->resource_name);
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot $action ".$self->item_name.".");
+        return;
+    }
+    return 1;
+}
 
 # sub allowed_methods {
     # my ($self) = @_;

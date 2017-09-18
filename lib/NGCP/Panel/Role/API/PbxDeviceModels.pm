@@ -1,21 +1,52 @@
 package NGCP::Panel::Role::API::PbxDeviceModels;
-use NGCP::Panel::Utils::Generic qw(:all);
+
+use parent qw/NGCP::Panel::Role::API/;
 
 use Sipwise::Base;
-
-use parent 'NGCP::Panel::Role::API';
-
-
-use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
+
+use NGCP::Panel::Form::Device::ModelAPI;
+
+use NGCP::Panel::Utils::Device;
+use NGCP::Panel::Utils::DeviceBootstrap;
+use Data::Dumper;
+use boolean qw(true);
 use JSON qw();
 use File::Type;
-use Data::Dumper;
-use NGCP::Panel::Form::Device::ModelAPI;
-use NGCP::Panel::Utils::DeviceBootstrap;
-use NGCP::Panel::Utils::Device;
+
+sub item_name{
+    return 'pbxdevicemodels';
+}
+
+sub resource_name{
+    return 'pbxdevicemodels';
+}
+
+sub dispatch_path{
+    return '/api/pbxdevicemodels/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicemodels';
+}
+
+sub config_allowed_roles {
+    return {
+        'Default' => [qw/admin reseller subscriberadmin/],
+        #GET will use default
+        'POST'    => [qw/admin reseller/],
+        'PUT'     => [qw/admin reseller/],
+        'PATCH'   => [qw/admin reseller/],
+    };
+}
+
+sub hal_links{
+    my($self, $c, $item, $resource, $form) = @_;
+    return [
+        NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:pbxdevicefirmwares", href => sprintf("/api/pbxdevicefirmwares/?device_id=%d", $item->id)),
+    ];
+}
 
 sub get_form {
     my ($self, $c) = @_;
@@ -23,30 +54,22 @@ sub get_form {
     return NGCP::Panel::Form::Device::ModelAPI->new(ctx => $c);
 }
 
-sub hal_from_item {
-    my ($self, $c, $item) = @_;
-    my $form;
-    #my $type = 'pbxdevicemodels';
+sub _item_rs {
+    my ($self, $c) = @_;
+    my $item_rs = $c->model('DB')->resultset('autoprov_devices')
+        ->search_rs(undef,{ prefetch => {autoprov_device_line_ranges => 'annotations'} });
+    if ($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        my $reseller_id = $c->user->contract->contact->reseller_id;
+        return unless $reseller_id;
+        $item_rs = $item_rs->search({
+            reseller_id => $reseller_id,
+        });
+    }
 
-    my $hal = NGCP::Panel::Utils::DataHal->new(
-        links => [
-            NGCP::Panel::Utils::DataHalLink->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:pbxdevicefirmwares", href => sprintf("/api/pbxdevicefirmwares/?device_id=%d", $item->id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    my $resource = $self->resource_from_item($c, $item);
-    $hal->resource($resource);
-    return $hal;
+    return $item_rs;
 }
 
 sub resource_from_item {
@@ -73,6 +96,9 @@ sub resource_from_item {
     foreach my $range($item->autoprov_device_line_ranges->all) {
         $self->process_range( \%resource, $range );
     }
+
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch_api($c, $item,\%resource);
+
     if('extension' eq $item->type){
         # show possible devices for extension
         $resource{connectable_models} = [map {$_->device->id} ($item->autoprov_extension_device_link->all) ];
@@ -83,74 +109,27 @@ sub resource_from_item {
             my $extension = $extension_link->extension;
             push @{$resource{connectable_models}}, $extension->id;
             foreach my $range($extension->autoprov_device_line_ranges->all) {
-                $self->process_range( \%resource, $range, sub { my $r = shift; $r->{extension_range} = $extension->id;} );# 
+                $self->process_range( \%resource, $range, sub {
+                    my $r = shift;
+                    $r->{extension_range} = $extension->id;
+                } );#
             }
         }
     }
     return \%resource;
 }
 
-sub _item_rs {
-    my ($self, $c) = @_;
-    my $item_rs = $c->model('DB')->resultset('autoprov_devices')
-        ->search_rs(undef,{ prefetch => {autoprov_device_line_ranges => 'annotations'} });
-    if ($c->user->roles eq "admin") {
-    } elsif ($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
-    } elsif ($c->user->roles eq "subscriberadmin") {
-        my $reseller_id = $c->user->contract->contact->reseller_id;
-        return unless $reseller_id;
-        $item_rs = $item_rs->search({
-            reseller_id => $reseller_id,
-        });
-    }
+sub process_form_resource{
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
 
-    return $item_rs;
-}
+    $resource->{type} //= 'phone';
 
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
-}
-
-sub update_item {
-
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
-    $form //= $self->get_form($c);
-
+    my $reseller_id;
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
-        $resource->{reseller_id} = $c->user->reseller_id;
+        $reseller_id = $c->user->reseller_id;
     }
-
-    my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
-    unless($reseller) {
-        $c->log->error("invalid reseller_id '".((defined $resource->{reseller_id})?$resource->{reseller_id} : "undefined")."', does not exist");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id, does not exist");
-        return;
-    }
-
-    my $dup_item;
-    $dup_item = $c->model('DB')->resultset('autoprov_devices')->find({
-        reseller_id => $resource->{reseller_id},
-        vendor => $resource->{vendor},
-        model => $resource->{model},
-    });
-    if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("device model with vendor '$$resource{vendor}' and model '$$resource{model}'already exists for reseller_id '$$resource{reseller_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Device model already exists for this reseller");
-        return;
-    }
-
-    my $linerange = delete $resource->{linerange};
-    unless(ref $linerange eq "ARRAY") {
-        $c->log->error("linerange must be array");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange parameter, must be array");
-        return;
-    }
-
+    $resource->{reseller_id} = $reseller_id;
 
     my $ft = File::Type->new();
     if($resource->{front_image}) {
@@ -163,20 +142,27 @@ sub update_item {
         $resource->{mac_image} = $front_image->slurp;
         $resource->{mac_image_type} = $ft->mime_type($resource->{mac_image});
     }
-    my $connectable_models = delete $resource->{connectable_models};
-    my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $item, $resource);
-    my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $item, $resource);
-    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $resource);
-    $item->update($resource);
-    $c->model('DB')->resultset('autoprov_sync')->search_rs({
-        device_id => $item->id,
-    })->delete;
-    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
-    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
-    NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $item);
-    NGCP::Panel::Utils::Device::process_connectable_models($c, 0, $item, $connectable_models );
-    my @existing_range = ();
-    my $range_rs = $item->autoprov_device_line_ranges;
+
+    return $resource;
+}
+
+sub check_resource{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    my $schema = $c->model('DB');
+
+    my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+    unless($reseller) {
+        $c->log->error("invalid reseller_id '".((defined $resource->{reseller_id})?$resource->{reseller_id} : "undefined")."', does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id, does not exist");
+        return;
+    }
+
+    my $linerange = $resource->{linerange};
+    unless(ref $linerange eq "ARRAY") {
+        $c->log->error("linerange must be array");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange parameter, must be array");
+        return;
+    }
     foreach my $range(@{ $linerange }) {
 
         unless(ref $range eq "HASH") {
@@ -195,76 +181,43 @@ sub update_item {
             $c->log->error("linerange.keys must be array");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange.keys parameter, must be array");
             #last? not next?
-            last;
+            return;
         }
-        if(defined $range->{id}) {
-            my $range_by_id = $c->model('DB')->resultset('autoprov_device_line_ranges')->find($range->{id});
-            if( $range_by_id && ( $range_by_id->device_id != $item->id ) ){
-            #this is extension linerange, stop processing this linerange completely
-            #we should care about it here due to backward compatibility, so API user still can make GET => PUT without excluding extension ranges
-                next;
-            }
-        }
-        #/check input section end
-
-        $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
-        my $keys = delete $range->{keys};
-        my $old_range;
-        if(defined $range->{id}) {
-            # should be an existing range, do update
-            $old_range = $range_rs->find($range->{id});
-            delete $range->{id};
-            unless($old_range) {#really this is strange situation
-                delete $range->{id};
-                $old_range = $range_rs->create($range);
-            } else {
-                # formhandler only passes set check-boxes, so explicitely unset here
-                $range->{can_private} //= 0;
-                $range->{can_shared} //= 0;
-                $range->{can_blf} //= 0;
-                $old_range->update($range);
-            }
-        } else {
-            # new range
-            $old_range = $range_rs->create($range);
-        }
-
-        $old_range->annotations->delete;
-        my $i = 0;
-        foreach my $label(@{ $keys }) {
+        foreach my $label(@{ $range->{keys} }) {
             unless(ref $label eq "HASH") {
                 $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
                 return;
             }
-
-            $label->{line_index} = $i++;
-            $label->{position} = delete $label->{labelpos};
-            $old_range->annotations->create($label);
-        }
-
-        push @existing_range, $old_range->id; # mark as valid (delete others later)
-
-        # delete field device line assignments with are out-of-range or use a
-        # feature which is not supported anymore after edit
-        foreach my $fielddev_line($c->model('DB')->resultset('autoprov_field_device_lines')
-            ->search({ linerange_id => $old_range->id })->all) {
-            if($fielddev_line->key_num >= $old_range->num_lines ||
-               ($fielddev_line->line_type eq 'private' && !$old_range->can_private) ||
-               ($fielddev_line->line_type eq 'shared' && !$old_range->can_shared) ||
-               ($fielddev_line->line_type eq 'blf' && !$old_range->can_blf)) {
-
-               $fielddev_line->delete;
-           }
         }
     }
-    # delete invalid range ids (e.g. removed ones)
-    $range_rs->search({
-        id => { 'not in' => \@existing_range },
-    })->delete_all;
-    
+}
+
+sub check_duplicate{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    my $schema = $c->model('DB');
+    my $existing_item = $c->model('DB')->resultset('autoprov_devices')->find({
+        reseller_id => $resource->{reseller_id},
+        vendor => $resource->{vendor},
+        model => $resource->{model},
+    });
+    if($existing_item && (!$item || $item->id != $existing_item->id)) {
+        $c->log->error("device model with vendor '$$resource{vendor}' and model '$$resource{model}'already exists for reseller_id '$$resource{reseller_id}'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Device model already exists for this reseller");
+        return;
+    }
+    return 1;
+}
+
+sub update_item {
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    NGCP::Panel::Utils::Device::store_and_process_device_model($c, $item, $resource);
+
     return $item;
 }
+
 sub process_range {
     my($self, $resource, $range, $process_range_cb ) = @_;
     my $r = { $range->get_inflated_columns };
@@ -285,7 +238,7 @@ sub process_range {
     }
     $r->{num_lines} = @{ $r->{keys} };
     ( ( defined $process_range_cb ) && ( 'CODE' eq ref $process_range_cb ) ) and $process_range_cb->($r);
-    push @{ $resource->{linerange} }, $r;    
+    push @{ $resource->{linerange} }, $r;
 }
 
 1;
