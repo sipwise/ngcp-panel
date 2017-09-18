@@ -18,8 +18,7 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 
 sub set_config {
     my $self = shift;
-    my $allowed_roles = $self->config_allowed_roles;
-    $allowed_roles = 'ARRAY' eq ref $allowed_roles ? $allowed_roles : [$allowed_roles];
+    my $allowed_roles = $self->get_allowed_roles();
     $self->config(
         action => {
             map { $_ => {
@@ -96,6 +95,8 @@ sub patch {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
         my $old_resource = { $item->get_inflated_columns };
+        #$old_resource = clone($old_resource);
+        ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -132,6 +133,8 @@ sub put {
         last unless $resource;
         my $old_resource = { $item->get_inflated_columns };
         #TODO: MOVE form exceptions to proper forms as property
+        #$old_resource = clone($old_resource);
+        ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
         my ($form, $form_exceptions, $process_extras);
 
         ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
@@ -175,6 +178,8 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    $self->check_method_allowed_roles($c);
+
 }
 
 sub head {

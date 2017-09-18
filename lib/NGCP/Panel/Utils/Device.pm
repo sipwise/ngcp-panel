@@ -9,6 +9,49 @@ use IO::String;
 our $denwaip_masterkey = '@newrocktech2007';
 our $denwaip_magic_head = "\x40\x40\x40\x24\x24\x40\x40\x40\x40\x40\x40\x24\x24\x40\x40\x40";
 
+sub store_and_process_device_model_before_ranges {
+    my ($c, $item, $resource) = @_;
+
+    my $just_created = $item ? 0 : 1;
+
+    my $connectable_models = delete $resource->{connectable_models};
+    my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $item, $resource);
+    my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $item, $resource);
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $resource);
+    if($item){
+        $item->update($resource);
+        $c->model('DB')->resultset('autoprov_sync')->search_rs({
+            device_id => $item->id,
+        })->delete;
+    }else{
+        $item = $c->model('DB')->resultset('autoprov_devices')->create($resource);
+    }
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
+    NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $item);
+    if(defined $connectable_models) {
+        NGCP::Panel::Utils::Device::process_connectable_models($c, $just_created, $item, $connectable_models);
+    }
+    return $item;
+}
+
+sub create_device_model_ranges {
+    my ($c, $item, $linerange) = @_;
+    foreach my $range(@{ $linerange }) {
+        delete $range->{id};
+        $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
+        my $keys = delete $range->{keys};
+        my $r = $item->autoprov_device_line_ranges->create($range);
+        my $i = 0;
+        foreach my $label(@{ $keys }) {
+            $label->{line_index} = $i++;
+            $label->{position} = delete $label->{labelpos};
+            delete $label->{id};
+            $r->annotations->create($label);
+        }
+    }
+}
+
 sub process_connectable_models{
     my ($c, $just_created, $devmod, $connectable_models_in) = @_;
     my $schema = $c->model('DB');
