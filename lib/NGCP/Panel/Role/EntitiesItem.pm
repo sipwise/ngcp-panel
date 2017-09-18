@@ -18,13 +18,12 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 
 sub set_config {
     my $self = shift;
-    my $allowed_roles = $self->config_allowed_roles;
-    $allowed_roles = 'ARRAY' eq ref $allowed_roles ? $allowed_roles : [$allowed_roles];
+    my $allowed_roles_by_methods = $self->get_allowed_roles();
     $self->config(
         action => {
             map { $_ => {
                 ACLDetachTo => '/api/root/invalid_user',
-                AllowedRole => $allowed_roles,
+                AllowedRole => $allowed_roles_by_methods->{$_},
                 Args => 1,
                 Does => [qw(ACL RequireSSL)],
                 Method => $_,
@@ -86,20 +85,24 @@ sub patch {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
+        my ($form, $form_exceptions, $process_extras);
+        ($form, $form_exceptions) = $self->get_form($c, 'edit');
+
         my $json = $self->get_valid_patch_data(
-            c => $c,
-            id => $id,
+            c          => $c,
+            id         => $id,
             media_type => 'application/json-patch+json',
+            form       => $form,
         );
         last unless $json;
 
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
-        my $old_resource = { $item->get_inflated_columns };
+        my $old_resource = $self->resource_from_item($c, $item);
+        #$old_resource = clone($old_resource);
+        ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
-
-        my ($form, $form_exceptions, $process_extras);
 
         ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
@@ -119,20 +122,25 @@ sub put {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
+        #TODO: MOVE form exceptions to proper forms as property
+        #$old_resource = clone($old_resource);
+        ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
+        my ($form, $form_exceptions, $process_extras);
+        ($form, $form_exceptions) = $self->get_form($c, 'edit');
+
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
         my $method_config = $self->config->{action}->{PUT};
         my ($resource, $data) = $self->get_valid_data(
             c          => $c,
             id         => $id,
-            method     =>  'PUT',
-            media_type =>  $method_config->{ContentType} // 'application/json',
-            uploads    =>  $method_config->{Uploads} // [] ,
+            method     => 'PUT',
+            media_type => $method_config->{ContentType} // 'application/json',
+            uploads    => $method_config->{Uploads} // [] ,
+            form       => $form,
         );
         last unless $resource;
-        my $old_resource = { $item->get_inflated_columns };
-        #TODO: MOVE form exceptions to proper forms as property
-        my ($form, $form_exceptions, $process_extras);
+        my $old_resource = $self->resource_from_item($c, $item);
 
         ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
@@ -175,6 +183,8 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    $self->check_method_allowed_roles($c);
+
 }
 
 sub head {

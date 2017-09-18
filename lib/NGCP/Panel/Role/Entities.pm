@@ -14,13 +14,12 @@ use NGCP::Panel::Utils::DataHalLink qw();
 
 sub set_config {
     my $self = shift;
-    my $allowed_roles = $self->config_allowed_roles;
-    $allowed_roles = 'ARRAY' eq ref $allowed_roles ? $allowed_roles : [$allowed_roles];
+    my $allowed_roles_by_methods = $self->get_allowed_roles();
     $self->config(
         action => {
             map { $_ => {
                 ACLDetachTo => '/api/root/invalid_user',
-                AllowedRole => $allowed_roles,
+                AllowedRole => $allowed_roles_by_methods->{$_},
                 Args => 0,
                 Does => [qw(ACL CheckTrailingSlash RequireSSL)],
                 Method => $_,
@@ -109,16 +108,18 @@ sub post {
     my ($c) = @_;
     my $guard = $self->get_transaction_control($c);
     {
+       my ($form, $form_exceptions) = $self->get_form($c, 'add');
         my $method_config = $self->config->{action}->{POST};
         my ($resource) = $self->get_valid_data(
-            c          => $c,
-            method     =>  'POST',
-            media_type =>  $method_config->{ContentType} // 'application/json',
-            uploads    =>  $method_config->{Uploads} // [] ,
+            c               => $c,
+            method          =>  'POST',
+            media_type      =>  $method_config->{ContentType} // 'application/json',
+            uploads         => $method_config->{Uploads} // [] ,
+            form            => $form,
+#            form_exceptions => $form_exceptions,
         );
         last unless $resource;
         #instead of type parameter get_form can check request method
-        my ($form, $form_exceptions) = $self->get_form($c, 'add');
         if(!$form_exceptions && $form->can('form_exceptions')){
             $form_exceptions = $form->form_exceptions;
         }
@@ -154,6 +155,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    $self->check_method_allowed_roles($c);
 }
 
 sub head {

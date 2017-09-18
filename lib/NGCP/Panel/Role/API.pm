@@ -73,7 +73,7 @@ sub get_valid_data{
             my $ops = $params{ops} // [qw/replace copy/];
             return unless $self->require_valid_patch($c, $json, $ops);
         }
-        return unless $self->get_uploads($c, $json, $params{uploads});
+        return unless $self->get_uploads($c, $json, $params{uploads}, $params{form});
         $resource = $json;
     }
 
@@ -329,15 +329,17 @@ sub require_uploads {
 
 # returns Catalyst::Request::Upload
 sub get_upload {
-    my ($self, $c, $field) = @_;
+    my ($self, $c, $field, $required) = @_;
     my $upload = $c->req->upload($field);
     return $upload if $upload;
-    $self->error($c, HTTP_BAD_REQUEST, "This request is missing the upload part '$field' in body.");
+    if($required){
+        $self->error($c, HTTP_BAD_REQUEST, "This request is missing the upload part '$field' in body.");
+    }
     return;
 }
 
 sub get_uploads {
-    my ($self, $c, $json, $uploads) = @_;
+    my ($self, $c, $json, $uploads, $form) = @_;
     my (@upload_fields, %mime_types);
     if(!$uploads || ('ARRAY' ne ref $uploads && 'HASH' ne ref $uploads ) ){
         return;
@@ -349,7 +351,12 @@ sub get_uploads {
     }
     my $ft;
     foreach my $field (@upload_fields){
-        $json->{$field} = $self->get_upload($c, $field);
+        my $required = $form ? $form->field($field)->required : 1;
+        my $upload = $self->get_upload($c, $field, $required);
+        if(!$upload && !$required){
+            next;
+        }
+        $json->{$field} = $upload;
         if($mime_types{$field}){
             $ft //= File::Type->new();
             my $mime_type = $ft->mime_type($json->{$field}->slurp);
@@ -403,6 +410,63 @@ sub allowed_methods_filtered {
     } else {
         return $self->allowed_methods;
     }
+}
+#
+#old: allowed_roles = [qw/admin subscriber /]
+#
+#from now also possible: allowed_roles = {
+#    Allow => {
+#        Common => qw//,
+#        POST  => qw//,
+#    },
+#    Deny => {
+#        Common => qw//,
+#        PUT  => qw//,        
+#    }
+#    ...
+#}
+
+sub get_allowed_roles {
+    my($self, $method) = @_;
+
+    my $roles_config = $self->config_allowed_roles;
+    my ($allowed_roles_default,$allowed_roles_per_methods);
+
+    if('HASH' eq ref $roles_config){
+        $allowed_roles_default = delete $roles_config->{Default};
+        $allowed_roles_per_methods = {map {
+            $_ => $roles_config->{$_} // $allowed_roles_default,
+        } @{ $self->allowed_methods }};
+    }else{
+        $allowed_roles_default = 'ARRAY' eq ref $roles_config ? $roles_config : [$roles_config];
+        $allowed_roles_per_methods = {map {
+            $_ => $allowed_roles_default,
+        } @{ $self->allowed_methods }};
+    }
+    return $method ? $allowed_roles_per_methods->{$method} : $allowed_roles_per_methods;
+}
+
+sub check_method_allowed_roles{
+    my($self, $c, $method, $role) = @_;
+    $method //= $c->request->method;
+    $role //= $c->user->roles;
+    my $allowed_roles = $self->get_allowed_roles($method);
+    if(!grep {$_ eq $role} @$allowed_roles){
+        my $action;
+        if($method eq 'POST'){
+            $action = 'create';
+        }elsif($method eq 'DELETE'){
+            $action = 'delete';
+        }elsif($method eq 'GET'){
+            $action = 'view';
+        }else{
+            $action = 'update';
+        }
+        $c->log->error("role $role cannot $action ".$self->resource_name);
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot $action ".$self->item_name.".");
+        return;
+    }
+    return 1;
 }
 
 # sub allowed_methods {
