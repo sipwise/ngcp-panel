@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab399f4_f16c1c39",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-09-19T15:13:38Z",
+      "side": 1,
+      "message": "#capture old subscriber\u0027s aliases:\n  my $old_aliases_before \u003d   \n  NGCP::Panel::Utils::Events::get_aliases_snapshot(\n        c \u003d\u003e $c,\n        schema \u003d\u003e $schema,\n        subscriber \u003d\u003e $old_sub,\n    );\n\n#capture new subscriber\u0027s aliases:\n  my $aliases_before \u003d   \n  NGCP::Panel::Utils::Events::get_aliases_snapshot(\n        c \u003d\u003e $c,\n        schema \u003d\u003e $schema,\n        subscriber \u003d\u003e $sub,\n    );",
+      "revId": "0d45938e5f9c5e6d037dcf613263399bdf9b5cc2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab399f4_d188f8e9",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-09-19T15:13:38Z",
+      "side": 1,
+      "message": "#edr events for old sub:\nNGCP::Panel::Utils::Events::insert_profile_events(\n  c \u003d\u003e $c, schema \u003d\u003e $schema, subscriber_id \u003d\u003e $old_sub-\u003eid,\n  old \u003d\u003e $old_profile, new \u003d\u003e $old_prov_subscriber-\u003eprofile_id,\n  %$old_sub_aliases_before,\n);\n\n#edr events for new sub:\nNGCP::Panel::Utils::Events::insert_profile_events(\n  c \u003d\u003e $c, schema \u003d\u003e $schema, subscriber_id \u003d\u003e $sub-\u003eid,\n  old \u003d\u003e $old_profile, new \u003d\u003e $prov_subscriber-\u003eprofile_id,\n  %$sub_aliases_before,\n);",
+      "revId": "0d45938e5f9c5e6d037dcf613263399bdf9b5cc2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
