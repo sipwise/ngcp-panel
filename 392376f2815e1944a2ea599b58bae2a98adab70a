@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab399f4_9c09372f",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-09-20T08:14:32Z",
+      "side": 1,
+      "message": "might show duplicate records for terminated subscribers?",
+      "range": {
+        "startLine": 97,
+        "startChar": 8,
+        "endLine": 101,
+        "endChar": 11
+      },
+      "revId": "392376f2815e1944a2ea599b58bae2a98adab70a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
