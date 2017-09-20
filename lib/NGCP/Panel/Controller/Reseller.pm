@@ -112,6 +112,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
             $resource->{rtc_networks} = [qw/sip xmpp webrtc conference/];
             eval {
                 NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+                    c => $c,
                     resource => $resource,
                     config => $c->config,
                     reseller_item => $reseller,
@@ -319,6 +320,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
                 $resource->{rtc_networks} = [qw/sip xmpp webrtc conference/];
                 eval {
                     NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+                        c => $c,
                         old_resource => $params,
                         resource => $resource,
                         config => $c->config,
@@ -388,6 +390,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
             my $old_enable_rtc = $reseller->rtc_user;
             $reseller->update({ status => 'terminated' });
             NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+                c => $c,
                 old_resource => {status => $old_status, enable_rtc => $old_enable_rtc},
                 resource => {status => 'terminated'},
                 config => $c->config,

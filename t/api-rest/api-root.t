@@ -55,6 +55,7 @@ $ua = Test::Collection->new()->ua();
         callrecordings => 1,
         callrecordingstreams => 1,
         calls => 1,
+        capabilities => 1,
         ccmapentries => 1,
         cfdestinationsets => 1,
         cfmappings => 1,
