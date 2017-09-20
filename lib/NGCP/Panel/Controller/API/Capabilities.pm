@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::Admins;
+package NGCP::Panel::Controller::API::Capabilities;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
@@ -10,7 +10,6 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Utils::Admin;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 require Catalyst::ActionRole::ACL;
@@ -18,62 +17,45 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-sub api_description {
-    return'Defines admins to log into the system via panel or api.';
-}
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET OPTIONS HEAD/];
 }
+
+sub api_description {
+    return 'Lists the capabilities/features enabled for the access role.'
+};
 
 sub query_params {
     return [
         {
-            param => 'reseller_id',
-            description => 'Filter for admins belonging to a specific reseller',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { reseller_id => $q };
-                },
-                second => sub {},
-            },
-        },
-        {
-            param => 'login',
-            description => 'Filter for admins with a specific login (wildcards possible)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { login => { like => $q  } };
-                },
-                second => sub {},
-            },
+            param => 'name',
+            description => 'Filter for capability name.',
         },
     ];
 }
 
-use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Admins/;
+use parent qw/Catalyst::Controller NGCP::Panel::Role::API::Capabilities/;
 
 sub resource_name{
-    return 'admins';
+    return 'capabilities';
 }
 sub dispatch_path{
-    return '/api/admins/';
+    return '/api/capabilities/';
 }
 sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-admins';
+    return 'http://purl.org/sipwise/ngcp-api/#rel-capabilities';
 }
 
 __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
 );
 
@@ -88,6 +70,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -95,15 +78,15 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $items = $self->item_rs($c);
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        my $capabilities = $self->item_rs($c);
+        (my $total_count, $capabilities) = $self->paginate_order_collection($c, $capabilities);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
-            push @embedded, $self->hal_from_item($c, $item, $form);
+        for my $cap (@{ $capabilities }) {
+            push @embedded, $self->hal_from_item($c, $cap, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
+                href     => sprintf('/%s%d', $c->request->path, $cap->{id}),
             );
         }
         push @links,
@@ -129,6 +112,8 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
+        my $rname = $self->resource_name;
+
         my $response = HTTP::Response->new(HTTP_OK, undef, 
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
@@ -157,70 +142,11 @@ sub OPTIONS :Allow {
     return;
 }
 
-sub POST :Allow {
-    my ($self, $c) = @_;
-
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        unless($c->user->is_master) {
-            $self->error($c, HTTP_FORBIDDEN, "Cannot create admin without master permissions");
-            last;
-        }
-        
-        my $resource = $self->get_valid_post_data(
-            c => $c, 
-            media_type => 'application/json',
-        );
-        last unless $resource;
-
-        my $form = $self->get_form($c);
-        my $pass = $resource->{password};
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        delete $resource->{password};
-        if(defined $pass) {
-            $resource->{md5pass} = undef;
-            $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
-        }
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $resource->{reseller_id} = $c->user->reseller_id;
-        }
-
-        my $item;
-        $item = $c->model('DB')->resultset('admins')->find({
-            login => $resource->{login},
-        });
-        if($item) {
-            $c->log->error("admin with login '$$resource{login}' already exists");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this login already exists");
-            last;
-        }
-
-        try {
-            $item = $c->model('DB')->resultset('admins')->create($resource);
-        } catch($e) {
-            $c->log->error("failed to create admin: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create admin.");
-            last;
-        }
-
-        $guard->commit;
-
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
-        $c->response->body(q());
-    }
-    return;
-}
-
 sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 1;

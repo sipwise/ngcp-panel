@@ -135,6 +135,7 @@ sub update_reseller {
 
     eval {
         NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
+            c => $c,
             old_resource => $old_resource,
             resource => $resource,
             config => $c->config,

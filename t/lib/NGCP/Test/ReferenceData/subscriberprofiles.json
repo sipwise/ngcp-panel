@@ -1,0 +1,32 @@
+[
+    {
+        "name": "subscriber profile set",
+        "type": "subscriberprofilesets",
+        "depends": [
+            "reseller"
+        ],
+        "data": {
+            "reseller_id": "${reseller}",
+            "name": "subprofileset_${sid}",
+            "description": "subprofileset ${sid}"
+        }
+    },
+    {
+        "name": "subscriber profile",
+        "type": "subscriberprofiles",
+        "depends": [
+            "subscriber profile set"
+        ],
+        "data": {
+            "profile_set_id": "${subscriber profile set}",
+            "name": "subscriber_profile_${sid}",
+            "description": "subscriber profile ${sid}",
+            "set_default": false,
+            "attributes": [
+                "fax_server",
+                "ncos",
+                "cfu"
+            ]
+        }
+    }
+]

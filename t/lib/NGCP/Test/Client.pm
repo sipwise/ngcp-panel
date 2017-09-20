@@ -7,6 +7,7 @@ use LWP::UserAgent;
 use JSON qw/from_json to_json/;
 use IO::Uncompress::Unzip;
 use Time::HiRes qw/gettimeofday tv_interval/;
+use Digest::MD5 qw/md5_hex/;
 use Data::Dumper;
 
 has 'username' => (
@@ -149,7 +150,10 @@ has '_crt_path' => (
     is => 'ro',
     isa => 'Str',
     lazy => 1,
-    default => '/tmp/apicert.pem',
+    default => sub {
+        my ($self) = @_;
+        return '/tmp/' . md5_hex($self->username) . ".crt";
+    }
 );
 
 has 'last_rtt' => (
