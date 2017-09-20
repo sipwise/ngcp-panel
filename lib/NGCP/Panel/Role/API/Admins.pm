@@ -22,6 +22,16 @@ sub _item_rs {
             reseller_id => $c->user->reseller_id
         });
     }
+
+
+    if($c->user->is_master || $c->user->is_superuser) {
+        # return all (or all of reseller) admins
+    } else {
+        # otherwise, only return the own admin if master is not set
+        $item_rs = $item_rs->search({
+            id => $c->user->id,
+        });
+    }
     return $item_rs;
 }
 
@@ -43,6 +53,8 @@ sub hal_from_item {
     delete $resource{md5pass};
     delete $resource{saltedpass};
 
+    my $adm = $c->user->roles eq "admin";
+
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             NGCP::Panel::Utils::DataHalLink->new(
@@ -54,7 +66,7 @@ sub hal_from_item {
             NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf('%s', $self->dispatch_path)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)),
+            $adm ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),
             $self->get_journal_relation_link($item->id),
         ],
         relation => 'ngcp:'.$self->resource_name,

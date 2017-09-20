@@ -1,0 +1,47 @@
+[
+    {
+        "name": "superuser admin",
+        "type": "admins",
+        "depends": [],
+        "data": {
+            "reseller_id": 1,
+            "login": "superadmin_${sid}",
+            "password": "superadmin_${sid}",
+            "is_superuser": true,
+            "is_master": true
+        }
+    },
+    {
+        "name": "readonly admin",
+        "type": "admins",
+        "depends": [],
+        "data": {
+            "reseller_id": 1,
+            "login": "roadmin_${sid}",
+            "password": "roadmin_${sid}",
+            "read_only": true
+        }
+    },
+    {
+        "name": "master reseller admin",
+        "type": "admins",
+        "depends": [ "reseller" ],
+        "data": {
+            "reseller_id": "${reseller}",
+            "login": "mstreselleradmin_${sid}",
+            "password": "mstreselleradmin_${sid}",
+            "is_master": true
+        }
+    },
+    {
+        "name": "nomaster reseller admin",
+        "type": "admins",
+        "depends": [ "reseller" ],
+        "data": {
+            "reseller_id": "${reseller}",
+            "login": "stdreselleradmin_${sid}",
+            "password": "stdreselleradmin_${sid}",
+            "is_master": false
+        }
+    }
+]
