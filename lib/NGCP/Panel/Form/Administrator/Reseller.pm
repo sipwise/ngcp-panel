@@ -9,7 +9,7 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'login' => (type => 'Text', required => 1, minlength => 5);
+has_field 'login' => (type => 'Text', required => 1, minlength => 5, maxlength => 31);
 has_field 'password' => (type => 'Password', required => 1, label => 'Password');
 for (qw(is_active show_passwords call_data billing_data)) {
     has_field $_ => (type => 'Boolean', default => 1);

@@ -8,7 +8,45 @@
         "data": {
             "contract_id": "${reseller contract}",
             "name": "reseller_${sid}",
-            "status": "active"
+            "status": "active",
+            "enable_rtc": false
+        }
+    },
+    {
+        "name": "reseller admin",
+        "type": "admins",
+        "depends": [
+            "reseller"
+        ],
+        "data": {
+            "reseller_id": "${reseller}",
+            "login": "reseller_${sid}",
+            "password": "reseller_${sid}"
+        }
+    },
+    {
+        "name": "rtc reseller",
+        "type": "resellers",
+        "depends": [
+            "rtc reseller contract"
+        ],
+        "data": {
+            "contract_id": "${rtc reseller contract}",
+            "name": "rtcreseller_${sid}",
+            "status": "active",
+            "enable_rtc": true
+        }
+    },
+    {
+        "name": "rtc reseller admin",
+        "type": "admins",
+        "depends": [
+            "rtc reseller"
+        ],
+        "data": {
+            "reseller_id": "${rtc reseller}",
+            "login": "rtcreseller_${sid}",
+            "password": "rtcreseller_${sid}"
         }
     }
 ]
