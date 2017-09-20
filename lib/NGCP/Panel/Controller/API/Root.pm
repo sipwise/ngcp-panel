@@ -166,7 +166,11 @@ sub GET : Allow {
                 $item_rs = $full_mod->item_rs($c, "");
             }
             if ($item_rs) {
-                $sorting_cols = [$item_rs->result_source->columns];
+                if(ref $item_rs eq "ARRAY") {
+                    $sorting_cols = [map { $_->{name} } @{ $item_rs }];
+                } else {
+                    $sorting_cols = [$item_rs->result_source->columns];
+                }
             }
         }
         my ($form_fields,$form_fields_upload) = $form ? $self->get_collection_properties($form) : ([],[]);
