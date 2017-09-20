@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 use JSON qw//;
+use UUID;
 
 use NGCP::Panel::Utils::ComxAPIClient;
 use NGCP::Panel::Utils::Generic qw/compare/;
@@ -89,9 +90,15 @@ sub _create_rtc_user {
         return unless &{$err_code}(
             'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
+    my ($uuid_bin, $uuid);
+    UUID::generate($uuid_bin);
+    UUID::unparse($uuid_bin, $uuid);
+    my $rand = get_random(10, $err_code);
+    return unless $rand;
+    my $pass = unpack("H*", $rand);
     my $user = $comx->create_user(
-            $reseller_name . '@ngcp.com',
-            $reseller_name . 'pass12345',
+            $uuid . '@ngcp.local',
+            $pass,
         );
     if ($user->{code} != 201) {
         return unless &{$err_code}(
@@ -105,8 +112,8 @@ sub _create_rtc_user {
 
     # 4. create related app
     my $app = $comx->create_app(
-            $reseller_name . '_default_app',
-            $reseller_name . '.www.sipwise.com',
+            $uuid . '_default_app',
+            $uuid . '.sipwise.local',
             $user->{data}{id},
         );
     if ($app->{code} != 201) {
@@ -419,6 +426,8 @@ sub get_rtc_subscriber_data {
     unless ($rtc_session) {
         return {enable_rtc => 0};  # JSON::false ?
     }
+
+    # TODO: huh? is this the right browser token?
     return {enable_rtc => 1, rtc_browser_token => 'abcde TODO'};
 }
 
@@ -718,6 +727,19 @@ sub get_rtc_session {
             "Couldn't find session. Error code: " . $session->{code}, $session->{debug});
     }
     return $session;
+}
+
+sub get_random {
+    my ($num, $err_code) = @_;
+    my ($fd, $buf);
+    unless(open($fd, '<', '/dev/urandom')) {
+        return unless &{$err_code}("Failed to open /dev/urandom: $!");
+    }
+    unless(read($fd, $buf, $num) == $num) {
+        return unless &{$err_code}("Failed to read $num bytes from /dev/urandom: $!");
+    }
+    close($fd);
+    return $buf;
 }
 
 1;

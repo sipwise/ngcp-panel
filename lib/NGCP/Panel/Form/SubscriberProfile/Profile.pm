@@ -25,7 +25,7 @@ has_field 'description' => (
     #not_nullable => 1, in the future?
     element_attr => {
         rel => ['tooltip'],
-        title => ['Arbitrary text.'],
+        title => ['The description of the Subscriber Profile.'],
     },
 );
 
@@ -35,7 +35,7 @@ has_field 'set_default' => (
     required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Make this profile automatically the default profile for new subscribers having this profile set.'],
+        title => ['Make this profile automatically the default profile for new subscribers having assigned the Profile Set this profile belongs.'],
     },
 );
 
@@ -43,6 +43,10 @@ has_field 'attribute' => (
     type => 'Compound',
     label => 'Attributes',
     #do_label => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An array of subscriber preference names the subscriber can control.'],
+    },
 );
 
 has_field 'save' => (

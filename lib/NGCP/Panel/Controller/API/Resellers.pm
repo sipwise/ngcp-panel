@@ -202,6 +202,7 @@ sub POST :Allow {
                 status => $resource->{status},
                 contract_id => $resource->{contract_id},
             });
+            my $rtcfail = 0;
             NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
             NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
                 resource => $resource,
@@ -211,8 +212,10 @@ sub POST :Allow {
                     my ($msg, $debug) = @_;
                     $c->log->debug($debug) if $debug;
                     $c->log->warn($msg);
+                    $rtcfail = 1;
                     return;
                 });
+                die "failed to create rtcengine reseller" if($rtcfail);
         } catch($e) {
             $c->log->error("failed to create reseller: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reseller.");

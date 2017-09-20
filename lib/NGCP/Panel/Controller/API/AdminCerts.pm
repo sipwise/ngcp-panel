@@ -33,7 +33,12 @@ sub return_representation_post {}
 sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
 
-    my $login = $resource->{login} // $c->user->login;
+    my $login;
+    if($c->user->read_only) {
+        $login = $c->user->login;
+    } else {
+        $login = $resource->{login} // $c->user->login;
+    }
     my $item_rs = $self->get_list($c);
     my $admin = $item_rs->search({
         login => $login,
@@ -49,6 +54,7 @@ sub create_item {
     # b. you're a master
     # c. you're a superuser
     unless($c->user->login eq $login || $c->user->is_master || $c->user->is_superuser) {
+        $c->log->warn("Admin " . $c->user->login . " trying to create certs for user $login, reject");
         $self->error($c, HTTP_FORBIDDEN, "Insufficient privileges to create certificate for this administrator");
         return;
     }

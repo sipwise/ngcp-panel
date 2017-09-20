@@ -95,9 +95,13 @@ sub auto :Private {
                 } else {
                     $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_cert");
                 }
-                if($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
+                if($c->user->read_only && $c->req->method eq "POST" &&
+                        $c->req->uri->path =~ m|^/api/admincerts/$|) {
+                    $c->log->info("let read-only user '".$c->user->login."' generate admin cert for itself");
+                } elsif($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
                     $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
                     $c->user->logout;
+                    $c->log->error("++++ body data: " . $c->req->body_data);
                     $c->response->status(403);
                     $c->res->body(JSON::to_json({
                         message => "Invalid HTTP method for read-only user",
@@ -180,9 +184,13 @@ sub auto :Private {
                 } else {
                     $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
                 }
-                if($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
+                if($c->user->read_only && $c->req->method eq "POST" &&
+                        $c->req->uri->path =~ m|^/api/admincerts/$|) {
+                    $c->log->info("let read-only user '".$c->user->login."' generate admin cert for itself");
+                } elsif($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
                     $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
                     $c->user->logout;
+                    $c->log->error("++++ body data: " . $c->req->body_data);
                     $c->response->status(403);
                     $c->res->body(JSON::to_json({
                         message => "Invalid HTTP method for read-only user",
