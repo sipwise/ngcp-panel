@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab399f4_f7640ce7",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 13
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-09-20T16:11:23Z",
+      "side": 1,
+      "message": "is_primary not needed to filter anymore, since we reload the whole item below properly (including is_primary) anyways",
+      "revId": "e8035e6cde6f8a8bff61e48459fcb66d16d4c716",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
