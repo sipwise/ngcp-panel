@@ -4,14 +4,15 @@ use warnings;
 use strict;
 
 use JSON qw//;
+use UUID;
 
 use NGCP::Panel::Utils::ComxAPIClient;
 use NGCP::Panel::Utils::Generic qw/compare/;
 
 sub modify_reseller_rtc {
     my %params = @_;
-    my ($old_resource, $resource, $config, $reseller_item, $err_code) =
-        @params{qw/old_resource resource config reseller_item err_code/};
+    my ($c, $old_resource, $resource, $config, $reseller_item, $err_code) =
+        @params{qw/c old_resource resource config reseller_item err_code/};
 
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return 0; };
@@ -25,6 +26,7 @@ sub modify_reseller_rtc {
         }
 
         _create_rtc_user(
+            c => $c,
             resource => $resource,
             config => $config,
             reseller_item => $reseller_item,
@@ -54,6 +56,7 @@ sub modify_reseller_rtc {
                 $resource->{status} ne 'terminated') {  # enable rtc
 
             _create_rtc_user(
+                c => $c,
                 resource => $resource,
                 config => $config,
                 reseller_item => $reseller_item,
@@ -65,8 +68,8 @@ sub modify_reseller_rtc {
 
 sub _create_rtc_user {
     my %params = @_;
-    my ($resource, $config, $reseller_item, $err_code) =
-        @params{qw/resource config reseller_item err_code/};
+    my ($c, $resource, $config, $reseller_item, $err_code) =
+        @params{qw/c resource config reseller_item err_code/};
 
     my $rtc_networks = $resource->{rtc_networks} // [];
     if ('ARRAY' ne (ref $rtc_networks)) {
@@ -89,9 +92,13 @@ sub _create_rtc_user {
         return unless &{$err_code}(
             'Rtc Login failed. Check config settings. Status code: ' . $comx->login_status->{code}, $comx->login_status->{debug});
     }
+    my ($uuid_bin, $uuid);
+    UUID::generate($uuid_bin);
+    UUID::unparse($uuid_bin, $uuid);
+    my $pass = unpack("H*", get_random($c, 10));
     my $user = $comx->create_user(
-            $reseller_name . '@ngcp.com',
-            $reseller_name . 'pass12345',
+            $uuid . '@ngcp.local',
+            $pass,
         );
     if ($user->{code} != 201) {
         return unless &{$err_code}(
@@ -105,8 +112,8 @@ sub _create_rtc_user {
 
     # 4. create related app
     my $app = $comx->create_app(
-            $reseller_name . '_default_app',
-            $reseller_name . '.www.sipwise.com',
+            $uuid . '_default_app',
+            $uuid . '.sipwise.local',
             $user->{data}{id},
         );
     if ($app->{code} != 201) {
@@ -419,13 +426,15 @@ sub get_rtc_subscriber_data {
     unless ($rtc_session) {
         return {enable_rtc => 0};  # JSON::false ?
     }
+
+    # TODO: huh? is this the right browser token?
     return {enable_rtc => 1, rtc_browser_token => 'abcde TODO'};
 }
 
 sub modify_subscriber_rtc {
     my %params = @_;
-    my ($old_resource, $resource, $config, $prov_subs, $err_code) =
-        @params{qw/old_resource resource config prov_subs err_code/};
+    my ($c, $old_resource, $resource, $config, $prov_subs, $err_code) =
+        @params{qw/c old_resource resource config prov_subs err_code/};
 
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return 0; };
@@ -468,6 +477,7 @@ sub modify_subscriber_rtc {
                 $resource->{status} ne 'terminated') {  # enable rtc
 
             _create_rtc_user(
+                c => $c,
                 resource => $resource,
                 config => $config,
                 prov_subs => $prov_subs,
@@ -718,6 +728,21 @@ sub get_rtc_session {
             "Couldn't find session. Error code: " . $session->{code}, $session->{debug});
     }
     return $session;
+}
+
+sub get_random {
+    my ($c, $num) = @_;
+    my ($fd, $buf);
+    unless(open($fd, '<', '/dev/urandom')) {
+        $c->log->error("Failed to open /dev/urandom: $!");
+        return time;
+    }
+    unless(read($fd, $buf, $num) == $num) {
+        $c->log->error("Failed to read $num bytes from /dev/urandom: $!");
+        return time;
+    }
+    close($fd);
+    return $buf;
 }
 
 1;
