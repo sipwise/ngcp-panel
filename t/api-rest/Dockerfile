@@ -1,11 +1,11 @@
-# DOCKER_NAME=ngcp-panel-tests-rest-api-jessie
-FROM docker.mgm.sipwise.com/sipwise-jessie:latest
+# DOCKER_NAME=ngcp-panel-tests-rest-api-stretch
+FROM docker.mgm.sipwise.com/sipwise-stretch:latest
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2017-09-19
+ENV REFRESHED_AT 2017-09-21
 
 # files that get-code generates
 COPY t/api-rest/sources.list.d/builddeps.list /etc/apt/sources.list.d/
@@ -32,6 +32,9 @@ COPY t/api-rest/control /tmp/
 RUN mk-build-deps /tmp/control
 RUN dpkg --force-depends -i /tmp/ngcp-panel-tests-rest-api-build-deps_1.0_all.deb
 RUN apt-get --assume-yes -f install
+# Ensure package ngcp-panel-tests-rest-api-build-deps is installed as
+# apt-get might just remove it instead of installing (due to force option).
+RUN dpkg-query -s ngcp-panel-tests-rest-api-build-deps
 
 # for prove execution
 RUN wget http://deb.sipwise.com/files/libtest-pretty-perl_0.31-1~bpo80+1_all.deb
@@ -53,16 +56,16 @@ WORKDIR /home/testuser
 #
 # you need to put the proper NGCP sources at t/sources.list.d/builddeps.list
 # for instance, trunk:
-# echo "deb https://deb.sipwise.com/autobuild/ release-trunk-jessie main" > /
+# echo "deb https://deb.sipwise.com/autobuild/ release-trunk-stretch main" > /
 #  t/sources.list.d/builddeps.list
 #
 # NOTE: run the following command from root folder of git repository:
-# % docker build --tag="ngcp-panel-tests-rest-api-jessie" -f t/api-rest/Dockerfile .
-# % docker run --rm -i -t -v $(pwd):/code:rw ngcp-panel-tests-rest-api-jessie:latest bash
+# % docker build --tag="ngcp-panel-tests-rest-api-stretch" -f t/api-rest/Dockerfile .
+# % docker run --rm -i -t -v $(pwd):/code:rw ngcp-panel-tests-rest-api-stretch:latest bash
 #
 # Use the existing docker image (run from ngcp-panel base directory):
-# % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie
-# % docker run --rm -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-jessie:latest bash
+# % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-stretch
+# % docker run --rm -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-stretch:latest bash
 #
 # Inside docker:
 #   su - testuser
