@@ -164,7 +164,7 @@
   <message name="empty_Response">
   </message>
 
-  <!-- this is curently only used by create_interception -->
+  <!-- this is currently only used by create_interception -->
   <message name="integer_Response">
     <part name="data" type="xsd:int" />
   </message>

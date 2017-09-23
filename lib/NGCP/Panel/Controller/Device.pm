@@ -432,7 +432,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                         unless($old_range) {
                             $old_range = $range_rs->create($range);
                         } else {
-                            # formhandler only passes set check-boxes, so explicitely unset here
+                            # formhandler only passes set check-boxes, so explicitly unset here
                             $range->{can_private} //= 0;
                             $range->{can_shared} //= 0;
                             $range->{can_blf} //= 0;

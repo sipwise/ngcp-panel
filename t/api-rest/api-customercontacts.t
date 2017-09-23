@@ -319,7 +319,7 @@ my %customer_contact_map = ();
     my $customer = _create_customer($customer_contact->{id});
     my $subscriber1 = _create_subscriber($customer,contact_id => $subscriber1_contact->{id});
     my $subscriber2 = _create_subscriber($customer,contact_id => $subscriber2_contact->{id});
-    #termination wether subscriber is terminated or not.
+    #termination whether subscriber is terminated or not.
     _delete_customer_contact($subscriber1_contact);
     _delete_subscriber($subscriber2);
     _delete_customer_contact($subscriber2_contact);

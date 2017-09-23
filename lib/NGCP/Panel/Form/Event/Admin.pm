@@ -21,7 +21,7 @@ has_field 'export_status' => (
 
 has_field 'exported_at' => (
     type => 'Text',
-    title => 'The timestamp when the exporting occured.',
+    title => 'The timestamp when the exporting occurred.',
     required => 0,
 );
 

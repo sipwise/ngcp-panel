@@ -22,7 +22,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Specifies the fees to be applied for a call if it matches the source or destination number of the call. You can POST fees individually one-by-one using json. To bulk-upload fees, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection while specifying the the billing profile via URI parameters, like "/api/billingfees/?billing_profile_id=xx&amp;purge_existing=true"';
+    return 'Specifies the fees to be applied for a call if it matches the source or destination number of the call. You can POST fees individually one-by-one using json. To bulk-upload fees, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection while specifying the billing profile via URI parameters, like "/api/billingfees/?billing_profile_id=xx&amp;purge_existing=true"';
 }
 
 sub query_params {

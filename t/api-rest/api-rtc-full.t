@@ -59,7 +59,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
     $res = $ua->request($req);
     is($res->code, 201, "POST create contract");
     ($contract_id) = $res->header('Location') =~ m!/(\d+)$!;
-    ok($contract_id, "got contract_id") || die "we dont't continue here";
+    ok($contract_id, "got contract_id") || die "we don't continue here";
 
     $req = HTTP::Request->new('POST', $uri.'/api/resellers/');
     $req->header('Content-Type' => 'application/json');
@@ -74,7 +74,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
     $res = $ua->request($req);
     is($res->code, 201, "POST create reseller");
     ($reseller_id) = $res->header('Location') =~ m!/(\d+)$!;
-    ok($reseller_id, "got reseller_id")  || die "we dont't continue here";
+    ok($reseller_id, "got reseller_id")  || die "we don't continue here";
 
     $req = HTTP::Request->new('GET', $uri . "/api/resellers/$reseller_id");
     $res = $ua->request($req);
@@ -102,7 +102,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
     $res = $ua->request($req);
     is($res->code, 201, "POST create billingprofile");
     ($bprof_id) = $res->header('Location') =~ m!/(\d+)$!;
-    ok($bprof_id, "got bprof_id")  || die "we dont't continue here";
+    ok($bprof_id, "got bprof_id")  || die "we don't continue here";
 
     $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
     $req->header('Content-Type' => 'application/json');
@@ -114,7 +114,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
     $res = $ua->request($req);
     is($res->code, 201, "POST create customercontact");
     ($customercontact_id) = $res->header('Location') =~ m!/(\d+)$!;
-    ok($customercontact_id, "got customercontact_id")  || die "we dont't continue here";
+    ok($customercontact_id, "got customercontact_id")  || die "we don't continue here";
 
     $req = HTTP::Request->new('POST', $uri.'/api/customers/');
     $req->header('Content-Type' => 'application/json');
@@ -129,7 +129,7 @@ my ($contract_id, $reseller_id, $customer_id, $bprof_id, $customercontact_id, $n
     $res = $ua->request($req);
     is($res->code, 201, "POST create customer");
     ($customer_id) = $res->header('Location') =~ m!/(\d+)$!;
-    ok($customer_id, "got customer_id")  || die "we dont't continue here";
+    ok($customer_id, "got customer_id")  || die "we don't continue here";
 
     diag("customer id: $customer_id");
 }
@@ -153,7 +153,7 @@ my ($sub1_id, $sub1_name, $sub2_id, $sub2_name);
     $res = $ua->request($req);
     is($res->code, 201, "POST create subscriber 1");
     ($sub1_id) = $res->header('Location') =~ m!/(\d+)$!;
-    ok($sub1_id, "got sub1_id")  || die "we dont't continue here";
+    ok($sub1_id, "got sub1_id")  || die "we don't continue here";
 
     $req = HTTP::Request->new('PATCH', $uri."/api/subscriberpreferences/$sub1_id");
     $req->header('Content-Type' => 'application/json-patch+json');
@@ -180,7 +180,7 @@ my ($sub1_id, $sub1_name, $sub2_id, $sub2_name);
     $res = $ua->request($req);
     is($res->code, 201, "POST create subscriber 2");
     ($sub2_id) = $res->header('Location') =~ m!/(\d+)$!;
-    ok($sub2_id, "got sub2_id")  || die "we dont't continue here";
+    ok($sub2_id, "got sub2_id")  || die "we don't continue here";
 
     $req = HTTP::Request->new('PATCH', $uri."/api/subscriberpreferences/$sub2_id");
     $req->header('Content-Type' => 'application/json-patch+json');

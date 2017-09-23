@@ -210,7 +210,7 @@ NGCP::Panel::Utils::Device
 
 =head1 DESCRIPTION
 
-Diffrent business logic method for pbx devices
+Different business logic method for pbx devices
 
 =head1 METHODS
 

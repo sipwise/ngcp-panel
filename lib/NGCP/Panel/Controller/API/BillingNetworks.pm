@@ -47,7 +47,7 @@ sub query_params {
                 second => sub {
                     return { join => 'billing_network_blocks',
                              group_by => 'me.id', }
-                             #distinct => 1 }; #not neccessary if _CHECK_BLOCK_OVERLAPS was always on
+                             #distinct => 1 }; #not necessary if _CHECK_BLOCK_OVERLAPS was always on
                 },
             },
         },

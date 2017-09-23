@@ -49,7 +49,7 @@ $test_machine->check_bundle();
     $rules->[1]->{content}->{replace_pattern} = '${callee_in}_' . time();
     $test_machine->request_put(@{$rules->[1]}{qw/content location/});
     my ($res, $rule, $req) = $test_machine->check_item_get($rules->[1]->{location});
-    #While I don't know how to test raw data when we recieve inflated
+    #While I don't know how to test raw data when we receive inflated
     #so just checked in the DB    
     #print Dumper $rules->[1]->{content};
     ok(exists $rule->{direction} && $rule->{direction} =~ /^(in|out)$/ , "check existence of direction");

@@ -374,7 +374,7 @@ END%]
         </li>
         <li>
             <b>copy, move</b>
-            <p>Copies or moves (copy, then remove) the value from property defined by <b>from</b> to the propery defined by <b>path</b>.</p>
+            <p>Copies or moves (copy, then remove) the value from property defined by <b>from</b> to the property defined by <b>path</b>.</p>
         </li>
     </ul>
 </p>

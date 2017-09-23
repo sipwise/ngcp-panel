@@ -60,7 +60,7 @@ sub validate {
     }
 
     if ($self->has_errors) {
-        #dont add more errors
+        #don't add more errors
     } elsif (defined $cc && $cc ne '' && (!defined $sn || $sn eq '')) {
         my $err_msg = 'Subscriber Number required if Country Code is set';
         $self->add_error($err_msg);

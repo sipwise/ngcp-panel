@@ -142,7 +142,7 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             revalidate => 0,
         },
         ds1_spans_optical => {
-            name => 'SpanGroup', # TODO: double occurence, is that acceptable?
+            name => 'SpanGroup', # TODO: double occurrence, is that acceptable?
             parent => 'ds3_interface',
             revalidate => 0,
         },

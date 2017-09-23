@@ -102,7 +102,7 @@ sub localize {
     $c->loc('Session-Timer Min Refresh Interval');
     $c->loc('Set Min-SE value in SBC. This is also used to build 422 reply if remote Min-SE is smaller than local Min-SE.');
     $c->loc('Session-Timer Max Refresh Interval');
-    $c->loc('Sets upper limit on accepted Min-SE value in in SBC.');
+    $c->loc('Sets upper limit on accepted Min-SE value in SBC.');
     $c->loc('Session-Timer Refresh Method');
     $c->loc('SIP Session Timers refresh method.');
     $c->loc('System Sound Set');
@@ -128,7 +128,7 @@ sub localize {
     $c->loc('Enable Apple/Google Mobile Push');
     $c->loc('Send inbound call to Mobile Push server when called subscriber is not registered. This can not be used together with CFNA as call will be then simply forwarded.');
     $c->loc('Use valid Alias CLI as NPN');
-    $c->loc('Search for partial match of user-provided number (UPN) to subscriber\'s  primary E164 number and aliases. If it mathes, take UPN as valid wihout allowed_clis check and copy UPN to network-provided number (NPN).');
+    $c->loc('Search for partial match of user-provided number (UPN) to subscriber\'s  primary E164 number and aliases. If it matches, take UPN as valid without allowed_clis check and copy UPN to network-provided number (NPN).');
     $c->loc('Total max of overall calls of Customer');
     $c->loc('Maximum number of concurrent sessions (calls) for subscribers within the same account');
     $c->loc('Total max of outbound calls of Customer');
@@ -405,7 +405,7 @@ sub form_strings {
     $c->loc('Alias Number');
     $c->loc('Alias numbers');
     $c->loc('Alias number');
-    $c->loc('where e-mail notifications are sent, a list of e-mail addreses separated by comma');
+    $c->loc('where e-mail notifications are sent, a list of e-mail addresses separated by comma');
     $c->loc('Level Name');
     $c->loc('April');
     $c->loc('Contact Email');
