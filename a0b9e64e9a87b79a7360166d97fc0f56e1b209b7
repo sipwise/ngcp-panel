@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_d92e73a5",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-09-25T11:13:36Z",
+      "side": 0,
+      "message": "why is this removed? i\u0027mean not that its required/useful, but afair its in place with other controllers as well",
+      "range": {
+        "startLine": 57,
+        "startChar": 12,
+        "endLine": 57,
+        "endChar": 124
+      },
+      "revId": "a0b9e64e9a87b79a7360166d97fc0f56e1b209b7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
