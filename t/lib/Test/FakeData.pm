@@ -563,8 +563,9 @@ sub set_data_from_script{
     }
     #dirty hack, part 2
     if(grep {/^load_data_only$/} @ARGV){
-        no strict "vars";
-        $data_out = $data_in;
+        my $filename = grep {/^tempfile=$/} @ARGV;
+        $filename =~ s/^tempfile=//;
+        store($data_in,$filename);
         die;
     }
 }
@@ -579,9 +580,10 @@ sub load_data_from_script{
     if(-e $collection_file && fgrep { /set_data_from_script/ } $collection_file ){
         #dirty hack, part 1. To think about Safe
         my ($fh, $filename) = tempfile();
-        local @ARGV = qw/load_data_only/;
-        our $data_out;
+        local @ARGV = ('load_data_only', 'tempfile='.$filename);
         do $collection_file;
+        my $data_out = retrieve($filename);
+        close $fh;
         if($data_out && $data_out->{$collection_name}){
             $self->data->{$collection_name} //= {};
             $self->data->{$collection_name} = $data_out->{$collection_name};
