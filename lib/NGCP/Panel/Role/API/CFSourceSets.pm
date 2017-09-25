@@ -12,11 +12,21 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
-use NGCP::Panel::Form::CFSourceSetAPI;
+
+use NGCP::Panel::Form::CallForward::CFSourceSetSubAPI;
+#use NGCP::Panel::Form::CallForward::CFSourceSetSubadminAPI;
+use NGCP::Panel::Form::CallForward::CFSourceSetAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CFSourceSetAPI->new;
+    if($c->user->roles eq "subscriber") {
+        return NGCP::Panel::Form::CallForward::CFSourceSetSubAPI->new;
+    } elsif($c->user->roles eq "subscriberadmin") {
+        #return NGCP::Panel::Form::CallForward::CFSourceSetSubadminAPI->new;
+        return NGCP::Panel::Form::CallForward::CFSourceSetSubAPI->new;
+    } else {
+        return NGCP::Panel::Form::CallForward::CFSourceSetAPI->new;
+    }
 }
 
 sub hal_from_item {
@@ -33,6 +43,7 @@ sub hal_from_item {
 
     my $b_subs_id = $item->subscriber->voip_subscriber->id;
     $resource{subscriber_id} = $b_subs_id;
+    my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
 
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
@@ -45,9 +56,8 @@ sub hal_from_item {
             NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
-            $self->get_journal_relation_link($item->id),
+            $adm ? $self->get_journal_relation_link($item->id) : (),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -78,7 +88,8 @@ sub _item_rs {
                 } , {
                     join => {'subscriber' => {'contract' => 'contact'} },
                 });
-    } elsif($c->user->role eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+    # TODO: do we want subscriberadmins to update other subs' entries?
+    } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         $item_rs = $c->model('DB')->resultset('voip_cf_source_sets')
             ->search_rs({
                     'subscriber_id' => $c->user->id,
@@ -116,6 +127,13 @@ sub update_item {
         return;
     }
 
+    if($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
+    }
+    # elsif($c->user->roles eq "subscriberadmin") {
+    #    $resource->{subscriber_id} //= $c->user->id;
+    #}
+
     my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
     unless ($b_subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
@@ -126,6 +144,10 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
         last;
     }
+    #if($c->user->roles eq "subscriberadmin" && $subscriber->account_id != $c->user->account_id) {
+    #    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
+    #    last;
+    #}
 
     try {
         $item->update({

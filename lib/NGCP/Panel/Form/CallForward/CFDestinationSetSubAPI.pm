@@ -1,19 +1,9 @@
-package NGCP::Panel::Form::CFDestinationSetAPI;
+package NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI;
 use HTML::FormHandler::Moose;
-use HTML::FormHandler::Widget::Block::Bootstrap;
 extends 'HTML::FormHandler';
 
 has_field 'id' => (
     type => 'Hidden',
-);
-
-has_field 'subscriber_id' => (
-    type => 'PosInteger',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The subscriber id this destination set belongs to.']
-    },
 );
 
 has_field 'name' => (

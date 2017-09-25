@@ -182,11 +182,10 @@ sub POST :Allow {
 
         my $dset;
 
-        if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        if($c->user->roles eq "subscriberadmin") {
+            $resource->{subscriber_id} //= $c->user->voip_subscriber->id;
+        } elsif($c->user->roles eq "subscriber") {
             $resource->{subscriber_id} = $c->user->voip_subscriber->id;
-        } elsif(!defined $resource->{subscriber_id}) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
-            last;
         }
 
         my $b_subscriber = $schema->resultset('voip_subscribers')->find({
@@ -196,6 +195,12 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
             last;
         }
+        #if($c->user->roles eq "subscriberadmin" &&
+        #   $b_subscriber->contract_id != $c->user->account_id) {
+        #    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
+        #    last;
+        #}
+
         my $subscriber = $b_subscriber->provisioning_voip_subscriber;
         unless($subscriber) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");

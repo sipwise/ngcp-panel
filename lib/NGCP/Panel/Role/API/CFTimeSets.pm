@@ -12,11 +12,17 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
-use NGCP::Panel::Form::CFTimeSetAPI;
+
+use NGCP::Panel::Form::CallForward::CFTimeSetSubAPI;
+use NGCP::Panel::Form::CallForward::CFTimeSetAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CFTimeSetAPI->new;
+    if($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        return NGCP::Panel::Form::CallForward::CFTimeSetSubAPI->new;
+    } else {
+        return NGCP::Panel::Form::CallForward::CFTimeSetAPI->new;
+    }
 }
 
 sub hal_from_item {
@@ -79,7 +85,7 @@ sub _item_rs {
                 } , {
                     join => {'subscriber' => {'contract' => 'contact'} },
                 });
-    } elsif($c->user->role eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+    } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         $item_rs = $c->model('DB')->resultset('voip_cf_time_sets')
             ->search_rs({
                     'subscriber_id' => $c->user->id,
@@ -115,6 +121,10 @@ sub update_item {
     if (ref $resource->{times} ne "ARRAY") {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'times'. Must be an array.");
         return;
+    }
+
+    if($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
     }
 
     my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});

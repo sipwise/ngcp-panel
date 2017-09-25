@@ -1,11 +1,6 @@
-package NGCP::Panel::Form::CFMappingsAPI;
+package NGCP::Panel::Form::CallForward::CFMappingsAPI;
 use HTML::FormHandler::Moose;
-use HTML::FormHandler::Widget::Block::Bootstrap;
 extends 'HTML::FormHandler';
-
-has '+widget_wrapper' => (default => 'Bootstrap');
-sub build_render_list {[qw/fields actions/]}
-sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'id' => (
     type => 'Hidden',
@@ -73,7 +68,8 @@ has_field 'cfs' => (
         rel => ['tooltip'], 
         title => ['Call Forward SMS, Number of Objects, each containing the keys ' .
                   '"destinationset", "timeset" and "sourceset". The values must be the name of ' .
-                  'a corresponding set which belongs to the same subscriber.'],
+                  'a corresponding set which belongs to the same subscriber. Alternatively, ' .
+                  'you can pass destinationset_id, timeset_id and sourceset_id instead of names.'],
     },
 );
 
@@ -83,9 +79,19 @@ has_field 'cfu.destinationset' => (
     do_label => 0,
 );
 
+has_field 'cfu.destinationset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfu.timeset' => (
     type => 'Text',
     do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfu.timeset_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -95,9 +101,19 @@ has_field 'cfu.sourceset' => (
     do_label => 0,
 );
 
+has_field 'cfu.sourceset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfb.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfb.destinationset_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -107,9 +123,19 @@ has_field 'cfb.timeset' => (
     do_label => 0,
 );
 
+has_field 'cfb.timeset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfb.sourceset' => (
     type => 'Text',
     do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfb.sourceset_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -119,9 +145,19 @@ has_field 'cft.destinationset' => (
     do_label => 0,
 );
 
+has_field 'cft.destinationset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cft.timeset' => (
     type => 'Text',
     do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cft.timeset_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -131,9 +167,19 @@ has_field 'cft.sourceset' => (
     do_label => 0,
 );
 
+has_field 'cft.sourceset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfna.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfna.destinationset_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -143,9 +189,19 @@ has_field 'cfna.timeset' => (
     do_label => 0,
 );
 
+has_field 'cfna.timeset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfna.sourceset' => (
     type => 'Text',
     do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfna.sourceset_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -155,9 +211,19 @@ has_field 'cfs.destinationset' => (
     do_label => 0,
 );
 
+has_field 'cfs.destinationset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfs.timeset' => (
     type => 'Text',
     do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfs.timeset_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -167,16 +233,15 @@ has_field 'cfs.sourceset' => (
     do_label => 0,
 );
 
+has_field 'cfs.sourceset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cft_ringtimeout' => (
     type => 'PosInteger',
     do_wrapper => 1,
     do_label => 0,
-);
-
-has_block 'fields' => (
-    tag => 'div',
-    class => [qw(modal-body)],
-    render_list => [qw(cfu cfb cft cfna cfs)],
 );
 
 1;

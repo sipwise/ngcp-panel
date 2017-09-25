@@ -13,11 +13,11 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
-use NGCP::Panel::Form::CFMappingsAPI;
+use NGCP::Panel::Form::CallForward::CFMappingsAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CFMappingsAPI->new;
+    return NGCP::Panel::Form::CallForward::CFMappingsAPI->new;
 }
 
 sub hal_from_item {
@@ -33,15 +33,32 @@ sub hal_from_item {
     $ringtimeout_preference = $ringtimeout_preference ? $ringtimeout_preference->value : undef;
 
     for my $mapping ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
-        my $dset = $mapping->destination_set ? $mapping->destination_set->name : undef;
-        my $tset = $mapping->time_set ? $mapping->time_set->name : undef;
-        my $sset = $mapping->source_set ? $mapping->source_set->name : undef;
         push @{ $resource->{$mapping->type} }, {
-                destinationset => $dset,
-                timeset => $tset,
-                sourceset => $sset,
+                $mapping->destination_set ? (
+                    destinationset => $mapping->destination_set->name,
+                    destinationset_id => $mapping->destination_set->id,
+                ) : (
+                    destinationset => undef,
+                    destinationset_id => undef,
+                ),
+                $mapping->time_set ? (
+                    timeset => $mapping->time_set->name,
+                    timeset_id => $mapping->time_set->id,
+                ) : (
+                    timeset => undef,
+                    timeset_id => undef,
+                ),
+                $mapping->source_set ? (
+                    sourceset => $mapping->source_set->name,
+                    sourceset_id => $mapping->source_set->id,
+                ) : (
+                    sourceset => undef,
+                    sourceset_id => undef,
+                ),
             };
     }
+
+    my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
 
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
@@ -54,9 +71,8 @@ sub hal_from_item {
             NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
-            $self->get_journal_relation_link($item->id),
+            $adm ? $self->get_journal_relation_link($item->id) : (),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -69,6 +85,7 @@ sub hal_from_item {
         run => 0,
     );
     $resource->{cft_ringtimeout} = $ringtimeout_preference;
+    $resource->{id} = int($item->id);
     $hal->resource($resource);
     return $hal;
 }
@@ -90,7 +107,7 @@ sub _item_rs {
         });
     } elsif($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
         $item_rs = $item_rs->search({
-            'uuid' => $c->user->uuid,
+            'me.uuid' => $c->user->uuid,
         });
     }
 
@@ -138,31 +155,64 @@ sub update_item {
         $cf_preferences{$type} = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $item->provisioning_voip_subscriber, attribute => $type);
         for my $mapping (@{ $resource->{$type} }) {
-            unless ($mapping->{destinationset}) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinationset' in '$type'. Must be defined.");
+            my $dset;
+            if(defined $mapping->{destinationset_id}) {
+                $dset = $dsets_rs->find({
+                    subscriber_id => $p_subs_id,
+                    id => $mapping->{destinationset_id},
+                });
+            } elsif($mapping->{destinationset}) {
+                $dset = $dsets_rs->find({
+                    subscriber_id => $p_subs_id,
+                    name => $mapping->{destinationset},
+                });
+            } else {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing field 'destinationset' or 'destinationset_id' in '$type'.");
                 return;
             }
-            my $dset = $dsets_rs->find({subscriber_id => $p_subs_id, name => $mapping->{destinationset}, });
             unless ($dset) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'destinationset'. Could not be found.");
                 return;
             }
-            my $tset;
-            if ($mapping->{timeset}) {
-                $tset = $tsets_rs->find({subscriber_id => $p_subs_id, name => $mapping->{timeset}, });
-                unless ($tset) {
-                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'timeset'. Could not be found.");
-                    return;
-                }
+
+            my $tset; my $has_tset;
+            if (defined $mapping->{timeset_id}) {
+                $tset = $tsets_rs->find({
+                    subscriber_id => $p_subs_id,
+                    id => $mapping->{timeset_id},
+                });
+                $has_tset = 1;
+            } elsif (defined $mapping->{timeset}) {
+                $tset = $tsets_rs->find({
+                    subscriber_id => $p_subs_id,
+                    name => $mapping->{timeset},
+                });
+                $has_tset = 1;
             }
-            my $sset;
-            if ($mapping->{sourceset}) {
-                $sset = $ssets_rs->find({subscriber_id => $p_subs_id, name => $mapping->{sourceset}, });
-                unless ($sset) {
-                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'sourceset'. Could not be found.");
-                    return;
-                }
+            if($has_tset && !$tset) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'timeset'. Could not be found.");
+                return;
             }
+
+            my $sset; my $has_sset;
+            if (defined $mapping->{sourceset_id}) {
+                $sset = $ssets_rs->find({
+                    subscriber_id => $p_subs_id,
+                    id => $mapping->{sourceset_id},
+                });
+                $has_sset = 1;
+            } elsif (defined $mapping->{sourceset}) {
+                $sset = $ssets_rs->find({
+                    subscriber_id => $p_subs_id,
+                    name => $mapping->{sourceset},
+                });
+                $has_sset = 1;
+            }
+            if($has_sset && !$sset) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'sourceset'. Could not be found.");
+                return;
+            }
+
             push @new_mappings, $mappings_rs->new_result({
                     destination_set_id => $dset->id,
                     time_set_id => $tset ? $tset->id : undef,
