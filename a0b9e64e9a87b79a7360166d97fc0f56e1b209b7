@@ -22,6 +22,30 @@
       "revId": "a0b9e64e9a87b79a7360166d97fc0f56e1b209b7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_fcd7a5eb",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2017-09-25T14:57:12Z",
+      "side": 0,
+      "message": "If it\u0027s in other controllers, then it\u0027s a mistake there, because this particular link points to itself, and is therefore redundant to the hal-specified \"self\" link. Other links are supposed to link to related items/resources. I\u0027ve removed them in the past when I saw them, and will continue to do so.",
+      "parentUuid": "dab895d6_d92e73a5",
+      "range": {
+        "startLine": 57,
+        "startChar": 12,
+        "endLine": 57,
+        "endChar": 124
+      },
+      "revId": "a0b9e64e9a87b79a7360166d97fc0f56e1b209b7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
