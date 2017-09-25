@@ -148,17 +148,17 @@ sub auto :Private {
                     $c->log->debug("++++++ checking '".$c->user->domain->domain."' against '$d'");
                     if ($c->user->domain->domain ne $d) {
                         $c->user->logout;
-                        $c->log->debug("+++++ invalid api subscriber http login (domain check failed)");
-                        $c->log->warn("invalid api http login from '".$c->req->address."'");
+                        $c->log->debug("+++++ invalid api subscriber http login by '$username' (domain check failed)");
+                        $c->log->warn("invalid api http login from '".$c->req->address."' by '$username'");
                         my $r = $c->get_auth_realm($realm);
                         $r->credential->authorization_required_response($c, $r);
                         return;
                     }
-                    $c->log->debug("++++++ subscriber '".$c->user->webusername."' authenticated via api_subscriber_http");
+                    $c->log->debug("++++++ subscriber '$username' authenticated via api_subscriber_http");
                 } else {
                     $c->user->logout if($c->user);
                     $c->log->debug("+++++ invalid api subscriber http login");
-                    $c->log->warn("invalid api http login from '".$c->req->address."'");
+                    $c->log->warn("invalid api http login from '".$c->req->address."' by '$username'");
                     my $r = $c->get_auth_realm($realm);
                     $r->credential->authorization_required_response($c, $r);
                     return;
@@ -173,7 +173,7 @@ sub auto :Private {
                 unless($c->user_exists && $c->user->is_active)  {
                     $c->user->logout if($c->user);
                     $c->log->debug("+++++ invalid api admin http login");
-                    $c->log->warn("invalid api http login from '".$c->req->address."'");
+                    $c->log->warn("invalid api http login from '".$c->req->address."' by '$user'");
                     my $r = $c->get_auth_realm($realm);
                     $r->credential->authorization_required_response($c, $r);
                     return;
