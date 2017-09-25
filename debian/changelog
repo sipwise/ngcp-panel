@@ -1,3 +1,23 @@
+ngcp-panel (1.14.6.1+0~mr4.5.6.1) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [31f8d7d] TT#17761 Add ghostscript as dependency to ngcp-panel for invoice generation
+  * [acde83a] TT#19300 Fix ngcp-panel start race condition on server boot
+
+  [ Victor Seva ]
+  * [1ba01d2] TT#17642 docker: follow policy to include NGCP repository
+  * [affeefb] TT#17502 docker: fix relative path from new context
+
+  [ Irina Peshinskaya ]
+  * [ff74e99] TT#12197 Use contacts connected to the resellers for the customers creation
+  * [00f0c40] TT#17068 Fix phone symbol # in the generated invoice
+  * [5722d3c] TT#17068 Move # processing to TT
+  * [c573b36] TT#20233 Consider empty display_name to update preferences
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Sep 2017 14:31:41 +0200
+
 ngcp-panel (1.14.6.0+0~mr4.5.6.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
