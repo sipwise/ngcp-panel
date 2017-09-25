@@ -12,11 +12,21 @@ use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
-use NGCP::Panel::Form::CFDestinationSetAPI;
+use NGCP::Panel::Form::CallForward::CFDestinationSetAPI;
+use NGCP::Panel::Form::CallForward::CFDestinationSetSubadminAPI;
+use NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CFDestinationSetAPI->new;
+    if($c->user->roles eq "subscriber") {
+        return NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI->new;
+    } elsif($c->user->roles eq "subscriberadmin") {
+        # TODO: allow subadmin to manipulate other subs?
+        #return NGCP::Panel::Form::CallForward::CFDestinationSetSubadminAPI->new;
+        return NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI->new;
+    } else {
+        return NGCP::Panel::Form::CallForward::CFDestinationSetAPI->new;
+    }
 }
 
 sub hal_from_item {
@@ -43,6 +53,7 @@ sub hal_from_item {
 
     my $b_subs_id = $item->subscriber->voip_subscriber->id;
     $resource{subscriber_id} = $b_subs_id;
+    my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
 
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
@@ -55,9 +66,8 @@ sub hal_from_item {
             NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
-            $self->get_journal_relation_link($item->id),
+            $adm ? $self->get_journal_relation_link($item->id) : (),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -117,6 +127,10 @@ sub update_item {
         resource => $resource,
         exceptions => [ "subscriber_id" ],
     );
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
+    }
+
 
     if (! exists $resource->{destinations} ) {
         $resource->{destinations} = [];

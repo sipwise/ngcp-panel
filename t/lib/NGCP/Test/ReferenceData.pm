@@ -192,7 +192,8 @@ sub _read_depends {
                         #$self->_test->debug("+++ checking hint field $$hint{field} with expected value $$hint{value} against ".$ref->{data}->{$hint->{field}}."\n");
                         if(defined $hint->{name} && $hint->{name} eq $ref->{name}) {
                             $hint_found = 1;
-                            $self->_dependstree->{$d->{name}} = $ref->{data};
+                            $self->_dependstree->{$d->{name}}->{data} = $ref->{data};
+                            $self->_dependstree->{$d->{name}}->{meta}->{type} = $ref->{type};
                             last;
                         } elsif(defined $hint->{field} && exists $ref->{data}->{$hint->{field}} &&
                            "".$hint->{value} eq "".$ref->{data}->{$hint->{field}}) {
@@ -200,7 +201,8 @@ sub _read_depends {
                             #$self->_test->debug("found reference data using hints:\n");
                             #$self->_test->debug Dumper $ref->{data};
                             $hint_found = 1;
-                            $self->_dependstree->{$d->{name}} = $ref->{data};
+                            $self->_dependstree->{$d->{name}}->{data} = $ref->{data};
+                            $self->_dependstree->{$d->{name}}->{meta}->{type} = $ref->{type};
                             last;
                         }
                     }
@@ -212,7 +214,8 @@ sub _read_depends {
                     #$self->_test->debug("found reference data:\n");
                     #$self->_test->debug Dumper $ref->{data};
                     $resource_found = 1;
-                    $self->_dependstree->{$d->{name}} = $ref->{data};
+                    $self->_dependstree->{$d->{name}}->{data} = $ref->{data};
+                    $self->_dependstree->{$d->{name}}->{meta}->{type} = $ref->{type};
                     last;
                 }
             }
@@ -317,8 +320,26 @@ sub _resolve_deps {
 
 sub data {
     my ($self, $name) = @_;
-    if(exists $self->_dependstree->{$name}) {
-        return $self->_dependstree->{$name};
+    my $ref = $self->_dependstree->{$name};
+    if($ref) {
+        if($ref->{meta}->{full}) {
+            return $ref->{data};
+        } else {
+            $self->_test->debug("$name not fully fetched yet\n");
+            my $res = $self->client->_get(
+                'api/'.$ref->{meta}->{type}.'/'.$ref->{data}->{id}
+            );
+            unless($res->is_success) {
+                die "Failed to fully fetch " .
+                    "$ref->{meta}->{type} #$ref->{data}->{id}: " .
+                    $res->status_line."\n";
+            }
+            my $data = from_json($res->decoded_content);
+            $self->_dependstree->{$name}->{data} = $data;
+            $self->_test->debug("$name now fully fetched yet\n");
+            $self->_dependstree->{$name}->{meta}->{full} = 1;
+            return $data;
+        }
     } else {
         die "Failed to find given dependency name '$name' in dependency tree, check name against 'depends' in constructor\n";
     }

@@ -1,6 +1,5 @@
-package NGCP::Panel::Form::CFTimeSetAPI;
+package NGCP::Panel::Form::CallForward::CFTimeSetSubAPI;
 use HTML::FormHandler::Moose;
-use HTML::FormHandler::Widget::Block::Bootstrap;
 extends 'HTML::FormHandler';
 
 has_field 'id' => (
@@ -11,15 +10,6 @@ has_field 'name' => (
     type => 'Text',
     label => 'Name',
     required => 1,
-);
-
-has_field 'subscriber_id' => (
-    type => 'PosInteger',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The subscriber id this time set belongs to.']
-    },
 );
 
 has_field 'times' => (

@@ -1,11 +1,6 @@
-package NGCP::Panel::Form::CFMappingsAPI;
+package NGCP::Panel::Form::CallForward::CFMappingsAPI;
 use HTML::FormHandler::Moose;
-use HTML::FormHandler::Widget::Block::Bootstrap;
 extends 'HTML::FormHandler';
-
-has '+widget_wrapper' => (default => 'Bootstrap');
-sub build_render_list {[qw/fields actions/]}
-sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'id' => (
     type => 'Hidden',
@@ -171,12 +166,6 @@ has_field 'cft_ringtimeout' => (
     type => 'PosInteger',
     do_wrapper => 1,
     do_label => 0,
-);
-
-has_block 'fields' => (
-    tag => 'div',
-    class => [qw(modal-body)],
-    render_list => [qw(cfu cfb cft cfna cfs)],
 );
 
 1;
