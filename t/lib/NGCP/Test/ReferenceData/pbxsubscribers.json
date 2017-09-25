@@ -21,5 +21,29 @@
             "customer_id": "${filled pbxaccount customer}",
             "status": "active"
         }
+    },
+    {
+        "name": "pbx seat subscriber",
+        "type": "subscribers",
+        "depends": [
+            "pbx pilot subscriber",
+            "filled pbxaccount customer",
+            "domain"
+        ],
+        "data": {
+            "username": "pbx_seat_user_${sid}",
+            "password": "pbx_seat_pass_${sid}",
+            "webusername": "pbx_seat_webuser_${sid}",
+            "webpassword": "pbx_seat_webpass_${sid}",
+            "display_name": "pbx seat display ${sid}",
+            "primary_number": {
+                "cc": "43", "ac": "998", "sn": "${sid}"
+            },
+            "administrative": false,
+            "domain_id": "${domain}",
+            "customer_id": "${filled pbxaccount customer}",
+            "status": "active",
+            "pbx_extension": "101"
+        }
     }
 ]

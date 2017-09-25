@@ -161,10 +161,15 @@ has 'last_rtt' => (
 sub _request {
     my ($self, $req) = @_;
     my $t0 = [gettimeofday];
+    $self->_test->debug("content of " . $req->method . " request to " . $req->uri . ":\n");
+    $self->_test->debug($req->content || "<empty request>");
+    $self->_test->debug("\n");
     my $res = $self->_ua->request($req);
     my $rtt = tv_interval($t0);
     $self->last_rtt($rtt);
-    $self->_test->debug($res->decoded_content // '<empty response>');
+    $self->_test->debug("content of response:\n");
+    $self->_test->debug($res->decoded_content || "<empty response>");
+    $self->_test->debug("\n");
     return $res;
 }
 

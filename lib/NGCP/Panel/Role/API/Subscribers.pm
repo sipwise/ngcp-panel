@@ -24,10 +24,8 @@ sub get_form {
     my ($self, $c) = @_;
 
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-        $c->log->error("++++ admin form");
         return NGCP::Panel::Form::Subscriber::SubscriberAPI->new(ctx => $c);
     } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $c->log->error("++++ subscriber form");
         return NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI->new(ctx => $c);
     }
 }

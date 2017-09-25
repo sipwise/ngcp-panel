@@ -238,6 +238,9 @@ sub _test_fields {
                     my $k = (keys %{ $skip{$field} })[0]; 
                     my $refold = delete $refelem->{$k};
                     my $old = delete $elem->{$k};
+                    $self->_test->debug("compare content of $field\n");
+                    $self->_test->debug("element: " . Dumper $elem);
+                    $self->_test->debug("reference element: " . Dumper $refelem);
                     is_deeply($elem, $refelem, $name . " - content of $field");
                     $self->_inc_test_count;
                     $refelem->{$k} = $refold;
@@ -246,6 +249,9 @@ sub _test_fields {
                 is(@{ $ref->{$field} }, @{ $item->{$field} }, "$name - element count of $field");
                 $self->_inc_test_count;
             } else {
+                $self->_test->debug("compare content of $field via bag comparison\n");
+                $self->_test->debug("element: " . Dumper $item->{$field});
+                $self->_test->debug("reference element: " . Dumper $ref->{$field});
                 cmp_bag($item->{$field}, $ref->{$field}, $name . " - content of $field");
                 $self->_inc_test_count;
             }
@@ -668,6 +674,7 @@ sub test_put {
     for(my $i = 0; $i < @data; ++$i) {
 
         my $d = $self->_get_replaced_data($item, $data[$i]);
+        $self->_test->debug("replaced data: " . Dumper $d);
         my $e = $expected[$i];
         my $name = "$testname $i";
 

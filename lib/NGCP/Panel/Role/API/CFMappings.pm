@@ -13,11 +13,11 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
-use NGCP::Panel::Form::CFMappingsAPI;
+use NGCP::Panel::Form::CallForward::CFMappingsAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CFMappingsAPI->new;
+    return NGCP::Panel::Form::CallForward::CFMappingsAPI->new;
 }
 
 sub hal_from_item {
@@ -43,6 +43,8 @@ sub hal_from_item {
             };
     }
 
+    my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
+
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             NGCP::Panel::Utils::DataHalLink->new(
@@ -54,9 +56,8 @@ sub hal_from_item {
             NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
             NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
-            $self->get_journal_relation_link($item->id),
+            $adm ? $self->get_journal_relation_link($item->id) : (),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -69,6 +70,7 @@ sub hal_from_item {
         run => 0,
     );
     $resource->{cft_ringtimeout} = $ringtimeout_preference;
+    $resource->{id} = int($item->id);
     $hal->resource($resource);
     return $hal;
 }
@@ -90,7 +92,7 @@ sub _item_rs {
         });
     } elsif($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
         $item_rs = $item_rs->search({
-            'uuid' => $c->user->uuid,
+            'me.uuid' => $c->user->uuid,
         });
     }
 
