@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_7f2b8730",
+        "filename": "lib/NGCP/Panel/Controller/API/CapabilitiesItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-09-26T08:25:11Z",
+      "side": 1,
+      "message": "better omit this?",
+      "range": {
+        "startLine": 1,
+        "startChar": 8,
+        "endLine": 1,
+        "endChar": 54
+      },
+      "revId": "e3f18ded00237d37a12c6137d3154002f8baa8e6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
