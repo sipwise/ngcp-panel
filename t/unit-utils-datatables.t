@@ -59,7 +59,7 @@ sub _test_datatables_process {
     ok(1, "_test_datatables_process completed successfully");
     is($stash->{sEcho}, 9251, "sEcho was properly set");
     is($stash->{iTotalRecords}, 99, "totalRecords were retrieved by first call of count()");
-        # not a neccessary conditon for correct functionality, but a hint
+        # not a necessary conditon for correct functionality, but a hint
     return;
 }
 

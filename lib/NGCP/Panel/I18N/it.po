@@ -6158,7 +6158,7 @@ msgstr "Salva SVG"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Search for partial match of user-provided number (UPN) to subscriber's  "
-"primary E164 number and aliases. If it mathes, take UPN as valid wihout "
+"primary E164 number and aliases. If it matches, take UPN as valid without "
 "allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 "Ricerca per un riscontro parziale di user-provided number (UPN) con il "
@@ -6356,13 +6356,13 @@ msgid "Sorry!"
 msgstr "Siamo desolati!"
 
 #: share/templates/notfound_page.tt
-msgid "Sorry, an error has occured, Requested page not found!"
+msgid "Sorry, an error has occurred, Requested page not found!"
 msgstr ""
 "Mi spiace, si è verificato un errore, la pagina richiesta non è stata "
 "trovata!"
 
 #: share/templates/denied_page.tt
-msgid "Sorry, an error has occured, requested operation denied!"
+msgid "Sorry, an error has occurred, requested operation denied!"
 msgstr ""
 "Mi spiace, si è verificato un errore, l´operazione richiesta non è permessa!"
 
@@ -7675,7 +7675,7 @@ msgid "Vouchers"
 msgstr "Vouchers"
 
 #: share/templates/error_page.tt
-msgid "We are terribly sorry, an exceptional error has occured:"
+msgid "We are terribly sorry, an exceptional error has occurred:"
 msgstr "Mi spiace, si è verificato un errore eccezionale:"
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt
@@ -8177,7 +8177,7 @@ msgstr "si"
 #~ msgstr ""
 #~ "Una lista di reti di fatturazione, ognuno contenente le chiavi "
 #~ "(fondamentali) indirizzo \"ip\" e \"mask\" per specificare la porzione di "
-#~ "rete (subnet prefix lenght)."
+#~ "rete (subnet prefix length)."
 
 #~ msgid ""
 #~ "An array of billing network blocks, each containing the keys (base) \"ip"
@@ -8187,7 +8187,7 @@ msgstr "si"
 #~ msgstr ""
 #~ "Una lista di reti di fatturazione, ognuno contenente le chiavi "
 #~ "(fondamentali) indirizzo \"ip\" e \"mask\" per specificare la porzione di "
-#~ "rete (subnet prefix lenght). I blocchi specificati non si devono "
+#~ "rete (subnet prefix length). I blocchi specificati non si devono "
 #~ "sovrapporre e possono indipendentemente contenere indirizzi IPv4 e IPv6."
 
 #~ msgid ""
@@ -8235,7 +8235,7 @@ msgstr "si"
 #~ msgstr ""
 #~ "Una lista  di location, ognuno contenente le chiavi (fondamentali): "
 #~ "indirizzo \"ip\" e \"mask\" per specificare la porzione di rete (subnet "
-#~ "prefix lenght)."
+#~ "prefix length)."
 
 #~ msgid ""
 #~ "An array of location blocks, each containing the keys (base) \"ip\" "
@@ -8245,7 +8245,7 @@ msgstr "si"
 #~ msgstr ""
 #~ "Una lista di location, ognuno contenente le chiavi (fondamentali): "
 #~ "indirizzo \"ip\" e \"mask\" per specificare la porzione di rete (subnet "
-#~ "prefix lenght). I blocchi specificati non si devono sovrapporre e possono "
+#~ "prefix length). I blocchi specificati non si devono sovrapporre e possono "
 #~ "indipendentemente contenere indirizzi IPv4 e IPv6."
 
 #~ msgid ""
@@ -10234,7 +10234,7 @@ msgstr "si"
 #~ msgid "The billing network id this profile is restricted to."
 #~ msgstr "L´Id rete di fatturazione a cui questo profilo è limitato"
 
-#~ msgid "The billing packge to switch to after topup."
+#~ msgid "The billing package to switch to after topup."
 #~ msgstr "Il pacchetto tariffario a cui passare dopo una ricarica"
 
 #~ msgid ""
@@ -11189,10 +11189,10 @@ msgstr "si"
 #~ msgid "The timestamp of the topup attempt."
 #~ msgstr "La data e ora in cui è avvenuto un tentativo di ricarica."
 
-#~ msgid "The timestamp when the exporting occured."
+#~ msgid "The timestamp when the exporting occurred."
 #~ msgstr "La data e ora in cui è avvenuta l´esportazione."
 
-#~ msgid "The timestamp when the rating occured."
+#~ msgid "The timestamp when the rating occurred."
 #~ msgstr "La data e ora in cui è avvenuta la tariffazione."
 
 #~ msgid "The top-up amount in Euro/USD/etc."
@@ -11814,7 +11814,7 @@ msgstr "si"
 #~ msgstr "settimana/e"
 
 #~ msgid ""
-#~ "where e-mail notifications are sent, a list of e-mail addreses separated "
+#~ "where e-mail notifications are sent, a list of e-mail addresses separated "
 #~ "by comma"
 #~ msgstr ""
 #~ "dove inviare la notifica email, una lista di indirizzi e-mail separati da "

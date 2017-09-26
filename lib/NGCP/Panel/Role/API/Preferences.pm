@@ -130,7 +130,7 @@ sub get_resource {
                 if($rwr_set) {
                     $resource->{rewrite_rule_set} = $rwr_set->name;
                 } else {
-                    $c->log->error("no rewrite rule set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
+                    $c->log->error("no rewrite rule set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, although it's stored in preference id ".$pref->id);
                     # let it slip through
                 }
                 $processed = 1;
@@ -149,7 +149,7 @@ sub get_resource {
                 if($ncos) {
                     $resource->{$pref_name} = $ncos->level;
                 } else {
-                    $c->log->error("no ncos level for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
+                    $c->log->error("no ncos level for '".$pref->attribute->attribute."' with value '".$pref->value."' found, although it's stored in preference id ".$pref->id);
                     # let it slip through
                 }
                 $processed = 1;
@@ -168,7 +168,7 @@ sub get_resource {
                 if($container) {
                     $resource->{$pref_name} = $container->name;
                 } else {
-                    $c->log->error("no emergency mapping container for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
+                    $c->log->error("no emergency mapping container for '".$pref->attribute->attribute."' with value '".$pref->value."' found, although it's stored in preference id ".$pref->id);
                     # let it slip through
                 }
                 $processed = 1;
@@ -185,7 +185,7 @@ sub get_resource {
                 if($set) {
                     $resource->{$pref->attribute->attribute} = $set->name;
                 } else {
-                    $c->log->error("no sound set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
+                    $c->log->error("no sound set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, although it's stored in preference id ".$pref->id);
                     # let it slip through
                 }
                 $processed = 1;

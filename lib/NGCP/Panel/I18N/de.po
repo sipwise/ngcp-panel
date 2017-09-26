@@ -6004,7 +6004,7 @@ msgstr "SVG speichern"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Search for partial match of user-provided number (UPN) to subscriber's  "
-"primary E164 number and aliases. If it mathes, take UPN as valid wihout "
+"primary E164 number and aliases. If it matches, take UPN as valid without "
 "allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 "Suche nach partieller Übereinstimmung der user-provided Nummer (UPN) in der "
@@ -6196,13 +6196,13 @@ msgid "Sorry!"
 msgstr "Verzeihung!"
 
 #: share/templates/notfound_page.tt
-msgid "Sorry, an error has occured, Requested page not found!"
+msgid "Sorry, an error has occurred, Requested page not found!"
 msgstr ""
 "Verzeihung, ein Problem ist aufgetreten. Die angeforderte Seite konnte nicht "
 "gefunden werden!"
 
 #: share/templates/denied_page.tt
-msgid "Sorry, an error has occured, requested operation denied!"
+msgid "Sorry, an error has occurred, requested operation denied!"
 msgstr ""
 "Verzeihung, ein Problem ist aufgetreten. Die angeforderte Operation ist "
 "nicht erlaubt!"
@@ -7493,7 +7493,7 @@ msgid "Vouchers"
 msgstr ""
 
 #: share/templates/error_page.tt
-msgid "We are terribly sorry, an exceptional error has occured:"
+msgid "We are terribly sorry, an exceptional error has occurred:"
 msgstr "Wir bitten um Verzeihung, ein schwerer Fehler ist aufgetreten:"
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt
@@ -9257,7 +9257,7 @@ msgstr "ja"
 #~ msgstr "bis inkl."
 
 #~ msgid ""
-#~ "where e-mail notifications are sent, a list of e-mail addreses separated "
+#~ "where e-mail notifications are sent, a list of e-mail addresses separated "
 #~ "by comma"
 #~ msgstr ""
 #~ "Komma-separierte Liste von Email-Adressen, and die Benachrichtigungen "

@@ -9,7 +9,7 @@
 			<h2>[% c.loc('[_1] Access Denied', c.response.status) %]</h2>
 			
 			<div class="error-details">
-				[% c.loc('Sorry, an error has occured, requested operation denied!') %]
+				[% c.loc('Sorry, an error has occurred, requested operation denied!') %]
 				
 			</div> <!-- /error-details -->
 			

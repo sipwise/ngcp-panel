@@ -84,7 +84,7 @@ sub update_device_model_ranges {
             unless($range_db) {#really this is strange situation
                 $range_db = $range_rs->create($range);
             } else {
-                # formhandler only passes set check-boxes, so explicitely unset here
+                # formhandler only passes set check-boxes, so explicitly unset here
                 $range->{can_private} //= 0;
                 $range->{can_shared} //= 0;
                 $range->{can_blf} //= 0;
@@ -326,7 +326,7 @@ NGCP::Panel::Utils::Device
 
 =head1 DESCRIPTION
 
-Diffrent business logic method for pbx devices
+Different business logic method for pbx devices
 
 =head1 METHODS
 

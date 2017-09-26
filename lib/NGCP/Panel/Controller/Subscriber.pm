@@ -2430,7 +2430,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     # we don't change this on edit
     $c->request->params->{username} = $prov_subscriber->username;
     if ($subadmin_pbx) {
-        #dont change the status
+        #don't change the status
         $c->request->params->{status} = $subscriber->status;
     }
     unless($posted) {

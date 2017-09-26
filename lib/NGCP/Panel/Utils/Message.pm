@@ -299,7 +299,7 @@ Params:
     $error - error log message, will be parsed and may also appear on the GUI
     $type  - 'panel' by default, means the message will go to both the log and the GUI,
              anything else but 'panel' is written only to the log.
-             Expandable with new types if neccessary.
+             Expandable with new types if necessary.
              Current types 'panel','internal','api_request','api_response'
     $data  - hash containing what will be written into the DATA= part of the log message
              (by default $c->request->params is used for the data source)
@@ -319,7 +319,7 @@ Params:
     $log   - additional information that will be added to LOG= only (no GUI).
     $type  - 'panel' by default, means the message will go to both the log and the GUI,
              anything else but 'panel' is written only to the log.
-             Expandable with new types if neccessary.
+             Expandable with new types if necessary.
              Current types 'panel','internal','api_request','api_response'
     $data  - hash containing what will be written into the DATA= part of the log message
              (by default $c->request->params is used for the data source)

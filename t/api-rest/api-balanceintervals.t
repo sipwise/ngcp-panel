@@ -1059,7 +1059,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         #is($intervals_b->{total_count},scalar (grep { $_->{contact_id} == $custcontact9->{id} } values %customer_map),"check total count of thread b results");
         #is($intervals_c->{total_count},3,"check total count of thread c results");
 
-        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were perfomed in parallel') if !$disable_parallel_catchup;
+        ok($t2 - $t1 < $delta_serialized,'expected delay to assume only required contracts were locked and requests were performed in parallel') if !$disable_parallel_catchup;
 
 
     } else {

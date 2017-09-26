@@ -6011,7 +6011,7 @@ msgstr "Сохранить SVG"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Search for partial match of user-provided number (UPN) to subscriber's  "
-"primary E164 number and aliases. If it mathes, take UPN as valid wihout "
+"primary E164 number and aliases. If it matches, take UPN as valid without "
 "allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 "Искать частичное совпадение пользовательского номера (UPN) с первичным и "
@@ -6208,11 +6208,11 @@ msgid "Sorry!"
 msgstr "Извините!"
 
 #: share/templates/notfound_page.tt
-msgid "Sorry, an error has occured, Requested page not found!"
+msgid "Sorry, an error has occurred, Requested page not found!"
 msgstr "Извините, произошла ошибка, запрошенная страница не найдена!"
 
 #: share/templates/denied_page.tt
-msgid "Sorry, an error has occured, requested operation denied!"
+msgid "Sorry, an error has occurred, requested operation denied!"
 msgstr "Извините, произошла ошибка, запрошенная операция запрещена!"
 
 #: share/templates/customer/details.tt share/templates/sound/list.tt
@@ -7494,7 +7494,7 @@ msgid "Vouchers"
 msgstr ""
 
 #: share/templates/error_page.tt
-msgid "We are terribly sorry, an exceptional error has occured:"
+msgid "We are terribly sorry, an exceptional error has occurred:"
 msgstr "Нам ужасно жаль, но приключилась беда:"
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt
@@ -9523,10 +9523,10 @@ msgstr "да"
 #~ msgid "The timestamp of the call initiation."
 #~ msgstr "Отметка времени начала звонка."
 
-#~ msgid "The timestamp when the exporting occured."
+#~ msgid "The timestamp when the exporting occurred."
 #~ msgstr "Отметка времени когда произошел экспорт."
 
-#~ msgid "The timestamp when the rating occured."
+#~ msgid "The timestamp when the rating occurred."
 #~ msgstr "Отметка времени когда произошел биллинг."
 
 #~ msgid "The transport protocol (one of UDP, TCP, TLS, ANY)."
@@ -9798,7 +9798,7 @@ msgstr "да"
 #~ msgstr "не тарифицированный"
 
 #~ msgid ""
-#~ "where e-mail notifications are sent, a list of e-mail addreses separated "
+#~ "where e-mail notifications are sent, a list of e-mail addresses separated "
 #~ "by comma"
 #~ msgstr ""
 #~ "получатели EMail уведомлений, список EMail адресов разделенных запятой"

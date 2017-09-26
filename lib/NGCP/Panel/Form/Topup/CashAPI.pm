@@ -28,7 +28,7 @@ has_field 'package_id' => (
     required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The billing packge to switch to after topup.']
+        title => ['The billing package to switch to after topup.']
     },
 );
 

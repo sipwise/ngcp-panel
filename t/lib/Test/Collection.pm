@@ -794,7 +794,7 @@ sub check_list_collection{
         ok(exists $q{page} && exists $q{rows}, "$self->{name}: check existence of 'page' and 'row' in 'self'");
         my $page = int($q{page});
         my $rows = int($q{rows});
-        ok($rows != 0, "check existance of the 'rows'");
+        ok($rows != 0, "check existence of the 'rows'");
         if($page == 1) {
             ok(!exists $list_collection->{_links}->{prev}->{href}, "$self->{name}: check absence of 'prev' on first page");
         } else {

@@ -103,7 +103,7 @@ has_field 'rated_at' => (
     type => 'Text',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The timestamp when the rating occured.']
+        title => ['The timestamp when the rating occurred.']
     },
     required => 0,
 );
@@ -125,7 +125,7 @@ has_field 'exported_at' => (
     type => 'Text',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The timestamp when the exporting occured.']
+        title => ['The timestamp when the exporting occurred.']
     },
     required => 0,
 );

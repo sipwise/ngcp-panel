@@ -333,7 +333,7 @@ PREPARE_BALANCE_CATCHUP:
 	# the interval start represents the time the last topup happened in case of "topup".
 	# in case of "topup_interval", the interval start represents the contract creation.
 	# the cash balance should be discarded when
-	#  1. the current/call time is later than than $notopup_discard_intervals periods
+	#  1. the current/call time is later than $notopup_discard_intervals periods
 	#  after the interval start, or
 	#  2. we have the "carry_over_timely" mode, and the current/call time is beyond
 	#  the timely end already
@@ -844,7 +844,7 @@ sub _get_notopup_expiration {
     my($contract,$start_mode,$notopup_discard_intervals,$interval_unit,$last_balance)= @params{qw/contract $start_mode notopup_discard_intervals interval_unit last_balance/};
     my $notopup_expiration = undef;
     if ($notopup_discard_intervals) {
-        #take the start of the latest interval where a topup occured,
+        #take the start of the latest interval where a topup occurred,
         #add the allowed number+1 of the current package' interval units.
         #the balance is discarded if the start of the next package
         #exceed this calculated expiration date.
@@ -1162,7 +1162,7 @@ sub check_underrun_lock_level {
 
     if (defined $resource->{underrun_lock_level}) {
         unless(defined $resource->{underrun_lock_threshold}){
-            return 0 unless &{$err_code}("If specifying an underun lock level, 'underrun_lock_threshold' is required.",'underrun_lock_threshold');
+            return 0 unless &{$err_code}("If specifying an underrun lock level, 'underrun_lock_threshold' is required.",'underrun_lock_threshold');
         }
     }
     return 1;

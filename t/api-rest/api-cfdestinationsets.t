@@ -110,7 +110,7 @@ SKIP:
     my $d = $test_machine->check_create_correct( 1, sub{ 
         $_[0]->{name} .= '5954' ; 
     } )->[0];
-    ok(exists $d->{content}->{destinations}->[0]->{announcement_id},"Check announcement_id existance");
+    ok(exists $d->{content}->{destinations}->[0]->{announcement_id},"Check announcement_id existence");
     
     my (undef,$announcement_hal) = $test_machine->check_item_get('/api/soundhandles/'.$d->{content}->{destinations}->[0]->{announcement_id});
     ok($announcement_hal->{group} eq 'custom_announcements', 'Check announcement group' );

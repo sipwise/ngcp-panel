@@ -5406,7 +5406,7 @@ msgid "Save SVG"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid wihout allowed_clis check and copy UPN to network-provided number (NPN)."
+msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it matches, take UPN as valid without allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -5563,11 +5563,11 @@ msgid "Sorry!"
 msgstr ""
 
 #: share/templates/notfound_page.tt
-msgid "Sorry, an error has occured, Requested page not found!"
+msgid "Sorry, an error has occurred, Requested page not found!"
 msgstr ""
 
 #: share/templates/denied_page.tt
-msgid "Sorry, an error has occured, requested operation denied!"
+msgid "Sorry, an error has occurred, requested operation denied!"
 msgstr ""
 
 #: share/templates/customer/details.tt share/templates/sound/list.tt share/templates/widgets/reseller_domain_overview.tt
@@ -6667,7 +6667,7 @@ msgid "Vouchers"
 msgstr ""
 
 #: share/templates/error_page.tt
-msgid "We are terribly sorry, an exceptional error has occured:"
+msgid "We are terribly sorry, an exceptional error has occurred:"
 msgstr ""
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt share/templates/widgets/subscriberadmin_topmenu_settings.tt

@@ -39,7 +39,7 @@ has_field 'fraud_interval_notify' => (
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['where e-mail notifications are sent, a list of e-mail addreses separated by comma']
+        title => ['where e-mail notifications are sent, a list of e-mail addresses separated by comma']
     },
 );
 

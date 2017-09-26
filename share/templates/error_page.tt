@@ -9,7 +9,7 @@
 			<h2>[% c.loc('[_1] Internal server error', c.response.status) %]</h2>
 			
 			<div class="error-details">
-				<p>[% c.loc('We are terribly sorry, an exceptional error has occured:') %]</p>
+				<p>[% c.loc('We are terribly sorry, an exceptional error has occurred:') %]</p>
 				<div><strong>[% c.loc('incident number:') %]</strong> [% exception_incident %]</div>
 				<div><strong>[% c.loc('time of incident:') %]</strong> [% exception_timestamp %]</div>
 				<br/>

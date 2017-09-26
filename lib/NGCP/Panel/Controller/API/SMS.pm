@@ -156,7 +156,7 @@ sub create_item {
             $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send the sms");
         } else {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
-                "An internal error has occured when sending the sms, please contact the platform administrator or try again later");
+                "An internal error has occurred when sending the sms, please contact the platform administrator or try again later");
         }
     }
 
