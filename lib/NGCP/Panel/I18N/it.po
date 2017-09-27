@@ -6158,13 +6158,9 @@ msgstr "Salva SVG"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Search for partial match of user-provided number (UPN) to subscriber's  "
-"primary E164 number and aliases. If it matches, take UPN as valid without "
+"primary E164 number and aliases. If it mathes, take UPN as valid wihout "
 "allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
-"Ricerca per un riscontro parziale di user-provided number (UPN) con il "
-"numero primario E164 e numeri alias dell´abbonato. Se c'è riscontro, accetta "
-"UPN come valido senza controllo su allowed_clis e copia UPN in network-"
-"provided number (NPN)."
 
 #: share/templates/subscriber/preferences.tt
 msgid "Secret Key (empty=disabled)"
@@ -8011,6 +8007,16 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid ""
+#~ "Search for partial match of user-provided number (UPN) to subscriber's  "
+#~ "primary E164 number and aliases. If it matches, take UPN as valid without "
+#~ "allowed_clis check and copy UPN to network-provided number (NPN)."
+#~ msgstr ""
+#~ "Ricerca per un riscontro parziale di user-provided number (UPN) con il "
+#~ "numero primario E164 e numeri alias dell´abbonato. Se c'è riscontro, "
+#~ "accetta UPN come valido senza controllo su allowed_clis e copia UPN in "
+#~ "network-provided number (NPN)."
 
 #~ msgid "\"Timely\" Duration"
 #~ msgstr "Durata \"nel tempo\""

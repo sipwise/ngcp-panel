@@ -6004,13 +6004,9 @@ msgstr "SVG speichern"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Search for partial match of user-provided number (UPN) to subscriber's  "
-"primary E164 number and aliases. If it matches, take UPN as valid without "
+"primary E164 number and aliases. If it mathes, take UPN as valid wihout "
 "allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
-"Suche nach partieller Übereinstimmung der user-provided Nummer (UPN) in der "
-"Haupt-Nummer und den Alias-Nummern des Subscribers. Bei Übereinstimmung wird "
-"UPN nicht gegen allowed_clis geprüft und in die network-provided Nummer "
-"(NPN) kopiert."
 
 #: share/templates/subscriber/preferences.tt
 msgid "Secret Key (empty=disabled)"
@@ -7819,6 +7815,16 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid ""
+#~ "Search for partial match of user-provided number (UPN) to subscriber's  "
+#~ "primary E164 number and aliases. If it matches, take UPN as valid without "
+#~ "allowed_clis check and copy UPN to network-provided number (NPN)."
+#~ msgstr ""
+#~ "Suche nach partieller Übereinstimmung der user-provided Nummer (UPN) in "
+#~ "der Haupt-Nummer und den Alias-Nummern des Subscribers. Bei "
+#~ "Übereinstimmung wird UPN nicht gegen allowed_clis geprüft und in die "
+#~ "network-provided Nummer (NPN) kopiert."
 
 #~ msgid ""
 #~ "A POSIX regex matching against 'sip:user@domain' (e.g. '^sip:.+@example\\."
