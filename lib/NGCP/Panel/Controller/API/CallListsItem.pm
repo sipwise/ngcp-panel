@@ -5,6 +5,7 @@ use Sipwise::Base;
 
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::API::Calllist;
 
 use NGCP::Panel::Utils::ValidateJSON qw();
 use DateTime::TimeZone;
@@ -65,7 +66,7 @@ sub GET :Allow {
         my $schema = $c->model('DB');
         last unless $self->valid_id($c, $id);
 
-        my $owner = $self->get_owner_data($c, $schema);
+        my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
         last unless $owner;
         my $href_data = $owner->{subscriber} ? 
             "subscriber_id=".$owner->{subscriber}->id :

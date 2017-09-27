@@ -589,6 +589,7 @@ sub paginate_order_collection_rs {
     my ($self, $c, $item_rs, $params) = @_;
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
+    my $result_class = $item_rs->result_class();
     my $total_count = int($item_rs->count);
     $item_rs = $item_rs->search(undef, {
         page => $page,
@@ -608,6 +609,11 @@ sub paginate_order_collection_rs {
             $c->log->debug("ordering by $col");
         }
     }
+    my $result_class_after = $item_rs->result_class();
+    if($result_class ne $result_class_after){
+        $item_rs->result_class($result_class);
+    }
+
     return ($total_count, $item_rs);
 }
 
@@ -891,6 +897,7 @@ sub hal_from_item {
     }
     my $resource = $self->resource_from_item($c, $item, $form);
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
+    return unless $resource;
     my $links = $self->hal_links($c, $item, $resource, $form) // [];
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
@@ -902,8 +909,22 @@ sub hal_from_item {
             ),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $self->get_item_id($c, $item))),
-            NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:".$self->resource_name, href => sprintf("/api/%s/%s", $self->resource_name, $self->get_item_id($c, $item))),
+            NGCP::Panel::Utils::DataHalLink->new(
+                relation => 'self', 
+                href => sprintf(
+                    "%s%s", 
+                    $self->dispatch_path, 
+                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
+                ),
+            ),
+            NGCP::Panel::Utils::DataHalLink->new(
+                relation => "ngcp:".$self->resource_name, 
+                href => sprintf(
+                    "/api/%s/%s", 
+                    $self->resource_name, 
+                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
+                )
+            ),
             @$links
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -1027,8 +1048,13 @@ sub get_form {
     return ;
 }
 
+sub get_list{
+    my ($self, $c) = @_;
+    return $self->item_rs($c);
+}
+
 sub get_item_id{
-    my($self, $c, $item, $resource, $form) = @_;
+    my($self, $c, $item, $resource, $form, $params) = @_;
     return int(blessed $item ? $item->id : $item->{id});
 }
 
@@ -1189,5 +1215,6 @@ sub return_requested_type {
         $self->error($c, HTTP_BAD_REQUEST, $e);
     }
 }
+
 1;
 # vim: set tabstop=4 expandtab:

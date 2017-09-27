@@ -10,6 +10,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::API::Calllist;
 use DateTime::TimeZone;
 use NGCP::Panel::Utils::CallList qw();
 require Catalyst::ActionRole::ACL;
@@ -312,7 +313,7 @@ sub GET :Allow {
             return;
         }
 
-        my $owner = $self->get_owner_data($c, $schema);
+        my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
         last unless $owner;
         $c->stash(owner => $owner); # for query_param: direction
         my $items = $self->item_rs($c);
