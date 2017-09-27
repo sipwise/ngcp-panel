@@ -932,6 +932,11 @@ sub update_item {
         ($form, $form_exceptions) = $self->get_form($c, 'edit');
     }
 
+    $old_resource //= $self->resource_from_item($c, $item, $form);
+    $process_extras //= {};
+    return unless $self->process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
+    return unless $resource;
+
     if($form){
         if(!$form_exceptions && $form->can('form_exceptions')){
             $form_exceptions = $form->form_exceptions;
@@ -944,13 +949,6 @@ sub update_item {
         );
         return unless $resource;
     }
-
-    $old_resource //= $self->resource_from_item($c, $item, $form);
-
-    $process_extras //= {};
-
-    return unless $self->process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
-    return unless $resource;
     return unless $self->check_duplicate($c, $item, $old_resource, $resource, $form, $process_extras);
     return unless $self->check_resource($c, $item, $old_resource, $resource, $form, $process_extras);
 
