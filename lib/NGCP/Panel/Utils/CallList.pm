@@ -49,6 +49,8 @@ sub process_cdr_item {
     $params //= $c->req->params;
 
     $resource->{call_id} = $item->call_id;
+    $resource->{id} = $item->id;
+    $resource->{call_type} = $item->call_type;
 
     my $intra = 0;
     if($item->source_user_id && $item->source_account_id == $item->destination_account_id) {
@@ -284,7 +286,7 @@ sub process_cdr_item {
     $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$item->duration,3);
     $resource->{customer_cost} = $resource->{direction} eq "out" ?
         $item->source_customer_cost : $item->destination_customer_cost;
-    if ($cust->add_vat) {
+    if (defined $cust && $cust->add_vat) {
         $resource->{total_customer_cost} = $resource->{customer_cost} * (1 + $cust->vat_rate / 100);
     } else {
         $resource->{total_customer_cost} = $resource->{customer_cost};

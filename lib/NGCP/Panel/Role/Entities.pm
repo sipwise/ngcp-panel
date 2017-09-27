@@ -44,11 +44,6 @@ sub config_allowed_roles {
     return [qw/admin reseller/];
 }
 
-sub get_list{
-    my ($self, $c) = @_;
-    return $self->item_rs($c);
-}
-
 sub get {
     my ($self, $c) = @_;
     my $header_accept = $c->request->header('Accept');
@@ -60,6 +55,7 @@ sub get {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $items = $self->get_list($c);
+        return unless $items;
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my ($form) = $self->get_form($c);
@@ -68,7 +64,8 @@ sub get {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%s', $c->request->path, $self->get_item_id($c, $item)),
+                href     => sprintf('/%s%s', $c->request->path, $self->get_item_id($c, 
+                    $item, undef, undef, { purpose => 'hal_links_href' })),
             );
         }
         push @links,
