@@ -64,7 +64,7 @@ sub get {
         }
 
         my $hal = $self->hal_from_item($c, $item);
-
+        return unless $hal;
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
                 s|rel="(http://purl.org/sipwise/ngcp-api/#rel-[a-z]+)"|rel="item $1"|r =~
