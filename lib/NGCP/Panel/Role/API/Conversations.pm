@@ -12,6 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Form;
 
 use Tie::IxHash;
+use Class::Hash;
 
 my %call_fields = ();
 my $call_fields_tied = tie(%call_fields, 'Tie::IxHash');
@@ -78,7 +79,8 @@ tie(%sms_fields, 'Tie::IxHash');
 $sms_fields{subscriber_id} = 'me.subscriber_id';
 $sms_fields{time} = 'me.time';
 $sms_fields{direction} = 'me.direction';
-$sms_fields{caller} = 'me.callee';
+$sms_fields{caller} = 'me.caller';
+$sms_fields{callee} = 'me.callee';
 $sms_fields{text} = 'me.text';
 $sms_fields{reason} = 'me.reason';
 $sms_fields{status} = 'me.status';
@@ -116,11 +118,11 @@ $max_fields = scalar keys %fax_fields if ((scalar keys %fax_fields) > $max_field
 $max_fields = scalar keys %xmpp_fields if ((scalar keys %xmpp_fields) > $max_fields);
 
 my %enabled_conversations = (
-    call => 1,
+    call      => 1,
     voicemail => 1,
-    sms => 1,
-    fax => 1,
-    xmpp => 0,
+    sms       => 1,
+    fax       => 1,
+    xmpp      => 0,
 );
 
 sub item_name{
@@ -659,6 +661,33 @@ sub _get_select_list {
 
 }
 
+sub _get_field_number{
+    my($field) = @_;
+    my $number = $field;
+    $number=~s/\D+//g;
+    return $number;
+}
+
+sub get_item_numbered_fields{
+    my($item) = @_;
+    my $numbered_fields = [ sort {_get_field_number($a) <=> _get_field_number($b)} grep {/\d+$/} keys %$item ];
+    #my $start_number = _get_field_number($numbered_fields->[0]);
+    #my $end_number = _get_field_number($numbered_fields->[$#$numbered_fields]);
+    my $start_number = 0;
+    my $end_number = $#$numbered_fields;
+    return ($numbered_fields,$start_number,$end_number);
+}
+
+sub _get_item_with_accessors{
+    my($item,$fields) = @_;
+    my $item_res = {%$item};
+    my @accessors = keys %$fields;
+    my($numbered_fields,$start_number,$end_number) = get_item_numbered_fields($item_res);
+    #@{$item_res}{@accessors[@$numbered_fields]} = @{$item_res}{@{$numbered_fields}[$start_number..$end_number]};
+    @{$item_res}{@accessors} = @{$item_res}{@{$numbered_fields}[$start_number..$end_number]};
+    return $item_res;
+}
+
 sub _get_as_list {
 
     my ($fields,$min,$max) = @_;
@@ -685,22 +714,28 @@ sub get_form {
 
 sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
-
+    my $schema = $c->model('DB');
+    # todo: mashal specific fields, per conversation event type ...
+    my $fields = _get_fields_by_type($item->{type});
+    my $item_accessors_hash = _get_item_with_accessors($item, $fields);
+    my $item_mock_obj = Class::Hash->new(%$item_accessors_hash);
+    my $owner = $self->get_owner_data($c, $schema);
+    if(!$owner){
+        return;
+    }
+    $resource = NGCP::Panel::Utils::CallList::process_cdr_item($c, $item_mock_obj, $owner);
     use Data::Dumper;
     #$c->log->debug(Dumper($item));
     #$c->log->debug(Dumper($resource));
-
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
     );
-    my $timestamp = NGCP::Panel::Utils::DateTime::epoch_local($resource->{timestamp});
+    my $timestamp = NGCP::Panel::Utils::DateTime::epoch_local($resource->{start_time});
     #if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
     #    $timestamp->set_time_zone($c->req->param('tz'));
     #}
-    $resource->{timestamp} = $datetime_fmt->format_datetime($timestamp);
-    $resource->{timestamp} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
-
-    # todo: mashal specific fields, per conversation event type ...
+    $resource->{start_time} = $datetime_fmt->format_datetime($timestamp);
+    $resource->{start_time} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
 
     if ('call' eq $resource->{type}) {
         my $cdr_item = NGCP::Panel::Utils::CallList::process_cdr_item($c,_hash2obj(
@@ -717,6 +752,28 @@ sub process_hal_resource {
     }
 
     return $resource;
+}
+
+sub _get_fields_by_type{
+    my($type) = @_;
+    my $fields;
+
+    #my $var = $type.'_fields';
+    #$fields = %{$var};
+    #return $fields;
+
+    if('call' eq $type){
+        $fields = \%call_fields;
+    }elsif('voicemail' eq $type){
+        $fields = \%voicemail_fields;
+    }elsif('sms' eq $type){
+         $fields = \%sms_fields;
+    }elsif('fax' eq $type){
+         $fields = \%fax_fields;
+    }elsif('xmpp' eq $type){
+         $fields = \%xmpp_fields;
+    }
+    return $fields;
 }
 
 sub hal_links {
