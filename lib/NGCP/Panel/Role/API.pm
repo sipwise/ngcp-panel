@@ -891,6 +891,7 @@ sub hal_from_item {
     }
     my $resource = $self->resource_from_item($c, $item, $form);
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
+    return unless $resource;
     my $links = $self->hal_links($c, $item, $resource, $form) // [];
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
@@ -1187,6 +1188,84 @@ sub return_requested_type {
         $c->response->body($$data_ref);
     }catch($e){
         $self->error($c, HTTP_BAD_REQUEST, $e);
+    }
+}
+
+sub get_owner_data {
+    my ($self, $c, $schema, $source) = @_;
+
+    my $ret;
+    $source //= $c->req->params;
+    my $src_subscriber_id = $source->{subscriber_id};
+    my $src_customer_id = $source->{customer_id};
+    
+    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+        if($src_subscriber_id) {
+            my $sub = $schema->resultset('voip_subscribers')->find($src_subscriber_id);
+            unless($sub) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+                return;
+            }
+            if($c->user->roles eq "reseller" && $sub->contract->contact->reseller_id != $c->user->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+                return;
+            }
+            return {
+                subscriber => $sub,
+                customer => $sub->contract,
+            };
+        } elsif($src_customer_id) {
+            my $cust = $schema->resultset('contracts')->find($src_customer_id);
+            unless($cust && $cust->contact->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
+                return;
+            }
+            if($c->user->roles eq "reseller" && $cust->contact->reseller_id != $c->user->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
+                return;
+            }
+            return {
+                subscriber => undef,
+                customer => $cust,
+            };
+        } else {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory parameter 'subscriber_id' or 'customer_id' missing in request");
+            return;
+        }
+    } elsif($c->user->roles eq "subscriberadmin") {
+        if($src_subscriber_id) {
+            my $sub = $schema->resultset('voip_subscribers')->find($src_subscriber_id);
+            unless($sub) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+                return;
+            }
+            if($sub->contract_id != $c->user->account_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+                return;
+            }
+            return {
+                subscriber => $sub,
+                customer => $sub->contract,
+            };
+        } else {
+            my $cust = $schema->resultset('contracts')->find($c->user->account_id);
+            unless($cust && $cust->contact->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
+                return;
+            }
+            return {
+                subscriber => undef,
+                customer => $cust,
+            };
+        }
+    } elsif($c->user->roles eq "subscriber") {
+        return {
+            subscriber => $c->user->voip_subscriber,
+            customer => $c->user->voip_subscriber->contract,
+        };
+    } else {
+        $self->error($c, HTTP_NOT_FOUND, "Unknown role '".$c->user->roles."' of the user.");
+        return;
     }
 }
 1;
