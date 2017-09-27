@@ -891,6 +891,7 @@ sub hal_from_item {
     }
     my $resource = $self->resource_from_item($c, $item, $form);
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
+    return unless $resource;
     my $links = $self->hal_links($c, $item, $resource, $form) // [];
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
@@ -1189,5 +1190,6 @@ sub return_requested_type {
         $self->error($c, HTTP_BAD_REQUEST, $e);
     }
 }
+
 1;
 # vim: set tabstop=4 expandtab:

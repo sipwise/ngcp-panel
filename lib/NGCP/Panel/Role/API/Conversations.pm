@@ -3,15 +3,19 @@ package NGCP::Panel::Role::API::Conversations;
 use parent qw/NGCP::Panel::Role::API/;
 
 use Sipwise::Base;
-#use NGCP::Panel::Utils::Generic qw(:all);
+use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::CallList qw();
+use NGCP::Panel::Utils::API::Calllist qw();
+use NGCP::Panel::Utils::Fax;
 
 use NGCP::Panel::Utils::DateTime qw();
 use DateTime::Format::Strptime qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form;
+use Data::Dumper;
 
 use Tie::IxHash;
+#use Class::Hash;
 
 my %call_fields = ();
 my $call_fields_tied = tie(%call_fields, 'Tie::IxHash');
@@ -38,35 +42,10 @@ $call_fields{source_customer_cost} = 'me.source_customer_cost';
 $call_fields{destination_customer_cost} = 'me.destination_customer_cost';
 $call_fields{source_customer_free_time} = 'me.source_customer_free_time';
 
-my $cdr_proto = _hash2obj(
-    classname => 'cdr_item',
-    accessors => {
-        (map { $_ => _get_alias($call_fields_tied->Indices($_) + 1); } keys %call_fields),
-        #call_id => sub { #override
-        #    my $self = shift;
-        #    use Data::Dumper;
-        #    my $test = { %$self };
-        #    delete $test->{c};
-        #    $self->{c}->log->debug(Dumper([map { $_ => _get_alias($call_fields_tied->Indices($_) + 1); } keys %call_fields]));
-        #    return $self->{'field15'};
-        #},
-        get_column => sub {
-            my ($self,$colname) = @_;
-            return $self->{$colname};
-        },
-        source_subscriber => sub {
-            my $self = shift;
-            return $self->{c}->model('DB')->resultset('voip_subscribers')->find({ uuid => $self->source_user_id() });
-        },
-        destination_subscriber => sub {
-            my $self = shift;
-            return $self->{c}->model('DB')->resultset('voip_subscribers')->find({ uuid => $self->destination_user_id() });
-        },
-    },
-);
-
+#this is exactly cdr item, although we take call fields. 
+#Call fields contain wvwryithing that process_cdr_item  requires
 my %voicemail_fields = ();
-tie(%voicemail_fields, 'Tie::IxHash');
+my $voicemail_fields_tied = tie(%voicemail_fields, 'Tie::IxHash');
 $voicemail_fields{duration} = 'me.duration';
 $voicemail_fields{origtime} = 'me.origtime';
 $voicemail_fields{callerid} = 'me.callerid';
@@ -74,17 +53,18 @@ $voicemail_fields{mailboxuser} = 'me.mailboxuser';
 $voicemail_fields{dir} = 'me.dir';
 
 my %sms_fields = ();
-tie(%sms_fields, 'Tie::IxHash');
+my $sms_fields_tied = tie(%sms_fields, 'Tie::IxHash');
 $sms_fields{subscriber_id} = 'me.subscriber_id';
 $sms_fields{time} = 'me.time';
 $sms_fields{direction} = 'me.direction';
-$sms_fields{caller} = 'me.callee';
-$sms_fields{text} = 'me.text';
+$sms_fields{caller} = 'me.caller';
+$sms_fields{callee} = 'me.callee';
+$sms_fields{text}   = 'me.text';
 $sms_fields{reason} = 'me.reason';
 $sms_fields{status} = 'me.status';
 
 my %fax_fields = ();
-tie(%fax_fields, 'Tie::IxHash');
+my $fax_fields_tied = tie(%fax_fields, 'Tie::IxHash');
 $fax_fields{subscriber_id} = 'me.subscriber_id';
 $fax_fields{time} = 'me.time';
 $fax_fields{direction} = 'me.direction';
@@ -102,7 +82,7 @@ $fax_fields{caller_uuid} = 'me.caller_uuid';
 $fax_fields{callee_uuid} = 'me.callee_uuid';
 
 my %xmpp_fields = ();
-tie(%xmpp_fields, 'Tie::IxHash');
+my $xmpp_fields_tied = tie(%xmpp_fields, 'Tie::IxHash');
 $xmpp_fields{subscriber_id} = 'me.id';
 $xmpp_fields{user} = 'me.user';
 $xmpp_fields{with} = 'me.with';
@@ -115,12 +95,85 @@ $max_fields = scalar keys %sms_fields if ((scalar keys %sms_fields) > $max_field
 $max_fields = scalar keys %fax_fields if ((scalar keys %fax_fields) > $max_fields);
 $max_fields = scalar keys %xmpp_fields if ((scalar keys %xmpp_fields) > $max_fields);
 
+
+my $cdr_proto = NGCP::Panel::Utils::Generic::hash2obj(
+    classname => 'cdr_item',
+    accessors => {
+        %{_get_fields_names(\%call_fields,$call_fields_tied)},
+        get_column => sub {
+            my ($self,$colname) = @_;
+            return $self->{$colname};
+        },
+        source_subscriber => sub {
+            my $self = shift;
+            return $self->{c}->model('DB')->resultset('voip_subscribers')->find({ uuid => $self->source_user_id() });
+        },
+        destination_subscriber => sub {
+            my $self = shift;
+            return $self->{c}->model('DB')->resultset('voip_subscribers')->find({ uuid => $self->destination_user_id() });
+        },
+    },
+);
+my $fax_proto = NGCP::Panel::Utils::Generic::hash2obj(
+    classname => 'fax_item',
+    accessors => {
+        %{_get_fields_names(\%fax_fields,$fax_fields_tied)},
+        get_column => sub {
+            my ($self,$colname) = @_;
+            return $self->{$colname};
+        },
+        caller_subscriber => sub {
+            my $self = shift;
+            return $self->{c}->model('DB')->resultset('voip_subscribers')->find({ uuid => $self->caller_uuid() });
+        },
+        callee_subscriber => sub {
+            my $self = shift;
+            return $self->{c}->model('DB')->resultset('voip_subscribers')->find({ uuid => $self->callee_uuid() });
+        },
+        provisioning_voip_subscriber => sub {
+            my $self = shift;
+            return $self->{c}->model('DB')->resultset('provisioning_voip_subscribers')->find({ id => $self->suscriber_id() });
+        },
+    },
+);
+my $voicemail_proto = NGCP::Panel::Utils::Generic::hash2obj(
+    classname => 'voicemail_item',
+    accessors => {
+        %{_get_fields_names(\%voicemail_fields,$voicemail_fields_tied)},
+        get_column => sub {
+            my ($self,$colname) = @_;
+            return $self->{$colname};
+        },
+    },
+);
+my $sms_proto = NGCP::Panel::Utils::Generic::hash2obj(
+    classname => 'sms_item',
+    accessors => {
+        %{_get_fields_names(\%sms_fields,$sms_fields_tied)},
+        get_column => sub {
+            my ($self,$colname) = @_;
+            return $self->{$colname};
+        },
+    },
+);
+
+my $xmpp_proto = NGCP::Panel::Utils::Generic::hash2obj(
+    classname => 'xmpp_item',
+    accessors => {
+        %{_get_fields_names(\%xmpp_fields,$xmpp_fields_tied)},
+        get_column => sub {
+            my ($self,$colname) = @_;
+            return $self->{$colname};
+        },
+    },
+);
+
 my %enabled_conversations = (
-    call => 1,
+    call      => 1,
     voicemail => 1,
-    sms => 1,
-    fax => 1,
-    xmpp => 0,
+    sms       => 1,
+    fax       => 1,
+    xmpp      => 0,
 );
 
 sub item_name{
@@ -143,29 +196,32 @@ sub config_allowed_roles {
     return [qw/admin reseller subscriberadmin subscriber/];
 }
 
+sub get_list{
+    my ($self, $c) = @_;
+#TODO: move to config and return to the SUPER (Entities) again
+#So: if config->{methtod}->{required_params} eq '' owner
+#and for other types of possible required parameters or predefined parameters groups
+    my $schema = $c->model('DB');
+    my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
+    unless (defined $owner) {
+        return;
+    }
+    return $self->item_rs($c, $owner);
+}
+
 sub _item_rs {
-    my ($self, $c, $params) = @_;
+    my ($self, $c, $owner, $params) = @_;
 
     $params //= $c->req->params;
     $params = { %$params };
-
+    my $schema = $c->model('DB');
     my ($uuid,$contract_id,$reseller_id,$provider_id,$show);
 
-    (my $subscriber,$uuid) = $self->_get_subscriber($c,$params);
-    (my $contract,$contract_id) = $self->_get_contract($c,$params);
 
-    if ($c->user->roles eq "subscriber") {
-        $uuid = $c->user->voip_subscriber->uuid;
-    } elsif ($c->user->roles eq "subscriberadmin") {
-        $contract_id = $c->user->account_id;
-    } elsif ($c->user->roles eq "reseller") {
-        $reseller_id = $c->user->reseller_id;
-        $provider_id = $c->user->reseller->contract_id;
-    }
-
-    unless (defined $uuid or defined $contract_id) {
-        #die subscriber_id or customer_id required
-    }
+    $contract_id = $owner->{customer} ? $owner->{customer}->id : undef ;
+    $uuid = $owner->{subscriber} ? $owner->{subscriber}->uuid : undef;
+    $reseller_id = $owner->{customer} ? $owner->{customer}->contact->reseller_id : undef;
+    $provider_id =  $owner->{customer} ? $owner->{customer}->contact->reseller->contract_id : undef;
 
     my $item_rs;
     my $type_param = ((exists $params->{type}) ? ($params->{type} // '') : undef);
@@ -188,41 +244,6 @@ sub _item_rs {
 
     return $item_rs;
 
-}
-
-sub _get_subscriber {
-    my ($self, $c, $params) = @_;
-    $params //= $c->req->params;
-    my ($subscriber,$uuid);
-    if ($params->{subscriber_id}) {
-        eval {
-            $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($params->{subscriber_id});
-        };
-        if ($subscriber) {
-            $uuid = $subscriber->uuid;
-        } else {
-            #die invalid subscriber_id '$params->{subscriber_id}'
-        }
-    }
-    return ($subscriber,$uuid);
-}
-
-sub _get_contract {
-    my ($self, $c, $params) = @_;
-    $params //= $c->req->params;
-    my ($contract,$contract_id);
-    if ($params->{customer_id}) {
-        # ensure integer, allow terminated
-        eval {
-            $contract = $c->model('DB')->resultset('contracts')->find($params->{customer_id});
-        };
-        if ($contract) {
-            $contract_id = $contract->id;
-        } else {
-            #die invalid customer_id '$params->{customer_id}'
-        }
-    }
-    return ($contract,$contract_id);
 }
 
 sub _apply_timestamp_from_to {
@@ -680,47 +701,120 @@ sub _get_alias {
 
 sub get_form {
     my ($self, $c) = @_;
-    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Conversation::API", $c),['id']);
+    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Conversation::API", $c),[qw/id call_id source_user_id source_account_id destination_user_id destination_account_id call_id subscriber_id/]);
 }
 
 sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
-
-    use Data::Dumper;
-    #$c->log->debug(Dumper($item));
-    #$c->log->debug(Dumper($resource));
-
+    my $schema = $c->model('DB');
+    # todo: mashal specific fields, per conversation event type ...
+    my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $item);
+    if('call' eq $item->{type}){
+        my $cdr_subscriber_id = $c->model('DB')->resultset('voip_subscribers')->search_rs({
+            'uuid' => $item_mock_obj->source_user_id,
+        })->first->id;
+        my $cdr_customer_id = $item_mock_obj->source_account_id;
+        my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema, { subscriber_id => $cdr_subscriber_id } );
+        if(!$owner){
+            return;
+        }
+        $resource = NGCP::Panel::Utils::CallList::process_cdr_item(
+            $c, 
+            $item_mock_obj,
+            $owner,
+        );
+        @{$resource}{qw/caller callee/} = @{$resource}{qw/own_cli other_cli/};
+    }elsif('fax' eq $item->{type}){
+        my $fax_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs({
+            'id' => $item_mock_obj->subscriber_id,
+        })->first->voip_subscriber;
+        $resource = NGCP::Panel::Utils::Fax::process_fax_journal_item($c, $item_mock_obj, $fax_subscriber);
+        $resource->{start_time} = $item_mock_obj->timestamp;
+        foreach my $field (qw/type id status reason/){
+            $resource->{$field} = $item_mock_obj->$field;
+        }
+    }elsif('voicemail' eq $item->{type}){
+    }elsif('sms' eq $item->{type}){
+    }elsif('xmpp' eq $item->{type}){
+    }
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
     );
-    my $timestamp = NGCP::Panel::Utils::DateTime::epoch_local($resource->{timestamp});
+    my $timestamp = NGCP::Panel::Utils::DateTime::epoch_local($resource->{start_time});
     #if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
     #    $timestamp->set_time_zone($c->req->param('tz'));
     #}
-    $resource->{timestamp} = $datetime_fmt->format_datetime($timestamp);
-    $resource->{timestamp} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
+    $resource->{start_time} = $datetime_fmt->format_datetime($timestamp);
+    $resource->{start_time} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
 
-    # todo: mashal specific fields, per conversation event type ...
-
-    if ('call' eq $resource->{type}) {
-        my $cdr_item = NGCP::Panel::Utils::CallList::process_cdr_item($c,_hash2obj(
-                classname => ref $cdr_proto,
-                hash => $resource,
-                private => { c => $c, },
-            ),{
-                subscriber => ($self->_get_subscriber($c))[0],
-                customer => ($self->_get_contract($c))[0],
-            },
-        );
-        # todo: populate $resource ...
-        $c->log->debug(Dumper($cdr_item));
-    }
+    # todo: populate $resource ...
+    $c->log->debug('resource: ');
+    $c->log->debug(Dumper($resource));
 
     return $resource;
 }
 
+sub _get_fields_names{
+    my ($fields, $fields_tied) = @_;
+    return { map { $_ => $fields_tied->Indices($_) ? _get_alias($fields_tied->Indices($_) + 1) : $_; } (keys %$fields, 'id','type','timestamp') };
+}
+
+sub _get_item_object{
+    my($c, $item) = @_;
+    $c->log->debug(Dumper('item'));
+    $c->log->debug(Dumper($item));
+    my ($fields, $fields_tied, $class_proto) = _get_fields_by_type($item->{type});
+
+    my $item_accessors_hash = {%$item};
+    foreach(keys %$fields){ 
+        $item_accessors_hash->{$_} = $item->{_get_alias($fields_tied->Indices($_) + 1)};
+    }
+    #my $item_accessors_hash = _get_item_with_accessors($item, $fields);
+    #my $item_mock_obj = Class::Hash->new(%$item_accessors_hash);
+    $c->log->debug(Dumper('item_accessors_hash'));
+    $c->log->debug(Dumper($item_accessors_hash));
+
+    my $item_mock_obj = NGCP::Panel::Utils::Generic::hash2obj(
+        classname => ref $class_proto,
+        hash => $item_accessors_hash,
+        private => { c => $c, },
+    );
+    $c->log->debug(Dumper('item_mock_obj'));
+    $c->log->debug(Dumper($item_mock_obj));
+    return ($item_mock_obj, $item_accessors_hash);
+}
+
+sub _get_fields_by_type{
+    my($type) = @_;
+    my ($fields, $fields_tied, $proto);
+
+    if('call' eq $type){
+        $fields = \%call_fields;
+        $fields_tied = $call_fields_tied;
+        $proto = $cdr_proto;
+    }elsif('voicemail' eq $type){
+        $fields = \%voicemail_fields;
+        $fields_tied = $voicemail_fields_tied;
+        $proto = $voicemail_proto;
+    }elsif('sms' eq $type){
+        $fields = \%sms_fields;
+        $fields_tied = $sms_fields_tied;
+        $proto = $sms_proto;
+    }elsif('fax' eq $type){
+        $fields = \%fax_fields;
+        $fields_tied = $fax_fields_tied;
+        $proto = $fax_proto;
+    }elsif('xmpp' eq $type){
+        $fields = \%xmpp_fields;
+        $fields_tied = $xmpp_fields_tied;
+        $proto = $xmpp_proto;
+    }
+    return $fields,$fields_tied,$proto;
+}
+
 sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
+    $c->log->debug("hal_links: type=".($resource->{type} // 'undefined')."; id=".($resource->{id} // 'undefined').";");
     return [
         ('call' eq $resource->{type} ?
             NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:calls', href => sprintf("/api/calls/%d", $resource->{id})) : ()),
@@ -731,42 +825,10 @@ sub hal_links {
         ('fax' eq $resource->{type} ?
             NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:faxes', href => sprintf("/api/faxes/%d", $resource->{id})) : ()),
         # todo - add xmpp mam rail:
-        # ('xmpp' eq $item->{type} ?
-        #    NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:xmpp', href => sprintf("/api/xmpp/%d", $item->{id})) : ()),
+        ('xmpp' eq $item->{type} ?
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:xmpp', href => sprintf("/api/xmpp/%d", $item->{id})) : ()),
     ];
 }
 
-sub _hash2obj {
-    my %params = @_;
-    my ($hash,$private,$classname,$accessors) = @params{qw/hash private classname accessors/};
-
-    my $obj;
-    $obj = $hash if 'HASH' eq ref $hash;
-    $obj //= {};
-    $obj = { %$obj, %$private } if 'HASH' eq ref $private;
-    unless (defined $classname and length($classname) > 0) {
-        my @chars = ('A'..'Z');
-        $classname //= '';
-        $classname .= $chars[rand scalar @chars] for 1..8;
-    }
-    $classname = __PACKAGE__ . '::' . $classname unless $classname =~ /::/;
-    bless($obj,$classname);
-    no strict "refs";
-    return $obj if scalar %{$classname . '::'};
-    print "registering class $classname\n";
-    $accessors //= {};
-    foreach my $accessor (keys %$accessors) {
-        print "registering accessor $classname::$accessor\n";
-        *{$classname . '::' . $accessor} = sub {
-            my $self = shift;
-            return &{$accessors->{$accessor}}($self,@_);
-        } if 'CODE' eq ref $accessors->{$accessor};
-        *{$classname . '::' . $accessor} = sub {
-            my $self = shift;
-            return $self->{$accessors->{$accessor}};
-        } if '' eq ref $accessors->{$accessor};
-    }
-    return $obj;
-}
 
 1;

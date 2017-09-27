@@ -7,9 +7,9 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all);
+@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj);
 %EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true)],
-                 all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all)]);
+                 all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj)]);
 
 use Hash::Merge;
 use Data::Compare qw//;
@@ -103,6 +103,39 @@ sub get_inflated_columns_all{
     }
     return $res;
     #return [ map { { $_->get_inflated_columns }; } $rs->all ];
+}
+
+sub hash2obj {
+    my %params = @_;
+    my ($hash,$private,$classname,$accessors) = @params{qw/hash private classname accessors/};
+
+    my $obj;
+    $obj = $hash if 'HASH' eq ref $hash;
+    $obj //= {};
+    $obj = { %$obj, %$private } if 'HASH' eq ref $private;
+    unless (defined $classname and length($classname) > 0) {
+        my @chars = ('A'..'Z');
+        $classname //= '';
+        $classname .= $chars[rand scalar @chars] for 1..8;
+    }
+    $classname = __PACKAGE__ . '::' . $classname unless $classname =~ /::/;
+    bless($obj,$classname);
+    no strict "refs";
+    return $obj if scalar %{$classname . '::'};
+    print "registering class $classname\n";
+    $accessors //= {};
+    foreach my $accessor (keys %$accessors) {
+        print "registering accessor $classname::$accessor\n";
+        *{$classname . '::' . $accessor} = sub {
+            my $self = shift;
+            return &{$accessors->{$accessor}}($self,@_);
+        } if 'CODE' eq ref $accessors->{$accessor};
+        *{$classname . '::' . $accessor} = sub {
+            my $self = shift;
+            return $self->{$accessors->{$accessor}};
+        } if '' eq ref $accessors->{$accessor};
+    }
+    return $obj;
 }
 
 1;
