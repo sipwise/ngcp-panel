@@ -45,7 +45,8 @@ tie(%sms_fields, 'Tie::IxHash');
 $sms_fields{subscriber_id} = 'me.subscriber_id';
 $sms_fields{time} = 'me.time';
 $sms_fields{direction} = 'me.direction';
-$sms_fields{caller} = 'me.callee';
+$sms_fields{caller} = 'me.caller';
+$sms_fields{callee} = 'me.callee';
 $sms_fields{text} = 'me.text';
 $sms_fields{reason} = 'me.reason';
 $sms_fields{status} = 'me.status';
@@ -640,7 +641,8 @@ sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
 
     use Data::Dumper;
-    $c->log->debug(Dumper($item));
+    $c->log->debug(Dumper(['conversations item',$item]));
+    $c->log->debug(Dumper(['conversations resource',$resource]));
 
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
@@ -649,12 +651,16 @@ sub process_hal_resource {
     #if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
     #    $timestamp->set_time_zone($c->req->param('tz'));
     #}
-    $resource->{timestamp} = $datetime_fmt->format_datetime($timestamp);
-    $resource->{timestamp} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
-
+    $resource->{start_time} = $datetime_fmt->format_datetime($timestamp);
+    $resource->{start_time} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
+    $self->process_cdr_item($c, $item, $resource, $form);
     # todo: mashal specific fields, per conversation event type ...
 
     return $resource;
+}
+
+sub process_cdr_item {
+    my($self, $c, $item, $resource, $form) = @_;
 }
 
 sub hal_links {
