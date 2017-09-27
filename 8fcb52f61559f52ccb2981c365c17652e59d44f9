@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_42650844",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 663,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-09-27T08:44:35Z",
+      "side": 1,
+      "message": "NGCP::Panel::Utils::CallList::process_cdr_item",
+      "revId": "8fcb52f61559f52ccb2981c365c17652e59d44f9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
