@@ -55,8 +55,8 @@ sub get {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
         my $header_accept = $c->request->header('Accept');
-        if(defined $header_accept 
-            && ($header_accept ne 'application/json') 
+        if(defined $header_accept
+            && ($header_accept ne 'application/json')
             && ($header_accept ne '*/*')
         ) {
             $self->return_requested_type($c,$id,$item);
@@ -64,7 +64,7 @@ sub get {
         }
 
         my $hal = $self->hal_from_item($c, $item);
-
+        return unless $hal;
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
                 s|rel="(http://purl.org/sipwise/ngcp-api/#rel-[a-z]+)"|rel="item $1"|r =~
@@ -110,11 +110,11 @@ sub patch {
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'patch', $item, $old_resource, $resource, $form, $process_extras);
 
-        $self->return_representation($c, 
-            'item' => $item, 
-            'form' => $form, 
-            'preference' => $preference, 
-            'form_exceptions' => $form_exceptions 
+        $self->return_representation($c,
+            'item' => $item,
+            'form' => $form,
+            'preference' => $preference,
+            'form_exceptions' => $form_exceptions
         );
     }
     return;
@@ -152,11 +152,11 @@ sub put {
 
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
-        $self->return_representation($c, 
-            'item' => $item, 
-            'form' => $form, 
-            'preference' => $preference, 
-            'form_exceptions' => $form_exceptions 
+        $self->return_representation($c,
+            'item' => $item,
+            'form' => $form,
+            'preference' => $preference,
+            'form_exceptions' => $form_exceptions
         );
     }
     return;
