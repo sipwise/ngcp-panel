@@ -44,6 +44,7 @@ sub list :Chained('/') :PathPart('lnp') :CaptureArgs(0) {
         { name => "id", "search" => 0, "title" => $c->loc("#") },
         { name => "number", "search" => 1, "title" => $c->loc("Number") },
         { name => "routing_number", "search" => 0, "title" => $c->loc("Routing Number") },
+        { name => "type", "search" => 0, "title" => $c->loc("Type") },
         { name => "lnp_provider.name", "search" => 1, "title" => $c->loc("Carrier") },
         { name => "start", "search" => 0, "title" => $c->loc("Start Date") },
         { name => "end", "search" => 0, "title" => $c->loc("End Date") },
@@ -324,6 +325,7 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
                     $form->values->{end} = undef;
                 }
                 $form->values->{routing_number} = undef unless(length $form->values->{routing_number});
+                $form->values->{type} = undef unless(length $form->values->{type});
                 $c->stash->{number_result}->update($form->values);
             });
 
