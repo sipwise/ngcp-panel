@@ -25,7 +25,7 @@ fi
 
 if [ "${SELECT}" = "stable" ] ; then
   echo "Test selection: ${SELECT}"
-  SELECT=$(echo t/api-rest/api-{all-links,bannedips,bannedusers,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,contracts,customercontacts,customers,lnp,ncoslevels,pbxdevicemodels,peeringgroups,profilepackages,resellers,rewriterules,rewriterulesets,root,soundsets,systemcontacts,threads,topuplogs,valid-patch,vouchers,method-override}.t)
+  SELECT=$(echo t/api-rest/api-{all-links,bannedips,bannedusers,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,contracts,customercontacts,customers,lnp,ncoslevels,pbxdevicemodels,peeringgroups,profilepackages,resellers,rewriterules,rewriterulesets,root,soundsets,systemcontacts,threads,topuplogs,trustedsources,valid-patch,vouchers,method-override}.t)
 elif [ "${SELECT}" = "fast" ] ; then
   echo "Test selection: ${SELECT}"
   SELECT=$(echo t/api-rest/api-{bannedips,bannedusers,billingnetworks,billingzones,calls,cert-auth,cfdestinationsets,ncoslevels,peeringgroups,peeringrules,peeringinboundrules,peeringservers,resellers,rewriterules,root,soundsets,systemcontacts,valid-patch,vouchers,method-override}.t)
