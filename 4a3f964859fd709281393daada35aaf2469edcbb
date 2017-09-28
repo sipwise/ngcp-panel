@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_08e40f3a",
+        "filename": "lib/NGCP/Panel/Role/API/SoundFiles.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1000006
+      },
+      "writtenOn": "2017-09-28T09:43:52Z",
+      "side": 1,
+      "message": "codec and filename should be always \u0027wav\u0027",
+      "range": {
+        "startLine": 195,
+        "startChar": 3,
+        "endLine": 198,
+        "endChar": 12
+      },
+      "revId": "4a3f964859fd709281393daada35aaf2469edcbb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
