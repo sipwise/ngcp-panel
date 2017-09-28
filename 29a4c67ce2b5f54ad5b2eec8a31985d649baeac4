@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_e86b5b83",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-09-28T10:02:47Z",
+      "side": 1,
+      "message": "I don\u0027t understand why $c is needed here",
+      "revId": "29a4c67ce2b5f54ad5b2eec8a31985d649baeac4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
