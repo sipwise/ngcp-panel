@@ -62,11 +62,6 @@ sub GET :Allow {
         my $resource = $self->resource_from_item($c, $item);
 
         $resource->{data} = $item->data;
-        if($item->codec eq "PCMA") {
-            $resource->{codec} = 'WAV';
-            $resource = $self->transcode_data($c, $item->codec, $resource);
-            last unless($resource);
-        }
 
         $c->response->header ('Content-Disposition' => 'attachment; filename="' . $resource->{filename} . '"');
         $c->response->content_type('audio/x-wav');

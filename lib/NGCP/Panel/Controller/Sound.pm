@@ -562,12 +562,12 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
         fields => {},
         back_uri => $c->req->uri,
     );
-    
+
     if($posted && $form->validated) {
         if (defined $upload) {
             my $soundfile = eval { $upload->slurp };
             my $filename = eval { $upload->filename };
-            
+
             my $ft = File::Type->new();
             unless ($ft->checktype_contents($soundfile) eq 'audio/x-wav') {
                 NGCP::Panel::Utils::Message::error(
@@ -577,7 +577,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 );
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
-            
+
             my $target_codec = 'WAV';
 
             # clear audio caches
@@ -593,23 +593,6 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
 
-            if ($file_result->handle->name eq 'music_on_hold' && !$file_result->set->contract_id) {
-                $target_codec = 'PCMA';
-                $filename =~ s/\.[^.]+$/.pcma/;
-            }
-
-            try {
-                $soundfile = NGCP::Panel::Utils::Sounds::transcode_file(
-                    $upload->tempname, 'WAV', $target_codec);
-            } catch ($e) {
-                NGCP::Panel::Utils::Message::error(
-                    c     => $c,
-                    log   => 'Transcoding audio file failed',
-                    desc  => $c->loc('Transcoding audio file failed'),
-                );
-                NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-            }
-           
             try {
                 $file_result->update({
                     loopplay => $form->values->{loopplay},
@@ -686,28 +669,12 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
 
 sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $file = $c->stash->{file_result};
     my $filename = $file->filename;
     $filename =~ s/\.\w+$/.wav/;
-    my $data;
+    my $data = $file->data;
 
-    if($file->codec ne 'WAV') {
-        try {
-            $data = NGCP::Panel::Utils::Sounds::transcode_data(
-                $file->data, $file->codec, 'WAV');
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c     => $c,
-                error => $e,
-                desc  => $c->loc('Failed to transcode audio file'),
-            );
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-        }
-    } else {
-        $data = $file->data;
-    }
-    
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename . '"');
     $c->response->content_type('audio/x-wav');
     $c->response->body($data);
@@ -729,7 +696,7 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
         fields => {},
         back_uri => $c->req->uri,
     );
-    
+
     if($posted && $form->validated) {
         my $lang = $form->params->{language};
         my $base = "/var/lib/ngcp-soundsets";
@@ -760,21 +727,11 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                     if(defined $file_id) {
                         if($form->params->{override}) {
                             $c->log->debug("override $path as $hname for existing id $file_id");
-                            my $data;
-                            if(!$c->stash->{set_result}->contract_id && 
-                               grep {/^$hname$/} (qw/music_on_hold/)) {
-
-                                $fname =~ s/\.wav$/.pcma/;
-                                $data = NGCP::Panel::Utils::Sounds::transcode_file(
-                                    $path, 'WAV', 'PCMA');
-                            } else {
-                                $data = read_file($path);
-                            }
 
                             $fres = $schema->resultset('voip_sound_files')->find($file_id);
                             $fres->update({
                                     filename => $fname,
-                                    data => $data,
+                                    data => read_file($path),
                                     loopplay => $form->params->{loopplay} ? 1 : 0,
                                 });
                         } else {
@@ -784,22 +741,11 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                         $c->log->debug("inserting $path as $hname with new id");
 
                         my $codec = 'WAV';
-                        my $data;
-                        if(!$c->stash->{set_result}->contract_id && 
-                           grep {/^$hname$/} (qw/music_on_hold/)) {
-
-                            $fname =~ s/\.wav$/.pcma/;
-                            $codec = 'PCMA';
-                            $data = NGCP::Panel::Utils::Sounds::transcode_file(
-                                $path, 'WAV', $codec);
-                        } else {
-                            $data = read_file($path);
-                        }
 
                         $fres = $schema->resultset('voip_sound_files')
                             ->create({
                                 filename => $fname,
-                                data => $data,
+                                data => read_file($path),
                                 handle_id => $handle_id,
                                 set_id => $set_id,
                                 loopplay => $form->params->{loopplay} ? 1 : 0,
