@@ -52,6 +52,23 @@
       "revId": "29a4c67ce2b5f54ad5b2eec8a31985d649baeac4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_2812b3b4",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-09-28T11:42:11Z",
+      "side": 1,
+      "message": "I can\u0027t remember currently. But the reason might be that this moved into the dedicated rtcsessions endpoint? I need to check this",
+      "revId": "29a4c67ce2b5f54ad5b2eec8a31985d649baeac4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
