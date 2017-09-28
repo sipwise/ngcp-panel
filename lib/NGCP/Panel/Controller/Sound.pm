@@ -689,28 +689,14 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
 
 sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $file = $c->stash->{file_result};
     my $filename = $file->filename;
     $filename =~ s/\.\w+$/.wav/;
     my $data;
 
-    if($file->codec ne 'WAV') {
-        try {
-            $data = NGCP::Panel::Utils::Sounds::transcode_data(
-                $file->data, $file->codec, 'WAV');
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c     => $c,
-                error => $e,
-                desc  => $c->loc('Failed to transcode audio file'),
-            );
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-        }
-    } else {
-        $data = $file->data;
-    }
-    
+    $data = $file->data;
+
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename . '"');
     $c->response->content_type('audio/x-wav');
     $c->response->body($data);
@@ -732,7 +718,7 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
         fields => {},
         back_uri => $c->req->uri,
     );
-    
+
     if($posted && $form->validated) {
         my $lang = $form->params->{language};
         my $base = "/var/lib/ngcp-soundsets";
