@@ -199,8 +199,7 @@ sub update_item {
         $resource->{codec} = 'WAV';
     }
     $resource->{data} = $recording;
-    $resource = $self->transcode_data($c, 'WAV', $resource);
-    last unless($resource);
+
     delete $resource->{handle};
 
     try {
