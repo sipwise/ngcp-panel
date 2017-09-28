@@ -79,7 +79,7 @@ sub _insert_batch {
         c => $c,
         schema => $schema,
         do_transaction => 0,
-        query => "INSERT INTO billing.lnp_numbers(lnp_provider_id, number, routing_number, start, end)",
+        query => "INSERT INTO billing.lnp_numbers(lnp_provider_id, number, routing_number, start, end, type)",
         data => $numbers,
         chunk_size => $chunk_size
     );
@@ -93,7 +93,7 @@ sub upload_csv {
     # csv bulk upload
     my $csv = Text::CSV_XS->new({ allow_whitespace => 1, binary => 1, keep_meta_info => 1 });
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
-    my @cols = qw/carrier_name carrier_prefix number routing_number start end authoritative skip_rewrite/;
+    my @cols = qw/carrier_name carrier_prefix number routing_number start end authoritative skip_rewrite type/;
 
     my @fields ;
     my @fails = ();
@@ -132,7 +132,8 @@ sub upload_csv {
         if($row->{end} && $row->{end} =~ /^\d{4}-\d{2}-\d{2}$/) {
             $row->{end} .= 'T23:59:59';
         }
-        push @numbers, [$carriers{$k}, $row->{number}, $row->{routing_number}, $row->{start}, $row->{end}];
+        $row->{type} ||= undef;
+        push @numbers, [$carriers{$k}, $row->{number}, $row->{routing_number}, $row->{start}, $row->{end}, $row->{type}];
 
         if($linenum % $chunk_size == 0) {
             _insert_batch($c, $schema, \@numbers, $chunk_size);
@@ -159,7 +160,7 @@ sub create_csv {
     my($c, $number_rs) = @params{qw/c number_rs/};
     $number_rs //= $c->stash->{number_rs} // $c->model('DB')->resultset('lnp_numbers');
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
-    my @cols = qw/carrier_name carrier_prefix number routing_number start end authoritative skip_rewrite/;
+    my @cols = qw/carrier_name carrier_prefix number routing_number start end authoritative skip_rewrite type/;
 
     my $lnp_rs = $number_rs->search_rs(
         undef,
