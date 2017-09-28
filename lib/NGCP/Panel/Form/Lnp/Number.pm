@@ -40,6 +40,20 @@ has_field 'routing_number' => (
     },
 );
 
+has_field 'type' => (
+    type => 'Select',
+    required => 0,
+    label => 'Type',
+    options => [
+        { label => '', value => '' },
+        { label => 'fixed', value => 'fixed' },
+        { label => 'mobile', value => 'mobile' },
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The optional LNP number type tag, for CDR exports.']
+    },
+);
 
 has_field 'start' => (
     type => '+NGCP::Panel::Field::DatePicker',
@@ -69,7 +83,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/lnp_provider number routing_number start end/],
+    render_list => [qw/lnp_provider number routing_number type start end/],
 );
 
 has_block 'actions' => (
