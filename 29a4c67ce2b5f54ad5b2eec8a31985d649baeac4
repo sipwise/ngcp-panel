@@ -34,6 +34,24 @@
       "revId": "29a4c67ce2b5f54ad5b2eec8a31985d649baeac4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_e848bbce",
+        "filename": "lib/NGCP/Panel/Utils/Rtc.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-09-28T11:39:15Z",
+      "side": 1,
+      "message": "I think once we are used to it, it\u0027s actually not more complicated but easier.\n\nOne advantage of increasing encapsulation is testability, where we\u0027re often lacking.\n\nThe other is to rule out unwanted side effects. E.g. this can be easily plugged from API to panel code, because it doesn\u0027t rely on some mysterious variables that are requested from stash somewhere deep down in this Util.\n\nSo to sum up: I often try to keep $c out of Utils (and also Forms) for these reasons. But maybe we need to define a common strategy for all developers so that we keep code consistent.",
+      "parentUuid": "dab895d6_a8c9635c",
+      "revId": "29a4c67ce2b5f54ad5b2eec8a31985d649baeac4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
