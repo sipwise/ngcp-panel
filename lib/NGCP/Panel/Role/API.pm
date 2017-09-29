@@ -1183,5 +1183,6 @@ sub return_requested_type {
         $self->error($c, HTTP_BAD_REQUEST, $e);
     }
 }
+
 1;
 # vim: set tabstop=4 expandtab:

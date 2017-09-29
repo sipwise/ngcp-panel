@@ -28,6 +28,7 @@ sub allowed_methods{
 }
 
 __PACKAGE__->config(
+    namespace => "",
     action => {
         map { $_ => {
             ACLDetachTo => 'invalid_user',
@@ -51,6 +52,8 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+
+    $c->log->error("!!!!!!!!! API::Root::auto");
     return 1;
 }
 
