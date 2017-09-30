@@ -499,6 +499,18 @@ msgstr "Разрешить исходящие звонки локальных а
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Allow this subscriber to be controlled by a CTI subscriber within the same "
+"customer using uaCSTA via SIP."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Allow this subscriber to initiate CTI sessions to other subscribers within "
+"the same customer using uaCSTA via SIP."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Allow unauthenticated inbound calls from FOREIGN domain to users within this "
 "domain. Use with care - it allows to flood your users with voice spam."
 msgstr ""
@@ -889,6 +901,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CPBX Device Firmware Settings"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CSTA Client"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CSTA Controller"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7225,7 +7245,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
-#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 #: share/templates/subscriber/preferences.tt
