@@ -928,6 +928,8 @@ sub update_item {
     my ($form_exceptions, $process_extras);
     ($form, $form_exceptions, $process_extras) = @{$params}{qw/form form_exceptions process_extras/};
 
+    $old_resource //= $self->resource_from_item($c, $item, $form);
+    $process_extras //= {};
     if(!$form){
         ($form, $form_exceptions) = $self->get_form($c, 'edit');
     }
@@ -936,6 +938,7 @@ sub update_item {
         if(!$form_exceptions && $form->can('form_exceptions')){
             $form_exceptions = $form->form_exceptions;
         }
+        last unless $self->pre_process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
         return unless $self->validate_form(
             c => $c,
             resource => $resource,
@@ -944,10 +947,6 @@ sub update_item {
         );
         return unless $resource;
     }
-
-    $old_resource //= $self->resource_from_item($c, $item, $form);
-
-    $process_extras //= {};
 
     return unless $self->process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
     return unless $resource;
@@ -980,7 +979,7 @@ sub check_resource{
     return 1;
 }
 
-#process_form_resource - added as method for custom preparation form data,like:
+#pre_process_form_resource, process_form_resource - added as method for custom preparation form data,like:
 #   my $ft = File::Type->new();
 #   my $content_type = $ft->mime_type(${$process_extras->{binary_ref}});
 #   if($type eq 'mac') {
@@ -993,6 +992,11 @@ sub check_resource{
 #
 #etc. Method still can be used as exit point, if form data processing can be performed due to incorrect input data
 #used in update_item
+sub pre_process_form_resource {
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+    return $resource;
+}
+
 sub process_form_resource {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
     return $resource;

@@ -120,6 +120,12 @@ sub resource_from_item {
     return \%resource;
 }
 
+sub pre_process_form_resource{
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    #API form doesn't consider default value somehow
+    $resource->{type} //= 'phone';
+}
+
 sub process_form_resource{
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
 

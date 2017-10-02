@@ -110,6 +110,7 @@ sub post {
     {
        my ($form, $form_exceptions) = $self->get_form($c, 'add');
         my $method_config = $self->config->{action}->{POST};
+        my $process_extras= {};
         my ($resource) = $self->get_valid_data(
             c               => $c,
             method          =>  'POST',
@@ -122,14 +123,13 @@ sub post {
         if(!$form_exceptions && $form->can('form_exceptions')){
             $form_exceptions = $form->form_exceptions;
         }
+        last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
             $form_exceptions ? (exceptions => $form_exceptions) : (),
         );
-
-        my $process_extras= {};
         last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
         last unless $resource;
         last unless $self->check_duplicate($c, undef, undef, $resource, $form, $process_extras);
