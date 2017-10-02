@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_f8f16896",
+        "filename": "lib/NGCP/Panel/Role/API/PbxDeviceModels.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-02T13:19:58Z",
+      "side": 1,
+      "message": "i suggest that exactly should be clarified and fixed.\nthis step is otherwise last resort only.",
+      "range": {
+        "startLine": 125,
+        "startChar": 4,
+        "endLine": 125,
+        "endChar": 52
+      },
+      "revId": "38ef5dafb2680edd0e8e25f9eff518aad09fa94c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
