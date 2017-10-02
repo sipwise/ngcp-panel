@@ -1,3 +1,98 @@
+ngcp-panel (6.0.0.0+0~mr6.0.0.0) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [26c96e9] TT#19300 Fix ngcp-panel start race condition on server boot
+  * [bec681a] TT#18850 Fix dee760a: add test 'managersecretary' to api-root.t
+  * [9c4c342] TT#10837 Fix f508bf8: bump Dockerfile to install libfile-grep-perl into Docker container (new API test dependency)
+  * [66617f3] TT#21905 Switch ngcp-panel REST API Docker to Debian stretch
+  * [ca76144] TT#22351 Disable API tests which are currently broken with stretch Perl
+  * [5988b51] TT#22351 Fix ca76144c4a: API test trustedsources is also failing in stretch Docker image
+  * [a0b9e64] TT#22410 Fix typo in Dockerfile 'Instructions for usage'
+  * [324662c] Revert "TT#22351 Fix ca76144c4a: API test trustedsources is also failing in stretch Docker image"
+  * [b432517] Revert "TT#22351 Disable API tests which are currently broken with stretch Perl"
+  * [50c231b] TT#22351 Disable API tests which are currently broken with stretch Perl (still broken)
+
+  [ Kirill Solomko ]
+  * [ad5f1b2] TT#19459 add whitelist/blacklist mode to cf source sets
+  * [3c6dba6] TT#19459 check for undefined CF sourceset mode
+  * [8cd3572] TT#19855 fix numeric preference value cast to int
+  * [dee760a] TT#18850 add Manager Secretary feature, API Prefer='internal'
+  * [476904f] TT#20690 Fix rtc user create/update/terminate for Resellers
+  * [792c2bc] TT#20095 improve sms billing handling and journaling
+
+  [ Sipwise Jenkins Builder ]
+  * [32b9503] TT#4166 I18N dump: snapshot 2017.08.02-03.05.05
+  * [d41bca6] TT#4166 I18N dump: snapshot 2017.08.04-03.09.03
+  * [03f0ea5] TT#4166 I18N dump: snapshot 2017.08.14-16.27.08
+  * [eb6b5ea] TT#4166 I18N dump: snapshot 2017.08.19-03.05.21
+  * [c0845b9] TT#4166 I18N dump: snapshot 2017.08.23-03.07.21
+  * [613358c] TT#4166 I18N dump: snapshot 2017.08.24-03.06.26
+  * [52a838e] TT#4166 I18N dump: snapshot 2017.08.26-03.02.26
+  * [fc5a9e1] TT#4166 I18N dump: snapshot 2017.09.05-03.05.43
+  * [b040f4f] TT#4166 I18N dump: snapshot 2017.09.07-03.06.57
+  * [288894c] TT#4166 I18N dump: snapshot 2017.09.15-19.00.24
+  * [7482153] TT#4166 I18N dump: snapshot 2017.09.27-03.12.32
+  * [b3d28df] TT#4166 I18N dump: snapshot 2017.09.30-03.11.54
+
+  [ Irina Peshinskaya ]
+  * [3900342] TT#14285 Consider form lock level value
+  * [f508bf8] TT#10837 Test all collections in one script - POST
+  * [10b25b2] TT#10837 Cleanup unused code and libraries references
+  * [07b9f8d] TT#10837 Make allowed_roles array reference
+  * [5ef25af] TT#17848 Separate invoice creation method
+  * [24f550a] TT#17848 Invoice API POST request
+  * [3968957] TT#19769 Replace old statistics link to Grafana system-statistic link
+  * [90340ca] TT#20233 Consider empty display_name to update preferences
+  * [c0940df] TT#17638 Rewrite Rule API to set priority
+  * [5f29fe2] TT#17638 Take rule data from validated form values
+  * [1c4b828] TT#19656 Add lock level fields to the subscriber forms with status
+  * [da60b8c] TT#7515 Clean up good original polycom template
+  * [ce315a8] TT#21819 Add provisioning fields to the API response resource
+  * [2031ea2] TT#21819 Allow to adjust resource before form validation
+  * [38ef5da] TT#21819 Allow to adjust resource before form validation.
+
+  [ Rene Krenn ]
+  * [155763a] TT#19760 customer.t diags
+  * [0c573e4] TT#19760 customer.t diags fix
+  * [fc70bcd] TT#19855 align writing the 'lock' pref value
+  * [38cc002] TT#19855 prevent empty string 'lock' pref values strictly
+  * [8e1624a] TT#19855 prevent whitespace 'lock' pref values strictly
+  * [ad3562c] TT#14295 timezone field for /api/subscribers
+  * [0fe1a28] TT#20514 fix regexp in .t's for new secretarymanager rail
+  * [bf779bf] TT#10964 "prepaid" query param for /api/customerbalances
+  * [a0b757a] TT#12311 make DateTime add() skip leap seconds
+  * [94c9b92] TT#20322 TT#20344 basic /api/conversations
+  * [ea1b26f] TT#20322 preliminary fix for failing conversations tests
+  * [02a161b] TT#21106 properly terminate reseller contract
+  * [a485302] TT#22468 TT#22467 lnp numbers 'type' field
+
+  [ Andreas Granig ]
+  * [52ac0a8] TT#20696 Fix contract_id validation in reseller
+  * [f9030b4] TT#4333 subscribers/customers/numbers/CF ACL
+  * [dc0bd38] TT#4333 Fix CF issues for subscribers
+  * [a52558b] TT#22422 Implement capabilities endpoint
+
+  [ Gerhard Jungwirth ]
+  * [a672389] TT#17853 selenium test adaptions for geckodriver
+  * [b47cf5f] TT#17853 TT#21767 make new selenium library visible to jenkins
+
+  [ Michael Prokop ]
+  * [2b9b5f8] TT#17853 selenium tests: update to geckodriver v0.18.0
+  * [1cd3fb4] TT#17853 TT#21767 Use git version of Selenium::Remote::Driver
+  * [12234e5] TT#22411 Fix spelling mistakes/typos
+
+  [ Guillem Jover ]
+  * [4964912] TT#18115 Call start-stop-daemon correctly
+
+  [ Richard Fuchs ]
+  * [0956362] TT#18838 Implement max subscribers limit via license client
+  * [c6db685] TT#21878 disable autodie for 'open' to check for missing license
+
+  [ Andrii Pogrebennyk ]
+  * [2bcac80] Revert "TT#21819 Allow to adjust resource before form validation"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 02 Oct 2017 23:41:53 +0200
+
 ngcp-panel (5.5.0.0+0~mr5.5.0.0) unstable; urgency=medium
 
   [ Guillem Jover ]
