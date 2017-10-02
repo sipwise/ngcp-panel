@@ -122,9 +122,6 @@ sub post {
         if(!$form_exceptions && $form->can('form_exceptions')){
             $form_exceptions = $form->form_exceptions;
         }
-        my $process_extras= {};
-        last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
-        last unless $resource;
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
@@ -132,6 +129,9 @@ sub post {
             $form_exceptions ? (exceptions => $form_exceptions) : (),
         );
 
+        my $process_extras= {};
+        last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
+        last unless $resource;
         last unless $self->check_duplicate($c, undef, undef, $resource, $form, $process_extras);
         last unless $self->check_resource($c, undef, undef, $resource, $form, $process_extras);
 
