@@ -189,7 +189,6 @@ sub POST :Allow {
         my $item;
         try {
             $item = $c->model('DB')->resultset('voip_trusted_sources')->create($resource);
-            NGCP::Panel::Utils::Kamailio::trusted_reload($c);
         } catch($e) {
             $c->log->error("failed to create trusted source: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create trusted source.");
@@ -203,6 +202,18 @@ sub POST :Allow {
             return $self->hal_from_item($c, $_item, $form); });
         
         $guard->commit;
+
+        try {
+            my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
+            if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+                die "XMLRPC failed";
+            }
+        } catch($e) {
+            $c->log->error("failed to reload kamailio: $e. Trusted source created");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was created");
+            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+            last;
+        }
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));

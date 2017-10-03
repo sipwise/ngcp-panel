@@ -86,6 +86,7 @@ sub flush {
 EOF
 }
 
+# returns: () or (ID, STATUS, [XML])
 sub trusted_reload {
     my ($c) = @_;
 
@@ -96,6 +97,7 @@ sub trusted_reload {
 <methodName>permissions.trustedReload</methodName>
 </methodCall>
 EOF
+    return ref $ret ? @{ $ret } : ();
 }
 
 sub get_aor{
