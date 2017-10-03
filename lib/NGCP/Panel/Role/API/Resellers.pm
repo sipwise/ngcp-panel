@@ -146,9 +146,8 @@ sub update_reseller {
             });
     };
     my $rtc_err = $@ // '';
-    if ($rtc_err && $resource->{status} eq 'terminated') {
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
-                        "Could not terminate rtc_user: $rtc_err");
+    if ($rtc_err) {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Could not modify rtc_user: $rtc_err");
         return;
     }
 
