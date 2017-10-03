@@ -1068,6 +1068,10 @@ msgstr "Capienza della coda"
 msgid "Call Queue wrap-up time, sec"
 msgstr "Tempo dopo il quale accettare una nuova chiamata dalla coda, secondi"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Call Recording Type"
+msgstr ""
+
 #: share/templates/subscriber/master.tt share/templates/subscriber/recording.tt
 #: share/templates/widgets/subscriber_topmenu_settings.tt
 msgid "Call Recordings"
@@ -7509,6 +7513,13 @@ msgstr ""
 "verso questo endpoint (solo per i peer, mentre per gli abbonati viene "
 "definito dal Path durante la registrazione) e per il relay RTP (per peer e "
 "abbonati)."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Use integrated call recording functionality or notify external call "
+"recording server by providing SIP header specified in 'rtpproxy.recording."
+"add_header_for_external_callrecording' config.yml key"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use valid Alias CLI as NPN"
