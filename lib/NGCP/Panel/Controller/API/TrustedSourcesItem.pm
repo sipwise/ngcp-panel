@@ -74,9 +74,8 @@ sub GET :Allow {
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
-                s/rel=self/rel="item self"/;
-                $_
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-\w+)"|rel="item $1"|r =~
+                s/rel=self/rel="item self"/r;
             } $hal->http_headers),
         ), $hal->as_json);
         $c->response->headers($response->headers);
@@ -134,6 +133,17 @@ sub PATCH :Allow {
         
         $guard->commit;
 
+        try {
+            my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
+            if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+                die "XMLRPC failed";
+            }
+        } catch($e) {
+            $c->log->error("failed to reload kamailio: $e. Trusted source modified.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was modified.");
+            last;
+        }
+
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
@@ -175,7 +185,19 @@ sub PUT :Allow {
         my $hal = $self->hal_from_item($c, $item, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
         
-        $guard->commit; 
+        $guard->commit;
+
+        try {
+            my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
+            if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+                die "XMLRPC failed";
+            }
+        } catch($e) {
+            $c->log->error("failed to reload kamailio: $e. Trusted source modified.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was modified.");
+            # TODO: do we still want to return the modified item here?
+            last;
+        }
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -211,6 +233,17 @@ sub DELETE :Allow {
         $item->delete;
 
         $guard->commit;
+
+        try {
+            my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
+            if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+                die "XMLRPC failed";
+            }
+        } catch($e) {
+            $c->log->error("failed to reload kamailio: $e. Trusted source deleted.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was deleted.");
+            last;
+        }
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());

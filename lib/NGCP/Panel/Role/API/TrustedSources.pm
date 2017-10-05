@@ -115,7 +115,6 @@ sub update_item {
     $resource->{uuid} = $sub->uuid;
 
     $item->update($resource);
-    NGCP::Panel::Utils::Kamailio::trusted_reload($c);
 
     return $item;
 }
