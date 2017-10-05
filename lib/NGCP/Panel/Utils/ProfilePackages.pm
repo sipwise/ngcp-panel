@@ -634,10 +634,10 @@ sub _get_resized_balance_values {
     if (NGCP::Panel::Utils::DateTime::set_local_tz($balance->start) <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end) || NGCP::Panel::Utils::DateTime::set_local_tz($balance->end) >= $contract_create)) {
         my $bm = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $contract_create); #now => $balance->start); #end); !?
         my $profile = $bm->billing_mappings->first->billing_profile;
-        my $old_ratio = _get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),NGCP::Panel::Utils::DateTime::set_local_tz($balance->end));
+        my $old_ratio = get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),NGCP::Panel::Utils::DateTime::set_local_tz($balance->end));
         my $old_free_cash = $old_ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
         my $old_free_time = $old_ratio * ($profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME);
-        my $new_ratio = _get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),$etime);
+        my $new_ratio = get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),$etime);
         my $new_free_cash = $new_ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
         my $new_free_time = $new_ratio * ($profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME);
         $cash_balance += $new_free_cash - $old_free_cash;
@@ -670,7 +670,7 @@ sub _get_balance_values {
             my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
             $ratio = 1.0;
             if (NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start) <= $contract_create && NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end) >= $contract_create) { #$last_balance->end is never +inf here
-                $ratio = _get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start),NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end));
+                $ratio = get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start),NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end));
             }
             my $old_free_cash = $ratio * ($last_profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
             $cash_balance = $last_balance->cash_balance;
@@ -684,7 +684,7 @@ sub _get_balance_values {
         $ratio = 1.0;
     } else {
         $cash_balance = (defined $initial_balance ? $initial_balance : _DEFAULT_INITIAL_BALANCE);
-        $ratio = _get_free_ratio($now,$stime, $etime);
+        $ratio = get_free_ratio($now,$stime, $etime);
     }
 
     my $free_cash = $ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
@@ -702,7 +702,7 @@ sub _get_balance_values {
 
 }
 
-sub _get_free_ratio {
+sub get_free_ratio {
     my ($now,$stime,$etime) = @_;
     if (!NGCP::Panel::Utils::DateTime::is_infinite_future($etime)) {
         my $ctime;
@@ -829,7 +829,7 @@ sub _add_interval {
 }
 
 sub _add_second {
-    
+
     my ($dt,$skip_leap_seconds) = @_;
     $dt->add(seconds => 1);
     while ($skip_leap_seconds and $dt->second() >= 60) {

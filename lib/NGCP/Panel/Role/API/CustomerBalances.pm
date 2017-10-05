@@ -51,6 +51,13 @@ sub hal_from_item {
     $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
     $resource{free_time_spent} = delete $resource{free_time_balance_interval};
 
+    my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($item->contract->create_timestamp // $item->contract->modify_timestamp);
+    if (NGCP::Panel::Utils::DateTime::set_local_tz($item->start) <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($item->end) || NGCP::Panel::Utils::DateTime::set_local_tz($item->end) >= $contract_create)) {
+        $resource{ratio} = NGCP::Panel::Utils::ProfilePackages::get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($item->start),NGCP::Panel::Utils::DateTime::set_local_tz($item->end));
+    } else {
+        $resource{ratio} = 1.0;
+    }
+
     my $hal = NGCP::Panel::Utils::DataHal->new(
         links => [
             NGCP::Panel::Utils::DataHalLink->new(
