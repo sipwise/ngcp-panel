@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_47ba6de2",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 14
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-05T23:07:56Z",
+      "side": 1,
+      "message": "turns out this breaks ability to lock a subscriber",
+      "range": {
+        "startLine": 122,
+        "startChar": 0,
+        "endLine": 123,
+        "endChar": 28
+      },
+      "revId": "f9030b4f21522af90c84fce97841a2906fb28ddc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
