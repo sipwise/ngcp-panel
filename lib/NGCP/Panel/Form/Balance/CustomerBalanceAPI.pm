@@ -24,10 +24,21 @@ has_field 'free_time_spent' => (
     },
 );
 
+has_field 'ratio' => (
+    type => 'Float',
+    required => 0,
+    #precision => 6,
+    #decimal_symbol => '.',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The ratio to reduce free cash/time in the initial balance period (month), when the customer was created. Readonly.'],
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/cash_balance cash_debit free_time_balance free_time_spent/],
+    render_list => [qw/cash_balance cash_debit free_time_balance free_time_spent ratio/],
 );
 
 1;
