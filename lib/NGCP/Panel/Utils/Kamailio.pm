@@ -86,16 +86,18 @@ sub flush {
 EOF
 }
 
+# returns: () or (ID, STATUS, [XML])
 sub trusted_reload {
     my ($c) = @_;
 
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    my $ret = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+    my ($ret) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>permissions.trustedReload</methodName>
 </methodCall>
 EOF
+    return ref $ret ? @{ $ret } : ();
 }
 
 sub get_aor{
