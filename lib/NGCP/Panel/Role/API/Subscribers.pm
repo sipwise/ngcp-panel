@@ -126,9 +126,10 @@ sub resource_from_item {
         my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'lock',
             prov_subscriber => $item->provisioning_voip_subscriber);
+        $resource{lock} = 0;
         if($pref->first) {
             #cast to Numeric accordingly to the form field type and customer note in the ticket #10313
-            $resource{lock} = 0 + $pref->first->value;
+            $resource{lock} += $pref->first->value;
         }
     } else {
         # fields we never want to see
@@ -339,6 +340,8 @@ sub prepare_resource {
         if( ref $resource->{e164} ne "HASH"){
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid primary_number parameter, must be a hash.');
             return;
+        } else {
+            delete $resource->{e164}->{number_id};
         }
     }
     if(exists $resource->{alias_numbers}) {
@@ -351,6 +354,8 @@ sub prepare_resource {
             if( ref $alias_number->{e164} ne "HASH"){
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid alias_number parameter, must be an array of the hashes.');
                 return;
+            } else {
+                delete $alias_number->{e164}->{number_id};
             }
         }
     }
