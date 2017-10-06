@@ -110,7 +110,12 @@ sub patch {
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'patch', $item, $old_resource, $resource, $form, $process_extras);
 
-        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
+        $self->return_representation($c, 
+            'item' => $item, 
+            'form' => $form, 
+            'preference' => $preference, 
+            'form_exceptions' => $form_exceptions 
+        );
     }
     return;
 }
@@ -147,8 +152,12 @@ sub put {
 
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
-
-        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference, 'form_exceptions' => $form_exceptions );
+        $self->return_representation($c, 
+            'item' => $item, 
+            'form' => $form, 
+            'preference' => $preference, 
+            'form_exceptions' => $form_exceptions 
+        );
     }
     return;
 }
