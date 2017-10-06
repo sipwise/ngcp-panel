@@ -97,9 +97,10 @@ sub resource_from_item {
     my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => 'lock',
         prov_subscriber => $item->provisioning_voip_subscriber);
+    $resource{lock} = 0;
     if($pref->first) {
         #cast to Numeric accordingly to the form field type and customer note in the ticket #10313
-        $resource{lock} = 0 + $pref->first->value;
+        $resource{lock} += $pref->first->value;
     }
 
     $resource{customer_id} = int(delete $resource{contract_id});
