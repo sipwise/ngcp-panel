@@ -956,7 +956,7 @@ sub update_item {
 
     $item = $self->update_item_model($c, $item, $old_resource, $resource, $form, $process_extras);
 
-    return $item, $form, $form_exceptions;
+    return $item, $form, $form_exceptions, $process_extras;
 }
 
 #------ dummy & default methods
@@ -1120,11 +1120,11 @@ sub relation {
 #------ /accessors ---
 sub return_representation{
     my($self, $c, %params) = @_;
-    my($hal, $response, $item, $form, $preference, $form_exceptions) = @params{qw/hal response item form preference form_exceptions/};
+    my($hal, $response, $item, $preference, $form, $form_exceptions) = @params{qw/hal response item preference form form_exceptions/};
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form, \%params );
+    $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
     $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
         $hal->http_headers,
     ), $hal->as_json);
@@ -1142,11 +1142,11 @@ sub return_representation{
 
 sub return_representation_post{
     my($self, $c, %params) = @_;
-    my($hal, $response, $item, $form, $preference, $form_exceptions) = @params{qw/hal response item form preference form_exceptions/};
+    my($hal, $response, $item, $preference, $form, $form_exceptions) = @params{qw/hal response item preference form form_exceptions/};
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form, \%params );
+    $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
     $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
         $hal->http_headers,
     ), $hal->as_json);
