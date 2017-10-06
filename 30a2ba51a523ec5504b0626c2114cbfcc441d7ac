@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_47034c0f",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 674,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-10-06T19:45:08Z",
+      "side": 1,
+      "message": "Here we use class Class::Hash to allow object-like access to the hash field. We need to pass it to the process_cdr_item that we definitely don\u0027t want to modify to work both with hashes and objects.",
+      "range": {
+        "startLine": 674,
+        "startChar": 4,
+        "endLine": 674,
+        "endChar": 64
+      },
+      "revId": "30a2ba51a523ec5504b0626c2114cbfcc441d7ac",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
