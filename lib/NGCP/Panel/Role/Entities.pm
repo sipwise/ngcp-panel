@@ -133,7 +133,7 @@ sub post {
 
         $self->post_process_commit($c, 'create', $item, undef, $resource, $form, $process_extras);
         
-        $self->return_representation_post($c, 'item' => $item, 'form' => $form );
+        $self->return_representation_post($c, 'item' => $item, 'form' => $form, 'form_exceptions' => $form_exceptions );
     }
     return;
 }
