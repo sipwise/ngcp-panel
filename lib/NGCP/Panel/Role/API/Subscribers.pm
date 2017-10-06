@@ -130,6 +130,8 @@ sub resource_from_item {
         if($pref->first and length($pref->first->value) > 0) {
             #cast to Numeric accordingly to the form field type and customer note in the ticket #10313
             $resource{lock} = $pref->first->value;
+        }else{
+            $resource{lock} = undef;
         }
     } else {
         # fields we never want to see
