@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_4db60b3f",
+        "filename": "lib/NGCP/Panel/Utils/Form.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-09T21:01:51Z",
+      "side": 1,
+      "message": "if",
+      "range": {
+        "startLine": 47,
+        "startChar": 6,
+        "endLine": 47,
+        "endChar": 11
+      },
+      "revId": "a83c485f6cca2901dc057af2e54239ce588b2fd2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_6d82ef53",
+        "filename": "sandbox/cracklib.pl",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-09T21:01:51Z",
+      "side": 1,
+      "message": "nice, did not know it",
+      "range": {
+        "startLine": 6,
+        "startChar": 4,
+        "endLine": 6,
+        "endChar": 19
+      },
+      "revId": "a83c485f6cca2901dc057af2e54239ce588b2fd2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
