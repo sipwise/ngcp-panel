@@ -17,7 +17,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     return 1;
 }
 
-sub root :Chained('/') :PathPart('grafana') :CaptureArgs() {
+sub root :Chained('/') :PathPart('grafana') :Args() {
     my ( $self, $c, @fullpath ) = @_;
 
     my $path = join '/', @fullpath;
@@ -26,7 +26,6 @@ sub root :Chained('/') :PathPart('grafana') :CaptureArgs() {
               $c->config->{grafana}{host} . ':' .
               $c->config->{grafana}{port};
     $url .= "/".$path if length $path;
-    $c->log->debug("accessing grafana via ngcp-panel proxy, url is $url");
 
     my $req = HTTP::Request->new($c->req->method => $url);
     $req->header('Content-Type' => $c->req->header('Content-Type'));
