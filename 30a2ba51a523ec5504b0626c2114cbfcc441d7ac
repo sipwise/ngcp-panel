@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "dab895d6_cae20103",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-10-09T10:18:11Z",
+      "side": 1,
+      "message": "do not we have (cannot we have?) $item already containing all fields that are needed for processing by process_cdr_item ? that would allow us to omit creating additional intermediate objects and would be less overhead with using Class::Hash (a lot of self-baked small hashes in perl are a little expensive)",
+      "range": {
+        "startLine": 669,
+        "startChar": 18,
+        "endLine": 669,
+        "endChar": 23
+      },
+      "revId": "30a2ba51a523ec5504b0626c2114cbfcc441d7ac",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_47034c0f",
         "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
         "patchSetId": 6
