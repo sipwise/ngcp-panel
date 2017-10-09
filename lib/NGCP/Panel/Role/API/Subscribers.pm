@@ -102,6 +102,7 @@ sub resource_from_item {
         $resource{lock} = 0 + $pref->first->value;
         }else{
             $resource{lock} = undef;
+        }
     }
 
     $resource{customer_id} = int(delete $resource{contract_id});
