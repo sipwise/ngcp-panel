@@ -12,6 +12,7 @@ Homepage: https://www.sipwise.com/
 Package: ngcp-panel
 Architecture: all
 Depends:
+ cracklib-runtime,
  gettext,
  ghostscript,
  gnutls-bin,
@@ -26,6 +27,7 @@ Depends:
  libcatalyst-view-tt-perl,
  libconfig-general-perl,
  libconvert-ascii85-perl,
+ libcrypt-cracklib-perl,
  libcrypt-eksblowfish-perl,
  libcrypt-jwt-perl,
  libcrypt-rc4-perl,
