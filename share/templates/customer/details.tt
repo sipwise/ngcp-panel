@@ -731,6 +731,7 @@ $(function() {
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]
+<script src="/js/libs/ngcp-pwdgen.js"></script>
 [% ELSIF edit_flag == 1 -%]
 [%
     IF form.has_for_js;
