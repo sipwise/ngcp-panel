@@ -347,6 +347,8 @@ function process_pbx_items(moveId,direction){
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]
+
+<script src="/js/libs/ngcp-pwdgen.js"></script>
 [% END -%]
 
 
