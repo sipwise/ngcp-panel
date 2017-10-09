@@ -1,6 +1,7 @@
 package NGCP::Panel::Utils::Form;
 
 use Sipwise::Base;
+use Crypt::Cracklib;
 
 sub validate_password {
     my %params = @_;
@@ -29,6 +30,33 @@ sub validate_password {
     }
     if($r->{password_musthave_specialchar} && $pass !~ /[^0-9a-zA-Z]/) {
         $field->add_error($c->loc('Must contain special characters'));
+    }
+    if($field->name eq "password" && $r->{password_sip_validate}) {
+        my $user;
+        if($field->form->field('username')) {
+            $user = $field->form->field('username')->value;
+        } elsif($c->stash->{subscriber}) {
+            $user = $c->stash->{subscriber}->provisioning_voip_subscriber->username;
+        }
+        if(defined $user && $user eq $pass) {
+            $field->add_error($c->loc('Password must not be equal to username'));
+        }
+        unless(Crypt::Cracklib::check($pass)) {
+            $field->add_error($c->loc('Password is too weak'));
+        }
+    } elsif($field->name eq "webpassword" && $r->{password_web_validate}) {
+        my $user;
+        if($field->form->field('webusername')) {
+            $user = $field->form->field('webusername')->value;
+        } elsif($c->stash->{subscriber}) {
+            $user = $c->stash->{subscriber}->provisioning_voip_subscriber->webusername;
+        }
+        if(defined $user && $user eq $pass) {
+            $field->add_error($c->loc('Web password must not be equal to web username'));
+        }
+        unless(Crypt::Cracklib::check($pass)) {
+            $field->add_error($c->loc('Web password is too weak'));
+        }
     }
 }
 
