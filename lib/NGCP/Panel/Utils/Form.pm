@@ -1,6 +1,7 @@
 package NGCP::Panel::Utils::Form;
 
 use Sipwise::Base;
+use Crypt::Cracklib;
 
 sub validate_password {
     my %params = @_;
@@ -29,6 +30,15 @@ sub validate_password {
     }
     if($r->{password_musthave_specialchar} && $pass !~ /[^0-9a-zA-Z]/) {
         $field->add_error($c->loc('Must contain special characters'));
+    }
+    if($field->name eq "password" && $r->{password_sip_validate}) {
+        if($field->form->field('username') eq $pass || !check($pass)) {
+            $field->add_error($c->loc('Password too weak'));
+        }
+    } elsif($field->name eq "webpassword" && $r->{password_web_validate}) {
+        if($field->form->field('webusername') eq $pass || !check($pass)) {
+            $field->add_error($c->loc('Web Password too weak'));
+        }
     }
 }
 
