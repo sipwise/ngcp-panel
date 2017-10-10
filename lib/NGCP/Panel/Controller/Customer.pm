@@ -1557,6 +1557,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
         ->search({
             'device.reseller_id' => $c->stash->{contract}->contact->reseller_id,
         },{
+            order_by => { -asc => 'name' },
             join => { 'config' => 'device' },
         });
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxFieldDevice", $c);
