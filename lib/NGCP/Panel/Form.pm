@@ -9,8 +9,8 @@ sub get {
     if(exists $forms{$name}) {
         $form = $forms{$name};
         $form->clear();
-        $form->setup_form();
         $form->ctx($c);
+        $form->setup_form();
     } else {
         my $use_list = { $name => undef };
         unless(can_load(modules => $use_list, nocache => 0, autoload => 0)) {
