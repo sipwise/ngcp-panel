@@ -1556,6 +1556,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
     $c->stash->{autoprov_profile_rs} = $c->model('DB')->resultset('autoprov_profiles')
         ->search({
             'device.reseller_id' => $c->stash->{contract}->contact->reseller_id,
+            order_by => { -asc => 'name' }
         },{
             join => { 'config' => 'device' },
         });
