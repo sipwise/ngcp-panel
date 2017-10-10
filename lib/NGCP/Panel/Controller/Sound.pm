@@ -461,6 +461,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
                     { 'handles.id' => { '=' => \'files.handle_id'}, 'files.set_id' => $c->stash->{set_result}->id},
                 ],
             ],
+            order_by => { -asc => 'handles.name' }
         });
 
     if($c->stash->{set_result}->contract_id) {
