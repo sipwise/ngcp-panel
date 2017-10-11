@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_b6aa98d2",
+        "filename": "lib/NGCP/Panel/Form/Peering/Server.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-11T15:16:03Z",
+      "side": 1,
+      "message": "does it also trigger for api?",
+      "revId": "af3026f06c0156f8c4ee2fb7e32dc7b988afbb8c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
