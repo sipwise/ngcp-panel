@@ -119,6 +119,13 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
+sub validate_name {
+    my ($self, $field) = @_;
+    unless($field->value =~ /^[a-zA-Z0-9_\- ]+$/) {
+        $field->add_error("Invalid characters in name");
+    }
+}
+
 sub validate_via_route {
     my ($self, $field) = @_;
 
