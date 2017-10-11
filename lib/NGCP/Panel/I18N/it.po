@@ -5163,6 +5163,14 @@ msgstr "Personalizzazione Interfaccia"
 msgid "Party Call Control"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Password is too weak"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Password must not contain username"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Password of the phone administrator."
 msgstr ""
@@ -7724,6 +7732,14 @@ msgstr "Telefono Web per "
 #: share/templates/subscriber/master.tt
 msgid "Web Username"
 msgstr "Nome Utente Web"
+
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Web password is too weak"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Web password must not contain username"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Web password successfully recovered, please re-login."
