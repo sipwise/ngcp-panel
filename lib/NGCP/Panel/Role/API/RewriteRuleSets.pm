@@ -49,6 +49,8 @@ sub post_process_hal_resource {
             run => 0,
         );
         delete $rule_resource->{set_id};
+        $rule_resource->{match_pattern} = $rwr_form->inflate_match_pattern($rule_resource->{match_pattern});
+        $rule_resource->{replace_pattern} = $rwr_form->inflate_replace_pattern($rule_resource->{replace_pattern});
         push @rewriterules, $rule_resource;
     }
     $resource->{rewriterules} = \@rewriterules;
