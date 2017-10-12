@@ -132,7 +132,10 @@ sub upload_csv {
         if($row->{end} && $row->{end} =~ /^\d{4}-\d{2}-\d{2}$/) {
             $row->{end} .= 'T23:59:59';
         }
-        $row->{type} ||= undef;
+        if (defined $row->{type} and (length($row->{type}) > 31 or $row->{type} =~ /[^a-z0-9_-]/i)) {
+            push @fails, $linenum;
+            next;
+        }
         push @numbers, [$carriers{$k}, $row->{number}, $row->{routing_number}, $row->{start}, $row->{end}, $row->{type}];
 
         if($linenum % $chunk_size == 0) {
