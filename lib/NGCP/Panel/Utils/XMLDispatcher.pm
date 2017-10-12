@@ -5,126 +5,126 @@ use Net::HTTP;
 use Errno;
 
 sub dispatch {
-	my ($c, $target, $all, $sync, $body, $schema) = @_;
+    my ($c, $target, $all, $sync, $body, $schema) = @_;
 
     $schema //= $c->model('DB');
     $c->log->info("dispatching to target $target, all=$all, sync=$sync");
     $c->log->debug("dispatching body $body");
 
-	my $hosts;
-	if ($target =~ /^%TG%/) {
-		my @t = split(/::/, $target);
-		$hosts = [{ip => $t[2], port => $t[3], path => $t[4], id => $t[5]}];
-	}
-	else {
-		my $host_rs = $schema->resultset('xmlgroups')
-		    ->search_rs({name => $target})
-		    ->search_related('xmlhostgroups')->search_related('host', {}, { order_by => 'id' });
-	    $hosts = [map +{ip => $_->ip, port => $_->port, path => $_->path,
-	        id => $_->id}, $host_rs->all];
-	}
+    my $hosts;
+    if ($target =~ /^%TG%/) {
+        my @t = split(/::/, $target);
+        $hosts = [{ip => $t[2], port => $t[3], path => $t[4], id => $t[5]}];
+    }
+    else {
+        my $host_rs = $schema->resultset('xmlgroups')
+            ->search_rs({name => $target})
+            ->search_related('xmlhostgroups')->search_related('host', {}, { order_by => 'id' });
+        $hosts = [map +{ip => $_->ip, port => $_->port, path => $_->path,
+            id => $_->id}, $host_rs->all];
+    }
 
     use Data::Dumper;
     $c->log->info("dispatching to hosts: " . Dumper $hosts);
-	my @ret;
+    my @ret;
 
-	for my $host (@$hosts) {
-		my ($meth, $ip, $port, $path, $hostid) = ("http", $host->{ip}, $host->{port}, $host->{path}, $host->{id});
-		$c->log->info("dispatching xmlrpc $target request to ".$ip.":".$port.$path);
+    for my $host (@$hosts) {
+        my ($meth, $ip, $port, $path, $hostid) = ("http", $host->{ip}, $host->{port}, $host->{path}, $host->{id});
+        $c->log->info("dispatching xmlrpc $target request to ".$ip.":".$port.$path);
 
-		my $ret = eval {	# catch exceptions
-			my $s = Net::HTTP->new(Host => $ip, KeepAlive => 0, PeerPort => $port || 80, Timeout => 5);
-			$s or die "could not connect to server";
+        my $ret = eval {    # catch exceptions
+            my $s = Net::HTTP->new(Host => $ip, KeepAlive => 0, PeerPort => $port || 80, Timeout => 5);
+            $s or die "could not connect to server";
 
-			my $res = $s->write_request("POST", $path || "/", "User-Agent" => "Sipwise XML Dispatcher", "Content-Type" => "text/xml", $body);
-			$res or die "did not get result";
+            my $res = $s->write_request("POST", $path || "/", "User-Agent" => "Sipwise XML Dispatcher", "Content-Type" => "text/xml", $body);
+            $res or die "did not get result";
 
-			my ($code, $mess, @headers) = $s->read_response_headers();
-			$code == 200 or die "code is $code";
+            my ($code, $mess, @headers) = $s->read_response_headers();
+            $code == 200 or die "code is $code";
 
-			my $body = "";
-			for (;;) {
-				my $buf;
-				my $n = $s->read_entity_body($buf, 1024);
-				if (!defined($n) || $n == -1) {
-					$!{EINTR} || $!{EAGAIN} and next;
-					die;
-				}
-				$n == 0 and last;
+            my $body = "";
+            for (;;) {
+                my $buf;
+                my $n = $s->read_entity_body($buf, 1024);
+                if (!defined($n) || $n == -1) {
+                    $!{EINTR} || $!{EAGAIN} and next;
+                    die;
+                }
+                $n == 0 and last;
 
-				$body .= $buf;
-			}
+                $body .= $buf;
+            }
 
-			# successful request
+            # successful request
 
-			return [$hostid, 1, $body];	# return from eval only
-		};
+            return [$hostid, 1, $body]; # return from eval only
+        };
 
-		if ($ret) {
-			return $ret
-			    unless $all;
-			push(@ret, $ret);
-			next;
-		}
+        if ($ret) {
+            return $ret
+                unless $all;
+            push(@ret, $ret);
+            next;
+        }
 
-		# failure
-		
-		$c->log->info("failure: $@");
+        # failure
+        
+        $c->log->info("failure: $@");
 
-		$all or next;
+        $all or next;
 
-		if ($sync) {
-			push(@ret, [$hostid, 0]);
-			next;
-		}
+        if ($sync) {
+            push(@ret, [$hostid, 0]);
+            next;
+        }
 
-		_queue(join("::", "%TG%", $meth, $ip, $port, $path, $hostid), $body, $schema);
-		push(@ret, [$hostid, -1]);
-	}
+        _queue(join("::", "%TG%", $meth, $ip, $port, $path, $hostid), $body, $schema);
+        push(@ret, [$hostid, -1]);
+    }
 
-	if (!$all) {
-		# failure on all hosts
-		$sync and return;
-		_queue($target, $body, $schema);
-		return [$target, -1];
-	}
+    if (!$all) {
+        # failure on all hosts
+        $sync and return;
+        _queue($target, $body, $schema);
+        return [$target, -1];
+    }
 
-	return wantarray ? @ret : \@ret;
+    return wantarray ? @ret : \@ret;
 }
 
 sub _queue {
-	my ($target, $body, $schema) = @_;
+    my ($target, $body, $schema) = @_;
 
-	$schema->resultset('xmlqueue')->create({
-	    target => $target,
-	    body => $body,
-	    ctime => \"unix_timestamp()",
-	    atime => \"unix_timestamp()",
+    $schema->resultset('xmlqueue')->create({
+        target => $target,
+        body => $body,
+        ctime => \"unix_timestamp()",
+        atime => \"unix_timestamp()",
     });
 }
 
 sub queuerunner {
-	my ($schema) = @_;
+    my ($schema) = @_;
 
-	for (;; sleep(1)) {
-		my $row = _dequeue($schema);
-		$row or next;
+    for (;; sleep(1)) {
+        my $row = _dequeue($schema);
+        $row or next;
 
-		my @ret = dispatch(undef, $row->target, 0, 1, $row->body, $schema);
+        my @ret = dispatch(undef, $row->target, 0, 1, $row->body, $schema);
 
-		@ret and _unqueue($row->id, $schema);
-	}
+        @ret and _unqueue($row->id, $schema);
+    }
 }
 
 sub _dequeue {
-	my ($schema) = @_;
+    my ($schema) = @_;
 
-	my $row = $schema->resultset('xmlqueue')->search({
-	        next_try => {'<=' => \'unix_timestamp()'},
+    my $row = $schema->resultset('xmlqueue')->search({
+            next_try => {'<=' => \'unix_timestamp()'},
         },{
             order_by => 'id'
         })->first;
-	$row or return;
+    $row or return;
 
     $row->update({
         tries => \'tries+1',
@@ -132,14 +132,66 @@ sub _dequeue {
         next_try => \['unix_timestamp() + ?', [{} => 5 + $row->tries * 30]],
     });
 
-	return $row;
+    return $row;
 }
 
 sub _unqueue {
-	my ($id, $schema) = @_;
+    my ($id, $schema) = @_;
 
     $schema->resultset('xmlqueue')->find($id)->delete;
 }
+
+# dies if unsuccessful
+sub sip_domain_reload {
+    my ($c, $domain_name) = @_;
+
+    my $NUM_TRIES = 2;
+    my $SLEEP_BEFORE_RETRY = 1;
+    my $res;
+
+    my $reload_command = <<EOF;
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>domain.reload</methodName>
+<params/>
+</methodCall>
+EOF
+
+    my $dump_command = <<EOF;
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>domain.dump</methodName>
+<params/>
+</methodCall>
+EOF
+
+    for (my $i = 0; $i < $NUM_TRIES; $i++) {
+        sleep $SLEEP_BEFORE_RETRY if ($i > 0);
+
+        ($res) = dispatch($c, "proxy-ng", 1, 1, $reload_command); # we're only checking first host here
+        if ($res->[1] < 1) {
+            die "couldn't reload domains";
+        }
+        return () unless $domain_name;
+        my @replies = dispatch($c, "proxy-ng", 1, 1, $dump_command);
+        my $all_successful = 1;
+        for my $reply (@replies) {
+            if ($reply->[1] && $reply->[2] =~ m/$domain_name/) {
+                # successful
+            } else {
+                $c->log->debug("Domain not loaded. Retrying...");
+                $all_successful = 0;
+            }
+        }
+        if ($all_successful) {
+            $c->log->debug("Domain successfully loaded in all proxies");
+            return;
+        }
+    }
+
+    die "couldn't load domain into all proxies. Tried $NUM_TRIES times.";
+}
+
 
 1;
 

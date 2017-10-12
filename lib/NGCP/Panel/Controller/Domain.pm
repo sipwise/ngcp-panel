@@ -144,11 +144,13 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
         }
 
-        my (undef, $xmlrpc_res) = $self->_sip_domain_reload($c);
-        if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+        try {
+            NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c, $form->value->{domain});
+        } catch ($e) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 desc  => $c->loc('Failed to activate domain. Domain was created.'),
+                error => $e,
             );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
         }
@@ -232,7 +234,17 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             return;
         }
 
-        $self->_sip_domain_reload($c);
+        try {
+            NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c, $form->value->{domain});
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                desc  => $c->loc('Failed to reload proxy. Domain was modified.'),
+                error => $e,
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
+            return;
+        }
         NGCP::Panel::Utils::Message::info(
             c => $c,
             desc => $c->loc('Domain successfully updated'),
@@ -271,13 +283,24 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         return;
     }
 
-    $self->_sip_domain_reload($c);
+    try {
+        NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c);
+    } catch ($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            desc  => $c->loc('Failed to reload proxy. Domain was deleted.'),
+            error => $e,
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
+        return;
+    }
     NGCP::Panel::Utils::Message::info(
         c => $c,
         data => { $c->stash->{domain_result}->get_inflated_columns },
         desc => $c->loc('Domain successfully deleted!'),
     );
     $c->response->redirect($c->uri_for());
+    return;
 }
 
 sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
@@ -401,20 +424,6 @@ sub load_preference_list :Private {
     );
 }
 
-sub _sip_domain_reload {
-    my ($self, $c) = @_;
-    my ($res) = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
-<?xml version="1.0" ?>
-<methodCall>
-<methodName>domain.reload</methodName>
-<params/>
-</methodCall>
-EOF
-
-    return ref $res ? @{ $res } : ();
-}
-
-
 1;
 
 __END__
@@ -482,12 +491,6 @@ Data that is put on stash: edit_preference, form
 Retrieves and processes a datastructure containing preference groups, preferences and their values, to be used in rendering the preference list.
 
 Data that is put on stash: pref_groups
-
-=head2 _sip_domain_reload
-
-Ported from ossbss
-
-reloads domain cache of sip proxies
 
 =head1 AUTHOR
 

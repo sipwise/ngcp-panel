@@ -13,6 +13,7 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+use NGCP::Panel::Utils::XMLDispatcher;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD DELETE/];
@@ -145,7 +146,7 @@ sub DELETE :Allow {
 
         try {
             $self->xmpp_domain_disable($c, $domain) if $xmpp_reload;
-            $self->sip_domain_reload($c) if $sip_reload;
+            NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c) if $sip_reload;
         } catch($e) {
             $c->log->error("failed to deactivate domain: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to deactivate domain.");

@@ -13,6 +13,7 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+use NGCP::Panel::Utils::XMLDispatcher;
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
@@ -229,12 +230,7 @@ sub POST :Allow {
 
         try {
             $self->xmpp_domain_reload($c, $resource->{domain}) if $xmpp_reload;
-            if ($sip_reload) {
-                my (undef, $xmlrpc_res) = $self->sip_domain_reload($c);
-                if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
-                    die "XMLRPC failed";
-                }
-            }
+            NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c, $resource->{domain}) if ($sip_reload);
         } catch($e) {
             $c->log->error("failed to activate domain: $e. Domain created"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain. Domain was created");
