@@ -41,18 +41,14 @@ has_field 'routing_number' => (
 );
 
 has_field 'type' => (
-    type => 'Select',
+    type => 'Text',
     required => 0,
-    label => 'Type',
-    options => [
-        { label => '', value => '' },
-        { label => 'fixed', value => 'fixed' },
-        { label => 'mobile', value => 'mobile' },
-    ],
+    maxlength => 31,
     element_attr => {
         rel => ['tooltip'],
         title => ['The optional LNP number type tag, for CDR exports.']
     },
+    validate_method => \&_validate_type,
 );
 
 has_field 'start' => (
@@ -97,6 +93,15 @@ sub validate_number {
 
     unless($field->value =~ /^\d+$/) {
         $field->add_error($field->label . " must be a valid E164 number");
+    }
+    return;
+}
+
+sub _validate_type {
+    my ( $self, $field ) = @_;
+
+    if ($field->input =~ /[^a-z0-9_-]/i) {
+        $field->add_error($field->label . " must be alphanumeric");
     }
     return;
 }
