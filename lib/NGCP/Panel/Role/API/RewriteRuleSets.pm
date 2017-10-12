@@ -43,6 +43,8 @@ sub hal_from_item {
             resource => $rule_resource,
             run => 0,
         );
+        $rule_resource->{match_pattern} = $rwr_form->inflate_match_pattern($rule_resource->{match_pattern});
+        $rule_resource->{replace_pattern} = $rwr_form->inflate_replace_pattern($rule_resource->{replace_pattern});
         push @rewriterules, $rule_resource;
     }
 
