@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Form;
 
 use Tie::IxHash;
-use Class::Hash;
+#use Class::Hash;
 
 my %call_fields = ();
 my $call_fields_tied = tie(%call_fields, 'Tie::IxHash');
@@ -718,7 +718,7 @@ sub process_hal_resource {
     # todo: mashal specific fields, per conversation event type ...
     my $fields = _get_fields_by_type($item->{type});
     my $item_accessors_hash = _get_item_with_accessors($item, $fields);
-    my $item_mock_obj = Class::Hash->new(%$item_accessors_hash);
+    #my $item_mock_obj = Class::Hash->new(%$item_accessors_hash);
     my $owner = $self->get_owner_data($c, $schema);
     if(!$owner){
         return;
