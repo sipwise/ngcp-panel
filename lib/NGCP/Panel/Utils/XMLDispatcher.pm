@@ -20,18 +20,18 @@ sub dispatch {
     $c->log->info("dispatching to target $target, all=$all, sync=$sync");
     $c->log->debug("dispatching body $body");
 
-	my $hosts;
-	if ($target =~ /^%TG%/) {
-		my @t = split(/::/, $target);
-		$hosts = [{ip => $t[2], port => $t[3], path => $t[4], id => $t[5]}];
-	}
-	else {
-		my $host_rs = $schema->resultset('xmlgroups')
-		    ->search_rs({name => $target})
-		    ->search_related('xmlhostgroups')->search_related('host', {}, { order_by => 'id' });
-	    $hosts = [map +{ip => $_->ip, port => $_->port, path => $_->path,
-	        id => $_->id}, $host_rs->all];
-	}
+    my $hosts;
+    if ($target =~ /^%TG%/) {
+        my @t = split(/::/, $target);
+        $hosts = [{ip => $t[2], port => $t[3], path => $t[4], id => $t[5]}];
+    }
+    else {
+        my $host_rs = $schema->resultset('xmlgroups')
+            ->search_rs({name => $target})
+            ->search_related('xmlhostgroups')->search_related('host', {}, { order_by => 'id' });
+        $hosts = [map +{ip => $_->ip, port => $_->port, path => $_->path,
+            id => $_->id}, $host_rs->all];
+    }
 
     use Data::Dumper;
     $c->log->info("dispatching to hosts: " . Dumper $hosts);
@@ -133,7 +133,7 @@ sub _dequeue {
         },{
             order_by => 'id'
         })->first;
-	$row or return;
+    $row or return;
 
     $row->update({
         tries => \'tries+1',
@@ -141,13 +141,66 @@ sub _dequeue {
         next_try => \['unix_timestamp() + ?', [{} => 5 + $row->tries * 30]],
     });
 
-	return $row;
+    return $row;
 }
 
 sub _unqueue {
 	my ($self, $id) = @_;
 
     $self->schema->resultset('xmlqueue')->find($id)->delete;
+}
+
+# dies if unsuccessful
+# not an object method
+sub sip_domain_reload {
+    my ($c, $domain_name) = @_;
+
+    my $NUM_TRIES = 3;
+    my $SLEEP_BEFORE_RETRY = 1;
+    my $res;
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+
+    my $reload_command = <<EOF;
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>domain.reload</methodName>
+<params/>
+</methodCall>
+EOF
+
+    my $dump_command = <<EOF;
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>domain.dump</methodName>
+<params/>
+</methodCall>
+EOF
+
+    for (my $i = 0; $i < $NUM_TRIES; $i++) {
+        sleep $SLEEP_BEFORE_RETRY if ($i > 0);
+
+        ($res) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, $reload_command); # we're only checking first host here
+        if ($res->[1] < 1) {
+            die "couldn't reload domains";
+        }
+        return () unless $domain_name;
+        my @replies = $dispatcher->dispatch($c, "proxy-ng", 1, 1, $dump_command);
+        my $all_successful = 1;
+        for my $reply (@replies) {
+            if ($reply->[1] && $reply->[2] =~ m/$domain_name/) {
+                # successful
+            } else {
+                $c->log->debug("Domain not loaded. Retrying...");
+                $all_successful = 0;
+            }
+        }
+        if ($all_successful) {
+            $c->log->debug("Domain successfully loaded in all proxies");
+            return;
+        }
+    }
+
+    die "couldn't load domain into all proxies. Tried $NUM_TRIES times.";
 }
 
 no Moose;

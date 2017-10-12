@@ -10,7 +10,6 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
@@ -136,20 +135,6 @@ sub item_by_id {
 
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
-}
-
-sub sip_domain_reload {
-    my ($self, $c) = @_;
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    my ($res) = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
-<?xml version="1.0" ?>
-<methodCall>
-<methodName>domain.reload</methodName>
-<params/>
-</methodCall>
-EOF
-
-    return ref $res ? @{ $res } : ();
 }
 
 sub xmpp_domain_reload {
