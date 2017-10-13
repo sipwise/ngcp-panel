@@ -22,6 +22,30 @@
       "revId": "b236c508a80d7079b9e2c7c494ff0904b0007845",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_b0a0dbf5",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 649,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-10-13T10:10:44Z",
+      "side": 1,
+      "message": "I didn\u0027t complete yet. So I will remove all from review to don\u0027t disturb with constant updates until it is done.",
+      "parentUuid": "dab895d6_5034dfdd",
+      "range": {
+        "startLine": 624,
+        "startChar": 0,
+        "endLine": 649,
+        "endChar": 1
+      },
+      "revId": "b236c508a80d7079b9e2c7c494ff0904b0007845",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
