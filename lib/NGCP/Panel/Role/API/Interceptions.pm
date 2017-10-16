@@ -15,6 +15,11 @@ sub _item_rs {
     my $item_rs = $c->model('InterceptDB')->resultset('voip_intercept')->search({
         deleted => 0,
     });
+    if($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({
+            reseller_id => $c->user->reseller_id,
+        });
+    }
     return $item_rs;
 }
 

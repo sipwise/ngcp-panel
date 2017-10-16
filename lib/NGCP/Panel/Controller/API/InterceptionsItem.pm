@@ -51,7 +51,12 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    $self->log_request($c);
+    #$self->log_request($c);
+
+    unless($c->user->lawful_intercept) {
+        $self->error($c, HTTP_FORBIDDEN, "Accessing user has no LI privileges.");
+        return;
+    }
 }
 
 sub GET :Allow {
