@@ -5,7 +5,7 @@ extends 'NGCP::Panel::Form::RewriteRule::ResellerSetAPI';
 
 has_field 'reseller_id' => (
     type => 'PosInteger',
-    validate_when_empty => 1,
+    required => 1,
     element_attr => {
         rel => ['tooltip'],
         title => ['The reseller who can use the Ruleset.'],
