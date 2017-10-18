@@ -191,6 +191,7 @@ sub update_item {
         last;
     }
 
+    $resource->{codec} = 'WAV';
     $resource->{data} = $recording;
 
     delete $resource->{handle};
