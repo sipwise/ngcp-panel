@@ -2989,10 +2989,6 @@ msgstr ""
 msgid "Failed to top-up using voucher!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm
-msgid "Failed to transcode audio file"
-msgstr "Fallo al convertir fichero de audio"
-
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to trigger config reload via SIP"
 msgstr ""
@@ -4326,8 +4322,8 @@ msgstr ""
 
 #: share/layout/body.tt
 msgid ""
-"Maintenance mode is enabled! Please do not perform any write operations "
-"until maintenance mode has been switched off!"
+"Maintenance mode is enabled! Please do not perform any changes until "
+"maintenance mode has been switched off!"
 msgstr ""
 
 #: share/templates/maliciouscall/list.tt
@@ -7230,10 +7226,6 @@ msgstr ""
 msgid "Transcode of audio file failed"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm
-msgid "Transcoding audio file failed"
-msgstr "La transcodificación del fichero ha fallado"
-
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Trusted Source"
 msgstr "Origen de confianza"
@@ -7865,6 +7857,12 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Failed to transcode audio file"
+#~ msgstr "Fallo al convertir fichero de audio"
+
+#~ msgid "Transcoding audio file failed"
+#~ msgstr "La transcodificación del fichero ha fallado"
 
 #~ msgid ""
 #~ "Search for partial match of user-provided number (UPN) to subscriber's  "

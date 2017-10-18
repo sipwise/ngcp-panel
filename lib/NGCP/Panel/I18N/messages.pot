@@ -2632,10 +2632,6 @@ msgstr ""
 msgid "Failed to top-up using voucher!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm
-msgid "Failed to transcode audio file"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to trigger config reload via SIP"
 msgstr ""
@@ -3891,7 +3887,7 @@ msgid "Mail2Fax"
 msgstr ""
 
 #: share/layout/body.tt
-msgid "Maintenance mode is enabled! Please do not perform any write operations until maintenance mode has been switched off!"
+msgid "Maintenance mode is enabled! Please do not perform any changes until maintenance mode has been switched off!"
 msgstr ""
 
 #: share/templates/maliciouscall/list.tt
@@ -6421,10 +6417,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Transcode of audio file failed"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Sound.pm
-msgid "Transcoding audio file failed"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm
