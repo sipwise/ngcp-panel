@@ -107,10 +107,10 @@ if(ok($soxi_output =~/GSM/, "Check that we converted wav to GSM encoding:".$soxi
     $test_machine->http_code_msg(422, "check response code on put empty file", $res_put_empty, $content_put_empty);
 }
 $test_machine->check_bundle();
-$test_machine->check_item_delete($greeting->{location});
+#$test_machine->check_item_delete($greeting->{location});
 
 
-$test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
+#$test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 
 
 done_testing;
