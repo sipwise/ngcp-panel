@@ -429,7 +429,7 @@ sub _get_voicemail_rs {
     my ($c,$uuid,$contract_id,$reseller_id,$params) = @params{qw/c uuid contract_id reseller_id params/};
 
     my $rs = $c->model('DB')->resultset('voicemail_spool')->search({
-        duration => { '!=' => '' },
+        #duration => { '!=' => '' },
     });
 
     $rs = $self->_apply_timestamp_from_to(rs => $rs,params => $params,col => 'me.origtime');
