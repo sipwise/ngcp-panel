@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "dab895d6_3f9f3461",
+        "filename": "lib/NGCP/Panel/Controller/API/Domains.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-19T09:48:12Z",
+      "side": 1,
+      "message": "ideally, it should drop the db record here (unlikely to fail)",
+      "revId": "9d6666ceb6836fd40e493407eac272fd9634d9ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_dfb9d8ea",
         "filename": "lib/NGCP/Panel/Utils/XMLDispatcher.pm",
         "patchSetId": 1
