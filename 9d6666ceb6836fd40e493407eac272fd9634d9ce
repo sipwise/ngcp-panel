@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_dfb9d8ea",
+        "filename": "lib/NGCP/Panel/Utils/XMLDispatcher.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-19T09:27:34Z",
+      "side": 1,
+      "message": "so this means there should be an additional loop in here, to try it on all kamailio\u0027s?",
+      "range": {
+        "startLine": 182,
+        "startChar": 81,
+        "endLine": 182,
+        "endChar": 99
+      },
+      "revId": "9d6666ceb6836fd40e493407eac272fd9634d9ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
