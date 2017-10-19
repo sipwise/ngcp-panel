@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "dab895d6_3fc4943f",
+        "filename": "lib/NGCP/Panel/Controller/API/Domains.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-19T10:36:37Z",
+      "side": 1,
+      "message": "understand, possibly best road to take.",
+      "parentUuid": "dab895d6_df87180e",
+      "revId": "9d6666ceb6836fd40e493407eac272fd9634d9ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_dfb9d8ea",
         "filename": "lib/NGCP/Panel/Utils/XMLDispatcher.pm",
         "patchSetId": 1
@@ -72,6 +90,30 @@
       "side": 1,
       "message": "no. the request is sent to all proxies. what I meant was the \"($res)\". This only check for the first host, whether the request succeeded. could be changed, but it\u0027s not that important since anyway we check further with domain.dump later.",
       "parentUuid": "dab895d6_dfb9d8ea",
+      "range": {
+        "startLine": 182,
+        "startChar": 81,
+        "endLine": 182,
+        "endChar": 99
+      },
+      "revId": "9d6666ceb6836fd40e493407eac272fd9634d9ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_1fc7d046",
+        "filename": "lib/NGCP/Panel/Utils/XMLDispatcher.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-19T10:36:37Z",
+      "side": 1,
+      "message": "ack, nice!",
+      "parentUuid": "dab895d6_bf8264fe",
       "range": {
         "startLine": 182,
         "startChar": 81,
