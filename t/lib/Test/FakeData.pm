@@ -791,7 +791,7 @@ sub read_cached_data{
 
 sub DEMOLISH{
     my($self) = @_;
-    $self->clear_test_data_all();
+    #$self->clear_test_data_all();
     if( keys %{$self->undeletable} ){
         print "We have test items, which can't delete through API:\n";
         print Dumper [ sort { $a cmp $b } keys %{$self->undeletable} ];
