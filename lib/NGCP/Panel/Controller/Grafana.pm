@@ -20,6 +20,16 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
 sub root :Chained('/') :PathPart('grafana') :Args() {
     my ( $self, $c, @fullpath ) = @_;
 
+    my $grafana_user;
+    my $admin = $c->req->param('ngcp_grafana_admin') // $c->session->{ngcp_grafana_admin} // 'no';
+    if($admin eq "yes") {
+        $grafana_user = 'admin';
+        $c->session->{ngcp_grafana_admin} = 'yes';
+    } else {
+        $grafana_user = $c->user->login;
+        delete $c->session->{ngcp_grafana_admin};
+    }
+
     my $path = join '/', @fullpath;
     $path .= '?' . $c->req->uri->query if $c->req->uri->query;
     my $url = $c->config->{grafana}{schema} . '://' .
@@ -29,7 +39,7 @@ sub root :Chained('/') :PathPart('grafana') :Args() {
 
     my $req = HTTP::Request->new($c->req->method => $url);
     $req->header('Content-Type' => $c->req->header('Content-Type'));
-    $req->header('X-WEBAUTH-USER' => $c->user->login);
+    $req->header('X-WEBAUTH-USER' => $grafana_user);
     my $body = $c->request->body ? (do { local $/; $c->request->body->getline }) : '';
     $req->content($body);
     my $res = $ua->request($req);
