@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_752b8deb",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 15
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-20T13:31:20Z",
+      "side": 1,
+      "message": "good catch",
+      "range": {
+        "startLine": 509,
+        "startChar": 56,
+        "endLine": 509,
+        "endChar": 61
+      },
+      "revId": "14bf51180baa2acac159a9a3bb1cfb7af3b4714e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_b5352548",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 15
+      },
+      "lineNbr": 853,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-20T13:31:20Z",
+      "side": 1,
+      "message": "wel, doesnt exist yet",
+      "range": {
+        "startLine": 853,
+        "startChar": 96,
+        "endLine": 853,
+        "endChar": 100
+      },
+      "revId": "14bf51180baa2acac159a9a3bb1cfb7af3b4714e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
