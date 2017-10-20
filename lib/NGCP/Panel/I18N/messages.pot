@@ -2570,6 +2570,14 @@ msgstr ""
 msgid "Failed to recover web password"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Domain.pm
+msgid "Failed to reload proxy. Domain was deleted."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Domain.pm
+msgid "Failed to reload proxy. Domain was modified."
+msgstr ""
+
 #. ($error->type . ', info is ' . $error->info)
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to render template. Type is "
@@ -5765,6 +5773,10 @@ msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "Station Name"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Statistics Administration"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/subscriber/master.tt
