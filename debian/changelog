@@ -1,3 +1,35 @@
+ngcp-panel (5.5.2.0+0~mr5.5.2.0) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [14cd843] TT#22827 Implement form factory
+  * [9bb6e9f] TT#20097 Fix 404 for /grafana
+  * [c491611] TT#22827 Fix setting ctx in form factory
+  * [298ab8b] TT#8704 Tighten peer name to not break kamailio
+
+  [ Gerhard Jungwirth ]
+  * [9b44043] TT#22422 make rtc errors fail on reseller changes
+  * [856a02c] TT#22420 properly reload trusted sources via xmlrpc
+  * [9d6666c] TT#23280 proper domain reload xmlrpc
+
+  [ Rene Krenn ]
+  * [a064d8a] TT#22505 TT#21271 api/subscriber put2get related fixes
+  * [3d42259] TT#22505 safe handling of "" lock level pref values
+
+  [ Irina Peshinskaya ]
+  * [04f1221] TT#22505 TT#21271 Fix subscribers API so get2put works
+  * [89f71b7] TT#23426 API: Format properly rewriterules in rewriterulesets output
+
+  [ Alexander Lutay ]
+  * [70fc48d] TT#21056 Decrease length of 'Maintenance mode' warning on ngcp-panel WEB interface
+
+  [ Kirill Solomko ]
+  * [824878c] TT#22550 disable sound files transcoding
+  * [c71a1fd] TT#22550 set codec to WAV in the API sound file update
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Oct 2017 18:19:21 +0200
+
 ngcp-panel (5.5.1.0+0~mr5.5.1.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
