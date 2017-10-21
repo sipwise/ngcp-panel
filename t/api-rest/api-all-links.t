@@ -42,6 +42,13 @@ $ua = Test::Collection->new()->ua();
         if (grep {$_ eq "GET"} @{ $opts->{methods} }) {
             # skip calllists collection, as it needs a subscriber_id parameter also in the collection
             next if $relname eq "calllists";
+            next if $relname eq "conversations";
+            #my $uri = "$uri/api/$relname/";
+            #if('conversations' eq $relname){
+            #    $uri .= '?type=call';
+            #}elsif('calllist' eq $relname){
+            #    $uri .= '?type=call';
+            #}
             $req = HTTP::Request->new('GET', "$uri/api/$relname/");
             $res = $ua->request($req);
             is($res->code, 200, "check GET request to $relname collection")
