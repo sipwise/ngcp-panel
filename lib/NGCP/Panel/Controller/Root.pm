@@ -53,15 +53,19 @@ sub auto :Private {
         $c->log->debug("lang set by browser or config: " . $c->language);
     }
 
-    if (
-        __PACKAGE__ eq $c->controller->catalyst_component_name
-        or 'NGCP::Panel::Controller::Login' eq $c->controller->catalyst_component_name
-        or $c->req->uri->path =~ m|^/device/autoprov/.+|
-        or $c->req->uri->path =~ m|^/pbx/directory/.+|
-        or $c->req->uri->path =~ m|^/recoverwebpassword/?$|
-        or $c->req->uri->path =~ m|^/resetwebpassword/?$|
-        or $c->req->uri->path =~ m|^/internalsms/receive/?$|
-        or $c->req->uri->path =~ m|^/soap/intercept(\.wsdl)?/?$|i
+    $c->log->debug("authorization_basic:".$c->req->headers->authorization_basic);
+    #allow authentication if someone want it
+    if ( !$c->req->headers->authorization_basic 
+        and (
+            __PACKAGE__ eq $c->controller->catalyst_component_name
+            or 'NGCP::Panel::Controller::Login' eq $c->controller->catalyst_component_name
+            or $c->req->uri->path =~ m|^/device/autoprov/.+|
+            or $c->req->uri->path =~ m|^/pbx/directory/.+|
+            or $c->req->uri->path =~ m|^/recoverwebpassword/?$|
+            or $c->req->uri->path =~ m|^/resetwebpassword/?$|
+            or $c->req->uri->path =~ m|^/internalsms/receive/?$|
+            or $c->req->uri->path =~ m|^/soap/intercept(\.wsdl)?/?$|i
+        )
     ) {
         $c->log->debug("*** Root::auto skip authn, grant access to " . $c->request->path);
         return 1;
