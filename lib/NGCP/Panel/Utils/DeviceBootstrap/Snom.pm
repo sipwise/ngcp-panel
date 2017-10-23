@@ -71,8 +71,8 @@ around 'extract_response_description' => sub {
 };
 
 around 'process_bootstrap_uri' => sub {
-    my($self,$uri) = @_;
-    $uri = super($uri);
+    my($orig_method,$self,$uri) = @_;
+    $uri = $self->$orig_method($uri);
     $uri = $self->bootstrap_uri_mac($uri);
     $self->content_params->{uri} = $uri;
     return $self->content_params->{uri};

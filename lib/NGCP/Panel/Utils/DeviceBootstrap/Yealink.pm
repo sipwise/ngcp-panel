@@ -22,6 +22,7 @@ sub rpc_server_params{
     $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
     $self->{rpc_server_params} = $cfg;
     return $self->{rpc_server_params};
+    return $self->{rpc_server_params};
 }
 
 sub register_content {
@@ -76,8 +77,8 @@ sub register_model_content {
 }
 
 around 'process_bootstrap_uri' => sub {
-    my($self,$uri) = @_;
-    $uri = super($uri);
+    my($orig_method,$self,$uri) = @_;
+    $uri = $self->$orig_method($uri);
     $self->content_params->{uri} = $uri;
     $self->bootstrap_uri_server_name($uri);
     return $self->content_params->{uri};
