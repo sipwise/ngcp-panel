@@ -593,11 +593,6 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
 
-            if ($file_result->handle->name eq 'music_on_hold' && !$file_result->set->contract_id) {
-                $target_codec = 'PCMA';
-                $filename =~ s/\.[^.]+$/.pcma/;
-            }
-
             try {
                 $soundfile = NGCP::Panel::Utils::Sounds::transcode_file(
                     $upload->tempname, 'WAV', $target_codec);
@@ -718,6 +713,7 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
     my ($self, $c) = @_;
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::LoadDefault", $c);
+    my $error;
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -753,28 +749,27 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                     }
                     next unless(defined $path);
 
+                    my $data_ref;
+                    my $codec = 'WAV';
                     my $handle_id = $h->get_column("handleid");
                     my $file_id = $h->get_column("fileid");
                     my $fres;
                     my $fname = basename($path);
+
+                    read_file($path, buf_ref => \$data_ref);
+                    unless (${data_ref}) {
+                        $error = "Cannot upload an empty sound file, $fname";
+                        die $error;
+                    }
+
                     if(defined $file_id) {
                         if($form->params->{override}) {
                             $c->log->debug("override $path as $hname for existing id $file_id");
-                            my $data;
-                            if(!$c->stash->{set_result}->contract_id && 
-                               grep {/^$hname$/} (qw/music_on_hold/)) {
-
-                                $fname =~ s/\.wav$/.pcma/;
-                                $data = NGCP::Panel::Utils::Sounds::transcode_file(
-                                    $path, 'WAV', 'PCMA');
-                            } else {
-                                $data = read_file($path);
-                            }
 
                             $fres = $schema->resultset('voip_sound_files')->find($file_id);
                             $fres->update({
                                     filename => $fname,
-                                    data => $data,
+                                    data => ${data_ref},
                                     loopplay => $form->params->{loopplay} ? 1 : 0,
                                 });
                         } else {
@@ -783,23 +778,10 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                     } else {
                         $c->log->debug("inserting $path as $hname with new id");
 
-                        my $codec = 'WAV';
-                        my $data;
-                        if(!$c->stash->{set_result}->contract_id && 
-                           grep {/^$hname$/} (qw/music_on_hold/)) {
-
-                            $fname =~ s/\.wav$/.pcma/;
-                            $codec = 'PCMA';
-                            $data = NGCP::Panel::Utils::Sounds::transcode_file(
-                                $path, 'WAV', $codec);
-                        } else {
-                            $data = read_file($path);
-                        }
-
                         $fres = $schema->resultset('voip_sound_files')
                             ->create({
                                 filename => $fname,
-                                data => $data,
+                                data => ${data_ref},
                                 handle_id => $handle_id,
                                 set_id => $set_id,
                                 loopplay => $form->params->{loopplay} ? 1 : 0,
@@ -821,8 +803,10 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
         } catch($e) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to load default sound files.'),
+                $error
+                    ? (desc  => $c->loc($error))
+                    : (error => $e,
+                       desc  => $c->loc('Failed to load default sound files.')),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
