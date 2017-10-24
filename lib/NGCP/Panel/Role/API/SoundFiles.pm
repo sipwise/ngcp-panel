@@ -191,12 +191,7 @@ sub update_item {
         last;
     }
 
-    if($resource->{handle} eq 'music_on_hold' && !$set->contract_id) {
-        $resource->{codec} = 'PCMA';
-        $resource->{filename} =~ s/\.[^.]+$/.pcma/;
-    } else {
-        $resource->{codec} = 'WAV';
-    }
+    $resource->{codec} = 'WAV';
     $resource->{data} = $recording;
     $resource = $self->transcode_data($c, 'WAV', $resource);
     last unless($resource);
