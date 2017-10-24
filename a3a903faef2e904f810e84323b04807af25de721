@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_9e52fddb",
+        "filename": "lib/NGCP/Panel/Model/DB.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-24T14:27:03Z",
+      "side": 1,
+      "message": "how does it realte to NGCP::Schema at all now?",
+      "revId": "a3a903faef2e904f810e84323b04807af25de721",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
