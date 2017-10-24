@@ -16,6 +16,24 @@
       "revId": "a3a903faef2e904f810e84323b04807af25de721",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_5e6f8592",
+        "filename": "lib/NGCP/Panel/Model/DB.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-10-24T14:36:45Z",
+      "side": 1,
+      "message": "ngcp_panel.conf:\n\n\u003cModel::DB\u003e\n    schema_class   NGCP::Schema\n\u003c/Model::DB\u003e",
+      "parentUuid": "dab895d6_9e52fddb",
+      "revId": "a3a903faef2e904f810e84323b04807af25de721",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
