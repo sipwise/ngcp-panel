@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_bb1273b2",
+        "filename": "lib/NGCP/Panel/Utils/DeviceBootstrap/Panasonic.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-10-24T10:25:59Z",
+      "side": 1,
+      "message": "$self in fact is second arg for this",
+      "revId": "659249a4fd345c7d5e150b920259f9ec2b21faf1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
