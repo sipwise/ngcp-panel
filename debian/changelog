@@ -1,3 +1,14 @@
+ngcp-panel (5.5.1.2+0~mr5.5.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [ba25221] Revert "TT#22550 set codec to WAV in the API sound file update"
+  * [f74062f] Revert "TT#22550 disable sound files transcoding"
+  * [b6703f3] TT#23772 remove PCMA transcoding for music_on_hold sound files
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Oct 2017 13:02:33 +0200
+
 ngcp-panel (5.5.1.1+0~mr5.5.1.1) unstable; urgency=medium
 
   [ Andreas Granig ]
