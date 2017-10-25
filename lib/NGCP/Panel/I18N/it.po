@@ -3081,6 +3081,10 @@ msgstr "Ricarica con contanti fallita!"
 msgid "Failed to top-up using voucher!"
 msgstr "Ricarica con voucher fallita!"
 
+#: lib/NGCP/Panel/Controller/Sound.pm
+msgid "Failed to transcode audio file"
+msgstr "Transcodifica file audio fallita."
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to trigger config reload via SIP"
 msgstr "Ricarica della configurazione via SIP fallita"
@@ -7414,6 +7418,10 @@ msgstr "Numero massimo delle chiamate contemporanee complessive"
 msgid "Transcode of audio file failed"
 msgstr "Transcodifica del file audio fallita"
 
+#: lib/NGCP/Panel/Controller/Sound.pm
+msgid "Transcoding audio file failed"
+msgstr "Transcodifica file audio fallita"
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Trusted Source"
 msgstr "Sorgente Fidata"
@@ -8058,12 +8066,6 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
-
-#~ msgid "Failed to transcode audio file"
-#~ msgstr "Transcodifica file audio fallita."
-
-#~ msgid "Transcoding audio file failed"
-#~ msgstr "Transcodifica file audio fallita"
 
 #~ msgid ""
 #~ "Search for partial match of user-provided number (UPN) to subscriber's  "

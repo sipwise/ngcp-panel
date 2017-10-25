@@ -2997,6 +2997,10 @@ msgstr ""
 msgid "Failed to top-up using voucher!"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Sound.pm
+msgid "Failed to transcode audio file"
+msgstr "Fallo al convertir fichero de audio"
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to trigger config reload via SIP"
 msgstr ""
@@ -7238,6 +7242,10 @@ msgstr ""
 msgid "Transcode of audio file failed"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Sound.pm
+msgid "Transcoding audio file failed"
+msgstr "La transcodificación del fichero ha fallado"
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Trusted Source"
 msgstr "Origen de confianza"
@@ -7869,12 +7877,6 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
-
-#~ msgid "Failed to transcode audio file"
-#~ msgstr "Fallo al convertir fichero de audio"
-
-#~ msgid "Transcoding audio file failed"
-#~ msgstr "La transcodificación del fichero ha fallado"
 
 #~ msgid ""
 #~ "Search for partial match of user-provided number (UPN) to subscriber's  "
