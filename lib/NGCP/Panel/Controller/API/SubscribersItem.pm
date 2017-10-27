@@ -70,7 +70,7 @@ sub auto :Private {
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
-    my $guard = $c->model('DB')->txn_scope_guard;    
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
         last unless $self->valid_id($c, $id);
         my $subscriber = $self->item_by_id($c, $id);
@@ -79,11 +79,11 @@ sub GET :Allow {
         my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $subscriber->contract,
             ); #apply underrun lock level
-        
-        
-        my $form = $self->get_form($c);
-        my $resource = $self->resource_from_item($c, $subscriber, $form);
-        my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
+
+
+        my ($form, $form_exceptions) = $self->get_form($c);
+        my $resource = $self->resource_from_item($c, $subscriber, $form, $form_exceptions);
+        my $hal = $self->hal_from_item($c, $subscriber, $resource, $form, $form_exceptions);
         $guard->commit; #potential db write ops in hal_from
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -128,7 +128,7 @@ sub PUT :Allow {
     }
 
     my $schema = $c->model('DB');
-    $schema->set_transaction_isolation('READ COMMITTED');        
+    $schema->set_transaction_isolation('READ COMMITTED');
     my $guard = $schema->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -138,7 +138,7 @@ sub PUT :Allow {
         last unless $self->resource_exists($c, subscriber => $subscriber);
         my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $subscriber->contract,
-            ); #apply underrun lock level        
+            ); #apply underrun lock level
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
@@ -147,15 +147,15 @@ sub PUT :Allow {
         last unless $resource;
         my $r = $self->prepare_resource($c, $schema, $resource, $subscriber);
         last unless $r;
-        
+
         $resource = $r->{resource};
 
-        my $form = $self->get_form($c);
-        $subscriber = $self->update_item($c, $schema, $subscriber, $r, $resource, $form);
+        my ($form, $form_exceptions) = $self->get_form($c);
+        $subscriber = $self->update_item($c, $schema, $subscriber, $r, $resource, $form, $form_exceptions);
         last unless $subscriber;
 
         $resource = $self->resource_from_item($c, $subscriber, $form);
-        my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);        
+        my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -197,7 +197,7 @@ sub PATCH :Allow {
         last unless $self->resource_exists($c, subscriber => $subscriber);
         my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $subscriber->contract,
-            ); #apply underrun lock level        
+            ); #apply underrun lock level
         my $json = $self->get_valid_patch_data(
             c => $c,
             id => $id,
@@ -206,8 +206,8 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $form = $self->get_form($c);
-        my $old_resource = $self->resource_from_item($c, $subscriber, $form);
+        my ($form, $form_exceptions) = $self->get_form($c);
+        my $old_resource = $self->resource_from_item($c, $subscriber, $form, $form_exceptions);
         $old_resource = clone($old_resource);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
@@ -223,7 +223,7 @@ sub PATCH :Allow {
         $resource = $self->resource_from_item($c, $subscriber, $form);
         my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
-        
+
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -292,13 +292,13 @@ sub DELETE :Allow {
         last unless $self->add_delete_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
-            my $_form = $self->get_form($c);
+            my ($_form,$_form_exceptions) = $self->get_form($c);
             #my $_subscriber = $self->item_by_id($c, $id);
-            my $_resource = $self->resource_from_item($c, $subscriber, $_form);
-            return $self->hal_from_item($c,$subscriber,$_resource,$_form); });
-        
+            my $_resource = $self->resource_from_item($c, $subscriber, $_form, $_form_exceptions);
+            return $self->hal_from_item($c,$subscriber,$_resource,$_form, $_form_exceptions); });
+
         NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-        
+
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
@@ -309,7 +309,7 @@ sub DELETE :Allow {
 
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
-}   
+}
 
 sub end : Private {
     my ($self, $c) = @_;

@@ -23,14 +23,14 @@ sub get_form {
     my ($self, $c) = @_;
 
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberAPI", $c);
+        return (NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberAPI", $c),[qw/customer_id/]);
     } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI", $c);
+        return (NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI", $c),[qw/customer_id/]);
     }
 }
 
 sub resource_from_item {
-    my ($self, $c, $item, $form) = @_;
+    my ($self, $c, $item, $form, $form_exceptions) = @_;
     my $pref;
 
     my $bill_resource = { $item->get_inflated_columns };
@@ -60,13 +60,14 @@ sub resource_from_item {
         $resource{email} = undef;
         $resource{timezone} = undef;
     }
-
-
-    $form //= $self->get_form($c);
+    if(!$form){
+        ($form,$form_exceptions) = $self->get_form($c);
+    }
     last unless $self->validate_form(
         c => $c,
         resource => \%resource,
         form => $form,
+        exceptions => $form_exceptions,
         run => 0,
     );
 
@@ -153,7 +154,7 @@ sub resource_from_item {
 }
 
 sub hal_from_item {
-    my ($self, $c, $item, $resource, $form) = @_;
+    my ($self, $c, $item, $resource, $form, $form_exceptions) = @_;
     my $is_sub = 1;
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
         $is_sub = 0;
@@ -362,11 +363,12 @@ sub prepare_resource {
         }
     }
 
-    my $form = $self->get_form($c);
+    my ($form,$form_exceptions) = $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
         resource => $resource,
         form => $form,
+        exceptions => $form_exceptions,
     );
 
     unless($domain) {
@@ -594,7 +596,7 @@ sub prepare_resource {
 }
 
 sub update_item {
-    my ($self, $c, $schema, $item, $full_resource, $resource, $form) = @_;
+    my ($self, $c, $schema, $item, $full_resource, $resource, $form, $form_exceptions) = @_;
 
     if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
