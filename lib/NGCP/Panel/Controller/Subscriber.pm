@@ -2025,7 +2025,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         #left untouchable, although user_agent is always the same by design, see MT 14789 notes
         { name => "user_agent", search => 1, title => $c->loc('User Agent') },
         { name => "contact", search => 1, title => $c->loc('Contact') },
-        { name => "expires", search => 1, title => $c->loc('Expires') },
+        { name => "expires", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Expires') },
     ]);
     $c->stash->{capture_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "timestamp", search => 1, title => $c->loc('Timestamp') },
