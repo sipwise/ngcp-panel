@@ -776,20 +776,23 @@ sub process_hal_resource {
         $resource->{folder} = pop @p;
     }elsif('sms' eq $item->{type}){
         $resource = $item_accessors_hash;
+        $resource->{start_time} =  NGCP::Panel::Utils::DateTime::from_string($item_mock_obj->timestamp)->epoch;
     }elsif('xmpp' eq $item->{type}){
         $resource = $item_accessors_hash;
     }
-    $resource->{start_time} //= $item_mock_obj->timestamp;
-    my $datetime_fmt = DateTime::Format::Strptime->new(
-        pattern => '%F %T',
-    );
-    my $timestamp = NGCP::Panel::Utils::DateTime::epoch_local($resource->{start_time});
-    #if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
-    #    $timestamp->set_time_zone($c->req->param('tz'));
-    #}
-    $resource->{start_time} = $datetime_fmt->format_datetime($timestamp);
-    $resource->{start_time} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
-
+    $c->log->debug(Dumper($resource));
+    if($item_mock_obj->timestamp){
+        $resource->{start_time} //= $item_mock_obj->timestamp;
+        my $datetime_fmt = DateTime::Format::Strptime->new(
+            pattern => '%F %T',
+        );
+        my $timestamp = NGCP::Panel::Utils::DateTime::epoch_local($resource->{start_time});
+        #if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+        #    $timestamp->set_time_zone($c->req->param('tz'));
+        #}
+        $resource->{start_time} = $datetime_fmt->format_datetime($timestamp);
+        $resource->{start_time} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
+    }
     return $resource;
 }
 
