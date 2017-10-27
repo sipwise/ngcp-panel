@@ -47,11 +47,7 @@ sub create_location {
 
     my $aor = get_aor($c, $prov_subscriber);
     my $path = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
-    if($expires) {
-        $expires = NGCP::Panel::Utils::DateTime::from_string($expires)->epoch;
-    } else {
-        $expires = 4294967295;
-    }
+    $expires //= 4294967295;
     $flags //= 0;
     $cflags //= 0;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
