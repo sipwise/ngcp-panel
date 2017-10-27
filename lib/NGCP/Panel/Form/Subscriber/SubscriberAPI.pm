@@ -6,8 +6,8 @@ extends 'NGCP::Panel::Form::Subscriber';
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'customer' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
+has_field 'customer_id' => (
+    type => 'PosInteger',
     label => 'Customer',
     validate_when_empty => 1,
     element_attr => {
@@ -231,6 +231,7 @@ sub update_fields {
     }
     return;
 }
+
 
 1;
 

@@ -36,9 +36,9 @@ has_field 'webusername' => (
     type => 'Text',
     label => 'Web Username',
     required => 0,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The username to log into the CSC Panel.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The username to log into the CSC Panel.']
     },
 );
 
@@ -46,9 +46,9 @@ has_field 'webpassword' => (
     type => 'Text',
     label => 'Web Password',
     required => 0,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The password to log into the CSC Panel.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The password to log into the CSC Panel.']
     },
 );
 
@@ -69,14 +69,14 @@ has_field 'username' => (
     type => '+NGCP::Panel::Field::Identifier',
     label => 'SIP Username',
     required => 1,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The username for SIP and XMPP services.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The username for SIP and XMPP services.']
     },
 );
 
 has_field 'domain' => (
-	#fields will be or will be not renamed to the name_id for the API documentation, Anyway, it will be not duplicated, so "or name or id" is not correct
+    #fields will be or will be not renamed to the name_id for the API documentation, Anyway, it will be not duplicated, so "or name or id" is not correct
     type => '+NGCP::Panel::Field::Domain',
     label => 'SIP Domain',
     validate_when_empty => 1,
@@ -84,13 +84,13 @@ has_field 'domain' => (
         rel => ['tooltip'],
         title => ['The domain id this subscriber belongs to.'],
         implicit_parameter => {
-			type => "String",
-			required => 0,
-			validate_when_empty => 0,
-			element_attr => {
-				title => ['The domain name this subscriber belongs to.'],
-			},
-		},
+            type => "String",
+            required => 0,
+            validate_when_empty => 0,
+            element_attr => {
+                title => ['The domain name this subscriber belongs to.'],
+            },
+        },
     },
 );
 
@@ -98,9 +98,9 @@ has_field 'password' => (
     type => 'Text',
     label => 'SIP Password',
     required => 1,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The password to authenticate for SIP and XMPP services.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The password to authenticate for SIP and XMPP services.']
     },
 );
 
@@ -123,9 +123,9 @@ has_field 'administrative' => (
     type => 'Boolean',
     label => 'Administrative',
     required => 0,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['Whether the subscriber can configure other subscribers within his Customer account.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether the subscriber can configure other subscribers within his Customer account.']
     },
 );
 
@@ -133,9 +133,9 @@ has_field 'external_id' => (
     type => 'Text',
     label => 'External ID',
     required => 0,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['An external id, e.g. provided by a 3rd party provisioning.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An external id, e.g. provided by a 3rd party provisioning.']
     },
 );
 
