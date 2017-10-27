@@ -14,8 +14,8 @@ use constant SUPPRESS_OUT => 1;
 use constant SUPPRESS_IN => 2;
 use constant SUPPRESS_INOUT => 3;
 
-use constant SOURCE_CLI_SUPPRESSION_ID_COLNAME => 'source_cli_suppression_id';
-use constant DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME => 'destination_user_in_suppression_id';
+use constant SOURCE_CLI_SUPPRESSION_ID_COLNAME => 'source_cli';
+use constant DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME => 'destination_user_in';
 
 use constant ENABLE_SUPPRESSIONS => 1; #setting to 0 totally disables call list suppressions -> no discussion about performance difference.
 
