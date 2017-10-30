@@ -738,6 +738,8 @@ sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
     my $schema = $c->model('DB');
     # todo: mashal specific fields, per conversation event type ...
+    $c->log->debug(Dumper('item'));
+    $c->log->debug(Dumper($item));
     my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $item);
     if('call' eq $item->{type}){
         my $cdr_subscriber_id = $c->model('DB')->resultset('voip_subscribers')->search_rs({
@@ -754,6 +756,7 @@ sub process_hal_resource {
             $owner,
         );
         @{$resource}{qw/caller callee/} = @{$resource}{qw/own_cli other_cli/};
+        $resource->{type} = $item->{type};
     }elsif('fax' eq $item->{type}){
         my $fax_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs({
             'id' => $item_mock_obj->subscriber_id,
