@@ -51,6 +51,24 @@
       "revId": "659249a4fd345c7d5e150b920259f9ec2b21faf1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_a4efb0af",
+        "filename": "lib/NGCP/Panel/Utils/DeviceBootstrap/Yealink.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-10-30T10:41:50Z",
+      "side": 1,
+      "message": "Thank you! Yes, seems like type.",
+      "parentUuid": "dab895d6_2960d931",
+      "revId": "659249a4fd345c7d5e150b920259f9ec2b21faf1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
