@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "dab895d6_04e85cb3",
+        "filename": "lib/NGCP/Panel/Utils/DeviceBootstrap/Panasonic.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-10-30T10:27:17Z",
+      "side": 1,
+      "message": "Sorry, I didn\u0027t get clearly this note.",
+      "parentUuid": "dab895d6_bb1273b2",
+      "revId": "659249a4fd345c7d5e150b920259f9ec2b21faf1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_2960d931",
         "filename": "lib/NGCP/Panel/Utils/DeviceBootstrap/Yealink.pm",
         "patchSetId": 1
