@@ -58,10 +58,10 @@ sub get {
         return unless $items;
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
-        my ($form) = $self->get_form($c);
+        my ($form, $form_exceptions) = $self->get_form($c);
         my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
         for my $item (@items) {
-            push @embedded, $self->hal_from_item($c, $item, $form);
+            push @embedded, $self->hal_from_item($c, $item, $form, { form_exceptions => $form_exceptions });
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%s', $c->request->path, $self->get_item_id($c,
