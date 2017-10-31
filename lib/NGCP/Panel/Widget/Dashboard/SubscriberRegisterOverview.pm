@@ -19,7 +19,7 @@ sub filter {
 sub _prepare_registrations {
     my ($self, $c) = @_;
 
-    my $rs = $c->model('DB')->resultset('location')->search({
+    my $rs = $c->model('NdbDB')->resultset('location')->search({
         username => $c->user->username,
     });
     if($c->config->{features}->{multidomain}) {

@@ -1832,7 +1832,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
 
         my $sub = $line->provisioning_voip_subscriber;
         next unless($sub);
-        my $reg_rs = $c->model('DB')->resultset('location')->search({
+        my $reg_rs = $c->model('NdbDB')->resultset('location')->search({
             username => $sub->username,
         });
         if($c->config->{features}->{multidomain}) {
