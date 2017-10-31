@@ -208,7 +208,7 @@ sub get_list{
     my $schema = $c->model('DB');
     my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
     unless (defined $owner) {
-        return;
+        #return;
     }
     return $self->item_rs($c, $owner);
 }
@@ -591,7 +591,7 @@ sub _get_fax_rs {
     }
     if ($uuid) {
         $rs = $rs->search({
-            'voip_subscriber.uuid' => $c->user->uuid,
+            'voip_subscriber.uuid' => $uuid,
         },{
             join => { provisioning_voip_subscriber => 'voip_subscriber' },
         });
@@ -748,7 +748,7 @@ sub process_hal_resource {
         my $cdr_customer_id = $item_mock_obj->source_account_id;
         my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema, { subscriber_id => $cdr_subscriber_id } );
         if(!$owner){
-            return;
+            #return;
         }
         $resource = NGCP::Panel::Utils::CallList::process_cdr_item(
             $c,
@@ -766,7 +766,7 @@ sub process_hal_resource {
         foreach my $field (qw/type id status reason pages filename/){
             $resource->{$field} = $item_mock_obj->$field;
         }
-        $resource->{subscriber_id} = $fax_subscriber_provisioning->id;
+        $resource->{subscriber_id} = $fax_subscriber_billing->id;
     }elsif('voicemail' eq $item->{type}){
         $resource = $item_accessors_hash;
         $resource->{caller} = $item_mock_obj->callerid;

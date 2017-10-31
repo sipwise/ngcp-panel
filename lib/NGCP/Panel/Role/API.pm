@@ -930,6 +930,9 @@ sub hal_from_item {
         relation => 'ngcp:'.$self->resource_name,
     );
     if($form){
+        use Data::Dumper;
+        $c->log->debug(Dumper( 'form_exceptions'));
+        $c->log->debug(Dumper( $form_exceptions));
         $self->validate_form(
             c => $c,
             resource => $resource,
