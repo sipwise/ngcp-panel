@@ -19,7 +19,7 @@ sub _item_rs {
     if($c->config->{features}->{multidomain}) {
         push @joins, 'domain';
     }
-    my $item_rs = $c->model('DB')->resultset('location');
+    my $item_rs = $c->model('NdbDB')->resultset('location');
     if($c->user->roles eq "admin") {
         $item_rs = $item_rs->search({
             

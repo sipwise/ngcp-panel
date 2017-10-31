@@ -3599,7 +3599,7 @@ sub ajax_registered :Chained('master') :PathPart('registered/ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
-    my $reg_rs = $c->model('DB')->resultset('location')->search({
+    my $reg_rs = $c->model('NdbDB')->resultset('location')->search({
         username => $s->username,
     });
     if($c->config->{features}->{multidomain}) {
@@ -3852,7 +3852,7 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     my ($self, $c, $reg_id) = @_;
 
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
-    my $reg_rs = $c->model('DB')->resultset('location')->search({
+    my $reg_rs = $c->model('NdbDB')->resultset('location')->search({
         id => $reg_id,
         username => $s->username,
     });
