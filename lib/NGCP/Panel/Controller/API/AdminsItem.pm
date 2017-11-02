@@ -3,6 +3,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
+use NGCP::Panel::Utils::Admin;
+
 use boolean qw(true);
 use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
@@ -115,6 +117,12 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, admin => $admin);
 
         $c->log->error("++++++ trying to delete admin #$id as #" . $c->user->id);
+        
+        my $special_user_login = NGCP::Panel::Utils::Admin::get_special_admin_login();
+        if($admin->login eq $special_user_login) {
+            $self->error($c, HTTP_FORBIDDEN, "Cannot delete special user '$special_user_login'");
+            last;
+        }
         if($c->user->id == $id) {
             $self->error($c, HTTP_FORBIDDEN, "Cannot delete own user");
             last;
