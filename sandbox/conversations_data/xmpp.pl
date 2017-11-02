@@ -10,7 +10,7 @@ my ($recip, $msg) = @ARGV;
 #    exit;  
 #}
 
-my $con = new Net::XMPP::Client(debuglevel => 1, debugtime=>1);  
+my $con = new Net::XMPP::Client(debuglevel => 50, debugtime=>1);  
 my $status = $con->Connect(  
     hostname => '192.168.1.118',  
     port => '5222',  
@@ -19,10 +19,10 @@ my $status = $con->Connect(
     #connectiontype => 'tcpip',
     #srv => 1,
     #ssl => 1,
-tls => 1,
+#tls => 1,
 ssl_verify => 0,
    #ssl_ca_path => '/etc/prosody/certs/localhost.crt',
-ssl_ca_path => '/etc/ssl/certs',
+#ssl_ca_path => '/etc/ssl/certs',
 );
 print Dumper $status;
 die('ERROR: XMPP connection failed') if ! defined($status);  
@@ -30,6 +30,7 @@ my @result = $con->AuthIQAuth(
     hostname => '192.168.1.118',  
     username => 'sipsub2_1001@192.168.1.118',  
     password => 'sipsub2_pwd_1001',
+    connectionname => '192.168.1.118',
     resource => 'test',
     #register => 1,
 );  
