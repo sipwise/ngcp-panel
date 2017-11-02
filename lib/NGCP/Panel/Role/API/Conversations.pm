@@ -214,7 +214,7 @@ sub get_list{
     my $schema = $c->model('DB');
     my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
     unless (defined $owner) {
-        return;
+        #return;
     }
     return $self->item_rs($c, $owner);
 }
@@ -754,7 +754,7 @@ sub process_hal_resource {
         my $cdr_customer_id = $item_mock_obj->source_account_id;
         my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema, { subscriber_id => $cdr_subscriber_id } );
         if(!$owner){
-            return;
+            #return;
         }
         $resource = NGCP::Panel::Utils::CallList::process_cdr_item(
             $c,
