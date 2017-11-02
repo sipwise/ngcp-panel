@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_cabaebe0",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 783,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-11-02T15:11:03Z",
+      "side": 1,
+      "message": "I leaved debug intentionally, as now it is pretty new by design api interface. Already presented in logs debug will make investigation faster on this early stage.",
+      "range": {
+        "startLine": 783,
+        "startChar": 0,
+        "endLine": 783,
+        "endChar": 38
+      },
+      "revId": "46c02edf7fb511a602b068cf5537ff53fad3a533",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
