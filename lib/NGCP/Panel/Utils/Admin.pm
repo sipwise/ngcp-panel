@@ -5,6 +5,10 @@ use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 use Data::Entropy::Algorithms qw/rand_bits/;
 use IO::Compress::Zip qw/zip/;
 
+sub get_special_admin_login {
+    return 'sipwise';
+}
+
 sub get_bcrypt_cost {
     return 13;
 }
@@ -12,14 +16,14 @@ sub get_bcrypt_cost {
 sub generate_salted_hash {
     my $pass = shift;
 
-	my $salt = rand_bits(128);
-	my $b64salt = en_base64($salt);
-	my $b64hash = en_base64(bcrypt_hash({
-	    key_nul => 1,
-	    cost => get_bcrypt_cost(),
-	    salt => $salt,
-	}, $pass));
-	return $b64salt . '$' . $b64hash;
+    my $salt = rand_bits(128);
+    my $b64salt = en_base64($salt);
+    my $b64hash = en_base64(bcrypt_hash({
+        key_nul => 1,
+        cost => get_bcrypt_cost(),
+        salt => $salt,
+    }, $pass));
+    return $b64salt . '$' . $b64hash;
 }
 
 sub perform_auth {

@@ -161,12 +161,16 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = { $c->stash->{administrator}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
-    if($c->user->is_superuser) {
+    if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Admin::get_special_admin_login()){
+       $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::AdminSpecial", $c);
+    }elsif($c->user->is_superuser) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Admin", $c);
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Reseller", $c);
     }
-    $form->field('password')->{required} = 0;
+    if($form->field('password')){
+        $form->field('password')->{required} = 0;
+    }
 
     $form->process(
         posted => $posted,
@@ -198,6 +202,16 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 $form->values->{md5pass} = undef;
                 $form->values->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash(delete $form->values->{password});
             }
+            #should be after other fields, to remove all added values, e.g. reseller_id
+            if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Admin::get_special_admin_login()) {
+                foreach my $field ($form->fields){
+                    if($field ne 'is_active'){
+                        delete $form->values->{$field};
+                    }
+                }
+                delete $form->values->{reseller_id};
+            }
+
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -225,6 +239,24 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    if($c->stash->{administrator}->id == $c->user->id) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            data => { $c->stash->{administrator}->get_inflated_columns },
+            desc => $c->loc('Cannot delete myself'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+    }
+    my $special_user_login = NGCP::Panel::Utils::Admin::get_special_admin_login();
+    if($c->stash->{administrator}->login eq $special_user_login) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            data => { $c->stash->{administrator}->get_inflated_columns },
+            desc => $c->loc('Cannot delete "'.$special_user_login.'"'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+    }
+        
     if($c->stash->{administrator}->id == $c->user->id) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
