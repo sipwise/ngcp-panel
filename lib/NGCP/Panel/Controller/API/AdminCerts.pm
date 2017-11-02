@@ -53,7 +53,11 @@ sub create_item {
     # a. you're doing it for yourself
     # b. you're a master
     # c. you're a superuser
-    unless($c->user->login eq $login || $c->user->is_master || $c->user->is_superuser) {
+    unless($c->user->login eq $login 
+        || $c->user->is_master 
+        || $c->user->is_superuser
+        || NGCP::Panel::Utils::Admin::get_special_admin_login() ne $login
+    ) {
         $c->log->warn("Admin " . $c->user->login . " trying to create certs for user $login, reject");
         $self->error($c, HTTP_FORBIDDEN, "Insufficient privileges to create certificate for this administrator");
         return;

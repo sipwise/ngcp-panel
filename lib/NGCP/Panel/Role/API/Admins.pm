@@ -10,6 +10,7 @@ use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Admin;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -90,6 +91,7 @@ sub item_by_id {
     return $rs->find($id);
 }
 
+#we don't use update_item for the admins now.
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
@@ -105,6 +107,12 @@ sub update_item {
     if(defined $pass) {
         $resource->{md5pass} = undef;
         $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
+    }
+
+    if($old_resource->{login} eq NGCP::Panel::Utils::Admin::get_special_admin_login()) {
+        my $active = $resource->{is_active};
+        $resource = $old_resource;
+        $resource->{is_active} = $active;
     }
 
     if($c->user->roles eq "reseller" && $resource->{reseller_id} != $c->user->reseller_id) {
