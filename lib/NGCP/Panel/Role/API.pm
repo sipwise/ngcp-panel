@@ -1049,8 +1049,8 @@ sub get_form {
 }
 
 sub get_list{
-    my ($self, $c) = @_;
-    return $self->item_rs($c);
+    my ($self) = shift;
+    return $self->item_rs(@_);
 }
 
 sub get_item_id{

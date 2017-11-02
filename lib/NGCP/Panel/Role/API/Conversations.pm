@@ -467,7 +467,7 @@ sub _get_voicemail_rs {
     }
     if ($uuid) {
         $rs = $rs->search({
-            'voip_subscriber.uuid' => $c->user->uuid,
+            'voip_subscriber.uuid' => $uuid,
         },{
             join => { mailboxuser => { provisioning_voip_subscriber => 'voip_subscriber' } },
         });
@@ -591,7 +591,7 @@ sub _get_fax_rs {
     }
     if ($uuid) {
         $rs = $rs->search({
-            'voip_subscriber.uuid' => $c->user->uuid,
+            'voip_subscriber.uuid' => $uuid,
         },{
             join => { provisioning_voip_subscriber => 'voip_subscriber' },
         });
@@ -643,7 +643,7 @@ sub _get_xmpp_rs {
     }
     if ($uuid) {
         $rs = $rs->search({
-            'me.uuid' => $c->user->uuid,
+            'me.uuid' => $uuid,
         });
     }
 
@@ -758,13 +758,15 @@ sub process_hal_resource {
         @{$resource}{qw/caller callee/} = @{$resource}{qw/own_cli other_cli/};
         $resource->{type} = $item->{type};
     }elsif('fax' eq $item->{type}){
-        my $fax_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs({
+        my $fax_subscriber_provisioning = $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs({
             'id' => $item_mock_obj->subscriber_id,
-        })->first->voip_subscriber;
-        $resource = NGCP::Panel::Utils::Fax::process_fax_journal_item($c, $item_mock_obj, $fax_subscriber);
+        })->first;
+        my $fax_subscriber_billing = $fax_subscriber_provisioning->voip_subscriber;
+        $resource = NGCP::Panel::Utils::Fax::process_fax_journal_item($c, $item_mock_obj, $fax_subscriber_billing);
         foreach my $field (qw/type id status reason pages filename/){
             $resource->{$field} = $item_mock_obj->$field;
         }
+        $resource->{subscriber_id} = $fax_subscriber_billing->id;
     }elsif('voicemail' eq $item->{type}){
         $resource = $item_accessors_hash;
         $resource->{caller} = $item_mock_obj->callerid;
@@ -780,6 +782,7 @@ sub process_hal_resource {
     }elsif('xmpp' eq $item->{type}){
         $resource = $item_accessors_hash;
     }
+    $c->log->debug(Dumper('resource'));
     $c->log->debug(Dumper($resource));
     if($item_mock_obj->timestamp){
         $resource->{start_time} //= $item_mock_obj->timestamp;
