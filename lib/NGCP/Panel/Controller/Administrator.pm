@@ -188,6 +188,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             if($c->stash->{administrator}->id == $c->user->id) {
                 delete $form->values->{$_} for qw(is_master is_active read_only);
             }
+            if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Admin::get_special_admin_login()) {
+                foreach my $field ($form->fields){
+                    if($field ne 'is_active'){
+                        delete $form->values->{$field};
+                    }
+                }
+            }
 
             if($c->user->is_superuser) {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
@@ -225,6 +232,24 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    if($c->stash->{administrator}->id == $c->user->id) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            data => { $c->stash->{administrator}->get_inflated_columns },
+            desc => $c->loc('Cannot delete myself'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+    }
+    my $special_user_login = NGCP::Panel::Utils::Admin::get_special_admin_login();
+    if($c->stash->{administrator}->login eq $special_user_login) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            data => { $c->stash->{administrator}->get_inflated_columns },
+            desc => $c->loc('Cannot delete "'.$special_user_login.'"'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+    }
+        
     if($c->stash->{administrator}->id == $c->user->id) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
