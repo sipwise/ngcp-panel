@@ -22,6 +22,30 @@
       "revId": "09d5589f750e08bf9b59030810bb09d4d2ee6207",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_feb934ea",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 785,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-11-03T16:26:41Z",
+      "side": 1,
+      "message": "In the log it is hard to distinguish \"item\" logged on the top of this method and this result record. It was the most often necessary information during investigation of these issues from Robert, and I would like to keep it for some time.",
+      "parentUuid": "dab895d6_be317ca4",
+      "range": {
+        "startLine": 785,
+        "startChar": 4,
+        "endLine": 785,
+        "endChar": 39
+      },
+      "revId": "09d5589f750e08bf9b59030810bb09d4d2ee6207",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
