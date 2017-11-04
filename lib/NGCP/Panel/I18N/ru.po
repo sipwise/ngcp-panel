@@ -1131,6 +1131,16 @@ msgstr "Не могу создать PBX группу без основного 
 msgid "Cancel"
 msgstr "Отмена"
 
+#. ($special_user_login.'" administrator')
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "Cannot change api key of the \""
+msgstr ""
+
+#. ($special_user_login.'" administrator. Use "Edit" to disable it.')
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "Cannot delete \""
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Cannot delete myself"
 msgstr "Не могу удалить себя сам"

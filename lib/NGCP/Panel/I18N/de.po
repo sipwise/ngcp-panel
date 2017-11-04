@@ -1132,6 +1132,16 @@ msgstr ""
 msgid "Cancel"
 msgstr "Abbrechen"
 
+#. ($special_user_login.'" administrator')
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "Cannot change api key of the \""
+msgstr ""
+
+#. ($special_user_login.'" administrator. Use "Edit" to disable it.')
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "Cannot delete \""
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Cannot delete myself"
 msgstr "Eigener Zugang kann nicht gelöscht werden"
