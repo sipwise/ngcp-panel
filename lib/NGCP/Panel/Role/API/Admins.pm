@@ -3,14 +3,23 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-use parent 'NGCP::Panel::Role::API';
-
-use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
 use NGCP::Panel::Utils::DataHalLink qw();
 use HTTP::Status qw(:constants);
+
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Admin;
+
+sub resource_name{
+    return 'admins';
+}
+
+sub dispatch_path{
+    return '/api/admins/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-admins';
+}
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -45,50 +54,12 @@ sub get_form {
     return $form;
 }
 
-sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
-
-    my %resource = $item->get_inflated_columns;
-    delete $resource{md5pass};
-    delete $resource{saltedpass};
-
+sub hal_links {
+    my($self, $c, $item, $resource, $form) = @_;
     my $adm = $c->user->roles eq "admin";
-
-    my $hal = NGCP::Panel::Utils::DataHal->new(
-        links => [
-            NGCP::Panel::Utils::DataHalLink->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf('%s', $self->dispatch_path)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            $adm ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),
-            $self->get_journal_relation_link($item->id),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-
-    $resource{id} = int($item->id);
-    $hal->resource({%resource});
-    return $hal;
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-
-    my $rs = $self->item_rs($c);
-    return $rs->find($id);
+    return [
+        $adm ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),    
+    ];
 }
 
 #we don't use update_item for the admins now.
@@ -109,15 +80,15 @@ sub update_item {
         $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
     }
 
+    if($c->user->roles eq "reseller" && $resource->{reseller_id} != $c->user->reseller_id) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
+        return;
+    }
+
     if($old_resource->{login} eq NGCP::Panel::Utils::Admin::get_special_admin_login()) {
         my $active = $resource->{is_active};
         $resource = $old_resource;
         $resource->{is_active} = $active;
-    }
-
-    if($c->user->roles eq "reseller" && $resource->{reseller_id} != $c->user->reseller_id) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
-        return;
     }
 
     if($old_resource->{reseller_id} != $resource->{reseller_id}) {
