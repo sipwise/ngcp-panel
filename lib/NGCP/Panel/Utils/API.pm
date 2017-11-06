@@ -3,7 +3,37 @@ use strict;
 use warnings;
 
 use File::Find::Rule;
+use HTTP::Status qw(:constants);
 
+
+sub check_resource_reseller_id {
+    my($api, $c, $resource, $old_resource) = @_;
+    my $reseller;
+    if( $resource->{reseller_id} 
+        && (( ! $old_resource ) || $old_resource->{reseller_id} != $resource->{reseller_id} )) {
+        $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+        unless( $reseller ) {
+            $api->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
+            return;
+        }
+    }
+    return $reseller;
+}
+
+sub apply_resource_reseller_id {
+    my($c, $resource) = @_;
+    my $reseller_id;
+    if($c->user->roles eq "admin") {
+        try {
+            $reseller_id = $resource->{reseller_id}
+                 || $c->user->contract->contact->reseller_id;
+         }
+    } elsif($c->user->roles eq "reseller") {
+        $reseller_id = $c->user->reseller_id;
+    }
+    $resource->{reseller_id} = $reseller_id;
+    return $resource;
+}
 
 sub get_collections {
     my @files = @{get_collections_files()};
@@ -20,6 +50,7 @@ sub get_collections {
     }
     return \@files, \@packages, \@collections, \@modules;
 }
+
 sub get_collections_files {
     my($library,$libpath) = @_;
     if(!$libpath){
