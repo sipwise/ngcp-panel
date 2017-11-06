@@ -4,6 +4,7 @@ use parent qw/NGCP::Panel::Role::API/;
 
 use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
+use NGCP::Panel::Utils::API;
 use HTTP::Status qw(:constants);
 
 sub item_name{
@@ -72,16 +73,7 @@ sub _item_rs {
 
 sub process_form_resource{
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
-    my $reseller_id;
-    if($c->user->roles eq "admin") {
-        try {
-            $reseller_id = $resource->{reseller_id}
-                 || $c->user->contract->contact->reseller_id;
-         }
-    } elsif($c->user->roles eq "reseller") {
-        $reseller_id = $c->user->reseller_id;
-    }
-    $resource->{reseller_id} = $reseller_id;
+    NGCP::Panel::Utils::API::apply_resource_reseller_id($c, $resource);
     return $resource;
 }
 
