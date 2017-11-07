@@ -91,24 +91,24 @@ sub GET : Allow {
         }
         my $actions = [];
         if($c->user->read_only) {
-            foreach my $m(keys %{ $full_mod->config->{action} }) {
+            foreach my $m(sort keys %{ $full_mod->config->{action} }) {
                 next unless $m =~ /^(GET|HEAD|OPTIONS)$/;
                 push @{ $actions }, $m;
             }
         } else {
-            $actions = [ keys %{ $full_mod->config->{action} } ];
+            $actions = [ sort keys %{ $full_mod->config->{action} } ];
         }
         my $uri = "/api/$rel/";
         my $item_actions = [];
         my $journal_resource_config = {};
         if($full_item_mod->can('config')) {
             if($c->user->read_only) {
-                foreach my $m(keys %{ $full_item_mod->config->{action} }) {
+                foreach my $m(sort keys %{ $full_item_mod->config->{action} }) {
                     next unless $m =~ /^(GET|HEAD|OPTIONS)$/;
                     push @{ $item_actions }, $m;
                 }
             } else {
-                foreach my $m(keys %{ $full_item_mod->config->{action} }) {
+                foreach my $m(sort keys %{ $full_item_mod->config->{action} }) {
                     next unless $m =~ /^(GET|HEAD|OPTIONS|PUT|PATCH|DELETE)$/;
                     push @{ $item_actions }, $m;
                 }
@@ -159,7 +159,7 @@ sub GET : Allow {
 
         my $sorting_cols = [];
         if (my $order_by_cols = eval { $full_mod->order_by_cols(); }) {
-            $sorting_cols = [ keys %$order_by_cols ];
+            $sorting_cols = [ sort keys %$order_by_cols ];
         } else {
             my $item_rs;
             try {
@@ -219,7 +219,7 @@ sub GET : Allow {
 
     if($c->req->header('Accept') && $c->req->header('Accept') eq 'application/json') {
         my $body = {};
-        foreach my $rel(keys %{ $c->stash->{collections} }) {
+        foreach my $rel(sort keys %{ $c->stash->{collections} }) {
             my $r = $c->stash->{collections}->{$rel};
             foreach my $k(qw/
                     actions item_actions fields sorting_cols
