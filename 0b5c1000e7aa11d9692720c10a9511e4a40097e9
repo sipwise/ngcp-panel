@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_72063522",
+        "filename": "lib/NGCP/Panel/Model/NdbDB.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-11-09T08:11:59Z",
+      "side": 1,
+      "message": "please note simplified schema connection and drop of moose:\n\nhttps://gerrit.mgm.sipwise.com/#/c/16484/2/lib/NGCP/Panel/Model/DB.pm",
+      "revId": "0b5c1000e7aa11d9692720c10a9511e4a40097e9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
