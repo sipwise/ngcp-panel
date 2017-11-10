@@ -65,7 +65,7 @@ sub period_as_string {
 }
 
 sub destination_as_string {
-    my ($c, $destination, $subscriber, $direction) = @_;
+    my ($c, $destination, $prov_subscriber, $direction) = @_;
     my $dest = $destination->{destination};
 
     if($dest =~ /\@voicebox\.local$/) {
@@ -89,7 +89,7 @@ sub destination_as_string {
     } elsif($dest =~ /\@managersecretary\.local$/) {
         my $sn_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, attribute => 'secretary_numbers',
-                prov_subscriber => $subscriber);
+                prov_subscriber => $prov_subscriber);
         my @sn_list = ();
         if ($sn_rs) {
             foreach my $l ($sn_rs->all) {
@@ -101,15 +101,17 @@ sub destination_as_string {
     } else {
         my $d = $dest;
         $d =~ s/^sips?://;
-        my $sub = $subscriber // $c->stash->{subscriber};
+        my $b_subscriber = $prov_subscriber
+            ? $prov_subscriber->voip_subscriber
+            : undef;
         $direction //= 'caller_out';
-        if($sub && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
+        if($b_subscriber && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
             my ($user, $domain) = split(/\@/, $d);
-            $domain //= $sub->domain->domain;
+            $domain //= $b_subscriber->domain->domain;
             $user = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                c => $c, subscriber => $sub, number => $user, direction => $direction
+                c => $c, subscriber => $b_subscriber, number => $user, direction => $direction
             );
-            if($domain eq $sub->domain->domain) {
+            if($domain eq $b_subscriber->domain->domain) {
                 $d = $user;
             } else {
                 $d = $user . '@' . $domain;
