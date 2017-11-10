@@ -763,7 +763,7 @@ sub process_hal_resource {
         })->first;
         my $fax_subscriber_billing = $fax_subscriber_provisioning->voip_subscriber;
         $resource = NGCP::Panel::Utils::Fax::process_fax_journal_item($c, $item_mock_obj, $fax_subscriber_billing);
-        foreach my $field (qw/type id status reason pages filename/){
+        foreach my $field (qw/type id status reason pages filename direction/){
             $resource->{$field} = $item_mock_obj->$field;
         }
         $resource->{subscriber_id} = $fax_subscriber_billing->id;
