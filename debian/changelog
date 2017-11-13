@@ -1,3 +1,23 @@
+ngcp-panel (5.4.3.0+0~mr5.4.3.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [23595a5] TT#20233 Consider empty display_name to update preferences
+  * [32b146c] TT#19769 Replace old statistics link to Grafana system-statistic link
+  * [e3ab3d9] TT#22505 TT#21271 Fix subscribers API so get2put works
+  * [333093f] TT#23426 API: Format properly rewriterules in rewriterulesets output
+
+  [ Gerhard Jungwirth ]
+  * [25e2f84] TT#22420 properly reload trusted sources via xmlrpc
+
+  [ Rene Krenn ]
+  * [a1d7c0a] TT#22505 safe handling of "" lock level pref values
+  * [7894bb1] TT#12311 make DateTime add() skip leap seconds
+  * [ad83d34] TT#21871 add "ratio" field to /api/customerbalances
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Nov 2017 15:08:54 +0100
+
 ngcp-panel (5.4.2.0+0~mr5.4.2.0) unstable; urgency=medium
 
   [ Rene Krenn ]
