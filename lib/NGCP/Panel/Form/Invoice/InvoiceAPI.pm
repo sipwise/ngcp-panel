@@ -53,7 +53,7 @@ has_field 'period_end' => (
 );
 
 has_field 'period' => (
-    label => 'Invoice Period End',
+    label => 'Invoice Periods',
     required => 0,
     element_attr => {
         rel => ['tooltip'],
