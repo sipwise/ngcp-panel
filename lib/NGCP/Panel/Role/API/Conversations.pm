@@ -858,17 +858,24 @@ sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
     #$c->log->debug("hal_links: type=".($resource->{type} // 'undefined')."; id=".($resource->{id} // 'undefined').";");
     return [
-        ('call' eq $resource->{type} ?
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:calls', href => sprintf("/api/calls/%d", $resource->{id})) : ()),
-        ('voicemail' eq $resource->{type} ?
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:voicemails', href => sprintf("/api/voicemails/%d", $resource->{id})) : ()),
-        ('sms' eq $resource->{type} ?
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:sms', href => sprintf("/api/sms/%d", $resource->{id})) : ()),
-        ('fax' eq $resource->{type} ?
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:faxes', href => sprintf("/api/faxes/%d", $resource->{id})) : ()),
+        ('call' eq $resource->{type} ? (
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:calls', href => sprintf("/api/calls/%d", $resource->{id})),
+           ) : ()),
+        ('voicemail' eq $resource->{type} ? (
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:voicemails', href => sprintf("/api/voicemails/%d", $resource->{id})),
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:voicemailrecordings', href => sprintf("/api/voicemailrecordings/%d", $resource->{id})),
+           ) : ()),
+        ('sms' eq $resource->{type} ? (
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:sms', href => sprintf("/api/sms/%d", $resource->{id})),
+           ) : ()),
+        ('fax' eq $resource->{type} ? (
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:faxes', href => sprintf("/api/faxes/%d", $resource->{id})),
+                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:faxrecordings', href => sprintf("/api/faxrecordings/%d", $resource->{id})),
+           ) : ()),
         # todo - add xmpp mam rail:
-        #('xmpp' eq $item->{type} ?
-        #    NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:xmpp', href => sprintf("/api/xmpp/%d", $item->{id})) : ()),
+        #('xmpp' eq $item->{type} ? (
+        #    NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:xmpp', href => sprintf("/api/xmpp/%d", $item->{id})),
+        # ) : ()),
     ];
 }
 
