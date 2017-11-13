@@ -7,6 +7,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::CallList qw();
 use NGCP::Panel::Utils::API::Calllist qw();
 use NGCP::Panel::Utils::Fax;
+use NGCP::Panel::Utils::Subscriber;
 
 use NGCP::Panel::Utils::DateTime qw();
 use DateTime::Format::Strptime qw();
@@ -774,8 +775,11 @@ sub process_hal_resource {
             'mailboxuser' => $item_mock_obj->mailboxuser,
         })->first->mailboxuser->provisioning_voip_subscriber->voip_subscriber->id;
         # type is last item of path like /var/spool/asterisk/voicemail/default/uuid/INBOX
+        my $filename = NGCP::Panel::Utils::Subscriber::get_voicemail_filename($c,$item_mock_obj);
         my @p = split '/', $item_mock_obj->dir;
         $resource->{folder} = pop @p;
+        $resource->{direction} = 'in';
+        $resource->{filename} = $filename;
     }elsif('sms' eq $item->{type}){
         $resource = $item_accessors_hash;
         $resource->{start_time} =  NGCP::Panel::Utils::DateTime::from_string($item_mock_obj->timestamp)->epoch;

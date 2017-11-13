@@ -3726,8 +3726,8 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
 
     NGCP::Panel::Utils::Subscriber::mark_voicemail_read( 'c' => $c, 'voicemail' => $c->stash->{voicemail} );
     NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $c->stash->{voicemail} );
-
-    $c->response->header('Content-Disposition' => 'attachment; filename="'.$file->msgnum.'.wav"');
+    my $filename = NGCP::Panel::Utils::Subscriber::get_voicemail_filename($c,$file);
+    $c->response->header('Content-Disposition' => 'attachment; filename="'.$filename.'"');
     $c->response->content_type('audio/x-wav');
     $c->response->body($data);
 }
