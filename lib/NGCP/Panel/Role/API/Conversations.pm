@@ -347,12 +347,12 @@ sub _get_call_rs {
         $self->_apply_direction(params => $params,
             in => sub {
                 $rs = $rs->search({
-                    { destination_provider_id => $provider_id },
+                    destination_provider_id => $provider_id
                 });
             },
             out => sub {
                 $rs = $rs->search({
-                    { source_provider_id => $provider_id },
+                    source_provider_id => $provider_id
                 });
             },
             inout => sub {
@@ -369,12 +369,12 @@ sub _get_call_rs {
         $self->_apply_direction(params => $params,
             in => sub {
                 $rs = $rs->search({
-                    { destination_account_id => $contract_id },
+                    destination_account_id => $contract_id
                 });
             },
             out => sub {
                 $rs = $rs->search({
-                    { source_account_id => $contract_id },
+                    source_account_id => $contract_id
                 });
             },
             inout => sub {
