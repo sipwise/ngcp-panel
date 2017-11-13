@@ -1824,6 +1824,12 @@ sub get_subscriber_pbx_status{
     }
     return 0;
 }
+
+sub get_voicemail_filename{
+    my($c, $voicemail_item) = @_;
+    return 'voicemail-'.$voicemail_item->msgnum.'.wav';
+}
+
 1;
 
 =head1 NAME

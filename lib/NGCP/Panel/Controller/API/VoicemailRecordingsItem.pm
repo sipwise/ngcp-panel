@@ -7,6 +7,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Utils::Subscriber;
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -60,8 +61,8 @@ sub GET :Allow {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, voicemailrecording => $item);
-
-        $c->response->header ('Content-Disposition' => 'attachment; filename="' . $self->resource_name . '-' . $item->id . '.wav"');
+        my $filename = NGCP::Panel::Utils::Subscriber::get_voicemail_filename($c,$item);
+        $c->response->header ('Content-Disposition' => 'attachment; filename="'.$filename.'"');
         $c->response->content_type('audio/x-wav');
         $c->response->body($item->recording);
         return;
