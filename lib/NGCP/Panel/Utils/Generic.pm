@@ -122,10 +122,10 @@ sub hash2obj {
     bless($obj,$classname);
     no strict "refs";
     return $obj if scalar %{$classname . '::'};
-    print "registering class $classname\n";
+    #print "registering class $classname\n";
     $accessors //= {};
     foreach my $accessor (keys %$accessors) {
-        print "registering accessor $classname::$accessor\n";
+        #print "registering accessor $classname::$accessor\n";
         *{$classname . '::' . $accessor} = sub {
             my $self = shift;
             return &{$accessors->{$accessor}}($self,@_);
