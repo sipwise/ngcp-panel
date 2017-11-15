@@ -297,7 +297,15 @@ sub get_contract_calls_rs{
     $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
     $etime ||= $stime->clone->add( months => 1 );
 
-    my $calls_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$c->model('DB')->resultset('cdr')->search_rs( {
+    my @cols = ();
+    push(@cols,qw/source_user source_domain source_cli destination_user_in/);
+    #push(@cols,NGCP::Panel::Utils::CallList::get_suppression_id_colnames());
+    push(@cols,qw/start_time duration call_type source_customer_cost/);
+    my @colnames = @cols;
+    push(@cols,qw/source_customer_billing_zones_history.zone source_customer_billing_zones_history.detail/);
+    push(@colnames,qw/zone zone_detail/);
+
+    my $calls_rs = $c->model('DB')->resultset('cdr')->search_rs({
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         'call_status'       => 'ok',
         'source_user_id'    => { '!=' => '0' },
@@ -307,22 +315,15 @@ sub get_contract_calls_rs{
                 { '<=' => $etime->epoch},
             ],
         'source_account_id' => $customer_contract_id,
-    },undef ),NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
-
-    my @cols = ();
-    push(@cols,qw/source_user source_domain source_cli destination_user_in/);
-    push(@cols,NGCP::Panel::Utils::CallList::get_suppression_id_colnames());
-    push(@cols,qw/start_time duration call_type source_customer_cost/);
-    my @colnames = @cols;
-    push(@cols,qw/source_customer_billing_zones_history.zone source_customer_billing_zones_history.detail/);
-    push(@colnames,qw/zone zone_detail/);
-
-    return $calls_rs->search_rs(undef,{
+    },{
         select => \@cols,
         as => \@colnames,
         'join' => 'source_customer_billing_zones_history',
         'order_by'    => 'start_time',
-    } );
+    });
+
+    #suppression rs decoration at last, after any "select =>"
+    return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
 
 }
 
