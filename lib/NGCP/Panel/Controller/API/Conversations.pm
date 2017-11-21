@@ -13,7 +13,7 @@ sub config_allowed_roles {
 }
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD/];
+    return [qw/GET OPTIONS HEAD /];
 }
 
 sub api_description {

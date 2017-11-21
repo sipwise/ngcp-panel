@@ -19,7 +19,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/POST OPTIONS/];
+    return [qw/POST OPTIONS /];
 }
 
 sub api_description {
@@ -48,9 +48,9 @@ __PACKAGE__->config(
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller/],
-            Args => 0,
+            Args => ($_ =~ m!^I_!) ? 1 : 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
+            Method => ($_ =~ s!^I_!!r),
             Path => __PACKAGE__->dispatch_path,
         } } @{ __PACKAGE__->allowed_methods }
     },

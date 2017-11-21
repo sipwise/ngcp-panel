@@ -15,7 +15,7 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD/];
+    return [qw/GET OPTIONS HEAD /];
 }
 
 use base qw/Catalyst::Controller NGCP::Panel::Role::API/;
@@ -35,9 +35,9 @@ __PACKAGE__->config(
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller/],#left adminand reseller, as test can run as reseller too. Just don't return full config
-            Args => 0,
+            Args => ($_ =~ m!^I_!) ? 1 : 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
+            Method => ($_ =~ s!^I_!!r),
             Path => __PACKAGE__->dispatch_path,
         } } @{ __PACKAGE__->allowed_methods }
     },

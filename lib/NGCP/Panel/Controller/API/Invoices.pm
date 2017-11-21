@@ -9,7 +9,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Invoices/;
 __PACKAGE__->set_config();
 
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET POST OPTIONS HEAD /];
 }
 
 sub api_description {

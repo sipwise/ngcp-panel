@@ -15,7 +15,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/OPTIONS/];
+    return [qw/OPTIONS I_GET I_HEAD I_OPTIONS /];
 }
 
 sub api_description {
@@ -39,9 +39,9 @@ __PACKAGE__->config(
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
-            Args => 0,
+            Args => ($_ =~ m!^I_!) ? 1 : 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
+            Method => ($_ =~ s!^I_!!r),
             Path => __PACKAGE__->dispatch_path,
         } } @{ __PACKAGE__->allowed_methods },
     },
@@ -67,6 +67,40 @@ sub OPTIONS :Allow {
     $c->response->headers(HTTP::Headers->new(
         Allow => join(', ', @{ $allowed_methods }),
         Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
+    ));
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
+    return;
+}
+
+sub I_GET :Allow {
+    my ($self, $c, $id) = @_;
+    {
+        last unless $self->valid_id($c, $id);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, voicemailrecording => $item);
+        my $filename = NGCP::Panel::Utils::Subscriber::get_voicemail_filename($c,$item);
+        $c->response->header ('Content-Disposition' => 'attachment; filename="'.$filename.'"');
+        $c->response->content_type('audio/x-wav');
+        $c->response->body($item->recording);
+        return;
+    }
+    return;
+}
+
+sub I_HEAD :Allow {
+    my ($self, $c, $id) = @_;
+    $c->forward(qw(GET));
+    $c->response->body(q());
+    return;
+}
+
+sub I_OPTIONS :Allow {
+    my ($self, $c, $id) = @_;
+    my $allowed_methods = $self->allowed_methods_filtered($c);
+    $c->response->headers(HTTP::Headers->new(
+        Allow => join(', ', @{ $allowed_methods }),
+        Accept_Patch => 'application/json-patch+json',
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
