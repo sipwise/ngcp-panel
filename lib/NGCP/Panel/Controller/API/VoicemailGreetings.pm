@@ -8,7 +8,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::VoicemailGreet
 __PACKAGE__->set_config();
 
 sub allowed_methods{
-    return [qw/OPTIONS HEAD GET POST/];
+    return [qw/OPTIONS HEAD GET POST /];
 }
 
 sub config_allowed_roles {

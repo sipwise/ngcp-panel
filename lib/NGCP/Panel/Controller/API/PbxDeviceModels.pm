@@ -8,7 +8,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::Device;
 
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET POST OPTIONS HEAD /];
 }
 
 __PACKAGE__->set_config();

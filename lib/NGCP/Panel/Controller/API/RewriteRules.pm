@@ -17,7 +17,7 @@ sub _set_config{
 }
 
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET POST OPTIONS HEAD /];
 }
 
 sub api_description {

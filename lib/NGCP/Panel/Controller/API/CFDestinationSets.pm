@@ -15,7 +15,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET POST OPTIONS HEAD I_GET I_HEAD I_OPTIONS I_PATCH I_PUT I_DELETE /];
 }
 
 sub api_description {
@@ -70,9 +70,9 @@ __PACKAGE__->config(
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller subscriberadmin subscriber/],
-            Args => 0,
+            Args => ($_ =~ m!^I_!) ? 1 : 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
+            Method => ($_ =~ s!^I_!!r),
             Path => __PACKAGE__->dispatch_path,
         } } @{ __PACKAGE__->allowed_methods },
     },
@@ -252,6 +252,164 @@ sub POST :Allow {
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $dset->id));
+        $c->response->body(q());
+    }
+    return;
+}
+
+sub I_GET :Allow {
+    my ($self, $c, $id) = @_;
+    {
+        last unless $self->valid_id($c, $id);
+        my $dset = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, destinationset => $dset);
+
+        my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
+
+        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            (map { # XXX Data::HAL must be able to generate links with multiple relations
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r
+                =~ s/rel=self/rel="item self"/r;
+            } $hal->http_headers),
+        ), $hal->as_json);
+        $c->response->headers($response->headers);
+        $c->response->body($response->content);
+        return;
+    }
+    return;
+}
+
+sub I_HEAD :Allow {
+    my ($self, $c, $id) = @_;
+    $c->forward(qw(GET));
+    $c->response->body(q());
+    return;
+}
+
+sub I_OPTIONS :Allow {
+    my ($self, $c, $id) = @_;
+    my $allowed_methods = $self->allowed_methods_filtered($c);
+    $c->response->headers(HTTP::Headers->new(
+        Allow => join(', ', @{ $allowed_methods }),
+        Accept_Patch => 'application/json-patch+json',
+    ));
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
+    return;
+}
+
+sub I_PATCH :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $json = $self->get_valid_patch_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json-patch+json',
+            ops => [qw/add replace remove copy/],
+        );
+        last unless $json;
+
+        my $dset = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, destinationset => $dset);
+        my $old_resource = $self->hal_from_item($c, $dset, "cfdestinationsets")->resource;
+        my $resource = $self->apply_patch($c, $old_resource, $json);
+        last unless $resource;
+
+        my $form = $self->get_form($c);
+        $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
+        last unless $dset;
+
+        my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
+        last unless $self->add_update_journal_item_hal($c,$hal);
+        
+        $guard->commit; 
+
+        if ('minimal' eq $preference) {
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->body(q());
+        } else {
+            #my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                $hal->http_headers,
+            ), $hal->as_json);
+            $c->response->headers($response->headers);
+            $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->body($response->content);
+        }
+    }
+    return;
+}
+
+sub I_PUT :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $dset = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, destinationset => $dset);
+        my $resource = $self->get_valid_put_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json',
+        );
+        last unless $resource;
+        my $old_resource = { $dset->get_inflated_columns };
+
+        my $form = $self->get_form($c);
+        $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
+        last unless $dset;
+        
+        my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
+        last unless $self->add_update_journal_item_hal($c,$hal);
+
+        $guard->commit;
+
+        if ('minimal' eq $preference) {
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->body(q());
+        } else {
+            #my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                $hal->http_headers,
+            ), $hal->as_json);
+            $c->response->headers($response->headers);
+            $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->body($response->content);
+        }
+    }
+    return;
+}
+
+sub I_DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $dset = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, destinationset => $dset);
+        
+        last unless $self->add_delete_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            return $self->hal_from_item($c, $dset, "cfdestinationsets"); });
+        
+        try {
+            $dset->delete;
+        } catch($e) {
+            $c->log->error("Failed to delete cfdestinationset with id '$id': $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            last;
+        }
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
     }
     return;

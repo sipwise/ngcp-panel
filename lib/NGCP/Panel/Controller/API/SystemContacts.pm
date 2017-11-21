@@ -16,7 +16,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET POST OPTIONS HEAD/];
+    return [qw/GET POST OPTIONS HEAD I_GET I_HEAD I_OPTIONS I_PATCH I_PUT I_DELETE /];
 }
 
 sub api_description {
@@ -56,9 +56,9 @@ __PACKAGE__->config(
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => 'admin',
-            Args => 0,
+            Args => ($_ =~ m!^I_!) ? 1 : 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
+            Method => ($_ =~ s!^I_!!r),
             Path => __PACKAGE__->dispatch_path,
         } } @{ __PACKAGE__->allowed_methods }
     },
@@ -188,6 +188,198 @@ sub POST :Allow {
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $contact->id));
+        $c->response->body(q());
+    }
+    return;
+}
+
+sub I_GET :Allow {
+    my ($self, $c, $id) = @_;
+    {
+        last unless $self->valid_id($c, $id);
+        my $contact = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, systemcontact => $contact);
+
+        my $hal = $self->hal_from_contact($c, $contact);
+
+        # TODO: we don't need reseller stuff here!
+        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            (map { # XXX Data::HAL must be able to generate links with multiple relations
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
+                s/rel=self/rel="item self"/;
+                $_
+            } $hal->http_headers),
+        ), $hal->as_json);
+        $c->response->headers($response->headers);
+        $c->response->body($response->content);
+        return;
+    }
+    return;
+}
+
+sub I_HEAD :Allow {
+    my ($self, $c, $id) = @_;
+    $c->forward(qw(GET));
+    $c->response->body(q());
+    return;
+}
+
+sub I_OPTIONS :Allow {
+    my ($self, $c, $id) = @_;
+    my $allowed_methods = $self->allowed_methods_filtered($c);
+    $c->response->headers(HTTP::Headers->new(
+        Allow => join(', ', @{ $allowed_methods }),
+        Accept_Patch => 'application/json-patch+json',
+    ));
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
+    return;
+}
+
+sub I_PATCH :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $json = $self->get_valid_patch_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json-patch+json',
+        );
+        last unless $json;
+
+        my $contact = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, systemcontact => $contact);
+        my $old_resource = { $contact->get_inflated_columns };
+        my $resource = $self->apply_patch($c, $old_resource, $json);
+        last unless $resource;
+
+        my $form = $self->get_form($c);
+        $contact = $self->update_contact($c, $contact, $old_resource, $resource, $form);
+        last unless $contact;
+
+        my $hal = $self->hal_from_contact($c, $contact, $form);
+        last unless $self->add_update_journal_item_hal($c,$hal);
+
+        $guard->commit;
+
+        if ('minimal' eq $preference) {
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->body(q());
+        } else {
+            #my $hal = $self->hal_from_contact($c, $contact, $form);
+            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                $hal->http_headers,
+            ), $hal->as_json);
+            $c->response->headers($response->headers);
+            $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->body($response->content);
+        }
+    }
+    return;
+}
+
+sub I_PUT :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $contact = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, systemcontact => $contact);
+        my $resource = $self->get_valid_put_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json',
+        );
+        last unless $resource;
+        my $old_resource = { $contact->get_inflated_columns };
+
+        my $form = $self->get_form($c);
+        $contact = $self->update_contact($c, $contact, $old_resource, $resource, $form);
+        last unless $contact;
+
+        my $hal = $self->hal_from_contact($c, $contact, $form);
+        last unless $self->add_update_journal_item_hal($c,$hal);
+
+        $guard->commit;
+
+        if ('minimal' eq $preference) {
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->body(q());
+        } else {
+            #my $hal = $self->hal_from_contact($c, $contact, $form);
+            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                $hal->http_headers,
+            ), $hal->as_json);
+            $c->response->headers($response->headers);
+            $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->body($response->content);
+        }
+    }
+    return;
+}
+
+sub I_DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $contact = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, systemcontact => $contact);
+        my $contract_rs = $c->model('DB')->resultset('contracts')->search({
+            contact_id => $id,
+            status => { '!=' => 'terminated' },
+        });
+        my $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+            contact_id => $id,
+            status => { '!=' => 'terminated' },
+        }); # hypotecial, but for the sake of symmetry with customer contacts
+        if ($contract_rs->first or $subscriber_rs->first) { #2. if active contracts or subscribers -> error
+            $self->error($c, HTTP_LOCKED, "Contact is still in use.");
+            last;
+        } else {
+            $contract_rs = $c->model('DB')->resultset('contracts')->search({
+                contact_id => $id,
+                status => { '=' => 'terminated' },
+            });
+            $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+                contact_id => $id,
+                status => { '=' => 'terminated' },
+            }); # hypotecial, but for the sake of symmetry with customer contacts
+            if ($contract_rs->first or $subscriber_rs->first) { #1. terminate if terminated contracts or subscribers
+                $c->log->debug("terminate contact id ".$contact->id);
+                try {
+                    $contact->update({
+                        status => "terminated",
+                        terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
+                    });
+                    $contact->discard_changes();
+                } catch($e) {
+                    $c->log->error("Failed to terminate contact id '".$contact->id."': $e");
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+                    last;
+                };
+                my $form = $self->get_form($c);
+                my $hal = $self->hal_from_contact($c, $contact, $form);
+                last unless $self->add_update_journal_item_hal($c,$hal);
+            } else { #3. delete otherwise
+                last unless $self->add_delete_journal_item_hal($c,sub {
+                    my $self = shift;
+                    my ($c) = @_;
+                    my $_form = $self->get_form($c);
+                    return $self->hal_from_contact($c, $contact, $_form); });
+                $c->log->debug("delete contact id ".$contact->id);
+                $contact->delete;
+            }
+        }
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
     }
     return;
