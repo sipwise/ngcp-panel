@@ -34,7 +34,7 @@ RUN dpkg --force-depends -i /tmp/ngcp-panel-tests-rest-api-build-deps_1.0_all.de
 RUN apt-get --assume-yes -f install
 # Ensure package ngcp-panel-tests-rest-api-build-deps is installed as
 # apt-get might just remove it instead of installing (due to force option).
-RUN dpkg-query -s ngcp-panel-tests-rest-api-build-deps
+RUN test "$(dpkg-query -f '${db:Status-Status} ${db:Status-Eflag}' -W ngcp-panel-tests-rest-api-build-deps 2>/dev/null)" = 'installed ok'
 
 # for prove execution
 RUN wget http://deb.sipwise.com/files/libtest-pretty-perl_0.31-1~bpo80+1_all.deb
