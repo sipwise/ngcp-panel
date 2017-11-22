@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baada198_58797292",
+        "filename": "t/api-rest/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2017-11-22T16:51:40Z",
+      "side": 1,
+      "message": "JFYI, when you change the Dockerfile, please also bump the date here, our current \"docker build solution\" required this.\nMaybe one day we will migrate on docker-composer.\n\nFor the current review it is NOT necessary as it doesn\u0027t really change the curre4nt docker image anyhow.\nIt will be applied on the next docker rebuilding.\nLGTM.",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 27
+      },
+      "revId": "72b63d37335742201877a9687309acf4f5911dc2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
