@@ -115,8 +115,9 @@ sub get_contract_rs {
     my $rs = $schema->resultset('contracts')
         ->search({
             $params{include_terminated} ? () : ('me.status' => { '!=' => 'terminated' }),
+            $contract_id ? ('me.id' => $contract_id) : (),
         },{
-            bind => [ ( $dtf->format_datetime($now) ) x 2, ( $contract_id ) x 2 ],
+            bind => [ ( $dtf->format_datetime($now) ) x 2 ],
             'join' => { 'billing_mappings_actual' => { 'billing_mappings' => 'product'}},
             '+select' => [
                 'billing_mappings.id',
