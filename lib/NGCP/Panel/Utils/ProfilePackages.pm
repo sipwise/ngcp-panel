@@ -261,12 +261,12 @@ sub catchup_contract_balances {
         my $bm_actual;
         unless ($last_profile) {
             $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start));
-            $last_profile = $bm_actual->billing_mappings->first->billing_profile;
+            $last_profile = $bm_actual->billing_profile;
         }
         my ($underrun_profiles_ts,$underrun_lock_ts) = (undef,undef);
 PREPARE_BALANCE_CATCHUP:
         $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $start_of_next_interval);
-        my $profile = $bm_actual->billing_mappings->first->billing_profile;
+        my $profile = $bm_actual->billing_profile;
         $interval_unit = $has_package ? $interval_unit : ($profile->interval_unit // _DEFAULT_PROFILE_INTERVAL_UNIT);
         $interval_value = $has_package ? $interval_value : ($profile->interval_count // _DEFAULT_PROFILE_INTERVAL_COUNT);
 
@@ -410,7 +410,7 @@ sub topup_contract_balance {
     if ($log_vals) {
         $log_vals->{old_balance} = { $balance->get_inflated_columns };
         my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
-        my $profile = $bm_actual->billing_mappings->first->billing_profile;
+        my $profile = $bm_actual->billing_profile;
         $log_vals->{old_profile} = { $profile->get_inflated_columns };
         if ($subscriber) {
             $log_vals->{old_lock_level} = NGCP::Panel::Utils::Subscriber::get_provisoning_voip_subscriber_lock_level(
@@ -468,7 +468,7 @@ sub topup_contract_balance {
     if ($log_vals) {
         $log_vals->{new_balance} = { $balance->get_inflated_columns };
         my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
-        my $profile = $bm_actual->billing_mappings->first->billing_profile;
+        my $profile = $bm_actual->billing_profile;
         $log_vals->{new_profile} = { $profile->get_inflated_columns };
     }
 
@@ -546,7 +546,7 @@ sub create_initial_contract_balances {
     my ($underrun_lock_applied,$underrun_profiles_applied) = (0,0);
 PREPARE_BALANCE_INITIAL:
     my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
-    my $profile = $bm_actual->billing_mappings->first->billing_profile;
+    my $profile = $bm_actual->billing_profile;
     if (defined $contract->contact->reseller_id && $package) {
         $start_mode = $package->balance_interval_start_mode;
         $interval_unit = $package->balance_interval_unit;
@@ -633,7 +633,7 @@ sub _get_resized_balance_values {
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     if (NGCP::Panel::Utils::DateTime::set_local_tz($balance->start) <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end) || NGCP::Panel::Utils::DateTime::set_local_tz($balance->end) >= $contract_create)) {
         my $bm = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $contract_create); #now => $balance->start); #end); !?
-        my $profile = $bm->billing_mappings->first->billing_profile;
+        my $profile = $bm->billing_profile;
         my $old_ratio = get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),NGCP::Panel::Utils::DateTime::set_local_tz($balance->end));
         my $old_free_cash = $old_ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
         my $old_free_time = $old_ratio * ($profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME);
@@ -665,7 +665,7 @@ sub _get_balance_values {
             ) && (!defined $notopup_expiration || $stime < $notopup_expiration)) {
             #if (!defined $last_profile) {
             #    my $bm_last = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $last_balance->start); #end); !?
-            #    $last_profile = $bm_last->billing_mappings->first->billing_profile;
+            #    $last_profile = $bm_last->billing_profile;
             #}
             my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
             $ratio = 1.0;
@@ -928,7 +928,12 @@ sub get_actual_billing_mapping {
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     my $dtf = $schema->storage->datetime_parser;
     $now = $contract_create if $now < $contract_create; #if there is no mapping starting with or before $now, it would returns the mapping with max(id):
-    return $schema->resultset('billing_mappings_actual')->search({ contract_id => $contract->id },{bind => [ ( $dtf->format_datetime($now) ) x 2, ($contract->id) x 2 ],})->first;
+    return $schema->resultset('billing_mappings')->search({
+        'me.contract_id' => $contract->id
+    },{
+        bind => [ ( $dtf->format_datetime($now) ) x 2 ],
+        join => 'billing_mappings_actual',
+    })->first;
 }
 
 sub set_subscriber_lock_level {
@@ -1014,8 +1019,8 @@ sub add_profile_mappings {
         $bm_actual //= get_actual_billing_mapping(c => $c,
             contract => $contract,
             now => $now);
-        my $product_id = $bm_actual->billing_mappings->first->product->id;
-        #my $old_prepaid = $bm_actual->billing_mappings->first->billing_profile->prepaid;
+        my $product_id = $bm_actual->product->id;
+        #my $old_prepaid = $bm_actual->billing_profile->prepaid;
         my @mappings_to_create = ();
         foreach my $mapping (@profiles) {
             push(@mappings_to_create,{ #assume not terminated,
@@ -1034,8 +1039,8 @@ sub add_profile_mappings {
             now => $now);
         NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
             #old_prepaid => $old_prepaid,
-            #new_prepaid => $bm_actual->billing_mappings->first->billing_profile->prepaid,
-            prepaid => $bm_actual->billing_mappings->first->billing_profile->prepaid,
+            #new_prepaid => $bm_actual->billing_profile->prepaid,
+            prepaid => $bm_actual->billing_profile->prepaid,
             contract => $contract,
         );
         return scalar @profiles;
