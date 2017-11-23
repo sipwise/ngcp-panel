@@ -56,6 +56,7 @@ $voicemail_fields{context} = 'me.context';
 $voicemail_fields{macrocontext} = 'me.macrocontext';
 $voicemail_fields{mailboxcontext} = 'me.mailboxcontext';
 $voicemail_fields{dir} = 'me.dir';
+$voicemail_fields{msgnum} = 'me.msgnum';
 
 my %sms_fields = ();
 my $sms_fields_tied = tie(%sms_fields, 'Tie::IxHash');
