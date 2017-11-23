@@ -928,7 +928,14 @@ sub get_actual_billing_mapping {
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
     my $dtf = $schema->storage->datetime_parser;
     $now = $contract_create if $now < $contract_create; #if there is no mapping starting with or before $now, it would returns the mapping with max(id):
-    return $schema->resultset('billing_mappings_actual')->search({ contract_id => $contract->id },{bind => [ ( $dtf->format_datetime($now) ) x 2, ($contract->id) x 2 ],})->first;
+    return $schema->resultset('contracts')
+        ->billing_mappings_actual($now, $now)
+        ->search({
+            'me.id' => $contract->id,
+        },
+        {
+            join => 'billing_mappings',
+        })->first;
 }
 
 sub set_subscriber_lock_level {

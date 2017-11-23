@@ -20,7 +20,9 @@ sub _prepare_customers_count {
     my ($self, $c) = @_;
 
     $c->stash(
-        customers => $c->model('DB')->resultset('contracts')->search({
+        customers => $c->model('DB')->resultset('contracts')
+        ->billing_mappings_actual()
+        ->search({
             'me.status' => { '!=' => 'terminated' },
             'contact.reseller_id' => $c->user->reseller_id,
             'product.class' => { 'not in' => [ 'reseller', 'sippeering', 'pstnpeering' ] },

@@ -49,8 +49,8 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "contact.firstname", search => 1, title => '' },
         { name => "contact.lastname", search => 1, title => $c->loc("Name"),
             custom_renderer => 'function ( data, type, full ) { var sep = (full.contact_firstname && full.contact_lastname) ? " " : ""; return (full.contact_firstname || "") + sep + (full.contact_lastname || ""); }' },
-        { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
-        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => "billing_mappings.product.name", search => 1, title => $c->loc("Product") },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
         { name => "status", search => 1, title => $c->loc("Status") },
         { name => "max_subscribers", search => 1, title => $c->loc("Max. Subscribers") },
     ]);
@@ -107,7 +107,7 @@ sub ajax_reseller_filter :Chained('list_customer') :PathPart('ajax/reseller') :A
     my $reseller_customer_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
-        { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
+        { name => "billing_mappings.product.name", search => 1, title => $c->loc("Product") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);

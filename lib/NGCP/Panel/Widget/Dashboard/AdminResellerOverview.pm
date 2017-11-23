@@ -35,10 +35,10 @@ sub _prepare_domains_count {
 
 sub _prepare_customers_count {
     my ($self, $c) = @_;
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
-    my $dtf = $c->model('DB')->storage->datetime_parser;
     $c->stash(
-        customers => $c->model('DB')->resultset('contracts')->search({
+        customers => $c->model('DB')->resultset('contracts')
+        ->billig_mappings_actual()
+        ->search({
             'me.status' => { '!=' => 'terminated' },
             'contact.reseller_id' => { '-not' => undef },
             '-or' => [
@@ -46,8 +46,7 @@ sub _prepare_customers_count {
                 'product.class' => 'pbxaccount',
             ],
         },{
-            bind => [ ( $dtf->format_datetime($now) ) x 2, undef, undef ],
-            'join' => [ 'contact', { 'billing_mappings_actual' => { 'billing_mappings' => 'product'}} ],
+            'join' => [ 'contact', { 'billing_mappings' => 'product' } ],
         }),
     );
 }
