@@ -26,8 +26,8 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
-        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => "billing_mappings.product.name", search => 1, title => $c->loc("Product") },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
 
@@ -487,7 +487,7 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
     NGCP::Panel::Utils::Datatables::process($c, $rs,  $contract_columns);

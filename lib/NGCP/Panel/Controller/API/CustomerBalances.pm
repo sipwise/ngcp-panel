@@ -91,16 +91,11 @@ sub query_params {
         {
             param => 'prepaid',
             description => 'Filter for contracts with a prepaid billing profile',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'billing_profile.prepaid' => ($q ? 1 : 0) };
-                },
-                second => sub {
-                    {
-                        join => { billing_mappings_actual => { billing_mappings => 'billing_profile' } },
-                    };
-                },
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                return $rs->billing_mappings_actual->search({
+                    'billing_profile.prepaid' => ($q ? 1 : 0)
+                });
             },
         },
     ];
