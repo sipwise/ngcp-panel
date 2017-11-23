@@ -22,6 +22,30 @@
       "revId": "72b63d37335742201877a9687309acf4f5911dc2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baada198_9814eaf6",
+        "filename": "t/api-rest/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-11-23T08:54:01Z",
+      "side": 1,
+      "message": "\u003e JFYI, when you change the Dockerfile, please also bump the date\n \u003e here, our current \"docker build solution\" required this.\n \u003e Maybe one day we will migrate on docker-composer.\n\nFTR: I don\u0027t think so. If a cmdline (like RUN) is modified inside a Dockerfile its checksum is different and then it\u0027s not considered for usage from cache (since such a cached layer doesn\u0027t exist). So a change to ENV REFRESHED_AT isn\u0027t necessary then. The REFRESHED_AT really just is a hack to force a full refresh of all the following commands without relying on any (possibly existing) caches (e.g. if an underlying Debian repository was changed and the `apt-get update` should be run against the most current version). Of course there\u0027s no big deal to always update REFRESHED_AT when modifying Dockerfile.",
+      "parentUuid": "baada198_58797292",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 27
+      },
+      "revId": "72b63d37335742201877a9687309acf4f5911dc2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
