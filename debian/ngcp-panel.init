@@ -83,7 +83,7 @@ _start() {
         --pidfile $PIDFILE \
         --exec $DAEMON --chdir $HOMEDIR \
         --user $USER --group $GROUP --chuid $USER:$GROUP \
-        -- $OPTIONS >/dev/null || log_failure_msg "error"
+        -- $OPTIONS >/dev/null 2>&1 || log_failure_msg "error"
   rm -f "${PIDFILE}.startup"
   sleep 1
   if check_running ; then
