@@ -105,4 +105,16 @@ has_field 'voicemail_subscriber_id' => (
     required => 0,
 );
 
+has_field 'customer_cost' => (
+    type => 'Float',
+    label => 'Call cost.',
+    required => 0,
+);
+
+has_field 'total_customer_cost' => (
+    type => 'Float',
+    label => 'Call cost with applied customer VAT.',
+    required => 0,
+);
+
 1;
