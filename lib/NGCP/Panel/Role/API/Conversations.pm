@@ -758,6 +758,10 @@ sub process_hal_resource {
             $owner,
         );
         @{$resource}{qw/caller callee/} = @{$resource}{qw/own_cli other_cli/};
+        if($item->{call_type} =~/^cf/i){
+            $item->{callforward_type} = $item->{call_type};
+            $item->{call_type} = 'callforward';
+        }
         $resource->{type} = $item->{type};
     }elsif('fax' eq $item->{type}){
         my $fax_subscriber_provisioning = $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs({

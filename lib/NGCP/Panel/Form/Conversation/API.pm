@@ -12,13 +12,19 @@ has_field 'id' => (
 has_field 'call_id' => (
     type => 'Text',
     label => 'Call id.',
-    required => 1,
+    required => 0,
 );
 
 has_field 'call_type' => (
     type => 'Text',
     label => 'One of the "call","cfu","cft","cfb","cfna".',
-    required => 1,
+    required => 0,
+);
+
+has_field 'callforward_type' => (
+    type => 'Text',
+    label => 'One of the "cfu","cft","cfb","cfna".',
+    required => 0,
 );
 
 has_field 'start_time' => (
