@@ -80,7 +80,7 @@ has_field 'external_id' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['An external id, e.g. provided by a 3rd party provisioning'] 
+        title => ['A non-unique external ID e.g., provided by a 3rd party provisioning']
     },
 );
 
