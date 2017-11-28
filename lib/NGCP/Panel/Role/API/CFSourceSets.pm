@@ -20,7 +20,6 @@ sub get_form {
     if($c->user->roles eq "subscriber") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFSourceSetSubAPI", $c);
     } elsif($c->user->roles eq "subscriberadmin") {
-        #return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFSourceSetSubadminAPI", $c);
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFSourceSetSubAPI", $c);
     } else {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFSourceSetAPI", $c);
