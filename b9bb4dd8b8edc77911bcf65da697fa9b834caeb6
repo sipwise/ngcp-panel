@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baada198_e45a9f4f",
+        "filename": "lib/NGCP/Panel/Form/Conversation/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-11-28T08:39:43Z",
+      "side": 1,
+      "message": "I am guessing that this should be then\n\n\u0027\"call\" or \"callforward\"\u0027",
+      "range": {
+        "startLine": 20,
+        "startChar": 4,
+        "endLine": 20,
+        "endChar": 59
+      },
+      "revId": "b9bb4dd8b8edc77911bcf65da697fa9b834caeb6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
