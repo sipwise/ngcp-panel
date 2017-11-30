@@ -46,6 +46,7 @@ sub _item_rs {
         }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
         my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$item_rs->search_rs({
             destination_user_id => $c->user->voip_subscriber->uuid,
+            source_user_id => { '!=' => $c->user->voip_subscriber->uuid },
         }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
         $item_rs = $out_rs->union_all($in_rs);
     }
