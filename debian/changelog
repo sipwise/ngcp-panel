@@ -1,3 +1,12 @@
+ngcp-panel (5.5.1.6+0~mr5.5.1.6) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [b4e67d5] TT#26454 fix form creation for advanced callforwards
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 30 Nov 2017 15:49:27 +0100
+
 ngcp-panel (5.5.1.5+0~mr5.5.1.5) unstable; urgency=medium
 
   [ Rene Krenn ]
