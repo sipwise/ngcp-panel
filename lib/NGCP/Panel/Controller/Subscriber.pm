@@ -1090,9 +1090,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 
     my $cf_form;
     if($cf_type eq "cft") {
-        $cf_form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberCFTAdvanced", $c);
+        $cf_form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberCFTAdvanced", $c, 1);
     } else {
-        $cf_form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberCFAdvanced", $c);
+        $cf_form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberCFAdvanced", $c, 1);
     }
 
     my @maps = ();
