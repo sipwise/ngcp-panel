@@ -4,9 +4,9 @@ use Module::Load::Conditional qw/can_load/;
 my %forms = ();
 
 sub get {
-    my ($name, $c) = @_;
+    my ($name, $c, $create_new) = @_;
     my $form;
-    if(exists $forms{$name}) {
+    if(exists $forms{$name} && !$create_new) {
         $form = $forms{$name};
         $form->clear();
         $form->ctx($c);
