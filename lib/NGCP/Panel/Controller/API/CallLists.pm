@@ -45,6 +45,7 @@ sub query_params {
                         }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
                         my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
                             destination_user_id => $subscriber->uuid,
+                            source_user_id => { '!=' => 'destination_user_id' },
                         }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
                         return $out_rs->union_all($in_rs);
                     }

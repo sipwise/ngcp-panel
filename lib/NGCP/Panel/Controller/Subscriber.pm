@@ -3551,6 +3551,7 @@ sub ajax_calls :Chained('calllist_master') :PathPart('list/ajax') :Args(0) {
     }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
     my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$c->model('DB')->resultset('cdr')->search({
         destination_user_id => $c->stash->{subscriber}->uuid,
+        source_user_id => { '!=' => 'destination_user_id' },
         ($callid ? (call_id => $callid) : ()),
     }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
     my $rs = $out_rs->union_all($in_rs);
