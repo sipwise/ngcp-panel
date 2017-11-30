@@ -53,6 +53,7 @@ sub query_params {
                     });
                     my $in_rs = $rs->search_rs({
                         destination_user_id => $subscriber->uuid,
+                        source_user_id => { '!=' => $subscriber->uuid },
                     });
                     return $out_rs->union_all($in_rs);
                 }
