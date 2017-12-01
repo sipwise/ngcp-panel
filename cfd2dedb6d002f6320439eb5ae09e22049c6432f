@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "baada198_e4dc5877",
+        "filename": "lib/NGCP/Panel/Controller/API/CallLists.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-12-01T15:34:52Z",
+      "side": 1,
+      "message": "we cannot provide with an exclusion in the same select block as it will filter out all local calls (e.g. source_account_id \u003d destination_account_id).\nwhy we can do that in the case with union is because 1st \"select\" of the union contains the local calls and thats why we are filtering them in the 2nd \"select\" of the union.",
+      "parentUuid": "baada198_04930ca4",
+      "revId": "cfd2dedb6d002f6320439eb5ae09e22049c6432f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baada198_e467f8e8",
         "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
         "patchSetId": 1
