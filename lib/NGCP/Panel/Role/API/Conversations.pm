@@ -18,6 +18,34 @@ use Data::Dumper;
 use Tie::IxHash;
 #use Class::Hash;
 
+sub item_name{
+    return 'conversation';
+}
+
+sub resource_name{
+    return 'conversations';
+}
+
+sub dispatch_path{
+    return '/api/conversations/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-conversations';
+}
+
+sub config_allowed_roles {
+    return [qw/admin reseller subscriberadmin subscriber/];
+}
+
+my %enabled_conversations = (
+    call      => 1,
+    voicemail => 1,
+    sms       => 1,
+    fax       => 1,
+    xmpp      => 0,
+);
+
 my %call_fields = ();
 my $call_fields_tied = tie(%call_fields, 'Tie::IxHash');
 $call_fields{source_user_id} = 'me.source_user_id';
@@ -57,6 +85,7 @@ $voicemail_fields{macrocontext} = 'me.macrocontext';
 $voicemail_fields{mailboxcontext} = 'me.mailboxcontext';
 $voicemail_fields{dir} = 'me.dir';
 $voicemail_fields{msgnum} = 'me.msgnum';
+$voicemail_fields{call_id} = 'me.call_id';
 
 my %sms_fields = ();
 my $sms_fields_tied = tie(%sms_fields, 'Tie::IxHash');
@@ -86,6 +115,7 @@ $fax_fields{filename} = 'me.filename';
 $fax_fields{sid} = 'me.sid';
 $fax_fields{caller_uuid} = 'me.caller_uuid';
 $fax_fields{callee_uuid} = 'me.callee_uuid';
+$fax_fields{call_id} = 'me.call_id';
 
 my %xmpp_fields = ();
 my $xmpp_fields_tied = tie(%xmpp_fields, 'Tie::IxHash');
@@ -173,34 +203,6 @@ my $xmpp_proto = NGCP::Panel::Utils::Generic::hash2obj(
         },
     },
 );
-
-my %enabled_conversations = (
-    call      => 1,
-    voicemail => 1,
-    sms       => 1,
-    fax       => 1,
-    xmpp      => 0,
-);
-
-sub item_name{
-    return 'conversation';
-}
-
-sub resource_name{
-    return 'conversations';
-}
-
-sub dispatch_path{
-    return '/api/conversations/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-conversations';
-}
-
-sub config_allowed_roles {
-    return [qw/admin reseller subscriberadmin subscriber/];
-}
 
 sub get_list{
     my ($self, $c) = @_;
@@ -769,6 +771,7 @@ sub process_hal_resource {
             $resource->{$field} = $item_mock_obj->$field;
         }
         $resource->{subscriber_id} = $fax_subscriber_billing->id;
+        $resource->{call_id} = $item_mock_obj->call_id;
     }elsif('voicemail' eq $item->{type}){
         $resource = $item_accessors_hash;
         $resource->{caller} = $item_mock_obj->callerid;
@@ -781,6 +784,7 @@ sub process_hal_resource {
         $resource->{folder} = pop @p;
         $resource->{direction} = 'in';
         $resource->{filename} = $filename;
+        $resource->{call_id} = $item_mock_obj->call_id;
     }elsif('sms' eq $item->{type}){
         $resource = $item_accessors_hash;
         $resource->{start_time} =  NGCP::Panel::Utils::DateTime::from_string($item_mock_obj->timestamp)->epoch;
