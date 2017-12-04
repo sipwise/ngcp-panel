@@ -1,3 +1,29 @@
+ngcp-panel (5.5.2.1+0~mr5.5.2.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [46d360d] Revert "TT#22550 set codec to WAV in the API sound file update"
+  * [2cf0b3f] Revert "TT#22550 disable sound files transcoding"
+  * [2069d4e] TT#23772 remove PCMA transcoding for music_on_hold sound files
+
+  [ Rene Krenn ]
+  * [111593c] TT#21871 add "ratio" field to /api/customerbalances
+  * [d8b96c7] TT#23277 change lnp number type from enum to string
+  * [735fbcd] TT#24850 fix POST /api/invoices
+
+  [ Gerhard Jungwirth ]
+  * [a66ea5d] TT#24509 fix applying rewrite rule for subscriber cfs
+  * [c07c63d] TT#23853 make api doc json output deterministic
+  * [5606d9d] TT#14450 hide username field on edit
+  * [d1e5f88] TT#25313 make pbx_hunt_ fields available to sub
+  * [7c07eb1] TT#26454 fix form creation for advanced callforwards
+
+  [ Guillem Jover ]
+  * [116a640] TT#24117 Redirect stderr also to /dev/null when starting the panel
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 04 Dec 2017 11:40:31 +0100
+
 ngcp-panel (5.5.2.0+0~mr5.5.2.0) unstable; urgency=medium
 
   [ Andreas Granig ]
