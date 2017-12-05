@@ -1,3 +1,98 @@
+ngcp-panel (6.0.1.0+0~mr6.0.1.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [25e0967] TT#4166 I18N dump: snapshot 2017.10.03-03.17.32
+  * [9a85c9a] TT#4166 I18N dump: snapshot 2017.10.11-03.25.37
+  * [468589b] TT#4166 I18N dump: snapshot 2017.10.18-03.17.25
+  * [308165d] TT#4166 I18N dump: snapshot 2017.10.20-03.11.27
+  * [b55cd64] TT#4166 I18N dump: snapshot 2017.10.25-03.14.10
+  * [06e9840] TT#4166 I18N dump: snapshot 2017.11.04-03.05.37
+
+  [ Andreas Granig ]
+  * [0d3bf6b] TT#22827 Implement form factory
+  * [cf3f2fb] TT#23004 Undo dev environment
+  * [373dd4c] TT#21818 Check passwords against libcrack and user
+  * [19cd47a] TT#20097 Fix 404 for /grafana
+  * [82d7610] TT#23398 Sort sound handles and pbx devs
+  * [88b0d9d] TT#22827 Fix setting ctx in form factory
+  * [e11ebef] TT#8704 Tighten peer name to not break kamailio
+  * [eb09639] TT#23569 Fix interception ACLs
+  * [ffdd32d] TT#23659 Improved customer/subscriber batch creation
+  * [97e0b2b] TT#23755 Add administrative access link to grafana.
+
+  [ Gerhard Jungwirth ]
+  * [933e0fc] TT#22420 properly reload trusted sources via xmlrpc
+  * [68fb888] TT#22422 make rtc errors fail on reseller changes
+  * [4777aa5] TT#22420 fix kamailio xmlrpc return code
+  * [6c1ff23] TT#22505 api test fix for FakeData
+  * [cbf8fd6] TT#21112 remove Moose from some modules
+  * [41372cf] TT#22005 add tracemem script for memory profiling
+  * [acade2e] TT#23280 proper domain reload xmlrpc
+  * [a3a903f] TT#23774 remove old config-override method in Model
+  * [a7cadd4] TT#23775 test DBIx::Class with a small sample Schema
+  * [b14680e] TT#24509 fix applying rewrite rule for subscriber cfs
+  * [8783787] TT#23853 make api doc json output deterministic
+  * [af721a4] TT#14450 hide username field on edit
+  * [58b9e82] TT#25313 make pbx_hunt_ fields available to sub
+  * [1f7be85] TT#20866 remove dead code (Forms)
+  * [993d945] TT#26454 fix form creation for advanced callforwards
+
+  [ Irina Peshinskaya ]
+  * [fb85d94] TT#22505 Fix subscribers tests
+  * [4dc630c] TT#22505 TT#21271 Fix subscribers API so get2put works
+  * [542de9b] TT#23426 API: Format properly rewriterules in rewriterulesets output
+  * [f1c27f1] TT#23278 Make reseller_id mandatory field for the rewriterulesets
+  * [d67c2c0] TT#22494 Fix return_representation
+  * [34bc2d5] TT#21348 Add Item class for the conversations API
+  * [47cdb5e] TT#21348 Skip GET call in test for the convesations
+  * [355c060] TT#21112 Fix super call for the Moo
+  * [7709f54] TT#23955 Consider form_exceptions in the Entities GET
+  * [46c02ed] TT#23876 Format sms time as timestamp in conversations
+  * [09d5589] TT#24061 Fix broken conversations filter
+  * [d7c6689] TT#22496 TT#22495 Disable "sipwise" admin edit and delete
+  * [77ae84e] TT#23282 Replace customer field with customer_id for the API subscribers form
+  * [e37d06e] TT#23833 Allow subscriber  access to the conversations API
+  * [ffcd18c] TT#24093 Add direction field to the fax item
+  * [6cb867e] TT#24122 Add filename to the voicemail conversations
+  * [f15effb] TT#24122 Fix voicemail filename field
+  * [891f378] TT#24009 Add cost fields to cdr item
+  * [5475944] TT#26101 Add recordings hal links to the conversations
+  * [7e6b950] TT#24123 Add call_id to the fax and voicemail items
+  * [b08b742] TT#24128 Fixes found during testing
+
+  [ Rene Krenn ]
+  * [57c6cf5] TT#21871 add "ratio" field to /api/customerbalances
+  * [d64158c] TT#22505 TT#21271 api/subscriber put2get related fixes
+  * [4434266] TT#22505 safe handling of "" lock level pref values
+  * [ab869fa] TT#23275 TT#21348 hash2obj util method
+  * [5be3cc8] TT#22505 disable balanceintervals.t
+  * [e52dadd] TT#23277 change lnp number type from enum to string
+  * [88c8b81] TT#24850 fix POST /api/invoices
+
+  [ Alexander Lutay ]
+  * [6fdadac] Revert "TT#22351 Disable API tests which are currently broken with stretch Perl (still broken)"
+  * [8755043] TT#21056 Decrease length of 'Maintenance mode' warning on ngcp-panel WEB interface
+
+  [ Kirill Solomko ]
+  * [d419c49] TT#22550 disable sound files transcoding
+  * [e10cc89] TT#22550 set codec to WAV in the API sound file update
+  * [171a0fa] Revert "TT#22550 set codec to WAV in the API sound file update"
+  * [21975ad] Revert "TT#22550 disable sound files transcoding"
+  * [5f29592] TT#23772 remove PCMA transcoding for music_on_hold sound files
+  * [b0ab231] TT#16675 fix duplicate rows for Calllist representations
+
+  [ Guillem Jover ]
+  * [f053077] TT#22072 Update packaging
+  * [f5acbd8] TT#24117 Redirect stderr also to /dev/null when starting the panel
+
+  [ Manuel Montecelo ]
+  * [e4960b4] TT#25551 Improve the way to detect installed packages
+
+  [ Yaroslav Fedorina ]
+  * [d3d1e9e] TT#26107 Clarify external_id field description
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Dec 2017 00:09:31 +0100
+
 ngcp-panel (6.0.0.0+0~mr6.0.0.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
