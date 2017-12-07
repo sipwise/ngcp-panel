@@ -10,14 +10,14 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime qw();
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
-sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) {
+sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $contacts = $c->model('DB')->resultset('contacts')->search({
@@ -329,7 +329,7 @@ sub ajax_list_contacts{
 
 }
 
-sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) {
+sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $from = $c->request->params->{iDisplayStart} // 0;
