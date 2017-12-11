@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab29df4_8b5c9d27",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-12-11T13:19:25Z",
+      "side": 1,
+      "message": "still curious, should work with search_rs also?\n\nto me the bug in the old code was that the attr hash for the \"where\" part was accidentially placed as second arg.\n\neagle eye kudos nevertheless to find that the big number of result rows caused the slowdown.",
+      "revId": "e28e3100b288a30a8e7f3e3215130c73c3d9af6f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
