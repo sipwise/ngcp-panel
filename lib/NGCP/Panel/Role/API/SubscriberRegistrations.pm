@@ -178,10 +178,10 @@ sub update_item {
     {
         NGCP::Panel::Utils::Kamailio::flush($c);
         my $rs = $self->item_rs($c);
-        my $aor = NGCP::Panel::Utils::Kamailio::get_aor( $c, $sub->provisioning_voip_subscriber );
-        $item_reloaded = $rs->search_rs(undef, {
+        $item_reloaded = $rs->search({
             'me.contact' => $form->values->{contact},
-            'me.aor' => $aor,
+            'me.username' => $sub->provisioning_voip_subscriber->username,
+            'me.domain' => $sub->provisioning_voip_subscriber->domain->domain,
         })->first;
     }
     
