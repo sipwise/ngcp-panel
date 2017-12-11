@@ -3,11 +3,29 @@ use Net::SIP;
 use Net::SIP::Simple;
 use File::Slurp qw/write_file read_file/;
 use Data::Dumper;
-my $pid = fork;
+use NGCP::API::Client;
+use threads;
+my $api_client = new NGCP::API::Client;
+use JSON;
+my $REGS = {
+    'caller' => { username => 'sipsub2_1001',},
+    'callee' => { username => 'sipsub1_1003',},
+};
 
-if (!defined $pid) {
-    die "Cannot fork: $!";
-}elsif ($pid == 0) {
+get_calls_amount();
+my $thread_uas = threads->create(\&sip_simple_uas);
+my $thread_uac = threads->create(\&sip_simple_uac);
+
+while ($REGS->{caller}->{calls_amount} < (1 + $REGS->{caller}->{calls_amount_initial})){
+    sleep 5;
+    get_calls_amount();
+    print Dumper $REGS;
+}
+
+$thread_uas->join();
+$thread_uac->join();
+
+sub sip_simple_uas{
     my %params = (
         outgoing_proxy => '192.168.1.118:5060',
         registrar => '192.168.1.118:5060',
@@ -36,8 +54,9 @@ if (!defined $pid) {
     $ua2->loop($call_ended);
     #$ua2->loop(40);
     write_file('/tmp/rtp.wav',join('',@received));
-    exit(0);
-}else {
+}
+
+sub sip_simple_uac {
     # create new agent
     sleep 5;
     my %params = (
@@ -81,4 +100,24 @@ if (!defined $pid) {
     1 while waitpid(-1, WNOHANG) > 0;
 }
 
-
+sub get_calls_amount{
+    foreach my $type(qw/caller callee/){
+        print Dumper ['/api/subscribers/?username='.$REGS->{$type}->{username}];
+        my $res;
+        if(!$REGS->{$type}->{subscriber_id} ){
+            $res = $api_client->request('GET','/api/subscribers/?username='.$REGS->{$type}->{username});
+        $REGS->{$type}->{subscriber_id} //= $res->as_hash()->{_embedded}->{'ngcp:subscribers'}->[0]->{id};
+            print Dumper [$type,$REGS->{$type}->{subscriber_id}];
+        
+            undef $res;
+        }
+        print Dumper ['/api/conversations/?type=call&subscriber_id='.$REGS->{$type}->{subscriber_id}];
+        $res = $api_client->request('GET','/api/conversations/?type=call&subscriber_id='.$REGS->{$type}->{subscriber_id});
+        #print Dumper [$res->content()];
+        my $json = JSON->new->allow_nonref;
+        print Dumper [$json->decode($res->content())];
+        #$REGS->{$type}->{calls_amount} = $res->as_hash()->{total_count};
+        print Dumper [$type,$REGS->{$type}->{subscriber_id}];
+        print Dumper [$REGS->{$type}->{calls_amount_initial} //= $REGS->{$type}->{calls_amount}];
+    }
+}
