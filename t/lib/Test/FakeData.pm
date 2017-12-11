@@ -67,6 +67,11 @@ has 'data' => (
     isa => 'HashRef',
     builder => 'build_data',
 );
+has 'data_init' => (
+    is => 'rw',
+    isa => 'HashRef',
+#    builder => 'build_data',
+);
 has 'FLAVOUR' => (
     is => 'rw',
     isa => 'Str',
