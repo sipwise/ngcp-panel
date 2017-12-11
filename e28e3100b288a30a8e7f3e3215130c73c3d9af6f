@@ -16,6 +16,24 @@
       "revId": "e28e3100b288a30a8e7f3e3215130c73c3d9af6f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab29df4_cb3db5bd",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-12-11T13:22:48Z",
+      "side": 1,
+      "message": "yes, you are right! \nthat was exactly just wrongly used.\nsearch_rs() - uses the same args as search() with the only difference that it always returns a result set.\nI somehow also wrongly thought that search_rs() also was about to accept the related \"resultset\", where that is what search_related() does obviously :)",
+      "parentUuid": "9ab29df4_8b5c9d27",
+      "revId": "e28e3100b288a30a8e7f3e3215130c73c3d9af6f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
