@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Faxserver::API;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-
+use NGCP::Panel::Utils::Form qw();
 
 has_field 'name' => (
     type => 'Text',

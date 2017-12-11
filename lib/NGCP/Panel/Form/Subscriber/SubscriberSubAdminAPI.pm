@@ -2,14 +2,15 @@ package NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
+use NGCP::Panel::Utils::Form qw();
 
 has_field 'webusername' => (
     type => 'Text',
     label => 'Web Username',
     required => 0,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The username to log into the CSC Panel.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The username to log into the CSC Panel.']
     },
 );
 
@@ -17,9 +18,9 @@ has_field 'webpassword' => (
     type => 'Text',
     label => 'Web Password',
     required => 0,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The password to log into the CSC Panel.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The password to log into the CSC Panel.']
     },
 );
 
@@ -27,9 +28,9 @@ has_field 'username' => (
     type => '+NGCP::Panel::Field::Identifier',
     label => 'SIP Username',
     required => 1,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The username for SIP and XMPP services.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The username for SIP and XMPP services.']
     },
 );
 
@@ -56,9 +57,9 @@ has_field 'password' => (
     type => 'Text',
     label => 'SIP Password',
     required => 1,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The password to authenticate for SIP and XMPP services.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The password to authenticate for SIP and XMPP services.']
     },
 );
 
@@ -89,9 +90,9 @@ has_field 'administrative' => (
     type => 'Boolean',
     label => 'Administrative',
     required => 0,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['Whether the subscriber can configure other subscribers within his Customer account.'] 
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether the subscriber can configure other subscribers within his Customer account.']
     },
 );
 
@@ -139,7 +140,7 @@ has_field 'alias_numbers' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
@@ -184,7 +185,7 @@ has_field 'pbx_group_ids' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
@@ -199,7 +200,7 @@ has_field 'pbx_groupmember_ids' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
-    tags => { 
+    tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
