@@ -1,38 +1,25 @@
 use Net::SIP;
 #use Net::SIP::Debug '50';
 use Net::SIP::Simple;
-use File::Slurp qw/write_file read_file/;
 
-my $pid = fork;
+my ($sip_server,$port,$ip,$domain,$username,$password) = @_;
 
-if (!defined $pid) {
-    die "Cannot fork: $!";
-}elsif ($pid == 0) {
-    my $ua2 = Net::SIP::Simple->new(
-        outgoing_proxy => '192.168.1.118:5060',
-        registrar => '192.168.1.118:5060',
-        domain => '192.168.1.118',
-        contact => 'sip:sipsub1_1003@192.168.1.222:50002',
-        #route => '<sip:192.168.1.118>',
-        from => '<sip:sipsub1_1003@192.168.1.118>',
-        auth => [ 'sipsub1_1003@192.168.1.118','sipsub1_pwd_1003' ],
-    );
-    #$ua2->register;
-    my $call_ended;
-    my @received;
-    my $save_rtp = sub {
-        my $buf = shift;
-        push @received,$buf;
-        #warn substr( $buf,0,10)."\n";
-    };
-    $ua2->listen( 
-        cb_cleanup => sub { print "call_ended;\n";$call_ended = 1; },
-        init_media => $ua2->rtp( 'recv_echo', $save_rtp ),
-    );
-    $ua2->loop($call_ended);
-    #$ua2->loop(40);
-    write_file('/tmp/rtp.wav',join('',@received));
-    exit(0);
+$port ||= 5060;
+
+my $uas = Net::SIP::Simple->new(
+    outgoing_proxy => $sip_server.':'.$port,
+    registrar => $sip_server.':'.$port,
+    domain => $domain,
+    contact => 'sip:'.$username.'@'.$ip.':50002',
+    from => '<sip:'.$username.'@'.$domain.'>',
+    auth => [ $username.'@'.$domain,$password ],
+);
+#$uas->register;
+my $call_ended;
+$uas->listen( 
+    cb_cleanup => sub { print "call_ended;\n";$call_ended = 1; },
+);
+$uas->loop($call_ended);
 }else {
     # create new agent
     sleep 5;
