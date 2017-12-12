@@ -1,3 +1,12 @@
+ngcp-panel (5.4.2.2+0~mr5.4.2.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a26fbb2] TT#26652 fix subscriberregistration API internal rs query
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 12 Dec 2017 11:13:26 +0100
+
 ngcp-panel (5.4.2.1+0~mr5.4.2.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
