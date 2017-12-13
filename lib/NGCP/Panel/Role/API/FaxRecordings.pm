@@ -23,6 +23,16 @@ sub _item_rs {
             join => { voip_fax_data => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } } }
 
         });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search_rs({
+            'contract.id' => $c->user->account_id,
+        },{
+            join => { voip_fax_data => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } } }
+        });
+    } elsif ($c->user->roles eq "subscriber") {
+        $item_rs = $item_rs->search_rs({
+            'voip_subscriber.uuid' => $c->user->uuid,
+        });
     }
     return $item_rs;
 }
