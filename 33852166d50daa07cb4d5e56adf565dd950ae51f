@@ -22,6 +22,30 @@
       "revId": "33852166d50daa07cb4d5e56adf565dd950ae51f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_3e52ed13",
+        "filename": "lib/NGCP/Panel/Role/API/FaxRecordings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-12-14T15:50:46Z",
+      "side": 1,
+      "message": "Ah, yes. But noticed comment just after commit.",
+      "parentUuid": "5ac4a560_7bed578b",
+      "range": {
+        "startLine": 30,
+        "startChar": 109,
+        "endLine": 30,
+        "endChar": 116
+      },
+      "revId": "33852166d50daa07cb4d5e56adf565dd950ae51f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
