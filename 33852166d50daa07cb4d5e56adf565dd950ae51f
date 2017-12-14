@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_7bed578b",
+        "filename": "lib/NGCP/Panel/Role/API/FaxRecordings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2017-12-14T13:11:49Z",
+      "side": 1,
+      "message": "no need for contact here",
+      "range": {
+        "startLine": 30,
+        "startChar": 109,
+        "endLine": 30,
+        "endChar": 116
+      },
+      "revId": "33852166d50daa07cb4d5e56adf565dd950ae51f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
