@@ -1,3 +1,12 @@
+ngcp-panel (6.0.1.1+0~mr6.0.1.1) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [d2e9093] TT#27154 make timezone ajax acessible to subadmin
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Dec 2017 08:45:30 +0100
+
 ngcp-panel (6.0.1.0+0~mr6.0.1.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
