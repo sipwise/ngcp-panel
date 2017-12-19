@@ -22,7 +22,7 @@ $test_machine = Test::Collection->new(
     name                   => '',
     ALLOW_EMPTY_COLLECTION => 1,
     QUIET_DELETION         => 0,
-    runas_role             => 'reseller',
+    runas_role             => 'admin',
 );
 $fake_data = Test::FakeData->new;
 $fake_data->test_machine->QUIET_DELETION(0);

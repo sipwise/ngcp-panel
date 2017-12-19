@@ -33,7 +33,7 @@ sub relation{
 
 sub config_allowed_roles {
     return {
-        'Default' => [qw/admin reseller subscriberadmin/],
+        'Default' => [qw/admin reseller subscriberadmin subscriber/],
         #GET will use default
         'POST'    => [qw/admin reseller/],
         'PUT'     => [qw/admin reseller/],
