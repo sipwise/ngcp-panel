@@ -420,7 +420,7 @@ sub get_item_hal{
         #print "uri=$uri;";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
         ($reshal,$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name);
-        #print Dumper $reshal;
+        #print Dumper [$location,$total_count,$reshal,$reshal_collection];
         if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
             $self->IS_EMPTY_COLLECTION(0);
             $resitem = {
@@ -466,9 +466,10 @@ sub get_hal_from_collection{
     } elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
 #preferencedefs collection
 #or empty collection, see "/api/pbxdeviceprofiles/?name=two"
+#or just got requested item, as /api/sibscribers/id
         $reshal = $list_collection;
         $location = $reshal->{_links}->{self}->{href};
-        $total_count = $reshal->{total_count};
+        $total_count = $reshal->{total_count} // 1;
         #print Dumper ["get_hal_from_collection","4",$total_count];
     }
     return ($reshal,$location,$total_count,$reshal_collection);

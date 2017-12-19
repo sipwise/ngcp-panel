@@ -114,7 +114,7 @@ sub create_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber is not active");
         return;
     }
-
+    my $test_mode = $c->request->params->{test_mode} // '';
     my $session;
     try {
         my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
@@ -130,23 +130,24 @@ sub create_item {
         }
 
         $session->{coding} = NGCP::Panel::Utils::SMS::get_coding($resource->{text});
+        if( 'dont_send_sms' ne $test_mode ){
 
-        NGCP::Panel::Utils::SMS::send_sms(
-                c => $c,
-                caller => $resource->{caller},
-                callee => $resource->{callee},
-                text => $resource->{text},
-                coding => $session->{coding},
-                err_code => sub {
-                    $session->{reason} = shift;
-                    $session->{status} = 'failed';
-                }
-        );
+            NGCP::Panel::Utils::SMS::send_sms(
+                    c => $c,
+                    caller => $resource->{caller},
+                    callee => $resource->{callee},
+                    text => $resource->{text},
+                    coding => $session->{coding},
+                    err_code => sub {
+                        $session->{reason} = shift;
+                        $session->{status} = 'failed';
+                    }
+            );
 
+        }
         NGCP::Panel::Utils::SMS::perform_prepaid_billing(c => $c,
             session => $session
         );
-
         if ($session->{status} eq 'failed') {
             die $session->{reason}."\n";
         }
