@@ -43,7 +43,7 @@ my %enabled_conversations = (
     voicemail => 1,
     sms       => 1,
     fax       => 1,
-    xmpp      => 0,
+    xmpp      => 1,
 );
 
 my %call_fields = ();
