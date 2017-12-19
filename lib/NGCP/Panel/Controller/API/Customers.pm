@@ -88,13 +88,7 @@ sub query_params {
         {
             param => 'contact_id',
             description => 'Filter for customers belonging to a specific contact',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { contact_id => $q };
-                },
-                second => sub { },
-            },
+            query_type => 'string_eq',
         },
         {
             param => 'package_id',
