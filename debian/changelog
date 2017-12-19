@@ -1,3 +1,33 @@
+ngcp-panel (1.14.8.0+0~mr4.5.8.0) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [0f26313] TT#22420 properly reload trusted sources via xmlrpc
+  * [e013e5a] TT#23853 make api doc json output deterministic
+
+  [ Rene Krenn ]
+  * [67c3f48] TT#22505 TT#21271 /api/subscribers always return "lock" field
+  * [4341b7b] TT#22505 safe handling of "" lock level pref values
+  * [1992e7f] TT#12311 make DateTime add() skip leap seconds
+  * [5e40cb8] TT#21871 add "ratio" field to /api/customerbalances
+
+  [ Irina Peshinskaya ]
+  * [9d2b4e4] TT#22505 TT#21271 Fix subscribers API so get2put works
+  * [4b9c457] TT#23426 API: Format properly rewriterules in rewriterulesets output
+
+  [ Andreas Granig ]
+  * [3fe26b6] TT#18754 Implement json response for api-root
+  * [c97cfcc] TT#18754 Fix jsonifying of query params in api-root
+
+  [ Guillem Jover ]
+  * [6a80417] TT#24117 Redirect stderr also to /dev/null when starting the panel
+
+  [ Kirill Solomko ]
+  * [93c91a6] TT#26652 fix subscriberregistration API internal rs query
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 Dec 2017 15:52:34 +0100
+
 ngcp-panel (1.14.7.0+0~mr4.5.7.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
