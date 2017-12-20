@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "1abeadc6_5926e369",
+        "filename": "t/api-rest/resources/executor.pl",
+        "patchSetId": 8
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-12-20T13:33:01Z",
+      "side": 1,
+      "message": "maybe for a generic (shell) tool it would be more intuitive to make it like \"add 500 conversation entries of type X\" rather than \"create test calls etc. until a desired limit of conversations is reached\"",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 19
+      },
+      "revId": "bb0c67d9dfc970a00833655d92c884ad7f7b89ef",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1abeadc6_390a07d3",
         "filename": "t/api-rest/resources/executor.pl",
         "patchSetId": 8
