@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1abeadc6_19054bc2",
+        "filename": "t/api-rest/resources/executor.pl",
+        "patchSetId": 8
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-12-20T13:09:25Z",
+      "side": 1,
+      "message": "better move it topmost",
+      "revId": "bb0c67d9dfc970a00833655d92c884ad7f7b89ef",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1abeadc6_390a07d3",
+        "filename": "t/api-rest/resources/executor.pl",
+        "patchSetId": 8
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-12-20T13:09:25Z",
+      "side": 1,
+      "message": "you could use proper joining here, eg. somehting like:\n\nmy %processors \u003d ();\n            for (my $i \u003d 0; $i \u003c ..; $i++) {\n                $context-\u003e{subscriber_count} +\u003d \n                my $processor \u003d threads-\u003ecreate(\\\u0026_provision_subscriber,$context);\n                if (!defined $processor) {\n                    _info($context,\u0027generator thread \u0027 . ($i + 1) . \u0027 of \u0027 . $provision_subscriber_numofthreads . \u0027 NOT started\u0027);\n                }\n                $processors{$processor-\u003etid()} \u003d $processor;\n            }\n\n..\n\nwhile ((scalar keys %processors) \u003e 0) {\n                foreach my $processor (values %processors) {\n                    if (defined $processor and $processor-\u003eis_joinable()) {\n                        $processor-\u003ejoin();\n                        delete $processors{$processor-\u003etid()};\n                        _info($context,\u0027generator thread tid \u0027 . $processor-\u003etid() . \u0027 joined\u0027);\n                    }\n                }\n                sleep($thread_sleep_secs);\n            }\n\nsee [bulk-processor]lib/NGCP/BulkProcessor/Projects/Massive/Generator/Provisioning.pm",
+      "revId": "bb0c67d9dfc970a00833655d92c884ad7f7b89ef",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
