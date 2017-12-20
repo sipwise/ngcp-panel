@@ -3,6 +3,8 @@ package Test::Collection;
 #testcollection will keep object of the apiclient
 
 use strict;
+use threads qw();
+use threads::shared qw();
 use Test::More;
 use Moose;
 use JSON;
@@ -20,13 +22,9 @@ use File::Slurp qw/write_file/;
 use Storable;
 use Carp qw(cluck longmess shortmess);
 use IO::Uncompress::Unzip;
+use File::Temp qw();
 
-has 'crt_path' => (
-    is => 'ro',
-    isa => 'Str',
-    lazy => 1,
-    default => sub {'/tmp/apicert.pem';},
-);
+my $tmpfilename : shared;
 
 has 'data_cache_file' => (
     is => 'ro',
@@ -267,7 +265,8 @@ sub init_ua {
 }
 sub init_ssl_cert {
     my ($self, $ua) = @_;
-    unless(-f $self->crt_path) {
+    lock $tmpfilename;
+    unless ($tmpfilename) {
         my $res = $ua->post(
             $self->base_uri . '/api/admincerts/',
             Content_Type => 'application/json',
@@ -294,13 +293,15 @@ sub init_ssl_cert {
         unless($data) {
             die "failed to find PEM file in client certificate zip file\n";
         }
-        open my $fh, ">:raw", $self->crt_path or die "failed to open " . $self->crt_path . ": $!\n";
-        print $fh $data;
-        close $fh;
+        (my $tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
+        #close $tmpfh;
+        #open my $fh, ">:raw", $tmpfilename or die "failed to open " . $tmpfilename . ": $!\n";
+        print $tmpfh $data;
+        close $tmpfh;
     }
     $ua->ssl_opts(
-        SSL_cert_file => $self->crt_path,
-        SSL_key_file => $self->crt_path,
+        SSL_cert_file => $tmpfilename,
+        SSL_key_file => $tmpfilename,
     );
 }
 sub runas {
@@ -414,13 +415,13 @@ sub get_item_hal{
         #print Dumper $reshal;
         if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
             $self->IS_EMPTY_COLLECTION(0);
-            $resitem = { 
-                num => 1, 
-                content => $reshal, 
-                res => $res, 
-                req => $req, 
-                location => $location, 
-                total_count => $total_count, 
+            $resitem = {
+                num => 1,
+                content => $reshal,
+                res => $res,
+                req => $req,
+                location => $location,
+                total_count => $total_count,
                 content_collection => $reshal_collection,
             };
             $self->DATA_LOADED->{$name} ||= [];
@@ -493,18 +494,18 @@ sub get_collection_hal{
         $self->IS_EMPTY_COLLECTION(0);
         #$self->DATA_LOADED->{$name} ||= [];
         $rescollection = {
-            total_count => $total_count, 
+            total_count => $total_count,
             content => $reshal_collection,
-            res => $res, 
-            req => $req, 
+            res => $res,
+            req => $req,
             collection => [],
         };
         my $add_item = sub{
             my ($number,$location) = @_;
-            my $resitem = { 
-                num => $number, 
-                content => $reshals[$number], 
-                location => $location, 
+            my $resitem = {
+                num => $number,
+                content => $reshals[$number],
+                location => $location,
             };
             #while no caching here
             #push @{$self->DATA_LOADED->{$name}}, $resitem;
@@ -542,10 +543,10 @@ sub encode_content{
     if($content){
         if( $json_types{$type} && (('HASH' eq ref $content) ||('ARRAY' eq ref $content))  ){
             return JSON::to_json($content);
-        }elsif('multipart/form-data' eq $type 
-            && 'HASH' eq ref $content 
-            && $content->{json} 
-            && (('HASH' eq ref $content->{json}) || ( 'ARRAY' eq ref $content->{json} ) ) 
+        }elsif('multipart/form-data' eq $type
+            && 'HASH' eq ref $content
+            && $content->{json}
+            && (('HASH' eq ref $content->{json}) || ( 'ARRAY' eq ref $content->{json} ) )
         ){
             $content->{json} = JSON::to_json($content->{json});
             return [
