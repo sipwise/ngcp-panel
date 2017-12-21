@@ -22,6 +22,30 @@
       "revId": "012686ab02a8e56c5f474296d835307f4348e518",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1abeadc6_9c1f8909",
+        "filename": "t/api-rest/api-balanceintervals.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-12-21T08:45:56Z",
+      "side": 0,
+      "message": "yes, i explicitly want to try this now. this means it runs the testsuite in full scale. it works locally.",
+      "parentUuid": "1abeadc6_1c2c594a",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 33
+      },
+      "revId": "012686ab02a8e56c5f474296d835307f4348e518",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
