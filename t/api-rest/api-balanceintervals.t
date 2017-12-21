@@ -114,13 +114,13 @@ $req->header('Content-Type' => 'application/json');
 $req->content(JSON::to_json({
     domain => 'test' . ($t-1) . '.example.org',
     reseller_id => $default_reseller_id,
-}));
+}, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
 $res = $ua->request($req);
 is($res->code, 201, "POST test domain");
 $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
 $res = $ua->request($req);
 is($res->code, 200, "fetch POSTed test domain");
-my $domain = JSON::from_json($res->decoded_content);
+my $domain = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
 
 
 my %customer_map :shared = ();
@@ -1274,7 +1274,7 @@ for my $custcontact (values %$customer_contact_map) { #$default_custcontact,$cus
             $res = $ua->request($req);
             #$res = $ua->get($nexturi);
             is($res->code, 200, "balanceintervals root collection: fetch balance intervals collection page");
-            my $collection = JSON::from_json($res->decoded_content);
+            my $collection = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
             my $selfuri = $uri . $collection->{_links}->{self}->{href};
             is($selfuri, $nexturi, "balanceintervals root collection: check _links.self.href of collection");
             my $colluri = URI->new($selfuri);
@@ -1317,7 +1317,7 @@ for my $custcontact (values %$customer_contact_map) { #$default_custcontact,$cus
 
                 $res = $ua->request($req);
                 is($res->code, 200, "balanceintervals root collection: fetch page balance interval item");
-                my $interval = JSON::from_json($res->decoded_content);
+                my $interval = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
 
                 $page_items->{$interval->{id}} = $interval;
             }
@@ -1359,7 +1359,7 @@ sub _check_interval_history {
         #$res = $ua->get($nexturi);
         is($res->code, 200, $label . "fetch balance intervals collection page");
         push(@requests,_req_to_debug($req));
-        my $collection = JSON::from_json($res->decoded_content);
+        my $collection = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         #is($selfuri, $nexturi, $label . "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
@@ -1401,7 +1401,7 @@ sub _check_interval_history {
         #    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
         #    $res = $ua->request($req);
         #    is($res->code, 200, $label . "fetch page balance interval item");
-        #    my $interval = JSON::from_json($res->decoded_content);
+        #    my $interval = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
         #
         #    $page_items->{$interval->{id}} = $interval;
         #}
@@ -1487,7 +1487,7 @@ sub _fetch_intervals_worker {
     $req->header('X-Delay-Commit' => $delay);
     $res = $ua->request($req);
     is($res->code, 200, "thread " . threads->tid() . ": concurrent fetch balanceintervals of contracts of contact id ".$custcontact->{id} . " in " . $dir . " order");
-    my $result = JSON::from_json($res->decoded_content);
+    my $result = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     #is($result->{total_count},(scalar keys %customer_map),"check total count");
     diag("finishing thread " . threads->tid() . " ...");
     return $result;
@@ -1502,7 +1502,7 @@ sub _fetch_customerbalances_worker {
     $req->header('X-Delay-Commit' => $delay);
     $res = $ua->request($req);
     is($res->code, 200, "thread " . threads->tid() . ": concurrent fetch customerbalances of contracts of contact id ".$custcontact->{id} . " in " . $dir . " order");
-    my $result = JSON::from_json($res->decoded_content);
+    my $result = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     #is($result->{total_count},(scalar keys %customer_map),"check total count");
     diag("finishing thread " . threads->tid() . " ...");
     return $result;
@@ -1543,13 +1543,13 @@ sub _create_customer_contact {
         lastname  => "cust_contact_".$n."_last",
         email     => "cust_contact".$n."\@custcontact.invalid",
         reseller_id => $default_reseller_id,
-    }));
+    }, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "create customer contact $n");
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
     $res = $ua->request($req);
     is($res->code, 200, "fetch customer contact $n");
-    my $custcontact = JSON::from_json($res->decoded_content);
+    my $custcontact = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $customer_contact_map->{$custcontact->{id}} = $custcontact;
     return $custcontact;
 
@@ -1572,7 +1572,7 @@ sub _create_customer {
         max_subscribers => undef,
         external_id => undef,
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     my $label = 'test customer ' . ($package ? 'with package ' . $package->{name} : 'w/o profile package');
     is($res->code, 201, "create " . $label);
@@ -1582,7 +1582,7 @@ sub _create_customer {
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $res = $ua->request($req);
     is($res->code, 200, "fetch " . $label);
-    my $customer = JSON::from_json($res->decoded_content);
+    my $customer = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $customer_map{$customer->{id}} = threads::shared::shared_clone($customer);
     _record_request("create customer" . ($record_label ? ' ' . $record_label : ''),$request,$req_data,$customer);
     return $customer;
@@ -1596,7 +1596,7 @@ sub _get_customer {
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $res = $ua->request($req);
     is($res->code, 200, "fetch customer id " . $customer->{id});
-    $customer = JSON::from_json($res->decoded_content);
+    $customer = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $customer_map{$customer->{id}} = threads::shared::shared_clone($customer);
     return $customer;
 }
@@ -1612,11 +1612,11 @@ sub _switch_package {
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/profile_package_id', value => ($package ? $package->{id} : undef) } ]
-    ));
+    , { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 200, "patch customer from " . ($customer->{profile_package_id} ? 'package ' . $package_map->{$customer->{profile_package_id}}->{name} : 'no package') . " to " .
        ($package ? $package->{name} : 'no package'));
-    $customer = JSON::from_json($res->decoded_content);
+    $customer = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $customer_map{$customer->{id}} = threads::shared::shared_clone($customer);
     return $customer;
 
@@ -1664,7 +1664,7 @@ sub _create_profile_package {
                             balance_interval_unit => $interval_unit,) : ()),
         #notopup_discard_intervals => $notopup_discard_intervals,
         @further_opts,
-    }));
+    }, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test profilepackage - '" . $name . "'");
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
@@ -1673,7 +1673,7 @@ sub _create_profile_package {
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed profilepackage - '" . $name . "'");
-    my $package = JSON::from_json($res->decoded_content);
+    my $package = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $package_map->{$package->{id}} = $package;
     return $package;
 
@@ -1692,14 +1692,14 @@ sub _create_billing_network_x {
                    {ip=>'fdfe::5a55:caff:fefa:908a'},
                    {ip=>'fdfe::5a55:caff:fefa:908b',mask=>128},],
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test billingnetwork X");
     my $request = $req;
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed billingnetwork X");
-    my $network = JSON::from_json($res->decoded_content);
+    my $network = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     _record_request("create billing network X",$request,$req_data,$network);
     return $network;
 }
@@ -1718,14 +1718,14 @@ sub _create_billing_network_y {
                       {ip=>'10.0.5.9',mask=>24},
                         {ip=>'10.0.6.9',mask=>24},],
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test billingnetwork Y");
     my $request = $req;
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed billingnetwork Y");
-    my $network = JSON::from_json($res->decoded_content);
+    my $network = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     _record_request("create billing network Y",$request,$req_data,$network);
     return $network;
 }
@@ -1750,7 +1750,7 @@ sub _create_base_profile_package {
         timely_duration_value => 1,
         timely_duration_unit => 'month',
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test base profilepackage");
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
@@ -1758,7 +1758,7 @@ sub _create_base_profile_package {
     $req = HTTP::Request->new('GET', $profilepackage_uri);
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed base profilepackage");
-    my $package = JSON::from_json($res->decoded_content);
+    my $package = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $package_map->{$package->{id}} = $package;
     _record_request("create BASE profile package",$request,$req_data,$package);
     return $package;
@@ -1788,7 +1788,7 @@ sub _create_silver_profile_package {
                              { profile_id => $profile_silver_x->{id}, network_id => $network_x->{id} } ,
                              { profile_id => $profile_silver_y->{id}, network_id => $network_y->{id} } ],
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test silver profilepackage");
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
@@ -1796,7 +1796,7 @@ sub _create_silver_profile_package {
     $req = HTTP::Request->new('GET', $profilepackage_uri);
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed silver profilepackage");
-    my $package = JSON::from_json($res->decoded_content);
+    my $package = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $package_map->{$package->{id}} = $package;
     _record_request("create SILVER profile package",$request,$req_data,$package);
     return $package;
@@ -1826,7 +1826,7 @@ sub _create_extension_profile_package {
                              { profile_id => $profile_silver_x->{id}, network_id => $network_x->{id} } ,
                              { profile_id => $profile_silver_y->{id}, network_id => $network_y->{id} } ],
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test extension profilepackage");
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
@@ -1834,7 +1834,7 @@ sub _create_extension_profile_package {
     $req = HTTP::Request->new('GET', $profilepackage_uri);
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed extension profilepackage");
-    my $package = JSON::from_json($res->decoded_content);
+    my $package = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $package_map->{$package->{id}} = $package;
     _record_request("create EXTENSION profile package",$request,$req_data,$package);
     return $package;
@@ -1864,7 +1864,7 @@ sub _create_gold_profile_package {
                              { profile_id => $profile_gold_x->{id}, network_id => $network_x->{id} } ,
                              { profile_id => $profile_gold_y->{id}, network_id => $network_y->{id} } ],
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test gold profilepackage");
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
@@ -1872,7 +1872,7 @@ sub _create_gold_profile_package {
     $req = HTTP::Request->new('GET', $profilepackage_uri);
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed gold profilepackage");
-    my $package = JSON::from_json($res->decoded_content);
+    my $package = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $package_map->{$package->{id}} = $package;
     _record_request("create GOLD profile package",$request,$req_data,$package);
     return $package;
@@ -1895,7 +1895,7 @@ sub _create_voucher {
         reseller_id => $default_reseller_id,
         valid_until => $dtf->format_datetime($valid_until_dt ? $valid_until_dt : NGCP::Panel::Utils::DateTime::current_local->add(years => 1)),
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     my $label = 'test voucher (' . ($customer ? 'for customer ' . $customer->{id} : 'no customer') . ', ' . ($package ? 'for package ' . $package->{id} : 'no package') . ')';
     is($res->code, 201, "create " . $label);
@@ -1903,7 +1903,7 @@ sub _create_voucher {
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
     $res = $ua->request($req);
     is($res->code, 200, "fetch " . $label);
-    my $voucher = JSON::from_json($res->decoded_content);
+    my $voucher = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $voucher_map->{$voucher->{id}} = $voucher;
     _record_request("create $amount € voucher (code $code)",$request,$req_data,$voucher);
     return $voucher;
@@ -1925,7 +1925,7 @@ sub _create_subscriber {
             customer_id => $customer->{id},
             #status => "active",
         };
-        $req->content(JSON::to_json($req_data));
+        $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
         $res = $ua->request($req);
         is($res->code, 201, "POST test subscriber");
         my $request = $req;
@@ -1934,7 +1934,7 @@ sub _create_subscriber {
         $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
         $res = $ua->request($req);
         is($res->code, 200, "fetch POSTed test subscriber");
-        my $subscriber = JSON::from_json($res->decoded_content);
+        my $subscriber = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
         $subscriber->{_label} = 'subscriber' . ($record_label ? ' ' . $record_label : '');
         $subscriber_map{$subscriber->{id}} = threads::shared::shared_clone($subscriber);
         _record_request("create " . $subscriber->{_label},$request,$req_data,$subscriber);
@@ -1953,7 +1953,7 @@ sub _perform_topup_voucher {
         code => $voucher->{code},
         subscriber_id => $subscriber->{id},
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 204, "perform topup with voucher " . $voucher->{code});
     _record_request("topup by " . $subscriber_map{$subscriber->{id}}->{_label} . " using " . $voucher->{amount} / 100.0 . " € voucher (code $voucher->{code})",$req,$req_data,undef);
@@ -1972,7 +1972,7 @@ sub _perform_topup_cash {
         package_id => ($package ? $package->{id} : undef),
         subscriber_id => $subscriber->{id},
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 204, "perform topup with amount " . $amount * 100.0 . " cents, " . ($package ? 'package id ' . $package->{id} : 'no package'));
     _record_request("topup by " . $subscriber_map{$subscriber->{id}}->{_label} . " with " . $amount / 100.0 . " €, " . ($package ? 'package id ' . $package->{id} : 'no package'),$req,$req_data,undef);
@@ -1990,14 +1990,14 @@ sub _create_billing_profile {
         reseller_id => $default_reseller_id,
         @further_opts,
     };
-    $req->content(JSON::to_json($req_data));
+    $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test billing profile " . $name);
     my $request = $req;
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed billing profile " . $name);
-    my $billingprofile = JSON::from_json($res->decoded_content);
+    my $billingprofile = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     $profile_map->{$billingprofile->{id}} = $billingprofile;
     _record_request("create billing profile '$name'",$request,$req_data,$billingprofile);
     return $billingprofile;
@@ -2010,7 +2010,7 @@ sub _get_subscriber_lock_level {
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $res = $ua->request($req);
     is($res->code, 200, "fetch subscriber id " . $subscriber->{id} . " preferences");
-    my $preferences = JSON::from_json($res->decoded_content);
+    my $preferences = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     return $preferences->{lock};
 }
 
@@ -2021,7 +2021,7 @@ sub _get_actual_billing_profile_id {
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $res = $ua->request($req);
     is($res->code, 200, "fetch customer id " . $customer->{id});
-    my $contract = JSON::from_json($res->decoded_content);
+    my $contract = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     return $contract->{billing_profile_id};
 }
 
@@ -2034,7 +2034,7 @@ sub _fetch_preferences_worker {
     $req->header('X-Delay-Commit' => $delay);
     $res = $ua->request($req);
     is($res->code, 200, "thread " . threads->tid() . ": concurrent fetch subscriber preferences of contracts of contact id ".$custcontact->{id} . " in " . $dir . " order");
-    my $result = JSON::from_json($res->decoded_content);
+    my $result = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     #is($result->{total_count},(scalar keys %subscriber_map),"check total count");
     diag("finishing thread " . threads->tid() . " ...");
     return $result;
@@ -2049,7 +2049,7 @@ sub _fetch_subscribers_worker {
     $req->header('X-Delay-Commit' => $delay);
     $res = $ua->request($req);
     is($res->code, 200, "thread " . threads->tid() . ": concurrent fetch subscribers of contracts of contact id ".$custcontact->{id} . " in " . $dir . " order");
-    my $result = JSON::from_json($res->decoded_content);
+    my $result = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
     #is($result->{total_count},(scalar keys %subscriber_map),"check total count");
     diag("finishing thread " . threads->tid() . " ...");
     return $result;
@@ -2088,7 +2088,7 @@ sub _set_cash_balance {
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/cash_balance', value => $new_cash_balance } ]
-    ));
+    , { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
     $res = $ua->request($req);
     is($res->code, 200, "setting customer id " . $customer->{id} . " cash_balance to " . $new_cash_balance * 100.0 . ' cents');
 

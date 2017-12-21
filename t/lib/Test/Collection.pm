@@ -294,8 +294,6 @@ sub init_ssl_cert {
             die "failed to find PEM file in client certificate zip file\n";
         }
         (my $tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
-        #close $tmpfh;
-        #open my $fh, ">:raw", $tmpfilename or die "failed to open " . $tmpfilename . ": $!\n";
         print $tmpfh $data;
         close $tmpfh;
     }
