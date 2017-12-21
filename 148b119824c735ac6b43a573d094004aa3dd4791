@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1abeadc6_fc8f9dca",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2017-12-21T14:14:27Z",
+      "side": 1,
+      "message": "what if $self-\u003ecrt_path is empty/undef here ? it defaults to \u0027/tmp/apicert.pm\u0027, then we check that the file exists \"-f\" we skip doing anything with it, but:\n1. the file can be itself empty for some reason\n2. the file can be inaccessible (permissions), (-f \u003d File is a plain file, https://perldoc.perl.org/functions/-X.html)\n\nit\u0027s a good practice to check what actually holds $self-\u003ecrt_path before using it in $ua-\u003essl_opts.\n\nif ($self-\u003ecrt_path) {\n  .. \n} else {\n  .. handle error\n}\n\nthat way even if something is changed in the prior block it\u0027s still easy to trace, read and pinpoint.",
+      "range": {
+        "startLine": 302,
+        "startChar": 26,
+        "endLine": 302,
+        "endChar": 41
+      },
+      "revId": "148b119824c735ac6b43a573d094004aa3dd4791",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
