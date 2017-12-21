@@ -22,6 +22,30 @@
       "revId": "148b119824c735ac6b43a573d094004aa3dd4791",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1abeadc6_3cc115e5",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2017-12-21T14:15:17Z",
+      "side": 1,
+      "message": "This is no my code, as described in a commit message, I have just reverted changes from the latest Rene commit here.",
+      "parentUuid": "1abeadc6_fc8f9dca",
+      "range": {
+        "startLine": 302,
+        "startChar": 26,
+        "endLine": 302,
+        "endChar": 41
+      },
+      "revId": "148b119824c735ac6b43a573d094004aa3dd4791",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
