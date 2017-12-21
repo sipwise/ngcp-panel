@@ -27,7 +27,7 @@ BEGIN {
 use NGCP::Panel::Utils::DateTime qw();
 #use NGCP::Panel::Utils::ProfilePackages qw(); #since it depends on Utils::Subscribers and thus Sipwise::Base, importin it causes segfault when creating threads..
 
-my $is_local_env = 1;
+my $is_local_env = 0;
 my $disable_parallel_catchup = 0;
 my $disable_hourly_intervals = 1;
 #my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
