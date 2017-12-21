@@ -3,8 +3,6 @@ package Test::Collection;
 #testcollection will keep object of the apiclient
 
 use strict;
-use threads qw();
-use threads::shared qw();
 use Test::More;
 use Moose;
 use JSON;
@@ -22,9 +20,13 @@ use File::Slurp qw/write_file/;
 use Storable;
 use Carp qw(cluck longmess shortmess);
 use IO::Uncompress::Unzip;
-use File::Temp qw();
 
-my $tmpfilename : shared;
+has 'crt_path' => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => sub {'/tmp/apicert.pem';},
+);
 
 has 'data_cache_file' => (
     is => 'ro',
@@ -265,8 +267,7 @@ sub init_ua {
 }
 sub init_ssl_cert {
     my ($self, $ua) = @_;
-    lock $tmpfilename;
-    unless ($tmpfilename) {
+    unless(-f $self->crt_path) {
         my $res = $ua->post(
             $self->base_uri . '/api/admincerts/',
             Content_Type => 'application/json',
@@ -293,13 +294,13 @@ sub init_ssl_cert {
         unless($data) {
             die "failed to find PEM file in client certificate zip file\n";
         }
-        (my $tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
-        print $tmpfh $data;
-        close $tmpfh;
+        open my $fh, ">:raw", $self->crt_path or die "failed to open " . $self->crt_path . ": $!\n";
+        print $fh $data;
+        close $fh;
     }
     $ua->ssl_opts(
-        SSL_cert_file => $tmpfilename,
-        SSL_key_file => $tmpfilename,
+        SSL_cert_file => $self->crt_path,
+        SSL_key_file => $self->crt_path,
     );
 }
 sub runas {
