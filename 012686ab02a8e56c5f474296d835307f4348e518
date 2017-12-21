@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1abeadc6_1c2c594a",
+        "filename": "t/api-rest/api-balanceintervals.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2017-12-21T08:41:49Z",
+      "side": 0,
+      "message": "my $disable_parallel_catchup \u003d 1;\n\nIt was also changed in a parent commit, is it OK to keep AS IS?",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 33
+      },
+      "revId": "012686ab02a8e56c5f474296d835307f4348e518",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
