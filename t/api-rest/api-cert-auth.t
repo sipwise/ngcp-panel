@@ -7,12 +7,9 @@ use Test::More;
 use File::Temp qw/tempfile/;
 use Test::Collection;
 
-my $certpath = '/tmp/apicert.pem';
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
 #docker: CATALYST_SERVER=https://10.15.20.104:1443 perl t/api-rest/api-cert-auth.t
-
--f $certpath && unlink $certpath;
 
 my ($invalid_ssl_client_cert, $valid_ssl_client_cert) = _download_certs($uri);
 
@@ -57,10 +54,12 @@ sub _download_certs {
 
     -f $invalid_cert && unlink $invalid_cert;
     -f $valid_cert && unlink $valid_cert;
-    $ua = Test::Collection->new()->ua();
-    rename $certpath, $invalid_cert;
-    $ua = Test::Collection->new()->ua();
-    rename $certpath, $valid_cert;
+
+    my $coll = Test::Collection->new();
+    rename $coll->ssl_cert, $invalid_cert;
+    $coll->clear_cert;
+    rename $coll->ssl_cert, $valid_cert;
+
     return ($invalid_cert, $valid_cert);
 }
 
