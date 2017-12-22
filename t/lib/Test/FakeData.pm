@@ -375,7 +375,7 @@ sub build_data{
             'default' => 'billing_profiles',
             'no_delete_available' => 1,
             'dependency_requires_recreation' => ['resellers'],
-            'uniquizer_cb' => sub { 
+            'uniquizer_cb' => sub {
                 Test::FakeData::string_uniquizer(\$_[0]->{name});
                 Test::FakeData::string_uniquizer(\$_[0]->{handle});
             },
@@ -531,7 +531,7 @@ sub search_item{
                 @deep_keys = $spec->{field_path} ? (('ARRAY' eq $spec->{field_path}) ? @{$spec->{field_path}} : ($spec->{field_path})) : ($field_name);
             }
             #here we don't use get/set _collection_data_fields - we should refer directly to the {json}, if we have {json}
-            my $search_value = deepvalue($item->{data},@deep_keys);      
+            my $search_value = deepvalue($item->{data},@deep_keys);
             if('CODE' eq ref $search_value){
                 $search_value = $search_value->($self);
             }
@@ -682,6 +682,7 @@ sub create{
     $self->process($collection_name, $parents_in);
     #create itself
     my $data = clone($self->data->{$collection_name}->{data});
+    #$self->test_machine->ssl_cert;
     my $test_machine = clone $self->test_machine;
     $test_machine->set(
         name            => $self->get_collection_interface($collection_name),
@@ -825,4 +826,3 @@ Really it would be much more correct to use collection clases with ALL their own
 Optimizations:
 1.make wrapper for data creation/deletion for all tests.
 2.Load/Clear only relevant tests data
-
