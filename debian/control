@@ -96,6 +96,7 @@ Depends:
  libsipwise-base-perl,
  libsoap-lite-perl,
  libsoap-wsdl-perl,
+ libsox-fmt-mp3,
  libstring-mkpasswd-perl,
  libtemplate-perl,
  libtemplate-plugin-json-escape-perl,

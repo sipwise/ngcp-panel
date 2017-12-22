@@ -1827,9 +1827,21 @@ sub get_subscriber_pbx_status{
     return 0;
 }
 
-sub get_voicemail_filename{
-    my($c, $voicemail_item) = @_;
-    return 'voicemail-'.$voicemail_item->msgnum.'.wav';
+sub get_voicemail_filename {
+    my ($c, $voicemail_item, $format) = @_;
+    return 'voicemail-'.$voicemail_item->msgnum.'.'.$format;
+}
+
+sub get_voicemail_content_type {
+    my($c, $format) = @_;
+
+    SWITCH: for ($format) {
+        /^wav$/ && return "audio/x-wav";
+        /^mp3$/ && return "audio/mpeg";
+        /^ogg$/ && return "audio/ogg";
+        return;
+    }
+    return;
 }
 
 1;

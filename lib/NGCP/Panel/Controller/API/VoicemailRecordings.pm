@@ -47,6 +47,15 @@ __PACKAGE__->config(
     },
 );
 
+sub query_params {
+    return [
+        {
+            param => 'format',
+            description => 'Output format of the voicemail recording, supported: mp3, ogg, wav',
+        },
+    ];
+}
+
 sub gather_default_action_roles {
     my ($self, %args) = @_; my @roles = ();
     push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};

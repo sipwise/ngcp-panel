@@ -30,6 +30,14 @@ sub transcode_file {
             }
             last SWITCH;
         };
+        /^MP3$/ && do {
+            @conv_args = ($tmpfile, qw/--type mp3 --bits 16 - rate 8k/);
+            last SWITCH;
+        };
+        /^OGG$/ && do {
+            @conv_args = ($tmpfile, qw/--type ogg --bits 16 - rate 8k/);
+            last SWITCH;
+        };
         # default
     } # SWITCH
     
