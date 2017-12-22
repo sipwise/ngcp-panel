@@ -20,14 +20,14 @@ use File::Slurp qw/write_file/;
 use Storable;
 use Carp qw(cluck longmess shortmess);
 use IO::Uncompress::Unzip;
+use File::Temp qw();
 
-has 'crt_path' => (
+has 'ssl_cert' => (
     is => 'ro',
     isa => 'Str',
     lazy => 1,
-    default => sub {'/tmp/apicert.pem';},
+    builder => 'init_ssl_cert',
 );
-
 has 'data_cache_file' => (
     is => 'ro',
     isa => 'Str',
@@ -251,6 +251,10 @@ sub init_catalyst_config{
 }
 sub init_ua {
     my $self = shift;
+    return $self->_create_ua(1);
+}
+sub _create_ua {
+    my ($self,$init_cert) = @_;
     my $ua = LWP::UserAgent->new;
     my $uri = $self->base_uri;
     $uri =~ s/^https?:\/\///;
@@ -260,48 +264,53 @@ sub init_ua {
         verify_hostname => 0,
         SSL_verify_mode => 0,
     );
-    if($role eq "default" || $role eq "admin" || $role eq "reseller") {
-        $self->init_ssl_cert($ua);
+    if($init_cert and ($role eq "default" || $role eq "admin" || $role eq "reseller")) {
+        $ua->ssl_opts(
+            SSL_cert_file => $self->ssl_cert,
+            SSL_key_file => $self->ssl_cert,
+        );
     }
     return $ua;
 }
 sub init_ssl_cert {
     my ($self, $ua) = @_;
-    unless(-f $self->crt_path) {
-        my $res = $ua->post(
-            $self->base_uri . '/api/admincerts/',
-            Content_Type => 'application/json',
-            Content => '{}'
-        );
-        unless($res->is_success) {
-            die "failed to fetch client certificate: " . $res->status_line . "\n";
-        }
-        my $zip = $res->decoded_content;
-        my $z = IO::Uncompress::Unzip->new(\$zip, MultiStream => 0, Append => 1);
-        my $data;
-        while(!$z->eof() && (my $hdr = $z->getHeaderInfo())) {
-            unless($hdr->{Name} =~ /\.pem$/) {
-                # wrong file, just read stream, clear buffer and try next
-                while($z->read($data) > 0) {}
-                $data = undef;
-                $z->nextStream();
-                next;
-            }
-            while($z->read($data) > 0) {}
-            last;
-        }
-        $z->close();
-        unless($data) {
-            die "failed to find PEM file in client certificate zip file\n";
-        }
-        open my $fh, ">:raw", $self->crt_path or die "failed to open " . $self->crt_path . ": $!\n";
-        print $fh $data;
-        close $fh;
-    }
-    $ua->ssl_opts(
-        SSL_cert_file => $self->crt_path,
-        SSL_key_file => $self->crt_path,
+    $ua = $self->_create_ua(0) unless $ua;
+    my $res = $ua->post(
+        $self->base_uri . '/api/admincerts/',
+        Content_Type => 'application/json',
+        Content => '{}'
     );
+    unless($res->is_success) {
+        die "failed to fetch client certificate: " . $res->status_line . "\n";
+    }
+    my $zip = $res->decoded_content;
+    my $z = IO::Uncompress::Unzip->new(\$zip, MultiStream => 0, Append => 1);
+    my $data;
+    while(!$z->eof() && (my $hdr = $z->getHeaderInfo())) {
+        unless($hdr->{Name} =~ /\.pem$/) {
+            # wrong file, just read stream, clear buffer and try next
+            while($z->read($data) > 0) {}
+            $data = undef;
+            $z->nextStream();
+            next;
+        }
+        while($z->read($data) > 0) {}
+        last;
+    }
+    $z->close();
+    unless($data) {
+        die "failed to find PEM file in client certificate zip file\n";
+    }
+    my ($tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
+    print $tmpfh $data;
+    close $tmpfh;
+    return $tmpfilename;
+}
+sub clear_cert {
+    my $self = shift;
+    delete $self->{ua};
+    delete $self->{ssl_cert};
+    return $self;
 }
 sub runas {
     my $self = shift;
