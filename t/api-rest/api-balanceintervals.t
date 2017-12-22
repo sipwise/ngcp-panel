@@ -28,7 +28,7 @@ use NGCP::Panel::Utils::DateTime qw();
 #use NGCP::Panel::Utils::ProfilePackages qw(); #since it depends on Utils::Subscribers and thus Sipwise::Base, importin it causes segfault when creating threads..
 
 my $is_local_env = 0;
-my $disable_parallel_catchup = 0;
+my $disable_parallel_catchup = 1;
 my $disable_hourly_intervals = 1;
 #my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 #my $enable_profile_packages = 1;
@@ -1333,7 +1333,7 @@ for my $custcontact (values %$customer_contact_map) { #$default_custcontact,$cus
 
     }
 }
-
+print 'contract IDs: ' . join(',',keys %customer_map) . "\n";
 done_testing;
 
 sub _check_interval_history {

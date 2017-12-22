@@ -3,6 +3,8 @@ package Test::Collection;
 #testcollection will keep object of the apiclient
 
 use strict;
+use threads qw();
+use threads::shared qw();
 use Test::More;
 use Moose;
 use JSON;
@@ -21,6 +23,8 @@ use Storable;
 use Carp qw(cluck longmess shortmess);
 use IO::Uncompress::Unzip;
 use File::Temp qw();
+
+my $tmpfilename : shared;
 
 has 'ssl_cert' => (
     is => 'ro',
@@ -265,51 +269,59 @@ sub _create_ua {
         SSL_verify_mode => 0,
     );
     if($init_cert and ($role eq "default" || $role eq "admin" || $role eq "reseller")) {
-        $ua->ssl_opts(
-            SSL_cert_file => $self->ssl_cert,
-            SSL_key_file => $self->ssl_cert,
-        );
+        $self->init_ssl_cert($ua);
     }
     return $ua;
 }
 sub init_ssl_cert {
     my ($self, $ua) = @_;
-    $ua = $self->_create_ua(0) unless $ua;
-    my $res = $ua->post(
-        $self->base_uri . '/api/admincerts/',
-        Content_Type => 'application/json',
-        Content => '{}'
-    );
-    unless($res->is_success) {
-        die "failed to fetch client certificate: " . $res->status_line . "\n";
-    }
-    my $zip = $res->decoded_content;
-    my $z = IO::Uncompress::Unzip->new(\$zip, MultiStream => 0, Append => 1);
-    my $data;
-    while(!$z->eof() && (my $hdr = $z->getHeaderInfo())) {
-        unless($hdr->{Name} =~ /\.pem$/) {
-            # wrong file, just read stream, clear buffer and try next
-            while($z->read($data) > 0) {}
-            $data = undef;
-            $z->nextStream();
-            next;
+    lock $tmpfilename;
+    unless ($tmpfilename) {
+        my $_ua = $ua // $self->_create_ua(0);
+        my $res = $_ua->post(
+            $self->base_uri . '/api/admincerts/',
+            Content_Type => 'application/json',
+            Content => '{}'
+        );
+        unless($res->is_success) {
+            die "failed to fetch client certificate: " . $res->status_line . "\n";
         }
-        while($z->read($data) > 0) {}
-        last;
+        my $zip = $res->decoded_content;
+        my $z = IO::Uncompress::Unzip->new(\$zip, MultiStream => 0, Append => 1);
+        my $data;
+        while(!$z->eof() && (my $hdr = $z->getHeaderInfo())) {
+            unless($hdr->{Name} =~ /\.pem$/) {
+                # wrong file, just read stream, clear buffer and try next
+                while($z->read($data) > 0) {}
+                $data = undef;
+                $z->nextStream();
+                next;
+            }
+            while($z->read($data) > 0) {}
+            last;
+        }
+        $z->close();
+        unless($data) {
+            die "failed to find PEM file in client certificate zip file\n";
+        }
+        (my $tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
+        print $tmpfh $data;
+        close $tmpfh;
     }
-    $z->close();
-    unless($data) {
-        die "failed to find PEM file in client certificate zip file\n";
-    }
-    my ($tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
-    print $tmpfh $data;
-    close $tmpfh;
+    $ua->ssl_opts(
+        SSL_cert_file => $tmpfilename,
+        SSL_key_file => $tmpfilename,
+    ) if $ua;
     return $tmpfilename;
 }
 sub clear_cert {
     my $self = shift;
-    delete $self->{ua};
+    lock $tmpfilename;
+    return $self unless $tmpfilename;
+    unlink $tmpfilename;
+    undef $tmpfilename;
     delete $self->{ssl_cert};
+    delete $self->{ua};
     return $self;
 }
 sub runas {
