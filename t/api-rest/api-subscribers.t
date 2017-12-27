@@ -263,6 +263,38 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     }
+#TT#28510
+    {
+        diag("28510: check subscriberadmin POST ;\n");
+        my $data = clone $test_machine->DATA_ITEM;
+        $data->{administrative} = 1;
+        my($subscriberadmin) = $test_machine->check_create_correct(1, sub {
+            my $num = $_[1]->{i};
+            $_[0]->{administrative} = 1; 
+            $_[0]->{webusername} .= time().'_28510';
+            $_[0]->{webpassword} = 'api_test_webpassword'; 
+            $_[0]->{username} .= time().'_28510' ;
+            $_[0]->{pbx_extension} .= '28510';
+            $_[0]->{primary_number}->{ac} .= '28510';
+            $_[0]->{is_pbx_group} = 0;
+            $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
+        } )->[0];
+        $test_machine->subscriber_user(join('@',@{$subscriberadmin->{content}}{qw/webusername domain/}));
+        $test_machine->subscriber_pass($subscriberadmin->{content}->{webpassword});
+        $test_machine->runas('subscriber');
+        $test_machine->check_create_correct(1, sub {
+            my $num = $_[1]->{i};
+            $_[0]->{webusername} .= time().'_28510_1';
+            $_[0]->{webpassword} = 'api_test_webpassword'; 
+            $_[0]->{username} .= time().'_28510_1' ;
+            $_[0]->{pbx_extension} .= '285101';
+            $_[0]->{primary_number}->{ac} .= '285101';
+            $_[0]->{is_pbx_group} = 1;
+            $_[0]->{is_pbx_pilot} = 0;
+            delete $_[0]->{alias_numbers};
+        } );
+        $test_machine->runas('admin');
+    }
 }
 #TT#8680
 {
