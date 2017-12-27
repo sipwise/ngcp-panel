@@ -102,7 +102,7 @@ has 'ua' => (
     builder => 'init_ua',
 );
 has 'base_uri' => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     lazy => 1,
     default => sub {
@@ -268,17 +268,25 @@ sub _create_ua {
         verify_hostname => 0,
         SSL_verify_mode => 0,
     );
-    if($init_cert and ($role eq "default" || $role eq "admin" || $role eq "reseller")) {
+    if($init_cert) {
         $self->init_ssl_cert($ua);
     }
     return $ua;
 }
 sub init_ssl_cert {
-    my ($self, $ua) = @_;
+    my ($self, $ua,$role) = @_;
+    if($role ne "default" && $role ne "admin" && $role ne "reseller") {
+        $ua->ssl_opts(
+            SSL_cert_file => undef,
+            SSL_key_file => undef,
+        );
+        return;
+    }
     lock $tmpfilename;
     unless ($tmpfilename) {
         my $_ua = $ua // $self->_create_ua(0);
         my $res = $_ua->post(
+
             $self->base_uri . '/api/admincerts/',
             Content_Type => 'application/json',
             Content => '{}'
@@ -324,36 +332,48 @@ sub clear_cert {
     delete $self->{ua};
     return $self;
 }
+
 sub runas {
     my $self = shift;
     my($role_in,$uri) = @_;
+    my($user,$pass,$role,$realm,$port) = $self->get_role_credentials($role_in);
+    my $base_url = $self->base_uri;
+    $base_url =~ s/^(https?:[^:]+:)\d+(?:$|\/)/$1$port\//;
+    #print Dumper ["base_url",$base_url,"role",$role,$user,$pass];
+    $self->base_uri($base_url);
     $uri //= $self->base_uri;
-    $uri =~ s/^https?:\/\///;
-    my($user,$pass,$role,$realm) = $self->get_role_credentials($role_in);
+    $uri =~ s/^https?:\/\/|\/$//g;
     $self->runas_role($role);
+    #print Dumper ["runas",$uri, $realm, $user, $pass];
     $self->ua->credentials( $uri, $realm, $user, $pass);
+    $self->init_ssl_cert($self->ua, $role);
+    diag("runas: $role;");
     return $self;
 }
+
 sub get_role_credentials{
     my $self = shift;
     my($role) = @_;
     my($user,$pass);
     $role //= $self->runas_role // 'default';
-    my $realm;
+    my ($realm,$port);
     if($role eq 'default' || $role eq 'admin'){
         $user //= $ENV{API_USER} // 'administrator';
         $pass //= $ENV{API_PASS} // 'administrator';
         $realm = 'api_admin_http';
+        $port = '1443';
     }elsif($role eq 'reseller'){
         $user //= $ENV{API_USER_RESELLER} // 'api_test';
         $pass //= $ENV{API_PASS_RESELLER} // 'api_test';
         $realm = 'api_admin_http';
+        $port = '1443';
     }elsif($role eq 'subscriber'){
         $user = $self->subscriber_user;
         $pass = $self->subscriber_pass;
         $realm = 'api_subscriber_http';
+        $port = '443';
     }
-    return($user,$pass,$role,$realm);
+    return($user,$pass,$role,$realm,$port);
 }
 sub clear_data_created{
     my($self) = @_;
@@ -670,6 +690,7 @@ sub request_post{
     my($self, $content, $uri, $req) = @_;
     $uri ||= $self->get_uri_collection;
     $uri = $self->normalize_uri($uri);
+    diag("request_post: uri: $uri;");
     $content = $self->encode_content($content, $self->content_type->{POST} );
     #form-data is set automatically, despite on $self->content_type->{POST}
     $req ||= POST $uri,

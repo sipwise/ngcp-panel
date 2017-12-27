@@ -104,11 +104,15 @@ has_field 'timezone' => (
         title => ['The timezone of the subscriber.']
     },
 );
-
-has_field 'customer' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
+#we need customer_id field in the form to don't delete customer_id from the resource as absent field during form validation
+#but for subscriberadmin role value always will be pilot->account_id
+#for subscriber we have read-only access
+#but we use resource->{customer_id} to get customer in prepare resource
+has_field 'customer_id' => (
+    type => 'PosInteger',
     label => 'Customer',
     validate_when_empty => 1,
+    required => 1,
     element_attr => {
         rel => ['tooltip'],
         title => ['The contract used for this subscriber.']
