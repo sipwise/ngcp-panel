@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9df570_745d86e9",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-12-28T22:34:56Z",
+      "side": 1,
+      "message": "cant this be handled using the\n\nexceptions \u003d\u003e [ ],\n\nargument for -\u003evalidate_form() ?",
+      "revId": "bbc515bddeadd81dddc77e3763f2048b62f63286",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_94710a7a",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-12-28T22:34:56Z",
+      "side": 1,
+      "message": "what is the difference between the two fields customer_id and contract.id here? they dont appear in the apidoc,\n\ni suggest to refactor this in a better way, ie. one of them must be dropped.",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 28
+      },
+      "revId": "bbc515bddeadd81dddc77e3763f2048b62f63286",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_545882fa",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2017-12-28T22:34:56Z",
+      "side": 1,
+      "message": "pass $role here?",
+      "revId": "bbc515bddeadd81dddc77e3763f2048b62f63286",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
