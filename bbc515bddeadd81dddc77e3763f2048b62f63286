@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "da9df570_b4f52ecd",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-12-29T10:49:57Z",
+      "side": 1,
+      "message": "No, because we delete all fields from the resource that aren\u0027t listed in the form, due to PATCH logic.",
+      "parentUuid": "da9df570_745d86e9",
+      "revId": "bbc515bddeadd81dddc77e3763f2048b62f63286",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da9df570_94710a7a",
         "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2017-12-28T22:34:56Z",
       "side": 1,
       "message": "what is the difference between the two fields customer_id and contract.id here? they dont appear in the apidoc,\n\ni suggest to refactor this in a better way, ie. one of them must be dropped.",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 28
+      },
+      "revId": "bbc515bddeadd81dddc77e3763f2048b62f63286",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_d402b2b3",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2017-12-29T10:49:57Z",
+      "side": 1,
+      "message": "I always try to toch as little as possible in the API because I\u0027m always not sure maybe someone somehow already use it as is. In case of the customer.id it couldn\u0027t work in the old version at all.",
+      "parentUuid": "da9df570_94710a7a",
       "range": {
         "startLine": 111,
         "startChar": 0,
