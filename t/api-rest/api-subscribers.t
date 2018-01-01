@@ -22,7 +22,7 @@ $fake_data->set_data_from_script({
             administrative       => 0,
             customer_id          => sub { return shift->get_id('customers',@_); },
             primary_number       => { ac => 111, cc=> 111, sn => 111 },
-            alias_numbers        => [ { ac => 11, cc=> 11, sn => 11 } ],
+            alias_numbers        => [ { ac => 112, cc=> 112, sn => 112 } ],
             username             => 'api_test_username',
             password             => 'api_test_password',
             webusername          => 'api_test_webusername',
@@ -58,6 +58,7 @@ $fake_data->set_data_from_script({
             }
             $test_machine->check_create_correct(1, sub{$_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;} );
         },
+        'uniquizer_cb' => sub { delete $_[0]->{alias_numbers}; },
     },
 });
 

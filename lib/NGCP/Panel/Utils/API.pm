@@ -2,6 +2,7 @@ package NGCP::Panel::Utils::API;
 use strict;
 use warnings;
 
+use Sipwise::Base;
 use File::Find::Rule;
 use HTTP::Status qw(:constants);
 
