@@ -425,6 +425,10 @@ sub allowed_methods_filtered {
 #    };
 #}
 
+sub config_allowed_roles {
+    return [qw/admin reseller/];
+}
+
 sub get_allowed_roles {
     my($self, $method) = @_;
 
