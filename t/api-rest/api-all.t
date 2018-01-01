@@ -13,7 +13,7 @@ my($opt,$report,$api_config,$api_info,$config,$test_machine,$fake_data) =
     ({},{},{},{} );
 
 $opt = {
-    'collections'      => {'callcontrols' => 1,},
+    #'collections'      => {'admins' => 1,},
     'collections'      => {},
     'ignore_existence' => 1,
     'test_groups'      => { post => 1, },#get2put,get2patch,bundle
@@ -22,7 +22,7 @@ $test_machine = Test::Collection->new(
     name                   => '',
     ALLOW_EMPTY_COLLECTION => 1,
     QUIET_DELETION         => 0,
-    runas_role             => 'reseller',
+    runas_role             => 'admin',
 );
 $fake_data = Test::FakeData->new;
 $fake_data->test_machine->QUIET_DELETION(0);
