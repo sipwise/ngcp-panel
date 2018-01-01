@@ -33,7 +33,7 @@ sub relation{
 
 sub config_allowed_roles {
     return {
-        'Default' => [qw/admin reseller subscriberadmin/],
+        'Default' => [qw/admin reseller subscriberadmin subscriber/],
         #GET will use default
         'POST'    => [qw/admin reseller/],
         'PUT'     => [qw/admin reseller/],
@@ -61,14 +61,13 @@ sub _item_rs {
     if ($c->user->roles eq "admin") {
     } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
-    } elsif ($c->user->roles eq "subscriberadmin") {
+    } elsif ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         my $reseller_id = $c->user->contract->contact->reseller_id;
         return unless $reseller_id;
         $item_rs = $item_rs->search({
             reseller_id => $reseller_id,
         });
     }
-
     return $item_rs;
 }
 
