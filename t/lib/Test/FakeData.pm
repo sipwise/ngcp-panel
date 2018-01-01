@@ -72,6 +72,11 @@ has 'data_init' => (
     isa => 'HashRef',
 #    builder => 'build_data',
 );
+has 'use_uniquizer' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => sub { 1 },
+);
 has 'FLAVOUR' => (
     is => 'rw',
     isa => 'Str',
@@ -220,7 +225,8 @@ sub build_data{
             'data' => {
                 sources => [{source => "test",}],
                 subscriber_id => sub { return shift->get_id('subscribers',@_); },
-                name => "from_test"
+                name => "from_test",
+                mode => "whitelist",
             },
             'query' => ['name','subscriber_id'],
             'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
@@ -696,7 +702,12 @@ sub create{
     if(exists $self->data->{$collection_name}->{create_special} && 'CODE' eq ref $self->data->{$collection_name}->{create_special}){
         $self->data->{$collection_name}->{create_special}->($self,$collection_name,$test_machine);
     }else{
-        $test_machine->check_create_correct(1);
+        $test_machine->check_create_correct(1,
+            $self->{use_uniquizer}
+            ?
+            $self->data->{$collection_name}->{uniquizer_cb}
+            :
+            undef);
     }
     $self->created->{$collection_name} = {values=>[values %{$test_machine->DATA_CREATED->{ALL}}], order => scalar keys %{$self->created}};
 
