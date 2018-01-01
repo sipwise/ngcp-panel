@@ -22,7 +22,7 @@ $fake_data->set_data_from_script({
             administrative       => 0,
             customer_id          => sub { return shift->get_id('customers',@_); },
             primary_number       => { ac => 111, cc=> 111, sn => 111 },
-            alias_numbers        => [ { ac => 11, cc=> 11, sn => 11 } ],
+            alias_numbers        => [ { ac => 112, cc=> 112, sn => 112 } ],
             username             => 'api_test_username',
             password             => 'api_test_password',
             webusername          => 'api_test_webusername',
@@ -56,7 +56,13 @@ $fake_data->set_data_from_script({
             if($pilot->{total_count} <= 0){
                 undef $pilot;
             }
-            $test_machine->check_create_correct(1, sub{$_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;} );
+            $test_machine->check_create_correct(1, sub{
+                print "create special in subscribers;\n";
+                $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
+                $_[0]->{pbx_extension} = time();
+                $_[0]->{webusername} .= time();
+                delete $_[0]->{alias_numbers};
+            }, $self->data->{$collection_name}->{data} );
         },
     },
 });
