@@ -45,9 +45,6 @@ sub gather_default_action_roles {
     return @roles;
 }
 
-sub config_allowed_roles {
-    return [qw/admin reseller/];
-}
 
 sub get {
     my ($self, $c, $id) = @_;
