@@ -12,6 +12,10 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Admin;
 
+sub item_name{
+    return 'admin';
+}
+
 sub resource_name{
     return 'admins';
 }
