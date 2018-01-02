@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9df570_371dc074",
+        "filename": "lib/NGCP/Panel/Controller/API/PbxDeviceModelImages.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-02T15:24:12Z",
+      "side": 1,
+      "message": "this should not be necessary, I think",
+      "revId": "a5e3bbf19625f40a26776c4c5f9c1a89b4a9e142",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
