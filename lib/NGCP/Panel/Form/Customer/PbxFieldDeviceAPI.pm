@@ -15,10 +15,7 @@ has_field 'customer' => (
     },
 );
 
-has_field 'profile' => (
-    type => 'Compound',
-);
-has_field 'profile.id' => (
+has_field 'profile_id' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
     label => 'Device Profile',
