@@ -2357,21 +2357,20 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         if($subscriber->provisioning_voip_subscriber->is_pbx_pilot) {
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup", $c);
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup->new(ctx => $c);
             } else {
                 $is_admin = 1;
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxSubscriberEdit", $c);
+                $form = NGCP::Panel::Form::Customer::PbxSubscriberEdit->new(ctx => $c);
             }
         } else {
             $base_number = $c->stash->{pilot}->primary_number;
 
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin", $c);
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
             } else {
                 $is_admin = 1;
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriber", $c);
-                $form->field('username')->inactive(1);
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c, inactive => ['domain']);
             }
             $pbx_ext = 1;
         }
@@ -2380,9 +2379,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         if($c->user->roles eq 'subscriberadmin') {
             $subadmin_pbx = 1;
             $c->stash(customer_id => $subscriber->contract->id);
-            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup", $c);
+            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup->new(ctx => $c);
         } else {
-            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberEdit", $c);
+            $form = NGCP::Panel::Form::SubscriberEdit->new(ctx => $c);
             $is_admin = 1;
         }
     }
@@ -3124,7 +3123,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
     try {
         SWITCH: for ($attribute) {
             /^name$/ && do {
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::Name", $c);
+                $form = NGCP::Panel::Form::Faxserver::Name->new;
                 $params = { 'name' => $faxpref->name };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3136,7 +3135,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 last SWITCH;
             };
             /^active$/ && do {
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::Active", $c);
+                $form = NGCP::Panel::Form::Faxserver::Active->new;
                 $params = { 'active' => $faxpref->active };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -3148,7 +3147,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 last SWITCH;
             };
             /^t38$/ && do {
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::T38", $c);
+                $form = NGCP::Panel::Form::Faxserver::T38->new;
                 $params = { 't38' => $faxpref->t38 };
                 $form->process(params => $posted ? $c->req->params : $params);
                 NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -4735,6 +4734,31 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $cid . '.pcap"');
     $c->response->content_type('application/octet-stream');
     $c->response->body($pcap);
+}
+
+sub get_json :Chained('callflow_base') :PathPart('json') :Args(0) {
+    my ($self, $c) = @_;
+    my $cid = $c->stash->{callid};
+
+    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
+    }, {
+        order_by => { -asc => 'timestamp' },
+    });
+
+    return unless($calls_rs);
+
+    my @cols = qw(method timestamp src_ip dst_ip call_id payload transport id src_port dst_port request_uri);
+
+    my @msgs;
+
+    foreach my $row ($calls_rs->all ) {
+        my $m = { map { $_ => $row->$_.'' } @cols };
+	push(@msgs, $m);
+    }
+
+    $c->response->content_type('application/json');
+    $c->response->body(encode_json(\@msgs));
 }
 
 sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
