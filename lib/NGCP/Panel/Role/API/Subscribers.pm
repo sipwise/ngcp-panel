@@ -548,17 +548,44 @@ sub prepare_resource {
         $preferences->{prepaid} = 1;
     }
 
-    my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
-        username => $resource->{username},
-        domain_id => $resource->{domain_id},
-        status => { '!=' => 'terminated' },
-    });
+    my $subscriber;
     if($item) { # update
+        $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
+            username => $resource->{username},
+            domain_id => $resource->{domain_id},
+            status => { '!=' => 'terminated' },
+        } );
         unless($subscriber) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber with this username does not exist in the domain.");
             return;
         }
     } else {
+        if($resource->{webusername}){
+            $subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
+                -and => [
+                    -or => [
+                        -and => [
+                            'me.username' => $resource->{username},
+                            'me.domain_id' => $resource->{domain_id},
+                        ],
+                        -and => [
+    #Exception: DBD::mysql::st execute failed: Duplicate entry 'api_test_webusername-235' for key 'webuser_dom_idx'
+                            'provisioning_voip_subscriber.webusername' => $resource->{webusername},
+                            'me.domain_id' => $resource->{domain_id},
+                        ]
+                    ],
+                    'me.status' => { '!=' => 'terminated' },
+                ]
+            },{
+                    join => 'provisioning_voip_subscriber',
+            } )->first;
+        } else {
+            $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
+                username => $resource->{username},
+                domain_id => $resource->{domain_id},
+                status => { '!=' => 'terminated' },
+            } );
+        }
         if($subscriber) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber already exists.");
             return;
