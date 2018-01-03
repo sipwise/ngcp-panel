@@ -13,8 +13,8 @@ my($opt,$report,$api_config,$api_info,$config,$test_machine,$fake_data) =
     ({},{},{},{} );
 
 $opt = {
-    #'collections'      => {'callcontrols' => 1,},
-    'collections'      => {},
+    'collections'      => {'subscribers' => 1,},
+    #'collections'      => {},
     'ignore_existence' => 1,
     #'test_groups'      => { get2put => 1,get2patch => 1,  },#post,get2put,get2patch,bundle
     'test_groups'      => { post => 1 },#post,get2put,get2patch,bundle
