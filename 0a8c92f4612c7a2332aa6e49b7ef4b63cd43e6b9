@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9df570_5a9fc903",
+        "filename": "lib/NGCP/Panel/Role/API/PbxDevices.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-03T13:34:13Z",
+      "side": 1,
+      "message": "Sorry, what is the reason to don\u0027t return this  exception from the get_form, as we usually do?",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 37
+      },
+      "revId": "0a8c92f4612c7a2332aa6e49b7ef4b63cd43e6b9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
