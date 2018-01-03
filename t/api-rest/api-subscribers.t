@@ -61,6 +61,7 @@ $fake_data->set_data_from_script({
                 $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
                 $_[0]->{pbx_extension} = time();
                 $_[0]->{webusername} .= time();
+                $_[0]->{username} .= time();
                 delete $_[0]->{alias_numbers};
             }, $self->data->{$collection_name}->{data} );
         },
