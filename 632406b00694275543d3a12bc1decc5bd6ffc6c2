@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9df570_a567b6e9",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-03T14:52:17Z",
+      "side": 1,
+      "message": "Done",
+      "range": {
+        "startLine": 272,
+        "startChar": 32,
+        "endLine": 272,
+        "endChar": 39
+      },
+      "revId": "632406b00694275543d3a12bc1decc5bd6ffc6c2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
