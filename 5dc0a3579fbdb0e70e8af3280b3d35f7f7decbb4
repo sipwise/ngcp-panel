@@ -22,6 +22,30 @@
       "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_e0028cb3",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-04T15:16:11Z",
+      "side": 1,
+      "message": "I know it\u0027s drastic to not leave an option to override this behavior. But think of the way, validate_form works:\n\nfor all fields in resource:\n1. remove them if they don\u0027t exist as form fields. (When there is a form field with a sub-field id, consider them equal to \"field_id\")\n2. do some validations manually and using formhandler-\u003eprocess.\n\nthis is the same behavior like before, just now we have no possibility for forgotten exceptions anymore",
+      "parentUuid": "da9df570_406358b1",
+      "range": {
+        "startLine": 174,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 6
+      },
+      "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
