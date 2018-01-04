@@ -25,6 +25,7 @@ $fake_data->set_data_from_script({
             profile_id  =>  sub { return shift->get_id('subscriberprofiles',@_); },
             pbxdevice_id  =>  sub { return shift->get_id('pbxdevicemodels',@_); },
             pbxdeviceprofile_id  =>  sub { return shift->get_id('pbxdeviceprofiles',@_); },
+            emergencymappingcontainer_id  =>  sub { return shift->get_id('emergencymappingcontainers',@_); },
 
             rewriteruleset_id  =>  sub { return shift->get_id('rewriterulesets',@_); },
             soundset_id  =>  sub { return shift->get_id('soundsets',@_); },
@@ -73,7 +74,7 @@ foreach my $api (@apis){
                 }
             }
             #foreach my $preference_enum_value(@{$preference->{enum_values}}){
-            #    
+            #
             #}
         }elsif('string' eq $preference->{data_type}){
             $value = get_preference_existen_value($preference) // "test_api preference string";
@@ -107,14 +108,27 @@ sub get_preference_existen_value{
     my $preference = shift;
     my $res;
     if($preference->{name}=~/^rewrite_rule_set$/){
-        $res = $fake_data->{data}->{rewriterulesets}->{data}->{name};
-    }elsif($preference->{name}=~/^(adm_)?ncos$/){
-        $res = $fake_data->{data}->{ncoslevels}->{data}->{level};
+        $res = get_fake_data_created_or_data('rewriterulesets','name');
+    }elsif($preference->{name}=~/^(adm_)?(cf_)?ncos$/){
+        $res = get_fake_data_created_or_data('ncoslevels','level');
     }elsif($preference->{name}=~/^(contract_)?sound_set$/){
-        $res = $fake_data->{data}->{soundsets}->{data}->{name};
+        $res = get_fake_data_created_or_data('soundsets','name');
+    }elsif($preference->{name}=~/^emergency_mapping_container$/){
+        $res = get_fake_data_created_or_data('emergencymappingcontainers','name');
     }elsif($preference->{name}=~/^(man_)?allowed_ips_grp$/){
-        $res= 'no_process';
+        $res = 'no_process';
     }
+    return $res;
+}
+
+sub get_fake_data_created_or_data{
+    my($collection_name, $field, $number) = @_;
+    $number //= 0;
+    my $res = $fake_data->created->{$collection_name}
+        ?
+        $fake_data->created->{$collection_name}->{values}->[$number]->{content}->{$field}
+        :
+        $fake_data->{data}->{$collection_name}->{data}->{$field};
     return $res;
 }
 
@@ -139,5 +153,5 @@ __DATA__
     'label' => 'The cluster set used for SIP lb and RTP',
     'description' => 'Use a particular cluster set of load-balancers for SIP towards this endpoint (only for peers, as for subscribers it is defined by Path during registration) and of RTP relays (both peers and subscribers).'
 },
-                         
+
 # vim: set tabstop=4 expandtab:
