@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9df570_4030b856",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-04T17:51:16Z",
+      "side": 1,
+      "message": "some test were failing again because of uninitialized value i guess.\n\nthe whole suite was known to work on xmas eve,\nthere was also a reason why the lock statement was kept as very first stmt here. no clue why all of this is torn apart again.",
+      "revId": "b64c31744ea2fa2152d482dc6e600c7947e038c8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
