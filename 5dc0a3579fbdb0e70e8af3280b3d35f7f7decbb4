@@ -94,6 +94,30 @@
       "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_a07b2428",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-04T17:18:57Z",
+      "side": 1,
+      "message": "\"\". is indeed not necessary. I just wanted to make sure that I have a string. I can remove it.\n\nI ran the test-set stable, and all tests passed, except for the ones that alutay reported before. I think this would be a good opportunity to remove some complexity without breaking anything.\n\nI don\u0027t have to merge it immediately. I can run many more tests, to make absolutely sure, this works and I can leave this open for a week or so. but what do you think, couldn\u0027t we try to simplify things here in this way?",
+      "parentUuid": "da9df570_40bfd8d0",
+      "range": {
+        "startLine": 174,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 6
+      },
+      "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
