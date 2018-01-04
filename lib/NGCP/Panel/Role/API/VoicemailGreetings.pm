@@ -69,7 +69,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Voicemail::GreetingAPI", $c), ['subscriber_id'] );
+    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Voicemail::GreetingAPI", $c));
 }
 
 sub process_hal_resource{

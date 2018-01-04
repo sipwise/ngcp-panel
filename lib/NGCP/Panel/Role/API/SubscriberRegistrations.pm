@@ -69,7 +69,6 @@ sub hal_from_item {
         resource => $resource,
         form => $form,
         run => 0,
-        exceptions => [ "subscriber_id" ],
     );
     $resource->{user_agent} = $user_agent;
 
@@ -151,7 +150,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "subscriber_id" ],
         run => 1,
         #form_params => { 'use_fields_for_input_without_param' => 1 },
     );

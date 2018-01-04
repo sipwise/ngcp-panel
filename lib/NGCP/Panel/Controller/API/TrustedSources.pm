@@ -164,7 +164,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [ "subscriber_id" ],
         );
 
         my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({

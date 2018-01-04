@@ -88,7 +88,6 @@ sub hal_from_contract {
         form => $form,
         resource => \%resource,
         run => 0,
-        exceptions => [ "contact_id", "billing_profile_id" ],
     );
 
     $resource{type} = $billing_mapping->product->class;
@@ -124,7 +123,6 @@ sub update_contract {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "contact_id", "billing_profile_id" ],
     );
 
     #my $now = NGCP::Panel::Utils::DateTime::current_local;

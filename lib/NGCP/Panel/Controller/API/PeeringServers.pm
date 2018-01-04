@@ -204,7 +204,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [qw/group_id/],
         );
         my $dup_item = $c->model('DB')->resultset('voip_peer_hosts')->find({
             name => $resource->{name},

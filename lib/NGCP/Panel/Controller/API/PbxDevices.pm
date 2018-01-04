@@ -189,7 +189,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => ['profile_id'],
         );
 
         my $iden_device = $schema->resultset('autoprov_field_devices')->find({identifier => $resource->{identifier}});

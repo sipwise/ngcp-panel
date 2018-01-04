@@ -170,7 +170,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => ['contract_id'],
         );
         
         last unless $self->prepare_blocks_resource($c,$resource);

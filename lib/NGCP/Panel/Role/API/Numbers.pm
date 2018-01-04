@@ -56,7 +56,6 @@ sub hal_from_item {
         resource => \%resource,
         form => $form,
         run => 0,
-        exceptions => [ qw/subscriber_id/ ],
     );
 
     $resource{id} = int($item->id);
@@ -133,7 +132,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ qw/subscriber_id/ ],
     );
 
     my $sub = $schema->resultset('voip_subscribers')

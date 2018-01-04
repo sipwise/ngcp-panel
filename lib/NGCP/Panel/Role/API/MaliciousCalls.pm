@@ -62,7 +62,6 @@ sub hal_from_item {
         resource => \%resource,
         form => $form,
         run => 0,
-        exceptions => [qw/call_id/],
     );
 
     $resource{id} = int($item->id);

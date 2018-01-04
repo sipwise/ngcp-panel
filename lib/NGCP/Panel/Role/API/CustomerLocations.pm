@@ -59,7 +59,6 @@ sub hal_from_item {
         form => $form,
         resource => \%resource,
         run => 0,
-        exceptions => ['contract_id'],
     );
     $hal->resource(\%resource);
     return $hal;
@@ -97,7 +96,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => ['contract_id'],
     );
 
     return unless NGCP::Panel::Utils::ContractLocations::check_network_update_item($c,$resource,$item,sub {

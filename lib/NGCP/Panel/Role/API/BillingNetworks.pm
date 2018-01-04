@@ -60,7 +60,6 @@ sub hal_from_item {
         form => $form,
         resource => \%resource,
         run => 0,
-        exceptions => [ "reseller_id" ],
     );
     $hal->resource(\%resource);
     return $hal;
@@ -104,7 +103,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "reseller_id" ],
     );
 
     return unless NGCP::Panel::Utils::Reseller::check_reseller_update_item($c,$resource->{reseller_id},$old_resource->{reseller_id},sub {

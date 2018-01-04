@@ -45,7 +45,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return ( NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::RuleAPI", $c), ['set_id'] );
+    return ( NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::RuleAPI", $c) );
 }
 
 sub hal_links{

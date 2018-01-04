@@ -215,7 +215,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [qw/subscriber_id/],
         );
         $c->log->debug("form validated");
         my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});

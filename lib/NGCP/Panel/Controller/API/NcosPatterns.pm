@@ -159,7 +159,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [ "ncos_level_id" ],
         );
 
         my $level_rs = $c->model('DB')->resultset('ncos_levels')->search({

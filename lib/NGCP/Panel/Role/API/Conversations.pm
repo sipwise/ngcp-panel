@@ -735,7 +735,7 @@ sub _get_alias {
 
 sub get_form {
     my ($self, $c) = @_;
-    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Conversation::API", $c),[qw/id call_id source_user_id source_account_id destination_user_id destination_account_id call_id subscriber_id voicemail_subscriber_id/]);
+    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Conversation::API", $c));
 }
 
 sub process_hal_resource {

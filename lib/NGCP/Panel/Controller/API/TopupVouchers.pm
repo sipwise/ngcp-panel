@@ -110,7 +110,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [qw/subscriber_id/],
         );
 
         last unless NGCP::Panel::Utils::Voucher::check_topup(c => $c,
