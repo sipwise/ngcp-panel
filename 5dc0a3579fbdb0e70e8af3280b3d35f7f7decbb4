@@ -70,6 +70,30 @@
       "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_40bfd8d0",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-04T17:04:24Z",
+      "side": 1,
+      "message": "why is the \"\". needed here; not aware of any numeric-only names, and concat will also warn for undef -\u003ename\n\ntechnique is fine imho, but nevertheless its good question to introduce it this \"hard\" way. if exceptions are explicity passed, they should get higher precedence at least. i\u0027m basically concerned tests could fail again otherwise.",
+      "parentUuid": "da9df570_202c944a",
+      "range": {
+        "startLine": 174,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 6
+      },
+      "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
