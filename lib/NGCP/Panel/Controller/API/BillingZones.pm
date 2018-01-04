@@ -180,7 +180,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => ['billing_profile_id'],
         );
 
         my $profile = $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});

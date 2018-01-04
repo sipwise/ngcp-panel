@@ -200,7 +200,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [ "contact_id", "billing_profile_id" ],
         );
 
         my $syscontact = $schema->resultset('contacts')

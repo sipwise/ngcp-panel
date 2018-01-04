@@ -78,7 +78,6 @@ sub hal_from_item {
         resource => \%resource,
         form => $form,
         run => 0,
-        exceptions => [qw/id subscriber_id contract_id voucher_id package_before_id package_after_id profile_before_id profile_after_id contract_balance_before_id contract_balance_after_id/],
     );
 
     $resource{id} = int($item->id);

@@ -891,11 +891,8 @@ sub delay_commit {
 
 sub hal_from_item {
     my ($self, $c, $item, $form, $params) = @_;
-    my ($form_exceptions);
     if(!$form){
-        ($form,$form_exceptions) = $self->get_form($c);
-    }else{
-        $form_exceptions = $params->{form_exceptions};
+        ($form) = $self->get_form($c);
     }
     my $resource = $self->resource_from_item($c, $item, $form);
     $resource = $self->process_hal_resource($c, $item, $resource, $form);
@@ -936,7 +933,6 @@ sub hal_from_item {
             c => $c,
             resource => $resource,
             form => $form,
-            $form_exceptions ? (exceptions => $form_exceptions) : (),
             run => 0,
         );
     }
@@ -948,25 +944,21 @@ sub hal_from_item {
 
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form, $params) = @_;
-    my ($form_exceptions, $process_extras);
-    ($form, $form_exceptions, $process_extras) = @{$params}{qw/form form_exceptions process_extras/};
+    my $process_extras;
+    ($form, $process_extras) = @{$params}{qw/form process_extras/};  # TODO: form can be passed twice?
 
     $old_resource //= $self->resource_from_item($c, $item, $form);
     $process_extras //= {};
     if(!$form){
-        ($form, $form_exceptions) = $self->get_form($c, 'edit');
+        ($form) = $self->get_form($c, 'edit');
     }
 
     if($form){
-        if(!$form_exceptions && $form->can('form_exceptions')){
-            $form_exceptions = $form->form_exceptions;
-        }
         last unless $self->pre_process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
         return unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
-            $form_exceptions ? (exceptions => $form_exceptions) : (),
         );
         return unless $resource;
     }
@@ -978,7 +970,7 @@ sub update_item {
 
     $item = $self->update_item_model($c, $item, $old_resource, $resource, $form, $process_extras);
 
-    return $item, $form, $form_exceptions, $process_extras;
+    return $item, $form, $process_extras;
 }
 
 #------ dummy & default methods
@@ -1147,7 +1139,7 @@ sub relation {
 #------ /accessors ---
 sub return_representation{
     my($self, $c, %params) = @_;
-    my($hal, $response, $item, $preference, $form, $form_exceptions) = @params{qw/hal response item preference form form_exceptions/};
+    my($hal, $response, $item, $preference, $form) = @params{qw/hal response item preference form/};
 
     $preference //= $self->require_preference($c);
     return unless $preference;
@@ -1169,7 +1161,7 @@ sub return_representation{
 
 sub return_representation_post{
     my($self, $c, %params) = @_;
-    my($hal, $response, $item, $preference, $form, $form_exceptions) = @params{qw/hal response item preference form form_exceptions/};
+    my($hal, $response, $item, $preference, $form) = @params{qw/hal response item preference form/};
 
     $preference //= $self->require_preference($c);
     return unless $preference;

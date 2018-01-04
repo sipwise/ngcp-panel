@@ -82,8 +82,8 @@ sub patch {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my ($form, $form_exceptions, $process_extras);
-        ($form, $form_exceptions) = $self->get_form($c, 'edit');
+        my ($form, $process_extras);
+        ($form) = $self->get_form($c, 'edit');
 
         my $json = $self->get_valid_patch_data(
             c          => $c,
@@ -101,7 +101,7 @@ sub patch {
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+        ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
         $self->complete_transaction($c);
@@ -111,7 +111,6 @@ sub patch {
             'item' => $item,
             'form' => $form,
             'preference' => $preference,
-            'form_exceptions' => $form_exceptions
         );
     }
     return;
@@ -124,11 +123,10 @@ sub put {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        #TODO: MOVE form exceptions to proper forms as property
         #$old_resource = clone($old_resource);
         ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
-        my ($form, $form_exceptions, $process_extras);
-        ($form, $form_exceptions) = $self->get_form($c, 'edit');
+        my ($form, $process_extras);
+        ($form) = $self->get_form($c, 'edit');
 
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
@@ -144,7 +142,7 @@ sub put {
         last unless $resource;
         my $old_resource = $self->resource_from_item($c, $item);
 
-        ($item, $form, $form_exceptions, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+        ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
         $self->complete_transaction($c);
@@ -153,7 +151,6 @@ sub put {
             'item' => $item,
             'form' => $form,
             'preference' => $preference,
-            'form_exceptions' => $form_exceptions
         );
     }
     return;

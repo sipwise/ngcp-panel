@@ -64,19 +64,6 @@ sub hal_from_item {
         resource => $resource,
         form => $form,
         run => 0,
-        exceptions => [
-            "source_provider_id", "destination_provider_id",
-            "source_external_subscriber_id", "destination_external_subscriber_id",
-            "source_external_contract_id", "destination_external_contract_id",
-            "source_carrier_billing_fee_id", "destination_carrier_billing_fee_id",
-            "source_reseller_billing_fee_id", "destination_reseller_billing_fee_id",
-            "source_customer_billing_fee_id", "destination_customer_billing_fee_id",
-            "source_carrier_billing_zone_id", "destination_carrier_billing_zone_id",
-            "source_reseller_billing_zone_id", "destination_reseller_billing_zone_id",
-            "source_customer_billing_zone_id", "destination_customer_billing_zone_id",
-            "start_time", "init_time", # "duration",
-            "call_id",
-        ],
     );
 
     $resource->{id} = int($item->id);

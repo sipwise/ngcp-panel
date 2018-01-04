@@ -182,7 +182,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [qw/group_id/],
         );
         unless($c->model('DB')->resultset('voip_peer_groups')->find($resource->{group_id})) {
             $c->log->error("peering group $$resource{group_id} does not exist");

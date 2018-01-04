@@ -48,7 +48,6 @@ sub hal_from_item {
         form => $form,
         resource => $resource,
         run => 0,
-        exceptions => ['subscriber_id'],
     );
 
     $hal->resource($resource);

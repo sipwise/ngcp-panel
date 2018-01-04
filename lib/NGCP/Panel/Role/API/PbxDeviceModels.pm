@@ -78,13 +78,12 @@ sub resource_from_item {
     delete $resource{front_image};
     delete $resource{mac_image};
 
-    my ($form,$form_exceptions) = $self->get_form($c);
+    my ($form) = $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
         form => $form,
         resource => \%resource,
         run => 0,
-        exceptions => $form_exceptions,
     );
 
     foreach my $field (qw/reseller_id id extensions_num/){

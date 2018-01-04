@@ -315,15 +315,15 @@ sub GET :Allow {
             contract_id_field => 'contract_id');
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links, %contract_map);
-        my ($form,$form_exceptions) //= $self->get_form($c);
+        my ($form) //= $self->get_form($c);
         for my $subscriber (@$subscribers) {
             my $contract = $subscriber->contract;
             NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $contract,
                 now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
             $contract_map{$contract->id} = 1;
-            my $resource = $self->resource_from_item($c, $subscriber, $form,$form_exceptions);
-            push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form,$form_exceptions);
+            my $resource = $self->resource_from_item($c, $subscriber, $form);
+            push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
@@ -479,10 +479,10 @@ sub POST :Allow {
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
-            my ($_form,$_form_exceptions) = $self->get_form($c);
+            my ($_form) = $self->get_form($c);
             my $_subscriber = $self->item_by_id($c, $subscriber->id);
-            my $_resource = $self->resource_from_item($c, $_subscriber, $_form,$_form_exceptions);
-            return $self->hal_from_item($c,$_subscriber,$_resource,$_form,$_form_exceptions); });
+            my $_resource = $self->resource_from_item($c, $_subscriber, $_form);
+            return $self->hal_from_item($c,$_subscriber,$_resource,$_form); });
 
         $guard->commit;
 

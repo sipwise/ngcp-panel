@@ -227,7 +227,6 @@ sub POST :Allow {
                 c => $c,
                 resource => $resource,
                 form => $form,
-                exceptions => ['billing_profile_id'],
             );
 
 

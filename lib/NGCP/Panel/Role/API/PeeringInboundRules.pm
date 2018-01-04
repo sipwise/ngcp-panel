@@ -49,7 +49,6 @@ sub hal_from_item {
         c => $c,
         resource => \%resource,
         form => $form,
-        exceptions => [qw/group_id/],
         run => 0,
     );
 
@@ -72,7 +71,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [qw/group_id/],
     );
     unless($c->model('DB')->resultset('voip_peer_groups')->find($resource->{group_id})) {
         $c->log->error("peering group $$resource{group_id} does not exist");

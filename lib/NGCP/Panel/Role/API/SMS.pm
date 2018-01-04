@@ -21,7 +21,7 @@ sub resource_name {
 
 sub get_form {
     my ($self, $c) = @_;
-    return (NGCP::Panel::Form::get("NGCP::Panel::Form::SMSAPI", $c), ['subscriber_id']);
+    return (NGCP::Panel::Form::get("NGCP::Panel::Form::SMSAPI", $c));
 }
 
 sub hal_links {

@@ -111,7 +111,6 @@ sub POST :Allow {
             form => $form,
             # due to the _id suffix, it would be converted to package.id and subscriber.id in
             # the validation, so exclude them here
-            exceptions => [qw/package_id subscriber_id/],
         );
         
         last unless NGCP::Panel::Utils::Voucher::check_topup(c => $c,

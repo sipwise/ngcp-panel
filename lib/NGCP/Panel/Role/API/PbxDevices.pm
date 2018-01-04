@@ -74,7 +74,6 @@ sub resource_from_item {
         form => $form,
         resource => \%resource,
         run => 0,
-        exceptions => ['profile_id'],
     );
     $resource{lines} = \@lines;
     $resource{id} = int($item->id);
@@ -121,7 +120,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => ['profile_id'],
     );
 
     my $iden_device = $schema->resultset('autoprov_field_devices')->find({identifier => $resource->{identifier}});

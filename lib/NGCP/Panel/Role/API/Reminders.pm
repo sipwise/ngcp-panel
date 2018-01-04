@@ -84,7 +84,6 @@ sub hal_from_item {
         resource => $resource,
         form => $form,
         run => 0,
-        exceptions => [ "subscriber_id" ],
     );
 
     $resource->{id} = int($item->id);
@@ -115,7 +114,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "subscriber_id" ],
     );
     my $sub = $self->get_subscriber_by_id($c, $resource->{subscriber_id} );
     return unless $sub;

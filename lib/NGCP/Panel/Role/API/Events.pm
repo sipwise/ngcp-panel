@@ -104,10 +104,6 @@ sub hal_from_item {
         resource => \%resource,
         form => $form,
         run => 0,
-        exceptions => [qw/id subscriber_id reseller_id
-                          primary_number_id subscriber_profile_id subscriber_profile_set_id
-                          pilot_subscriber_id
-                          pilot_primary_number_id pilot_subscriber_profile_id pilot_subscriber_profile_set_id/],
     );
 
     $resource{id} = int($item->id);

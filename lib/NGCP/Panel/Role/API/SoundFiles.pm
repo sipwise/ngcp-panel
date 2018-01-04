@@ -92,7 +92,6 @@ sub hal_from_item {
         resource => $resource,
         form => $form,
         run => 0,
-        exceptions => [ "set_id" ],
     );
 
     $resource->{id} = int($item->id);
@@ -128,7 +127,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "set_id" ],
     );
 
     $resource->{loopplay} = ($resource->{loopplay} eq "true" || is_int($resource->{loopplay}) && $resource->{loopplay}) ? 1 : 0;

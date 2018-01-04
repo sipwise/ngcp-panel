@@ -58,7 +58,6 @@ sub hal_from_item {
         resource => \%resource,
         form => $form,
         run => 0,
-        exceptions => [ "ncos_level_id" ],
     );
 
     $resource{id} = int($item->id);
@@ -80,7 +79,6 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => [ "ncos_level_id" ],
     );
 
     my $level_rs = $c->model('DB')->resultset('ncos_levels')->search({

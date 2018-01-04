@@ -7,7 +7,6 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+enctype' => ( default => 'multipart/form-data');
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-has 'validation_exceptions' => ( is => 'rw', isa => 'ArrayRef', default => sub {[qw/subscriber_id/];} );
 
 has_field 'submitid' => ( type => 'Hidden' );
 

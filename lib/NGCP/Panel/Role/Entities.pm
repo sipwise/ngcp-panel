@@ -54,10 +54,9 @@ sub get {
         return unless $items;
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
-        my ($form, $form_exceptions) = $self->get_form($c);
+        my ($form) = $self->get_form($c);
         my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
         for my $item (@items) {
-            push @embedded, $self->hal_from_item($c, $item, $form, { form_exceptions => $form_exceptions });
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%s', $c->request->path, $self->get_item_id($c,
@@ -101,7 +100,7 @@ sub post {
     my ($c) = @_;
     my $guard = $self->get_transaction_control($c);
     {
-       my ($form, $form_exceptions) = $self->get_form($c, 'add');
+       my ($form) = $self->get_form($c, 'add');
         my $method_config = $self->config->{action}->{POST};
         my $process_extras= {};
         my ($resource) = $self->get_valid_data(
@@ -113,15 +112,11 @@ sub post {
         );
         last unless $resource;
         #instead of type parameter get_form can check request method
-        if(!$form_exceptions && $form->can('form_exceptions')){
-            $form_exceptions = $form->form_exceptions;
-        }
         last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
-            $form_exceptions ? (exceptions => $form_exceptions) : (),
         );
         last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
         last unless $resource;
@@ -137,7 +132,7 @@ sub post {
 
         return if defined $c->stash->{api_error_message};
 
-        $self->return_representation_post($c, 'item' => $item, 'form' => $form, 'form_exceptions' => $form_exceptions );
+        $self->return_representation_post($c, 'item' => $item, 'form' => $form );
     }
     return;
 }

@@ -30,9 +30,9 @@ sub get_form {
         return (NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::RuleAPI", $c));
     }
     if($c->user->roles eq "admin") {
-        return (NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::AdminSetAPI", $c), [qw/reseller_id/]);
+        return (NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::AdminSetAPI", $c));
     } else {
-        return (NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::ResellerSet", $c), [qw/reseller_id/]);
+        return (NGCP::Panel::Form::get("NGCP::Panel::Form::RewriteRule::ResellerSet", $c));
     }
 }
 

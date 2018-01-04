@@ -178,7 +178,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [ "subscriber_id" ],
         );
 
         my $sub = $self->get_subscriber_by_id($c, $resource->{subscriber_id} );

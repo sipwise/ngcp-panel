@@ -63,7 +63,6 @@ sub hal_from_item {
             form => $form,
             resource => $resource,
             run => 0,
-            exceptions => ['rtc_user_id'],
         );
     }
 

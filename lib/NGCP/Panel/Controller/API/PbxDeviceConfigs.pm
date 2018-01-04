@@ -182,7 +182,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [ "device_id" ],
         );
 
         my $model_rs = $c->model('DB')->resultset('autoprov_devices')->search({ 

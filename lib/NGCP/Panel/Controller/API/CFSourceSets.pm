@@ -183,7 +183,6 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
-            exceptions => [ "subscriber_id" ],
         );
 
         my $sset;

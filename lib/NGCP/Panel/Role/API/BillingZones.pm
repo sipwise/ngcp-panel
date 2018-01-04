@@ -68,7 +68,6 @@ sub hal_from_zone {
         form => $form,
         resource => \%resource,
         run => 0,
-        exceptions => ['billing_profile_id'],
     );
 
     $resource{id} = int($zone->id);
@@ -100,7 +99,6 @@ sub update_zone {
         c => $c,
         form => $form,
         resource => $resource,
-        exceptions => ['billing_profile_id'],
     );
 
     if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
