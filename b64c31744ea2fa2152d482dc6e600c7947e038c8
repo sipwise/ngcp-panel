@@ -16,6 +16,24 @@
       "revId": "b64c31744ea2fa2152d482dc6e600c7947e038c8",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_c03bc836",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-01-04T18:00:01Z",
+      "side": 1,
+      "message": "I think something was changed/bloken in the last 3 commits then:\n\n* 3becbeb - (3 days ago) TT#28453 Fix roles for config_allowed_roles inheritance entities - Irina Peshinskaya [Mon, 1 Jan 2018 22:07:04 +0200]\n* 632406b - (8 days ago) TT#28510 Fix customer_id field for the subscriber role in the Subscribers API - Irina Peshinskaya [Wed, 27 Dec 2017 17:45:20 +0200]\n* 0a8c92f - (2 days ago) TT#28827 fix profile_id documentation for PbxDevices - Gerhard Jungwirth [Tue, 2 Jan 2018 15:46:20 +0100]",
+      "parentUuid": "da9df570_4030b856",
+      "revId": "b64c31744ea2fa2152d482dc6e600c7947e038c8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
