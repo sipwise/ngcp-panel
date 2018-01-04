@@ -276,6 +276,7 @@ sub _create_ua {
 
 sub init_ssl_cert {
     my ($self, $ua, $role) = @_;
+    $role //= 'default';
     if($role ne "default" && $role ne "admin" && $role ne "reseller") {
         $ua->ssl_opts(
             SSL_cert_file => undef,
