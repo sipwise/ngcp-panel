@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9df570_406358b1",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-04T14:40:30Z",
+      "side": 1,
+      "message": "I would still leave possibility to enter validation exceptions in form. Let\u0027s them exist together?\nAnd maybe allow overwrite this new rule from the form too? I always is a little afraid of not-controllable behavior.",
+      "range": {
+        "startLine": 174,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 6
+      },
+      "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
