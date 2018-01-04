@@ -89,6 +89,25 @@ sub generate_swagger_datastructure {
             "schema" => { type => "integer" },
         },
     );
+    my %requestBodies = (
+        PatchBody => {
+            description => "A JSON patch document specifying modifications",
+            required => JSON::true,
+            content => {
+                'application/json-patch+json' => {
+                    schema => {
+                        # '$ref' => 'http://json.schemastore.org/json-patch.json#/',
+                        # "$ref": "https://raw.githubusercontent.com/fge/sample-json-schemas/master/json-patch/json-patch.json"
+                        '$ref' => '/js/schemas/json-patch.json#/',
+                        # type => 'array',
+                        # items => {
+                        #     type => 'object',
+                        # }
+                    }
+                }
+            }
+        }
+    );
 
     my @chapters = sort (keys %{ $collections });
 
@@ -219,6 +238,78 @@ sub generate_swagger_datastructure {
             };
         }
 
+        if (grep {m/^PUT$/} @{ $col->{item_actions} }) {
+            $item_p->{put} = {
+                summary => "Replace/change a specific $entity",
+                tags => ['Item Put'],
+                requestBody => {
+                    required => JSON::true,
+                    content => {
+                        "application/json" => {
+                            schema => {
+                                '$ref' => "#/components/schemas/$entity",
+                            }
+                        }
+                    }
+                },
+                responses => {
+                    "200" => {
+                        description => "$title",
+                        content => {
+                            "application/json" => {
+                                schema => {
+                                    '$ref' => "#/components/schemas/$entity",
+                                }
+                            },
+                        },
+                    },
+                    "204" => {
+                        description => "Put successful",
+                        # empty content
+                    },
+                }
+            };
+        }
+
+        if (grep {m/^PATCH$/} @{ $col->{item_actions} }) {
+            $item_p->{patch} = {
+                summary => "Change a specific $entity",
+                tags => ['Item Patch'],
+                requestBody => {
+                    '$ref' => '#/components/requestBodies/PatchBody',
+                },
+                responses => {
+                    "200" => {
+                        description => "$title",
+                        content => {
+                            "application/json" => {
+                                schema => {
+                                    '$ref' => "#/components/schemas/$entity",
+                                }
+                            },
+                        },
+                    },
+                    "204" => {
+                        description => "Patch successful",
+                        # empty content
+                    },
+                }
+            };
+        }
+
+        if (grep {m/^DELETE$/} @{ $col->{item_actions} }) {
+            $item_p->{delete} = {
+                summary => "Delete a specific $entity",
+                tags => ['Item Delete'],
+                responses => {
+                    "204" => {
+                        description => "Deletion successful",
+                        # empty content
+                    },
+                }
+            };
+        }
+
         # common description for all methods
         $p->{description} = $col->{description};
 
@@ -303,6 +394,7 @@ sub generate_swagger_datastructure {
             "schemas" => \%schemas,
             "responses" => \%responses,
             "parameters" => \%parameters,
+            "requestBodies" => \%requestBodies,
         },
     };
 
