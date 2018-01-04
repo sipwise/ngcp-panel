@@ -73,12 +73,14 @@ sub generate_swagger_datastructure {
             in => 'query',
             description => 'Pagination page which should be displayed (default: 1)',
             example => 1,
+            schema => {type => 'integer'}, # schema is required
         },
         RowsParameter => {
             name => 'rows',
             in => 'query',
             description => 'Number of rows in one pagination page (default: 10)',
             example => 10,
+            schema => {type => 'integer'}, # schema is required
         },
         ItemIdParameter => {
             "name" => "id",
@@ -123,6 +125,7 @@ sub generate_swagger_datastructure {
                     name => $query_param->{param},
                     description => $query_param->{description},
                     in => 'query',
+                    schema => {type => 'string'}, # schema is required
                 };
             }
             if ($col->{sorting_cols} && @{ $col->{sorting_cols} }) {
