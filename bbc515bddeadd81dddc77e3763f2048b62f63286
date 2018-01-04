@@ -84,6 +84,30 @@
     },
     {
       "key": {
+        "uuid": "da9df570_c022e800",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-04T18:19:31Z",
+      "side": 1,
+      "message": "maybe a deprecation notice in the description of this field?",
+      "parentUuid": "da9df570_d402b2b3",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 28
+      },
+      "revId": "bbc515bddeadd81dddc77e3763f2048b62f63286",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da9df570_545882fa",
         "filename": "t/lib/Test/Collection.pm",
         "patchSetId": 1
