@@ -169,13 +169,11 @@ sub validate_form {
     my $resource = $params{resource};
     my $form = $params{form};
     my $run = $params{run} // 1;
-    my $exceptions = $params{exceptions} // [];
     my $form_params = $params{form_params} // {};
 
-    if(!@$exceptions && $form->can('validation_exceptions')){
-        $exceptions = $form->validation_exceptions;
-    }
-    push @{ $exceptions }, "external_id";
+    my $exceptions = [
+        grep {m/_id$/} map {"".$_->name} $form->fields
+    ];
 
 
     my @normalized = ();
