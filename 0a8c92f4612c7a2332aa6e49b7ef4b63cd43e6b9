@@ -22,6 +22,30 @@
       "revId": "0a8c92f4612c7a2332aa6e49b7ef4b63cd43e6b9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_05f9624d",
+        "filename": "lib/NGCP/Panel/Role/API/PbxDevices.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-04T12:30:38Z",
+      "side": 1,
+      "message": "I see. I forgot about this. It makes sense, because the exceptions belong to the form.\n\nActually, I see that we even have a form propery called \"validation_exceptions\", but it\u0027s used only once.\n\nActually, what do you think about auto-generating this list of exceptions, so we don\u0027t need to care about them anymore?",
+      "parentUuid": "da9df570_5a9fc903",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 37
+      },
+      "revId": "0a8c92f4612c7a2332aa6e49b7ef4b63cd43e6b9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
