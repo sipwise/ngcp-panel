@@ -46,6 +46,30 @@
       "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_202c944a",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-04T15:19:53Z",
+      "side": 1,
+      "message": "another way to look at it:\nwhen you have an item in resource called \"foo_id\", first try to validate it against the form field \"foo_id\", and if you cannot find it, against the form field \"foo\" with the subfield \"id\". If both cannot be found, we have an issue in any case",
+      "parentUuid": "da9df570_e0028cb3",
+      "range": {
+        "startLine": 174,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 6
+      },
+      "revId": "5dc0a3579fbdb0e70e8af3280b3d35f7f7decbb4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
