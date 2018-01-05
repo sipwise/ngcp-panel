@@ -323,6 +323,7 @@ sub prepare_resource {
         })->first;
         if($pilot) {
             $domain = $pilot->voip_subscriber->domain;
+            delete $resource->{domain};
             $resource->{domain_id} = $domain->id;
         } else {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unable to find PBX pilot for this customer.");
@@ -364,6 +365,7 @@ sub prepare_resource {
     }
 
     my ($form,$form_exceptions) = $self->get_form($c);
+
     return unless $self->validate_form(
         c => $c,
         resource => $resource,

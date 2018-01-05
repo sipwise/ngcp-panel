@@ -104,6 +104,16 @@ has_field 'password' => (
     },
 );
 
+has_field 'administrative' => (
+    type => 'Boolean',
+    label => 'Administrative',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether the subscriber can configure other subscribers within his Customer account.']
+    },
+);
+
 has_field 'lock' => (
     type => '+NGCP::Panel::Field::SubscriberLockSelect',
     label => 'Lock Level',
@@ -119,13 +129,12 @@ has_field 'status' => (
     },
 );
 
-has_field 'administrative' => (
-    type => 'Boolean',
-    label => 'Administrative',
-    required => 0,
+has_field 'timezone' => (
+    type => '+NGCP::Panel::Field::TimezoneSelect',
+    label => 'Timezone',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Whether the subscriber can configure other subscribers within his Customer account.']
+        title => ['The timezone of the subscriber.']
     },
 );
 
@@ -139,14 +148,7 @@ has_field 'external_id' => (
     },
 );
 
-has_field 'timezone' => (
-    type => '+NGCP::Panel::Field::TimezoneSelect',
-    label => 'Timezone',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The timezone of the subscriber.']
-    },
-);
+
 
 has_field 'profile_set' => (
     type => '+NGCP::Panel::Field::SubscriberProfileSet',

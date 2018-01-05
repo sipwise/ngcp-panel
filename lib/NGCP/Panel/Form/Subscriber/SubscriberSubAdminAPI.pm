@@ -4,6 +4,26 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 use NGCP::Panel::Utils::Form qw();
 
+has_field 'contract' => (
+    type => '+NGCP::Panel::Field::CustomerContract',
+    label => 'Customer',
+    validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contract used for this subscriber.']
+    },
+);
+
+has_field 'email' => (
+    type => 'Email',
+    required => 0,
+    maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The email address of the subscriber.']
+    },
+);
+
 has_field 'webusername' => (
     type => 'Text',
     label => 'Web Username',
@@ -21,6 +41,19 @@ has_field 'webpassword' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The password to log into the CSC Panel.']
+    },
+);
+
+has_field 'e164' => (
+    type => '+NGCP::Panel::Field::E164',
+    order => 99,
+    required => 0,
+    label => 'E164 Number',
+    do_label => 1,
+    do_wrapper => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The main E.164 number (containing a cc, ac and sn attribute) used for inbound and outbound calls.']
     },
 );
 
@@ -63,28 +96,7 @@ has_field 'password' => (
     },
 );
 
-has_field 'email' => (
-    type => 'Email',
-    required => 0,
-    maxlength => 255,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The email address of the subscriber.']
-    },
-);
 
-has_field 'e164' => (
-    type => '+NGCP::Panel::Field::E164',
-    order => 99,
-    required => 0,
-    label => 'E164 Number',
-    do_label => 1,
-    do_wrapper => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The main E.164 number (containing a cc, ac and sn attribute) used for inbound and outbound calls.']
-    },
-);
 
 has_field 'administrative' => (
     type => 'Boolean',
@@ -93,6 +105,15 @@ has_field 'administrative' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Whether the subscriber can configure other subscribers within his Customer account.']
+    },
+);
+
+has_field 'status' => (
+    type => '+NGCP::Panel::Field::SubscriberStatusSelect',
+    label => 'Status',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The status of the subscriber (one of "active", "locked", "terminated").']
     },
 );
 
@@ -119,15 +140,6 @@ has_field 'customer_id' => (
     },
 );
 
-has_field 'contract' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
-    label => 'Customer',
-    validate_when_empty => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The contract used for this subscriber.']
-    },
-);
 
 has_field 'display_name' => (
     type => 'Text',
@@ -258,14 +270,6 @@ has_field 'cloud_pbx_hunt_timeout' => (
     },
 );
 
-has_field 'status' => (
-    type => '+NGCP::Panel::Field::SubscriberStatusSelect',
-    label => 'Status',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The status of the subscriber (one of "active", "locked", "terminated").']
-    },
-);
 
 
 sub validate_password {
