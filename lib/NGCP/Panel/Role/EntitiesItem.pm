@@ -28,6 +28,7 @@ sub set_config {
                 Does => [qw(ACL RequireSSL)],
                 Method => $_,
                 Path => $self->dispatch_path,
+                ReturnContentType => 'application/json',
                 %{$self->_set_config($_)},
             } } @{ $self->allowed_methods }
         },
@@ -57,9 +58,14 @@ sub get {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
         my $header_accept = $c->request->header('Accept');
-        if(defined $header_accept
-            && ($header_accept ne 'application/json')
-            && ($header_accept ne '*/*')
+
+        if( ( defined $header_accept
+                && ($header_accept ne 'application/json')
+                && ($header_accept ne '*/*')
+            )
+            || ( $self->config->{action}->{GET}->{ReturnContentType} 
+                && $self->config->{action}->{GET}->{ReturnContentType} ne 'application/json'
+            )
         ) {
             $self->return_requested_type($c,$id,$item);
             return;
