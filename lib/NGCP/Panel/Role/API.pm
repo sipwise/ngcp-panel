@@ -1203,6 +1203,9 @@ sub return_requested_type {
         $filename  //= $self->item_name.''.$self->get_item_id($c, $item);
         $mime_type //= 'application/octet-stream' ;
 
+        if(!$data_ref){
+            return;
+        }
         $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename  . '"');
         $c->response->content_type( $mime_type );
         $c->response->body($$data_ref);
