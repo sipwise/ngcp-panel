@@ -22,7 +22,9 @@ $fake_data->set_data_from_script({
             reseller_id => sub { return shift->get_id('resellers',@_); },
         },
         'query' => ['domain'],
-        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{domain}); },
+        'data_callbacks' => {
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{domain}); },
+        },
     },
 });
 

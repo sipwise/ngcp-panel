@@ -53,7 +53,9 @@ $fake_data->set_data_from_script({
             ],
         },
         'query' => ['name'],
-        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        'data_callbacks' => {
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        },
     },
 });
 

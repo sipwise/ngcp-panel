@@ -23,7 +23,9 @@ $fake_data->set_data_from_script({
             contract_id => sub { return shift->get_id('contracts',@_); },,
         },
         query => ['name'],
-        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name});},
+        'data_callbacks' => {
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        },
     },
 });
 

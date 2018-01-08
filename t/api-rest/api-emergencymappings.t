@@ -27,14 +27,7 @@ $fake_data->set_data_from_script({
             },
             file => [ (tempfile())[1] ],
         },
-        'create_special'=> sub {
-            my ($self,$name,$test_machine) = @_;
-            my $prev_params = $test_machine->get_cloned('content_type');
-            @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
-            $test_machine->check_create_correct(1);
-            $test_machine->set(%$prev_params);
-        },
-        'query' => ['code','emergency_container_id'],
+        'query' => [['code','json','code'],['emergency_container_id','json','emergency_container_id']],
     },
 });
 my $data = $fake_data->process('emergencymappings');
