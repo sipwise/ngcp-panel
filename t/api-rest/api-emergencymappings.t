@@ -27,13 +27,7 @@ $fake_data->set_data_from_script({
             },
             file => [ (tempfile())[1] ],
         },
-        'create_special'=> sub {
-            my ($self,$name,$test_machine) = @_;
-            my $prev_params = $test_machine->get_cloned('content_type');
-            @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
-            $test_machine->check_create_correct(1);
-            $test_machine->set(%$prev_params);
-        },
+        'create_special'=> $fake_data->create_special_upload(),
         'query' => ['code','emergency_container_id'],
     },
 });
