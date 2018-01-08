@@ -20,7 +20,7 @@ $fake_data->set_data_from_script({
             subscriber_id  => sub { return shift->get_id('subscribers',@_); },
             coding         => 0,
             direction      => 'out',
-            caller         => '111111111',
+            caller         => sub { my $primary_number = shift->get_field('subscribers','primary_number'); return join '', @$primary_number{qw/cc ac sn/}; },
             callee         => '+111111111',
             text           => 'Some text',
         },

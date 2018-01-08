@@ -13,16 +13,24 @@ my($opt,$report,$api_config,$api_info,$config,$test_machine,$fake_data) =
     ({},{},{},{} );
 
 $opt = {
-    'collections'      => {'callcontrols' => 1,},
+    'collections'      => {'sms' => 1,},
     'collections'      => {},
     'ignore_existence' => 1,
-    'test_groups'      => { post => 1, },#get2put,get2patch,bundle
+    'test_groups'      => { 
+        get2put => 1, 
+        #get2patch => 1, 
+        post =>1, 
+        get =>1, 
+        bundle =>1 
+    },#post,get2put,get2patch,bundle
+    #'test_groups'      => { post => 1 },#post,get2put,get2patch,bundle
 };
+
 $test_machine = Test::Collection->new(
     name                   => '',
     ALLOW_EMPTY_COLLECTION => 1,
     QUIET_DELETION         => 0,
-    runas_role             => 'reseller',
+    runas_role             => 'admin',
 );
 $fake_data = Test::FakeData->new;
 $fake_data->test_machine->QUIET_DELETION(0);
@@ -69,18 +77,23 @@ sub run{
                 if($fake_data->{data}->{$collection}->{data}){
                     my $data = $fake_data->{data}->{$collection}->{data};
                     #$data->{json} && ( $data = $data->{json});
-                    #TODO: ALL packages should have information about content_typr
+                    #TODO: ALL packages should have information about content_type
+                    
                     if($data->{json} && ( $data = $data->{json})){
                         $test_machine->content_type->{POST} = 'multipart/form-data';
                     }else{
                         $test_machine->content_type->{POST} = 'application/json';
                     }
                     $fake_data->process($collection);
-                    $test_machine->check_create_correct( 
-                        1, 
-                        $fake_data->{data}->{$collection}->{uniquizer_cb}, 
-                        clone $fake_data->{data}->{$collection}->{data} 
-                    );
+                    if($fake_data->{data}->{$collection}->{create_special}){
+                        $fake_data->{data}->{$collection}->{create_special}->($fake_data,$collection,$test_machine);
+                    }else{
+                        $test_machine->check_create_correct( 
+                            1, 
+                            $fake_data->{data}->{$collection}->{uniquizer_cb}, 
+                            clone $fake_data->{data}->{$collection}->{data} 
+                        );
+                    }
                     push @{$report->{post_tested}}, $collection;
                 }else{
                     push @{$report->{post_untested}}, $collection;
@@ -159,18 +172,26 @@ sub init_config{#init config
         'pbxdeviceprofilepreferencedefs' => 1,
         #defs and preferences are tested in context of preferences
         'pbxdevicefirmwares' => 1, #too hard, fails with timeout on get
+
     #falis with: not ok 163 - ccmapentries: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='mappings', input='ARRAY(0x1a53f278)', errors='Mappings field is required')
-        'ccmapentries' => 1,
+        #'ccmapentries' => 1,
     #fails with:
     #          got: 'https://127.0.0.1:1443/api/customerzonecosts/?page=1&rows=5&start=2016-10-01T000000&end=2016-10-31T235959'
     #     expected: 'https://127.0.0.1:1443/api/customerzonecosts/?page=1&rows=5'
-        'customerzonecosts' => 1,
+        #'customerzonecosts' => 1,
     #fails with: Unsupported media type 'application/json', accepting text/plain or text/xml only.)
-        'pbxdeviceconfigs' => 1,
+        #'pbxdeviceconfigs' => 1,
     #fails with: not ok 1131 - rtcapps: check_get2put: check put successful (Unprocessable Entity: Invalid field 'apps'. Must be an array.)
-        'rtcapps' => 1,
+        #'rtcapps' => 1,
     #fails with: not ok 1176 - rtcnetworks: check_get2put: check put successful (Unprocessable Entity: Invalid field 'networks'. Must be an array.)
-        'rtcnetworks' => 1,
+        #'rtcnetworks' => 1,
+
+#--------- interceptions:
+# No intercept agents configured in ngcp_panel.conf, rejecting request
+#--------- callcontrols:
+#Jan  3 12:48:20 sp1 ngcp-panel: INFO: received from dispatcher: $VAR1 = [#012 2,#012 1,#012 '<?xml version="1.0"?>#015#012<methodResponse><fault>#015#012#011<value><struct><member><name>faultCode</name><value><i4>-1</i4></value></member><member><name>faultString</name><value>dial_auth_b2b: unknown method name</value></member></struct></value>#015#012</fault></methodResponse>#015#012'#012];
+#Jan  3 12:48:20 sp1 ngcp-panel: ERROR: failed to dial out: failed to trigger dial-out at /media/sf_/VMHost/ngcp-panel/lib/NGCP/Panel/Utils/Sems.pm line 326, <$fh> line 1.
+#Jan  3 12:48:20 sp1 ngcp-panel: ERROR: error 500 - Failed to create call.
     );
     my %test_exists;
     {
