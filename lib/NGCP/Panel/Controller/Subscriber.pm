@@ -4737,6 +4737,31 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     $c->response->body($pcap);
 }
 
+sub get_json :Chained('callflow_base') :PathPart('json') :Args(0) {
+    my ($self, $c) = @_;
+    my $cid = $c->stash->{callid};
+
+    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
+    }, {
+        order_by => { -asc => 'timestamp' },
+    });
+
+    return unless($calls_rs);
+
+    my @cols = qw(method timestamp src_ip dst_ip call_id payload transport id src_port dst_port request_uri);
+
+    my @msgs;
+
+    foreach my $row ($calls_rs->all ) {
+        my $m = { map { $_ => $row->$_.'' } @cols };
+    push(@msgs, $m);
+    }
+
+    $c->response->content_type('application/json');
+    $c->response->body(encode_json(\@msgs));
+}
+
 sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
