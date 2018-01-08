@@ -27,6 +27,7 @@ $fake_data->set_data_from_script({
            'q' => 0.5,
            'subscriber_id' => sub { return shift->get_id('subscribers', @_); },
         },
+        'update_change_fields' => [qw/_links expires id/],#expires seems like timezone difference
     },
 });
 

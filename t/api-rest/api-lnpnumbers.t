@@ -29,14 +29,6 @@ $fake_data->set_data_from_script({
             },
             file => [ (tempfile())[1] ],
         },
-        'create_special'=> sub {
-            my ($self,$name,$test_machine) = @_;
-            my $prev_params = $test_machine->get_cloned('content_type');
-            @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
-            $test_machine->check_create_correct(1);
-            $test_machine->set(%$prev_params);
-        },
-        'query' => ['code','emergency_container_id'],
     },
 });
 my $data = $fake_data->process('lnpnumbers');
@@ -45,7 +37,6 @@ $test_machine->DATA_ITEM_STORE($data);
 {#test "usual" interface
 
     $test_machine->DATA_ITEM($data->{json});
-    # create 3 new emergency mappings from DATA_ITEM
     $test_machine->check_create_correct( 3, sub{ $_[0]->{number} .= $_[1]->{i}; } );
     $test_machine->check_get2put();
     $test_machine->check_bundle();

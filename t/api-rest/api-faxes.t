@@ -21,23 +21,26 @@ $fake_data->set_data_from_script({
         },
         'create_special'=> sub {
             my ($self,$name,$test_machine) = @_;
-            my $prev_params = $test_machine->get_cloned('content_type');
-            @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
-            $test_machine->check_create_correct(1);
-            $test_machine->set(%$prev_params);
+            my $data = $self->data->{faxes}->{data};
+            set_faxes_preferences($data->{json}->{subscriber_id});
+            $test_machine->resource_fill_file($data->{faxfile}->[0]);
+            $test_machine->check_create_correct( 1, sub { $_[0] = clone $data; } );
+            $test_machine->resource_clear_file($data->{faxfile}->[0]);
         },
         'no_delete_available' => 1,
+        
     },
 });
 my $test_machine = Test::Collection->new(
     name => 'faxes',
-    embedded_resources => [qw/subscribers/]
+    embedded_resources => [qw/subscribers/],
+    ALLOW_EMPTY_COLLECTION => 1,
 );
 
 my $remote_config = $test_machine->init_catalyst_config;
 if( !$remote_config->{config}->{features}->{faxserver} ){
     $remote_config->{config}->{features}->{faxserver} //= 0;
-    is($remote_config->{config}->{features}->{faxserver},0,"axserver feature isn't enabled");
+    is($remote_config->{config}->{features}->{faxserver}, 0, "faxserver feature isn't enabled");
 }else{
 
     @{$test_machine->content_type}{qw/POST PUT/}    = (('multipart/form-data') x 2);
@@ -48,14 +51,7 @@ if( !$remote_config->{config}->{features}->{faxserver} ){
     $test_machine->form_data_item();
 
 
-    {
-        my $test_machine_aux = Test::Collection->new(name => 'faxserversettings');
-        my $uri = $test_machine_aux->get_uri($test_machine->DATA_ITEM->{json}->{subscriber_id});
-        my($res,$faxserversettings,$req) = $test_machine_aux->check_item_get($uri);
-        $faxserversettings->{active} = 1;
-        $faxserversettings->{password} = 'aaa111';
-        $test_machine_aux->request_put($faxserversettings,$uri);
-    }
+    set_faxes_preferences($test_machine->DATA_ITEM->{json}->{subscriber_id});
 
     $test_machine->resource_fill_file($test_machine->DATA_ITEM->{faxfile}->[0]);
     $test_machine->check_create_correct( 1 );
@@ -67,13 +63,22 @@ if( !$remote_config->{config}->{features}->{faxserver} ){
     $test_machine->check_create_correct( 1 );
 }
 
-#$test_machine->check_bundle();
-#$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'faxfile' =>  $test_machine->DATA_ITEM_STORE->{faxfile} }; } );
-
+$test_machine->check_bundle();
 $test_machine->clear_test_data_all();
-done_testing;
-
 undef $fake_data;
 undef $test_machine;
+done_testing;
+
+
+#---------------------- aux
+sub set_faxes_preferences{
+    my($subscriber_id) = @_;
+    my $test_machine_aux = Test::Collection->new(name => 'faxserversettings');
+    my $uri = $test_machine_aux->get_uri($subscriber_id);
+    my($res,$faxserversettings,$req) = $test_machine_aux->check_item_get($uri);
+    $faxserversettings->{active} = 1;
+    $faxserversettings->{password} = 'aaa111';
+    $test_machine_aux->request_put($faxserversettings,$uri);
+}
 
 # vim: set tabstop=4 expandtab:
