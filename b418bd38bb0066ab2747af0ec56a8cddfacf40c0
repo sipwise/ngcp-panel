@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9df570_6626b46a",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 4746,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-08T11:29:38Z",
+      "side": 1,
+      "message": "yes, proper way imho",
+      "range": {
+        "startLine": 4746,
+        "startChar": 8,
+        "endLine": 4746,
+        "endChar": 44
+      },
+      "revId": "b418bd38bb0066ab2747af0ec56a8cddfacf40c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
