@@ -575,43 +575,46 @@ sub get_uri_current{
 }
 
 sub encode_content{
-    my($self,$content, $type) = @_;
+    my($self, $content, $type) = @_;
     $type //= $self->ENCODE_CONTENT;
+    my ($content_res,$content_type_res) = ($content, $type);
     my %json_types = (
         'application/json' => 1,
         'application/json-patch+json' => 1,
         'json' => 1,
     );
-    #print "1. content=$content;\n\n";
+    #print Dumper ["encode_content.1",$content, $type] ;
     if($content){
-        if( $json_types{$type} && (('HASH' eq ref $content) ||('ARRAY' eq ref $content))  ){
-            return JSON::to_json($content);
-        }elsif('multipart/form-data' eq $type
-            && 'HASH' eq ref $content
+        if('HASH' eq ref $content
             && $content->{json}
             && (('HASH' eq ref $content->{json}) || ( 'ARRAY' eq ref $content->{json} ) )
         ){
             $content->{json} = JSON::to_json($content->{json});
-            return [
+            $content_res = [
                 %{$content},
             ];
+            $content_type_res = 'multipart/form-data';
+        }elsif( $json_types{$type} && (('HASH' eq ref $content) ||('ARRAY' eq ref $content))  ){
+            $content_res = JSON::to_json($content);
+            $type eq 'json' and $content_type_res = 'application/json';
         }
     }
-    #print "2. content=$content;\n\n";
-    return $content;
+    #print Dumper ["encode_content.2",$content_res,$content_type_res] ;
+    return ($content_res,$content_type_res);
 }
 sub request{
     my($self,$req) = @_;
 
-    my $credentials = {};
-    (@$credentials{qw/user password/},undef,undef) = $self->get_role_credentials();
     if($self->DEBUG){
+        my $credentials = {};
+        (@$credentials{qw/user password/},undef,undef) = $self->get_role_credentials();
         my $curl = Test::HTTPRequestAsCurl::as_curl($req, credentials => $credentials );
         print $req->as_string;
         print "$curl\n\n";
     }
     if(!$self->DEBUG_ONLY){
         my $res = $self->ua->request($req);
+        diag(sprintf($self->name_prefix."request:%s: %s", $req->method, $req->uri));
         #draft of the debug mode
         if($self->DEBUG){
             if($res->code >= 400){
@@ -628,7 +631,7 @@ sub request{
 sub request_process{
     my($self,$req) = @_;
     #print $req->as_string;
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     my $rescontent = $self->get_response_content($res);
     return ($res,$rescontent,$req);
 }
@@ -647,21 +650,24 @@ sub get_request_put{
     $uri ||= $self->get_uri_current;
     $uri = $self->normalize_uri($uri);
     #This is for multipart/form-data cases
-    $content = $self->encode_content($content, $self->content_type->{PUT});
+    my $content_type;
+    ($content,$content_type) = $self->encode_content($content, $self->content_type->{PUT});
     my $req = POST $uri,
-        Content_Type => $self->content_type->{PUT},
+        Content_Type => $content_type,
         $content ? ( Content => $content ) : ();
     $req->method('PUT');
     $req->header('Prefer' => 'return=representation');
     return $req;
 }
 sub get_request_patch{
-    my($self,$uri) = @_;
+    my($self,$uri,$content) = @_;
     $uri ||= $self->get_uri_current;
-    $uri = $self->normalize_uri($uri);
+    my $content_type;
+    ($content,$content_type) = $self->encode_content($content, $self->content_type->{PATCH});
     my $req = HTTP::Request->new('PATCH', $uri);
     $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => $self->content_type->{PATCH} );
+    $req->header('Content-Type' => $content_type );
+    $content and $req->content($content);
     return $req;
 }
 sub request_put{
@@ -677,10 +683,8 @@ sub request_put{
 sub request_patch{
     my($self,$content, $uri, $req) = @_;
     $uri ||= $self->get_uri_current;
-    $req ||= $self->get_request_patch($uri);
     #patch is always a json
-    $content = $self->encode_content($content, $self->content_type->{PATCH});
-    $content and $req->content($content);
+    $req ||= $self->get_request_patch($uri, $content);
     my $res = $self->request($req);
     if($res){
         my $rescontent = $self->get_response_content($res);
@@ -694,10 +698,11 @@ sub request_post{
     $uri ||= $self->get_uri_collection;
     $uri = $self->normalize_uri($uri);
     diag("request_post: uri: $uri;");
-    $content = $self->encode_content($content, $self->content_type->{POST} );
+    my $content_type;
+    ($content,$content_type) = $self->encode_content($content, $self->content_type->{POST});
     #form-data is set automatically, despite on $self->content_type->{POST}
     $req ||= POST $uri,
-        Content_Type => $self->content_type->{POST},
+        Content_Type => $content_type,
         Content => $content;
     $req->header('Prefer' => 'return=representation');
     my $res = $self->request($req);
@@ -1105,25 +1110,17 @@ sub check_item_get{
 sub process_data{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $data = $data_in || clone($self->DATA_ITEM);
-    defined $data_cb and $data_cb->($data, $data_cb_data);
+    if(defined $data_cb && 'CODE' eq ref $data_cb){
+        $data_cb->($data, $data_cb_data, $self);
+    }
     return $data;
-}
-sub get_item_post_content{
-    my($self, $data_cb, $data_in, $data_cb_data) = @_;
-    my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
-    #print Dumper $data;
-    my $content = {
-        $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
-        %$data,
-    };
-    return $content;
 }
 sub check_item_post{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
-    my $content = $self->get_item_post_content($data_cb, $data_in, $data_cb_data);
-    #print Dumper $content;
-    my ($res,$rescontent,$req) = $self->request_post($content);#,$uri,$req
-    return wantarray ? ($res,$rescontent,$req,$content) : $res;
+    my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
+    #print Dumper $data;
+    my ($res,$rescontent,$req) = $self->request_post($data);#,$uri,$req
+    return wantarray ? ($res,$rescontent,$req,$data) : $res;
 };
 sub check_item_delete{
     my($self, $uri, $msg) = @_;
@@ -1225,7 +1222,7 @@ sub check_get2put{
     delete $put_out->{content_in}->{_links};
     delete $put_out->{content_in}->{_embedded};
     # check if put is ok
-    (defined $put_in->{data_cb}) and $put_in->{data_cb}->($put_out->{content_in});
+    $put_out->{content_in} = $self->process_data($put_in->{data_cb}, $put_out->{content_in});
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
     foreach my $field (@{$ignore_fields}){
         delete $get_out->{content}->{$field};
@@ -1418,6 +1415,13 @@ sub http_code_msg{
     }
     $code and is($res->code, $code, $message_res);
 }
+
+sub name_prefix{
+    my($self,$name) = @_;
+    $name //= $self->name;
+    return $name ? $name.': ' : '';
+} 
+
 sub get_cached_data{
     my($self) = @_;
     return (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};

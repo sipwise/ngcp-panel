@@ -23,7 +23,9 @@ $fake_data->set_data_from_script({
             greetingfile => [ dirname($0).'/resources/test.wav' ],
         },
         'query' => [ ['dir', 'json', 'dir'] ],
-        'create_special'=> $fake_data->create_special_upload(),
+        'data_callbacks' => {
+            'get2put' => $fake_data->get2put_upload_callback('voicemailgreetings'),
+        }
     },
 });
 my $test_machine = Test::Collection->new(
@@ -100,9 +102,8 @@ if(ok($soxi_output =~/GSM/, "Check that we converted wav to GSM encoding:".$soxi
     $test_machine->http_code_msg(422, "check response code on put empty file", $res_put_empty, $content_put_empty);
     diag("Check dirty file:");
     #btw - other vriant of tha put data - closer to stored. will be changed by Collection::encode_content
-    ($res_put_empty,$content_put_empty) = $test_machine->request_put( {
-        %{$test_machine->DATA_ITEM_STORE},
-        greetingfile => [ dirname($0).'/resources/empty.wav' ],
+    ($res_put_empty,$content_put_empty) = $test_machine->request_put({ 
+        'data_cb' => $fake_data->{data}->{'voicemailgreetings'}->{data_callbacks}->{get2put},
     } );
     $test_machine->http_code_msg(422, "check response code on put empty file", $res_put_empty, $content_put_empty);
 }

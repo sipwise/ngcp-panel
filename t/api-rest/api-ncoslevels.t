@@ -24,6 +24,9 @@ $fake_data->set_data_from_script({
             local_ac    => '1',
             intra_pbx   => '1',
         },
+        'data_callbacks' => {
+            'uniquizer_cb'  => sub{ $_[0]->{level} .=  $_[1]->{i}; },
+        },
     },
 });
 
