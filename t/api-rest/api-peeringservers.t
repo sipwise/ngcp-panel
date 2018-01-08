@@ -30,7 +30,9 @@ $fake_data->set_data_from_script({
             enabled   => '1',
         },
         query => ['group_id','name'],
-        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        'data_callbacks' => {
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        },
     },
 });
 
