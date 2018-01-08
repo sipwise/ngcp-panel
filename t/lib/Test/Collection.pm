@@ -612,6 +612,7 @@ sub request{
     }
     if(!$self->DEBUG_ONLY){
         my $res = $self->ua->request($req);
+        diag(sprintf($self->name_prefix."request:%s:%s", $req->method,$req->uri));
         #draft of the debug mode
         if($self->DEBUG){
             if($res->code >= 400){
@@ -1418,6 +1419,13 @@ sub http_code_msg{
     }
     $code and is($res->code, $code, $message_res);
 }
+
+sub name_prefix{
+    my($self,$name) = @_;
+    $name //= $self->name;
+    return $name ? $name.': ' : '';
+} 
+
 sub get_cached_data{
     my($self) = @_;
     return (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
