@@ -9,6 +9,20 @@ use Test::ForceArray qw/:all/;
 my $test_machine = Test::Collection->new(
     name => 'calllists',
 );
+my $fake_data = Test::FakeData->new;
+
+$fake_data->set_data_from_script({
+    'calllists' => {
+        'data' => {
+        },
+        'mandatory_query_parameters' => { 
+            'or' => {
+                subscriber_id => 'subscribers',
+                customer_id => 'customers',
+            }
+        },
+    },
+});
 
 diag('Note that the next tests require at least one subscriber to be present');
 
