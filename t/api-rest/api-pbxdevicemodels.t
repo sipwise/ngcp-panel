@@ -70,13 +70,9 @@ $fake_data->set_data_from_script({
             front_image => [ dirname($0).'/resources/empty.txt' ],
         },
         'query' => [ ['model','json','model'] ],
-        'create_special'=> sub {
-            my ($self,$collection_name,$test_machine) = @_;
-            my $prev_params = $test_machine->get_cloned('content_type');
-            @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
-            $test_machine->check_create_correct(1);
-            $test_machine->set(%$prev_params);
-        },
+        'create_special'=> $fake_data->create_special_upload(            
+            sub { Test::FakeData::string_uniquizer(\$_[0]->{json}->{model}); }
+        ),
         'no_delete_available' => 1,
     },
 });
