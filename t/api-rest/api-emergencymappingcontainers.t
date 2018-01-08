@@ -21,7 +21,9 @@ $fake_data->set_data_from_script({
             name               => "apitest",
         },
         'query' => ['name','reseller_id'],
-        'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        'data_callbacks' => {
+            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+        },
     },
 });
 

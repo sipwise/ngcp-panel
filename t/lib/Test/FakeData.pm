@@ -72,6 +72,11 @@ has 'data_init' => (
     isa => 'HashRef',
 #    builder => 'build_data',
 );
+has 'use_data_callbacks' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => sub { 0 },
+);
 has 'FLAVOUR' => (
     is => 'rw',
     isa => 'Str',
@@ -191,6 +196,9 @@ sub build_data{
                 reseller_id => sub { return shift->get_id('resellers',@_); },
             },
             'query' => ['login'],
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{login}); },
+            },
             'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{login}); },
         },
         'applyrewrites' => {
@@ -220,10 +228,13 @@ sub build_data{
             'data' => {
                 sources => [{source => "test",}],
                 subscriber_id => sub { return shift->get_id('subscribers',@_); },
-                name => "from_test"
+                name => "from_test",
+                mode => "whitelist",
             },
             'query' => ['name','subscriber_id'],
-            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            },
         },
         'customerlocations' => {
             'data' => {
@@ -236,12 +247,15 @@ sub build_data{
                 description => "test_api",
             },
             'query' => ['name'],
-            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            },
         },
         'ncoslnpcarriers' => {
             'data' => {
                 ncos_level_id  => sub { return shift->get_id('ncoslevels',@_); },
                 description => "test_api",
+                carrier_id => sub { return shift->get_id('lnpcarriers',@_); },
             },
         },
         'ncospatterns' => {
@@ -380,9 +394,11 @@ sub build_data{
             'default' => 'billing_profiles',
             'no_delete_available' => 1,
             'dependency_requires_recreation' => ['resellers'],
-            'uniquizer_cb' => sub {
-                Test::FakeData::string_uniquizer(\$_[0]->{name});
-                Test::FakeData::string_uniquizer(\$_[0]->{handle});
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { 
+                    Test::FakeData::string_uniquizer(\$_[0]->{name});
+                    Test::FakeData::string_uniquizer(\$_[0]->{handle});
+                },
             },
         },
         'subscriberprofilesets' => {
@@ -392,7 +408,9 @@ sub build_data{
                 description => 'api_test_subscriberprofileset',
             },
             'query' => ['name'],
-            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            },
         },
         'subscriberprofiles' => {
             'data' => {
@@ -401,7 +419,9 @@ sub build_data{
                 description    => 'api_test subscriberprofile',
             },
             'query' => ['name'],
-            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            },
         },
         'pbxdeviceconfigs' => {
             'data' => {
@@ -427,7 +447,9 @@ sub build_data{
             },
             'query' => ['name'],
             'no_delete_available' => 1,
-            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            },
         },
         'rewriterulesets' => {
             'data' => {
@@ -440,12 +462,15 @@ sub build_data{
                 callee_out_dpid => '4',
             },
             'query' => ['name'],
-            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            },
         },
     };
     $self->process_data($data);
     return $data;
 }
+
 sub process_data{
     my($self,$data,$collections_slice) = @_;
     $collections_slice //= [keys %$data];
@@ -551,12 +576,14 @@ sub search_item{
     $self->searched->{$collection_name} = [$res, $content, $req];
     return ($res, $content, $req);
 }
+
 sub clear_cached_data{
     my($self, @collections)  = @_;
     delete @{$self->loaded}{@collections};
     delete @{$self->created}{@collections};
     delete @{$self->searched}{@collections};
 }
+
 sub set_data_from_script{
     my($self, $data_in)  = @_;
     while (my($collection_name,$collection_data) = each %$data_in ){
@@ -608,6 +635,7 @@ sub load_collection_data{
         $self->load_db(undef,[$collection_name]);
     }
 }
+
 sub get_id{
     my $self = shift;
     #my( $collection_name, $parents_in, $params)  = @_;
@@ -625,12 +653,23 @@ sub get_id{
     }
     return $res_id;
 }
+
+sub get_field{
+    my $self = shift;
+    #my( $collection_name, $parents_in, $params)  = @_;
+    my( $collection_name, $field )  = @_;
+    $self->get_id($collection_name);
+    my $item = $self->get_existent_item($collection_name);
+    return $item->{content}->{$field};
+}
+
 sub get_existent_item{
     my($self, $collection_name)  = @_;
     my $item = $self->created->{$collection_name}->{values}->[0]
         || $self->loaded->{$collection_name}->[0];
     return $item
 }
+
 sub get_existent_id{
     my($self, $collection_name)  = @_;
     my $id;
@@ -641,20 +680,30 @@ sub get_existent_id{
     }
     return $id
 }
+
 sub collection_id_exists{
     my($self, $collection_name)  = @_;
     return (exists $self->loaded->{$collection_name}) || ( exists $self->created->{$collection_name});
 }
+
 sub set_collection_data_fields{
     my($self, $collection_name, $fields)  = @_;
     @{ $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data} }{keys %$fields} = values %$fields;
 }
+
 sub get_collection_data_fields{
     my($self, $collection_name, @fields )  = @_;
     my $data = $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data};
     my %res = map { $_ => $data->{$_} } @fields;
     return wantarray ? %res : ( values %res )[0];
 }
+
+sub get_collection_interface{
+    my($self,$collection_name,$data) = @_;
+    $data //= $self->data;
+    return $data->{$collection_name}->{collection} ?  $data->{$collection_name}->{collection} : $collection_name;
+}
+
 sub process{
     my($self, $collection_name, $parents_in)  = @_;
     $self->load_collection_data($collection_name);
@@ -696,7 +745,12 @@ sub create{
     if(exists $self->data->{$collection_name}->{create_special} && 'CODE' eq ref $self->data->{$collection_name}->{create_special}){
         $self->data->{$collection_name}->{create_special}->($self,$collection_name,$test_machine);
     }else{
-        $test_machine->check_create_correct(1);
+        $test_machine->check_create_correct(1,
+            $self->{use_data_callbacks}
+            ?
+            $self->data->{$collection_name}->{data_callbacks}->{uniquizer_cb}
+            :
+            undef);
     }
     $self->created->{$collection_name} = {values=>[values %{$test_machine->DATA_CREATED->{ALL}}], order => scalar keys %{$self->created}};
 
@@ -730,17 +784,6 @@ sub create{
         delete $self->data->{$collection_name}->{process_cycled};
     }
     return $self->get_existent_id($collection_name);
-}
-
-sub create_special_upload{
-    my $self = shift;
-    return sub {
-        my ($self,$collection_name,$test_machine) = @_;
-        my $prev_params = $test_machine->get_cloned('content_type');
-        @{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
-        $test_machine->check_create_correct(1);
-        $test_machine->set(%$prev_params);
-    };
 }
 
 sub clear_test_data_all{
@@ -795,20 +838,7 @@ sub read_cached_data{
     store {loaded => $self->loaded, created => $self->created}, $self->data_cache_file;
 }
 
-sub DEMOLISH{
-    my($self) = @_;
-    $self->clear_test_data_all();
-    if( keys %{$self->undeletable} ){
-        print "We have test items, which can't delete through API:\n";
-        print Dumper [ sort { $a cmp $b } keys %{$self->undeletable} ];
-    }
-}
 
-sub get_collection_interface{
-    my($self,$collection_name,$data) = @_;
-    $data //= $self->data;
-    return $data->{$collection_name}->{collection} ?  $data->{$collection_name}->{collection} : $collection_name;
-}
 sub string_uniquizer{
     my($field,$data,$additions) = @_;
     state $i;
@@ -821,6 +851,29 @@ sub string_uniquizer{
     }
     return $field;
 }
+
+sub get2put_upload_callback{
+    my($self,$collection_name) = @_;
+     return sub {
+        my($data,$data_add,$test_machine) = @_;
+        my $upload_data = clone $self->data->{$collection_name}->{data};
+        delete $upload_data->{json};
+        %$data = ( 
+            'json' => {%$data},
+            %$upload_data,
+        ); 
+    };
+}
+
+sub DEMOLISH{
+    my($self) = @_;
+    $self->clear_test_data_all();
+    if( keys %{$self->undeletable} ){
+        print "We have test items, which can't delete through API:\n";
+        print Dumper [ sort { $a cmp $b } keys %{$self->undeletable} ];
+    }
+}
+
 1;
 
 __END__
