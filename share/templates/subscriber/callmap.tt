@@ -1,37 +1,81 @@
 [% site_config.title = c.loc('Call Flow for Call-ID [_1]', callid) -%]
+    <link rel="stylesheet" href="/css/callflow.css">
+    <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css">
 
-<script type="text/javascript" src="/js/libs/jquery.popup.js"></script>
-<script type="text/javascript">
-    function pkgPopup(pkgid) {
-        // http://www.jquerypopup.com/documentation.php
-        modalPopup("center", 100, 640, 10, "#666666", 40, "#FFFFFF", "#000000", 4, 5, 300,
-            "[% c.uri_for_action('/subscriber/get_packet', c.req.captures) %]/"+pkgid,
-            "/img/loader.gif");
-    }
-</script>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
+    <script src="/js/libs/aliaseditor.js"></script>
+    <script src="/js/libs/diagram.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="/js/libs/jquery-1.7.2.min.js"></script>
 
+
+<script>
+        $( function() {
+            $("#diagram").resizable({
+                handles: 'n, s'
+            })
+
+            $('#diagram').resize(function(){
+                $('#message-frame').height($("#wrapper").height() - $("#diagram").height());
+            });
+
+            $(window).resize(function(){
+                $('#message-frame').height($("#wrapper").height() - $("#diagram").height());
+                $('#diagram').width($("#wrapper").width());
+//                  location.reload();
+            });
+        });
+
+        $(document).mouseup(function(e)
+        {
+            var container = $("#editorDiv");
+
+            // if the target of the click isn't the container nor a descendant of the container
+            if (!container.is(e.target) && container.has(e.target).length === 0)
+            {
+                container.hide();
+            }
+        });
+    </script>
 <div class="row">
-    <span class="pull-left" style="margin:0 5px 0 5px;">
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/get_pcap', c.req.captures) %]"><i class="icon-file"></i> [% c.loc('Download PCAP') %]</a>
-    </span>
+	<div id="controls">
+	    <a class="btn btn-primary btn-small" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+<!--	    <a class="btn btn-primary btn-small" href="[% c.uri_for_action('/subscriber/get_pcap', c.req.captures) %]"><i class="icon-file"></i> [% c.loc('Download PCAP') %]</a> -->
+	    <input id="hideInternalButton" type="button" class="btn-primary btn-small" value="Show/Hide internal"/>
+	    <input id="considerPortsButton" type="button" class="btn-primary btn-small" value="Consider Ports"/>
+	    <input id="expandEditor" type="button" class="btn-primary btn-small" value="Node Editor"/>
+	    <div id="editorDiv">
+		node|alias
+		<textarea id="nodeEditor"></textarea>
+		<input id="applyNodeEdit" type="button" value="Apply"/>
+	    </div
+	</div>
+
+	<div id="diagram_header">
+	</div>
+
+	<div id="wrapper">
+	    <div id="diagram">
+	    </div>
+	    <div id="message-frame">
+	    </div>
+	</div>
+
+	<script>
+	$.getJSON("[% c.uri_for_action('/subscriber/get_json', c.req.captures) %]", function(frames) {
+		var considerports = true;
+		var data = {};
+		data.frames = frames;
+		data = prepareData(data, considerports);
+		redraw(data, considerports);
+	});
+	</script>
 </div>
+</div>
+
 [% back_created = 1 -%]
 
-<div class="row">
-    [% FOREACH m IN messages -%]
-        <div class="alert alert-[% m.type %]">[% m.text %]</div>
-    [% END -%]
-</div>
-
 <div class="ngcp-separator"></div>
-
-<img src="[% c.uri_for_action('/subscriber/get_png', c.req.captures) %]"
-    width="[% canvas.width %]" height="[% canvas.height %]" usemap="#diamap" style="min-width:[% canvas.width %]px !important" />
-<map name="diamap">
-    [% FOREACH area IN canvas.areas -%]
-        <area shape="rect" coords="[% area.coords %]" href="javascript:pkgPopup([% area.id %])" />
-    [% END -%]
-</map>
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
