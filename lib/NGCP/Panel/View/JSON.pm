@@ -1,6 +1,8 @@
 package NGCP::Panel::View::JSON;
 
 use strict;
+use warnings;
+
 use parent 'Catalyst::View::JSON';
 
 =head1 NAME

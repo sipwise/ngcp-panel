@@ -1,8 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 use lib '../lib';
 #use lib '/home/agranig/projects/HTML-FormHandler-0.40026/lib';
 
 use strict;
+use warnings;
 use Data::Printer;
 
 {

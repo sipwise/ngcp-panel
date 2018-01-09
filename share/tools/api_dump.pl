@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use strict;
+use warnings;
 use LWP::UserAgent qw();
 use JSON qw();
 use DateTime qw();

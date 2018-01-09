@@ -1,6 +1,7 @@
-#!/usr/bin/perl -w 
+#!/usr/bin/perl
 use lib qw(/root/VMHost/ngcp-panel/t/lib);
 use strict;
+use warnings;
 
 use Test::Collection;
 use Data::Dumper;

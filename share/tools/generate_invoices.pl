@@ -1,5 +1,6 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 use strict;
+use warnings;
 
 use Getopt::Long qw/GetOptionsFromString/;
 use DBI;

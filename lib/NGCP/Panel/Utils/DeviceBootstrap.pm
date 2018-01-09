@@ -2,6 +2,8 @@ package NGCP::Panel::Utils::DeviceBootstrap;
 
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use NGCP::Panel::Utils::DeviceBootstrap::VendorRPC;
 use NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
