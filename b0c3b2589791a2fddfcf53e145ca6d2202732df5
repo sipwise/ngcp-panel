@@ -22,6 +22,30 @@
       "revId": "b0c3b2589791a2fddfcf53e145ca6d2202732df5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_3d82fa52",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-09T13:05:56Z",
+      "side": 0,
+      "message": "ups :)",
+      "parentUuid": "da9df570_fdb8722c",
+      "range": {
+        "startLine": 60,
+        "startChar": 1,
+        "endLine": 60,
+        "endChar": 108
+      },
+      "revId": "b0c3b2589791a2fddfcf53e145ca6d2202732df5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
