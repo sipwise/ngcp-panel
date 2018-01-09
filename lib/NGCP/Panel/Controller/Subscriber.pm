@@ -4737,6 +4737,22 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     $c->response->body($pcap);
 }
 
+sub get_uas_json :Chained('callflow_base') :PathPart('json') :Args(0) {
+    my ($self, $c) = @_;
+
+    my %int_uas = (
+      $c->config->{callflow}->{lb_int}, 'lb',
+      $c->config->{callflow}->{lb_ext}, 'lb',
+      $c->config->{callflow}->{proxy},  'proxy',
+      $c->config->{callflow}->{sbc},    'sbc',
+      $c->config->{callflow}->{app},    'app',
+      $c->config->{callflow}->{pbx},    'pbx',
+    );
+
+    $c->response->content_type('application/json');
+    $c->response->body(encode_json(%int_uas));
+}
+
 sub get_json :Chained('callflow_base') :PathPart('json') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
@@ -4749,13 +4765,13 @@ sub get_json :Chained('callflow_base') :PathPart('json') :Args(0) {
 
     return unless($calls_rs);
 
-    my @cols = qw(method timestamp src_ip dst_ip call_id payload transport id src_port dst_port request_uri);
+    my @cols = qw(cseq_method timestamp src_ip dst_ip call_id payload transport id src_port dst_port request_uri);
 
     my @msgs;
 
     foreach my $row ($calls_rs->all ) {
         my $m = { map { $_ => $row->$_.'' } @cols };
-    push(@msgs, $m);
+        push(@msgs, $m);
     }
 
     $c->response->content_type('application/json');
