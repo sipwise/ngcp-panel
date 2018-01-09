@@ -1,5 +1,8 @@
 package NGCP::Panel::Block::Contract::ProfileMappingsTimeline;
 
+use warnings;
+use strict;
+
 use parent ("NGCP::Panel::Block::Block");
 
 sub template {

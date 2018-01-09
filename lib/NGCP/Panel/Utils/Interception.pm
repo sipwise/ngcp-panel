@@ -1,5 +1,8 @@
 package NGCP::Panel::Utils::Interception;
 
+use warnings;
+use strict;
+
 use Data::Dumper;
 use LWP::UserAgent;
 use TryCatch;

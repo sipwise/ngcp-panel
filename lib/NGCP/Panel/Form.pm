@@ -1,4 +1,8 @@
 package NGCP::Panel::Form;
+
+use warnings;
+use strict;
+
 use Module::Load::Conditional qw/can_load/;
 
 my %forms = ();

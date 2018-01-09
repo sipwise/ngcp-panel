@@ -1,4 +1,8 @@
 package NGCP::Panel::Controller::API::MetaConfigDefs;
+
+use warnings;
+use strict;
+
 use NGCP::Panel::Utils::Generic qw(:all);
 use boolean qw(true);
 use Data::HAL qw();

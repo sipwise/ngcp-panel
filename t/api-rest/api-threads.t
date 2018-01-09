@@ -1,7 +1,9 @@
-use threads qw();
-#use Sipwise::Base;
-use Test::More;
+use warnings;
+use strict;
 
+use threads qw();
+
+use Test::More;
 
 
 BEGIN {

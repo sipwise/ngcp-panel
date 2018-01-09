@@ -1,5 +1,8 @@
 package NGCP::Panel::Block::Contract::ProfileMappingsList;
 
+use warnings;
+use strict;
+
 use parent ("NGCP::Panel::Block::Block");
 
 sub template {

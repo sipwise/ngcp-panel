@@ -1,5 +1,8 @@
 package NGCP::Panel::Utils::Fax;
 
+use warnings;
+use strict;
+
 use English;
 use File::Temp qw/tempfile/;
 use File::Slurp;
@@ -76,7 +79,7 @@ sub send_fax {
     my $client = new NGCP::Fax;
     use Data::Dumper;
     $c->log->debug('invoke send_fax with args: ' . Dumper(\%sendfax_args));
-    $client->send_fax(\%sendfax_args);
+    my $res = $client->send_fax(\%sendfax_args);
     $c->log->debug("webfax: res=$res;");
 }
 
@@ -120,9 +123,10 @@ sub get_fax {
         return unless $filepath;
     } else {
         if ($format) {
-            ($tmp_fh, $filepath) =
-                File::Temp::tempfile( DIR => $cfg->{spool_dir}."/tmp")
-                    or $self->error("Cannot create temp file: $ERRNO");
+            unless ( ($tmp_fh, $filepath) = File::Temp::tempfile( DIR => $c->config->{faxserver}{spool_dir}."/tmp") ) {
+                $c->log->error("Cannot create temp file: $ERRNO");
+                return;
+            }
             binmode $tmp_fh;
             close $tmp_fh;
             print $tmp_fh $item->voip_fax_data->data;
@@ -167,7 +171,7 @@ sub process_fax_journal_item {
     my $dst_sub  = $result->callee_subscriber // undef; #undef, if not local, or if callee is username
     #try finding it:
     unless ($dst_sub) {
-        my $dst_src_sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+        my $prov_dst_sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
             'username' => $result->callee,
         })->first();
         if ($prov_dst_sub) {

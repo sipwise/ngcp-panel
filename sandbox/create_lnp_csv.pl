@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+use warnings;
+use strict;
+
 my $path = '/tmp/lnp.csv';
 
 my $carrier_base = 'carrier_';

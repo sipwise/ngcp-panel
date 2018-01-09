@@ -1,5 +1,8 @@
 package Parent;
 
+use warnings;
+use strict;
+
 our $VERSION = 1.23;
 
 sub VERSION { $VERSION }
