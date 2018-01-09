@@ -1,6 +1,8 @@
 package NGCP::Panel::View::TT;
 
 use strict;
+use warnings;
+
 use parent 'Catalyst::View::TT';
 
 __PACKAGE__->config(

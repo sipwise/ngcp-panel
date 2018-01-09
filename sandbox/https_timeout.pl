@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use warnings;
 
 use MIME::Base64 qw/encode_base64/;
 use URI::Escape;

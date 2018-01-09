@@ -1,8 +1,10 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 
 use strict;
+use warnings;
+
 use URI::Escape;
-use XML::Mini::Document;;
+use XML::Mini::Document;
 use Data::Dumper;
 use Moo;
 use Types::Standard qw(Str);
