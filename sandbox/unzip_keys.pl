@@ -1,5 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 use strict;
+use warnings;
+
 use Data::Dumper;
 use File::Slurp qw/read_file/;
 use IO::Uncompress::Unzip qw/unzip/;

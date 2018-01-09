@@ -1,5 +1,8 @@
 package NGCP::Panel::Utils::GD::Simple;
 
+## no critic (RequireUseWarnings, RequirePodSections)
+# disable perlcritic because it's upstream code
+
 =head1 NAME
 
 NGCP::Panel::GD::Simple - Simplified interface to GD library,

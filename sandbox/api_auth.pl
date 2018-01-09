@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
+use warnings;
 use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new();
