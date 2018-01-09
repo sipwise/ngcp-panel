@@ -1,0 +1,88 @@
+.class-rect {
+  fill: white;
+  stroke-width: 1px;
+  stroke: black;
+}
+
+.class-rect:hover {
+    cursor: pointer;
+}
+
+.class-label {
+  font-size: 10px;
+  font-family: Courier
+}
+
+.class-label:hover {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.class-message {
+  font-size: x-small;
+  font-family: Courier
+}
+
+.class-message:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.class-title {
+  font-size: big;
+  font-family: Courier
+}
+
+.message-number {
+    font-size: small;
+    font-weight: bold;
+}
+
+.class-vertical-line {
+  stroke: #888;
+}
+
+#editorDiv {
+    display: none;
+    padding: 10px;
+    position:absolute;
+    background-color: white;
+    z-index: 1001;
+    border: solid 2px black;
+}
+
+textarea {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    resize: none;
+    background: #f1f1f1;
+}
+
+#controls {
+    height: 30px;
+}
+
+#diagram_header {
+    height: 50px;
+    background: #f1f1f1;
+}
+
+#wrapper {
+    width: 100%;
+    top: 93px;
+    height: 100%;
+    bottom: 3px;
+}
+
+#diagram {
+    height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#message-frame {
+    height: 150px;
+    width: 100%;
+    font-family: Courier;
+}
