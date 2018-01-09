@@ -119,6 +119,8 @@ sub update_item {
     my $schema = $c->model('DB');
 
     foreach my $field(qw/cc ac sn is_primary/) {
+        $old_resource->{$field} //= '';
+        $resource->{$field} //= '';
         unless($old_resource->{$field} eq $resource->{$field}) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Field '$field' is not allowed to be updated via this API endpoint, use /api/subscriber/\$id instead.");
             return;
