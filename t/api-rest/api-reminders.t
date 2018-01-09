@@ -1,4 +1,5 @@
 use strict;
+use warnings;
 
 use Test::Collection;
 use Test::FakeData;

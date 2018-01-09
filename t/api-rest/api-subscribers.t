@@ -1,4 +1,5 @@
 use strict;
+use warnings;
 
 use Test::Collection;
 use Test::FakeData;
@@ -242,7 +243,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
         $groups->[1]->{content}->{pbx_groupmember_ids} = [];
         diag("4. Check that group will return empty members after put members empty");
-        my($group_put,$group_get) = $test_machine->check_put2get($groups->[1], undef, $put2get_check_params);
+        ($group_put,$group_get) = $test_machine->check_put2get($groups->[1], undef, $put2get_check_params);
 #5415 WF
         diag("5415: check that groups management doesn't change members order;\n");
 
@@ -255,7 +256,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $members->[2]->{content}->{pbx_group_ids} = [ map { $groups->[$_]->{content}->{id} } (2,1)];
         #my($res,$content) = $test_machine->check_put2get($members->[2]);
         #fix for the  5415 prevents changing members order in the group, this is why resulting groups order for the member may differ from the input
-        my($res,$content) = $test_machine->request_put(@{$members->[2]}{qw/content location/});
+        ($res,$content) = $test_machine->request_put(@{$members->[2]}{qw/content location/});
         $test_machine->http_code_msg(200, "PUT for groups was successful", $res, $content);
         my(undef, $members_2_after_touch) = $test_machine->check_item_get($members->[2]->{location});
         is_deeply( [sort @{$members->[2]->{content}->{pbx_group_ids}}], [sort @{$members_2_after_touch->{pbx_group_ids}}], "Check member groups after touch - the same cortege");
@@ -313,9 +314,9 @@ if($remote_config->{config}->{features}->{cloudpbx}){
     my($res,$content) = $test_machine->request_post( $data);
     $test_machine->http_code_msg(422, "Pimary number should be a hash", $res, $content);
     #MT#22853
-    my $data = clone $test_machine->DATA_ITEM;
+    $data = clone $test_machine->DATA_ITEM;
     $data->{alias_numbers} = ["49221222899813", "49221222899814", "49221222899814"];
-    my($res,$content) = $test_machine->request_post( $data);
+    ($res,$content) = $test_machine->request_post( $data);
     $test_machine->http_code_msg(422, "Alias numbers should be the hashs", $res, $content);
 }
 

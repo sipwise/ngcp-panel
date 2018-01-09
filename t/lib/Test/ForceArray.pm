@@ -1,6 +1,7 @@
 package Test::ForceArray;
 
 use strict;
+use warnings;
 use Exporter qw'import';
 
 our @EXPORT      = qw//;
