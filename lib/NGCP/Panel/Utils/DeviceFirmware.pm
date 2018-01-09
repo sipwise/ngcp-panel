@@ -1,5 +1,8 @@
 package NGCP::Panel::Utils::DeviceFirmware;
 
+use warnings;
+use strict;
+
 use English;
 
 sub insert_firmware_data {

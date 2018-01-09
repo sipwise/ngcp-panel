@@ -1,5 +1,8 @@
 package NGCP::Panel::Utils::MySQL;
 
+use warnings;
+use strict;
+
 sub bulk_insert {
 	my(%params) = @_;
 	my ($c, $s, $trans, $query, $data, $chunksize) = @params{qw/c schema do_transaction query data chunk_size/};

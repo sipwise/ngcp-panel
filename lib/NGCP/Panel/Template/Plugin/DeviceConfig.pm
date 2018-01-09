@@ -1,4 +1,8 @@
 package NGCP::Panel::Template::Plugin::DeviceConfig;
+
+use warnings;
+use strict;
+
 use parent 'Template::Plugin';
 use Crypt::RC4;
 

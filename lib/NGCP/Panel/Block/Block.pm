@@ -1,5 +1,8 @@
 package NGCP::Panel::Block::Block;
 
+use warnings;
+use strict;
+
 use Template;
 
 sub new {

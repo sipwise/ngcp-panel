@@ -1,3 +1,6 @@
+use warnings;
+use strict;
+
 use lib 'inc';
 use Local::Module::Build;
 
