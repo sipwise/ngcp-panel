@@ -4737,6 +4737,22 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     $c->response->body($pcap);
 }
 
+sub get_uas_json :Chained('callflow_base') :PathPart('uas_json') :Args(0) {
+    my ($self, $c) = @_;
+
+    my %int_uas = (
+      $c->config->{callflow}->{lb_int}, 'lb',
+      $c->config->{callflow}->{lb_ext}, 'lb',
+      $c->config->{callflow}->{proxy},  'proxy',
+      $c->config->{callflow}->{sbc},    'sbc',
+      $c->config->{callflow}->{app},    'app',
+      $c->config->{callflow}->{pbx},    'pbx',
+    );
+
+    $c->response->content_type('application/json');
+    $c->response->body(encode_json(\%int_uas));
+}
+
 sub get_json :Chained('callflow_base') :PathPart('json') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
