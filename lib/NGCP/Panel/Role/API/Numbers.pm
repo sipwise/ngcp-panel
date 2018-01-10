@@ -119,9 +119,9 @@ sub update_item {
 
     # we maybe want to remove such checks to compare readonly fields:
     foreach my $field(qw/cc ac sn is_primary/) {
-        $old_resource->{$field} //= '';
-        $resource->{$field} //= '';
-        unless($old_resource->{$field} eq $resource->{$field}) {
+        unless(($old_resource->{$field} // '') eq ($resource->{$field} // '')
+            or ('JSON::false' eq ref $resource->{$field} and $old_resource->{$field} == 0)
+            or ('JSON::true' eq ref $resource->{$field} and $old_resource->{$field} == 1)) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Field '$field' is not allowed to be updated via this API endpoint, use /api/subscriber/\$id instead.");
             return;
         }
