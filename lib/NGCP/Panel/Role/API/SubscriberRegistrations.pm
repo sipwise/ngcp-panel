@@ -142,6 +142,16 @@ sub subscriber_from_id {
     return $sub;
 }
 
+sub item_by_aor {
+    my ($self, $c, $sub, $contact) = @_;
+
+    return $self->item_rs($c)->search({
+        'me.contact'  => $contact,
+        'me.username' => $sub->provisioning_voip_subscriber->username,
+        'me.domain'   => $sub->provisioning_voip_subscriber->domain->domain,
+    })->first;
+}
+
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form, $create) = @_;
 
@@ -155,13 +165,14 @@ sub update_item {
     );
 
     my $sub = $self->subscriber_from_id($c, $resource->{subscriber_id});
-    return unless($sub);
+    return unless ($sub);
 
     unless($create) {
         $self->delete_item($c, $item);
     }
     my $cflags = 0;
     $cflags |= 64 if($form->values->{nat});
+
     NGCP::Panel::Utils::Kamailio::create_location($c,
         $sub->provisioning_voip_subscriber,
         $form->values->{contact},
@@ -170,28 +181,46 @@ sub update_item {
         0, # flags
         $cflags
     );
-    my $item_reloaded;
-    
-    {
-        NGCP::Panel::Utils::Kamailio::flush($c);
-        my $rs = $self->item_rs($c);
-        $item_reloaded = $rs->search({
-            'me.contact' => $form->values->{contact},
-            'me.username' => $sub->provisioning_voip_subscriber->username,
-            'me.domain' => $sub->provisioning_voip_subscriber->domain->domain,
-        })->first;
-    }
-    
-    if($create) {
-        $item = $item_reloaded; 
-    }else{
-        # we need to reload it since we changed the content via an external
-        # xmlrpc call
-        $item->discard_changes;
-        if($item_reloaded){
-            $item = $item_reloaded;         
+
+    NGCP::Panel::Utils::Kamailio::flush($c);
+
+    return $item;
+}
+
+sub fetch_item {
+    my ($self, $c, $resource, $form, $old_item) = @_;
+
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+        run => 1,
+        #form_params => { 'use_fields_for_input_without_param' => 1 },
+    );
+
+    my $sub = $self->subscriber_from_id($c, $resource->{subscriber_id});
+    return unless ($sub);
+
+    my $item;
+    my $flush_timeout = 5;
+
+    while ($flush_timeout) {
+        $item = $self->item_by_aor($c, $sub, $form->values->{contact});
+        if ($item && (!$old_item || $item->id != $old_item->id)) {
+            last;
         }
+        $item = undef;
+        $flush_timeout--;
+        last unless $flush_timeout;
+        sleep 1;
     }
+
+    unless ($item) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Could not find a new registration entry in the db, that might be caused by the kamailio flush mechanism, where the item has been updated successfully");
+        return;
+    }
+
     return $item;
 }
 
