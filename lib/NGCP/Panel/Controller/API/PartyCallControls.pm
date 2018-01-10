@@ -56,11 +56,7 @@ __PACKAGE__->config(
     },
 );
 
-sub gather_default_action_roles {
-    my ($self, %args) = @_; my @roles = ();
-    push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
-    return @roles;
-}
+
 sub OPTIONS :Allow {
     my ($self, $c) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
