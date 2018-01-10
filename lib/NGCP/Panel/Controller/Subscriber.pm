@@ -4748,14 +4748,18 @@ sub get_json :Chained('callflow_base') :PathPart('json') :Args(0) {
     });
 
     return unless($calls_rs);
-
     my @cols = qw(method timestamp src_ip dst_ip call_id payload transport id src_port dst_port request_uri);
+    my $ac   = { method => 'column_method' };
 
     my @msgs;
 
     foreach my $row ($calls_rs->all ) {
-        my $m = { map { $_ => $row->$_.'' } @cols };
-    push(@msgs, $m);
+        my $m = { map {
+            my $col = $_;
+            my $ac  = $ac->{$col} // $col;
+            $col => $row->$ac.'';
+        } @cols };
+        push(@msgs, $m);
     }
 
     $c->response->content_type('application/json');
