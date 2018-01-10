@@ -56,11 +56,7 @@ sub query_params {
     ];
 }
 
-sub gather_default_action_roles {
-    my ($self, %args) = @_; my @roles = ();
-    push @roles, 'NGCP::Panel::Role::HTTPMethods' if $args{attributes}->{Method};
-    return @roles;
-}
+
 
 
 1;
