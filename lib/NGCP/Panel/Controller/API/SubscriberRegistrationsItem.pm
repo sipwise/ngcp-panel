@@ -101,13 +101,13 @@ sub OPTIONS :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
+
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -115,20 +115,29 @@ sub PATCH :Allow {
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriberregistration => $item);
+
         my $form = $self->get_form($c);
         my $old_resource = $self->resource_from_item($c, $item, $form);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        my ($guard, $txn_ok) = ($c->model('DB')->txn_scope_guard, 0);
+        {
+            $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+            last unless $item;
+
+            $guard->commit;
+            $txn_ok = 1;
+        }
+        last unless $txn_ok;
+
+        $item = $self->fetch_item($c, $resource, $form, $item);
         last unless $item;
-        
-        $guard->commit;
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+            $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $item->id));
             $c->response->body(q());
         } else {
             my $hal = $self->hal_from_item($c, $item, $form);
@@ -137,40 +146,51 @@ sub PATCH :Allow {
             ), $hal->as_json);
             $c->response->headers($response->headers);
             $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+            $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $item->id));
             $c->response->body($response->content);
         }
     }
+
     return;
 }
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
+
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriberregistration => $item);
+
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
+
         my $form = $self->get_form($c);
         my $old_resource = $self->resource_from_item($c, $item, $form);
 
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
-        last unless $item;
+        my ($guard, $txn_ok) = ($c->model('DB')->txn_scope_guard, 0);
+        {
+            $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+            last unless $item;
 
-        $guard->commit; 
+            $guard->commit;
+            $txn_ok = 1;
+        }
+        last unless $txn_ok;
+
+        $item = $self->fetch_item($c, $resource, $form, $item);
+        last unless $item;
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+            $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $item->id));
             $c->response->body(q());
         } else {
             my $hal = $self->hal_from_item($c, $item, $form);
@@ -179,10 +199,11 @@ sub PUT :Allow {
             ), $hal->as_json);
             $c->response->headers($response->headers);
             $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+            $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $item->id));
             $c->response->body($response->content);
         }
     }
+
     return;
 }
 
