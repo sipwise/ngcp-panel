@@ -22,6 +22,30 @@
       "revId": "db23c00d318aabb55746441032e2c9b706542b1b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_70a4b057",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T12:50:12Z",
+      "side": 1,
+      "message": "does the item_by_id() call do anything that requires an actual data rollback ? or if no item is returned it we can simply return from the scope with NOT_FOUND",
+      "parentUuid": "baa201ad_30cce835",
+      "range": {
+        "startLine": 116,
+        "startChar": 26,
+        "endLine": 116,
+        "endChar": 36
+      },
+      "revId": "db23c00d318aabb55746441032e2c9b706542b1b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
