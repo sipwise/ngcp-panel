@@ -118,6 +118,30 @@
       "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_90d034f9",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T11:00:18Z",
+      "side": 1,
+      "message": "hm, I think I just use \"READ COMMITTED\" isolation for this transaction, so the new item should be visible, therefore no need to commit() before fetch_item()",
+      "parentUuid": "baa201ad_f0a9807c",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 33
+      },
+      "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
