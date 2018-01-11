@@ -22,6 +22,30 @@
       "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_b091b854",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T10:23:08Z",
+      "side": 1,
+      "message": "exactly. because we remove the item in the transaction, then call the xmlrpc create_location() + flush() requests and an updated item is inserted by kamailio outside this transaction, so there is no way to obtain the new item inside the isolation level. \nfetch_item() - is to fetch the updated item to provide with the correct new id in the Location header of the response, so the clients can rely on that.",
+      "parentUuid": "baa201ad_90cd9489",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 33
+      },
+      "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
