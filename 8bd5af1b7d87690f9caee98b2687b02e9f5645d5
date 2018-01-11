@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa201ad_f0b50032",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T08:36:44Z",
+      "side": 1,
+      "message": "last probably doesn\u0027t make sense here (it\u0027s used to trigger rollback above)",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_d0b8fc2c",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T08:36:44Z",
+      "side": 1,
+      "message": "no-op",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_b0ab78d5",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T08:36:44Z",
+      "side": 1,
+      "message": "maybe make this private (_item_by_aor)?",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_70aaf0d5",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T08:36:44Z",
+      "side": 1,
+      "message": "no :)",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_90ae74e6",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T08:36:44Z",
+      "side": 1,
+      "message": "why validate_form here?",
+      "range": {
+        "startLine": 194,
+        "startChar": 0,
+        "endLine": 201,
+        "endChar": 6
+      },
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_50a5ec02",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T08:36:44Z",
+      "side": 1,
+      "message": "no-op",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
