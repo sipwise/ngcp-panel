@@ -39,8 +39,10 @@ sub set_config {
         }) },
         #action_roles => [qw(HTTPMethods)],
         log_response => 1,
+        log_request  => 1,
         %{$self->_set_config()},
-        #log_response = 0|1 - don't log response body
+        #log_response = 0|1 - don't log response body, used for binary data download api
+        #log_request = 0|1 - don't log response body, used for binary data upload api
         #own_transaction_control = {post|put|patch|delete|all => 1|0}
     );
 }
@@ -196,7 +198,9 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    $self->log_request($c);
+    if($self->config->{log_request}){
+        $self->log_request($c);
+    }
 }
 
 sub head {
@@ -239,7 +243,6 @@ sub OPTIONS  {
     my ($self) = shift;
     return $self->options(@_);
 }
-
 sub PUT {
     my ($self) = shift;
     return $self->put(@_);
