@@ -46,6 +46,30 @@
       "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_108fe424",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-11T10:28:22Z",
+      "side": 1,
+      "message": "i see, makes sense. maybe its worth to recreate a txngard for this remaining part. to not rely on this separate transaction\u0027s beein autocomitted, in case additional sql is added one day.",
+      "parentUuid": "baa201ad_b091b854",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 33
+      },
+      "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
