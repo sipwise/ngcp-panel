@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa201ad_90cd9489",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-11T10:18:34Z",
+      "side": 1,
+      "message": "but this is outside transaction now?",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 33
+      },
+      "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
