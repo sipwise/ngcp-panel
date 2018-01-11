@@ -278,7 +278,7 @@ PREPARE_BALANCE_CATCHUP:
                                                       interval_value => $interval_value,
                                                       create => $contract_create);
 
-        my $balance_values = _get_balance_values(schema => $schema,c => $c,
+        my $balance_values = _get_balance_values(schema => $schema, c => $c,
             stime => $stime,
             etime => $etime,
             #start_mode => $start_mode,
@@ -568,7 +568,7 @@ PREPARE_BALANCE_INITIAL:
                                                       interval_value => $interval_value,
                                                       create => NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp),);
 
-    my $balance_values = _get_balance_values(schema => $schema,
+    my $balance_values = _get_balance_values(schema => $schema, c => $c,
             stime => $stime,
             etime => $etime,
             #start_mode => $start_mode,
@@ -684,7 +684,7 @@ sub _get_balance_values {
         $ratio = 1.0;
     } else {
         $cash_balance = (defined $initial_balance ? $initial_balance : _DEFAULT_INITIAL_BALANCE);
-        $ratio = get_free_ratio($now,$stime, $etime);
+        $ratio = get_free_ratio($now,$stime, $etime,$c);
     }
 
     my $free_cash = $ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
@@ -695,6 +695,8 @@ sub _get_balance_values {
     $free_time_balance = $free_time;
     $free_time_balance_interval = 0;
 
+    $c->log->debug("ratio: $ratio, free cash: $free_cash, cash balance: $cash_balance, free time: $free_time, free time balance: $free_time_balance");
+
     return [cash_balance => sprintf("%.4f",$cash_balance),
             cash_balance_interval => sprintf("%.4f",$cash_balance_interval),
             free_time_balance => sprintf("%.0f",$free_time_balance),
@@ -703,7 +705,7 @@ sub _get_balance_values {
 }
 
 sub get_free_ratio {
-    my ($now,$stime,$etime) = @_;
+    my ($now,$stime,$etime,$c) = @_;
     if (!NGCP::Panel::Utils::DateTime::is_infinite_future($etime)) {
         my $ctime;
         if (defined $now) {
@@ -715,6 +717,7 @@ sub get_free_ratio {
         #my $ctime = (defined $now ? $now->clone : NGCP::Panel::Utils::DateTime::current_local);
         #$ctime->truncate(to => 'day') if $ctime->clone->truncate(to => 'day') > $stime;
         my $start_of_next_interval = _add_second($etime->clone,1);
+        $c->log->debug("ratio = " . ($start_of_next_interval->epoch - $ctime->epoch) . ' / ' . ($start_of_next_interval->epoch - $stime->epoch)) if $c;
         return ($start_of_next_interval->epoch - $ctime->epoch) / ($start_of_next_interval->epoch - $stime->epoch);
     }
     return 1.0;
@@ -1434,3 +1437,4 @@ sub get_topuplog_datatable_cols {
 }
 
 1;
+
