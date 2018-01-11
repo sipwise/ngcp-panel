@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "baa201ad_300a28d3",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T09:51:54Z",
+      "side": 1,
+      "message": "true, missed that",
+      "parentUuid": "baa201ad_1037e4b1",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa201ad_d0b8fc2c",
         "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
         "patchSetId": 4
@@ -72,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "baa201ad_500face1",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T09:51:54Z",
+      "side": 1,
+      "message": "ah yes! sorry :)",
+      "parentUuid": "baa201ad_70467025",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa201ad_b0ab78d5",
         "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
         "patchSetId": 4
@@ -101,6 +137,24 @@
       "side": 1,
       "message": "how is that different from item_by_id() that we have as public ? :)",
       "parentUuid": "baa201ad_b0ab78d5",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_7014b0f5",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-11T09:51:54Z",
+      "side": 1,
+      "message": "item_by_id is used outside this package (in Controller::API::SubscriberRegistrationsItem) while this is only used here",
+      "parentUuid": "baa201ad_904af425",
       "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
