@@ -94,6 +94,30 @@
       "revId": "db23c00d318aabb55746441032e2c9b706542b1b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_70403057",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T13:56:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baa201ad_70bbd072",
+      "range": {
+        "startLine": 116,
+        "startChar": 26,
+        "endLine": 116,
+        "endChar": 36
+      },
+      "revId": "db23c00d318aabb55746441032e2c9b706542b1b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
