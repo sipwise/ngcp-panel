@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "baa201ad_1037e4b1",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T09:39:37Z",
+      "side": 1,
+      "message": "it is needed here as if fetch_item an error + no item (there is an internal timeout logic inside fetch_item() then it must no go to the code below (similar to update_item() above)",
+      "parentUuid": "baa201ad_f0b50032",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa201ad_d0b8fc2c",
         "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2018-01-11T08:36:44Z",
       "side": 1,
       "message": "no-op",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_70467025",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T09:39:37Z",
+      "side": 1,
+      "message": "$c-\u003erequest-\u003epath contains /api/subscriberregistrations/12345 \n\nso the error he was that the Location header returned as \n/api/subscriberregistrations/12345123450\n\nnow it is correctly returned as \n/api/subscriberregistrations/12345",
+      "parentUuid": "baa201ad_d0b8fc2c",
       "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "baa201ad_904af425",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T09:39:37Z",
+      "side": 1,
+      "message": "how is that different from item_by_id() that we have as public ? :)",
+      "parentUuid": "baa201ad_b0ab78d5",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa201ad_70aaf0d5",
         "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2018-01-11T08:36:44Z",
       "side": 1,
       "message": "no :)",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_b047f81c",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T09:39:37Z",
+      "side": 1,
+      "message": "indeed :)\nforgot to remove this one.",
+      "parentUuid": "baa201ad_70aaf0d5",
       "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -93,6 +165,30 @@
     },
     {
       "key": {
+        "uuid": "baa201ad_f05180d9",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T09:39:37Z",
+      "side": 1,
+      "message": "good question, the intention was to make this method autonomous but as we have it under control there is probably no need to do the additional validation as we call it after update_item() anyways.",
+      "parentUuid": "baa201ad_90ae74e6",
+      "range": {
+        "startLine": 194,
+        "startChar": 0,
+        "endLine": 201,
+        "endChar": 6
+      },
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa201ad_50a5ec02",
         "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
         "patchSetId": 4
@@ -104,6 +200,24 @@
       "writtenOn": "2018-01-11T08:36:44Z",
       "side": 1,
       "message": "no-op",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_105e04ea",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T09:39:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baa201ad_50a5ec02",
       "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
