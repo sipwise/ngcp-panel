@@ -94,6 +94,30 @@
       "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_50e7ace4",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrationsItem.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-11T10:59:37Z",
+      "side": 1,
+      "message": "was just thinking about starting over with a fresh one\n\n$gard \u003d $c-\u003emodel(\u0027DB\u0027)-\u003etxn_scope_guard;\n.. -\u003efetch_item ..\n$guard-\u003ecommit;",
+      "parentUuid": "baa201ad_f0a9807c",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 33
+      },
+      "revId": "99f32c8532f2ca4eb54742caddda3ae3bfdb178d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
