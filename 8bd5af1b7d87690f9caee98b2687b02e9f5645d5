@@ -179,6 +179,24 @@
     },
     {
       "key": {
+        "uuid": "baa201ad_d0f0fccb",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T10:16:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baa201ad_30d86853",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa201ad_70aaf0d5",
         "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
         "patchSetId": 4
@@ -226,6 +244,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "baa201ad_b047f81c",
+      "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa201ad_10ba84e1",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-01-11T10:16:21Z",
+      "side": 1,
+      "message": "Also removed 2nd form validation here for performance reasons. Should be restored though if fetch_item()  to be used in the future before the actual form validation happening in update_item()",
+      "parentUuid": "baa201ad_705d90e9",
       "revId": "8bd5af1b7d87690f9caee98b2687b02e9f5645d5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
