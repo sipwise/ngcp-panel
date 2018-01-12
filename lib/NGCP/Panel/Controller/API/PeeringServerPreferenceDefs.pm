@@ -1,88 +1,19 @@
 package NGCP::Panel::Controller::API::PeeringServerPreferenceDefs;
-use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
-use HTTP::Headers qw();
-use HTTP::Status qw(:constants);
+use parent qw/NGCP::Panel::Role::EntityPreferenceDefs NGCP::Panel::Role::API/;
 
 use NGCP::Panel::Utils::Preferences;
-use JSON::Types qw();
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/NGCP::Panel::Role::Entities/;
-
-sub resource_name{
-    return 'peeringserverpreferencedefs';
-}
-sub dispatch_path{
-    return '/api/peeringserverpreferencedefs/';
-}
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-peeringserverpreferencedefs';
-}
-
-__PACKAGE__->config(
-    action => {
-        map { $_ => {
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin/],
-            Args => 0,
-            Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
-            Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
-    },
-);
-
-
-
-
-
-sub GET :Allow {
-    my ($self, $c) = @_;
-    {
-        my @links;
-        push @links,
-            NGCP::Panel::Utils::DataHalLink->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('%s', $self->dispatch_path));
-
-        my $hal = NGCP::Panel::Utils::DataHal->new(
-            links => [@links],
-        );
-        my $resource = NGCP::Panel::Utils::Preferences::api_preferences_defs( c => $c, preferences_group => 'peer_pref' );
-        $hal->resource($resource);
-
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
-            HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
-        return;
-    }
-    return;
-}
-
-
-
-
-
-
+__PACKAGE__->set_config({
+    preferences_group => 'peer_pref',
+    allowed_roles    => [qw/admin/],
+});
 
 1;
 
