@@ -410,9 +410,12 @@ sub allowed_methods_filtered {
     }
 }
 #
-#old: allowed_roles = [qw/admin subscriber /]
+#old:
+#sub config_allowed_roles {
+#    return [qw/admin subscriber /];
+#}
 #
-#from now also possible: 
+#also possible:
 #sub config_allowed_roles {
 #    return {
 #        'Default' => [qw/admin reseller subscriberadmin/],
@@ -420,29 +423,41 @@ sub allowed_methods_filtered {
 #        'POST'    => [qw/admin reseller/],
 #        'PUT'     => [qw/admin reseller/],
 #        'PATCH'   => [qw/admin reseller/],
+#        'Journal' => [qw/admin/],
 #    };
 #}
+#
+#sub config_allowed_roles {
+#    return [ [qw/admin subscriber/], [qw/admin/] ];
+#   #where [qw/admin/] - is Journal roles spec
+#}
+#
 
 sub config_allowed_roles {
     return [qw/admin reseller/];
 }
 
 sub get_allowed_roles {
-    my($self, $method) = @_;
+    my($self, $roles_config_in, $method) = @_;
 
-    my $roles_config = $self->config_allowed_roles;
-    my ($allowed_roles_default,$allowed_roles_per_methods);
+    my $roles_config = $roles_config_in // $self->config_allowed_roles;
+    my ($allowed_roles_default, $allowed_roles_journal, $allowed_roles_per_methods);
 
     if('HASH' eq ref $roles_config){
         $allowed_roles_default = delete $roles_config->{Default};
         $allowed_roles_per_methods = {map {
             $_ => $roles_config->{$_} // $allowed_roles_default,
-        } @{ $self->allowed_methods }};
+        } @{ $self->allowed_methods }, 'Journal' };
     }else{
-        $allowed_roles_default = 'ARRAY' eq ref $roles_config ? $roles_config : [$roles_config];
+        $allowed_roles_default = 'ARRAY' eq ref $roles_config ? $roles_config : [$self->config_allowed_roles];
+        if ('ARRAY' eq ref $roles_config->[0]) {
+            $allowed_roles_default = $roles_config->[0];
+            $allowed_roles_journal = $roles_config->[1] // $allowed_roles_default;
+        }
         $allowed_roles_per_methods = {map {
             $_ => $allowed_roles_default,
         } @{ $self->allowed_methods }};
+        $allowed_roles_per_methods->{Journal} = $allowed_roles_journal;
     }
     return $method ? $allowed_roles_per_methods->{$method} : $allowed_roles_per_methods;
 }
@@ -909,18 +924,18 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(
-                relation => 'self', 
+                relation => 'self',
                 href => sprintf(
-                    "%s%s", 
-                    $self->dispatch_path, 
+                    "%s%s",
+                    $self->dispatch_path,
                     $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
                 ),
             ),
             Data::HAL::Link->new(
-                relation => "ngcp:".$self->resource_name, 
+                relation => "ngcp:".$self->resource_name,
                 href => sprintf(
-                    "/api/%s/%s", 
-                    $self->resource_name, 
+                    "/api/%s/%s",
+                    $self->resource_name,
                     $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
                 )
             ),
@@ -1127,14 +1142,26 @@ sub complete_transaction{
 }
 #------ accessors ---
 
-sub dispatch_path {
-    my $self = shift;
-    return '/api/'.$self->resource_name.'/';
+sub resource_name{
+    return $_[0]->config->{resource_name};
+}
+
+#need it for sub config, when config is not defined yet, so we just format known resource_name properly
+sub dispatch_path{
+    return '/api/'.($_[0]->resource_name // $_[1]).'/';
 }
 
 sub relation {
     my $self = shift;
-    return 'http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name;
+    return 'http://purl.org/sipwise/ngcp-api/#rel-'.$_[0]->resource_name;
+}
+
+sub item_name{
+    return $_[0]->config->{item_name};
+}
+
+sub allowed_methods{
+    return $_[0]->config->{allowed_methods};
 }
 
 #------ /accessors ---
