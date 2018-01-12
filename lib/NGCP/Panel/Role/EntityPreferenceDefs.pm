@@ -1,15 +1,16 @@
-package NGCP::Panel::Role::Entities;
+package NGCP::Panel::Role::EntityPreferenceDefs;
 
 use warnings;
 use strict;
-# NGCP::Panel::Role::EntityController
+
 use parent qw/Catalyst::Controller/;
+# NGCP::Panel::Role::EntityController
 use boolean qw(true);
 use Safe::Isa qw($_isa);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use Data::HAL qw();
-use Data::HAL::Link qw();
+use NGCP::Panel::Utils::DataHal qw();
+use NGCP::Panel::Utils::DataHalLink qw();
 
 ##### --------- common part
 
@@ -20,7 +21,6 @@ sub auto :Private {
     if($self->config->{log_request}){
         $self->log_request($c);
     }
-    return 1;
 }
 
 sub end :Private {
@@ -28,7 +28,6 @@ sub end :Private {
     if($self->config->{log_response}){
         $self->log_response($c);
     }
-    return 1;
 }
 
 sub GET {
@@ -45,6 +44,7 @@ sub OPTIONS  {
     my ($self) = shift;
     return $self->options(@_);
 }
+
 
 sub set_config {
     my $self = shift;
@@ -73,7 +73,6 @@ sub set_config {
         #own_transaction_control->{PUT|POST|PATCH|DELETE|ALL} = 0|1 - don't start transaction guard in parent classes, implementation need to control it
         #ReturnContentType => 'binary'#mostly for GET. value different from 'application/json' says that method is going to return binary data using get_item_binary_data
     #}
-
     my $obj_name = $self;
     if (!defined $params->{interface_type}) {
         if ($obj_name =~/Item$/) {
@@ -97,6 +96,7 @@ sub set_config {
         $params->{item_name} = $params->{resource_name};
         $params->{item_name} =~s/s$//;
     }
+
 
     my $params_all_methods = delete $params->{AllMethods} // {};
 
@@ -172,70 +172,27 @@ sub head {
 
 ##### --------- /common part
 
-sub options {
-    my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods_filtered($c);
-    my $post_allowed = grep { $_ eq 'POST' } @{ $allowed_methods };
-    $c->response->headers(HTTP::Headers->new(
-        Allow => join(', ', @{ $allowed_methods }),
-#        $post_allowed 
-#        ? ( 
-        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
-#        ) : (),
-    ));
-    $c->response->content_type('application/json');
-    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
-
 sub get {
     my ($self, $c) = @_;
-    my $header_accept = $c->request->header('Accept');
-    if(defined $header_accept && ($header_accept eq 'text/csv')) {
-        $self->return_csv($c);
-        return;
-    }
-    my $page = $c->request->params->{page} // 1;
-    my $rows = $c->request->params->{rows} // 10;
     {
-        my $items = $self->get_list($c);
-        return unless $items;
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
-        my (@embedded, @links);
-        my ($form) = $self->get_form($c);
-        my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
-        for my $item (@items) {
-            push @embedded, $self->hal_from_item($c, $item, $form, {});
-            push @links, Data::HAL::Link->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%s', $c->request->path, $self->get_item_id($c,
-                    $item, undef, undef, { purpose => 'hal_links_href' })),
-            );
-        }
+        my @links;
         push @links,
-            Data::HAL::Link->new(
+            NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
-        if(($total_count / $rows) > $page ) {
-            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
-        }
-        if($page > 1) {
-            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
-        }
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('%s', $self->dispatch_path));
 
-        my $hal = Data::HAL->new(
-            embedded => [@embedded],
+        my $hal = NGCP::Panel::Utils::DataHal->new(
             links => [@links],
         );
-        $hal->resource({
-            total_count => $total_count,
-        });
-        my $response = HTTP::Response->new(HTTP_OK, undef,
+        my $resource = NGCP::Panel::Utils::Preferences::api_preferences_defs( c => $c, preferences_group => $self->config->{'preferences_group'} );
+        $hal->resource($resource);
+
+        my $response = HTTP::Response->new(HTTP_OK, undef, 
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -244,52 +201,17 @@ sub get {
     return;
 }
 
-sub post {
-    my ($self) = shift;
-    my ($c) = @_;
-    my $guard = $self->get_transaction_control($c);
-    {
-       my ($form) = $self->get_form($c, 'add');
-        my $method_config = $self->config->{action}->{POST};
-        my $process_extras= {};
-        my ($resource) = $self->get_valid_data(
-            c               => $c,
-            method          =>  'POST',
-            media_type      =>  $method_config->{ContentType} // 'application/json',
-            uploads         => $method_config->{Uploads} // [] ,
-            form            => $form,
-        );
-        last unless $resource;
-        #instead of type parameter get_form can check request method
-        last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
-        last unless $resource;
-        last unless $self->check_duplicate($c, undef, undef, $resource, $form, $process_extras);
-        last unless $self->check_resource($c, undef, undef, $resource, $form, $process_extras);
-
-        my $item = $self->create_item($c, $resource, $form, $process_extras);
-        last unless $item;
-
-        $self->complete_transaction($c);
-
-        $self->post_process_commit($c, 'create', $item, undef, $resource, $form, $process_extras);
-
-        return if defined $c->stash->{api_error_message};
-
-        $self->return_representation_post($c, 'item' => $item, 'form' => $form );
-    }
+sub options {
+    my ($self, $c) = @_;
+    my $allowed_methods = $self->allowed_methods_filtered($c);
+    $c->response->headers(HTTP::Headers->new(
+        Allow => join(', ', @{ $allowed_methods }),
+        #TODO: Adapt Collection test to don't check Accept_Post if collection dosn't provide POST method
+        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
+    ));
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
-}
-
-
-sub POST {
-    my ($self) = shift;
-    return $self->post(@_);
 }
 
 1;
