@@ -1,4 +1,4 @@
-package NGCP::Panel::Role::EntitiesItem;
+package NGCP::Panel::Role::EntityPreferenceDefs;
 
 use warnings;
 use strict;
@@ -6,14 +6,10 @@ use strict;
 use parent qw/Catalyst::Controller/;
 use boolean qw(true);
 use Safe::Isa qw($_isa);
-use Path::Tiny qw(path);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use Data::HAL qw();
 use Data::HAL::Link qw();
-use NGCP::Panel::Utils::Generic qw(:all);
-use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Utils::ValidateJSON qw();
 
 ##### --------- common part
 
@@ -50,6 +46,7 @@ sub OPTIONS  {
     return $self->options(@_);
 }
 
+
 sub set_config {
     my $self = shift;
     my ($params) = @_;
@@ -77,7 +74,6 @@ sub set_config {
         #own_transaction_control->{PUT|POST|PATCH|DELETE|ALL} = 0|1 - don't start transaction guard in parent classes, implementation need to control it
         #ReturnContentType => 'binary'#mostly for GET. value different from 'application/json' says that method is going to return binary data using get_item_binary_data
     #}
-
     my $obj_name = $self;
     if (!defined $params->{interface_type}) {
         if ($obj_name =~/Item$/) {
@@ -101,6 +97,7 @@ sub set_config {
         $params->{item_name} = $params->{resource_name};
         $params->{item_name} =~s/s$//;
     }
+
 
     my $params_all_methods = delete $params->{AllMethods} // {};
 
@@ -177,32 +174,27 @@ sub head {
 ##### --------- /common part
 
 sub get {
-    my ($self, $c, $id) = @_;
+    my ($self, $c) = @_;
     {
-        my $item = $self->item_by_id_valid($c, $id);
-        last unless $item;
-        my $header_accept = $c->request->header('Accept');
+        my @links;
+        push @links,
+            Data::HAL::Link->new(
+                relation => 'curies',
+                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+                name => 'ngcp',
+                templated => true,
+            ),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf('%s', $self->dispatch_path));
 
-        if( ( defined $header_accept
-                && ($header_accept ne 'application/json')
-                && ($header_accept ne '*/*')
-            )
-            || ( $self->config->{action}->{GET}->{ReturnContentType} 
-                && $self->config->{action}->{GET}->{ReturnContentType} ne 'application/json'
-            )
-        ) {
-            $self->return_requested_type($c,$id,$item);
-            return;
-        }
+        my $hal = Data::HAL->new(
+            links => [@links],
+        );
+        my $resource = NGCP::Panel::Utils::Preferences::api_preferences_defs( c => $c, preferences_group => $self->config->{'preferences_group'} );
+        $hal->resource($resource);
 
-        my $hal = $self->hal_from_item($c, $item);
-        return unless $hal;
-        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-            (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-[a-z]+)"|rel="item $1"|r =~
-                s/rel=self/rel="item self"/r;
-            } $hal->http_headers),
-        ), $hal->as_json);
+        my $response = HTTP::Response->new(HTTP_OK, undef, 
+            HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
         return;
@@ -210,141 +202,17 @@ sub get {
     return;
 }
 
-sub patch {
-    my ($self, $c, $id) = @_;
-    my $guard = $self->get_transaction_control($c);
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
-
-        my ($form, $process_extras);
-        ($form) = $self->get_form($c, 'edit');
-
-        my $json = $self->get_valid_patch_data(
-            c          => $c,
-            id         => $id,
-            media_type => 'application/json-patch+json',
-            form       => $form,
-        );
-        last unless $json;
-
-        my $item = $self->item_by_id_valid($c, $id);
-        last unless $item;
-        my $old_resource = $self->resource_from_item($c, $item);
-        #$old_resource = clone($old_resource);
-        ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
-        my $resource = $self->apply_patch($c, $old_resource, $json);
-        last unless $resource;
-
-        ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
-        last unless $item;
-
-        $self->complete_transaction($c);
-        $self->post_process_commit($c, 'patch', $item, $old_resource, $resource, $form, $process_extras);
-
-        $self->return_representation($c,
-            'item' => $item,
-            'form' => $form,
-            'preference' => $preference,
-        );
-    }
-    return;
-}
-
-sub put {
-    my ($self, $c, $id) = @_;
-    my $guard = $self->get_transaction_control($c);
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
-
-        #$old_resource = clone($old_resource);
-        ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
-        my ($form, $process_extras);
-        ($form) = $self->get_form($c, 'edit');
-
-        my $item = $self->item_by_id_valid($c, $id);
-        last unless $item;
-        my $method_config = $self->config->{action}->{PUT};
-        my ($resource, $data) = $self->get_valid_data(
-            c          => $c,
-            id         => $id,
-            method     => 'PUT',
-            media_type => $method_config->{ContentType} // 'application/json',
-            uploads    => $method_config->{Uploads} // [] ,
-            form       => $form,
-        );
-        last unless $resource;
-        my $old_resource = $self->resource_from_item($c, $item);
-
-        ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
-        last unless $item;
-
-        $self->complete_transaction($c);
-        $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
-        $self->return_representation($c,
-            'item' => $item,
-            'form' => $form,
-            'preference' => $preference,
-        );
-    }
-    return;
-}
-
-
-sub delete {
-    my ($self, $c, $id) = @_;
-
-    my $guard = $self->get_transaction_control($c);
-    {
-        my $item = $self->item_by_id_valid($c, $id);
-        last unless $item;
-
-        $self->delete_item($c, $item );
-
-        $self->complete_transaction($c);
-        $self->post_process_commit($c, 'delete', $item);
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
-    }
-    return;
-}
-
-sub delete_item{
-    my($self, $c, $item) = @_;
-    $item->delete();
-}
-
 sub options {
-    my ($self, $c, $id) = @_;
+    my ($self, $c) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
-    my $patch_allowed = grep { $_ eq 'PATCH' } @{ $allowed_methods };
     $c->response->headers(HTTP::Headers->new(
         Allow => join(', ', @{ $allowed_methods }),
-        $patch_allowed 
-        ? ( 
-        Accept_Patch => 'application/json-patch+json',
-        ) : (),
+        #TODO: Adapt Collection test to don't check Accept_Post if collection dosn't provide POST method
+        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
-}
-
-sub PUT {
-    my ($self) = shift;
-    return $self->put(@_);
-}
-
-sub PATCH {
-    my ($self) = shift;
-    return $self->patch(@_);
-}
-
-sub DELETE {
-    my ($self) = shift;
-    return $self->delete(@_);
 }
 
 1;
