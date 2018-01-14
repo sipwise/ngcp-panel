@@ -35,23 +35,12 @@ sub journal_query_params {
     return $self->get_journal_query_params($query_params);
 }
 
-__PACKAGE__->config(
-    action => {
-        (map { $_ => {
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin/],
-            Args => 1,
-            Does => [qw(ACL RequireSSL)],
-            Method => $_,
-            Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }),
-        @{ __PACKAGE__->get_journal_action_config(__PACKAGE__->resource_name,{
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin/],
-            Does => [qw(ACL RequireSSL)],
-        }) }
-    },
-);
+__PACKAGE__->set_config({
+    allowed_roles => {
+        Default => [qw/admin/],
+        Journal => [qw/admin/],
+    }
+});
 
 
 
