@@ -75,18 +75,9 @@ sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-contracts';
 }
 
-__PACKAGE__->config(
-    action => {
-        map { $_ => {
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'admin',
-            Args => 0,
-            Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
-            Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods },
-    },
-);
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin/],
+});
 
 
 sub GET :Allow {
