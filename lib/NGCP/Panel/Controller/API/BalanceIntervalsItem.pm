@@ -54,7 +54,7 @@ sub query_params {
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
-    AllMethods    => {
+    action_add    => {
         item_base => {
             Chained => '/',
             PathPart => 'api/' . __PACKAGE__->resource_name,
@@ -89,20 +89,6 @@ __PACKAGE__->set_config({
         },        
     }
 });
-
-__PACKAGE__->config(
-    action => {
-        (map { $_ => {
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
-            Args => 1,
-            Does => [qw(ACL RequireSSL)],
-            Method => $_,
-            Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }),
-    },
-);
-
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
