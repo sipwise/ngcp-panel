@@ -52,16 +52,9 @@ sub query_params {
     ];
 }
 
-__PACKAGE__->config(
-    action => {
-        (map { $_ => {
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
-            Args => 1,
-            Does => [qw(ACL RequireSSL)],
-            Method => $_,
-            Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }),
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller/],
+    AllMethods    => {
         item_base => {
             Chained => '/',
             PathPart => 'api/' . __PACKAGE__->resource_name,
@@ -94,6 +87,19 @@ __PACKAGE__->config(
             AllowedRole => [qw/admin reseller/],
             Does => [qw(ACL RequireSSL)]
         },        
+    }
+});
+
+__PACKAGE__->config(
+    action => {
+        (map { $_ => {
+            ACLDetachTo => '/api/root/invalid_user',
+            AllowedRole => [qw/admin reseller/],
+            Args => 1,
+            Does => [qw(ACL RequireSSL)],
+            Method => $_,
+            Path => __PACKAGE__->dispatch_path,
+        } } @{ __PACKAGE__->allowed_methods }),
     },
 );
 
