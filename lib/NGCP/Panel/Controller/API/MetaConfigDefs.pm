@@ -30,18 +30,9 @@ sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-metaconfigdefs';
 }
 
-__PACKAGE__->config(
-    action => {
-        map { $_ => {
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],#left adminand reseller, as test can run as reseller too. Just don't return full config
-            Args => 0,
-            Does => [qw(ACL CheckTrailingSlash RequireSSL)],
-            Method => $_,
-            Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
-    },
-);
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller/],
+});
 
 
 
