@@ -38,23 +38,12 @@ sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
 
-__PACKAGE__->config(
-    action => {
-        (map { $_ => {
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller subscriber subscriberadmin/],
-            Args => 1,
-            Does => [qw(ACL RequireSSL)],
-            Method => $_,
-            Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }),
-        @{ __PACKAGE__->get_journal_action_config(__PACKAGE__->resource_name,{
-            ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
-            Does => [qw(ACL RequireSSL)],
-        }) },
-    },
-);
+__PACKAGE__->set_config({
+    allowed_roles => {
+        Default => [qw/admin reseller subscriber subscriberadmin/],
+        Journal => [qw/admin reseller/],
+    }
+});
 
 
 
