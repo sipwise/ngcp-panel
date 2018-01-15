@@ -7,26 +7,16 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PbxDeviceM
 
 use HTTP::Status qw(:constants);
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    GET => {
+        ReturnContentType => 'binary',
+    },
+    log_response  => 0,
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
-}
-
-sub config_allowed_roles {
-    return [qw/admin reseller subscriberadmin subscriber/];
-}
-
-sub _set_config{
-    my ($self, $method) = @_;
-    if($method && 'GET' eq $method){
-        return {
-            ReturnContentType => 'binary',
-        };
-    }
-    return {
-        log_response => 0,
-    };
 }
 
 sub get_item_binary_data{
