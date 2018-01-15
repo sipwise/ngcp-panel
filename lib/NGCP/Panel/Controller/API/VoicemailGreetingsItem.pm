@@ -4,7 +4,12 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::VoicemailGreetings/;
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    PUT => { 
+        'ContentType' => ['multipart/form-data'],#,
+        'Uploads'    => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
+    },
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT DELETE/];
@@ -12,21 +17,6 @@ sub allowed_methods{
 
 sub config_allowed_roles {
     return [qw/admin reseller subscriberadmin subscriber/];
-}
-
-sub _set_config{
-    my ($self, $method) = @_;
-    $method //='';
-    #todo: cpommon parts can be moved to the "Role" parent
-    if ('POST' eq $method || 'PUT' eq $method){
-        return {
-            'ContentType' => ['multipart/form-data'],#,
-            'Uploads'     => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
-            #TODO: check requested mimetype against provided data
-            #'Accepted'    => {'audio/x-wav' => [{'recording' => 'voicemail_greeting_[%dir%]_[%subscriber_id%]'}],
-        };
-    }
-    return {};
 }
 
 sub update_item_model{
