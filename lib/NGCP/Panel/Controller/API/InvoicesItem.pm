@@ -5,14 +5,9 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Invoices/;
 
-__PACKAGE__->set_config();
-
-sub _set_config{
-    my ($self, $method) = @_;
-    return {
-        log_response => 0,
-    };
-}
+__PACKAGE__->set_config({
+    log_response => 0,
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD DELETE/];
