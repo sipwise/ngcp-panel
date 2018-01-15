@@ -1089,7 +1089,7 @@ sub check_transaction_control{
     }else{
         if($config->{ALL}){
             $res = 0;
-        }elsif( ('HASH' eq $self->config->{own_transaction_control}->{$action} && $self->config->{own_transaction_control}->{$action}->{$step} )
+        }elsif( ('HASH' eq ref $self->config->{own_transaction_control}->{$action} && $self->config->{own_transaction_control}->{$action}->{$step} )
             || $self->config->{own_transaction_control}->{$action}){
             $res = 0;
         }
