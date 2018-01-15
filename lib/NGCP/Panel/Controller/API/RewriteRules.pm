@@ -7,14 +7,10 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use HTTP::Status qw(:constants);
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    own_transaction_control => { POST => 1 },
+});
 
-sub _set_config{
-    my ($self, $method) = @_;
-    return {
-        own_transaction_control => { POST => 1 },
-    };
-}
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
