@@ -8,14 +8,9 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::Rewrite;
 
-__PACKAGE__->set_config();
-
-sub _set_config{
-    my ($self, $method) = @_;
-    return {
-        own_transaction_control => { ALL => 1 },
-    };
-}
+__PACKAGE__->set_config({
+    own_transaction_control => { POST => 1 },
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];

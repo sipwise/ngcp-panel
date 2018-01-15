@@ -5,7 +5,12 @@ use Sipwise::Base;
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::VoicemailGreetings/;
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    POST => { 
+        'ContentType' => ['multipart/form-data'],#,
+        'Uploads'    => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
+    },
+});
 
 sub allowed_methods{
     return [qw/OPTIONS HEAD GET POST/];
@@ -18,19 +23,6 @@ sub config_allowed_roles {
 sub api_description {
     return 'Defines the voicemail greetings. A GET on an item with Accept "audio/x-wav" returns the binary blob of the greeting.';
 };
-
-sub _set_config{
-    my ($self, $method) = @_;
-    $method //='';
-    if ('POST' eq $method || 'PUT' eq $method){
-        return {
-            'ContentType' => ['multipart/form-data'],#,
-            'Uploads'    => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
-        };
-    }
-    return {};
-}
-
 
 sub query_params {
     return [

@@ -11,20 +11,16 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-__PACKAGE__->set_config();
-sub _set_config{
-    my ($self, $method) = @_;
-    $method //='';
-    if ('POST' eq $method){
-        return {
-            'ContentType' => ['multipart/form-data'],#,
-            'Uploads'     => [qw/front_image mac_image/],
-#            Also correct way for the allowed_roles, and really the last word. Will be applied over all others.
-#            'AllowedRole' => [qw/admin reseller/],
-        };
+__PACKAGE__->set_config({
+    POST => {
+        'ContentType' => ['multipart/form-data'],
+        'Uploads'     => [qw/front_image mac_image/],
+    },
+    allowed_roles => {
+        'Default' => [qw/admin reseller subscriberadmin subscriber/],
+        'POST'    => [qw/admin reseller/],
     }
-    return {};
-}
+});
 
 # curl -v -X POST --user $USER --insecure -F front_image=@sandbox/spa504g-front.jpg -F mac_image=@sandbox/spa504g-back.jpg -F json='{"reseller_id":1, "vendor":"Cisco", "model":"SPA999", "linerange":[{"name": "Phone Keys", "can_private":true, "can_shared":true, "can_blf":true, "keys":[{"labelpos":"top", "x":5110, "y":5120},{"labelpos":"top", "x":5310, "y":5320}]}]}' https://localhost:4443/api/pbxdevicemodels/
 
