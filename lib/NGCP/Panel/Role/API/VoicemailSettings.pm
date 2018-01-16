@@ -7,8 +7,8 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
 sub _item_rs {
@@ -45,18 +45,18 @@ sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
     my $resource = $self->resource_from_item($c, $item, $form);
 
-    my $hal = NGCP::Panel::Utils::DataHal->new(
+    my $hal = Data::HAL->new(
         links => [
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->provisioning_voip_subscriber->voip_subscriber->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->provisioning_voip_subscriber->voip_subscriber->id)),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->provisioning_voip_subscriber->voip_subscriber->id)),
+            Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->provisioning_voip_subscriber->voip_subscriber->id)),
             $self->get_journal_relation_link($item->provisioning_voip_subscriber->voip_subscriber->id),
         ],
         relation => 'ngcp:'.$self->resource_name,

@@ -7,8 +7,8 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHalLink qw();
-use NGCP::Panel::Utils::DataHal qw();
+use Data::HAL::Link qw();
+use Data::HAL qw();
 use DateTime::Format::Strptime;
 use HTTP::Status qw(:constants);
 use JSON::Types;
@@ -33,18 +33,18 @@ sub hal_from_item {
 
     my $query_string = $self->query_param_string($c);
 
-    my $hal = NGCP::Panel::Utils::DataHal->new(
+    my $hal = Data::HAL->new(
         links => [
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("%s?%s", $self->dispatch_path, $query_string)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d?%s", $self->dispatch_path, $item->id, $query_string)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d?%s", $type, $item->id, $query_string)),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("%s?%s", $self->dispatch_path, $query_string)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d?%s", $self->dispatch_path, $item->id, $query_string)),
+            Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d?%s", $type, $item->id, $query_string)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

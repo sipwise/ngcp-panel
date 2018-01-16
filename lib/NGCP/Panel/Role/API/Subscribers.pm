@@ -7,8 +7,8 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use Test::More;
@@ -163,37 +163,37 @@ sub hal_from_item {
         $is_subadm = 0;
     }
 
-    my $hal = NGCP::Panel::Utils::DataHal->new(
+    my $hal = Data::HAL->new(
         links => [
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
 
             # available also to subscribers
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberpreferences', href => sprintf("/api/subscriberpreferences/%d", $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:voicemailsettings', href => sprintf("/api/voicemailsettings/%d", $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:reminders', href => sprintf("/api/reminders/?subscriber_id=%d", $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:callforwards', href => sprintf("/api/callforwards/%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:subscriberpreferences', href => sprintf("/api/subscriberpreferences/%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:voicemailsettings', href => sprintf("/api/voicemailsettings/%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:reminders', href => sprintf("/api/reminders/?subscriber_id=%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:callforwards', href => sprintf("/api/callforwards/%d", $item->id)),
 
             # only available to admins/resellers
             ($is_sub ? () : (
-                ($item->provisioning_voip_subscriber && $item->provisioning_voip_subscriber->profile_set_id) ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberprofilesets', href => sprintf("/api/subscriberprofilesets/%d", $item->provisioning_voip_subscriber->profile_set_id))) : (),
-                ($item->provisioning_voip_subscriber && $item->provisioning_voip_subscriber->profile_id) ? (NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberprofiles', href => sprintf("/api/subscriberprofiles/%d", $item->provisioning_voip_subscriber->profile_id))) : (),
-                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:domains', href => sprintf("/api/domains/%d", $item->domain->id)),
-                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?subscriber_id=%d", $item->id)),
-                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscriberregistrations', href => sprintf("/api/subscriberregistrations/?subscriber_id=%d", $item->id)),
-                #NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:trustedsources', href => sprintf("/api/trustedsources/%d", $item->contract->id)),
+                ($item->provisioning_voip_subscriber && $item->provisioning_voip_subscriber->profile_set_id) ? (Data::HAL::Link->new(relation => 'ngcp:subscriberprofilesets', href => sprintf("/api/subscriberprofilesets/%d", $item->provisioning_voip_subscriber->profile_set_id))) : (),
+                ($item->provisioning_voip_subscriber && $item->provisioning_voip_subscriber->profile_id) ? (Data::HAL::Link->new(relation => 'ngcp:subscriberprofiles', href => sprintf("/api/subscriberprofiles/%d", $item->provisioning_voip_subscriber->profile_id))) : (),
+                Data::HAL::Link->new(relation => 'ngcp:domains', href => sprintf("/api/domains/%d", $item->domain->id)),
+                Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?subscriber_id=%d", $item->id)),
+                Data::HAL::Link->new(relation => 'ngcp:subscriberregistrations', href => sprintf("/api/subscriberregistrations/?subscriber_id=%d", $item->id)),
+                #Data::HAL::Link->new(relation => 'ngcp:trustedsources', href => sprintf("/api/trustedsources/%d", $item->contract->id)),
                 $self->get_journal_relation_link($item->id),
             )),
             # only available to admins/resellers/subscriberadmins
             (!$is_subadm ? () : (
-                NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)),
+                Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)),
             )),
         ],
         relation => 'ngcp:'.$self->resource_name,

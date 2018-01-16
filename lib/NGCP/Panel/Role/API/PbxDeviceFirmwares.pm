@@ -7,8 +7,8 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
 sub _item_rs {
@@ -37,19 +37,19 @@ sub hal_from_item {
     $form //= $self->get_form($c);
     my $resource = $self->resource_from_item($c, $item, $form);
 
-    my $hal = NGCP::Panel::Utils::DataHal->new(
+    my $hal = Data::HAL->new(
         links => [
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:pbxdevicemodels', href => sprintf("/api/pbxdevicemodels/%d", $item->device_id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:pbxdevicefirmwarebinaries', href => sprintf("/api/pbxdevicefirmwarebinaries/%d", $item->id)),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:pbxdevicemodels', href => sprintf("/api/pbxdevicemodels/%d", $item->device_id)),
+            Data::HAL::Link->new(relation => 'ngcp:pbxdevicefirmwarebinaries', href => sprintf("/api/pbxdevicefirmwarebinaries/%d", $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

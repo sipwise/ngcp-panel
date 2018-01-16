@@ -6,8 +6,8 @@ use Sipwise::Base;
 use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
@@ -30,19 +30,19 @@ sub hal_from_item {
     my $prov_sub = $item->provisioning_voip_subscriber;
     die "no provisioning_voip_subscriber" unless $prov_sub;
 
-    my $hal = NGCP::Panel::Utils::DataHal->new(
+    my $hal = Data::HAL->new(
         links => [
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $item->uuid)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:$type", href => sprintf("/api/%s/%s", $type, $item->uuid)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%s", $item->uuid)),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $item->uuid)),
+            Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%s", $type, $item->uuid)),
+            Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%s", $item->uuid)),
             $self->get_journal_relation_link($item->id),
         ],
         relation => 'ngcp:'.$self->resource_name,

@@ -6,8 +6,8 @@ use Sipwise::Base;
 use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Peering;
 
@@ -31,20 +31,20 @@ sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
     my %resource = $item->get_inflated_columns;
     $resource{contract_id} = delete $resource{peering_contract_id};
-    my $hal = NGCP::Panel::Utils::DataHal->new(
+    my $hal = Data::HAL->new(
         links => [
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:peeringservers', href => sprintf("/api/peeringservers/?group_id=%d", $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:peeringrules', href => sprintf("/api/peeringrules/?group_id=%d", $item->id)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:peeringinboundrules', href => sprintf("/api/peeringinboundrules/?group_id=%d", $item->id)),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:peeringservers', href => sprintf("/api/peeringservers/?group_id=%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:peeringrules', href => sprintf("/api/peeringrules/?group_id=%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:peeringinboundrules', href => sprintf("/api/peeringinboundrules/?group_id=%d", $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

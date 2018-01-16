@@ -6,8 +6,8 @@ use Sipwise::Base;
 use parent 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Subscriber;
 
@@ -83,19 +83,19 @@ sub hal_from_item {
         uuid => { -in => $res_rs->get_column('value')->as_query }
     })->get_column('id')->all;
 
-    my $hal = NGCP::Panel::Utils::DataHal->new(
+    my $hal = Data::HAL->new(
         links => [
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            (map { NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $_)) } @sub_ids),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:callrecordingstreams', href => sprintf("/api/callrecordingstreams/?recording_id=%d", $item->id)),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            (map { Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $_)) } @sub_ids),
+            Data::HAL::Link->new(relation => 'ngcp:callrecordingstreams', href => sprintf("/api/callrecordingstreams/?recording_id=%d", $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
