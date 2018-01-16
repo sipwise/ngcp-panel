@@ -754,7 +754,7 @@ sub log_request {
 }
 
 sub log_response {
-    my ($self, $c) = @_;
+    my ($self, $c, $suppress_user_info) = @_;
 
     # TODO: should be put a UUID to stash in log_request and use it here to correlate
     # req/res lines?
@@ -776,6 +776,7 @@ sub log_response {
         c    => $c,
         type => 'api_response',
         log  => $c->response->body,
+        $suppress_user_info ? (suppress_user_info => 1) : (),
     );
 }
 

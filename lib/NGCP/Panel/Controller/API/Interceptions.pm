@@ -91,6 +91,7 @@ sub auto :Private {
         $self->error($c, HTTP_FORBIDDEN, "Accessing user has no LI privileges.");
         return;
     }
+    return 1;
 }
 
 sub GET :Allow {
@@ -268,7 +269,8 @@ sub POST :Allow {
 sub end : Private {
     my ($self, $c) = @_;
 
-    $self->log_response($c);
+    $self->log_response($c, 1);
+    return;
 }
 
 1;

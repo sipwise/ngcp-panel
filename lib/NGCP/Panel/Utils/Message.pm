@@ -12,6 +12,7 @@ sub get_log_params {
     my $c = $params{c};
     my $type = $params{type};
     my $data = $params{data};
+    my $suppress_user_info = $params{suppress_user_info} // 0;
 
     # tx_id
     my $log_tx = DateTime->from_epoch(epoch => Time::HiRes::time);
@@ -43,7 +44,9 @@ sub get_log_params {
 
     # remote user
     my $r_user = '';
-    if ($c->user_exists) {
+    if ($suppress_user_info) {
+        $r_user = '*';
+    } elsif ($c->user_exists) {
         if ($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') {
             $r_user = $c->user->login;
         } else {
@@ -54,6 +57,9 @@ sub get_log_params {
     # remote ip
     my $r_ip = $c->request->address;
     $r_ip =~ s/^::ffff://; # ipv4 in ipv6 form -> ipv4
+    if ($suppress_user_info) {
+        $r_ip = '*';
+    }
 
     # parameters
     my $data_str;
@@ -109,12 +115,14 @@ sub error {
     my $cname = $params{cname};
     my $log = $params{log};
     my $error = $params{error};
+    my $suppress_user_info = $params{suppress_user_info} // 0;
     $type //= 'panel';
     $desc //= '';
 
     my $log_params = get_log_params(c => $c,
                                     type => $type,
-                                    data => $data, );
+                                    data => $data,
+                                    suppress_user_info => $suppress_user_info );
 
     defined $cname and $log_params->{called} =~ s/__ANON__/$cname/;
 
@@ -198,12 +206,14 @@ sub info {
     my $desc = $params{desc};
     my $cname = $params{cname};
     my $log = $params{log};
+    my $suppress_user_info = $params{suppress_user_info} // 0;
     $type //= 'panel';
     $desc //= '';
 
     my $log_params = get_log_params(c => $c,
                                     type => $type,
-                                    data => $data, );
+                                    data => $data,
+                                    suppress_user_info => $suppress_user_info );
 
     defined $cname and $log_params->{called} =~ s/__ANON__/$cname/;
 
