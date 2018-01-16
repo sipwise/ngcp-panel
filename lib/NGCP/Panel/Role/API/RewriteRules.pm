@@ -51,7 +51,7 @@ sub get_form {
 sub hal_links{
     my($self, $c, $item, $resource, $form) = @_;
     return [
-        NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:rewriterulesets", href => sprintf("/api/rewriterulesets/%d", $item->set_id)),
+        Data::HAL::Link->new(relation => "ngcp:rewriterulesets", href => sprintf("/api/rewriterulesets/%d", $item->set_id)),
     ];
 }
 

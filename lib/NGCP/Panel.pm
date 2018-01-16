@@ -3,6 +3,7 @@ package NGCP::Panel;
 use Moose;
 use Catalyst::Runtime 5.80;
 use File::Slurp qw();
+use Config::General qw();
 
 # Set flags and add plugins for the application.
 #
@@ -254,6 +255,15 @@ __PACKAGE__->config(
 __PACKAGE__->config( default_view => 'HTML' );
 
 __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
+
+# configure Data::HAL depending on our config
+{
+    my $panel_config = get_panel_config;
+    if ($panel_config->{appearance}{api_embedded_forcearray}) {
+        require Data::HAL;
+        $Data::HAL::__forcearray_underneath = {embedded => 1};
+    }
+}
 
 # Start the application
 __PACKAGE__->setup();

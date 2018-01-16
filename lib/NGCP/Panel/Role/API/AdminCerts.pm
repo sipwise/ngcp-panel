@@ -4,7 +4,7 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
 sub item_name {

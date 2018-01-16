@@ -7,8 +7,8 @@ use parent 'NGCP::Panel::Role::API';
 
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use Data::Dumper;
 
@@ -44,29 +44,29 @@ sub hal_from_item {
     $resource{cash_balance_before} = $resource{cash_balance_before} / 100.0 if defined $resource{cash_balance_before};
     $resource{cash_balance_after} = $resource{cash_balance_after} / 100.0 if defined $resource{cash_balance_after};
     
-    my $hal = NGCP::Panel::Utils::DataHal->new(
+    my $hal = Data::HAL->new(
         links => [
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            (defined $item->subscriber_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->subscriber_id)) : ()),
-            (defined $item->contract_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)) : ()),
-            (defined $item->voucher_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:vouchers', href => sprintf("/api/vouchers/%d", $item->voucher_id)) : ()),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            (defined $item->subscriber_id ? Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->subscriber_id)) : ()),
+            (defined $item->contract_id ? Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)) : ()),
+            (defined $item->voucher_id ? Data::HAL::Link->new(relation => 'ngcp:vouchers', href => sprintf("/api/vouchers/%d", $item->voucher_id)) : ()),
              
-            (defined $item->profile_before_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $item->profile_before_id)) : ()),
-            (defined $item->profile_after_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $item->profile_after_id)) : ()),
+            (defined $item->profile_before_id ? Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $item->profile_before_id)) : ()),
+            (defined $item->profile_after_id ? Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $item->profile_after_id)) : ()),
             
-            (defined $item->package_before_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:profilepackages', href => sprintf("/api/profilepackages/%d", $item->package_before_id)) : ()),
-            (defined $item->package_after_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:profilepackages', href => sprintf("/api/profilepackages/%d", $item->package_after_id)) : ()),
+            (defined $item->package_before_id ? Data::HAL::Link->new(relation => 'ngcp:profilepackages', href => sprintf("/api/profilepackages/%d", $item->package_before_id)) : ()),
+            (defined $item->package_after_id ? Data::HAL::Link->new(relation => 'ngcp:profilepackages', href => sprintf("/api/profilepackages/%d", $item->package_after_id)) : ()),
             
-            (defined $item->contract_balance_before_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:balanceintervals', href => sprintf("/api/balanceintervals/%d/%d", $item->contract_id, $item->contract_balance_before_id)) : ()),
-            (defined $item->contract_balance_after_id ? NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:balanceintervals', href => sprintf("/api/balanceintervals/%d/%d", $item->contract_id, $item->contract_balance_after_id)) : ()),
+            (defined $item->contract_balance_before_id ? Data::HAL::Link->new(relation => 'ngcp:balanceintervals', href => sprintf("/api/balanceintervals/%d/%d", $item->contract_id, $item->contract_balance_before_id)) : ()),
+            (defined $item->contract_balance_after_id ? Data::HAL::Link->new(relation => 'ngcp:balanceintervals', href => sprintf("/api/balanceintervals/%d/%d", $item->contract_id, $item->contract_balance_after_id)) : ()),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

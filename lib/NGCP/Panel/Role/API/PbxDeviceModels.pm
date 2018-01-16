@@ -44,7 +44,7 @@ sub config_allowed_roles {
 sub hal_links{
     my($self, $c, $item, $resource, $form) = @_;
     return [
-        NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:pbxdevicefirmwares", href => sprintf("/api/pbxdevicefirmwares/?device_id=%d", $item->id)),
+        Data::HAL::Link->new(relation => "ngcp:pbxdevicefirmwares", href => sprintf("/api/pbxdevicefirmwares/?device_id=%d", $item->id)),
     ];
 }
 

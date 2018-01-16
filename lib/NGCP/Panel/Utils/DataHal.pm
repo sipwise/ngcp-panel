@@ -1,4 +1,4 @@
-package NGCP::Panel::Utils::DataHal;
+package Data::HAL;
 
 use Moo;
 use NGCP::Panel;
