@@ -4,8 +4,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
@@ -125,29 +125,29 @@ sub GET :Allow {
                 now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
             $contract_map{$contract->id} = 1;
             push @embedded, $self->hal_from_item($c, $subscriber, "subscribers");
-            push @links, NGCP::Panel::Utils::DataHalLink->new(
+            push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
             );
         }
         $self->delay_commit($c,$guard);
         push @links,
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('%s?page=%s&rows=%s', $self->dispatch_path, $page, $rows));
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf('%s?page=%s&rows=%s', $self->dispatch_path, $page, $rows));
         if(($total_count / $rows) > $page ) {
-            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'next', href => sprintf('%s?page=%d&rows=%d', $self->dispatch_path, $page + 1, $rows));
+            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('%s?page=%d&rows=%d', $self->dispatch_path, $page + 1, $rows));
         }
         if($page > 1) {
-            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'prev', href => sprintf('%s?page=%d&rows=%d', $self->dispatch_path, $page - 1, $rows));
+            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('%s?page=%d&rows=%d', $self->dispatch_path, $page - 1, $rows));
         }
 
-        my $hal = NGCP::Panel::Utils::DataHal->new(
+        my $hal = Data::HAL->new(
             embedded => [@embedded],
             links => [@links],
         );

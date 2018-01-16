@@ -6,7 +6,7 @@ use Sipwise::Base;
 use parent 'NGCP::Panel::Role::API';
 
 
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::SMS;
 use NGCP::Panel::Utils::DateTime;
@@ -28,7 +28,7 @@ sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
     my $b_subs_id = $item->provisioning_voip_subscriber->voip_subscriber->id;
     return [
-        NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
+        Data::HAL::Link->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
     ];
 }
 

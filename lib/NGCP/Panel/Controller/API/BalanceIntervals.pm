@@ -4,8 +4,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
@@ -136,24 +136,24 @@ sub GET :Allow {
             my $hal = $self->hal_from_balance($c, $balance, $form, $now, 0); #we prefer item collection links pointing to the contract's collection instead of this root collection
             $hal->_forcearray(1);
             push @embedded, $hal;
-            my $link = NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:'.$self->resource_name, href     => sprintf('/%s%d/%d', $c->request->path, $contract->id, $balance->id));
+            my $link = Data::HAL::Link->new(relation => 'ngcp:'.$self->resource_name, href     => sprintf('/%s%d/%d', $c->request->path, $contract->id, $balance->id));
             $link->_forcearray(1);
             push @links, $link;
-            #push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/%d/", $self->resource_name, $contract->id));
+            #push @links, Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/%d/", $self->resource_name, $contract->id));
         }
         $self->delay_commit($c,$guard);
         push @links,
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
         
         push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
-        my $hal = NGCP::Panel::Utils::DataHal->new(
+        my $hal = Data::HAL->new(
             embedded => [@embedded],
             links => [@links],
         );

@@ -4,8 +4,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
 
 use boolean qw(true);
-use NGCP::Panel::Utils::DataHal qw();
-use NGCP::Panel::Utils::DataHalLink qw();
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
@@ -114,23 +114,23 @@ sub GET :Allow {
         my (@embedded, @links);
         for my $bn ($bns->all) {
             push @embedded, $self->hal_from_item($c, $bn, "billingnetworks");
-            push @links, NGCP::Panel::Utils::DataHalLink->new(
+            push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d', $self->dispatch_path, $bn->id),
             );
         }
         push @links,
-            NGCP::Panel::Utils::DataHalLink->new(
+            Data::HAL::Link->new(
                 relation => 'curies',
                 href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
 
         push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
-        my $hal = NGCP::Panel::Utils::DataHal->new(
+        my $hal = Data::HAL->new(
             embedded => [@embedded],
             links => [@links],
         );

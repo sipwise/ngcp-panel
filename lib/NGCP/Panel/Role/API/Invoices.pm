@@ -50,7 +50,7 @@ sub get_form {
 sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
     return [
-        NGCP::Panel::Utils::DataHalLink->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)),
+        Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)),
     ];
 }
 
