@@ -169,17 +169,29 @@ sub POST :Allow {
     my ($self, $c) = @_;
 
     {
-        my $resource = $self->get_valid_post_data(
-            c => $c, 
+        my ($item, $resource);
+
+        $resource = $self->get_valid_post_data(
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
 
         my $form = $self->get_form($c);
         my $create = 1;
-        my $item = $self->update_item($c, undef, undef, $resource, $form, $create);
+
+        my ($guard, $txn_ok) = ($c->model('DB')->txn_scope_guard, 0);
+        {
+            $self->update_item($c, undef, undef, $resource, $form, $create);
+
+            $guard->commit;
+            $txn_ok = 1;
+        }
+        last unless $txn_ok;
+
+        $item = $self->fetch_item($c, $resource, $form, $item);
         last unless $item;
-        
+
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
         $c->response->body(q());
