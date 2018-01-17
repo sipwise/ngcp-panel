@@ -22,6 +22,29 @@
       "revId": "7935106f6bf94fb59ad6258dea0aa0e24912a44d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a8c0949_b7644ae6",
+        "filename": "lib/NGCP/Panel/Utils/DataHal.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-17T11:20:12Z",
+      "side": 1,
+      "message": "I think this file should be removed then, no? \n\nBut I personally like local wrappers around libraries - just to keep control )",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 20
+      },
+      "revId": "7935106f6bf94fb59ad6258dea0aa0e24912a44d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
