@@ -45,6 +45,30 @@
       "revId": "7935106f6bf94fb59ad6258dea0aa0e24912a44d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a8c0949_a2940645",
+        "filename": "lib/NGCP/Panel/Utils/DataHal.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-17T15:59:24Z",
+      "side": 1,
+      "message": "Exactly. My mistake. This should be removed.\n\nAbout wrappers: Generally sure. But this wrapper is a performance-nightmare. Because it puts the NGCP::Panel namespace everywhere it\u0027s used. (That\u0027s why we kept having \"subroutine allowed_methods already defined\")",
+      "parentUuid": "7a8c0949_b7644ae6",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 20
+      },
+      "revId": "7935106f6bf94fb59ad6258dea0aa0e24912a44d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
