@@ -69,6 +69,30 @@
       "revId": "7935106f6bf94fb59ad6258dea0aa0e24912a44d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a8c0949_e2ac4e8f",
+        "filename": "lib/NGCP/Panel/Utils/DataHal.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-17T16:50:24Z",
+      "side": 1,
+      "message": "Yes, I hesitated about this NGCP::Panel config, but nobody suggested better solution then. This new solution is much, much better.",
+      "parentUuid": "7a8c0949_a2940645",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 20
+      },
+      "revId": "7935106f6bf94fb59ad6258dea0aa0e24912a44d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
