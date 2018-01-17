@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a8c0949_b47368e6",
+        "filename": "lib/NGCP/Panel/Utils/DataHal.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-17T10:20:34Z",
+      "side": 1,
+      "message": "doesnt this conflict?",
+      "range": {
+        "startLine": 5,
+        "startChar": 9,
+        "endLine": 5,
+        "endChar": 18
+      },
+      "revId": "7935106f6bf94fb59ad6258dea0aa0e24912a44d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
