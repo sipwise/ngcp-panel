@@ -34,6 +34,7 @@ $test_machine = Test::Collection->new(
 );
 $fake_data = Test::FakeData->new;
 $fake_data->test_machine->QUIET_DELETION(0);
+$fake_data->test_machine->KEEP_CREATED(0);
 $test_machine->clear_cache;
 
 get_opt();
@@ -44,9 +45,10 @@ init_report();
 run();
 
 $test_machine->clear_test_data_all();
-done_testing;
 undef $fake_data;
 undef $test_machine;
+
+done_testing;
 
 print Dumper $report;
 
@@ -57,7 +59,6 @@ print Dumper $report;
 sub run{
     #my($opt,$report,$api_info,$test_machine,$fake_data,$config)
     foreach my $collection ( sort grep { collection4testing($_) } keys %{$api_info} ){
-
         $test_machine->name($collection);
         $test_machine->NO_ITEM_MODULE($api_info->{$collection}->{module_item} ? 0 : 1 );
         $test_machine->methods({
@@ -65,9 +66,6 @@ sub run{
             item       => { allowed => { map { $_ => 1 } keys %{$api_info->{$collection}->{allowed_methods_item}} }},
         });
 
-        if($opt->{test_groups}->{bundle}){
-            $test_machine->check_bundle();
-        }
         if($opt->{test_groups}->{post}){
             if($test_machine->{methods}->{collection}->{allowed}->{POST}){
                 #load date 
@@ -100,6 +98,11 @@ sub run{
                 }
             }
         }
+        if($opt->{test_groups}->{bundle}){
+            if($test_machine->name !~ /preferencedefs/i){
+                $test_machine->check_bundle();
+            }
+        }
         if($opt->{test_groups}->{get}){
             if($test_machine->{methods}->{collection}->{allowed}->{GET}){
                 my $item = $test_machine->get_item_hal( undef, undef, 1);#reload
@@ -110,11 +113,12 @@ sub run{
                 my $item = $test_machine->get_item_hal( undef, undef, 1);#reload
                 if(!$test_machine->IS_EMPTY_COLLECTION){
                     if($test_machine->{methods}->{item}->{allowed}->{PUT}){
-                        $test_machine->check_get2put();
+                        $test_machine->check_get2put(undef,{ uri => $item->{location} });
                     }
                 }
             }
         }
+        $test_machine->clear_data_created;
         if(!$test_machine->{methods}->{collection}->{allowed}->{GET}){
             push @{$report->{'collections_no_get'}}, $collection;
         }

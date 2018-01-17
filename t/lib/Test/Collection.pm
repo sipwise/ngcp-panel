@@ -210,6 +210,7 @@ has 'ENCODE_CONTENT' => (
     isa => 'Str',
     default => 'json',
 );
+
 sub set{
     my $self = shift;
     my %params = @_;
@@ -220,6 +221,7 @@ sub set{
     }
     return $prev_state;
 }
+
 sub get_cloned{
     my $self = shift;
     my @params = @_;
@@ -229,6 +231,7 @@ sub get_cloned{
     }
     return $state;
 }
+
 sub init_catalyst_config{
     my $self = shift;
     my $config;
@@ -253,10 +256,12 @@ sub init_catalyst_config{
     $self->{panel_config} = $config->{file};
     return $self->{catalyst_config};
 }
+
 sub init_ua {
     my $self = shift;
     return $self->_create_ua(1);
 }
+
 sub _create_ua {
     my ($self,$init_cert) = @_;
     my $ua = LWP::UserAgent->new;
@@ -324,6 +329,7 @@ sub init_ssl_cert {
     ) if $ua;
     return $tmpfilename;
 }
+
 sub clear_cert {
     my $self = shift;
     lock $tmpfilename;
@@ -377,6 +383,7 @@ sub get_role_credentials{
     }
     return($user,$pass,$role,$realm,$port);
 }
+
 sub clear_data_created{
     my($self) = @_;
     $self->DATA_CREATED({
@@ -385,49 +392,58 @@ sub clear_data_created{
     });
     return $self->DATA_CREATED;
 }
+
 sub form_data_item{
     my($self, $data_cb, $data_cb_data) = @_;
     $self->{DATA_ITEM} ||= clone($self->DATA_ITEM_STORE);
     (defined $data_cb) and $data_cb->($self->DATA_ITEM,$data_cb_data);
     return $self->DATA_ITEM;
 }
+
 sub get_id_from_created{
     my($self, $created_info) = @_;
     my $id = $self->get_id_from_location($created_info->{location});
     return $id;
 }
+
 sub get_id_from_location{
     my($self, $location) = @_;
     my $id = $location // '';
     $id=~s/.*?\D(\d+)$/$1/gis;
     return $id;
 }
+
 sub get_hal_name{
     my($self,$name) = @_;
     $name //= $self->name;
     return "ngcp:".$name;
 }
+
 sub restore_uri_custom{
     my($self) = @_;
     $self->URI_CUSTOM($self->URI_CUSTOM_STORE);
     $self->URI_CUSTOM_STORE(undef);
 }
+
 sub get_uri_collection{
     my($self,$name) = @_;
     $name //= $self->name;
     return $self->normalize_uri("/api/".$name.($name ? "/" : "").($self->QUERY_PARAMS ? "?".$self->QUERY_PARAMS : ""));
 }
+
 sub get_uri_get{
     my($self,$query_string, $name) = @_;
     $name //= $self->name;
     return $self->normalize_uri("/api/".$name.($query_string ? '/?' : '/' ).$query_string);
 }
+
 sub get_uri{
     my($self,$add,$name) = @_;
     $add //= '';
     $name //= $self->name;
     return $self->normalize_uri("/api/".$name.'/'.$add);
 }
+
 sub get_uri_item{
     my($self,$name,$item) = @_;
     my $resuri;
@@ -435,6 +451,7 @@ sub get_uri_item{
     $resuri = $self->normalize_uri('/'.( $item->{location} // '' ));
     return $resuri;
 }
+
 sub get_item_hal{
     my($self,$name,$uri, $reload) = @_;
     $name ||= $self->name;
@@ -474,6 +491,7 @@ sub get_item_hal{
     }
     return $resitem;
 }
+
 sub get_hal_from_collection{
     my($self,$list_collection,$name,$number) = @_;
     $number //= 0;
@@ -508,6 +526,7 @@ sub get_hal_from_collection{
     }
     return ($reshal,$location,$total_count,$reshal_collection);
 }
+
 sub get_collection_hal{
     my($self,$name, $uri, $reload, $page, $rows) = @_;
     my (@reshals, $location,$total_count,$reshal_collection,$rescollection,$firstitem,$res,$list_collection,$req);
@@ -564,10 +583,12 @@ sub get_collection_hal{
     }
     return $rescollection;
 }
+
 sub get_created_first{
     my($self) = @_;
     return $self->DATA_CREATED->{FIRST} ? $self->DATA_CREATED->{ALL}->{$self->DATA_CREATED->{FIRST}} : undef;
 }
+
 sub get_uri_current{
     my($self) = @_;
     $self->URI_CUSTOM and return $self->URI_CUSTOM;
@@ -600,6 +621,7 @@ sub encode_content{
     #print "2. content=$content;\n\n";
     return $content;
 }
+
 sub request{
     my($self,$req) = @_;
 
@@ -612,6 +634,7 @@ sub request{
     }
     if(!$self->DEBUG_ONLY){
         my $res = $self->ua->request($req);
+        diag(sprintf($self->name_prefix."request:%s:%s", $req->method,$req->uri));
         #draft of the debug mode
         if($self->DEBUG){
             if($res->code >= 400){
@@ -632,6 +655,7 @@ sub request_process{
     my $rescontent = $self->get_response_content($res);
     return ($res,$rescontent,$req);
 }
+
 sub get_request_get{
     my($self, $uri, $headers) = @_;
     $headers ||= {};
@@ -642,6 +666,7 @@ sub get_request_get{
     }
     return $req ;
 }
+
 sub get_request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
@@ -655,6 +680,7 @@ sub get_request_put{
     $req->header('Prefer' => 'return=representation');
     return $req;
 }
+
 sub get_request_patch{
     my($self,$uri) = @_;
     $uri ||= $self->get_uri_current;
@@ -664,6 +690,7 @@ sub get_request_patch{
     $req->header('Content-Type' => $self->content_type->{PATCH} );
     return $req;
 }
+
 sub request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
@@ -674,6 +701,7 @@ sub request_put{
         return wantarray ? ($res,$rescontent,$req) : $res;
     }
 }
+
 sub request_patch{
     my($self,$content, $uri, $req) = @_;
     $uri ||= $self->get_uri_current;
@@ -761,6 +789,7 @@ sub request_get{
     my $content = $self->get_response_content($res);
     return wantarray ? ($res, $content, $req) : $res;
 }
+
 sub get_response_content{
     my($self,$res) = @_;
     my $content = '';
@@ -772,6 +801,7 @@ sub get_response_content{
     #print Dumper $content;
     return $content;
 }
+
 sub normalize_uri{
     my($self,$uri) = @_;
     $uri ||= $self->get_uri_current // '';
@@ -794,6 +824,7 @@ sub check_options_collection{
     is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-".$self->name, "$self->{name}: check Accept-Post header in options response");
     $self->check_methods($res,'collection');
 }
+
 sub check_options_item{
     my ($self,$uri) = @_;
     # OPTIONS tests
@@ -804,6 +835,7 @@ sub check_options_item{
         $self->check_methods($res,'item');
     }
 }
+
 sub check_methods{
     my($self, $res, $area) = @_;
     my $opts = $self->get_response_content($res);
@@ -829,7 +861,7 @@ sub check_list_collection{
         #print "nexturi=$nexturi;\n";
         my ($res,$list_collection) = $self->check_item_get($nexturi);
         my $selfuri = $self->normalize_uri($list_collection->{_links}->{self}->{href});
-        is($selfuri, $nexturi, "$self->{name}: check _links.self.href of collection");
+        is($selfuri, $nexturi, "$self->{name}: check _links.self.href of collection:".$list_collection->{_links}->{self}->{href});
         my $colluri = URI->new($selfuri);
         if(($list_collection->{total_count} && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
             ok($list_collection->{total_count} > 0, "$self->{name}: check 'total_count' of collection");
@@ -885,13 +917,15 @@ sub check_list_collection{
 
 sub check_created_listed{
     my($self,$listed) = @_;
-    my $created_items = clone($self->DATA_CREATED->{ALL});
+    my $created_items_before = clone($self->DATA_CREATED->{ALL});
     $listed //= [];#to avoid error about not array reference
-    $created_items //= [];
+    $created_items_before //= [];
+    my $created_items = clone $created_items_before;
+    #print Dumper ['check_created_listed',$self->name,$listed,$created_items];
     foreach (@$listed){
         delete $created_items->{$_};
     }
-    is(scalar(keys %{$created_items}), 0, "$self->{name}: check if all created test items have been found in the list");
+    is(scalar(keys %{$created_items}), 0, "$self->{name}: check if all created test items have been found in the list. Created number:".scalar(keys %{$created_items_before}));
     if(scalar(keys %{$created_items})){
         #print Dumper $created_items;
         #print Dumper $listed;
@@ -926,6 +960,7 @@ sub check_put_content_type_empty{
     my($res,$content) = $self->request_process($req);
     $self->http_code_msg(415, "check put missing content type", $res, $content);
 }
+
 sub check_put_content_type_wrong{
     my($self) = @_;
     # check if it fails with unsupported content type
@@ -935,6 +970,7 @@ sub check_put_content_type_wrong{
     my($res,$content) = $self->request_process($req);
     $self->http_code_msg(415, "check put invalid content type", $res, $content);
 }
+
 sub check_put_prefer_wrong{
     my($self) = @_;
     # check if it fails with invalid Prefer
@@ -957,10 +993,14 @@ sub check_put_body_empty{
 
 sub check_put_bundle{
     my($self) = @_;
-    $self->check_put_content_type_empty;
-    $self->check_put_content_type_wrong;
-    $self->check_put_prefer_wrong;
-    $self->check_put_body_empty;
+    if($self->get_uri_current){
+        $self->check_put_content_type_empty;
+        $self->check_put_content_type_wrong;
+        $self->check_put_prefer_wrong;
+        $self->check_put_body_empty;
+    }else{
+        diag("");
+    }
 }
 
 #-------------------- patch bundle -------
@@ -981,6 +1021,7 @@ sub check_patch_prefer_wrong{
     my ($res,$content) = $self->request_process($req);
     $self->http_code_msg(415, "check patch invalid prefer", $res, $content);
 }
+
 sub check_patch_content_type_empty{
     my($self) = @_;
     my $req = $self->get_request_patch;
@@ -1049,6 +1090,7 @@ sub check_patch_opreplace_paramsextra{
     $self->http_code_msg(400, "check patch extra fields for op", $res, $content);
     like($content->{message}, qr/Invalid PATCH key /, "$self->{name}: check patch extra fields for op response");
 }
+
 sub check_patch_path_wrong{
     my($self) = @_;
     my ($res,$content,$req) = $self->request_patch(
@@ -1070,6 +1112,7 @@ sub check_patch_bundle{
     $self->check_patch_opreplace_paramsextra;
     $self->check_patch_path_wrong;
 }
+
 sub check_bundle{
     my($self) = @_;
     $self->check_options_collection();
@@ -1102,12 +1145,14 @@ sub check_item_get{
     $self->http_code_msg(200, $msg.($msg?": ":"")."fetch uri: $uri", $res);
     return wantarray ? ($res, $content, $req) : $res;
 }
+
 sub process_data{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $data = $data_in || clone($self->DATA_ITEM);
     defined $data_cb and $data_cb->($data, $data_cb_data);
     return $data;
 }
+
 sub get_item_post_content{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
@@ -1118,6 +1163,7 @@ sub get_item_post_content{
     };
     return $content;
 }
+
 sub check_item_post{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $content = $self->get_item_post_content($data_cb, $data_in, $data_cb_data);
@@ -1133,6 +1179,7 @@ sub check_item_delete{
     $self->http_code_msg(204, "$name: check delete item $uri",$res,$content);
     return ($req,$res,$content);
 };
+
 sub check_create_correct{
     my($self, $number, $uniquizer_cb, $data_in) = @_;
     if(!$self->KEEP_CREATED){
@@ -1188,6 +1235,7 @@ sub clear_test_data_all{
     $self->clear_data_created();
     return \@uris;
 }
+
 sub clear_test_data_dependent{
     my($self,$uri,$strict) = @_;
     my $name = $self->name // '';
@@ -1231,8 +1279,10 @@ sub check_get2put{
         delete $get_out->{content}->{$field};
         delete $put_out->{content}->{$field};
     }
-    $self->http_code_msg(200, "check_get2put: check put successful", $put_out->{response},  $put_out->{content} );
-    is_deeply($get_out->{content}, $put_out->{content}, "$self->{name}: check_get2put: check put if unmodified put returns the same");
+    $self->http_code_msg(200, "check_get2put: check put successful: $put_in->{uri}", $put_out->{response},  $put_out->{content} );
+    if(! is_deeply($get_out->{content}, $put_out->{content}, "$self->{name}: check_get2put: check put if unmodified put returns the same")){
+        print Dumper ['get',$get_out->{content}, 'put', $put_out->{content}];
+    }
     return ($put_out,$get_out);
 }
 
@@ -1325,6 +1375,7 @@ sub check_post2get{
 
     return ($post_out, $get_out);
 }
+
 sub put_and_get{
     my($self, $put_in, $get_in,$params) = @_;
     my($put_out,$put_get_out,$get_out);
@@ -1361,11 +1412,13 @@ sub hash2params{
     my($self,$hash) = @_;
     return join '&', map {$_.'='.uri_escape($hash->{$_})} keys %{ $hash };
 }
+
 sub resource_fill_file{
     my($self,$filename,$data) = @_;
     $data //= 'aaa';
     write_file($filename,$data);
 }
+
 sub resource_clear_file{
     my $cmd = "echo -n '' > $_[1]";
     print "cmd=$cmd;\n";
@@ -1399,6 +1452,7 @@ sub uri2location{
     $uri=~s/^.*?(\/api\/.*$)/$1/;
     return $uri;
 }
+
 sub http_code_msg{
     my($self,$code,$message,$res,$content) = @_;
     my $message_res;
@@ -1418,6 +1472,13 @@ sub http_code_msg{
     }
     $code and is($res->code, $code, $message_res);
 }
+
+sub name_prefix{
+    my($self,$name) = @_;
+    $name //= $self->name;
+    return $name ? $name.': ' : '';
+} 
+
 sub get_cached_data{
     my($self) = @_;
     return (-e $self->data_cache_file) ? retrieve($self->data_cache_file) : {};
