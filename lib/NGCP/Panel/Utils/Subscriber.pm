@@ -1394,10 +1394,10 @@ sub apply_rewrite {
         unless ($rwr_rs->count) {
             return $callee;
         }
-    } elsif (not $subscriber) {
+    } elsif (!$subscriber || !ref($subscriber)) {
         $c->log->warn('could not apply rewrite: no subscriber found.');
         return $callee;
-    } elsif ($subscriber->provisioning_voip_subscriber) {
+    } elsif ($subscriber->can('provisioning_voip_subscriber')) {
         $rwr_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => $dir,
             prov_subscriber => $subscriber->provisioning_voip_subscriber,
@@ -1411,7 +1411,7 @@ sub apply_rewrite {
         unless($rwr_rs->count) {
             return $callee;
         }
-    } else {
+    } elsif ($subscriber->can('domain')) {
         $sub_type = 'billing';
         if ($subscriber->domain && $subscriber->domain->provisioning_voip_domain) {
             $rwr_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
@@ -1424,6 +1424,9 @@ sub apply_rewrite {
         } else {
             return $callee;
         }
+    } else {
+        $c->log->warn('could not apply rewrite: unknown subscriber type.');
+        return $callee;
     }
 
     my $rule_rs = $c->model('DB')->resultset('voip_rewrite_rules')->search({
