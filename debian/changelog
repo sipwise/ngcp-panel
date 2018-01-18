@@ -1,3 +1,12 @@
+ngcp-panel (6.0.1.2+0~mr6.0.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [7c67418] TT#30653 apply_rewrite() strict checks for $subscriber variable type
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 18 Jan 2018 17:04:45 +0100
+
 ngcp-panel (6.0.1.1+0~mr6.0.1.1) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
