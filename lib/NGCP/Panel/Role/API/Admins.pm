@@ -1,16 +1,32 @@
 package NGCP::Panel::Role::API::Admins;
 use NGCP::Panel::Utils::Generic qw(:all);
+use NGCP::Panel::Utils::API;
 
 use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-use boolean qw(true);
-use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
+
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Admin;
+
+sub item_name{
+    return 'admin';
+}
+
+sub resource_name{
+    return 'admins';
+}
+
+sub dispatch_path{
+    return '/api/admins/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-admins';
+}
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -21,7 +37,6 @@ sub _item_rs {
             reseller_id => $c->user->reseller_id
         });
     }
-
 
     if($c->user->is_master || $c->user->is_superuser) {
         # return all (or all of reseller) admins
@@ -45,98 +60,47 @@ sub get_form {
     return $form;
 }
 
-sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
-
-    my %resource = $item->get_inflated_columns;
-    delete $resource{md5pass};
-    delete $resource{saltedpass};
-
+sub hal_links {
+    my($self, $c, $item, $resource, $form) = @_;
     my $adm = $c->user->roles eq "admin";
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf('%s', $self->dispatch_path)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            $adm ? Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),
-            $self->get_journal_relation_link($item->id),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-
-    $resource{id} = int($item->id);
-    $hal->resource({%resource});
-    return $hal;
+    return [
+        $adm ? Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),    
+    ];
 }
 
-sub item_by_id {
-    my ($self, $c, $id) = @_;
+sub process_form_resource{
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
 
-    my $rs = $self->item_rs($c);
-    return $rs->find($id);
-}
+    NGCP::Panel::Utils::API::apply_resource_reseller_id($c, $resource);
 
-#we don't use update_item for the admins now.
-sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
-
-    $form //= $self->get_form($c);
-    $resource->{contract_id} //= undef;
     my $pass = $resource->{password};
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-    );
     delete $resource->{password};
     if(defined $pass) {
         $resource->{md5pass} = undef;
         $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
     }
+    return $resource;
+}
 
-    if($old_resource->{login} eq NGCP::Panel::Utils::Admin::get_special_admin_login()) {
-        my $active = $resource->{is_active};
-        $resource = $old_resource;
-        $resource->{is_active} = $active;
+sub check_resource{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    #TODO: move to config
+    return unless NGCP::Panel::Utils::API::check_resource_reseller_id($self, $c, $resource, $old_resource);
+    return 1;
+}
+
+sub check_duplicate{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    my $schema = $c->model('DB');
+    my $existing_item = $schema->resultset('admins')->find({
+        login => $resource->{login},
+    });
+    if ($existing_item && (!$item || $item->id != $existing_item->id)) {
+        $c->log->error("admin with login '$$resource{login}' already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this login already exists");
+        last;
     }
-
-    if($c->user->roles eq "reseller" && $resource->{reseller_id} != $c->user->reseller_id) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
-        return;
-    }
-
-    if($old_resource->{reseller_id} != $resource->{reseller_id}) {
-        unless($c->model('DB')->resultset('resellers')->find($resource->{reseller_id})) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
-            return;
-        }
-    }
-
-    if($old_resource->{login} ne $resource->{login}) {
-        my $rs = $self->item_rs($c);
-        if($rs->find({ login => $resource->{login} })) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'login', admin with this login already exists");
-            return;
-        }
-    }
-
-    $item->update($resource);
-    return $item;
+    return 1;
 }
 
 1;
