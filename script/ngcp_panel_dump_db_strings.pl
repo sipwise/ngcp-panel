@@ -24,7 +24,7 @@ use warnings;
 use strict;
 
 sub localize {
-    my $c;
+    my $c = shift;
 
 HEADER_END
 
