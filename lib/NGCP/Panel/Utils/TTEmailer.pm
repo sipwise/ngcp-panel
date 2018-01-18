@@ -1,5 +1,10 @@
 package NGCP::Panel::Utils::TTEmailer;
 
+use warnings;
+use strict;
+
+use Data::Dumper;
+
 sub send_email{
   my $self = shift;
   my ($email,$hr_tmpl,$hr_vars) = @_;

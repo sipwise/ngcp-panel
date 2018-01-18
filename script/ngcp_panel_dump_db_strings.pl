@@ -17,13 +17,14 @@ my $s = NGCP::Schema->connect;
 open(my $fh, ">", $filepath)
     or die "cannot open file $!";
 
-print $fh <<HEADER_END;
+print $fh <<'HEADER_END';
 package NGCP::Panel::Utils::DbStrings;
 
 use warnings;
 use strict;
 
 sub localize {
+    my $c;
 
 HEADER_END
 
@@ -43,7 +44,7 @@ for my $row ($s->resultset('voip_preference_groups')->all) {
         if ($row->name);
 }
 
-print $fh "    return;\n}\n\nsub form_strings {\n\n";
+print $fh "    return;\n}\n\nsub form_strings {\n    my \$c;\n\n";
 
 my $path = 'lib/NGCP/Panel/Form/*.pm lib/NGCP/Panel/Form/*/*.pm';
 my @files = < $path >;
