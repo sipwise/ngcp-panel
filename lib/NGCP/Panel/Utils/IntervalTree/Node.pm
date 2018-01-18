@@ -3,6 +3,7 @@ package NGCP::Panel::Utils::IntervalTree::Node;
 use strict;
 use warnings;
 
+use POSIX ();
 use List::Util qw(min max);
 
 my $EMPTY_NODE = __PACKAGE__->new(0, 0, undef);

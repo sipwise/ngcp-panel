@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 sub localize {
+    my $c;
 
     $c->loc('Lock Level');
     $c->loc('See "lock_voip_account_subscriber" for a list of possible values. A lock value of "none" will not be returned to the caller. Read-only setting.');
@@ -195,6 +196,7 @@ sub localize {
 }
 
 sub form_strings {
+    my $c;
 
     #NGCP::Panel::Form::BillingFee
     #NGCP::Panel::Form::BillingFeeUpload
