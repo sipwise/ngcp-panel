@@ -22,6 +22,30 @@
       "revId": "ab70e4e3553b25501589c28467695eee66b25bca",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_adc6bd47",
+        "filename": "lib/NGCP/Panel/Utils/DbStrings.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-18T11:13:44Z",
+      "side": 1,
+      "message": "this file is never used. It is just a helper to store the DB strings, for the localization engine to extract these strings into the .pot file. (the localization framework looks at methods called loc())",
+      "parentUuid": "5a890539_eda9a57c",
+      "range": {
+        "startLine": 7,
+        "startChar": 7,
+        "endLine": 7,
+        "endChar": 9
+      },
+      "revId": "ab70e4e3553b25501589c28467695eee66b25bca",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
