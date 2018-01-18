@@ -70,6 +70,8 @@ $call_fields{rating_status} = 'me.rating_status';
 $call_fields{source_customer_cost} = 'me.source_customer_cost';
 $call_fields{destination_customer_cost} = 'me.destination_customer_cost';
 $call_fields{source_customer_free_time} = 'me.source_customer_free_time';
+$call_fields{source_customer_billing_zone_id} = 'me.source_customer_billing_fee_id';
+$call_fields{destination_customer_billing_zone_id} = 'me.destination_customer_billing_fee_id';
 
 #this is exactly cdr item, although we take call fields.
 #Call fields contain everyithing that process_cdr_item  requires
@@ -761,8 +763,15 @@ sub process_hal_resource {
         );
         @{$resource}{qw/caller callee/} = @{$resource}{qw/own_cli other_cli/};
         $resource->{type} = $item->{type};
+        if (my $fee = $schema->resultset('billing_fee_history')->search_rs({
+                'id' =>  ($resource->{direction} eq "out" ? $item_mock_obj->source_customer_billing_fee_id : $item_mock_obj->destination_customer_billing_fee_id),
+            })->first) {
+            $resource->{currency} = $fee->billing_profile->currency;
+        } else {
+            $resource->{currency} = '';
+        }
     }elsif('fax' eq $item->{type}){
-        my $fax_subscriber_provisioning = $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs({
+        my $fax_subscriber_provisioning = $schema->resultset('provisioning_voip_subscribers')->search_rs({
             'id' => $item_mock_obj->subscriber_id,
         })->first;
         my $fax_subscriber_billing = $fax_subscriber_provisioning->voip_subscriber;
@@ -775,7 +784,7 @@ sub process_hal_resource {
     }elsif('voicemail' eq $item->{type}){
         $resource = $item_accessors_hash;
         $resource->{caller} = $item_mock_obj->callerid;
-        $resource->{voicemail_subscriber_id} = $c->model('DB')->resultset('voicemail_spool')->search_rs({
+        $resource->{voicemail_subscriber_id} = $schema->resultset('voicemail_spool')->search_rs({
             'mailboxuser' => $item_mock_obj->mailboxuser,
         })->first->mailboxuser->provisioning_voip_subscriber->voip_subscriber->id;
         # type is last item of path like /var/spool/asterisk/voicemail/default/uuid/INBOX

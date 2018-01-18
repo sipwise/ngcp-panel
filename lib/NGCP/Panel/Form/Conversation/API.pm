@@ -117,4 +117,10 @@ has_field 'total_customer_cost' => (
     required => 0,
 );
 
+has_field 'currency' => (
+    type => 'Text',
+    label => 'Call cost currency.',
+    required => 0,
+);
+
 1;
