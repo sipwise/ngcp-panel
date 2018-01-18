@@ -196,7 +196,7 @@ sub fetch_item {
     return unless $sub;
 
     my $item;
-    my $flush_timeout = 5;
+    my $flush_timeout = 50;
 
     while ($flush_timeout) {
         $item = $self->_item_by_aor($c, $sub, $form->values->{contact});
