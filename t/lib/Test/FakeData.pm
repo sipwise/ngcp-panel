@@ -13,7 +13,7 @@ use Clone qw/clone/;
 use File::Slurp qw/read_file/;
 use URI::Escape;
 use Storable;
-use File::Grep qw/fgrep/;
+use Test::FileGrep qw/fgrep/;
 use feature 'state';
 use Storable;
 use File::Temp qw(tempfile);
