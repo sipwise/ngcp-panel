@@ -924,7 +924,8 @@ sub hal_from_item {
                     $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
                 )
             ),
-            @$links
+            @$links,
+            $self->get_journal_relation_link($self->get_item_id($c, $item)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
