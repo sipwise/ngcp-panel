@@ -1,3 +1,15 @@
+ngcp-panel (5.5.2.3+0~mr5.5.2.3) unstable; urgency=medium
+
+  [ Yaroslav Fedorina ]
+  * [f76fe89] TT#26107 Clarify external_id field description
+
+  [ Kirill Solomko ]
+  * [4213c1d] TT#30653 apply_rewrite() strict checks for $subscriber variable type
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 18 Jan 2018 17:04:18 +0100
+
 ngcp-panel (5.5.2.2+0~mr5.5.2.2) unstable; urgency=medium
 
   [ Kirill Solomko ]
