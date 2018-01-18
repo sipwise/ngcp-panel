@@ -46,6 +46,30 @@
       "revId": "f21983086722ed970b0a189c2d58ff2745da77c6",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_5041720a",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1400,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-18T14:35:40Z",
+      "side": 1,
+      "message": "in the screenshots is saw they were trying that on a pbx suscriber.. not sure if there is a db issue behind. the prov_voip_subscriber otherwise can only be empty if they edit a terminated subscriber",
+      "parentUuid": "5a890539_90c3da89",
+      "range": {
+        "startLine": 1400,
+        "startChar": 0,
+        "endLine": 1400,
+        "endChar": 64
+      },
+      "revId": "f21983086722ed970b0a189c2d58ff2745da77c6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
