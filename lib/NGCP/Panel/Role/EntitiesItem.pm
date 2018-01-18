@@ -31,6 +31,11 @@ sub set_config {
                 %{$self->_set_config($_)},
             } } @{ $self->allowed_methods }
         },
+        @{ $self->get_journal_action_config($self->resource_name,{
+            ACLDetachTo => '/api/root/invalid_user',
+            AllowedRole => [qw/admin reseller/],
+            Does => [qw(ACL RequireSSL)],
+        }) },
         #action_roles => [qw(HTTPMethods)],
         log_response => 1,
         %{$self->_set_config()},
