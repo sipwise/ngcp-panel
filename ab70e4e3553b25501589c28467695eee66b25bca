@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_eda9a57c",
+        "filename": "lib/NGCP/Panel/Utils/DbStrings.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-18T11:09:23Z",
+      "side": 1,
+      "message": "how could it work at runtime, $c from outer scope?",
+      "range": {
+        "startLine": 7,
+        "startChar": 7,
+        "endLine": 7,
+        "endChar": 9
+      },
+      "revId": "ab70e4e3553b25501589c28467695eee66b25bca",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
