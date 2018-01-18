@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_70f82ee6",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1400,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-18T14:31:19Z",
+      "side": 1,
+      "message": "I think we need to warn something to the log here? Or we intentionally allow both subscribers type as input?",
+      "range": {
+        "startLine": 1400,
+        "startChar": 0,
+        "endLine": 1400,
+        "endChar": 64
+      },
+      "revId": "f21983086722ed970b0a189c2d58ff2745da77c6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
