@@ -89,7 +89,7 @@ __PACKAGE__->config(
             Chained => 'item_base',
             PathPart => '',
             Args => 1,
-            Method => 'OPTIONS',
+            Method => 'HEAD',
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller/],
             Does => [qw(ACL RequireSSL)]
