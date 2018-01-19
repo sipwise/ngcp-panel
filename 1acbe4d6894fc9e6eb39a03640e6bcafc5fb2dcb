@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_f3ed08f1",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-19T11:35:33Z",
+      "side": 1,
+      "message": "not needed?",
+      "range": {
+        "startLine": 89,
+        "startChar": 39,
+        "endLine": 89,
+        "endChar": 40
+      },
+      "revId": "1acbe4d6894fc9e6eb39a03640e6bcafc5fb2dcb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_33bf90d2",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-19T11:35:33Z",
+      "side": 1,
+      "message": "confusing naming, its not related to a POST config or something but means overriding allowed_methods defaults.\n\nmaybe call it \"action_override\" or something",
+      "range": {
+        "startLine": 102,
+        "startChar": 45,
+        "endLine": 102,
+        "endChar": 55
+      },
+      "revId": "1acbe4d6894fc9e6eb39a03640e6bcafc5fb2dcb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
