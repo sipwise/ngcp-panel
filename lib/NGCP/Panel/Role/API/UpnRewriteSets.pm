@@ -15,13 +15,19 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('upn_rewrite_set')
-        ->search_rs(undef, {prefetch => 'upn_rewrite_sources'});
+        ->search_rs({
+            'voip_subscriber.id' => { '!=' => undef },
+            'voip_subscriber.status' => { '!=' => 'terminated' },
+        }, {
+            join => { subscriber => 'voip_subscriber' },
+            prefetch => 'upn_rewrite_sources'
+        });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id
         },{
-            join => { subscriber => { voip_subscriber => { contract => 'contact' } } },
+            join =>{ subscriber => { voip_subscriber => { contract => 'contact' } } },
         });
     }
     return $item_rs;
