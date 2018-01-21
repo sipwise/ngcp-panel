@@ -119,6 +119,8 @@ sub update_item {
         last;
     }
 
+    delete $resource->{device_id};
+
     $item->update($resource);
 
     return $item;
