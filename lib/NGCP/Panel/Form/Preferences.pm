@@ -36,6 +36,7 @@ sub field_list {
         my $meta = $row->{meta};
         my $enums = $row->{enums};
         my $rwrs_rs = $row->{rwrs_rs};
+        my $hdrs_rs = $row->{hdrs_rs};
         my $ncos_rs = $row->{ncos_rs};
         my $emergency_mapping_containers_rs = $row->{emergency_mapping_containers_rs};
         my $sound_rs = $row->{sound_rs};
@@ -44,6 +45,15 @@ sub field_list {
         if($meta->attribute eq "rewrite_rule_set") {
             my @options = map {{label => $_->name, value => $_->id}}
                 defined $rwrs_rs ? $rwrs_rs->all : ();
+            unshift @options, {label => '', value => ''};
+            $field = {
+                name => $meta->attribute,
+                type => 'Select',
+                options => \@options,
+            };
+        } elsif ($meta->attribute eq "header_rule_set") {
+            my @options = map {{label => $_->name, value => $_->id}}
+                defined $hdrs_rs ? $hdrs_rs->all : ();
             unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,
