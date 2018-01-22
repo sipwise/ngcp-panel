@@ -27,6 +27,7 @@ has_field 'free_time_spent' => (
 has_field 'ratio' => (
     type => 'Float',
     required => 0,
+    readonly => 1,
     #precision => 6,
     #decimal_symbol => '.',
     element_attr => {
