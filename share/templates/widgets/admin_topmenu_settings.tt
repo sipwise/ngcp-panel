@@ -69,6 +69,7 @@
         [% END -%]
         <li><a href="[% c.uri_for('/peering') %]">[% c.loc('Peerings') %]</a></li>
         <li><a href="[% c.uri_for('/rewrite') %]">[% c.loc('Rewrite Rule Sets') %]</a></li>
+        <li><a href="[% c.uri_for('/header') %]">[% c.loc('Header Manipulations') %]</a></li>
         <li><a href="[% c.uri_for('/ncos') %]">[% c.loc('NCOS Levels') %]</a></li>
         <li><a href="[% c.uri_for('/sound') %]">[% c.loc('Sound Sets') %]</a></li>
         <li><a href="[% c.uri_for('/emailtemplate') %]">[% c.loc('Email Templates') %]</a></li>
