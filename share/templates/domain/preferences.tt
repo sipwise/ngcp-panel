@@ -13,6 +13,7 @@
     helper.form = form;
     helper.base_uri = c.uri_for(domain.id,'preferences');
     helper.rewrite_rule_sets = rwr_sets;
+    helper.header_rule_sets = hdr_sets;
     helper.ncos_levels = ncos_levels;
     helper.emergency_mapping_containers = emergency_mapping_containers;
     helper.sound_sets = sound_sets;
