@@ -22,7 +22,7 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $include_id) = @_;
 
-    my $resource = { reseller_id => $item->id};
+    my $resource = { reseller_id => $item->id };
     if ($item->rtc_user) {
         my $rtc_user_id = $item->rtc_user->rtc_user_id;
         $resource->{rtc_user_id} = $rtc_user_id if $include_id;
@@ -37,6 +37,10 @@ sub hal_from_item {
                 return;
             });
     } else {
+    }
+    #for get=>put compatibility
+    if ('ARRAY' ne ref $resource->{networks}) {
+        $resource->{networks} = [];
     }
 
     my $hal = Data::HAL->new(
@@ -127,8 +131,8 @@ sub update_item {
     try {
 
     } catch($e) {
-        $c->log->error("failed to update autoattendants: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update autoattendants.");
+        $c->log->error("failed to update rtcnetworks: $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update rtcnetworks.");
         return;
     };
 
