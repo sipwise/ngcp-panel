@@ -12,6 +12,7 @@
     helper.base_uri = c.uri_for_action("/peering/servers_preferences_root",
         [c.req.captures.0, c.req.captures.1]);
     helper.rewrite_rule_sets = rwr_sets;
+    helper.header_rule_sets = hdr_sets;
     helper.man_aip_grp_rs = man_aip_grp_rs;
 
     helper.top_buttons = [
