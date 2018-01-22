@@ -505,8 +505,12 @@ sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :
 
     my $rewrite_rule_sets_rs = $c->model('DB')
         ->resultset('voip_rewrite_rule_sets');
+    my $header_rule_sets_rs = $c->model('DB')
+        ->resultset('voip_header_rule_sets');
     $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
-              rwr_sets    => [$rewrite_rule_sets_rs->all]);
+              rwr_sets    => [$rewrite_rule_sets_rs->all],
+              hdr_sets_rs => $header_rule_sets_rs,
+              hdr_sets    => [$header_rule_sets_rs->all]);
 
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
