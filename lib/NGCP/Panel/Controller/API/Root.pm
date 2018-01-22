@@ -200,7 +200,10 @@ sub GET : Allow {
             description => $full_mod->api_description,
             fields => $form_fields,
             uploads => $form_fields_upload,
-            config => $full_mod->config ,
+            config => $full_mod->config,
+            ( $full_item_mod->can('config') 
+                ? ( 'config_item' => $full_item_mod->config )
+                : () ),
             query_params => $query_params,
             actions => $actions,
             item_actions => $item_actions,
