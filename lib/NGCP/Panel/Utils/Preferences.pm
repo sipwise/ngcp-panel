@@ -341,6 +341,7 @@ sub create_preference_form {
             meta => $c->stash->{preference_meta},
             enums => $enums,
             rwrs_rs => $c->stash->{rwr_sets_rs},
+            hdrs_rs => $c->stash->{hdr_sets_rs},
             ncos_rs => $c->stash->{ncos_levels_rs},
             emergency_mapping_containers_rs => $c->stash->{emergency_mapping_containers_rs},
             sound_rs => $c->stash->{sound_sets_rs},
@@ -1218,7 +1219,7 @@ sub api_preferences_defs{
                 push @{ $fields->{enum_values} }, $efields;
             }
         }
-        if ($pref->attribute =~ m/^(rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|emergency_mapping_container|sound_set|contract_sound_set)$/) {
+        if ($pref->attribute =~ m/^(rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|emergency_mapping_container|sound_set|contract_sound_set|header_rule_set)$/) {
             $fields->{data_type} = 'string';
         }
         $resource->{$pref->attribute} = $fields;
