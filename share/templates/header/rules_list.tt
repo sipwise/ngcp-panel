@@ -1,0 +1,98 @@
+[% site_config.title = c.loc('Header Rules for [_1]', set_result.name) -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+    [% back_created = 1 -%]
+    [% UNLESS c.user.read_only -%]
+    <span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/header/rules_create', [c.req.captures.0]) %]"><i class="icon-star"></i> [% c.loc('Create Header Rule') %]</a>
+    </span>
+    [% END -%]
+</div>
+
+[% IF messages -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th>[% c.loc('Name') %]</th>
+            <th>[% c.loc('Direction') %]</th>
+            <th>[% c.loc('Description') %]</th>
+            <th>[% c.loc('Stopper') %]</th>
+            <th>[% c.loc('Enabled') %]</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+    [% FOR r IN rules %]
+        <tr class="sw_action_row">
+            <td>
+                    [% IF r != rules.first %]
+                    <a href="[% c.uri_for_action('/header/rules_root',[set_result.id], 'move' => r.id, 'where' => 'up') %]">
+                        <i class="icon-arrow-up"></i>
+                    </a>
+                    [% END %]
+                    [% IF r != rules.last %]
+                    <a href="[% c.uri_for_action('/header/rules_root',[set_result.id], 'move' => r.id, 'where' => 'down') %]">
+                        <i class="icon-arrow-down"></i>
+                    </a>
+                    [% END %]
+            </td>
+            <td>[% r.name %]</td>
+            <td>[% r.direction %]</td>
+            <td>[% r.description %]</td>
+            <td>[% r.stopper %]</td>
+            <td>[% r.enabled %]</td>
+            <td class="ngcp-actions-column">
+            [% UNLESS c.user.read_only -%]
+                <div class="sw_actions pull-right">
+                    [%- FILTER null;
+                            backuritmp=c.req.uri;
+                            backuritmp.query_param_delete('back');
+                            backuritmp.query_param_delete('move');
+                            backuritmp.query_param_delete('where');
+                        END;
+                    %]
+                    <a class="btn btn-small btn-primary" data-backuri="[%-backuritmp-%]" href="[% c.uri_for_action('/header/rules_edit',[set_result.id, r.id]) %]">
+                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                    </a>
+                    <a class="btn btn-small btn-tertiary" data-backuri="[%-backuritmp-%]" href="[% c.uri_for_action('/header/conditions_root',[set_result.id, r.id]) %]">
+                        <i class="icon-glass"></i> [% c.loc('Conditions') %]
+                    </a>
+                    <a class="btn btn-small btn-tertiary" data-backuri="[%-backuritmp-%]" href="[% c.uri_for_action('/header/actions_root',[set_result.id, r.id]) %]">
+                        <i class="icon-play"></i> [% c.loc('Actions') %]
+                    </a>
+                    <a data-confirm="Delete" class="btn btn-small btn-secondary" href="[% c.uri_for_action('/header/rules_delete',[set_result.id, r.id]) %]">
+                        <i class="icon-trash"></i> [% c.loc('Delete') %]
+                    </a>
+                </div>
+            [% END -%]
+            </td>
+        </tr>
+    [% END %]
+    </tbody>
+</table>
+
+[% IF edit_flag || create_flag -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = c.loc('Header Rule'),
+                 m.create_flag = create_flag);
+    form.render;
+    modal_footer();
+    modal_script(m.close_target = rules_uri);
+-%]
+[% END -%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
