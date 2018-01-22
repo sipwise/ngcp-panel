@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5a890539_d6f1da96",
+        "filename": "share/static/js/libs/aliaseditor.js",
+        "patchSetId": 42
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-22T10:19:04Z",
+      "side": 1,
+      "message": "no its just cosmetic; since you also used it in the template..",
+      "parentUuid": "5a890539_b6cd2e60",
+      "range": {
+        "startLine": 4,
+        "startChar": 13,
+        "endLine": 4,
+        "endChar": 36
+      },
+      "revId": "71e5ce5089dbc5d936fd68e079ae34dbe31183b4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a890539_76eca6c8",
         "filename": "share/templates/subscriber/callmap.tt",
         "patchSetId": 42
