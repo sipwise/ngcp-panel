@@ -44,19 +44,7 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
 
-    my %resource = $item->get_inflated_columns;
-    #$resource{cash_balance} /= 100.0;
-    ##$resource{cash_balance_interval} /= 100.0;
-    $resource{cash_balance} /= 100.0;
-    $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
-    $resource{free_time_spent} = delete $resource{free_time_balance_interval};
-
-    my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($item->contract->create_timestamp // $item->contract->modify_timestamp);
-    if (NGCP::Panel::Utils::DateTime::set_local_tz($item->start) <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($item->end) || NGCP::Panel::Utils::DateTime::set_local_tz($item->end) >= $contract_create)) {
-        $resource{ratio} = NGCP::Panel::Utils::ProfilePackages::get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($item->start),NGCP::Panel::Utils::DateTime::set_local_tz($item->end));
-    } else {
-        $resource{ratio} = 1.0;
-    }
+    my $resource = $self->resource_from_item($c, $item, $form);
 
     my $hal = Data::HAL->new(
         links => [
@@ -80,14 +68,38 @@ sub hal_from_item {
 
     $self->validate_form(
         c => $c,
-        resource => \%resource,
+        resource => $resource,
         form => $form,
         run => 0,
     );
 
-    $resource{id} = int($item->contract->id);
-    $hal->resource({%resource});
+    $resource->{id} = int($item->contract->id);
+    $hal->resource($resource);
     return $hal;
+}
+
+sub resource_from_item{
+    my($self, $c, $item) = @_;
+    my %resource = $item->get_inflated_columns;
+    #$resource{cash_balance} /= 100.0;
+    ##$resource{cash_balance_interval} /= 100.0;
+    $resource{cash_balance} /= 100.0;
+    $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
+    $resource{free_time_spent} = delete $resource{free_time_balance_interval};
+
+    my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($item->contract->create_timestamp // $item->contract->modify_timestamp);
+    if (NGCP::Panel::Utils::DateTime::set_local_tz($item->start) <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($item->end) || NGCP::Panel::Utils::DateTime::set_local_tz($item->end) >= $contract_create)) {
+    $resource{ratio} = NGCP::Panel::Utils::ProfilePackages::get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($item->start),NGCP::Panel::Utils::DateTime::set_local_tz($item->end));
+    #to avoid PUT error in API:
+    ##   Failed test 'customerbalances: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='ratio', input='0.35483871', errors='Total size of number must be less than or equal to 8, but is 9')'
+    ##   Failed test 'customerbalances: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='ratio', input='0.3548387', errors='May have a maximum of 2 digits after the decimal point, but has 7')'
+
+    #$resource{ratio} = sprintf("%.2f", $resource{ratio});
+
+    } else {
+        $resource{ratio} = 1.0;
+    }
+    return \%resource;
 }
 
 sub item_by_id {
