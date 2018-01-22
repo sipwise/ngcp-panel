@@ -1,0 +1,86 @@
+[% site_config.title = c.loc('Header Rule Conditions for [_1]', rule_result.name) -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/header/rules_root',[set_result.id]) %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+    [% back_created = 1 -%]
+    [% UNLESS c.user.read_only -%]
+    <span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/header/conditions_create", [set_result.id, rule_result.id]) %]"><i class="icon-star"></i> [% c.loc('Create Header Rule Condition') %]</a>
+    </span>
+    [% END -%]
+    <span>
+    <a class="btn btn-teritary btn-large" href="[% c.uri_for_action('/header/actions_root',[set_result.id, rule_result.id]) %]"><i class="icon-play"></i> [% c.loc('Actions') %]</a>
+    </span>
+</div>
+
+[% IF messages -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th>[% c.loc('Match') %]</th>
+            <th>[% c.loc('Part') %]</th>
+            <th>[% c.loc('Name') %]</th>
+            <th>[% c.loc('Expression') %]</th>
+            <th>[% c.loc('Type') %]</th>
+            <th>[% c.loc('Values') %]</th>
+            <th>[% c.loc('Rewrite Rule Set') %]</th>
+            <th>[% c.loc('Rewrite Rules') %]</th>
+            <th>[% c.loc('Enabled') %]</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+    [% FOR condition IN conditions %]
+        <tr class="sw_action_row">
+            <td>[% condition.match_type %]</td>
+            <td>[% condition.match_part %]</td>
+            <td>[% condition.match_name %]</td>
+            <td>[% IF condition.expression_negation %] ! [% END %][% condition.expression %]</td>
+            <td>[% condition.value_type %]</td>
+            <td>[% condition.values.join('<br/>') %]</td>
+            <td>[% condition.rwr_set %]</td>
+            <td>[% condition.rwr_dp %]</td>
+            <td>[% condition.enabled %]</td>
+            <td class="ngcp-actions-column">
+            [% UNLESS c.user.read_only -%]
+                <div class="sw_actions pull-right">
+                    <a class="btn btn-small btn-primary" data-backuri="[%-backuritmp-%]" href="[% c.uri_for_action('/header/conditions_edit',[set_result.id, rule_result.id, condition.id]) %]">
+                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                    </a>
+                    <a data-confirm="Delete" class="btn btn-small btn-secondary" href="[% c.uri_for_action('/header/conditions_delete',[set_result.id, rule_result.id, condition.id]) %]">
+                        <i class="icon-trash"></i> [% c.loc('Delete') %]
+                    </a>
+                </div>
+            [% END -%]
+            </td>
+        </tr>
+    [% END %]
+    </tbody>
+</table>
+
+[% IF edit_flag || create_flag -%]
+[%
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = c.loc('Header Rule Conditions'),
+                 m.create_flag = create_flag);
+    form.render;
+    modal_footer();
+    modal_script(m.close_target = conditions_uri);
+-%]
+[% END -%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
