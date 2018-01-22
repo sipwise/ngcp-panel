@@ -1,0 +1,36 @@
+[% site_config.title = c.loc('Header Manipulations') -%]
+[%
+    helper.name = c.loc('Header Rule Set');
+    helper.identifier = 'header_rule_set';
+    helper.messages = messages;
+    helper.dt_columns = set_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action( "/header/set_ajax" );
+
+    IF clone_flag;
+        helper.name = c.loc('Cloned Header Rule Set');
+    END;
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/header/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/header/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Rules'), uri = "/header/'+full.id+'/rules", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Header Rule Set'), uri = c.uri_for('/header/create'), icon = 'icon-star' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = c.loc('Rules'), uri = "/header/'+full.id+'/rules", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
