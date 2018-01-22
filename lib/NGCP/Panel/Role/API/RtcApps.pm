@@ -22,7 +22,7 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $include_id) = @_;
 
-    my $resource = { reseller_id => $item->id};
+    my $resource = { reseller_id => $item->id };
     if ($item->rtc_user) {
         my $rtc_user_id = $item->rtc_user->rtc_user_id;
         $resource->{rtc_user_id} = $rtc_user_id if $include_id;
@@ -34,6 +34,10 @@ sub hal_from_item {
                 $c->log->warn(shift); return;
             });
     } else {
+    }
+    #for get=>put compatibility
+    if ('ARRAY' ne ref $resource->{apps}) {
+        $resource->{apps} = [];
     }
 
     my $hal = Data::HAL->new(
