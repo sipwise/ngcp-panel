@@ -1,0 +1,104 @@
+[% site_config.title = c.loc('Header Rule Actions for [_1]', rule_result.name) -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/header/rules_root',[set_result.id]) %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+    [% back_created = 1 -%]
+    [% UNLESS c.user.read_only -%]
+    <span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/header/actions_create", [set_result.id, rule_result.id]) %]"><i class="icon-star"></i> [% c.loc('Create Header Rule Action') %]</a>
+    </span>
+    [% END -%]
+    <span>
+    <a class="btn btn-teritary btn-large" data-backuri="[% c.uri_for_action('/header/rules_list',[set_result.id]) %]" href="[% c.uri_for_action('/header/conditions_root',[set_result.id, rule_result.id]) %]"><i class="icon-glass"></i> [% c.loc('Conditions') %]</a>
+    </span>
+</div>
+
+[% IF messages -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th>[% c.loc('Header') %]</th>
+            <th>[% c.loc('Part') %]</th>
+            <th>[% c.loc('Type') %]</th>
+            <th>[% c.loc('Value Part') %]</th>
+            <th>[% c.loc('Value') %]</th>
+            <th>[% c.loc('Rewrite Rule Set') %]</th>
+            <th>[% c.loc('Rewrite Rules') %]</th>
+            <th>[% c.loc('Enabled') %]</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+    [% FOR action IN actions %]
+        <tr class="sw_action_row">
+            <td>
+                    [% IF action != actions.first %]
+                    <a href="[% c.uri_for_action('/header/actions_root',[set_result.id, rule_result.id], 'move' => action.id, 'where' => 'up') %]">
+                        <i class="icon-arrow-up"></i>
+                    </a>
+                    [% END %]
+                    [% IF action != actions.last %]
+                    <a href="[% c.uri_for_action('/header/actions_root',[set_result.id, rule_result.id], 'move' => action.id, 'where' => 'down') %]">
+                        <i class="icon-arrow-down"></i>
+                    </a>
+                    [% END %]
+            </td>
+            <td>[% action.header %]</td>
+            <td>[% action.header_part %]</td>
+            <td>[% action.action_type %]</td>
+            <td>[% action.value_part %]</td>
+            <td>[% action.value %]</td>
+            <td>[% action.rwr_set %]</td>
+            <td>[% action.rwr_dp %]</td>
+            <td>[% action.enabled %]</td>
+            <td class="ngcp-actions-column">
+            [% UNLESS c.user.read_only -%]
+                <div class="sw_actions pull-right">
+                    [%- FILTER null;
+                            backuritmp=c.req.uri;
+                            backuritmp.query_param_delete('back');
+                            backuritmp.query_param_delete('move');
+                            backuritmp.query_param_delete('where');
+                        END;
+                    %]
+                    <a class="btn btn-small btn-primary" data-backuri="[%-backuritmp-%]" href="[% c.uri_for_action('/header/actions_edit',[set_result.id, rule_result.id, action.id]) %]">
+                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                    </a>
+                    <a data-confirm="Delete" class="btn btn-small btn-secondary" href="[% c.uri_for_action('/header/actions_delete',[set_result.id, rule_result.id, action.id]) %]">
+                        <i class="icon-trash"></i> [% c.loc('Delete') %]
+                    </a>
+                </div>
+            [% END -%]
+            </td>
+        </tr>
+    [% END %]
+    </tbody>
+</table>
+
+[% IF edit_flag || create_flag -%]
+[%
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = c.loc('Header Rule Actions'),
+                 m.create_flag = create_flag);
+    form.render;
+    modal_footer();
+    modal_script(m.close_target = actions_uri);
+-%]
+[% END -%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

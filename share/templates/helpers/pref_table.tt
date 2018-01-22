@@ -70,6 +70,13 @@
                             <option [% (r.rwrs_id.defined && r.rwrs_id == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
                         [% END -%]
                         </select>
+                    [% ELSIF r.attribute == "header_rule_set" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR set IN helper.header_rule_sets -%]
+                            <option [% (r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
+                        [% END -%]
+                        </select>
                     [% ELSIF r.attribute == "ncos" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
