@@ -34,6 +34,24 @@
       "revId": "2476684cd49e50d943992131ce3c45bf28c4dfcf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_21601635",
+        "filename": "lib/NGCP/Panel/Controller/API/Capabilities.pm",
+        "patchSetId": 19
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-23T13:50:08Z",
+      "side": 1,
+      "message": "I would say it\u0027s okay in this case, since it\u0027s a minor issue; but in general I think every commit should care of the formatting of the code it touches or adds. (atomic commit)",
+      "parentUuid": "5a890539_e148cece",
+      "revId": "2476684cd49e50d943992131ce3c45bf28c4dfcf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
