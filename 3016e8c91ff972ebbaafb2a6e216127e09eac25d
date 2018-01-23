@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_e1f1ae96",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 1146,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-23T13:04:23Z",
+      "side": 1,
+      "message": "maybe we can do this stuff like before. that is, completely without touching the config?\n\nbecause the config has some quirks. and since we already use inheritance, let\u0027s stick to it.\n\n\"you MUST NOT call $self-\u003econfig or __PACKAGE__-\u003econfig as a way of reading config within your code\"\n(https://metacpan.org/pod/Catalyst#$c-%3Econfig)",
+      "revId": "3016e8c91ff972ebbaafb2a6e216127e09eac25d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_212bb6ec",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-23T13:04:23Z",
+      "side": 1,
+      "message": "remove?",
+      "revId": "3016e8c91ff972ebbaafb2a6e216127e09eac25d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_4130c256",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-23T13:04:23Z",
+      "side": 1,
+      "message": "same as in previous commit. \"return 1\"",
+      "revId": "3016e8c91ff972ebbaafb2a6e216127e09eac25d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
