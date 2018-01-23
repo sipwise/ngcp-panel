@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_1c9b81ca",
+        "filename": "lib/NGCP/Panel/Field/BillingProfile.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-23T16:40:17Z",
+      "side": 0,
+      "message": "also in lib/NGCP/Panel/Field/BillingNetwork.pm",
+      "revId": "c0c7c0c8452e4e39ff7cccd5acf46ea22e802db6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
