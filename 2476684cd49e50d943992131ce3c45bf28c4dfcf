@@ -16,6 +16,24 @@
       "revId": "2476684cd49e50d943992131ce3c45bf28c4dfcf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_e148cece",
+        "filename": "lib/NGCP/Panel/Controller/API/Capabilities.pm",
+        "patchSetId": 19
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-23T13:11:49Z",
+      "side": 1,
+      "message": "I thought that more convenient would be to prepare one format commit. Would it be OK?",
+      "parentUuid": "5a890539_a13ec627",
+      "revId": "2476684cd49e50d943992131ce3c45bf28c4dfcf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
