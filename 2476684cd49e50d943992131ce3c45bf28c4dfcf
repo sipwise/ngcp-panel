@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_a13ec627",
+        "filename": "lib/NGCP/Panel/Controller/API/Capabilities.pm",
+        "patchSetId": 19
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-23T13:08:52Z",
+      "side": 1,
+      "message": "IMO, there really should be one blank line between subs\n\n(applies multiple times)",
+      "revId": "2476684cd49e50d943992131ce3c45bf28c4dfcf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
