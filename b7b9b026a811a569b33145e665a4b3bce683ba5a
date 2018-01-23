@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_e1e44eae",
+        "filename": "lib/NGCP/Panel/Controller/API/CallRecordingFilesItem.pm",
+        "patchSetId": 18
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-23T14:59:24Z",
+      "side": 1,
+      "message": "left on purpose in order to override the logging behavior, right?",
+      "revId": "b7b9b026a811a569b33145e665a4b3bce683ba5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
