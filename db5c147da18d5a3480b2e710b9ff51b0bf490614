@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_81b9caeb",
+        "filename": "lib/NGCP/Panel/Utils/DbStrings.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-23T09:59:12Z",
+      "side": 1,
+      "message": "i suggest to insert a package global \"my $c;\" here, and remove it from every generated sub.",
+      "revId": "db5c147da18d5a3480b2e710b9ff51b0bf490614",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_61b4def2",
+        "filename": "script/ngcp_panel_dump_db_strings.pl",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-23T09:59:12Z",
+      "side": 1,
+      "message": "i suggest to insert a package global \"my $c;\" here, and remove it from every generated sub.",
+      "revId": "db5c147da18d5a3480b2e710b9ff51b0bf490614",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
