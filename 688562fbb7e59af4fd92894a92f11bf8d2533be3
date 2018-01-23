@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_01d87a1c",
+        "filename": "lib/NGCP/Panel/Role/EntitiesItem.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-23T12:50:59Z",
+      "side": 1,
+      "message": "when auto returns a false value, the action chain is aborted. Therefore I would really add an explicit \"return 1\" here!",
+      "revId": "688562fbb7e59af4fd92894a92f11bf8d2533be3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
