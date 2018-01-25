@@ -13,8 +13,14 @@ my($opt,$report,$api_config,$api_info,$config,$test_machine,$fake_data) =
     ({},{},{},{} );
 
 $opt = {
-    'collections'      => {'sms' => 1,},
+    'collections'      => {
+        'voicemailgreetings' => 1,
+        'pbxdevicemodels' => 1,
+        'emergencymappings' => 1,
+        'lnpnumbers' => 1,
+    },
     'collections'      => {},
+    'collections'      => {'ccmapentries'=>1},
     'ignore_existence' => 1,
     'test_groups'      => { 
         get2put => 1, 
@@ -93,6 +99,10 @@ sub run{
             }
         }
         if($opt->{test_groups}->{bundle}){
+            #@{$test_machine->content_type}{qw/POST PUT/}    = (
+            #    $api_info->{$collection}->{allowed_methods}->{POST}->{ContentType}->[0] // 'application/json',
+            #    $api_info->{$collection}->{allowed_methods_item}->{PUT}->{ContentType}>[0] // 'application/json',
+            #);
             $test_machine->check_bundle();
         }
         if($opt->{test_groups}->{get}){
@@ -188,9 +198,6 @@ sub init_config{#init config
     #fails with: Unsupported media type 'application/json', accepting text/plain or text/xml only.)
         #'pbxdeviceconfigs' => 1,
     #fails with: not ok 1131 - rtcapps: check_get2put: check put successful (Unprocessable Entity: Invalid field 'apps'. Must be an array.)
-        #'rtcapps' => 1,
-    #fails with: not ok 1176 - rtcnetworks: check_get2put: check put successful (Unprocessable Entity: Invalid field 'networks'. Must be an array.)
-        #'rtcnetworks' => 1,
 
 #--------- interceptions:
 # No intercept agents configured in ngcp_panel.conf, rejecting request
