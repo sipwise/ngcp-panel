@@ -295,6 +295,7 @@ sub init_ssl_cert {
         );
         unless($res->is_success) {
             die "failed to fetch client certificate: " . $res->status_line . "\n";
+            print Dumper $res;
         }
         my $zip = $res->decoded_content;
         my $z = IO::Uncompress::Unzip->new(\$zip, MultiStream => 0, Append => 1);
@@ -1223,6 +1224,7 @@ sub check_get2put{
     delete $put_out->{content_in}->{_embedded};
     # check if put is ok
     $put_out->{content_in} = $self->process_data($put_in->{data_cb}, $put_out->{content_in});
+    print Dumper $put_out->{content_in};
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
     foreach my $field (@{$ignore_fields}){
         delete $get_out->{content}->{$field};
