@@ -1832,6 +1832,7 @@ sub get_subscriber_pbx_status{
 
 sub get_voicemail_filename {
     my ($c, $voicemail_item, $format) = @_;
+    $format //= 'wav';
     return 'voicemail-'.$voicemail_item->msgnum.'.'.$format;
 }
 
