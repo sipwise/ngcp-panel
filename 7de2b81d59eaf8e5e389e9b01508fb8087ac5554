@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_4231a0a1",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-25T14:33:03Z",
+      "side": 1,
+      "message": "ups, that\u0027s testing only",
+      "revId": "7de2b81d59eaf8e5e389e9b01508fb8087ac5554",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
