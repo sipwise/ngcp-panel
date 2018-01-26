@@ -33,6 +33,24 @@
       "revId": "c51347fc9fb06e4ca19880bae79f7699daa8b27f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_f6197123",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerBalances.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-26T13:09:00Z",
+      "side": 1,
+      "message": "this requires max precision possible (its not a currency),\n6 minimum -\u003e otherwise rateomat tests and the fraud-auto-lock get problems",
+      "parentUuid": "5a890539_d63635e7",
+      "revId": "c51347fc9fb06e4ca19880bae79f7699daa8b27f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
