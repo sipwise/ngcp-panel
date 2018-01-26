@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a890539_b639a9da",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerBalances.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-26T10:29:55Z",
+      "side": 1,
+      "message": "indentation",
+      "revId": "c51347fc9fb06e4ca19880bae79f7699daa8b27f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_d63635e7",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerBalances.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-26T10:29:55Z",
+      "side": 1,
+      "message": "so I guess this is open for discussion, what precicion do we want to store and what precision do we want to display? Rene knows more here than I do",
+      "revId": "c51347fc9fb06e4ca19880bae79f7699daa8b27f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
