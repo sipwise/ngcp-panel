@@ -51,6 +51,24 @@
       "revId": "c51347fc9fb06e4ca19880bae79f7699daa8b27f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a890539_f6f091cb",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerBalances.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-26T13:27:40Z",
+      "side": 1,
+      "message": "You see, real fix is in set ratio field to the \"read-only\". But this code I separated from hal_from_item so later we will be able to delete hal_from_item",
+      "parentUuid": "5a890539_f6197123",
+      "revId": "c51347fc9fb06e4ca19880bae79f7699daa8b27f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
