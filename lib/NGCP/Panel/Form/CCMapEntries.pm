@@ -24,7 +24,7 @@ has_field 'subscriber_id' => (
 
 has_field 'mappings' => (
     type => 'Repeatable',
-    required => 1,
+    required => 0,
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
