@@ -1,3 +1,71 @@
+ngcp-panel (6.1.1.0+0~mr6.1.1.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [e28e310] TT#26652 fix subscriberregistration API internal rs query
+  * [0778de8] TT#28903 /api/voicemailrecordings add mp3 and ogg support
+  * [c31f015] TT#29350 get_json() respect column_method dbix accessor
+  * [dbb6207] TT#23771 fix /api/subscriberregistration logic
+  * [53532fd] TT#30500 Fix /api/subscriberregistrations POST method
+  * [db5c147] TT#30650 fix DbString $c declaration
+  * [bdc54a0] TT#30653 apply_rewrite() strict checks for $subscriber variable type
+  * [ff63655] TT#30500 subscriberregistrations adjust check_get2put()
+  * [bead4cb] TT#30500 subscriberregitrations: increase flush timeout
+
+  [ Rene Krenn ]
+  * [753165c] TT#27469 fix callrouting verification form dependency
+  * [012686a] TT#28472 thread-safe cert-auth for tests
+  * [2e24d79] TT#28472 set api-balanceintervals.t to non-local mode again
+  * [c42965d] TT#28472 explicitly set allow_nonref for testcase w. JSON::PP
+  * [9fad59d] TT#28472 disable the parallel catchup for now
+  * [bf9b844] TT#28472 cert file per Collection.pm instance
+  * [deb837c] TT#28472 revert cert file per collection.pm instance
+  * [969ab40] TT#29200 fix redundant form field label
+  * [0f3c660] TT#29904 allow /api/numbers undef ac-cc-sn-is_primary
+  * [a4d9180] TT#29904 remove /api/numbers readonly field checks
+  * [aad8bc8] TT#29754 debug infos free* ratio caclulation
+  * [fc57ea6] TT#30379 billing profile currency for call conversations
+
+  [ Gerhard Jungwirth ]
+  * [248e5c8] TT#27154 make timezone ajax acessible to subadmin
+  * [0a8c92f] TT#28827 fix profile_id documentation for PbxDevices
+  * [c7021aa] TT#28827 implement initial OpenAPI documentation
+  * [df9438b] TT#28827 fix OpenAPI documentation add schema
+  * [d369021] TT#29617 automatically generate form exceptions for validation
+  * [b0c3b25] TT#28828 openapi PUT, PATCH, DELETE
+  * [edbef3c] TT#29617 remove unnecessary form exceptions
+  * [24de423] TT#30507 remove DataHal workaround layer
+  * [ab70e4e] TT#30650 fix some syntax errors
+  * [c0c7c0c] TT#30650 remove unused TTEmailer stub
+  * [30e66ad] TT#28829 swagger UI
+  * [e4253f5] TT#30374 fix BillingProfile create button
+
+  [ Irina Peshinskaya ]
+  * [3385216] TT#27766 Allow subscriber and subscriberadmin access to faxrecordings
+  * [632406b] TT#28510 Fix customer_id field for the subscriber role in the Subscribers API
+  * [3becbeb] TT#28453 Fix roles for config_allowed_roles inheritance entities
+  * [6cc6f21] TT#28510 Fix tests masked by empty total_count for preferences
+  * [61bf07b] TT#28510 Remove "domain" from resource for subscriberadmin
+  * [c2263e6] TT#30500 Adapt tests to the item recreation on update
+  * [a5d3358] TT#28508 Fix own_transaction_control usage
+  * [f04e08a] TT#28460 Fix OPTIONS for  the item/item request of the balanceintervals
+  * [6950268] TT#28460 Fix UpnRewriteSets API
+  * [357c8c5] TT#28460 Fix PbxDeviceProfiles PUT
+  * [a72f212] TT#28460 Fix customer balances get-put use case
+  * [4f25a4d] TT#28460 Fix RTC networks and RTC apps get-put use case
+  * [75404b3] TT#28604 Fix voicemail conversation presentation
+
+  [ Alexander Lutay ]
+  * [148b119] TT#28472 Revert changed for t/lib/Test/Collection.pm committed in 012686ab0
+
+  [ Roman Romanchenko ]
+  * [b418bd3] TT#29350 call flow advanced diagram builder
+  * [592a23a] Revert "TT#29350 call flow advanced diagram builder"
+  * [d8d1ea8] TT#29350 call flow advanced diagram builder
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 29 Jan 2018 21:55:04 +0100
+
 ngcp-panel (6.1.0.0+0~mr6.1.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
