@@ -25,15 +25,14 @@ has_block 'fields' => (
     render_list => [qw/contact billing_profile_definition billing_profile billing_profiles profile_add profile_package product max_subscribers status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
 );
 
-sub validate {
-    my $self = shift;
-
-    my $product = $self->field('product');
-    my $max_subscribers = $self->field('max_subscribers');
-    my $c = $self->ctx;
-
+sub validate_max_subscribers {
+    my ($self, $field) = @_;
+    my $form = $self->form;
+    my $c = $form->ctx;
     return unless $c;
 
+    my $product = $form->field('product');
+    my $max_subscribers = $form->field('max_subscribers');
     my $sipaccount = $c->model('DB')->resultset('products')->find({class => 'sipaccount'});
     return unless $sipaccount;
     my $sipaccount_id = $sipaccount->id // 0;
