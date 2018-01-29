@@ -25,7 +25,7 @@ has_block 'fields' => (
     render_list => [qw/contact billing_profile_definition billing_profile billing_profiles profile_add profile_package product max_subscribers status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
 );
 
-sub validate {
+sub validate_max_subscribers {
     my $self = shift;
 
     my $product = $self->field('product');
