@@ -16,6 +16,24 @@
       "revId": "688562fbb7e59af4fd92894a92f11bf8d2533be3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a930d6b_6b73e1b1",
+        "filename": "lib/NGCP/Panel/Role/EntitiesItem.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-01-29T09:00:14Z",
+      "side": 1,
+      "message": "I added proper return in next commit\n\nhttps://gerrit.mgm.sipwise.com/#/c/18297/",
+      "parentUuid": "5a890539_01d87a1c",
+      "revId": "688562fbb7e59af4fd92894a92f11bf8d2533be3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
