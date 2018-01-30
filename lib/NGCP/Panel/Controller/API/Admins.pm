@@ -12,6 +12,7 @@ __PACKAGE__->set_config();
 sub api_description {
     return'Defines admins to log into the system via panel or api.';
 }
+
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }

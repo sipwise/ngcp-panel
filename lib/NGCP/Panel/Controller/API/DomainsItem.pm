@@ -24,9 +24,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Domains/;
 sub resource_name{
     return 'domains';
 }
+
 sub dispatch_path{
     return '/api/domains/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-domains';
 }

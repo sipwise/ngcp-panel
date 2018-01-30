@@ -23,9 +23,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SpeedDials
 sub resource_name{
     return 'speeddials';
 }
+
 sub dispatch_path{
     return '/api/speeddials/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-speeddials';
 }

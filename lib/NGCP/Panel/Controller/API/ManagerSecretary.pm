@@ -38,9 +38,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::ManagerSecreta
 sub resource_name{
     return 'managersecretary';
 }
+
 sub dispatch_path{
     return '/api/managersecretary/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-managersecretary';
 }

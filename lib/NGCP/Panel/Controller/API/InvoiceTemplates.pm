@@ -54,9 +54,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::InvoiceTemplat
 sub resource_name{
     return 'invoicetemplates';
 }
+
 sub dispatch_path{
     return '/api/invoicetemplates/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-invoicetemplates';
 }

@@ -18,9 +18,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CustomerFr
 sub resource_name{
     return 'customerfraudevents';
 }
+
 sub dispatch_path{
     return '/api/customerfraudevents/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-customerfraudevents';
 }

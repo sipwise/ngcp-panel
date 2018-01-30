@@ -269,9 +269,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CallLists/;
 sub resource_name{
     return 'calllists';
 }
+
 sub dispatch_path{
     return '/api/calllists/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-calllists';
 }

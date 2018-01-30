@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PeeringSer
 sub resource_name{
     return 'peeringservers';
 }
+
 sub dispatch_path{
     return '/api/peeringservers/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-peeringservers';
 }

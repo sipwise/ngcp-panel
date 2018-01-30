@@ -90,9 +90,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Events/;
 sub resource_name{
     return 'events';
 }
+
 sub dispatch_path{
     return '/api/events/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-events';
 }

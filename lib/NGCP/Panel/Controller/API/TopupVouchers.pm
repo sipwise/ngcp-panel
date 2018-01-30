@@ -37,9 +37,11 @@ sub query_params {
 sub resource_name{
     return 'topupvouchers';
 }
+
 sub dispatch_path{
     return '/api/topupvouchers/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-topupvouchers';
 }

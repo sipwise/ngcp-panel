@@ -23,9 +23,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CallForwar
 sub resource_name{
     return 'callforwards';
 }
+
 sub dispatch_path{
     return '/api/callforwards/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-callforwards';
 }

@@ -23,9 +23,11 @@ use base qw/NGCP::Panel::Role::API NGCP::Panel::Role::Entities/;
 sub resource_name{
     return 'metaconfigdefs';
 }
+
 sub dispatch_path{
     return '/api/metaconfigdefs/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-metaconfigdefs';
 }

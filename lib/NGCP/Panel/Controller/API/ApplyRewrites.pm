@@ -32,9 +32,11 @@ sub query_params {
 sub resource_name{
     return 'applyrewrites';
 }
+
 sub dispatch_path{
     return '/api/applyrewrites/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-applyrewrites';
 }

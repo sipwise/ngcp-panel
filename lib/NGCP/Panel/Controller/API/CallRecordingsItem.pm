@@ -21,9 +21,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CallRecord
 sub resource_name{
     return 'callrecordings';
 }
+
 sub dispatch_path{
     return '/api/callrecordings/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-callrecordings';
 }

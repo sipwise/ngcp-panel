@@ -21,9 +21,11 @@ sub allowed_methods{
 sub resource_name{
     return 'mailtofaxsettings';
 }
+
 sub dispatch_path{
     return '/api/mailtofaxsettings/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-mailtofaxsettings';
 }

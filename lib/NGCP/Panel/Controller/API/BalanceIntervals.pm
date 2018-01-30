@@ -79,9 +79,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::BalanceInterva
 sub resource_name{
     return 'balanceintervals';
 }
+
 sub dispatch_path{
     return '/api/balanceintervals/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-balanceintervals';
 }

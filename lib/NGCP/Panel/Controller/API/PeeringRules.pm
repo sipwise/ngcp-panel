@@ -66,9 +66,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PeeringRules/;
 sub resource_name{
     return 'peeringrules';
 }
+
 sub dispatch_path{
     return '/api/peeringrules/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-peeringrules';
 }

@@ -21,9 +21,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Resellers/
 sub resource_name{
     return 'resellers';
 }
+
 sub dispatch_path{
     return '/api/resellers/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-resellers';
 }

@@ -24,9 +24,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Preference
 sub resource_name{
     return 'subscriberpreferences';
 }
+
 sub dispatch_path{
     return '/api/subscriberpreferences/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferences';
 }

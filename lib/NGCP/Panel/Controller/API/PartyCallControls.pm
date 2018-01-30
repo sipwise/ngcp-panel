@@ -36,9 +36,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PartyCallContr
 sub resource_name{
     return 'partycallcontrols';
 }
+
 sub dispatch_path{
     return '/api/partycallcontrols/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-partycallcontrols';
 }
