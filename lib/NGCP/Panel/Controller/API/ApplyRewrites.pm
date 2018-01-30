@@ -45,12 +45,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
 
-
-
-
-
-
-
 sub POST :Allow {
     my ($self, $c) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
@@ -109,9 +103,6 @@ sub POST :Allow {
     }
     return;
 }
-
-
-
 
 1;
 

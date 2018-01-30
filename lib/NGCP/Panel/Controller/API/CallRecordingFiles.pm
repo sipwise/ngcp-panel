@@ -40,7 +40,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
 });
 
-
 1;
 
 # vim: set tabstop=4 expandtab:

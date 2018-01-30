@@ -33,10 +33,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin/],
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
@@ -59,10 +55,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -140,8 +132,6 @@ sub DELETE :Allow {
     }
     return;
 }
-
-
 
 1;
 

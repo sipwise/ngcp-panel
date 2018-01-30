@@ -50,12 +50,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
 
-
-
-
-
-
-
 sub POST :Allow {
     my ($self, $c) = @_;
 
@@ -146,8 +140,6 @@ sub POST :Allow {
     }
     return;
 }
-
-
 
 sub get_form {
     my ($self, $c) = @_;

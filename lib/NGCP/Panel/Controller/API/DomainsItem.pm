@@ -45,10 +45,6 @@ __PACKAGE__->set_config({
     }
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
@@ -70,10 +66,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;

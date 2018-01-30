@@ -33,10 +33,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
@@ -63,10 +59,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -207,7 +199,6 @@ sub delete_item {
     NGCP::Panel::Utils::Kamailio::flush($c);
     return 1;
 }
-
 
 1;
 

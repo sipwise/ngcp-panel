@@ -49,9 +49,6 @@ sub query_params {
     ];
 }
 
-
-
-
 1;
 
 # vim: set tabstop=4 expandtab:
