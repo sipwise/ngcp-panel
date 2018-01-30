@@ -182,13 +182,13 @@ sub GET : Allow {
             $s = to_json($s, {pretty => 1}) =~ s/(^\s*{\s*)|(\s*}\s*$)//rg =~ s/\n   /\n/rg;
             return $s;
         };
-        if($full_mod->can('documentation_sample')){
+        if ($full_mod->can('documentation_sample')) {
             $documentation_sample->{sample_orig}->{default} = $full_mod->documentation_sample;
             $documentation_sample->{sample}->{default} = $documentation_sample_process->($documentation_sample->{sample_orig}->{default});
         }
         foreach my $action (qw/create update/){
             my $method = 'documentation_sample_'.$action;
-            if($full_mod->can($method)){
+            if ($full_mod->can($method)) {
                 $documentation_sample->{sample_orig}->{$action} = $full_mod->$method;
                 $documentation_sample->{sample}->{$action} = $documentation_sample_process->($documentation_sample->{sample_orig}->{$action});
             }
@@ -448,7 +448,7 @@ sub get_collection_properties {
         next if !$field_spec;
         push @props, $field_spec;
         push @uploads, $field_spec if $f->type =~/Upload/;
-        if(my $spec = $f->element_attr->{implicit_parameter}){
+        if (my $spec = $f->element_attr->{implicit_parameter}) {
             my $f_implicit = clone($f);
             foreach my $field_attribute (keys %{$spec}){
                 $f_implicit->$field_attribute($spec->{$field_attribute});
