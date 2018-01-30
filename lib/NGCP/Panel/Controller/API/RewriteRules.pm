@@ -11,7 +11,6 @@ __PACKAGE__->set_config({
     own_transaction_control => { POST => 1 },
 });
 
-
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }

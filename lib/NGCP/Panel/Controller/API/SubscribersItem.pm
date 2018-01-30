@@ -45,10 +45,6 @@ __PACKAGE__->set_config({
     }
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
@@ -81,10 +77,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
@@ -211,7 +203,6 @@ sub PATCH :Allow {
     return;
 }
 
-
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
 
@@ -277,8 +268,6 @@ sub DELETE :Allow {
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
-
-
 
 1;
 

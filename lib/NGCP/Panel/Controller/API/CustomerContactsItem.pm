@@ -42,10 +42,6 @@ __PACKAGE__->set_config({
     }
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
@@ -68,10 +64,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;

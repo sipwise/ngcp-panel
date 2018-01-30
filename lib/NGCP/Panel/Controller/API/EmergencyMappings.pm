@@ -23,7 +23,6 @@ sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
 
-
 sub api_description {
     return 'Defines emergency mappings for an <a href="#emergencymappingscontainer">Emergency Mapping Container</a>. You can POST mappings individually one-by-one using json. To bulk-upload mappings, specify the Content-Type as "text/csv", pass a reseller_id URL parameter and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/emergencymappings/?reseller_id=123&amp;purge_existing=true"';
 };
@@ -85,10 +84,6 @@ sub relation{
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
-
-
-
-
 
 sub check_create_csv :Private {
     my ($self, $c) = @_;
@@ -160,10 +155,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub POST :Allow {
     my ($self, $c) = @_;
@@ -276,8 +267,6 @@ sub POST :Allow {
     }
     return;
 }
-
-
 
 1;
 

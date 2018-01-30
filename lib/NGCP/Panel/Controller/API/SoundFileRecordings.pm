@@ -45,8 +45,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin/],
 });
 
-
-
 sub auto :Private {
     my ($self, $c) = @_;
 

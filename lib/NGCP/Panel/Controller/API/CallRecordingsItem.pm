@@ -34,7 +34,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
 });
 
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
