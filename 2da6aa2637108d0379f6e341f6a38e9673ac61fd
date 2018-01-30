@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a930d6b_7181104a",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-01-30T12:19:03Z",
+      "side": 1,
+      "message": "remove",
+      "revId": "2da6aa2637108d0379f6e341f6a38e9673ac61fd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
