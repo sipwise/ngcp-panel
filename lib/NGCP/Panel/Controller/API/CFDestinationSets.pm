@@ -167,7 +167,7 @@ sub POST :Allow {
         if (! exists $resource->{destinations} ) {
             $resource->{destinations} = [];
         }
-        if(!$self->check_destinations($c, $resource)){
+        if (!$self->check_destinations($c, $resource)) {
             last;
         }
         try {
