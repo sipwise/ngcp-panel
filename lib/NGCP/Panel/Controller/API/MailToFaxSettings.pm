@@ -65,9 +65,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::MailToFaxSetti
 sub resource_name{
     return 'mailtofaxsettings';
 }
+
 sub dispatch_path{
     return '/api/mailtofaxsettings/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-mailtofaxsettings';
 }

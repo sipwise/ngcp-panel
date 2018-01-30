@@ -25,9 +25,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Contracts/
 sub resource_name{
     return 'contracts';
 }
+
 sub dispatch_path{
     return '/api/contracts/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-contracts';
 }

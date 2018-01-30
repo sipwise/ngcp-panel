@@ -70,9 +70,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CustomerFraudP
 sub resource_name{
     return 'customerfraudpreferences';
 }
+
 sub dispatch_path{
     return '/api/customerfraudpreferences/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-customerfraudpreferences';
 }

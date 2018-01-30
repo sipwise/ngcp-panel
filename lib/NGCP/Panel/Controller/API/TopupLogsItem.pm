@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::TopupLogs/
 sub resource_name{
     return 'topuplogs';
 }
+
 sub dispatch_path{
     return '/api/topuplogs/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-topuplogs';
 }

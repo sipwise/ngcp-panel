@@ -23,9 +23,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::AutoAttend
 sub resource_name{
     return 'autoattendants';
 }
+
 sub dispatch_path{
     return '/api/autoattendants/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-autoattendants';
 }

@@ -31,9 +31,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::RtcApps/;
 sub resource_name{
     return 'rtcapps';
 }
+
 sub dispatch_path{
     return '/api/rtcapps/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-rtcapps';
 }

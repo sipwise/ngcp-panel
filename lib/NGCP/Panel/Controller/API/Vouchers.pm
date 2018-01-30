@@ -54,9 +54,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Vouchers/;
 sub resource_name{
     return 'vouchers';
 }
+
 sub dispatch_path{
     return '/api/vouchers/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-vouchers';
 }

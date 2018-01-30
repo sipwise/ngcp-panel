@@ -21,9 +21,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Voicemails
 sub resource_name{
     return 'voicemails';
 }
+
 sub dispatch_path{
     return '/api/voicemails/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-voicemails';
 }

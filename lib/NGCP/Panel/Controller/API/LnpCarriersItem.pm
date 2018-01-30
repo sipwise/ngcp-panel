@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::LnpCarrier
 sub resource_name{
     return 'lnpcarriers';
 }
+
 sub dispatch_path{
     return '/api/lnpcarriers/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-lnpcarriers';
 }

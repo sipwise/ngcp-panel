@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::TrustedSou
 sub resource_name{
     return 'trustedsources';
 }
+
 sub dispatch_path{
     return '/api/trustedsources/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-trustedsources';
 }

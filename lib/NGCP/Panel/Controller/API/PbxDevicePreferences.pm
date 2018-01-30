@@ -27,9 +27,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Preferences/;
 sub resource_name{
     return 'pbxdevicepreferences';
 }
+
 sub dispatch_path{
     return '/api/pbxdevicepreferences/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicepreferences';
 }

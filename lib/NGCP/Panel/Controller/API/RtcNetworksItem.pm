@@ -19,12 +19,15 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::RtcNetwork
 sub resource_name{
     return 'rtcnetworks';
 }
+
 sub dispatch_path{
     return '/api/rtcnetworks/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-rtcnetworks';
 }
+
 sub journal_query_params {
     my($self,$query_params) = @_;
     return $self->get_journal_query_params($query_params);

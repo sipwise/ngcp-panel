@@ -21,9 +21,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Intercepti
 sub resource_name{
     return 'interceptions';
 }
+
 sub dispatch_path{
     return '/api/interceptions/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-interceptions';
 }

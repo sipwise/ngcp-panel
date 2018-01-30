@@ -55,9 +55,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CustomerContac
 sub resource_name{
     return 'customercontacts';
 }
+
 sub dispatch_path{
     return '/api/customercontacts/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-customercontacts';
 }

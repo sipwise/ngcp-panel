@@ -19,12 +19,15 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::RtcApps/;
 sub resource_name{
     return 'rtcapps';
 }
+
 sub dispatch_path{
     return '/api/rtcapps/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-rtcapps';
 }
+
 sub journal_query_params {
     my($self,$query_params) = @_;
     return $self->get_journal_query_params($query_params);
