@@ -12,6 +12,9 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     extra_capabilities => {
         acceptInsecureCerts => \1,
     },
+    version => '56.0',
+    platform => 'linux',
+    accept_ssl_certs => 1,
 );
 
 $d->login_ok();
@@ -52,7 +55,8 @@ my $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile"
 ok($row);
 my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Edit")]');
 ok($edit_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 
 diag("Edit mytestprofile");
@@ -68,7 +72,8 @@ $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/
 ok($row);
 $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Fees")]');
 ok($edit_link);
-$d->move_action(element => $row,xoffset => 1);
+$d->move_to(element => $row,xoffset => 1);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 $d->find_element('//*[@id="masthead"]//h2[contains(text(),"Billing Fees")]');
 
@@ -90,7 +95,8 @@ diag("Delete billing fee");
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..//a[contains(@class,"btn-primary") and contains(text(),"Edit")]');
 $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..');
 ok($row, "Find row");
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 ok(1, "Mouse over row");
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..//a[contains(@class,"btn-secondary") and contains(text(),"Delete")]')->click();
 ok($d->find_text("Are you sure?"));
@@ -108,7 +114,8 @@ $d->find_element('#billing_zone_table tr > td.dataTables_empty', 'css');
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'testingdetail');
 $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..');
 ok($row);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//a[contains(text(),"Delete")]')->click();
 $d->find_text("Are you sure?");
 $d->find_element('#dataConfirmOK', 'css')->click();
@@ -123,16 +130,19 @@ $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/
 ok($row);
 $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Peaktimes")]');
 ok($edit_link);
-$d->move_action(element => $row,xoffset=>2);
+$d->move_to(element => $row,xoffset=>2);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 ok($d->find_element('//*[@id="masthead"]//h2[contains(text(),"times for mytestprofile")]'));
 
 diag("Edit Wednesday");
 $row = $d->find_element('//table//td[contains(text(),"Wednesday")]');
 ok($row);
-$d->move_action(element => ($d->find_element('//h3[contains(text(),"Weekdays")]')));
+$d->move_to(element => ($d->find_element('//h3[contains(text(),"Weekdays")]')));
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 sleep 2 if ($d->browser_name_in("htmlunit"));
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]')->click();
 $d->find_text("Edit Wednesday");
 
@@ -156,7 +166,8 @@ $elem = $d->find_element('//div[contains(@class,"dataTables_wrapper")]');
 $d->scroll_to_element($elem);
 $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"2008-02-28")]/..');
 ok($row);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
 ok($edit_link);
 sleep 2 if ($browsername eq "htmlunit");

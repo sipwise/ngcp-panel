@@ -12,6 +12,9 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     extra_capabilities => {
         acceptInsecureCerts => \1,
     },
+    version => '56.0',
+    platform => 'linux',
+    accept_ssl_certs => 1,
 );
 
 $d->login_ok();
@@ -51,7 +54,8 @@ my $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")
 ok($row);
 my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Details")]');
 ok($edit_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 
 diag("Edit our contact");
@@ -79,7 +83,8 @@ $row = $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[
 ok($row);
 $edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]');
 ok($edit_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 
 diag("Do Edit Fraud Limits");
@@ -97,7 +102,8 @@ $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/.
 ok($row);
 $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Terminate")]');
 ok($edit_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 $d->find_text("Are you sure?");
 $d->find_element('#dataConfirmOK', 'css')->click();

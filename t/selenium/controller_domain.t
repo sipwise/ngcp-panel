@@ -13,6 +13,9 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     extra_capabilities => {
         acceptInsecureCerts => \1,
     },
+    version => '56.0',
+    platform => 'linux',
+    accept_ssl_certs => 1,
 );
 
 $d->login_ok();
@@ -37,7 +40,8 @@ SKIP: {
     }
 
     ok($edit_link);
-    $d->move_action(element => $row);
+    $d->move_to(element => $row, x => 1, y => 1);
+    $d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
     $edit_link->click();
 
     diag('Open the tab "Access Restrictions"');
@@ -50,7 +54,8 @@ SKIP: {
     ok($row);
     $edit_link = $d->find_child_element($row, '(./../td//a)[2]');
     ok($edit_link);
-    $d->move_action(element => $row);
+    $d->move_to(element => $row);
+    $d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
     $edit_link->click();
 
     diag("Try to change this to a value which is not a number");

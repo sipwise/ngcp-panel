@@ -12,6 +12,9 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     extra_capabilities => {
         acceptInsecureCerts => \1,
     },
+    version => '56.0',
+    platform => 'linux',
+    accept_ssl_certs => 1,
 );
 
 $d->login_ok();
@@ -46,7 +49,8 @@ my $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "testinggroup"
 ok($row);
 my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Details")]');
 ok($edit_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 
 diag("Create a Peering Rule");
@@ -76,7 +80,8 @@ $edit_link = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserve
 $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserver")]/..');
 ok($row);
 ok($edit_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 
 diag('Open the tab "Number Manipulations"');
@@ -87,7 +92,8 @@ $row = $d->find_element('//table/tbody/tr/td[normalize-space(text()) = "inbound_
 ok($row);
 $edit_link = $d->find_child_element($row, '(./../td//a)[2]');
 ok($edit_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $edit_link->click();
 
 diag('Change to "P-Asserted-Identity');
@@ -109,7 +115,8 @@ $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "mytestserver")]/
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $delete_link->click();
 $d->find_text("Are you sure?");
 $d->find_element('#dataConfirmOK', 'css')->click();
@@ -121,7 +128,8 @@ $row = $d->find_element('//table[@id="PeeringRules_table"]/tbody/tr[1]');
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $delete_link->click();
 $d->find_text("Are you sure?");
 $d->find_element('#dataConfirmOK', 'css')->click();
@@ -137,7 +145,8 @@ $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "testinggroup")]/
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $delete_link->click();
 $d->find_text("Are you sure?");
 $d->find_element('#dataConfirmOK', 'css')->click();

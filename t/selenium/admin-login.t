@@ -12,6 +12,9 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     extra_capabilities => {
         acceptInsecureCerts => \1,
     },
+    version => '56.0',
+    platform => 'linux',
+    accept_ssl_certs => 1,
 );
 
 ok(1, "Instantiation ok");

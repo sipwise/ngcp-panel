@@ -12,6 +12,9 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     extra_capabilities => {
         acceptInsecureCerts => \1,
     },
+    version => '56.0',
+    platform => 'linux',
+    accept_ssl_certs => 1,
 );
 
 $d->login_ok();
@@ -46,7 +49,8 @@ diag("Click Edit on the first reseller shown (first row)");
 sleep 1; #prevent a StaleElementReferenceException
 my $row = $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]');
 ok($row);
-$d->move_action(element => $row);
+$d->move_to(element => $row);
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 my $btn = $d->find_child_element($row, './/a[contains(text(),"Edit")]');
 ok($btn);
 $btn->click();
@@ -57,7 +61,8 @@ diag("Click Terminate on the first reseller shown");
 sleep 1; #prevent a StaleElementReferenceException
 $row = $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]');
 ok($row);
-$d->move_action(element => $row,xoffset=>1); # 1 because if the mouse doesn't move, the buttons don't appear
+$d->move_to(element => $row,xoffset=>1); # 1 because if the mouse doesn't move, the buttons don't appear
+$d->general_action(type => 'pointer', id => 'mouse', actions => []); # in order to perform the "lazy move"
 $btn = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
 ok($btn);
 $btn->click();
