@@ -40,10 +40,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c) = @_;
     my $container_type = 'pbxdeviceprofiles';
@@ -91,12 +87,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
-
-
 
 1;
 

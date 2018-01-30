@@ -56,10 +56,6 @@ sub GET :Allow {
     return;
 }
 
-
-
-
-
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     unless($c->user->billing_data) {
@@ -149,8 +145,6 @@ sub DELETE :Allow {
     }
     return;
 }
-
-
 
 1;
 

@@ -57,7 +57,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin/],
 });
 
-
 sub auto :Private {
     my ($self, $c) = @_;
 
@@ -114,10 +113,6 @@ sub GET :Allow {
     return;
 }
 
-
-
-
-
 sub POST :Allow {
     my ($self, $c) = @_;
 
@@ -150,8 +145,6 @@ sub POST :Allow {
     }
     return;
 }
-
-
 
 1;
 

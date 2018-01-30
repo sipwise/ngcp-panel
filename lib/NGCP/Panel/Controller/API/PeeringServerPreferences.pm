@@ -48,10 +48,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin/],
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c) = @_;
     my $container_type = 'peerings';
@@ -99,12 +95,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
-
-
 
 1;
 

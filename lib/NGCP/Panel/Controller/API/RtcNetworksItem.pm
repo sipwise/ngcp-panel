@@ -40,10 +40,6 @@ __PACKAGE__->set_config({
     }
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
@@ -65,10 +61,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
@@ -196,8 +188,6 @@ sub journalsitem_head :Journal {
     my $self = shift @_;
     return $self->handle_journalsitem_head(@_);
 }
-
-
 
 1;
 
