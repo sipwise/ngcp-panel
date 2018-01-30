@@ -88,7 +88,7 @@ __PACKAGE__->set_config({
 sub check_create_csv :Private {
     my ($self, $c) = @_;
     my $reseller_id = $c->request->params->{reseller_id};
-    if(!$reseller_id){
+    if (!$reseller_id) {
         $self->error($c, HTTP_BAD_REQUEST, 'reseller_id  parameter is necessary to download csv data.');
         return;
     }

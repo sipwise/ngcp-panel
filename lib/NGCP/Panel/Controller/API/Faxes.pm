@@ -160,7 +160,7 @@ sub GET :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
     {
-        if(!$c->config->{features}->{faxserver}){
+        if (!$c->config->{features}->{faxserver}) {
             $c->log->error("faxserver feature is not active.");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Faxserver feature is not active.");
             return;
