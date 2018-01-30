@@ -65,9 +65,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CFSourceSets/;
 sub resource_name{
     return 'cfsourcesets';
 }
+
 sub dispatch_path{
     return '/api/cfsourcesets/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-cfsourcesets';
 }

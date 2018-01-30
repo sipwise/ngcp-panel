@@ -23,9 +23,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Preference
 sub resource_name{
     return 'peeringserverpreferences';
 }
+
 sub dispatch_path{
     return '/api/peeringserverpreferences/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-peeringserverpreferences';
 }

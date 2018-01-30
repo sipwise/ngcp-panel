@@ -21,9 +21,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SystemCont
 sub resource_name{
     return 'systemcontacts';
 }
+
 sub dispatch_path{
     return '/api/systemcontacts/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-systemcontacts';
 }

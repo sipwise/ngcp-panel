@@ -24,9 +24,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::BillingNet
 sub resource_name{
     return 'billingnetworks';
 }
+
 sub dispatch_path{
     return '/api/billingnetworks/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-billingnetworks';
 }

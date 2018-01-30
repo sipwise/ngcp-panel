@@ -23,9 +23,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CFDestinat
 sub resource_name{
     return 'cfdestinationsets';
 }
+
 sub dispatch_path{
     return '/api/cfdestinationsets/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-cfdestinationsets';
 }

@@ -79,9 +79,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Numbers/;
 sub resource_name{
     return 'numbers';
 }
+
 sub dispatch_path{
     return '/api/numbers/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-numbers';
 }

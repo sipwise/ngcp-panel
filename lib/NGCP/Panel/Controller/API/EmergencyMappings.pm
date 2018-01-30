@@ -73,9 +73,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::EmergencyMappi
 sub resource_name{
     return 'emergencymappings';
 }
+
 sub dispatch_path{
     return '/api/emergencymappings/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-emergencymappings';
 }

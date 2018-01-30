@@ -140,9 +140,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Customers/;
 sub resource_name{
     return 'customers';
 }
+
 sub dispatch_path{
     return '/api/customers/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-customers';
 }

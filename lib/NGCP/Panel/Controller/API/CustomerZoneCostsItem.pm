@@ -23,9 +23,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CustomerZo
 sub resource_name{
     return 'customerzonecosts';
 }
+
 sub dispatch_path{
     return '/api/customerzonecosts/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-customerzonecosts';
 }

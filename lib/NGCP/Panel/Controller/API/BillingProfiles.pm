@@ -56,9 +56,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::BillingProfile
 sub resource_name{
     return 'billingprofiles';
 }
+
 sub dispatch_path{
     return '/api/billingprofiles/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-billingprofiles';
 }

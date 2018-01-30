@@ -43,9 +43,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::NcosPatterns/;
 sub resource_name{
     return 'ncospatterns';
 }
+
 sub dispatch_path{
     return '/api/ncospatterns/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-ncospatterns';
 }

@@ -35,9 +35,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CallControls/;
 sub resource_name{
     return 'callcontrols';
 }
+
 sub dispatch_path{
     return '/api/callcontrols/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-callcontrols';
 }

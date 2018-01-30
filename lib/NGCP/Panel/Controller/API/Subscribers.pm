@@ -29,6 +29,7 @@ sub api_description {
         'XMPP and place and receive calls via SIP. A subscriber always belongs to a '.
         '<a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.';
 }
+
 sub documentation_sample_update {
     return { "domain_id" => 4,
        "password" => "test",
@@ -266,9 +267,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Subscribers/;
 sub resource_name{
     return 'subscribers';
 }
+
 sub dispatch_path{
     return '/api/subscribers/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-subscribers';
 }

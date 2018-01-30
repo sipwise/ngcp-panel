@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::UpnRewrite
 sub resource_name{
     return 'upnrewritesets';
 }
+
 sub dispatch_path{
     return '/api/upnrewritesets/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-upnrewritesets';
 }

@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SoundFiles
 sub resource_name{
     return 'soundfilerecordings';
 }
+
 sub dispatch_path{
     return '/api/soundfilerecordings/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-soundfilerecordings';
 }
