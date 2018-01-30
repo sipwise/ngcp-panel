@@ -33,9 +33,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CCMapEntries/;
 sub resource_name{
     return 'ccmapentries';
 }
+
 sub dispatch_path{
     return '/api/ccmapentries/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-ccmapentries';
 }

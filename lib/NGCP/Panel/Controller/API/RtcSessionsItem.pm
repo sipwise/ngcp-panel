@@ -18,9 +18,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::RtcSession
 sub resource_name{
     return 'rtcsessions';
 }
+
 sub dispatch_path{
     return '/api/rtcsessions/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-rtcsessions';
 }

@@ -57,9 +57,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CustomerLocati
 sub resource_name{
     return 'customerlocations';
 }
+
 sub dispatch_path{
     return '/api/customerlocations/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-customerlocations';
 }

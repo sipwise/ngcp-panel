@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::NcosLevels
 sub resource_name{
     return 'ncoslevels';
 }
+
 sub dispatch_path{
     return '/api/ncoslevels/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-ncoslevels';
 }

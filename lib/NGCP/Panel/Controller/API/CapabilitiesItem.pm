@@ -22,9 +22,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Capabiliti
 sub resource_name{
     return 'capabilities';
 }
+
 sub dispatch_path{
     return '/api/capabilities/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-capabilities';
 }

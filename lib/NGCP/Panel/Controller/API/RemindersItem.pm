@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Reminders/
 sub resource_name{
     return 'reminders';
 }
+
 sub dispatch_path{
     return '/api/reminders/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-reminders';
 }

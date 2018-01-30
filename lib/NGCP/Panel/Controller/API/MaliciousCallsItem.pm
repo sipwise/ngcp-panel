@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::MaliciousC
 sub resource_name{
     return 'maliciouscalls';
 }
+
 sub dispatch_path{
     return '/api/maliciouscalls/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-maliciouscalls';
 }

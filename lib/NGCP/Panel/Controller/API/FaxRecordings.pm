@@ -27,9 +27,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::FaxRecordings/
 sub resource_name{
     return 'faxrecordings';
 }
+
 sub dispatch_path{
     return '/api/faxrecordings/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-faxrecordings';
 }

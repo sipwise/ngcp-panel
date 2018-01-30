@@ -20,9 +20,11 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::EmailTempl
 sub resource_name{
     return 'emailtemplates';
 }
+
 sub dispatch_path{
     return '/api/emailtemplates/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-emailtemplates';
 }

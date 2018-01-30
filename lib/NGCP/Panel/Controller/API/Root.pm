@@ -23,6 +23,7 @@ use NGCP::Panel::Utils::Journal qw();
 #with 'NGCP::Panel::Role::API';
 
 sub dispatch_path{return '/api/';}
+
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
@@ -385,6 +386,7 @@ sub field_to_select_options : Private {
     } @{$field->options});
 
 }
+
 sub get_field_poperties :Private{
     my ($self, $field) = @_;
     my $name = $field->name;
@@ -430,6 +432,7 @@ sub get_field_poperties :Private{
     return { name => $name, description => $desc, types => \@types, type_original => $field->type,
         readonly => $field->readonly, ($enum ? (enum => $enum) : ()) };
 }
+
 sub get_collection_properties {
     my ($self, $form) = @_;
 

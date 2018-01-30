@@ -65,9 +65,11 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PbxDeviceConfi
 sub resource_name{
     return 'pbxdeviceconfigs';
 }
+
 sub dispatch_path{
     return '/api/pbxdeviceconfigs/';
 }
+
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdeviceconfigs';
 }
