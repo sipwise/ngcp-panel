@@ -22,7 +22,6 @@ sub allowed_methods{
     return [qw/GET POST DELETE OPTIONS HEAD/];
 }
 
-
 sub api_description {
     return 'Defines LNP number entries ported to a specific <a href="#lnpcarriers">LNP Carrier</a>. You can POST numbers individually one-by-one using json. To bulk-upload numbers, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/lnpnumbers/?purge_existing=true"';
 };
@@ -76,10 +75,6 @@ sub relation{
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin/],
 });
-
-
-
-
 
 sub check_create_csv :Private {
     my ($self, $c) = @_;
@@ -151,10 +146,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub POST :Allow {
     my ($self, $c) = @_;
@@ -284,8 +275,6 @@ sub DELETE :Allow {
     return;
 
 }
-
-
 
 1;
 

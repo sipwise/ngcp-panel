@@ -49,10 +49,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
@@ -99,12 +95,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
-
-
 
 1;
 

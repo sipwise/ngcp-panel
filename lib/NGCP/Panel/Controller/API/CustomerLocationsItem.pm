@@ -45,10 +45,6 @@ __PACKAGE__->set_config({
     }
 });
 
-
-
-
-
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
@@ -70,10 +66,6 @@ sub GET :Allow {
     }
     return;
 }
-
-
-
-
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
@@ -165,8 +157,6 @@ sub DELETE :Allow {
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
-
-
 
 1;
 

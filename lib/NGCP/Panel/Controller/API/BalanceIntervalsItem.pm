@@ -147,10 +147,6 @@ sub GET :Allow {
     return;
 }
 
-
-
-
-
 sub item_base {
     my ($self,$c,$id) = @_;
     $c->stash->{contract_id} = $id;
@@ -206,7 +202,5 @@ sub item_head {
     $c->response->body(q());
     return;
 }
-
-
 
 1;
