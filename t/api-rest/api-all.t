@@ -19,9 +19,9 @@ $opt = {
     'test_groups'      => { 
         get2put => 1, 
         #get2patch => 1, 
-        post =>1, 
-        get =>1, 
-        bundle =>1 
+        post => 1, 
+        get => 1, 
+        bundle => 1 
     },#post,get2put,get2patch,bundle
     #'test_groups'      => { post => 1 },#post,get2put,get2patch,bundle
 };

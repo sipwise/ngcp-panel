@@ -5,6 +5,7 @@ use Test::More;
 use Test::Collection;
 use Data::Dumper;
 use Test::ForceArray qw/:all/;
+use Test::FakeData;
 
 my $test_machine = Test::Collection->new(
     name => 'calllists',
@@ -17,8 +18,8 @@ $fake_data->set_data_from_script({
         },
         'mandatory_query_parameters' => { 
             'or' => {
-                subscriber_id => 'subscribers',
-                customer_id => 'customers',
+                subscriber_id => { 'subscribers' => 'id' },
+                customer_id   => { 'customers'   => 'id' },
             }
         },
     },
