@@ -754,7 +754,7 @@ sub log_request {
 }
 
 sub log_response {
-    my ($self, $c) = @_;
+    my ($self, $c, $log_body_formatter, $params_data) = @_;
 
     # TODO: should be put a UUID to stash in log_request and use it here to correlate
     # req/res lines?
@@ -772,10 +772,14 @@ sub log_response {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
+    my $response_body = $log_body_formatter && 'CODE' eq ref $log_body_formatter
+        ? $log_body_formatter->($c->response->body)
+        : $c->response->body;
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
-        log  => $c->response->body,
+        log  => $response_body,
+        data => $params_data,
     );
 }
 

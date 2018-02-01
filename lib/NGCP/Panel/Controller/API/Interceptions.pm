@@ -268,7 +268,16 @@ sub POST :Allow {
 sub end : Private {
     my ($self, $c) = @_;
 
-    $self->log_response($c);
+    my $params_data = $c->request->parameters;
+    if ($params_data->{number}) {
+        $params_data->{number} = '***';
+    }
+
+    $self->log_response($c, sub {
+            return shift =~ s!([+0-9]{2,})([0-9]{2})!***$2!rg; # hide strings which look like a number
+        },
+        $params_data,
+        );
 }
 
 1;
