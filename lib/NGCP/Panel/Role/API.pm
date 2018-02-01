@@ -769,7 +769,7 @@ sub log_request {
 }
 
 sub log_response {
-    my ($self, $c) = @_;
+    my ($self, $c, $log_body_formatter, $params_data) = @_;
 
     # TODO: should be put a UUID to stash in log_request and use it here to correlate
     # req/res lines?
@@ -787,10 +787,12 @@ sub log_response {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
+    ($response_body, $params_data) = $self->filter_log_response($c, $response_body, $params_data);
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
-        log  => $c->response->body,
+        log  => $response_body,
+        data => $params_data,
     );
 }
 
@@ -1139,6 +1141,13 @@ sub complete_transaction{
         $c->stash->{transaction_quard} = undef;
     }
     return;
+}
+
+# $response_body can only be modified as a string due to its nature of being the raw response body
+sub filter_log_response {
+    my ($self, $c, $response_body, $params_data);
+
+    return ($response_body, $params_data);
 }
 #------ accessors ---
 
