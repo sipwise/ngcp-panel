@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "1a930d6b_ffe1479b",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 1146,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-02-01T12:02:18Z",
+      "side": 1,
+      "message": "I totally agree with Rene. I think it will be one of the next review - move app specific config to package variable and don\u0027t interfere with Catalyst config, but use still the same set_config call to set both of them instantly.",
+      "parentUuid": "1a930d6b_3fe2efd5",
+      "revId": "3016e8c91ff972ebbaafb2a6e216127e09eac25d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a890539_212bb6ec",
         "filename": "lib/NGCP/Panel/Role/Entities.pm",
         "patchSetId": 6
