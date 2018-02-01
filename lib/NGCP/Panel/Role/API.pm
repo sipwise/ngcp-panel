@@ -787,10 +787,16 @@ sub log_response {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
+    my ($response_body, $params_data) = $self->filter_log_response(
+            $c,
+            scalar( $c->response->body ),
+            scalar( $c->request->parameters ),
+        );
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
-        log  => $c->response->body,
+        log  => $response_body,
+        data => $params_data,
     );
 }
 
@@ -1139,6 +1145,13 @@ sub complete_transaction{
         $c->stash->{transaction_quard} = undef;
     }
     return;
+}
+
+# $response_body can only be modified as a string due to its nature of being the raw response body
+sub filter_log_response {
+    my ($self, $c, $response_body, $params_data) = @_;
+
+    return ($response_body, $params_data);
 }
 #------ accessors ---
 
