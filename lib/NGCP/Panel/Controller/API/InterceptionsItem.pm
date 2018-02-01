@@ -173,6 +173,15 @@ sub DELETE :Allow {
     return;
 }
 
+sub filter_log_response {
+    my ($self, $c, $response_body, $params_data) = @_;
+
+    $response_body //= "";
+    $response_body =~ s!([+0-9]{2,})([0-9]{2})!***$2!g; # hide strings which look like a number
+
+    return ($response_body, $params_data);
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
