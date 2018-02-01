@@ -234,7 +234,7 @@ sub POST :Allow {
                         last;
                     }
                 }
-                if ($resource->{purge_existing} eq 'true') {
+                if ($resource->{purge_existing} && $resource->{purge_existing} eq 'true')  {
                     my ($start, $end);
                     $start = time;
                     my $rs = $schema->resultset('emergency_containers')->search({
