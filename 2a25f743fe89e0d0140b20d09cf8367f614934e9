@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a930d6b_fff8674b",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-02-01T12:07:02Z",
+      "side": 1,
+      "message": "Thinking about upcoming changes - I would just introduce custom method to prepare response data for logging and do all work there. And default method here, in API.",
+      "range": {
+        "startLine": 775,
+        "startChar": 0,
+        "endLine": 777,
+        "endChar": 29
+      },
+      "revId": "2a25f743fe89e0d0140b20d09cf8367f614934e9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
