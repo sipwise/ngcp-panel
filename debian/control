@@ -85,7 +85,6 @@ Depends:
  libnet-https-any-perl,
  libnet-telnet-perl,
  libnetaddr-ip-perl,
- libnumber-phone-perl,
  libpath-tiny-perl,
  libplack-middleware-deflater-perl,
  librole-rest-client-perl,
