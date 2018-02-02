@@ -8,10 +8,6 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use File::Slurp qw/read_file/;
 
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
