@@ -12,10 +12,6 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::Reseller;
 use NGCP::Panel::Utils::Rtc;
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];

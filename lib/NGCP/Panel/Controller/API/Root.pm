@@ -13,10 +13,6 @@ use JSON qw(to_json);
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API;
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 use NGCP::Panel::Utils::Journal qw();
 

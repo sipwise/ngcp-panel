@@ -10,10 +10,6 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 
 sub api_description {
