@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a930d6b_40bb5cc4",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 21
+      },
+      "lineNbr": 587,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-02T10:36:57Z",
+      "side": 1,
+      "message": "does not reliably detect duplicates...",
+      "revId": "e27cff4e7483e6e81c1c010a521aa9401432e684",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a930d6b_e0ac488f",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 21
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-02T10:36:57Z",
+      "side": 1,
+      "message": "i suggest to put a try around here for\n\nException: DBD::mysql::st execute failed: Duplicate entry \u0027api_test_webusername-235\u0027 for key \u0027webuser_dom_idx\u0027",
+      "range": {
+        "startLine": 818,
+        "startChar": 4,
+        "endLine": 818,
+        "endChar": 38
+      },
+      "revId": "e27cff4e7483e6e81c1c010a521aa9401432e684",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
