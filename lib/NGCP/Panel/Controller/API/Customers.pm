@@ -19,7 +19,8 @@ sub allowed_methods{
 
 sub api_description {
     return 'Defines a billing container for end customers. Customers usually have one or more <a href="#subscribers">Subscribers</a>. A <a href="#billingprofiles">Billing Profile</a> is assigned to a customer, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the customer for current and past billing intervals. Customer can be one of the "sipaccount" or "pbxaccount" type. Type should be specified as "type" parameter.';
-};
+}
+
 sub documentation_sample {
     return
         {
@@ -84,13 +85,7 @@ sub query_params {
         {
             param => 'contact_id',
             description => 'Filter for customers belonging to a specific contact',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { contact_id => $q };
-                },
-                second => sub { },
-            },
+            query_type => 'string_eq',
         },
         {
             param => 'package_id',
