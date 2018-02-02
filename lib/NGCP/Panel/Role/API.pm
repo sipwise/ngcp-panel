@@ -872,10 +872,12 @@ sub get_query_callbacks{
     my @p = @$query_param_spec;
     my($sub_where,$sub_attributes);
     if($p[0]->{query_type}){
+        my $field = $p[0]->{param};
+        $field = 'me.'.$field;#it will alllow to use types for ambiguous fields. Now we need to use extended format to add 'me.' before ambiguous field.
         if('string_like' eq $p[0]->{query_type}){
-            $sub_where = sub {my ($q, $c) = @_; { $p[0]->{param} => { like => $q } };};
+            $sub_where = sub {my ($q, $c) = @_; { $field => { like => $q } };};
         }elsif('string_eq' eq $p[0]->{query_type}){
-            $sub_where = sub {my ($q, $c) = @_; { $p[0]->{param} => $q };};
+            $sub_where = sub {my ($q, $c) = @_; { $field => $q };};
         }
     }
     if($p[0]->{query}){
