@@ -14,6 +14,7 @@ has 'register_subscriber_content' => (
     isa => Str,
     accessor => '_register_subscriber_content',
 );
+
 sub rpc_server_params{
     my $self = shift;
     my $cfg  = {
@@ -27,11 +28,13 @@ sub rpc_server_params{
     $self->{rpc_server_params} = $cfg;
     return $self->{rpc_server_params};
 }
+
 sub register_model{
     my($self) = @_;
     $self->rpc_server_params;
     $self->redirect_server_call('register_package');
 }
+
 sub register_package_content {
     my $self = shift;
     #.'_'.$self->content_params->{mac}
@@ -82,15 +85,17 @@ sub unregister_content {
 </request>";
     return $self->{unregister_content};
 }
+
 around 'parse_rpc_response_page' => sub {
-    my($self, $page) = @_;
+    my($orig_method, $self, $page) = @_;
     my $xmlDoc = XML::Mini::Document->new();
     $xmlDoc->parse($page);
     my $ref = $xmlDoc->toHash();
     return $ref;
 };
+
 around 'parse_rpc_response' => sub {
-    my($self, $rpc_response) = @_;
+    my($orig_method, $self, $rpc_response) = @_;
     my $c = $self->params->{c};
     my $ret = 0;
     my ($code,$message) = @{$rpc_response->{response}->{status}}{qw/ErrorCode ErrorMessage/};
@@ -101,6 +106,7 @@ around 'parse_rpc_response' => sub {
     $c->log->debug("NGCP::Panel::Utils::DeviceBootstrap::Polycom::parse_rpc_response: ret=$ret; code=$code; message=$message;");
     return $ret;
 };
+
 1;
 
 =head1 NAME

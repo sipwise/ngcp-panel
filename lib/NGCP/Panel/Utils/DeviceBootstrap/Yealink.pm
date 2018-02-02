@@ -76,7 +76,7 @@ sub register_model_content {
 }
 
 around 'process_bootstrap_uri' => sub {
-    my($orig_method,$self,$uri) = @_;
+    my($orig_method, $self, $uri) = @_;
     $uri = $self->$orig_method($uri);
     $self->content_params->{uri} = $uri;
     $self->bootstrap_uri_server_name($uri);
