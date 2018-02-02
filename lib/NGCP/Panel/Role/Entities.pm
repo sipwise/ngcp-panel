@@ -197,7 +197,7 @@ sub get {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $items = $self->get_list($c);
+        my $items = $self->get_list($c, 'list');
         return unless $items;
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);

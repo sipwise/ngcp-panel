@@ -12,9 +12,14 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
 sub _item_rs {
-    my ($self, $c) = @_;
+    my ($self, $c, $type) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('invoice_templates');
+    my $item_rs;
+    if ( 'list' eq $type ) {
+        $item_rs = $c->model('DB')->resultset('invoice_templates')->search({}, {prefetch => ['reseller']});
+    }else{
+        $item_rs = $c->model('DB')->resultset('invoice_templates');
+    }
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
