@@ -15,10 +15,6 @@ use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Events qw();
 use UUID;
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
