@@ -11,10 +11,6 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ProfilePackages qw();
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];

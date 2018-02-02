@@ -13,10 +13,6 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Lnp;
 use NGCP::Panel::Utils::MySQL;
 
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET POST DELETE OPTIONS HEAD/];

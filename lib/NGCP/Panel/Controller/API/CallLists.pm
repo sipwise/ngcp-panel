@@ -13,10 +13,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::API::Calllist;
 use DateTime::TimeZone;
 use NGCP::Panel::Utils::CallList qw();
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
