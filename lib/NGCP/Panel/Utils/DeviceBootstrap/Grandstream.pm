@@ -54,19 +54,19 @@ sub unregister_content {
 }
 
 around 'parse_rpc_response_page' => sub {
-    my($self, $page) = @_;
+    my($orig_method, $self, $page) = @_;
     my $res = JSON::from_json($page);
     return $res;
 };
 
 around 'parse_rpc_response' => sub {
-    my($self,$rpc_response) = @_;
+    my($orig_method, $self, $rpc_response) = @_;
     return $rpc_response;
 };
 
 #Todo: unify it with snome and vendor version somehow and move to VendorRPC.pm
 around 'extract_response_description' => sub {
-    my($self,$rpc_value) = @_;
+    my($orig_method, $self, $rpc_value) = @_;
     my $res = '';
 
     if(ref $rpc_value eq 'HASH'){
