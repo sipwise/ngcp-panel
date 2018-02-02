@@ -51,7 +51,7 @@ sub unregister_content {
     return $self->{unregister_content};
 }
 around 'extract_response_description' => sub {
-    my($self,$rpc_value) = @_;
+    my($orig_method, $self, $rpc_value) = @_;
     my $c = $self->params->{c};
     my $res = '';
 
@@ -71,7 +71,7 @@ around 'extract_response_description' => sub {
 };
 
 around 'process_bootstrap_uri' => sub {
-    my($orig_method,$self,$uri) = @_;
+    my($orig_method, $self, $uri) = @_;
     $uri = $self->$orig_method($uri);
     $uri = $self->bootstrap_uri_mac($uri);
     $self->content_params->{uri} = $uri;
@@ -79,7 +79,7 @@ around 'process_bootstrap_uri' => sub {
 };
 
 around 'bootstrap_uri_mac' => sub {
-    my($self, $uri) = @_;
+    my($orig_method, $self, $uri) = @_;
     if ($uri !~/\{mac\}$/){
         if ($uri !~/\/$/){
             $uri .= '/' ;

@@ -45,7 +45,7 @@ sub unregister_content {
 }
 
 around 'process_bootstrap_uri' => sub {
-    my($orig_method,$self,$uri) = @_;
+    my($orig_method, $self, $uri) = @_;
     $uri = $self->$orig_method($uri);
     $uri = $self->bootstrap_uri_mac($uri);
     $self->content_params->{uri} = $uri;
