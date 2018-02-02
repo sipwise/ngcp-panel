@@ -14,10 +14,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::API::Subscribers;
 use NGCP::Panel::Utils::Fax;
 use Encode qw( encode_utf8 );
-require Catalyst::ActionRole::ACL;
-require Catalyst::ActionRole::CheckTrailingSlash;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
