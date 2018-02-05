@@ -8,7 +8,6 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use File::Slurp qw/read_file/;
 
-
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }

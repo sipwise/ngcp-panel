@@ -9,7 +9,6 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
@@ -60,8 +59,6 @@ sub auto :Private {
     #$self->log_request($c);
     return 1;
 }
-
-
 
 sub POST :Allow {
     my ($self, $c) = @_;

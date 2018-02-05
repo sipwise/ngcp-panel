@@ -13,7 +13,6 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Lnp;
 use NGCP::Panel::Utils::MySQL;
 
-
 sub allowed_methods{
     return [qw/GET POST DELETE OPTIONS HEAD/];
 }

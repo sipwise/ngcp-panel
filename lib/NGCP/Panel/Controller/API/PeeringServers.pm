@@ -96,8 +96,6 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin/],
 });
 
-
-
 sub POST :Allow {
     my ($self, $c) = @_;
 

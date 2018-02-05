@@ -14,7 +14,6 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::EmergencyMapping;
 use NGCP::Panel::Utils::MySQL;
 
-
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }

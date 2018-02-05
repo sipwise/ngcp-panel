@@ -6,8 +6,6 @@ use Sipwise::Base;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-
-
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
@@ -130,7 +128,6 @@ sub PUT :Allow {
 }
 
 # we don't allow to DELETE a billing profile
-
 
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
