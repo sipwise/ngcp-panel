@@ -9,9 +9,6 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::ValidateJSON qw();
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PeeringGroups/;
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
