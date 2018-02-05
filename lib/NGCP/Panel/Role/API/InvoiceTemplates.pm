@@ -11,6 +11,18 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
+sub resource_name{
+    return 'invoicetemplates';
+}
+
+sub dispatch_path{
+    return '/api/invoicetemplates/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-invoicetemplates';
+}
+
 sub _item_rs {
     my ($self, $c, $type) = @_;
 
