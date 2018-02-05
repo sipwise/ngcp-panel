@@ -10,9 +10,6 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Fax;
 use File::Basename;
 use File::Type;
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];

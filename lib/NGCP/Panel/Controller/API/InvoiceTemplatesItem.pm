@@ -6,32 +6,15 @@ use Sipwise::Base;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Utils::ValidateJSON qw();
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
-
-sub allowed_methods{
-    return [qw/GET OPTIONS HEAD/];
-}
-
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::InvoiceTemplates/;
-
-sub resource_name{
-    return 'invoicetemplates';
-}
-
-sub dispatch_path{
-    return '/api/invoicetemplates/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-invoicetemplates';
-}
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
+
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD/];
+}
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
