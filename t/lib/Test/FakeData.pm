@@ -784,6 +784,9 @@ sub create{
 sub clear_test_data_all{
     my $self = shift;
     my($force_delete) = @_;
+    if(!$self->test_machine){
+        return;
+    }
     if($self->test_machine->cache_data && !$force_delete){
        store {loaded => $self->loaded, created => $self->created}, $self->data_cache_file;
     }else{
