@@ -8,10 +8,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Utils::ValidateJSON qw();
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
+
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::MailToFaxSettings/;
 sub allowed_methods{

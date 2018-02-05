@@ -3,11 +3,6 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
-use HTTP::Headers qw();
-use HTTP::Status qw(:constants);
 
 
 sub allowed_methods{

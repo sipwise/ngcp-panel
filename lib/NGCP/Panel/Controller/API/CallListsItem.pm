@@ -9,9 +9,6 @@ use NGCP::Panel::Utils::API::Calllist;
 
 use NGCP::Panel::Utils::ValidateJSON qw();
 use DateTime::TimeZone;
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
