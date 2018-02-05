@@ -13,7 +13,6 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::SMS;
 
-
 sub allowed_methods{
     return [qw/POST OPTIONS/];
 }

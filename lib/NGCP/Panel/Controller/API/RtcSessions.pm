@@ -10,8 +10,6 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-
-
 sub api_description {
     return 'Show a collection of RTC sessions, belonging to a specific subscriber.';
 }

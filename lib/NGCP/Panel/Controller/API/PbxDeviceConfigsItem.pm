@@ -6,8 +6,6 @@ use Sipwise::Base;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-
-
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT/];
 }
