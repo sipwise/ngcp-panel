@@ -48,10 +48,14 @@ is($greeting->{content}->{subscriber_id}, $test_machine->DATA_ITEM->{json}->{sub
 ok($greeting->{content}->{dir} =~/^(?:unavail|busy)$/, "Check dir after creation.");
 is($greeting->{content}->{dir}, $test_machine->DATA_ITEM->{json}->{dir}, "Check dir after creation #2.");
 
+$res = $test_machine->request_get('/api/voicemailgreetings/?subscriber_id='.$greeting->{content}->{subscriber_id}.'&type='.$greeting->{content}->{dir});
+$test_machine->http_code_msg(200, "check subscriber_id and type filters", $res);
+
 $res = $test_machine->request_get($greeting->{location}, undef, {
     'Accept' => 'audio/x-wav',
 });
 $test_machine->http_code_msg(200, "check download voicemail greeting", $res);
+
 
 my $expected_downloaded_name = "voicemail_".$greeting->{content}->{dir}."_".$greeting->{content}->{subscriber_id}.".wav";
 is($res->filename, $expected_downloaded_name ,"Check downloaded file name: $expected_downloaded_name .");
@@ -100,18 +104,13 @@ if(ok($soxi_output =~/GSM/, "Check that we converted wav to GSM encoding:".$soxi
         greetingfile => [ dirname($0).'/resources/empty.wav' ],
     } );
     $test_machine->http_code_msg(422, "check response code on put empty file", $res_put_empty, $content_put_empty);
-    diag("Check dirty file:");
-    #btw - other vriant of tha put data - closer to stored. will be changed by Collection::encode_content
-    ($res_put_empty,$content_put_empty) = $test_machine->request_put({ 
-        'data_cb' => $fake_data->{data}->{'voicemailgreetings'}->{data_callbacks}->{get2put},
-    } );
-    $test_machine->http_code_msg(422, "check response code on put empty file", $res_put_empty, $content_put_empty);
 }
 $test_machine->check_bundle();
 $test_machine->check_item_delete($greeting->{location});
 
-
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
+undef $fake_data;
+undef $test_machine;
 
 
 done_testing;
