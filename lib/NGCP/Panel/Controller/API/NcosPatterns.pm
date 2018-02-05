@@ -9,7 +9,6 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
@@ -51,8 +50,6 @@ sub relation{
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
-
-
 
 sub POST :Allow {
     my ($self, $c) = @_;

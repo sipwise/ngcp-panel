@@ -76,8 +76,6 @@ sub auto :Private {
     }
 }
 
-
-
 sub POST :Allow {
     my ($self, $c) = @_;
 

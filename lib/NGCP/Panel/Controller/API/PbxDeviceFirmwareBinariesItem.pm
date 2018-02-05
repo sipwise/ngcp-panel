@@ -8,7 +8,6 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DeviceFirmware;
 
-
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }

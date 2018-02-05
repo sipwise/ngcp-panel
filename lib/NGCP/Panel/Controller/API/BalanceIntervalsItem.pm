@@ -9,7 +9,6 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
 
-
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
