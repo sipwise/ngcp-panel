@@ -35,10 +35,8 @@ sub query_params {
                     my $c = shift;
                     my %wheres = ();
                     if( $c->config->{features}->{multidomain}) {
-                        $wheres{'domain.id'} = { -ident => 'subscriber.domain_id' };
+                        $wheres{'domain.id'} = { -ident => 'voip_subscriber.domain_id' };
                     }
-
-                    my $h =
                     return {
                         'voip_subscriber.id' => $q,
                         %wheres,
@@ -47,12 +45,12 @@ sub query_params {
                 second => sub {
                     my $q = shift;
                     my $c = shift;
-                    my @joins = ();
+                    my $subscriber_join = 'voip_subscriber';
                     if( $c->config->{features}->{multidomain}) {
-                        push @joins, 'domain' ;
+                        $subscriber_join = { 'voip_subscriber' => 'domain' };
                     }
                     return {
-                        join => [{ subscriber => 'voip_subscriber' },@joins]
+                        join => [{ 'mailboxuser' => { 'provisioning_voip_subscriber' => $subscriber_join }}]
                     };
                 },
             },
