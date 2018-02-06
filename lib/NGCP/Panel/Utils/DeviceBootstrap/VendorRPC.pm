@@ -57,6 +57,9 @@ sub rpc_https_call{
     my($self, $content, $cfg) = @_;
     $cfg //= $self->rpc_server_params;
     my $c = $self->params->{c};
+    use Data::Dumper;
+    print Dumper $cfg;
+    $c->log->debug(Dumper($cfg));
     $c->log->debug( "rpc_https_call: host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; query_string=$cfg->{query_string}; content=$content;" );
     #$c->log->debug( Dumper($cfg->{headers}) );
     my( $page, $response_code, %reply_headers, $response_value );

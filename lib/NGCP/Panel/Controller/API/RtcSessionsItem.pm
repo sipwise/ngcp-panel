@@ -9,6 +9,9 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
+require Catalyst::ActionRole::ACL;
+require NGCP::Panel::Role::HTTPMethods;
+require Catalyst::ActionRole::RequireSSL;
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::RtcSessions/;
 

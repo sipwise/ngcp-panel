@@ -25,6 +25,7 @@ sub dispatch{
     };
     return _dispatch($c, $action, $params);
 }
+
 sub dispatch_devmod{
     my($c, $action, $devmod) = @_;
 
@@ -38,6 +39,12 @@ sub dispatch_devmod{
 }
 sub _dispatch{
     my($c, $action, $params) = @_;
+    use Data::Dumper;
+    use irka;
+    my $params_copy = {%$params};
+    delete $params_copy->{c};
+    $c->log->debug(Dumper(["NGCP::Panel::Utils::DeviceBootstrap::_dispatch", $action, $params_copy,"/_dispatch"]));
+    irka::loglong(["NGCP::Panel::Utils::DeviceBootstrap::_dispatch", $action, $params_copy,"/_dispatch"]);
     my $redirect_processor = get_redirect_processor($params);
     my $ret;
     if($redirect_processor){
