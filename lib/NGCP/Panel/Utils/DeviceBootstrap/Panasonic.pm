@@ -12,6 +12,7 @@ sub rpc_server_params{
         host     => 'provisioning.e-connecting.net',
         port     => '443',
         path     => '/redirect/xmlrpc',
+        realm    => 'Please Enter Your Password',
     };
     $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
     $self->{rpc_server_params} = $cfg;

@@ -3,7 +3,8 @@ package NGCP::Panel::Utils::DeviceBootstrap::VendorRPC;
 use strict;
 use URI::Escape;
 use MIME::Base64 qw/encode_base64/;
-use Net::HTTPS::Any qw/https_post/;
+use LWP::UserAgent;
+use HTTP::Request::Common;
 use RPC::XML::ParserFactory 'XML::LibXML';
 use RPC::XML;
 use Data::Dumper;
@@ -62,14 +63,28 @@ sub rpc_https_call{
     eval {
         local $SIG{ALRM} = sub { die "Connection timeout\n" };
         alarm(25);
-        ( $page, $response_code, %reply_headers ) = https_post({
-            'host'    => $cfg->{host},
-            'port'    => $cfg->{port},
-            'path'    => $cfg->{path}.($cfg->{query_string}//''),
-            'headers' => $cfg->{headers},
-            'Content-Type' => $cfg->{content_type} // 'text/xml',
-            'content' => $content,
-        },);
+        my $ua = LWP::UserAgent->new;
+        $ua->credentials($cfg->{host}.':'.$cfg->{port}, $cfg->{realm} // '', @$cfg{qw/user password/});
+        $ua->ssl_opts(
+            verify_hostname => 0,
+            #SSL_verify_mode => 0,
+        );
+        $cfg->{port} //= '';
+        my $uri = $cfg->{proto}.'://'.$cfg->{host}.($cfg->{port} ? ':' : '').$cfg->{port}.$cfg->{path};
+        my $request = POST $uri,
+            Content_Type => $cfg->{content_type} // 'text/xml',
+            %{$cfg->{headers}},
+            Content => $content;
+        my $response = $ua->request($request);
+        ( $page, $response_code, %reply_headers ) = $response->content,$response->code,$response->headers;
+        #( $page, $response_code, %reply_headers ) = https_post({
+        #    'host'    => $cfg->{host},
+        #    'port'    => $cfg->{port},
+        #    'path'    => $cfg->{path}.($cfg->{query_string}//''),
+        #    'headers' => $cfg->{headers},
+        #    'Content-Type' => $cfg->{content_type} // 'text/xml',
+        #    'content' => $content,
+        #},);
         alarm(0);
     };
     alarm(0);
