@@ -10,6 +10,12 @@ use NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 use NGCP::Panel::Utils::DeviceBootstrap::Snom;
 use NGCP::Panel::Utils::DeviceBootstrap::Grandstream;
 
+my $redirect_processor;
+
+sub get_cached_redirect_processor{
+    return $redirect_processor;
+}
+
 sub dispatch{
     my($c, $action, $fdev, $old_identifier) = @_;
 
@@ -25,6 +31,7 @@ sub dispatch{
     };
     return _dispatch($c, $action, $params);
 }
+
 sub dispatch_devmod{
     my($c, $action, $devmod) = @_;
 
@@ -36,23 +43,24 @@ sub dispatch_devmod{
     my $params = get_devmod_params($c,$devmod);
     return _dispatch($c, $action, $params);
 }
+
 sub _dispatch{
     my($c, $action, $params) = @_;
-    my $redirect_processor = get_redirect_processor($params);
-    my $ret;
+    $redirect_processor = get_redirect_processor($params);
+    my $err;
     if($redirect_processor){
         $c->log->debug( "action=$action;" );
         if($redirect_processor->can($action)){
-            $ret = $redirect_processor->$action();
+            $err = $redirect_processor->$action();
         }else{
             if( ('register' eq $action) && $params->{mac_old} && ( $params->{mac_old} ne $params->{mac} ) ){
                 $redirect_processor->redirect_server_call('unregister');
             }
-            $ret = $redirect_processor->redirect_server_call($action);
+            $err = $redirect_processor->redirect_server_call($action);
         }
-        $c->log->debug( "ret=$ret;" );
+        $c->log->debug( "err=$err;" );
     }
-    return $ret;
+    return $err;
 }
 sub get_devmod_params{
     my($c, $devmod) = @_;
