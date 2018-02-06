@@ -48,7 +48,7 @@ sub unregister_content {
 <methodName>redirect.deRegisterDevice</methodName>
 <params>
 <param>
-<value><string>".$self->content_params->{mac_old}."</string></value>
+<value><string>".($self->content_params->{mac_old} // '')."</string></value>
 </param>
 </params>
 </methodCall>";
