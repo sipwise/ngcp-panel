@@ -99,7 +99,7 @@ around 'parse_rpc_response' => sub {
     my $c = $self->params->{c};
     my $ret = 0;
     my ($code,$message) = @{$rpc_response->{response}->{status}}{qw/ErrorCode ErrorMessage/};
-    if(0 != $code){
+    if($code){
         $ret = $message;
     }
     #todo: configure log4perl (or override) to print out caller info and string
