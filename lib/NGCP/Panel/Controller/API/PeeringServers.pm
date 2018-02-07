@@ -172,6 +172,7 @@ sub POST :Allow {
         }
 
         try {
+            $resource->{ip} //= "";  # allow empty ip
             $item = $c->model('DB')->resultset('voip_peer_hosts')->create($resource);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             if($resource->{probe}) {
