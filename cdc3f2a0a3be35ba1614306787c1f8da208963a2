@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a930d6b_68311aa2",
+        "filename": "lib/NGCP/Panel/Controller/API/Interceptions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-07T10:40:02Z",
+      "side": 1,
+      "message": "exists",
+      "revId": "cdc3f2a0a3be35ba1614306787c1f8da208963a2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
