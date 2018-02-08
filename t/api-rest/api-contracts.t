@@ -27,8 +27,8 @@ $ua = Test::Collection->new()->ua();
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
     foreach my $opt(qw( GET HEAD OPTIONS POST )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
+        ok(grep { /^$opt$/ } @hopts, "check for existence of '$opt' in Allow header");
+        ok(grep { /^$opt$/ } @{ $opts->{methods} }, "check for existence of '$opt' in body");
     }
 }
 
@@ -242,12 +242,12 @@ my @allcontracts = ();
     my $opts = JSON::from_json($res->decoded_content);
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
     foreach my $opt(qw( GET HEAD OPTIONS PUT PATCH )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
+        ok(grep { /^$opt$/ } @hopts, "check for existence of '$opt' in Allow header");
+        ok(grep { /^$opt$/ } @{ $opts->{methods} }, "check for existence of '$opt' in body");
     }
     foreach my $opt(qw( POST DELETE )) {
-        ok(!grep(/^$opt$/, @hopts), "check for absence of '$opt' in Allow header");
-        ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for absence of '$opt' in body");
+        ok(!grep { /^$opt$/ } @hopts, "check for absence of '$opt' in Allow header");
+        ok(!grep { /^$opt$/ } @{ $opts->{methods} }, "check for absence of '$opt' in body");
     }
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstcontract);

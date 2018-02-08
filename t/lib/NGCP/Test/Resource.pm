@@ -331,9 +331,9 @@ sub test_allowed_methods {
     $self->_inc_test_count;
 
     while((my $opt = shift @{ $expected })) {
-        ok(grep(/^$opt$/, @hopts), "$name - '$opt' in Allow header");
+        ok(grep { /^$opt$/ } @hopts, "$name - '$opt' in Allow header");
         $self->_inc_test_count;
-        ok(grep(/^$opt$/, @{ $methods }), "$name - '$opt' in body");
+        ok(grep { /^$opt$/ } @{ $methods }, "$name - '$opt' in body");
         $self->_inc_test_count;
     }
     is(@{ $expected }, 0, "$name - no leftover in allowed methods");
@@ -521,7 +521,7 @@ sub _test_item {
     $self->_test_fields($args->{skip_test_fields}, $args->{expected_fields}, $ref, $item, $name);
     my %links = map { $_ => 0 } @{ $args->{expected_links} };
     foreach my $link(keys %{ $item->{_links} }) {
-        next if(grep(/^$link$/, qw/self curies profile collection/));
+        next if(grep { /^$link$/ } qw/self curies profile collection/);
         ok(exists $links{$link}, "$name - existence of link $link in reference");
         $self->_inc_test_count;
         delete $links{$link};

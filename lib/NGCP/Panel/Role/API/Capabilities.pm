@@ -92,7 +92,7 @@ sub _item_rs {
         my $profile = $c->user->voip_subscriber_profile;
         if($profile) {
             my $attrs = [ map { $_->attribute->attribute } $profile->profile_attributes->all ];
-            if(grep(/^fax_server$/, @{ $attrs })) {
+            if(grep { /^fax_server$/ } @{ $attrs }) {
                 $faxserver &= 1;
             } else {
                 $faxserver = 0;

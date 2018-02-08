@@ -824,11 +824,11 @@ sub check_methods{
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "$self->{name}: check for valid 'methods' in body");
     foreach my $opt(keys %{$self->methods->{$area}->{all}} ) {
         if(exists $self->methods->{$area}->{allowed}->{$opt}){
-            ok(grep(/^$opt$/, @hopts), "$self->{name}: check for existence of '$opt' in Allow header");
-            ok(grep(/^$opt$/, @{ $opts->{methods} }), "$self->{name}: check for existence of '$opt' in body");
+            ok(grep { /^$opt$/ } @hopts, "$self->{name}: check for existence of '$opt' in Allow header");
+            ok(grep { /^$opt$/ } @{ $opts->{methods} }, "$self->{name}: check for existence of '$opt' in body");
         }else{
-            ok(!grep(/^$opt$/, @hopts), "$self->{name}: check for absence of '$opt' in Allow header");
-            ok(!grep(/^$opt$/, @{ $opts->{methods} }), "$self->{name}: check for absence of '$opt' in body");
+            ok(!grep { /^$opt$/ } @hopts, "$self->{name}: check for absence of '$opt' in Allow header");
+            ok(!grep { /^$opt$/ } @{ $opts->{methods} }, "$self->{name}: check for absence of '$opt' in body");
         }
     }
 }

@@ -27,12 +27,12 @@ $ua = Test::Collection->new()->ua();
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
     foreach my $opt(qw( GET HEAD OPTIONS )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
+        ok(grep { /^$opt$/ } @hopts, "check for existence of '$opt' in Allow header");
+        ok(grep { /^$opt$/ } @{ $opts->{methods} }, "check for existence of '$opt' in body");
     }
     foreach my $opt(qw( PUT POST DELETE )) {
-        ok(!grep(/^$opt$/, @hopts), "check for non-existence of '$opt' in Allow header");
-        ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for non-existence of '$opt' in body");
+        ok(!grep { /^$opt$/ } @hopts, "check for non-existence of '$opt' in Allow header");
+        ok(!grep { /^$opt$/ } @{ $opts->{methods} }, "check for non-existence of '$opt' in body");
     }
 
     my @links = $res->header('Link');

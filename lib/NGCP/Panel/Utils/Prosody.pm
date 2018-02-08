@@ -73,8 +73,8 @@ sub _load_servers {
 	my $host_rs = $c->model('DB')->resultset('xmlgroups')
 	    ->search_rs({name => 'xmpp'})
 	    ->search_related('xmlhostgroups')->search_related('host');
-    return [map +{ip => $_->ip, port => $_->port, path => $_->path,
-        id => $_->id}, $host_rs->all];
+    return [map { +{ip => $_->ip, port => $_->port, path => $_->path,
+        id => $_->id} } $host_rs->all];
 }
 
 1;
