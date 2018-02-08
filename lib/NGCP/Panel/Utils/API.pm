@@ -80,6 +80,7 @@ sub get_collections_files {
 sub generate_swagger_datastructure {
     my ($collections, $user_role) = @_;
 
+    my @tag_descriptions;
     my %paths;
     my %schemas;
     my %responses = (
@@ -149,10 +150,15 @@ sub generate_swagger_datastructure {
         my $title = $col->{name};
         my $entity = $col->{entity_name};
 
+        push @tag_descriptions, {
+            name => "$entity",
+            description => $col->{description},
+        };
+
         if (grep {m/^GET$/} @{ $col->{actions} }) {
             $p->{get} = {
                 summary => "Get $entity items",
-                tags => ['Collection Get'],
+                tags => ["$entity"],
                 responses => {
                     "200" => {
                         description => "$title",
@@ -209,7 +215,7 @@ sub generate_swagger_datastructure {
             $p->{post} = {
                 # description => "Creates a new item of $title",
                 summary => "Create a new $entity",
-                tags => ['Collection Post'],
+                tags => ["$entity"],
                 requestBody => {
                     required => JSON::true,
                     content => {
@@ -253,7 +259,7 @@ sub generate_swagger_datastructure {
         if (grep {m/^GET$/} @{ $col->{item_actions} }) {
             $item_p->{get} = {
                 summary => "Get a specific $entity",
-                tags => ['Item Get'],
+                tags => ["$entity"],
                 responses => {
                     "200" => {
                         description => "$title",
@@ -272,7 +278,7 @@ sub generate_swagger_datastructure {
         if (grep {m/^PUT$/} @{ $col->{item_actions} }) {
             $item_p->{put} = {
                 summary => "Replace/change a specific $entity",
-                tags => ['Item Put'],
+                tags => ["$entity"],
                 requestBody => {
                     required => JSON::true,
                     content => {
@@ -305,7 +311,7 @@ sub generate_swagger_datastructure {
         if (grep {m/^PATCH$/} @{ $col->{item_actions} }) {
             $item_p->{patch} = {
                 summary => "Change a specific $entity",
-                tags => ['Item Patch'],
+                tags => ["$entity"],
                 requestBody => {
                     '$ref' => '#/components/requestBodies/PatchBody',
                 },
@@ -331,7 +337,7 @@ sub generate_swagger_datastructure {
         if (grep {m/^DELETE$/} @{ $col->{item_actions} }) {
             $item_p->{delete} = {
                 summary => "Delete a specific $entity",
-                tags => ['Item Delete'],
+                tags => ["$entity"],
                 responses => {
                     "204" => {
                         description => "Deletion successful",
@@ -340,9 +346,6 @@ sub generate_swagger_datastructure {
                 }
             };
         }
-
-        # common description for all methods
-        $p->{description} = $col->{description};
 
         #push @paths, $p;
         $paths{'/'.$chapter.'/'} = $p;
@@ -421,6 +424,7 @@ sub generate_swagger_datastructure {
         "servers" => [ { "url" => "/api" } ],
 
         "paths" => \%paths,
+        "tags" => \@tag_descriptions,
         "components" => {
             "schemas" => \%schemas,
             "responses" => \%responses,
