@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a930d6b_031a3917",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 793,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-08T09:55:01Z",
+      "side": 1,
+      "message": "gives a list? then the query params are replaced by their count",
+      "range": {
+        "startLine": 793,
+        "startChar": 20,
+        "endLine": 793,
+        "endChar": 43
+      },
+      "revId": "e104fc63e17b81c68828972c879f27139e651208",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
