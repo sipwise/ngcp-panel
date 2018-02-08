@@ -20,8 +20,9 @@ sub dispatch {
         my $host_rs = $schema->resultset('xmlgroups')
             ->search_rs({name => $target})
             ->search_related('xmlhostgroups')->search_related('host', {}, { order_by => 'id' });
-        $hosts = [map +{ip => $_->ip, port => $_->port, path => $_->path,
-            id => $_->id}, $host_rs->all];
+        $hosts = [map { +{ip => $_->ip, port => $_->port, path => $_->path,
+            id => $_->id} } $host_rs->all];
+        use DDP; p $hosts;
     }
 
     use Data::Dumper;

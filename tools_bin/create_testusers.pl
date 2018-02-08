@@ -205,7 +205,7 @@ say "Processing done, collecting final status...";
 if($pid > 0) {
     my $last_kids = @kids;
     while((my $child_pid = wait()) > 0 && @kids) {
-        @kids = grep(!/^$child_pid$/, @kids);
+        @kids = grep { !/^$child_pid$/ } @kids;
         if(@kids == $last_kids) {
             sleep 1;
         }
