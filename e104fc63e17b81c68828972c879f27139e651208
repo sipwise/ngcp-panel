@@ -70,6 +70,30 @@
       "revId": "e104fc63e17b81c68828972c879f27139e651208",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a930d6b_43a1a1a8",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 793,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-02-08T10:18:05Z",
+      "side": 1,
+      "message": "no. this already returns a reference:\n\nhttps://metacpan.org/pod/Catalyst::Request#$req-%3Eparameters",
+      "parentUuid": "1a930d6b_e3ca8d6d",
+      "range": {
+        "startLine": 793,
+        "startChar": 20,
+        "endLine": 793,
+        "endChar": 43
+      },
+      "revId": "e104fc63e17b81c68828972c879f27139e651208",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
