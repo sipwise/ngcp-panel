@@ -22,6 +22,30 @@
       "revId": "e104fc63e17b81c68828972c879f27139e651208",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a930d6b_83b469f3",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 793,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-02-08T10:12:48Z",
+      "side": 1,
+      "message": "removed the scalar as being misleading. this was just a precaution measure when testing to make sure the arguments do no blow up into the argument list of filter_log_response.\nfixed",
+      "parentUuid": "1a930d6b_031a3917",
+      "range": {
+        "startLine": 793,
+        "startChar": 20,
+        "endLine": 793,
+        "endChar": 43
+      },
+      "revId": "e104fc63e17b81c68828972c879f27139e651208",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
