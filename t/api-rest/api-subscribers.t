@@ -5,6 +5,7 @@ use Test::Collection;
 use Test::FakeData;
 use Test::More;
 use Data::Dumper;
+use Clone qw/clone/;
 
 #use NGCP::Panel::Utils::Subscriber;
 
@@ -22,7 +23,7 @@ $fake_data->set_data_from_script({
         'data' => {
             administrative       => 0,
             customer_id          => sub { return shift->get_id('customers',@_); },
-            primary_number       => { ac => 111, cc=> 111, sn => 111 },
+            primary_number       => { ac => 1, cc=> 1, sn => 1 },
             alias_numbers        => [ { ac => 11, cc=> 11, sn => 11 } ],
             username             => 'api_test_username',
             password             => 'api_test_password',
@@ -197,9 +198,9 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $pilot and $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
 }
+
 if($remote_config->{config}->{features}->{cloudpbx}){
-    {
-#18601
+    {#18601
         diag("18601: config->features->cloudpbx: ".$remote_config->{config}->{features}->{cloudpbx}.";\n");
         my $groups = $test_machine->check_create_correct( 3, sub{
             my $num = $_[1]->{i};
@@ -244,12 +245,12 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $groups->[1]->{content}->{pbx_groupmember_ids} = [];
         diag("4. Check that group will return empty members after put members empty");
         ($group_put,$group_get) = $test_machine->check_put2get($groups->[1], undef, $put2get_check_params);
-#5415 WF
+    #5415 WF
         diag("5415: check that groups management doesn't change members order;\n");
 
         diag("5415:Set members order for the group;\n");
         $groups->[1]->{content}->{pbx_groupmember_ids} = [ map { $members->[$_]->{content}->{id} } ( 0, 2, 1 ) ];
-        
+
         ($group_put,$group_get)= $test_machine->check_put2get($groups->[1], undef, $put2get_check_params);
 
         diag("5415:Touch one of the members;\n");
@@ -266,45 +267,95 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
         is_deeply($groups->[1]->{content}->{pbx_groupmember_ids}, $group_get_after->{pbx_groupmember_ids}, "Check group members order after touching it's member");
 
-#7453 - we have modifications, so we can check modify_timestamp
+    #7453 - we have modifications, so we can check modify_timestamp
         ok(length($members_2_after_touch->{create_timestamp}) > 8 , "check create_timestamp not empty ".$members_2_after_touch->{create_timestamp});
         ok(length($members_2_after_touch->{modify_timestamp}) > 8 , "check modify_timestamp not empty ".$members_2_after_touch->{modify_timestamp});
-        
+
         $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     }
-#TT#28510
-    {
-        diag("28510: check subscriberadmin POST ;\n");
+    {#TT#28510
+        diag("28510: check subscriberadmin POST. Possible only for pbx subscriberadmin. ;\n");
         my $data = clone $test_machine->DATA_ITEM;
         $data->{administrative} = 1;
-        my($subscriberadmin) = $test_machine->check_create_correct(1, sub {
+        my $pbxsubscriberadmin = $test_machine->check_create_correct(1, sub {
             my $num = $_[1]->{i};
-            $_[0]->{administrative} = 1; 
+            $_[0]->{administrative} = 1;
             $_[0]->{webusername} .= time().'_28510';
-            $_[0]->{webpassword} = 'api_test_webpassword'; 
+            $_[0]->{webpassword} = 'api_test_webpassword';
             $_[0]->{username} .= time().'_28510' ;
             $_[0]->{pbx_extension} .= '28510';
             $_[0]->{primary_number}->{ac} .= '28510';
             $_[0]->{is_pbx_group} = 0;
             $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
         } )->[0];
-        $test_machine->subscriber_user(join('@',@{$subscriberadmin->{content}}{qw/webusername domain/}));
-        $test_machine->subscriber_pass($subscriberadmin->{content}->{webpassword});
+        $test_machine->set_subscriber_credentials($pbxsubscriberadmin->{content});
         $test_machine->runas('subscriber');
-        $test_machine->check_create_correct(1, sub {
+        my $subscriber = $test_machine->check_create_correct(1, sub {
             my $num = $_[1]->{i};
             $_[0]->{webusername} .= time().'_28510_1';
-            $_[0]->{webpassword} = 'api_test_webpassword'; 
+            $_[0]->{webpassword} = 'api_test_webpassword';
             $_[0]->{username} .= time().'_28510_1' ;
             $_[0]->{pbx_extension} .= '285101';
-            $_[0]->{primary_number}->{ac} .= '285101';
+            $_[0]->{primary_number}->{ac} .= '28510';
             $_[0]->{is_pbx_group} = 1;
             $_[0]->{is_pbx_pilot} = 0;
             delete $_[0]->{alias_numbers};
-        } );
+        } )->[0];
+        if (check_password_validation_config()) {
+            my $subscriber_pwd = $test_machine->check_create_correct(1, sub {
+                my $num = $_[1]->{i};
+                $_[0]->{administrative} = 0;
+                $_[0]->{webusername} = 'api_test_'.time().'_21818';
+                $_[0]->{webpassword} = 'api_test_WEBpassword';
+                $_[0]->{username}    = 'api_test_'.time().'_21818' ;
+                $_[0]->{password}    = 'api_test_PWD'.time().'_21818' ;
+                $_[0]->{pbx_extension} = '21818';
+                $_[0]->{primary_number}->{ac} = '21818';
+                $_[0]->{is_pbx_group} = 0;
+                #sometimes we have pbx customer with disabled pbx feature in test data.
+                $_[0]->{is_pbx_pilot} = 0;
+                delete $_[0]->{alias_numbers};
+            } )->[0];
+            diag("21818: check password validation: run as \"subscriberadmin\" role;\n");
+            test_password_validation($subscriber_pwd, {POST => 1});
+            $test_machine->runas('admin');
+            diag("21818: check password validation: run as \"admin\" role;\n");
+            test_password_validation($subscriber_pwd);
+            $test_machine->runas('reseller');
+            diag("21818: check password validation: run as \"resellers\" role;\n");
+            test_password_validation($subscriber_pwd);
+        }
         $test_machine->runas('admin');
     }
 }
+#TT#21818 variant 2 - pbx feature off, subscriberadmin is read-only. No subscriber exists
+if (!$remote_config->{config}->{features}->{cloudpbx}) {
+    diag("21818: check password validation: subscriber and subscriberadmin are read-only roles;\n");
+    $test_machine->runas('admin');
+    my $subscriber = $test_machine->check_create_correct(1, sub {
+        my $num = $_[1]->{i};
+        $_[0]->{administrative} = 0;
+        $_[0]->{webusername} = 'api_test_'.time().'_21818';
+        $_[0]->{webpassword} = 'api_test_WEBpassword';
+        $_[0]->{username}    = 'api_test_'.time().'_21818' ;
+        $_[0]->{password}    = 'api_test_PWD_21818' ;
+        $_[0]->{pbx_extension} = '21818';
+        $_[0]->{primary_number}->{ac} = '21818';
+        $_[0]->{is_pbx_group} = 0;
+        #sometimes we have pbx customer with disabled pbx feature in test data.
+        $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
+        delete $_[0]->{alias_numbers};
+    } )->[0];
+    if (check_password_validation_config()) {
+        diag("21818: check password validation: run as \"admin\" role;\n");
+        test_password_validation($subscriber);
+        $test_machine->runas('reseller');
+        diag("21818: check password validation: run as \"resellers\" role;\n");
+        test_password_validation($subscriber);
+        $test_machine->runas('admin');
+    }
+}
+
 #TT#8680
 {
     diag("8680: check E164 fields format;\n");
@@ -319,13 +370,138 @@ if($remote_config->{config}->{features}->{cloudpbx}){
     ($res,$content) = $test_machine->request_post( $data);
     $test_machine->http_code_msg(422, "Alias numbers should be the hashs", $res, $content);
 }
-
 $fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 $fake_data->clear_test_data_all();
 undef $test_machine;
 undef $fake_data;
 done_testing;
+
+
+#--------- aux
+sub check_password_validation_config{
+    if(
+        ok($remote_config->{config}->{security}->{password_sip_validate},"check www_admin.security.password_sip_validate should be true.")
+        &&
+        ok($remote_config->{config}->{security}->{password_web_validate},"check www_admin.security.password_web_validate should be true.")) {
+        return 1;
+    }
+    return 0;
+}
+sub test_password_validation {
+    my ($subscriber_put, $actions) = @_;
+    my %fields = ('web' => 'web%s','' => '%s');
+    my $data_pre = clone $subscriber_put->{content};
+    my $uri = $subscriber_put->{location};
+    $data_pre->{password} = 'not empty 1';#to don't raise error for empty pass when checking webpass
+    #print Dumper $data_pre;
+    foreach my $type ('','web'){
+        my $fieldformat = $fields{$type};
+        my $usernamefield = sprintf($fieldformat,'username');
+        my $passwordfield = sprintf($fieldformat,'password');
+        my $message_start = ($type ? ucfirst($type)." password" : "Password");
+
+        #test POST
+        if(!$actions || $actions->{POST}){
+            my $data = clone $data_pre;
+            $data->{$usernamefield} .= '_post_lc';
+            $data->{$passwordfield} = ' '.ucfirst($data->{$usernamefield}).' ';
+            my($res,$content) = $test_machine->request_post($data);
+            $test_machine->http_code_msg(422, $message_start." must not contain username", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $data->{$usernamefield} .= '_post1';
+            $data->{$passwordfield} = '123456';
+            ($res,$content) = $test_machine->request_post($data);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $data->{$usernamefield} .= '_post2';
+            $data->{$passwordfield} = 'qwerty';
+            ($res,$content) = $test_machine->request_post($data);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $data->{$usernamefield} .= '_post3';
+            $data->{$passwordfield} = 'passwd';
+            ($res,$content) = $test_machine->request_post($data);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+        }
+        if(!$actions || $actions->{PUT}){
+            #test PUT
+            my $data = clone $data_pre;
+            $data = $subscriber_put->{content};
+            $data->{$usernamefield} .= '_put_lc';
+            $data->{$passwordfield} = ' '.ucfirst($data->{$usernamefield}).' ';
+            my($res,$content) = $test_machine->request_put($data,$uri);
+            $test_machine->http_code_msg(422, $message_start." must not contain username", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $data->{$usernamefield} .= '_put1';
+            $data->{$passwordfield} = '123abc';
+            ($res,$content) = $test_machine->request_put($data,$uri);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $data->{$usernamefield} .= '_put2';
+            $data->{$passwordfield} = 'something';
+            ($res,$content) = $test_machine->request_put($data,$uri);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $data->{$usernamefield} .= '_put3';
+            $data->{$passwordfield} = 'password';
+            ($res,$content) = $test_machine->request_put($data,$uri);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+        }
+        if(!$actions || $actions->{PATCH}){
+            #test PATCH
+            my $data = clone $data_pre;
+            my $username = $data->{$usernamefield}.= '_patch_lc';
+            my $password = ' '.ucfirst($username).' ';
+            my($res,$content) = $test_machine->request_patch(
+                [
+                    { op => 'replace', path => '/'.$usernamefield, value => $username},
+                    { op => 'replace', path => '/'.$passwordfield, value => $password},
+                ],
+                $uri);
+            $test_machine->http_code_msg(422, $message_start." must not contain username", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $username = $data->{$usernamefield}.= '_patch1';
+            $password = '12345678';
+            ($res,$content) = $test_machine->request_patch(
+                [
+                    { op => 'replace', path => '/'.$usernamefield, value => $username},
+                    { op => 'replace', path => '/'.$passwordfield, value => $password},
+                ],
+                $uri);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $username = $data->{$usernamefield}.= '_patch2';
+            $password = '111aaa';
+            ($res,$content) = $test_machine->request_patch(
+                [
+                    { op => 'replace', path => '/'.$usernamefield, value => $username},
+                    { op => 'replace', path => '/'.$passwordfield, value => $password},
+                ],
+                $uri);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+
+            $data = clone $data_pre;
+            $username = $data->{$usernamefield}.= '_patch3';
+            $password = 'mypassword';
+            ($res,$content) = $test_machine->request_patch(
+                [
+                    { op => 'replace', path => '/'.$usernamefield, value => $username},
+                    { op => 'replace', path => '/'.$passwordfield, value => $password},
+                ],
+                $uri);
+            $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
+        }
+    }
+}
 
 sub number_as_string{
     my ($number_row, %params) = @_;
