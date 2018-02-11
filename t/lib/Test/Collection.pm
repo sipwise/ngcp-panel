@@ -377,6 +377,13 @@ sub get_role_credentials{
     }
     return($user,$pass,$role,$realm,$port);
 }
+
+sub set_subscriber_credentials{
+    my($self,$data) = @_;
+    $self->subscriber_user(join('@',@{$data}{qw/webusername domain/}));
+    $self->subscriber_pass($data->{webpassword});
+}
+
 sub clear_data_created{
     my($self) = @_;
     $self->DATA_CREATED({
@@ -684,7 +691,7 @@ sub request_patch{
     my($self,$content, $uri, $req) = @_;
     $uri ||= $self->get_uri_current;
     #patch is always a json
-    $req ||= $self->get_request_patch($uri, $content);
+    $req ||= $self->get_request_patch( $self->normalize_uri($uri), $content);
     my $res = $self->request($req);
     if($res){
         my $rescontent = $self->get_response_content($res);
@@ -1397,7 +1404,7 @@ sub uri2location{
     return $uri;
 }
 sub http_code_msg{
-    my($self,$code,$message,$res,$content) = @_;
+    my($self,$code,$message,$res,$content, $check_message) = @_;
     my $message_res;
     my $name = $self->{name} // '';
     $message //= '';
@@ -1405,6 +1412,7 @@ sub http_code_msg{
         my $res_message = $res->message // '';
         my $content_message = 'HASH' eq ref $content ? $content->{message} // '' : '' ;
         $message_res = $message.' (' . $res_message . ': ' . $content_message . ')';
+        $check_message and ok($content_message =~/$message/, "$name: check http message: expected: $message; got: $content_message;");
     } else {
         $content //= $self->get_response_content($res);
         if (defined $content && $content && defined $content->{message}) {
