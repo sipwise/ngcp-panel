@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_8aae4be6",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-12T11:45:35Z",
+      "side": 1,
+      "message": "maybe only logging if there really is another prefer header",
+      "range": {
+        "startLine": 376,
+        "startChar": 11,
+        "endLine": 376,
+        "endChar": 17
+      },
+      "revId": "f1f65ad1db3e786d806cf97cba3136e93874f795",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
