@@ -1,3 +1,19 @@
+ngcp-panel (5.5.4.0+0~mr5.5.4.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [7d4fad1] TT#26652 fix subscriberregistration API internal rs query
+  * [4c0e86e] TT#30653 apply_rewrite() strict checks for $subscriber variable type
+
+  [ Gerhard Jungwirth ]
+  * [c22c280] TT#27154 make timezone ajax acessible to subadmin
+
+  [ Yaroslav Fedorina ]
+  * [1c17a03] TT#26107 Clarify external_id field description
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 12 Feb 2018 12:42:23 +0100
+
 ngcp-panel (5.5.3.0+0~mr5.5.3.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
