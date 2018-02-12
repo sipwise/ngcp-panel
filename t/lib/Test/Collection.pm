@@ -954,6 +954,7 @@ sub check_put_prefer_wrong{
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=invalid");
     my($res,$content) = $self->request_process($req);
+    print Dumper ["check_put_prefer_wrong",$res];
     $self->http_code_msg(400, "check put invalid prefer", $res, $content);
 }
 
@@ -971,7 +972,7 @@ sub check_put_bundle{
     my($self) = @_;
     $self->check_put_content_type_empty;
     $self->check_put_content_type_wrong;
-    #$self->check_put_prefer_wrong;
+    $self->check_put_prefer_wrong;
     $self->check_put_body_empty;
 }
 
@@ -1092,6 +1093,7 @@ sub check_bundle{
         $self->check_created_listed($listed);
     }
     # test model item
+    print Dumper ["check_bundle","listed",scalar(@$listed),"NO_ITEM_MODULE",$self->NO_ITEM_MODULE,"IS_EMPTY_COLLECTION",$self->IS_EMPTY_COLLECTION, "can PUT",exists $self->methods->{'item'}->{allowed}->{'PUT'} ];
     if(@$listed && !$self->NO_ITEM_MODULE){
         $self->check_options_item;
         if(!$self->IS_EMPTY_COLLECTION){
