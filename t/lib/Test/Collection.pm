@@ -971,7 +971,7 @@ sub check_put_bundle{
     my($self) = @_;
     $self->check_put_content_type_empty;
     $self->check_put_content_type_wrong;
-    $self->check_put_prefer_wrong;
+    #$self->check_put_prefer_wrong;
     $self->check_put_body_empty;
 }
 
