@@ -372,6 +372,8 @@ sub get_uploads {
 
 sub require_preference {
     my ($self, $c) = @_;
+    my $prefer_requested = $c->request->header('Prefer') // '';
+    $self->debug("Header 'Prefer' must be either 'return=minimal' or 'return=representation'. Requested '$prefer_requested'.");
     return 'minimal' unless $c->request->header('Prefer');
     my $ngcp_ua_header = $c->request->header("NGCP-UserAgent") // '';
     my @preference = grep { 'return' eq $_->[0] } split_header_words($c->request->header('Prefer'));
@@ -380,7 +382,7 @@ sub require_preference {
     return $preference[0][1]
         if 1 == @preference && $preference[0][1] eq 'internal' &&
                 $ngcp_ua_header eq "NGCP::API::Client";
-    $self->error($c, HTTP_BAD_REQUEST, "Header 'Prefer' must be either 'return=minimal' or 'return=representation'.");
+    return 'minimal';
 }
 
 sub require_wellformed_json {
