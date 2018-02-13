@@ -3601,13 +3601,10 @@ sub ajax_registered :Chained('master') :PathPart('registered/ajax') :Args(0) {
 
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $reg_rs = $c->model('DB')->resultset('location')->search({
-        username => $s->username,
+        'kam_subscriber.uuid' => $s->uuid,
+    },{
+        join => 'kam_subscriber',
     });
-    if($c->config->{features}->{multidomain}) {
-        $reg_rs = $reg_rs->search({
-            domain => $s->domain->domain,
-        });
-    }
 
     NGCP::Panel::Utils::Datatables::process($c, $reg_rs, $c->stash->{reg_dt_columns});
 
@@ -3854,14 +3851,11 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
 
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $reg_rs = $c->model('DB')->resultset('location')->search({
-        id => $reg_id,
-        username => $s->username,
+        'me.id' => $reg_id,
+        'kam_subscriber.uuid' => $s->uuid,
+    },{
+        join => 'kam_subscriber',
     });
-    if($c->config->{features}->{multidomain}) {
-        $reg_rs = $reg_rs->search({
-            domain => $s->domain->domain,
-        });
-    }
     $c->stash->{registered} = $reg_rs->first;
     unless($c->stash->{registered}) {
         NGCP::Panel::Utils::Message::error(

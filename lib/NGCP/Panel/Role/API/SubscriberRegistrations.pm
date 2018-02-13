@@ -15,22 +15,18 @@ use NGCP::Panel::Utils::Kamailio;
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my @joins = ();;
-    if($c->config->{features}->{multidomain}) {
-        push @joins, 'domain';
-    }
     my $item_rs = $c->model('DB')->resultset('location');
     if($c->user->roles eq "admin") {
         $item_rs = $item_rs->search({
             
         },{
-            join => [@joins,'subscriber'],
+            join => { 'kam_subscriber' => 'provisioning_voip_subscriber'},
         });
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ 
             'contact.reseller_id' => $c->user->reseller_id 
         },{
-            join => [@joins, { 'subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}} ],
+            join => { 'kam_subscriber' => 'provisioning_voip_subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}},
         });
     }
     return $item_rs;
@@ -102,19 +98,10 @@ sub item_by_id {
 sub subscriber_from_item {
     my ($self, $c, $item) = @_;
 
-    my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
-        username => $item->username,
-        status => { '!=' => 'terminated' },
-    });
-    if($c->config->{features}->{multidomain}) {
-        $sub_rs = $sub_rs->search({
-            'domain.domain' => $item->domain->domain,
-        }, {
-            join => 'domain',
-        });
-    }
-    my $sub = $sub_rs->first;
-    unless($sub && $sub->provisioning_voip_subscriber) {
+    my $kam_subscriber = $item ? $item->kam_subscriber : undef;
+    my $prov_subscriber = $kam_subscriber ? $kam_subscriber->provisioning_voip_subscriber : undef;
+    my $sub = $prov_subscriber ? $prov_subscriber->voip_subscriber : undef;
+    unless($sub && $prov_subscriber) {
         return;
     }
     return $sub;
@@ -186,7 +173,7 @@ sub update_item {
 
     NGCP::Panel::Utils::Kamailio::flush($c);
 
-    return $item;
+    return $create ? 1 : $item; # on create, we dont have the item yet
 }
 
 sub fetch_item {
