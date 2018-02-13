@@ -176,7 +176,7 @@ sub POST :Allow {
 
         my ($guard, $txn_ok) = ($c->model('DB')->txn_scope_guard, 0);
         {
-            $self->update_item($c, undef, undef, $resource, $form, $create);
+            last unless $self->update_item($c, undef, undef, $resource, $form, $create);
 
             $guard->commit;
             $txn_ok = 1;
