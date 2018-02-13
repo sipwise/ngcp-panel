@@ -65,9 +65,7 @@ sub get_resource {
     my %profile_allowed_attrs; # for filtering subscriber attrs on its profile
     my $has_profile = 0;
     my $attr = 0;
-    my $resource = {};
     if($type eq "subscribers") {
-        $resource->{'lock'} = 0;
         $prefs = $item->provisioning_voip_subscriber->voip_usr_preferences;
         my $profile = $item->provisioning_voip_subscriber->voip_subscriber_profile;
         if ($profile) {
@@ -97,6 +95,7 @@ sub get_resource {
         order_by => { '-asc' => 'id' },
     });
 
+    my $resource;
     foreach my $pref($prefs->all) {
         my $value;
         my $processed = 0;
