@@ -195,7 +195,7 @@ sub delete_item {
     my $sub = $self->subscriber_from_item($c, $item);
     return unless($sub);
     NGCP::Panel::Utils::Kamailio::delete_location_contact($c,
-        $sub, $item->contact);
+        $sub->provisioning_voip_subscriber, $item->contact);
     NGCP::Panel::Utils::Kamailio::flush($c);
     return 1;
 }
