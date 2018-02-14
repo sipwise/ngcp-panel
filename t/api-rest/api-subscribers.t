@@ -381,6 +381,10 @@ done_testing;
 #--------- aux
 sub check_password_validation_config{
     if(
+		$remote_config->{config}->{security}->{password_sip_validate}
+		&&
+		$remote_config->{config}->{security}->{password_web_validate}
+		&&
         ok($remote_config->{config}->{security}->{password_sip_validate},"check www_admin.security.password_sip_validate should be true.")
         &&
         ok($remote_config->{config}->{security}->{password_web_validate},"check www_admin.security.password_web_validate should be true.")) {
