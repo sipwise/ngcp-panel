@@ -10,7 +10,7 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'callee_prefix' => ( 
+has_field 'callee_prefix' => (
     type => 'Text',
     not_nullable => 1,
     element_attr => {
@@ -24,7 +24,7 @@ has_field 'callee_pattern' => (
     type => '+NGCP::Panel::Field::Regexp',
     element_attr => {
         rel => ['tooltip'],
-        title => [q!A POSIX regex matching against the full Request-URI (e.g. '^sip:.+@example\.org$' or '^sip:431')!]
+        title => [q!A PCRE regex matching against the full Request-URI (e.g. '^sip:.+@example\.org$' or '^sip:431')!]
     },
 );
 
@@ -32,7 +32,7 @@ has_field 'caller_pattern' => (
     type => '+NGCP::Panel::Field::Regexp',
     element_attr => {
         rel => ['tooltip'],
-        title => [q!A POSIX regex matching against 'sip:user@domain' (e.g. '^sip:.+@example\.org$' matching the whole URI, or '999' matching if the URI contains '999')!]
+        title => [q!A PCRE regex matching against 'sip:user@domain' (e.g. '^sip:.+@example\.org$' matching the whole URI, or '999' matching if the URI contains '999')!]
     },
 );
 
