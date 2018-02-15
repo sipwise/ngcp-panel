@@ -526,6 +526,79 @@ msgstr "Разрешенные CLI для исходящих звонков"
 msgid "Allowed source IPs"
 msgstr "Разрешенные IP адреса"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Alter the interval (in milliseconds) between RTP packets for media "
+"repacketization"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Always offer the audio codec AMR (narrowband, 8 kHz) to this subscriber or "
+"peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Always offer the audio codec AMR-WB (wideband, 16 kHz) to this subscriber or "
+"peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Always offer the audio codec G.711 a-Law (PCMA, 8 kHz) to this subscriber or "
+"peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Always offer the audio codec G.711 -Law (PCMU, 8 kHz) to this subscriber or "
+"peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec G.722 (16 kHz) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Always offer the audio codec G.723.1 (8 kHz) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec G.729 (8 kHz) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Always offer the audio codec GSM Full Rate 06.10 (8 kHz) to this subscriber "
+"or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Always offer the audio codec Opus (1-channel mono, 48 kHz) to this "
+"subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Always offer the audio codec Opus (2-channel stereo, 48 kHz) to this "
+"subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec Speex (16 kHz) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec Speex (32 kHz) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec Speex (8 kHz) to this subscriber or peer."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm lib/NGCP/Panel/Utils/Voucher.pm
 msgid "Amount"
 msgstr ""
@@ -2379,6 +2452,20 @@ msgstr ""
 msgid "Enables lawful interception for the subscriber."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Encoding bitrate for G.723.1 (5.3 kbit/s for 20-byte frames or 6.3 kbit/s "
+"for 24-byte frames"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Encoding bitrate for Opus codec if 1-channel mono is in use"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Encoding bitrate for Opus codec if 2-channel stereo is in use"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
 msgid "End"
 msgstr "Конец"
@@ -3432,6 +3519,10 @@ msgstr "From-Pattern"
 #: share/templates/device/list.tt
 msgid "Front Image"
 msgstr "Фотография устройства"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "G.723.1 bitrate"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "General Purpose Parameter 0"
@@ -4497,6 +4588,10 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Media Codec Transcoding Options"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Media transport protocol"
 msgstr ""
 
@@ -4890,6 +4985,14 @@ msgstr "Недоступен"
 #: share/templates/notfound_page.tt
 msgid "Oops!"
 msgstr "Бабах!"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Opus mono bitrate"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Opus stereo bitrate"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Outbound Diversion Header"
@@ -5396,6 +5499,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "RTP interface"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "RTP packet interval"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7251,6 +7358,58 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Transcode of audio file failed"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to AMR"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to AMR-WB"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.711 a-Law"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.711 -Law"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.722"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.723.1"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.729"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to GSM"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to Opus mono"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to Opus stereo"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to Speex 16 kHz"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to Speex 32 kHz"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to Speex 8 kHz"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Sound.pm
