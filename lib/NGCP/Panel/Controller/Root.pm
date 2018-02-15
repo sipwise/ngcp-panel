@@ -205,7 +205,7 @@ sub auto :Private {
         }
 
         # don't redirect to login page for ajax uris
-        if($c->request->path =~ /\/ajax$/ || $c->request->path =~ /ngcpelastic/) {
+        if($c->request->path =~ /\/ajax$/) {
             $c->response->body($c->loc("403 - Permission denied"));
             $c->response->status(403);
             return;
