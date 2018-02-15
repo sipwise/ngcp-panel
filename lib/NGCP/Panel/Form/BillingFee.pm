@@ -16,7 +16,7 @@ has_field 'source' => (
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A POSIX regular expression to match the calling number (e.g. ^.+$).']
+        title => ['A PCRE regular expression to match the calling number (e.g. ^.+$).']
     },
 );
 
@@ -26,7 +26,7 @@ has_field 'destination' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A POSIX regular expression to match the called number (e.g. ^431.+$).']
+        title => ['A PCRE regular expression to match the called number (e.g. ^431.+$).']
     },
 );
 
