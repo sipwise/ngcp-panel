@@ -17,7 +17,7 @@ has_field 'match_pattern' => (
     deflate_value_method => \&deflate_match_pattern,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Match pattern, a regular expression.'],
+        title => ['Match pattern, a PCRE regular expression.'],
     },
 );
 
@@ -106,7 +106,7 @@ sub deflate_match_pattern {
 
 sub inflate_match_pattern {
     my ($self, $value) = @_;
-    
+
     $value =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
     $value =~ s/\$\(avp\(s\:(\w+)\)\[\+\]\)/\@{$1}/g;
     return $value;
@@ -121,7 +121,7 @@ sub deflate_replace_pattern {
 
 sub inflate_replace_pattern {
     my ($self, $value) = @_;
-    
+
     $value =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
     return $value;
 }
@@ -133,13 +133,13 @@ sub validate {
     my $re = "s/$s/$r/";
 
     eval { use warnings FATAL => qw(all); $_ = ''; m/$re/; };
-    
+
     if( $@ && $self->field('match_pattern')->num_errors < 1 ) {
         my $err_msg = 'Match pattern and Replace Pattern do not work together.';
         $self->field('match_pattern')->add_error($err_msg);
         $self->field('replace_pattern')->add_error($err_msg);
     }
-    
+
     if ( $r =~ m/\$$/ ) {
         $self->field('replace_pattern')->add_error('Cannot end with "$"');
     }
