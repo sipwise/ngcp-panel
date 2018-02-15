@@ -10,7 +10,7 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'field' => ( 
+has_field 'field' => (
     type => 'Select',
     label => 'Match Field',
     options => [
@@ -38,7 +38,7 @@ has_field 'pattern' => (
     max_length => 1023,
     element_attr => {
         rel => ['tooltip'],
-        title => [q!A POSIX regex matching against the specified field (e.g. '^sip:.+@example\.org$' or '^sip:431') when matching against a full URI!]
+        title => [q!A PCRE regex matching against the specified field (e.g. '^sip:.+@example\.org$' or '^sip:431') when matching against a full URI!]
     },
 );
 
@@ -109,4 +109,3 @@ sub validate {
 }
 
 1;
-
