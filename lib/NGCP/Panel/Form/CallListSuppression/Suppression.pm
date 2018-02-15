@@ -42,7 +42,7 @@ has_field 'pattern' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A regular expression the dialed number (CDR \'destination user in\') has to match in case of \'outgoing\' direction, or the inbound number (CDR \'source cli\') in case of \'incoming\' direction.']
+        title => ['A PCRE regular expression the dialed number (CDR \'destination user in\') has to match in case of \'outgoing\' direction, or the inbound number (CDR \'source cli\') in case of \'incoming\' direction.']
     },
 );
 
