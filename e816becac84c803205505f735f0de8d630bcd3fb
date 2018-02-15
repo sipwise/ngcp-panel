@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da86d52c_c98f7174",
+        "filename": "lib/NGCP/Panel/Role/API/Capabilities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-15T09:20:52Z",
+      "side": 0,
+      "message": "was not even aware about this form of grep",
+      "range": {
+        "startLine": 95,
+        "startChar": 15,
+        "endLine": 95,
+        "endChar": 20
+      },
+      "revId": "e816becac84c803205505f735f0de8d630bcd3fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
