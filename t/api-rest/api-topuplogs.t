@@ -31,7 +31,7 @@ if ($is_local_env) {
         }
     }
     $panel_config //= 'ngcp_panel.conf';
-    $catalyst_config = Config::General->new($panel_config);   
+    $catalyst_config = Config::General->new($panel_config);
 }
 my %config = $catalyst_config->getall();
 
@@ -85,7 +85,7 @@ my $request_count = 0;
 #goto SKIP;
 {
     my $profile = _create_billing_profile('PROFILE_1');
-    
+
     my $customer = _create_customer(billing_profile_definition => 'id',
         billing_profile_id => $profile->{id},);
     my $subscriber = _create_subscriber($customer);
@@ -97,32 +97,32 @@ my $request_count = 0;
     _check_topup_log('failing topup cash validation (subscriber_id): ',[
         { outcome => 'failed', request_token => $request_token, message => 'Validation failed. field=\'subscriber_id\'' }
     ],'request_token='.$request_token);
-    
+
     $request_token = $t."_".$request_count; $request_count++;
     _perform_topup_cash($subscriber,'invalid_amount',undef,$request_token,422);
     _check_topup_log('failing topup cash validation (amount): ',[
         { outcome => 'failed', request_token => $request_token, message => 'Value cannot be converted to money' }
     ],'request_token='.$request_token);
-    
+
     $request_token = $t."_".$request_count; $request_count++;
     _perform_topup_cash($subscriber,50,{ id => 'invalid' },$request_token,422);
     _check_topup_log('failing topup cash validation (package_id): ',[
         { outcome => 'failed', request_token => $request_token, message => 'Validation failed. field=\'package_id\'' }
-    ],'request_token='.$request_token);    
-    
+    ],'request_token='.$request_token);
+
     $request_token = $t."_".$request_count; $request_count++;
     _perform_topup_voucher($subscriber,{ code => 'invalid' },$request_token,422);
     _check_topup_log('failing topup voucher validation (voucher code): ',[
         { outcome => 'failed', request_token => $request_token, message => 'Invalid voucher code \'invalid\'' }
-    ],'request_token='.$request_token);    
-    
+    ],'request_token='.$request_token);
+
     $request_token = $t."_".$request_count; $request_count++;
     $request_token .= 'a' x (256 - length($request_token));
     _perform_topup_voucher($subscriber,$voucher_1,$request_token,422);
     _check_topup_log('failing topup voucher validation (request_token): ',[
         { outcome => 'failed', request_token => substr($request_token,0,255), message => 'Validation failed. field=\'request_token\'' }, #'Field should not exceed 255 characters' }
     ],'request_token='.substr($request_token,0,255));
-    
+
     $request_token = $t."_".$request_count; $request_count++;
     _perform_topup_voucher($subscriber,$voucher_1,$request_token);
     $request_token = $t."_".$request_count; $request_count++;
@@ -130,16 +130,16 @@ my $request_count = 0;
     _check_topup_log('failing topup voucher validation (voucher used): ',[
         { outcome => 'failed', request_token => $request_token, message => 'already used' }
     ],'request_token='.$request_token);
-    
+
     $request_token = $t."_".$request_count; $request_count++;
     _perform_topup_voucher($subscriber,$voucher_2,$request_token,422);
     _check_topup_log('failing topup voucher validation (voucher expired): ',[
         { outcome => 'failed', request_token => $request_token, message => 'expired' }
-    ],'request_token='.$request_token);      
-    
+    ],'request_token='.$request_token);
+
 }
 
-SKIP:
+#SKIP:
 {
     my $profile_initial_1 = _create_billing_profile('INITIAL1');
     my $profile_topup_1 = _create_billing_profile('TOPUP1');
@@ -151,9 +151,7 @@ SKIP:
             topup_profiles => [ { profile_id => $profile_topup_1->{id}, }, ],
             #underrun_profiles => [ { profile_id => $profile_underrun->{id}, }, ],
             );
-    
-    
-    
+
     my $customer = _create_customer(billing_profile_definition => 'package',
         profile_package_id => $package_1->{id},);
     my $subscriber = _create_subscriber($customer);
@@ -163,12 +161,12 @@ SKIP:
     _perform_topup_cash($subscriber,0.5,undef,$request_token_1);
     my $request_token_2 = $t."_".$request_count; $request_count++;
     _perform_topup_voucher($subscriber,$voucher_1,$request_token_2);
-    
+
     _check_topup_log('successful topups - subscriber_id, outcome filter: ',[
         { outcome => 'ok', request_token => $request_token_1 },
         { outcome => 'ok', request_token => $request_token_2 },
     ],'subscriber_id='.$subscriber->{id}.'&outcome=ok');
-    
+
     _check_topup_log('successful topups - contract_id filter: ',[
         { outcome => 'ok', request_token => $request_token_1 },
         { outcome => 'ok', request_token => $request_token_2 },
@@ -184,7 +182,7 @@ SKIP:
             topup_profiles => [ { profile_id => $profile_topup_2->{id}, }, ],
             #underrun_profiles => [ { profile_id => $profile_underrun->{id}, }, ],
             );
-    
+
     my $voucher_2 = _create_voucher(30,'test4'.$t,$customer,$package_2);
     my $request_token_3 = $t."_".$request_count; $request_count++;
     _perform_topup_voucher($subscriber,$voucher_2,$request_token_3);
@@ -192,54 +190,107 @@ SKIP:
     _check_topup_log('successful topups - voucher_id filter: ',[
         { outcome => 'ok', request_token => $request_token_3 },
     ],'voucher_id='.$voucher_2->{id});
-    
+
     _check_topup_log('successful topups - amount_above filter: ',[
-        { outcome => 'ok', request_token => $request_token_2 },        
+        { outcome => 'ok', request_token => $request_token_2 },
         { outcome => 'ok', request_token => $request_token_3 },
     ],'amount_above=1&subscriber_id='.$subscriber->{id});
 
     _check_topup_log('successful topups - amount_below filter: ',[
-        { outcome => 'ok', request_token => $request_token_1 },        
+        { outcome => 'ok', request_token => $request_token_1 },
         { outcome => 'ok', request_token => $request_token_2 },
     ],'amount_below=10&subscriber_id='.$subscriber->{id});
-    
+
     _check_topup_log('successful topups - timestamp_from filter: ',[
-        { outcome => 'ok', request_token => $request_token_1 },        
+        { outcome => 'ok', request_token => $request_token_1 },
         { outcome => 'ok', request_token => $request_token_2 },
-        { outcome => 'ok', request_token => $request_token_3 },        
+        { outcome => 'ok', request_token => $request_token_3 },
     ],'timestamp_from=2000-01-01T00:00:00&subscriber_id='.$subscriber->{id});
 
     _check_topup_log('successful topups - balance before/after: ',[
-        { outcome => 'ok', cash_balance_before => 1, cash_balance_after => 1.5, request_token => $request_token_1 },        
+        { outcome => 'ok', cash_balance_before => 1, cash_balance_after => 1.5, request_token => $request_token_1 },
         { outcome => 'ok', cash_balance_before => 1.5, cash_balance_after => 11.5, request_token => $request_token_2 },
-        { outcome => 'ok', cash_balance_before => 11.5, cash_balance_after => 41.5, request_token => $request_token_3 },  
-    ],'contract_id='.$customer->{id});    
+        { outcome => 'ok', cash_balance_before => 11.5, cash_balance_after => 41.5, request_token => $request_token_3 },
+    ],'contract_id='.$customer->{id});
 
     _check_topup_log('successful topups - package before/after: ',[
-        { outcome => 'ok', package_before_id=> $package_1->{id}, package_after_id=> $package_1->{id}, request_token => $request_token_1 },        
+        { outcome => 'ok', package_before_id=> $package_1->{id}, package_after_id=> $package_1->{id}, request_token => $request_token_1 },
         { outcome => 'ok', package_before_id=> $package_1->{id}, package_after_id=> $package_1->{id}, request_token => $request_token_2 },
-        { outcome => 'ok', package_before_id=> $package_1->{id}, package_after_id=> $package_2->{id}, request_token => $request_token_3 },     
-    ],'contract_id='.$customer->{id});        
-    
+        { outcome => 'ok', package_before_id=> $package_1->{id}, package_after_id=> $package_2->{id}, request_token => $request_token_3 },
+    ],'contract_id='.$customer->{id});
+
     _check_topup_log('successful topups - profile before/after: ',[
-        { outcome => 'ok', profile_before_id => $profile_initial_1->{id}, profile_after_id => $profile_topup_1->{id}, request_token => $request_token_1 },        
+        { outcome => 'ok', profile_before_id => $profile_initial_1->{id}, profile_after_id => $profile_topup_1->{id}, request_token => $request_token_1 },
         { outcome => 'ok', profile_before_id => $profile_topup_1->{id}, profile_after_id => $profile_topup_1->{id}, request_token => $request_token_2 },
-        { outcome => 'ok', profile_before_id => $profile_topup_1->{id}, profile_after_id => $profile_topup_2->{id},request_token => $request_token_3 },  
-    ],'contract_id='.$customer->{id});    
-    
+        { outcome => 'ok', profile_before_id => $profile_topup_1->{id}, profile_after_id => $profile_topup_2->{id},request_token => $request_token_3 },
+    ],'contract_id='.$customer->{id});
+
 }
-    
+
+SKIP:
+{
+    my $profile = _create_billing_profile('PROFILE_2');
+
+    my $customer = _create_customer(billing_profile_definition => 'id',
+        billing_profile_id => $profile->{id},);
+
+    my $cash_balance = 5; # euro
+    _perform_set_balance($customer,$cash_balance,0);
+
+    _check_topup_log('set cash balance: ',[
+        {
+            outcome => 'ok',
+            amount => $cash_balance,
+            profile_before_id => $profile->{id},
+            profile_after_id => $profile->{id},
+            cash_balance_before => 0,
+            cash_balance_after => $cash_balance,
+        },
+    ],'contract_id='.$customer->{id});
+
+    # patch free time balance only:
+    $req = HTTP::Request->new('PATCH', $uri.'/api/customerbalances/'.$customer->{id});
+    $req->header('Prefer' => 'return=representation');
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/free_time_balance', value => 0 } ]
+    , { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
+    $res = $ua->request($req);
+    is($res->code, 200, "patch customer balances free time balance only");
+    my $customerbalance = JSON::from_json($res->decoded_content, { allow_nonref => 1, });
+
+    _check_topup_log('patch free time balance: ',[
+        {
+            outcome => 'ok',
+            amount => $cash_balance,
+            profile_before_id => $profile->{id},
+            profile_after_id => $profile->{id},
+            cash_balance_before => 0,
+            cash_balance_after => $cash_balance,
+        },
+        {
+            outcome => 'ok',
+            amount => 0,
+            profile_before_id => $profile->{id},
+            profile_after_id => $profile->{id},
+            cash_balance_before => $cash_balance,
+            cash_balance_after => $cash_balance,
+        },
+    ],'contract_id='.$customer->{id});
+
+}
+
 done_testing;
 
 sub _check_topup_log {
-    
+
     my ($label,$expected_topup_log,$filter_query) = @_;
     my $total_count = (scalar @$expected_topup_log);
     my $i = 0;
     my $nexturi = $uri.'/api/topuplogs/?page=1&rows=10&order_by_direction=asc&order_by=timestamp'.(defined $filter_query ? '&'.$filter_query : '');
     do {
         $req = HTTP::Request->new('GET',$nexturi);
-        $res = $ua->request($req);        
+        $res = $ua->request($req);
         #$res = $ua->get($nexturi);
         is($res->code, 200, $label."fetch topup log collection page");
         my $collection = JSON::from_json($res->decoded_content);
@@ -272,28 +323,28 @@ sub _check_topup_log {
 
         # TODO: I'd expect that to be an array ref in any case!
         ok(ref $collection->{_embedded}->{'ngcp:topuplogs'} eq "ARRAY", $label."check if 'ngcp:topuplogs' is array");
-        
+
         #my $page_items = {};
 
         foreach my $log_record (@{ $collection->{_embedded}->{'ngcp:topuplogs'} }) {
             #$req = HTTP::Request->new('GET',$uri.$log_record->{_links}->{self}->{href});
-            #$res = $ua->request($req);        
+            #$res = $ua->request($req);
             #is($res->code, 200, $label."fetch topup log entry");
             #my $got = JSON::from_json($res->decoded_content);
             #is_deeply($got,$log_record,$label.'check topup log entry deeply');
             _compare_log_record($label,$log_record,$expected_topup_log->[$i]);
             $i++
         }
-             
+
     } while($nexturi);
-    
+
     ok($i == $total_count,$label."check if all expected items are listed");
-    
+
 }
 
 sub _compare_log_record {
     my ($label,$got,$expected) = @_;
-    
+
     foreach my $field (keys %$expected) {
         if ('message' eq $field) {
             ok($got->{$field} =~ /$expected->{$field}/,$label."check log '" . $field . "': " . $got->{$field} . " =~ /" . $expected->{$field} . '/');
@@ -305,7 +356,7 @@ sub _compare_log_record {
 }
 
 sub _create_customer {
-    
+
     my (@further_opts) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/customers/');
     $req->header('Content-Type' => 'application/json');
@@ -327,7 +378,7 @@ sub _create_customer {
     my $customer = JSON::from_json($res->decoded_content);
     $customer_map->{$customer->{id}} = $customer;
     return $customer;
-    
+
 }
 
 sub _create_profile_package {
@@ -362,11 +413,11 @@ sub _create_profile_package {
 }
 
 sub _create_voucher {
-    
+
     my ($amount,$code,$customer,$package,@further_opts) = @_;
     my $dtf = DateTime::Format::Strptime->new(
-            pattern => '%F %T', 
-        );        
+            pattern => '%F %T',
+        );
     $req = HTTP::Request->new('POST', $uri.'/api/vouchers/');
     $req->header('Content-Type' => 'application/json');
     my $req_data = {
@@ -390,7 +441,7 @@ sub _create_voucher {
     my $voucher = JSON::from_json($res->decoded_content);
     $voucher_map->{$voucher->{id}} = $voucher;
     return $voucher;
-    
+
 }
 
 sub _create_subscriber {
@@ -418,7 +469,7 @@ sub _create_subscriber {
 }
 
 sub _perform_topup_voucher {
-    
+
     my ($subscriber,$voucher,$request_token,$error_code) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/topupvouchers/');
     $req->header('Content-Type' => 'application/json');
@@ -431,11 +482,11 @@ sub _perform_topup_voucher {
     $res = $ua->request($req);
     $error_code //= 204;
     is($res->code, $error_code, ($error_code == 204 ? 'perform' : 'attempt')." perform topup with voucher " . $voucher->{code});
-    
+
 }
 
 sub _perform_topup_cash {
-    
+
     my ($subscriber,$amount,$package,$request_token,$error_code) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/topupcash/');
     $req->header('Content-Type' => 'application/json');
@@ -449,7 +500,23 @@ sub _perform_topup_cash {
     $res = $ua->request($req);
     $error_code //= 204;
     is($res->code, $error_code, ($error_code == 204 ? 'perform' : 'attempt')." topup with amount " . ( looks_like_number($amount) ? $amount * 100.0 . ' cents' : $amount) . ", " . ($package ? 'package id ' . $package->{id} : 'no package'));
-    
+
+}
+
+sub _perform_set_balance {
+
+    my ($customer,$cash_balance,$free_time_balance,$error_code) = @_;
+    $req = HTTP::Request->new('PUT', $uri.'/api/customerbalances/' . $customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    my $req_data = {
+        cash_balance => $cash_balance,
+        free_time_balance => $free_time_balance,
+    };
+    $req->content(JSON::to_json($req_data));
+    $res = $ua->request($req);
+    $error_code //= 204;
+    is($res->code, $error_code, ($error_code == 204 ? 'perform' : 'attempt')." setting cash_balance to " . $cash_balance . ", free_time_balance to $free_time_balance");
+
 }
 
 sub _create_billing_profile {

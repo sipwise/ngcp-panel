@@ -25,6 +25,7 @@ has_field 'type' => (
     options => [
         { value => 'cash', label => 'Cash top-up' },
         { value => 'voucher', label => 'Voucher top-up' },
+        { value => 'set_balance', label => 'Balance edited' },
     ],
     required => 1,
 );
