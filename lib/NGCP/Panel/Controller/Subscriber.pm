@@ -2306,6 +2306,10 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
         { name => "call_status", search => 1, title => $c->loc('Status') },
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
         { name => "duration", search => 1, title => $c->loc('Duration'), show_total => 'sum' },
+        { name => "cdr_mos_data.mos_average", search => 0, title => $c->loc('MOS avg') },
+        { name => "cdr_mos_data.mos_average_packetloss", search => 0, title => $c->loc('MOS packetloss') },
+        { name => "cdr_mos_data.mos_average_jitter", search => 0, title => $c->loc('MOS jitter') },
+        { name => "cdr_mos_data.mos_average_roundtrip", search => 0, title => $c->loc('MOS roundtrip')  },
     ];
     push @{ $call_cols }, (
         { name => "call_id", search => 1, title => $c->loc('Call-ID') },
@@ -3588,8 +3592,13 @@ sub ajax_calls_out :Chained('calllist_master') :PathPart('list/ajax/out') :Args(
 sub ajax_call_details :Chained('master') :PathPart('calls/ajax') :Args(1) {
     my ($self, $c, $call_id) = @_;
     my $call = $c->model('DB')->resultset('cdr')->search_rs({
-        id => $call_id,
-    });
+            id => $call_id,
+        },{
+            join => 'cdr_mos_data',
+            '+select' => [qw/cdr_mos_data.mos_average cdr_mos_data.mos_average_packetloss cdr_mos_data.mos_average_jitter cdr_mos_data.mos_average_roundtrip/],
+            '+as' => [qw/mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/],
+        }
+    );
     $c->stash(
         template => 'subscriber/call_details.tt',
         call     => { $call->first->get_inflated_columns } );

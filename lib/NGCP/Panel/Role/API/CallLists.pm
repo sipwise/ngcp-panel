@@ -5,10 +5,7 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use POSIX;
 use DateTime::Format::Strptime;
@@ -20,7 +17,14 @@ use NGCP::Panel::Utils::CallList qw();
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('cdr');
+    my $item_rs = $c->model('DB')->resultset('cdr')->search_rs(
+        undef,
+        {
+            join => 'cdr_mos_data',
+            '+select' => [qw/cdr_mos_data.mos_average cdr_mos_data.mos_average_packetloss cdr_mos_data.mos_average_jitter cdr_mos_data.mos_average_roundtrip/],
+            '+as' => [qw/mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/],
+         }
+    );
 
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
@@ -66,41 +70,6 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::CallList::Subscriber", $c);
 }
 
-sub hal_from_item {
-    my ($self, $c, $item, $owner, $form, $href_data) = @_;
-    my $resource = $self->resource_from_item($c, $item, $owner, $form);
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d?%s", $self->dispatch_path, $item->id, $href_data)),
-            # todo: customer can be in source_account_id or destination_account_id
-#            Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->source_customer_id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    $form //= $self->get_form($c);
-
-    $self->validate_form(
-        c => $c,
-        resource => $resource,
-        form => $form,
-        run => 0,
-    );
-
-    $resource->{id} = int($item->id);
-    $hal->resource($resource);
-    return $hal;
-}
-
 sub resource_from_item {
     my ($self, $c, $item, $owner, $form) = @_;
 
@@ -119,14 +88,6 @@ sub resource_from_item {
     $resource->{start_time} .= '.'.$item->start_time->millisecond if $item->start_time->millisecond > 0.0;
     return $resource;
 }
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
-}
-
-
 
 1;
 # vim: set tabstop=4 expandtab:
