@@ -4,6 +4,16 @@ use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Balance::CustomerBalance';
 use Moose::Util::TypeConstraints;
 
+has_field 'cash_balance' => (
+    type => 'Money',
+    label => 'Cash Balance',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The current cash balance of the customer in EUR/USD/etc.']
+    },
+);
+
 has_field 'cash_debit' => (
     type => 'Money',
     #label => 'Cash Balance (Interval)',

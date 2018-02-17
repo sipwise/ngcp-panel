@@ -91,6 +91,18 @@ has_field 'cash_balance' => (
     },
 );
 
+has_field 'initial_cash_balance' => (
+    type => 'Money',
+    #label => 'Cash Balance',
+    #required => 1,
+    #inflate_method => sub { return $_[1] * 100 },
+    #deflate_method => sub { return $_[1] / 100 },
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The interval\'s initial cash balance of the contract in EUR/USD/etc.']
+    },
+);
+
 has_field 'cash_debit' => (
     type => 'Money',
     #label => 'Cash Balance',
@@ -110,6 +122,16 @@ has_field 'free_time_balance' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The interval\'s free-time balance of the contract in seconds.']
+    },
+);
+
+has_field 'initial_free_time_balance' => (
+    type => 'Integer',
+    #label => 'Free-Time Balance',
+    #required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The interval\'s initial free-time balance of the contract in seconds.']
     },
 );
 
