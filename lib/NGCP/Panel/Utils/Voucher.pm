@@ -45,10 +45,10 @@ sub decrypt_code {
 sub check_topup {
     my %params = @_;
     my ($c,$plain_code,$voucher_id,$now,$subscriber_id,$contract,$package_id,$schema,$err_code,$entities,$resource) = @params{qw/c plain_code voucher_id now subscriber_id contract package_id schema err_code entities resource/};
-    
+
     $schema //= $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
-    
+
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return 0; };
     }
@@ -71,7 +71,7 @@ sub check_topup {
         $entities->{subscriber} = $subscriber if defined $entities;
         $contract //= $subscriber->contract;
     }
-    
+
     $entities->{contract} = $contract if defined $entities;
 
     unless($contract->status eq 'active') {
@@ -80,17 +80,17 @@ sub check_topup {
     unless($contract->contact->reseller) {
         return 0 unless &{$err_code}('Contract is not a customer contract.');
     }
-    
+
     # if reseller, check if subscriber_id belongs to the calling reseller
     if($reseller_id && $reseller_id != $contract->contact->reseller_id) {
         return 0 unless &{$err_code}('Subscriber customer contract belongs to another reseller.');
     }
-    
+
     if (defined $plain_code || defined $voucher_id) {
 
         my $voucher;
         my $dtf = $schema->storage->datetime_parser;
-        
+
         if (defined $plain_code) {
             $voucher = $schema->resultset('vouchers')->search_rs({
                 code => encrypt_code($c, $plain_code),
@@ -120,21 +120,20 @@ sub check_topup {
                 if (defined $resource) {
                     $resource->{voucher_id} = undef if exists $resource->{voucher_id};
                     $resource->{voucher}->{id} = undef if (exists $resource->{voucher} && exists $resource->{voucher}->{id});
-                }                
+                }
                 return 0 unless &{$err_code}("Invalid voucher ID $voucher_id, already used or expired.");
-            }            
+            }
         }
-        
+
         $entities->{voucher} = $voucher if defined $entities;
 
         if($voucher->customer_id && $contract->id != $voucher->customer_id) {
             return 0 unless &{$err_code}('Voucher is reserved for a different customer.');
-        }        
+        }
         unless($voucher->reseller_id == $contract->contact->reseller_id) {
             return 0 unless &{$err_code}('Voucher belongs to another reseller.');
         }
-        
-        $entities->{voucher} = $voucher if defined $entities;
+
     } else {
         my $package = undef;
         if (defined $package_id) {
@@ -143,7 +142,7 @@ sub check_topup {
                 if (defined $resource) {
                     $resource->{package_id} = undef if exists $resource->{package_id};
                     $resource->{package}->{id} = undef if (exists $resource->{package} && exists $resource->{package}->{id});
-                }                     
+                }
                 return 0 unless &{$err_code}("Unknown profile package ID $package_id.");
             }
             $entities->{package} = $package if defined $entities;
@@ -152,15 +151,15 @@ sub check_topup {
             }
         }
     }
-    
+
     # TODO: add and check billing.vouchers.active flag for internal/emergency use
-    
+
     return 1;
-    
+
 }
 
 sub get_datatable_cols {
-    
+
     my ($c,$hide_package) = @_;
     return (
         { name => "id", "search" => 1, "title" => $c->loc("#") },

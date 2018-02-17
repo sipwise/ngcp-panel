@@ -89,12 +89,14 @@ sub resource_from_item{
 
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($item->contract->create_timestamp // $item->contract->modify_timestamp);
     if (NGCP::Panel::Utils::DateTime::set_local_tz($item->start) <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($item->end) || NGCP::Panel::Utils::DateTime::set_local_tz($item->end) >= $contract_create)) {
-    $resource{ratio} = NGCP::Panel::Utils::ProfilePackages::get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($item->start),NGCP::Panel::Utils::DateTime::set_local_tz($item->end));
-    #to avoid PUT error in API:
-    ##   Failed test 'customerbalances: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='ratio', input='0.35483871', errors='Total size of number must be less than or equal to 8, but is 9')'
-    ##   Failed test 'customerbalances: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='ratio', input='0.3548387', errors='May have a maximum of 2 digits after the decimal point, but has 7')'
+        $resource{ratio} = NGCP::Panel::Utils::ProfilePackages::get_free_ratio($contract_create,NGCP::Panel::Utils::DateTime::set_local_tz($item->start),NGCP::Panel::Utils::DateTime::set_local_tz($item->end));
+        #to avoid PUT error in API:
+        ##   Failed test 'customerbalances: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='ratio', input='0.35483871', errors='Total size of number must be less than or equal to 8, but is 9')'
+        ##   Failed test 'customerbalances: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='ratio', input='0.3548387', errors='May have a maximum of 2 digits after the decimal point, but has 7')'
 
-    #$resource{ratio} = sprintf("%.2f", $resource{ratio});
+        #$resource{ratio} = sprintf("%.2f", $resource{ratio});
+
+        # any readonly field is now removed before validation, see below.
 
     } else {
         $resource{ratio} = 1.0;
@@ -114,6 +116,14 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form, $now) = @_;
 
+    # remove any readonly field before validation:
+    my %ro_fields = map { $_ => 1; } keys %$resource;
+    $ro_fields{cash_balance} = 0;
+    $ro_fields{free_time_balance} = 0;
+    foreach my $field (keys %$resource) {
+        delete $resource->{$field} if $ro_fields{$field};
+    }
+
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
@@ -121,17 +131,24 @@ sub update_item {
         resource => $resource,
     );
 
-    $item = NGCP::Panel::Utils::ProfilePackages::underrun_update_balance(c => $c,
+    my $entities = { contract => $item->contract, };
+    my $log_vals = {};
+    $item = NGCP::Panel::Utils::ProfilePackages::set_contract_balance(
+        c => $c,
         balance => $item,
+        cash_balance => $resource->{cash_balance} * 100.0,
+        free_time_balance => $resource->{free_time_balance},
         now => $now,
-        new_cash_balance => $resource->{cash_balance} * 100.0);
+        log_vals => $log_vals);
 
-    $resource->{cash_balance} *= 100.0;
-    # ignoring cash_debit and free_time_spent:
-    $item->update({
-            cash_balance => $resource->{cash_balance},
-            free_time_balance => $resource->{free_time_balance},
-        });
+    my $topup_log = NGCP::Panel::Utils::ProfilePackages::create_topup_log_record(
+        c => $c,
+        now => $now,
+        entities => $entities,
+        log_vals => $log_vals,
+        request_token => NGCP::Panel::Utils::ProfilePackages::API_DEFAULT_TOPUP_REQUEST_TOKEN,
+    );
+
     $item->discard_changes;
 
     return $item;
