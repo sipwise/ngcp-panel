@@ -698,8 +698,10 @@ sub _get_balance_values {
     $c->log->debug("ratio: $ratio, free cash: $free_cash, cash balance: $cash_balance, free time: $free_time, free time balance: $free_time_balance");
 
     return [cash_balance => sprintf("%.4f",$cash_balance),
+            initial_cash_balance => sprintf("%.4f",$cash_balance),
             cash_balance_interval => sprintf("%.4f",$cash_balance_interval),
             free_time_balance => sprintf("%.0f",$free_time_balance),
+            initial_free_time_balance => sprintf("%.0f",$free_time_balance),
             free_time_balance_interval => sprintf("%.0f",$free_time_balance_interval)];
 
 }
@@ -1397,12 +1399,19 @@ sub get_balanceinterval_datatable_cols {
           #convert_code => sub { my $s = shift; return $s if ($parser_date->parse_datetime($s) or $parser_datetime->parse_datetime($s)); } },
         { name => "end", search => 0, search_upper_column => 'interval', title => $c->loc('To'), },
           #convert_code => sub { my $s = shift; return $s if ($parser_date->parse_datetime($s) or $parser_datetime->parse_datetime($s)); } },
-        { name => "balance", search => 0, title => $c->loc('Cash'), literal_sql => "FORMAT(cash_balance / 100,2)" },
+
+        { name => "initial_balance", search => 0, title => $c->loc('Initial Cash'), literal_sql => "FORMAT(initial_cash_balance / 100,2)" },
+        { name => "balance", search => 0, title => $c->loc('Cash Balance'), literal_sql => "FORMAT(cash_balance / 100,2)" },
         { name => "debit", search => 0, title => $c->loc('Debit'), literal_sql => "FORMAT(cash_balance_interval / 100,2)" },
-        { name => "topup_count", search => 0, title => $c->loc('#Top-ups') },
-        { name => "timely_topup_count", search => 0, title => $c->loc('#Timely Top-ups') },
-        { name => "underrun_profiles", search => 0, title => $c->loc('Underrun detected (Profiles)') },
-        { name => "underrun_lock", search => 0, title => $c->loc('Underrun detected (Lock)') },
+
+        { name => "initial_free_time_balance", search => 0, title => $c->loc('Initial Free-Time') },
+        { name => "free_time_balance", search => 0, title => $c->loc('Free-Time Balance') },
+        { name => "free_time_interval", search => 0, title => $c->loc('Free-Time spent') },
+
+        { name => "topups", search => 0, title => $c->loc('#Top-ups (timely)'), literal_sql => 'CONCAT(topup_count," (",timely_topup_count," )")' },
+
+        { name => "underrun_profiles", search => 0, title => $c->loc('Last Underrun (Profiles)') },
+        { name => "underrun_lock", search => 0, title => $c->loc('Last Underrun (Lock)') },
     );
 }
 
@@ -1437,4 +1446,3 @@ sub get_topuplog_datatable_cols {
 }
 
 1;
-
