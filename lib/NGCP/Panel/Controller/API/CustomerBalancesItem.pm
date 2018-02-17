@@ -62,7 +62,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
-    #$self->apply_fake_time($c);    
+    #$self->apply_fake_time($c);
 }
 
 sub GET :Allow {
@@ -119,7 +119,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -129,16 +129,18 @@ sub PATCH :Allow {
         my $item = $self->item_by_id($c, $id, $now);
         last unless $self->resource_exists($c, customerbalance => $item);
         my $old_resource = { $item->get_inflated_columns };
+        $old_resource->{cash_balance} /= 100.0 if defined $old_resource->{cash_balance};
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form, $now);
         last unless $item;
-        
+
         my $hal = $self->hal_from_item($c, $item, $form);
-        last unless $self->add_update_journal_item_hal($c,$hal);
-        
+
+        last unless $self->add_update_journal_item_hal($c, $hal);
+
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -176,6 +178,7 @@ sub PUT :Allow {
         );
         last unless $resource;
         my $old_resource = { $item->get_inflated_columns };
+        $old_resource->{cash_balance} /= 100.0 if defined $old_resource->{cash_balance};
 
         my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form, $now);
@@ -183,8 +186,8 @@ sub PUT :Allow {
 
         my $hal = $self->hal_from_item($c, $item, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
-        
-        $guard->commit; 
+
+        $guard->commit;
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);

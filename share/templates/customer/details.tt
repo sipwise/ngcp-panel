@@ -446,7 +446,7 @@ $(function() {
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <th>
-                            <th colspan="4"></th>
+                            <th colspan="6"></th>
                         </th>
                     </thead>
                     <tbody>
@@ -454,17 +454,21 @@ $(function() {
                         [% money_format = format('%.2f') %]
 
                         <tr>
-                            <td>[% c.loc('Cash balance') %]</td>
-                            <td>[% money_format(balance.cash_balance / 100) %]</td>
-                            <td>[% c.loc('Debit') %]</td>
-                            <td>[% money_format( balance.cash_balance_interval / 100 ) %]</td>
+                            <td>[% c.loc('Initial Cash Balance:') %]</td>
+                            <td><b>[% money_format(balance.initial_cash_balance / 100) %]</b></td>
+                            <td>[% c.loc('Cash Balance:') %]</td>
+                            <td><b>[% money_format(balance.cash_balance / 100) %]</b></td>
+                            <td>[% c.loc('Debit:') %]</td>
+                            <td><b>[% money_format( balance.cash_balance_interval / 100 ) %]</b></td>
                         </tr>
 
                         <tr>
-                            <td>[% c.loc('Free time balance') %]</td>
-                            <td>[% balance.free_time_balance %]</td>
-                            <td>[% c.loc('Free time spent') %]</td>
-                            <td>[% balance.free_time_balance_interval %]</td>
+                            <td>[% c.loc('Initial Free-Time Balance:') %]</td>
+                            <td><b>[% balance.initial_free_time_balance %]</b></td>
+                            <td>[% c.loc('Free-Time Balance:') %]</td>
+                            <td><b>[% balance.free_time_balance %]</b></td>
+                            <td>[% c.loc('Free-Time spent:') %]</td>
+                            <td><b>[% balance.free_time_balance_interval %]</b></td>
                         </tr>
                     </tbody>
                 </table>
@@ -477,22 +481,22 @@ $(function() {
                     </thead>
 
                         <tr>
-                            <td>[% c.loc('Interval from') %]</td>
-                            <td>[% balance.start %]</td>
-                            <td>[% c.loc('Interval to') %]</td>
-                            <td>[% balance.end %]</td>
+                            <td>[% c.loc('Interval from:') %]</td>
+                            <td><b>[% balance.start %]</b></td>
+                            <td>[% c.loc('Interval to:') %]</td>
+                            <td><b>[% balance.end %]</b></td>
                         </tr>
 
                         <tr>
-                            <td>[% c.loc('"Timely" top-ups from') %]</td>
-                            <td>[% timely_topup_start %]</td>
-                            <td>[% c.loc('"Timely" top-ups to') %]</td>
-                            <td>[% timely_topup_end %]</td>
+                            <td>[% c.loc('"Timely" Top-ups from:') %]</td>
+                            <td><b>[% timely_topup_start %]</b></td>
+                            <td>[% c.loc('"Timely" Top-ups to:') %]</td>
+                            <td><b>[% timely_topup_end %]</b></td>
                         </tr>
 
                         <tr>
-                            <td colspan="2">[% c.loc('Balance will be discarded, if no tup-up happens until') %]</td>
-                            <td colspan="2">[% notopup_expiration %]</td>
+                            <td colspan="2">[% c.loc('Balance will be discarded, if no tup-up happens until:') %]</td>
+                            <td colspan="2"><b>[% notopup_expiration %]</b></td>
                         </tr>
 
                     </tbody>
@@ -509,16 +513,16 @@ $(function() {
                         [% money_format = format('%.2f') %]
 
                         <tr>
-                            <td>[% c.loc('Actual profile package') %]</td>
+                            <td>[% c.loc('Actual profile package:') %]</td>
                             <td>[% package.name %]</td>
-                            <td>[% c.loc('Actual billing profile') %]</td>
+                            <td>[% c.loc('Actual billing profile:') %]</td>
                             <td>[% mapping.billing_profile.name %]</td>
                         </tr>
 
                         <tr>
-                            <td>[% c.loc('Balance threshold when underrun profiles get applied') %]</td>
+                            <td>[% c.loc('Cash balance threshold when underrun profiles get applied:') %]</td>
                             <td>[% package.underrun_profile_threshold ? money_format( package.underrun_lock_threshold / 100 ) : '' %]</td>
-                            <td>[% c.loc('Balance threshold when subscribers will be locked') %]</td>
+                            <td>[% c.loc('Cash balance threshold when subscribers will be locked:') %]</td>
                             <td>[% package.underrun_lock_threshold ? money_format( package.underrun_lock_threshold / 100 ) : '' %]</td>
                         </tr>
                     </tbody>

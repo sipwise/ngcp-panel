@@ -1020,6 +1020,8 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+        my $entities = { contract => $contract, };
+        my $log_vals = {};
         try {
             my $schema = $c->model('DB');
             $schema->set_transaction_isolation('READ COMMITTED');
@@ -1027,11 +1029,21 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
                 $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                             contract => $contract,
                             now => $now);
-                $balance = NGCP::Panel::Utils::ProfilePackages::underrun_update_balance(c => $c,
-                    balance =>$balance,
+                $balance = NGCP::Panel::Utils::ProfilePackages::set_contract_balance(
+                    c => $c,
+                    balance => $balance,
+                    cash_balance => $form->values->{cash_balance},
+                    free_time_balance => $form->values->{free_time_balance},
                     now => $now,
-                    new_cash_balance => $form->values->{cash_balance} );
-                $balance->update($form->values);
+                    log_vals => $log_vals);
+
+                my $topup_log = NGCP::Panel::Utils::ProfilePackages::create_topup_log_record(
+                    c => $c,
+                    now => $now,
+                    entities => $entities,
+                    log_vals => $log_vals,
+                    request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
+                );
             });
             NGCP::Panel::Utils::Message::info(
                 c => $c,
