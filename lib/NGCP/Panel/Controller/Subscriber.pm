@@ -2306,6 +2306,10 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
         { name => "call_status", search => 1, title => $c->loc('Status') },
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
         { name => "duration", search => 1, title => $c->loc('Duration'), show_total => 'sum' },
+        { name => "cdr_mos_data.mos_average", search => 0, title => $c->loc('MOS avg'), show_total => 'sum' },
+        { name => "cdr_mos_data.mos_average_packetloss", search => 0, title => $c->loc('MOS packetloss'), show_total => 'sum' },
+        { name => "cdr_mos_data.mos_average_jitter", search => 0, title => $c->loc('MOS jitter'), show_total => 'sum' },
+        { name => "cdr_mos_data.mos_average_roundtrip", search => 0, title => $c->loc('MOS roundtrip'), show_total => 'sum' },
     ];
     push @{ $call_cols }, (
         { name => "call_id", search => 1, title => $c->loc('Call-ID') },

@@ -48,10 +48,11 @@ sub process_cdr_item {
 
     $params //= $c->req->params;
 
-    $resource->{call_id} = $item->call_id;
-    $resource->{id} = $item->id;
-    $resource->{call_type} = $item->call_type;
-
+    foreach my $field (qw/id call_id call_type mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/) {
+        if ($item->has_column_loaded($field)) {
+            $resource->{$field} = $item->get_column($field);        
+        }
+    }
     my $intra = 0;
     if($item->source_user_id && $item->source_account_id == $item->destination_account_id) {
         $resource->{intra_customer} = JSON::true;
