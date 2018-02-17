@@ -21,7 +21,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines customer balances to access cash and free time balance.';
+    return 'Defines customer balances to access cash and free-time balance.';
 };
 
 sub query_params {

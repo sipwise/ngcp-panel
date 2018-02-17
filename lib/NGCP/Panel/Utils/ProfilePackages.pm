@@ -44,6 +44,7 @@ use constant _ENABLE_UNDERRUN_PROFILES => 1;
 use constant _ENABLE_UNDERRUN_LOCK => 1;
 
 use constant PANEL_TOPUP_REQUEST_TOKEN => 'panel';
+use constant API_DEFAULT_TOPUP_REQUEST_TOKEN => 'api';
 
 sub get_contract_balance {
     my %params = @_;
@@ -382,11 +383,56 @@ PREPARE_BALANCE_CATCHUP:
 
 }
 
+sub set_contract_balance {
+    my %params = @_;
+    my($c,$balance,$cash_balance,$free_time_balance,$now,$schema,$log_vals) = @params{qw/c balance cash_balance free_time_balance now schema log_vals/};
+
+    $schema //= $c->model('DB');
+    my $contract;
+    $contract = $balance->contract if $log_vals;
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
+
+    $cash_balance //= $balance->cash_balance;
+    $free_time_balance //= $balance->free_time_balance;
+
+    $c->log->debug('set contract ' . $contract->id . ' cash_balance from ' . $balance->cash_balance . ' to ' . $cash_balance . ', free_time_balance from ' . $balance->free_time_balance . ' to ' . $free_time_balance);
+
+    if ($log_vals) {
+        my $package = $contract->profile_package;
+        $log_vals->{old_package} = ( $package ? { $package->get_inflated_columns } : undef);
+        $log_vals->{new_package} = $log_vals->{old_package};
+        $log_vals->{old_balance} = { $balance->get_inflated_columns };
+        my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
+        my $profile = $bm_actual->billing_mappings->first->billing_profile;
+        $log_vals->{old_profile} = { $profile->get_inflated_columns };
+        $log_vals->{amount} = $cash_balance - $balance->cash_balance;
+    }
+
+    $balance = _underrun_update_balance(c => $c,
+        balance =>$balance,
+        now => $now,
+        new_cash_balance => $cash_balance );
+
+    $balance->update({
+        cash_balance => $cash_balance,
+        free_time_balance => $free_time_balance,
+    });
+    $contract->discard_changes();
+    if ($log_vals) {
+        $log_vals->{new_balance} = { $balance->get_inflated_columns };
+        my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
+        my $profile = $bm_actual->billing_mappings->first->billing_profile;
+        $log_vals->{new_profile} = { $profile->get_inflated_columns };
+    }
+
+    return $balance;
+}
+
 sub topup_contract_balance {
     my %params = @_;
     my($c,$contract,$package,$voucher,$amount,$now,$request_token,$schema,$log_vals,$subscriber) = @params{qw/c contract package voucher amount now request_token schema log_vals subscriber/};
 
-    $schema = $c->model('DB');
+    $schema //= $c->model('DB');
     $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::current_local;
 
@@ -508,8 +554,8 @@ sub create_topup_log_record {
     return $c->model('DB')->resultset('topup_logs')->create({
         username => $username,
         timestamp => $now->hires_epoch,
-        type => ($is_cash ? 'cash' : 'voucher'),
-        outcome => ($is_success ? 'ok' : 'failed'),
+        type => (defined $is_cash ? ($is_cash ? 'cash' : 'voucher') : 'set_balance'),
+        outcome => ((not defined $is_cash or $is_success) ? 'ok' : 'failed'),
         message => (defined $message ? substr($message,0,255) : undef),
         subscriber_id => ($entities->{subscriber} ? $entities->{subscriber}->id : $resource->{subscriber_id}),
         contract_id => ($entities->{contract} ? $entities->{contract}->id : $resource->{contract_id}),
@@ -698,8 +744,10 @@ sub _get_balance_values {
     $c->log->debug("ratio: $ratio, free cash: $free_cash, cash balance: $cash_balance, free time: $free_time, free time balance: $free_time_balance");
 
     return [cash_balance => sprintf("%.4f",$cash_balance),
+            initial_cash_balance => sprintf("%.4f",$cash_balance),
             cash_balance_interval => sprintf("%.4f",$cash_balance_interval),
             free_time_balance => sprintf("%.0f",$free_time_balance),
+            initial_free_time_balance => sprintf("%.0f",$free_time_balance),
             free_time_balance_interval => sprintf("%.0f",$free_time_balance_interval)];
 
 }
@@ -967,7 +1015,7 @@ sub underrun_lock_subscriber {
     }
 }
 
-sub underrun_update_balance {
+sub _underrun_update_balance {
     my %params = @_;
     my ($c,$balance,$new_cash_balance,$now,$schema) = @params{qw/c balance new_cash_balance now schema/};
     $schema = $c->model('DB');
@@ -1397,12 +1445,19 @@ sub get_balanceinterval_datatable_cols {
           #convert_code => sub { my $s = shift; return $s if ($parser_date->parse_datetime($s) or $parser_datetime->parse_datetime($s)); } },
         { name => "end", search => 0, search_upper_column => 'interval', title => $c->loc('To'), },
           #convert_code => sub { my $s = shift; return $s if ($parser_date->parse_datetime($s) or $parser_datetime->parse_datetime($s)); } },
-        { name => "balance", search => 0, title => $c->loc('Cash'), literal_sql => "FORMAT(cash_balance / 100,2)" },
+
+        { name => "initial_balance", search => 0, title => $c->loc('Initial Cash'), literal_sql => "FORMAT(initial_cash_balance / 100,2)" },
+        { name => "balance", search => 0, title => $c->loc('Cash Balance'), literal_sql => "FORMAT(cash_balance / 100,2)" },
         { name => "debit", search => 0, title => $c->loc('Debit'), literal_sql => "FORMAT(cash_balance_interval / 100,2)" },
-        { name => "topup_count", search => 0, title => $c->loc('#Top-ups') },
-        { name => "timely_topup_count", search => 0, title => $c->loc('#Timely Top-ups') },
-        { name => "underrun_profiles", search => 0, title => $c->loc('Underrun detected (Profiles)') },
-        { name => "underrun_lock", search => 0, title => $c->loc('Underrun detected (Lock)') },
+
+        { name => "initial_free_time_balance", search => 0, title => $c->loc('Initial Free-Time') },
+        { name => "free_time_balance", search => 0, title => $c->loc('Free-Time Balance') },
+        { name => "free_time_interval", search => 0, title => $c->loc('Free-Time spent') },
+
+        { name => "topups", search => 0, title => $c->loc('#Top-ups (timely)'), literal_sql => 'CONCAT(topup_count," (",timely_topup_count,")")' },
+
+        { name => "underrun_profiles", search => 0, title => $c->loc('Last Underrun (Profiles)') },
+        { name => "underrun_lock", search => 0, title => $c->loc('Last Underrun (Lock)') },
     );
 }
 
@@ -1437,4 +1492,3 @@ sub get_topuplog_datatable_cols {
 }
 
 1;
-
