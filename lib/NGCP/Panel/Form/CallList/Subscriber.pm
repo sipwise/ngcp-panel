@@ -160,6 +160,42 @@ has_field 'call_id' => (
     },
 );
 
+has_field 'mos_average' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['MOS average.']
+    },
+);
+
+has_field 'mos_average_packetloss' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['MOS average packetloss.']
+    },
+);
+
+has_field 'mos_average_jitter' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['MOS average jitter.']
+    },
+);
+
+has_field 'mos_average_roundtrip' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['MOS average roundtrip.']
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
