@@ -50,7 +50,7 @@ sub process_cdr_item {
 
     foreach my $field (qw/id call_id call_type mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/) {
         if ($item->has_column_loaded($field)) {
-            $resource->{$field} = $item->get_column($field);        
+            $resource->{$field} = $item->get_column($field);
         }
     }
     my $intra = 0;
