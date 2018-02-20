@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba7be1f8_0ed0af52",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-20T16:18:58Z",
+      "side": 1,
+      "message": "not to forget - gerhard\u0027s domain join to be added here",
+      "revId": "1360e2f8cf5c584eca0c8c703ff485690d3b209c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
