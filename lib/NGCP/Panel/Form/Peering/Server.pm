@@ -143,18 +143,12 @@ sub validate_via_route {
         $field->add_error("Invalid SIP URI, must be (comma-separated) SIP URI(s) in form sip:ip:port");
     }
 }
-
-sub validate {
-    my ($self) = @_;
-
-    my $host = $self->value->{host};
-    my $ip = $self->value->{ip};
-    if (!$ip && !$host) {
-        $self->field('host')->add_error("At least one of the fields 'host' or 'ip' have to be present");
-    }
-    return;
-}
-
+#sub validate {
+#    my ($self) = @_;
+#    my $c = $self->ctx;
+#    return unless $c;
+#    my $model = $c->
+#}
 1;
 
 __END__
