@@ -14,10 +14,13 @@ use NGCP::Panel::Utils::Email;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::License;
+use NGCP::Panel::Utils::Generic;
+use NGCP::Panel::Utils::RedisLocationResultSet;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
 use IPC::System::Simple qw/capturex/;
 use File::Slurp qw/read_file/;
+use Redis;
 
 my %LOCK = (
     0, 'none',
@@ -28,6 +31,40 @@ my %LOCK = (
     5, 'ported',
 );
 
+sub get_subscriber_location_rs {
+    my ($c, $filter) = @_;
+    if ($c->config->{redis}->{usrloc}) {
+        my $redis;
+        try {
+            $redis = Redis->new(
+                server => $c->config->{redis}->{central_url},
+                reconnect => 10, every => 500000, # 500ms
+                cnx_timeout => 3,
+            );
+            unless ($redis) {
+                $c->log->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
+                return;
+            }
+            $redis->select($c->config->{redis}->{usrloc_db});
+            my $rs = NGCP::Panel::Utils::RedisLocationResultSet->new(_redis => $redis, _c => $c);
+            $rs = $rs->search($filter);
+            return $rs;
+        } catch($e) {
+            $c->log->error("Failed to fetch location information from redis: $e");
+            return;
+        }
+    } else {
+        my $reg_rs = $c->model('DB')->resultset('location')->search({
+            username => $filter->{username},
+        });
+        if($c->config->{features}->{multidomain}) {
+            $reg_rs = $reg_rs->search({
+                domain => $filter->{domain},
+            });
+        }
+        return $reg_rs;
+    }
+}
 
 sub period_as_string {
     my $set = shift;
