@@ -607,6 +607,7 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
+    $c->log->error("+++++++ count in paginate_order_collection_rs");
     my $total_count = int($item_rs->count);
     $item_rs = $item_rs->search(undef, {
         page => $page,

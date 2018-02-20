@@ -3599,16 +3599,20 @@ sub ajax_call_details :Chained('master') :PathPart('calls/ajax') :Args(1) {
 sub ajax_registered :Chained('master') :PathPart('registered/ajax') :Args(0) {
     my ($self, $c) = @_;
 
-    my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
-    my $reg_rs = $c->model('DB')->resultset('location')->search({
-        username => $s->username,
-    });
-    if($c->config->{features}->{multidomain}) {
-        $reg_rs = $reg_rs->search({
-            domain => $s->domain->domain,
-        });
+    $c->log->error("+++++ getting subscriber location rs");
+    my $reg_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs(
+        $c, $c->stash->{subscriber}->provisioning_voip_subscriber
+    );
+=pod    
+    unless ($reg_rs) {
+        NGCP::Panel::Utils::Message::error(
+            c    => $c,
+            log  => "failed to fetch registered subscribers",
+            desc => $c->loc('Failed to fetch registered subscribers'),
+        ); 
     }
-
+=cut    
+    $c->log->error("+++++ processing subscriber location rs");
     NGCP::Panel::Utils::Datatables::process($c, $reg_rs, $c->stash->{reg_dt_columns});
 
     $c->detach( $c->view("JSON") );
@@ -3853,15 +3857,12 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     my ($self, $c, $reg_id) = @_;
 
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
-    my $reg_rs = $c->model('DB')->resultset('location')->search({
-        id => $reg_id,
-        username => $s->username,
-    });
-    if($c->config->{features}->{multidomain}) {
-        $reg_rs = $reg_rs->search({
-            domain => $s->domain->domain,
-        });
-    }
+
+    $c->log->error("+++++ getting subscriber location rs");
+    my $reg_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs(
+        $c, $s, $reg_id,
+    );
+
     $c->stash->{registered} = $reg_rs->first;
     unless($c->stash->{registered}) {
         NGCP::Panel::Utils::Message::error(

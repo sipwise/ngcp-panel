@@ -1,0 +1,198 @@
+package NGCP::Panel::Utils::RedisLocationResultSet;
+
+use Moose;
+
+use TryCatch;
+use NGCP::Panel::Utils::RedisLocationResultSource;
+
+use Data::Dumper;
+
+has _c => (
+    is => 'ro',
+    isa => 'NGCP::Panel',
+);
+
+has _redis => (
+    is => 'ro',
+    isa => 'Redis',
+);
+
+has _rows => (
+    is => 'rw',
+    isa => 'ArrayRef',
+    default => sub {[]}
+);
+
+has _query_done => (
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+);
+
+sub count {
+    my ($self) = @_;
+
+    my $count = @{ $self->_rows };
+    return $count;
+}
+
+sub first {
+    my ($self) = @_;
+    return $self->_rows->[0];
+}
+
+sub all {
+    my ($self) = @_;
+    return @{ $self->_rows };
+}
+
+sub find {
+    my ($self, $filter) = @_;
+
+    if (ref $filter eq "") {
+        my %entry = $self->_redis->hgetall("location:entry::$filter");
+        $entry{id} = $entry{ruid};
+        return NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
+    } else {
+        # TODO: error
+        $self->_c->log->error("Only id-based find() is supported");
+        return;
+    }
+}
+
+sub search {
+    my ($self, $filter, $opt) = @_;
+
+    my $new_rs = $self->meta->clone_object($self);
+    unless ($new_rs->_query_done) {
+        if ($filter->{id}) {
+            push @{ $new_rs->_rows }, $new_rs->find($filter->{id});
+        } elsif ($filter->{username} && $filter->{domain}) {
+            push @{ $new_rs->_rows },
+                @{ $new_rs->_rows_from_mapkey("location:usrdom::" .
+                    $filter->{username} . ":" . $filter->{domain}) };
+        } else {
+            $new_rs->_scan($filter);
+        }
+        $new_rs->_query_done(1);
+    }
+    if ($filter) {
+        $new_rs->_filter($filter);
+    }
+
+    if ($opt->{order_by}->{'-desc'}) {
+        my $f = $opt->{order_by}->{'-desc'};
+        $f =~ s/^me\.//;
+        $new_rs->_rows([sort { $b->$f cmp $a->$f } @{ $new_rs->_rows }]);
+    } elsif ($opt->{order_by}->{'-asc'} || ref $opt->{order_by} eq "") {
+        my $f = $opt->{order_by}->{'-asc'} // $opt->{order_by};
+        $f =~ s/^me\.//;
+        $new_rs->_rows([sort { $a->$f cmp $b->$f } @{ $new_rs->_rows }]);
+    }
+
+    $opt->{rows} //= -1;
+    $opt->{offset} //= 0;
+    if ($opt->{rows} > -1 || $opt->{offset} > 0) {
+        $new_rs->_rows([ splice @{ $new_rs->_rows }, $opt->{offset}, $opt->{rows} ]);   
+    }
+
+    if (defined $opt->{page} && defined $opt->{rows} && $opt->{rows} > 0) {
+        $new_rs->_rows([ splice(@{ $new_rs->_rows }, ($opt->{page} - 1 )*$opt->{rows}, $opt->{rows}) ]);
+    }
+    return $new_rs;
+}
+
+sub _rows_from_mapkey {
+    my ($self, $mapkey, $filter) = @_;
+    my @rows = ();
+    my $keys = $self->_redis->smembers($mapkey);
+    $self->_c->log->error("map key entries are " . (Dumper $keys));
+    foreach my $key (@{ $keys }) {
+        $self->_c->log->error("fetching $key");
+        my %entry = $self->_redis->hgetall($key);
+        $entry{id} = $entry{ruid};
+        my $res = NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
+        push @rows, $res;
+    }
+    return \@rows;
+}
+
+sub _filter {
+    my ($self, $filter) = @_;
+    my @newrows = ();
+    my $i = 0;
+    foreach my $row (@{ $self->_rows }) {
+        my $match = 0;
+        my $filter_applied = 0;
+        my %attr = map { $_->name => 1 } $row->meta->get_all_attributes;
+        foreach my $f (keys %{ $filter }) {
+            if ($f eq "-and" && ref $filter->{$f} eq "ARRAY") {
+                foreach my $col (@{ $filter->{$f} }) {
+                    next unless (ref $col eq "ARRAY");
+                    foreach my $innercol (@{ $col }) {
+                        if (ref $innercol eq "HASH") {
+                            foreach my $colname (keys %{ $innercol }) {
+                                my $searchname = $colname;
+                                $colname =~ s/^me\.//;
+                                next if ($colname =~ /\./); # we don't support joined table columns
+                                $filter_applied = 1;
+                                if (ref $innercol->{$searchname} eq "") {
+                                    if (!exists $attr{$colname} || lc($row->$colname) ne lc($innercol->{$searchname})) {
+                                    } else {
+                                        $match = 1;
+                                        last;
+                                    }
+                                } elsif (ref $innercol->{$searchname} eq "HASH" && exists $innercol->{$searchname}->{like}) {
+                                    my $fil = $innercol->{$searchname}->{like};
+                                    $fil =~ s/^\%//;
+                                    $fil =~ s/\%$//;
+                                    if (!exists $attr{$colname} || $row->$colname !~ /$fil/i) {
+                                    } else {
+                                        $match = 1;
+                                        last;
+                                    }
+                                }
+                            }
+                            last if ($match);
+                        }
+                    }
+                }
+                last if ($match);
+            }
+
+        }
+        next if ($filter_applied && !$match);
+        push @newrows, $row;
+    }
+    $self->_rows(\@newrows);
+}
+
+sub _scan {
+    my ($self, $filter) = @_;
+    $filter //= {};
+    my $match = ($filter->{username} // "") . ":" . ($filter->{domain} // "");
+    if ($match eq ":") {
+        $match = "*";
+    } elsif ($match =~ /:$/) {
+        $match .= '*';
+    }
+
+    $self->_rows([]);
+    my $cursor = 0;
+    do {
+        my $res = $self->_redis->scan($cursor, MATCH => "location:usrdom::$match", COUNT => 1000);
+        $cursor = shift @{ $res };
+        my $mapkeys = shift @{ $res };
+        foreach my $mapkey (@{ $mapkeys }) {
+            push @{ $self->_rows }, @{ $self->_rows_from_mapkey($mapkey, $filter) };
+        }
+    } while ($cursor);
+
+    return 1;
+}
+
+sub result_class {
+    "dummy";
+}
+
+1;
