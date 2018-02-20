@@ -11,27 +11,48 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Kamailio;
+use NGCP::Panel::Utils::Subscriber;
 
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my @joins = ();;
-    if($c->config->{features}->{multidomain}) {
-        push @joins, 'domain';
-    }
-    my $item_rs = $c->model('DB')->resultset('location');
-    if($c->user->roles eq "admin") {
-        $item_rs = $item_rs->search({
+    my $item_rs;
+
+    if ($c->config->{redis}->{usrloc}) {
+        # TODO: will this survive with like 1M records?
+
+        my $filter = {};
+        if ($c->req->param('subscriber_id')) {
+            my $sub = $c->model('DB')->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
+            if ($sub) {
+                $filter->{username} = $sub->username;
+                $filter->{domain} = $sub->domain->domain;
+            }
+        }
+        if ($c->user->roles eq "admin") {
+        } elsif ($c->user->roles eq "reseller") {
+            $filter->{reseller_id} = $c->user->reseller_id;
+        }
+        $item_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter);
+    } else {
+        my @joins = ();
+        if($c->config->{features}->{multidomain}) {
+            push @joins, 'domain';
+        }
+        $item_rs = $c->model('DB')->resultset('location');
+        if($c->user->roles eq "admin") {
+            $item_rs = $item_rs->search({
             
-        },{
-            join => [@joins,'subscriber'],
-        });
-    } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ 
-            'contact.reseller_id' => $c->user->reseller_id 
-        },{
-            join => [@joins, { 'subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}} ],
-        });
+            },{
+                join => [@joins,'subscriber'],
+            });
+        } elsif($c->user->roles eq "reseller") {
+            $item_rs = $item_rs->search({ 
+                'contact.reseller_id' => $c->user->reseller_id 
+            },{
+                join => [@joins, { 'subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}} ],
+            });
+        }
     }
     return $item_rs;
 }
@@ -57,7 +78,7 @@ sub hal_from_item {
             ),
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $item->id)),
             Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $resource->{subscriber_id})),
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -72,7 +93,7 @@ sub hal_from_item {
     );
     $resource->{user_agent} = $user_agent;
 
-    $resource->{id} = int($item->id);
+    $resource->{id} = ($item->id =~ /^\d+$/) ? int($item->id) : $item->id;
 
     $hal->resource($resource);
     return $hal;
@@ -106,8 +127,9 @@ sub subscriber_from_item {
         status => { '!=' => 'terminated' },
     });
     if($c->config->{features}->{multidomain}) {
+        my $domain = $c->config->{redis}->{usrloc} ? $item->domain : $item->domain->domain;
         $sub_rs = $sub_rs->search({
-            'domain.domain' => $item->domain->domain,
+            'domain.domain' => $domain,
         }, {
             join => 'domain',
         });
@@ -199,7 +221,7 @@ sub fetch_item {
 
     while ($flush_timeout) {
         $item = $self->_item_by_aor($c, $sub, $form->values->{contact});
-        if ($item && (!$old_item || $item->id != $old_item->id)) {
+        if ($item && (!$old_item || $item->id ne $old_item->id)) {
             last;
         }
         $item = undef;
@@ -216,6 +238,14 @@ sub fetch_item {
     return $item;
 }
 
+sub valid_id {
+    my ($self, $id) = @_;
+    if (defined $id && length $id > 0) {
+        return 1;
+    } else {
+        return;
+    }
+}
 
 1;
 # vim: set tabstop=4 expandtab:
