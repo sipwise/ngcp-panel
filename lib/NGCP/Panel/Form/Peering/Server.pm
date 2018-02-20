@@ -18,8 +18,7 @@ has_field 'name' => (
 
 has_field 'ip' => (
     type => '+NGCP::Panel::Field::IPAddress',
-    required => 0,
-    not_nullable => 1,
+    required => 1,
     label => 'IP Address',
 );
 
