@@ -3480,6 +3480,13 @@ msgstr "Ausgehende Anrufe via Socket zwingen"
 msgid "Force outbound calls from user or peer to peer"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Force the system to resolve the peer hostname using DNS to get the "
+"destination IP. If activated the peer IP configured in the systed is used "
+"for inbound calls only."
+msgstr ""
+
 #: share/templates/login/login.tt
 msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
@@ -3622,6 +3629,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Hostname"
 msgstr "Host-Name"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Hostname DNS resolution will be used instead of the Peer IP"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm share/templates/subscriber/master.tt
 msgid "Hunt Policy"
