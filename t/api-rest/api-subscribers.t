@@ -58,7 +58,7 @@ $fake_data->set_data_from_script({
             if($pilot->{total_count} <= 0){
                 undef $pilot;
             }
-            $test_machine->check_create_correct(1, sub{
+            return $test_machine->check_create_correct(1, sub{
                 $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
                 $_[0]->{pbx_extension} = time();
                 $_[0]->{webusername} .= time();
