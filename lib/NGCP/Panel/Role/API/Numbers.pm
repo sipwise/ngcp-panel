@@ -11,8 +11,19 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Form;
-use NGCP::Panel::Utils::XMLDispatcher;
-use NGCP::Panel::Utils::Prosody;
+
+sub resource_name{
+    return 'numbers';
+}
+
+sub dispatch_path{
+    return '/api/numbers/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-numbers';
+}
+
 
 sub get_form {
     my ($self, $c) = @_;
@@ -106,13 +117,6 @@ sub _item_rs {
     return $item_rs;
 }
 
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
-}
-
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
     my $schema = $c->model('DB');
@@ -152,19 +156,19 @@ sub update_item {
 
     try {
 
-		# capture old subscriber's aliases
-		my $old_aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
-			  c => $c,
-			  schema => $schema,
-			  subscriber => $old_sub,
-		);
+        # capture old subscriber's aliases
+        my $old_aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+            c => $c,
+            schema => $schema,
+            subscriber => $old_sub,
+        );
 
-		# capture new subscriber's aliases
-		my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
-			  c => $c,
-			  schema => $schema,
-			  subscriber => $sub,
-		);
+        # capture new subscriber's aliases
+        my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+            c => $c,
+            schema => $schema,
+            subscriber => $sub,
+        );
 
         my $oldalias = [$old_sub->voip_numbers->all];
         $oldalias = [ map {
@@ -217,21 +221,21 @@ sub update_item {
             subscriber_id => $sub->id,
         );
 
-		# edr events for old sub
+        # edr events for old sub
         my $old_sub_profile = $old_sub->provisioning_voip_subscriber->profile_id;
-		NGCP::Panel::Utils::Events::insert_profile_events(
-			c => $c, schema => $schema, subscriber_id => $old_sub->id,
-			old => $old_sub_profile, new => $old_sub_profile,
-			%$old_aliases_before,
-		);
+        NGCP::Panel::Utils::Events::insert_profile_events(
+            c => $c, schema => $schema, subscriber_id => $old_sub->id,
+            old => $old_sub_profile, new => $old_sub_profile,
+            %$old_aliases_before,
+        );
 
-		# edr events for new sub
+        # edr events for new sub
         my $new_sub_profile = $sub->provisioning_voip_subscriber->profile_id;
-		NGCP::Panel::Utils::Events::insert_profile_events(
-			c => $c, schema => $schema, subscriber_id => $sub->id,
-			old => $new_sub_profile, new => $new_sub_profile,
-			%$aliases_before,
-		);
+        NGCP::Panel::Utils::Events::insert_profile_events(
+            c => $c, schema => $schema, subscriber_id => $sub->id,
+            old => $new_sub_profile, new => $new_sub_profile,
+            %$aliases_before,
+        );
 
     } catch($e) {
         $c->log->error("failed to update number: $e");
