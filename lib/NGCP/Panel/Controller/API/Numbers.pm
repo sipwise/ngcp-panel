@@ -3,15 +3,11 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
-use HTTP::Headers qw();
-use HTTP::Status qw(:constants);
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Numbers/;
 
-use NGCP::Panel::Utils::DateTime;
-use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin/],
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
@@ -68,74 +64,6 @@ sub query_params {
             description => 'Filter for number type, either "primary" or "alias".',
         },
     ];
-}
-
-use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Numbers/;
-
-sub resource_name{
-    return 'numbers';
-}
-
-sub dispatch_path{
-    return '/api/numbers/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-numbers';
-}
-
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin/],
-});
-
-sub GET :Allow {
-    my ($self, $c) = @_;
-    my $page = $c->request->params->{page} // 1;
-    my $rows = $c->request->params->{rows} // 10;
-    {
-        my $numbers = $self->item_rs($c);
-        (my $total_count, $numbers) = $self->paginate_order_collection($c, $numbers);
-        my (@embedded, @links);
-        my $form = $self->get_form($c);
-        for my $domain ($numbers->all) {
-            push @embedded, $self->hal_from_item($c, $domain, $form);
-            push @links, Data::HAL::Link->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $domain->id),
-            );
-        }
-        push @links,
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
-        if(($total_count / $rows) > $page ) {
-            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
-        }
-        if($page > 1) {
-            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
-        }
-
-        my $hal = Data::HAL->new(
-            embedded => [@embedded],
-            links => [@links],
-        );
-        $hal->resource({
-            total_count => $total_count,
-        });
-        my $rname = $self->resource_name;
-
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
-            HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
-        return;
-    }
-    return;
 }
 
 1;
