@@ -25,8 +25,9 @@ $fake_data->set_data_from_script({
             my $data = $self->data->{faxes}->{data};
             set_faxes_preferences($data->{json}->{subscriber_id});
             $test_machine->resource_fill_file($data->{faxfile}->[0]);
-            $test_machine->check_create_correct( 1, sub { $_[0] = clone $data; } );
+            my $created = $test_machine->check_create_correct( 1, sub { $_[0] = clone $data; } );
             $test_machine->resource_clear_file($data->{faxfile}->[0]);
+            return $created;
         },
         'no_delete_available' => 1,
         

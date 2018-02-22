@@ -430,8 +430,9 @@ sub build_data{
                 my $prev_params = $test_machine->get_cloned('content_type','QUERY_PARAMS');
                 $test_machine->content_type->{POST} = $self->data->{$collection_name}->{data}->{content_type};
                 $test_machine->QUERY_PARAMS($test_machine->hash2params($self->data->{$collection_name}->{data}));
-                $test_machine->check_create_correct(1, sub {return 'test_api_empty_config';} );
+                my $created = $test_machine->check_create_correct(1, sub {return 'test_api_empty_config';} );
                 $test_machine->set(%$prev_params);
+                return $created;
             },
             'no_delete_available' => 1,
         },
@@ -640,10 +641,11 @@ sub get_id{
     if('CODE' eq ref $self->data->{$collection_name}->{get_id}){
         $res_id = $self->data->{$collection_name}->get_id();
     }else{
-        if( $self->collection_id_exists($collection_name) ){
+        if( !$self->collection_id_exists($collection_name) ){
             $res_id = $self->get_existent_id($collection_name);
         }else{
-            $res_id = $self->create(@_);
+            $self->create(@_);
+            $res_id = $self->get_existent_id($collection_name);
         }
     }
     return $res_id;
@@ -737,10 +739,11 @@ sub create{
         name            => $self->get_collection_interface($collection_name),
         DATA_ITEM       => $data,
     );
+    my $created;
     if(exists $self->data->{$collection_name}->{create_special} && 'CODE' eq ref $self->data->{$collection_name}->{create_special}){
-        $self->data->{$collection_name}->{create_special}->($self,$collection_name,$test_machine);
+        $created = $self->data->{$collection_name}->{create_special}->($self,$collection_name,$test_machine);
     }else{
-        $test_machine->check_create_correct(1,
+        $created = $test_machine->check_create_correct(1,
             $self->{use_data_callbacks}
             ?
             $self->data->{$collection_name}->{data_callbacks}->{uniquizer_cb}
@@ -778,7 +781,7 @@ sub create{
         }
         delete $self->data->{$collection_name}->{process_cycled};
     }
-    return $self->get_existent_id($collection_name);
+    return $created;
 }
 
 sub clear_test_data_all{

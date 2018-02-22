@@ -14,30 +14,31 @@ my $test_machine = Test::Collection->new(
 );
 my $fake_data = Test::FakeData->new;
 
-$test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
-$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH DELETE)};
-
 $fake_data->set_data_from_script({
     'numbers' => {
         'data' => {
-            subscriber_id  => sub { return shift->get_id('customers',@_); },
+            subscriber_id  => sub { return shift->get_id('subscribers',@_); },
             cc => 1, 
             ac => 1, 
             sn => 1,
-            
         },
     },
 });
 
-my $fake_data_processed = $fake_data->process('subscribers');
+my $fake_data_processed = $fake_data->process('numbers');
 $test_machine->DATA_ITEM_STORE($fake_data_processed);
 $test_machine->form_data_item();
 
 {
+    my $ticket = '32913';
+    my $time = time();
     my $subscriber_test_machine = Test::Collection->new(
         name => 'subscribers',
     );
-    $fake_data->load_data_from_script('subscribers');
+    $subscriber_test_machine->DATA_ITEM_STORE($fake_data->process('subscribers'));
+    my $subscriber = $fake_data->get_existent_item('subscribers');
+    $subscriber->{content}->{alias_numbers} = [{ ac => '111'.$ticket, cc=> 11, sn => $time },{ ac => '112'.$ticket, cc=> 11, sn => $time }];
+    my ($res,$content,$request) = $subscriber_test_machine->request_put(@{$members->[1]}{qw/content location/});
 }
 
 sub number_as_string{
