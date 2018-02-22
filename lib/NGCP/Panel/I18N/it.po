@@ -103,12 +103,12 @@ msgstr ""
 "per consentirne l´associazione ai profili abbonato. Non direttamente usato."
 
 #: share/templates/customer/details.tt
-msgid "\"Timely\" top-ups from"
-msgstr "Ricariche \"nel tempo\" da"
+msgid "\"Timely\" Top-ups from:"
+msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "\"Timely\" top-ups to"
-msgstr "Ricariche \"nel tempo\" a"
+msgid "\"Timely\" Top-ups to:"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -148,12 +148,8 @@ msgid "#Numbers"
 msgstr "#Numeri"
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "#Timely Top-ups"
-msgstr "#Ricariche nel tempo"
-
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "#Top-ups"
-msgstr "#Ricariche"
+msgid "#Top-ups (timely)"
+msgstr ""
 
 #. (mtf_pref.secret_key_renew)
 #: share/templates/subscriber/preferences.tt
@@ -406,12 +402,12 @@ msgid "Active"
 msgstr "Attivo"
 
 #: share/templates/customer/details.tt
-msgid "Actual billing profile"
-msgstr "Attuale Profilo di Fatturazione"
+msgid "Actual billing profile:"
+msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Actual profile package"
-msgstr "Attuale profilo del pacchetto"
+msgid "Actual profile package:"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -793,16 +789,8 @@ msgid "Balance before"
 msgstr "Saldo prima"
 
 #: share/templates/customer/details.tt
-msgid "Balance threshold when subscribers will be locked"
-msgstr "Limite di saldo dopo cui l´abbonato verrà bloccato"
-
-#: share/templates/customer/details.tt
-msgid "Balance threshold when underrun profiles get applied"
-msgstr "Limite di saldo quando un profilo underrun deve essere applicato"
-
-#: share/templates/customer/details.tt
-msgid "Balance will be discarded, if no tup-up happens until"
-msgstr "Il saldo verrà rimosso, se la ricarica non avverrà prima di"
+msgid "Balance will be discarded, if no tup-up happens until:"
+msgstr ""
 
 #: share/templates/security/list.tt
 msgid "Banned IPs"
@@ -1309,12 +1297,20 @@ msgid "Carrier"
 msgstr "Operatore"
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "Cash"
-msgstr "Saldo"
+msgid "Cash Balance"
+msgstr "Accredito Conto"
 
 #: share/templates/customer/details.tt
-msgid "Cash balance"
-msgstr "Accredito Conto"
+msgid "Cash Balance:"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Cash balance threshold when subscribers will be locked:"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Cash balance threshold when underrun profiles get applied:"
+msgstr ""
 
 #: share/templates/subscriber/edit_webpass.tt
 msgid "Change Password"
@@ -1885,9 +1881,13 @@ msgstr "Definizione Data"
 msgid "Dates"
 msgstr "Date"
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Debit"
 msgstr "Debito"
+
+#: share/templates/customer/details.tt
+msgid "Debit:"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Default"
@@ -3587,13 +3587,21 @@ msgstr "Limite di Frode"
 msgid "Fraud settings successfully changed!"
 msgstr "Configurazione frode modificata con successo!"
 
-#: share/templates/customer/details.tt
-msgid "Free time balance"
-msgstr "Saldo tempo gratuito"
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Free-Time Balance"
+msgstr "Accredito Tempo Gratuito"
 
 #: share/templates/customer/details.tt
-msgid "Free time spent"
-msgstr "Tempo gratuito utilizzato"
+msgid "Free-Time Balance:"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Free-Time spent"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Free-Time spent:"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "Friday"
@@ -3962,6 +3970,22 @@ msgid "Initial Billing Profiles/Networks"
 msgstr "Profili di fatturazione/fatturazione reti iniziale"
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Initial Cash"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Initial Cash Balance:"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Initial Free-Time"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Initial Free-Time Balance:"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Initial Profiles"
 msgstr "Profili Iniziali"
 
@@ -4051,12 +4075,12 @@ msgid "Internals"
 msgstr "Interni"
 
 #: share/templates/customer/details.tt
-msgid "Interval from"
-msgstr "Intervallo da"
+msgid "Interval from:"
+msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Interval to"
-msgstr "Intervallo a"
+msgid "Interval to:"
+msgstr ""
 
 #: share/templates/ncos/pattern_list.tt
 msgid "Intra PBX Calls within same customer"
@@ -4466,6 +4490,14 @@ msgstr "Cognome"
 #: share/templates/subscriber/preferences.tt
 msgid "Last Secret Key Modify Time"
 msgstr "Ultimo orario di modifica della chiave segreta"
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Last Underrun (Lock)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Last Underrun (Profiles)"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Lawful Intercept"
@@ -7655,14 +7687,6 @@ msgstr "Profili/Reti di Fatturazione Underrun"
 msgid "Underrun Profiles"
 msgstr "Profili Underrun"
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "Underrun detected (Lock)"
-msgstr "Underrun rilveto (Blocco)"
-
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "Underrun detected (Profiles)"
-msgstr "Underrun rilveto (Profili)"
-
 #: lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm
 msgid "Unknown error"
 msgstr "Errore sconosciuto"
@@ -8247,6 +8271,57 @@ msgstr ""
 msgid "yes"
 msgstr "si"
 
+#~ msgid "\"Timely\" top-ups from"
+#~ msgstr "Ricariche \"nel tempo\" da"
+
+#~ msgid "\"Timely\" top-ups to"
+#~ msgstr "Ricariche \"nel tempo\" a"
+
+#~ msgid "#Timely Top-ups"
+#~ msgstr "#Ricariche nel tempo"
+
+#~ msgid "#Top-ups"
+#~ msgstr "#Ricariche"
+
+#~ msgid "Actual billing profile"
+#~ msgstr "Attuale Profilo di Fatturazione"
+
+#~ msgid "Actual profile package"
+#~ msgstr "Attuale profilo del pacchetto"
+
+#~ msgid "Balance threshold when subscribers will be locked"
+#~ msgstr "Limite di saldo dopo cui l´abbonato verrà bloccato"
+
+#~ msgid "Balance threshold when underrun profiles get applied"
+#~ msgstr "Limite di saldo quando un profilo underrun deve essere applicato"
+
+#~ msgid "Balance will be discarded, if no tup-up happens until"
+#~ msgstr "Il saldo verrà rimosso, se la ricarica non avverrà prima di"
+
+#~ msgid "Cash"
+#~ msgstr "Saldo"
+
+#~ msgid "Cash balance"
+#~ msgstr "Accredito Conto"
+
+#~ msgid "Free time balance"
+#~ msgstr "Saldo tempo gratuito"
+
+#~ msgid "Free time spent"
+#~ msgstr "Tempo gratuito utilizzato"
+
+#~ msgid "Interval from"
+#~ msgstr "Intervallo da"
+
+#~ msgid "Interval to"
+#~ msgstr "Intervallo a"
+
+#~ msgid "Underrun detected (Lock)"
+#~ msgstr "Underrun rilveto (Blocco)"
+
+#~ msgid "Underrun detected (Profiles)"
+#~ msgstr "Underrun rilveto (Profili)"
+
 #~ msgid ""
 #~ "Search for partial match of user-provided number (UPN) to subscriber's  "
 #~ "primary E164 number and aliases. If it matches, take UPN as valid without "
@@ -8741,9 +8816,6 @@ msgstr "si"
 #~ msgid "Carry over mode"
 #~ msgstr "Modalità di riporto"
 
-#~ msgid "Cash Balance"
-#~ msgstr "Accredito Conto"
-
 #~ msgid "Cash debit"
 #~ msgstr "Saldo speso"
 
@@ -9224,9 +9296,6 @@ msgstr "si"
 
 #~ msgid "Fraud daily notify"
 #~ msgstr "Notifica frode giornaliera"
-
-#~ msgid "Free-Time Balance"
-#~ msgstr "Accredito Tempo Gratuito"
 
 #~ msgid "Friends"
 #~ msgstr "Amici"

@@ -56,11 +56,11 @@ msgid "\"Speed Dial\" - An internal flag for the speed dial pseudo-preference fe
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "\"Timely\" top-ups from"
+msgid "\"Timely\" Top-ups from:"
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "\"Timely\" top-ups to"
+msgid "\"Timely\" Top-ups to:"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -76,11 +76,7 @@ msgid "#Numbers"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "#Timely Top-ups"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "#Top-ups"
+msgid "#Top-ups (timely)"
 msgstr ""
 
 #. (mtf_pref.secret_key_renew)
@@ -254,11 +250,11 @@ msgid "Active"
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Actual billing profile"
+msgid "Actual billing profile:"
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Actual profile package"
+msgid "Actual profile package:"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -566,15 +562,7 @@ msgid "Balance before"
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Balance threshold when subscribers will be locked"
-msgstr ""
-
-#: share/templates/customer/details.tt
-msgid "Balance threshold when underrun profiles get applied"
-msgstr ""
-
-#: share/templates/customer/details.tt
-msgid "Balance will be discarded, if no tup-up happens until"
+msgid "Balance will be discarded, if no tup-up happens until:"
 msgstr ""
 
 #: share/templates/security/list.tt
@@ -1036,11 +1024,19 @@ msgid "Carrier"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "Cash"
+msgid "Cash Balance"
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Cash balance"
+msgid "Cash Balance:"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Cash balance threshold when subscribers will be locked:"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Cash balance threshold when underrun profiles get applied:"
 msgstr ""
 
 #: share/templates/subscriber/edit_webpass.tt
@@ -1548,8 +1544,12 @@ msgstr ""
 msgid "Dates"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Debit"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Debit:"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
@@ -3099,12 +3099,20 @@ msgstr ""
 msgid "Fraud settings successfully changed!"
 msgstr ""
 
-#: share/templates/customer/details.tt
-msgid "Free time balance"
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Free-Time Balance"
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Free time spent"
+msgid "Free-Time Balance:"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Free-Time spent"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Free-Time spent:"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
@@ -3404,6 +3412,22 @@ msgid "Initial Billing Profiles/Networks"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Initial Cash"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Initial Cash Balance:"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Initial Free-Time"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "Initial Free-Time Balance:"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Initial Profiles"
 msgstr ""
 
@@ -3492,11 +3516,11 @@ msgid "Internals"
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Interval from"
+msgid "Interval from:"
 msgstr ""
 
 #: share/templates/customer/details.tt
-msgid "Interval to"
+msgid "Interval to:"
 msgstr ""
 
 #: share/templates/ncos/pattern_list.tt
@@ -3897,6 +3921,14 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "Last Secret Key Modify Time"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Last Underrun (Lock)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
+msgid "Last Underrun (Profiles)"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
@@ -6643,14 +6675,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Underrun Profiles"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "Underrun detected (Lock)"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm
-msgid "Underrun detected (Profiles)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm
