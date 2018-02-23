@@ -79,6 +79,11 @@ sub hal_from_balance {
     #my $invoice = $item->invoice;
 
     my %resource = $item->get_inflated_columns;
+    #consider possible null values from db
+    $resource{initial_cash_balance} //= 0.0;
+    $resource{initial_free_time_balance} //= 0;
+    $resource{cash_balance} //= 0.0;
+
     $resource{cash_balance} /= 100.0;
     $resource{initial_cash_balance} /= 100.0;
     $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
