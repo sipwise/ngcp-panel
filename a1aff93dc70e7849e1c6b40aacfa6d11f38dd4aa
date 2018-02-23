@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a75e904_2652f613",
+        "filename": "lib/NGCP/Panel/Role/API/BalanceIntervals.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-23T20:19:51Z",
+      "side": 1,
+      "message": "maybe better:\nunless defined $resource{initial_cash_balance}\n\n\nor otherwise also add:\n$resource{initial_free_time_balance} \u003d 0;",
+      "revId": "a1aff93dc70e7849e1c6b40aacfa6d11f38dd4aa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
