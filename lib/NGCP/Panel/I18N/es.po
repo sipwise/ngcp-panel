@@ -4471,6 +4471,22 @@ msgstr ""
 msgid "MIME encapsulated Location Information in the INVITE"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "MOS avg"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "MOS jitter"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "MOS packetloss"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "MOS roundtrip"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "Mail2Fax"
 msgstr ""
