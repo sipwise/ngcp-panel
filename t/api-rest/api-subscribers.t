@@ -6,7 +6,7 @@ use Test::FakeData;
 use Test::More;
 use Data::Dumper;
 use Clone qw/clone/;
-
+use feature 'state';
 #use NGCP::Panel::Utils::Subscriber;
 
 my $test_machine = Test::Collection->new(
@@ -53,18 +53,22 @@ $fake_data->set_data_from_script({
         },
         'query' => [['username',{'query_type'=> 'string_like'}]],
         'create_special'=> sub {
+            state $num;
+            $num //= 0;
+            $num++;
             my ($self,$collection_name,$test_machine) = @_;
             my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$self->data->{$collection_name}->{data}->{customer_id}.'&'.'is_pbx_pilot=1');
             if($pilot->{total_count} <= 0){
                 undef $pilot;
             }
-            $test_machine->check_create_correct(1, sub{
+            return $test_machine->check_create_correct(1, sub{
+                my $time = time;
                 $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
-                $_[0]->{pbx_extension} = time();
-                $_[0]->{webusername} .= time();
-                $_[0]->{username} .= time();
+                $_[0]->{pbx_extension} = $time.$num;
+                $_[0]->{webusername} .= $time.$num;
+                $_[0]->{username} .= $time.$num;
                 delete $_[0]->{alias_numbers};
-                $_[0]->{primary_number}->{sn} = time();
+                $_[0]->{primary_number}->{sn} = $time.$num;
             }, $self->data->{$collection_name}->{data} );
         },
         'update_change_fields' => [qw/modify_timestamp create_timestamp primary_number_id/],
