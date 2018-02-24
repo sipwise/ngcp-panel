@@ -677,6 +677,7 @@ sub get_request_patch{
     $content and $req->content($content);
     return $req;
 }
+
 sub request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
@@ -687,6 +688,7 @@ sub request_put{
         return wantarray ? ($res,$rescontent,$req) : $res;
     }
 }
+
 sub request_patch{
     my($self,$content, $uri, $req) = @_;
     $uri ||= $self->get_uri_current;
@@ -718,6 +720,7 @@ sub request_post{
     my $additional_info = { id => $self->get_id_from_location($location) // '' };
     return wantarray ? ($res,$rescontent,$req,$content,$additional_info) : $res;
 };
+
 sub request_options{
     my ($self,$uri) = @_;
     # OPTIONS tests
@@ -1336,6 +1339,8 @@ sub put_and_get{
     my($put_out,$put_get_out,$get_out);
 
     $params //= ();
+    
+    $put_in->{uri} //= $put_in->{location};
 
     $get_in->{ignore_fields} //= [];
     $put_in->{ignore_fields} //= [];
