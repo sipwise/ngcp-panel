@@ -1336,6 +1336,8 @@ sub put_and_get{
     my($put_out,$put_get_out,$get_out);
 
     $params //= ();
+    
+    $put_in->{uri} //= $put_in->{location};
 
     $get_in->{ignore_fields} //= [];
     $put_in->{ignore_fields} //= [];
