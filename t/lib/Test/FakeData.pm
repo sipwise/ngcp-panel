@@ -363,8 +363,8 @@ sub build_data{
         'customer_sipaccount' => {
             'data' => {
                 status             => 'active',
-                contact_id         => sub { return shift->create('customercontacts',@_); },
-                billing_profile_id => sub { return shift->create('billingprofiles',@_); },
+                contact_id         => sub { return shift->create_get_id('customercontacts',@_);},
+                billing_profile_id => sub { return shift->create_get_id('billingprofiles',@_); },
                 external_id        => 'api_test customer sipaccount',
                 type               => 'sipaccount',
             },
@@ -430,8 +430,9 @@ sub build_data{
                 my $prev_params = $test_machine->get_cloned('content_type','QUERY_PARAMS');
                 $test_machine->content_type->{POST} = $self->data->{$collection_name}->{data}->{content_type};
                 $test_machine->QUERY_PARAMS($test_machine->hash2params($self->data->{$collection_name}->{data}));
-                $test_machine->check_create_correct(1, sub {return 'test_api_empty_config';} );
+                my $created = $test_machine->check_create_correct(1, sub {return 'test_api_empty_config';} );
                 $test_machine->set(%$prev_params);
+                return $created;
             },
             'no_delete_available' => 1,
         },
@@ -643,7 +644,7 @@ sub get_id{
         if( $self->collection_id_exists($collection_name) ){
             $res_id = $self->get_existent_id($collection_name);
         }else{
-            $res_id = $self->create(@_);
+            $res_id = $self->create_get_id(@_);
         }
     }
     return $res_id;
@@ -717,6 +718,13 @@ sub process{
     return $self->data->{$collection_name}->{data};
 }
 
+sub create_get_id{
+    my $self = shift;
+    my $collection_name = shift;
+    $self->create($collection_name,@_);
+    return $self->get_existent_id($collection_name);
+}
+
 sub create{
     my($self, $collection_name, $parents_in, $params)  = @_;
     $parents_in //= {};
@@ -737,10 +745,11 @@ sub create{
         name            => $self->get_collection_interface($collection_name),
         DATA_ITEM       => $data,
     );
+    my $created;
     if(exists $self->data->{$collection_name}->{create_special} && 'CODE' eq ref $self->data->{$collection_name}->{create_special}){
-        $self->data->{$collection_name}->{create_special}->($self,$collection_name,$test_machine);
+        $created = $self->data->{$collection_name}->{create_special}->($self,$collection_name,$test_machine);
     }else{
-        $test_machine->check_create_correct(1,
+        $created = $test_machine->check_create_correct(1,
             $self->{use_data_callbacks}
             ?
             $self->data->{$collection_name}->{data_callbacks}->{uniquizer_cb}
@@ -778,7 +787,7 @@ sub create{
         }
         delete $self->data->{$collection_name}->{process_cycled};
     }
-    return $self->get_existent_id($collection_name);
+    return $created;
 }
 
 sub clear_test_data_all{
