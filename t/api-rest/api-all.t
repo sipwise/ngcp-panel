@@ -78,15 +78,7 @@ sub run{
                 if($fake_data->{data}->{$collection}->{data}){
                     my $data = $fake_data->{data}->{$collection}->{data};
                     $fake_data->process($collection);
-                    if($fake_data->{data}->{$collection}->{create_special}){
-                        $fake_data->{data}->{$collection}->{create_special}->($fake_data,$collection,$test_machine);
-                    }else{
-                        $test_machine->check_create_correct( 
-                            1, 
-                            $fake_data->{data}->{$collection}->{data_callbacks}->{uniquizer_cb}, 
-                            clone $fake_data->{data}->{$collection}->{data} 
-                        );
-                    }
+                    $fake_data->create($collection);
                     push @{$report->{post_tested}}, $collection;
                 }else{
                     push @{$report->{post_untested}}, $collection;

@@ -443,7 +443,7 @@ sub get_uri_item{
     return $resuri;
 }
 sub get_item_hal{
-    my($self,$name,$uri, $reload) = @_;
+    my($self, $name, $uri, $reload, $number) = @_;
     $name ||= $self->name;
     my $resitem ;
     #print Dumper ["get_item_hal",$name,$self->DATA_LOADED->{$name}];
@@ -460,7 +460,7 @@ sub get_item_hal{
         $uri //= $self->get_uri_collection($name)."?page=1&rows=1";
         #print "uri=$uri;";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
-        ($reshal,$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name);
+        ($reshal,$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name,$number);
         #print Dumper [$location,$total_count,$reshal,$reshal_collection];
         if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
             $self->IS_EMPTY_COLLECTION(0);
@@ -773,6 +773,7 @@ sub request_get{
     my $content = $self->get_response_content($res);
     return wantarray ? ($res, $content, $req) : $res;
 }
+
 sub get_response_content{
     my($self,$res) = @_;
     my $content = '';
@@ -824,11 +825,11 @@ sub check_methods{
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "$self->{name}: check for valid 'methods' in body");
     foreach my $opt(keys %{$self->methods->{$area}->{all}} ) {
         if(exists $self->methods->{$area}->{allowed}->{$opt}){
-            ok(grep { /^$opt$/ } @hopts, "$self->{name}: check for existence of '$opt' in Allow header");
-            ok(grep { /^$opt$/ } @{ $opts->{methods} }, "$self->{name}: check for existence of '$opt' in body");
+            ok((grep { /^$opt$/ } @hopts), "$self->{name}: check for existence of '$opt' in Allow header");
+            ok((grep { /^$opt$/ } @{ $opts->{methods} }), "$self->{name}: check for existence of '$opt' in body");
         }else{
-            ok(!grep { /^$opt$/ } @hopts, "$self->{name}: check for absence of '$opt' in Allow header");
-            ok(!grep { /^$opt$/ } @{ $opts->{methods} }, "$self->{name}: check for absence of '$opt' in body");
+            ok((!grep { /^$opt$/ } @hopts), "$self->{name}: check for absence of '$opt' in Allow header");
+            ok((!grep { /^$opt$/ } @{ $opts->{methods} }), "$self->{name}: check for absence of '$opt' in body");
         }
     }
 }
@@ -947,6 +948,7 @@ sub check_put_content_type_wrong{
     my($res,$content) = $self->request_process($req);
     $self->http_code_msg(415, "check put invalid content type", $res, $content);
 }
+
 sub check_put_prefer_wrong{
     my($self) = @_;
     # check if it fails with invalid Prefer
@@ -954,7 +956,7 @@ sub check_put_prefer_wrong{
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=invalid");
     my($res,$content) = $self->request_process($req);
-    $self->http_code_msg(400, "check put invalid prefer", $res, $content);
+    $self->http_code_msg(400, "check put invalid prefer", $res, $content, "Header 'Prefer' must be either 'return=minimal' or 'return=representation'.");
 }
 
 sub check_put_body_empty{
@@ -1412,7 +1414,10 @@ sub http_code_msg{
         my $res_message = $res->message // '';
         my $content_message = 'HASH' eq ref $content ? $content->{message} // '' : '' ;
         $message_res = $message.' (' . $res_message . ': ' . $content_message . ')';
-        $check_message and ok($content_message =~/$message/, "$name: check http message: expected: $message; got: $content_message;");
+        if($check_message){
+            my $check_message_content = length($check_message) > 1 ? $check_message : $message;
+            ok($content_message =~/$check_message_content/, "$name: check http message: expected: $check_message_content; got: $content_message;");
+        }
     } else {
         $content //= $self->get_response_content($res);
         if (defined $content && $content && defined $content->{message}) {
