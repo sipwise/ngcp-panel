@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <title>Sipwise NGCP HTTP API documentation (with SwaggerUI)</title>
+        <!-- link rel="stylesheet" href="/static/css/bootstrap/bootstrap.css"></link -->
+        <!-- link rel="stylesheet" href="/static/css/bootstrap/bootstrap-responsive.css"></link -->
+          <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+        <link rel="stylesheet" href="/static/css/sipwise-apidoc.css">
+        <link rel="stylesheet" type="text/css" href="/static/js/swaggerui/swagger-ui.css" >
+        <!-- link rel="stylesheet" type="text/css" href="/static/js/swaggerui/swagger-own.css" -->
+    </head>
+<body>
+[%
+    chapters = [
+        { level = 2,    id = 'intro',         title = 'Introduction',                                   },
+        { level = 2,    id = 'auth',          title = 'Authentication',                                 },
+        { level = 2,    id = 'chswaggerui',   title = 'API',            noswclass = 1,                  },
+    ];
+-%]
+
+    <h1>Sipwise NGCP HTTP API Documentation (with SwaggerUI)</h1>
+    <div class="content">
+    <div class="chapter sipwclass">
+    <h2 class="nocount">Table of Contents</h2>
+    <nav>
+        <ol>
+        [% FOR chapter IN chapters %]
+            [% IF loop.prev && loop.prev.level > chapter.level -%]
+            </ol></li>
+            [% END -%]
+            <li><a href="#[% chapter.id %]">[% chapter.title %]</a>
+            [% IF loop.next && loop.next.level > chapter.level -%]
+            <ol>
+            [% ELSE -%]
+            </li>
+            [% END -%]
+        [% END -%]
+        </ol>
+    </nav>
+    </div>
+
+[% FOR chapter IN chapters -%]
+    [% IF loop.prev && loop.prev.level >= chapter.level -%]
+    <div class="pagebreak"></div>
+    [% END -%]
+    <div class="chapter[% UNLESS chapter.noswclass; ' sipwclass'; END; %]">
+[%
+        t = 'api/root/' _ chapter.id _ '.tt';
+        INCLUDE $t level=chapter.level title=chapter.title id=chapter.id uri=chapter.uri;
+-%]
+    </div>
+[% END -%]
+
+    </div>
+
+    </body>
+</html>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

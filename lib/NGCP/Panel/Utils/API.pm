@@ -154,7 +154,7 @@ sub generate_swagger_datastructure {
                     schema => {
                         # '$ref' => 'http://json.schemastore.org/json-patch.json#/',
                         # "$ref": "https://raw.githubusercontent.com/fge/sample-json-schemas/master/json-patch/json-patch.json"
-                        '$ref' => '/js/schemas/json-patch.json#/',
+                        '$ref' => '/static/js/schemas/json-patch.json#/',
                         # type => 'array',
                         # items => {
                         #     type => 'object',

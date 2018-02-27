@@ -1,0 +1,46 @@
+.sipwclass { padding: 1em }
+.content .sipwclass { margin-left: 2em }
+h1 { color: white; background-color: #54893B; padding: 1.7em; }
+.sipwclass h6 { font-size: 1.1em; }
+.sipwclass code { white-space: pre-wrap; background-color: transparent; border: none; color: #000; font-size: 0.9em; display: block; margin: 0 0 20px 0;}
+.sipwclass table { width: 100%; border-collapse: collapse; }
+.sipwclass th, .sipwclass td { border: 1px solid #aaa; width: 50%; padding: 20px; }
+.sipwclass td { vertical-align: top; }
+.sipwclass span { font-family: monospace; }
+
+.sipwclass a { color: #54893B; border-bottom: 1px dotted #54893B; }
+.sipwclass a:hover { color: #54893B; text-decoration: underline; border: none; }
+.sipwclass .ui-state-active { border: 1px solid #54893B; color: #54893B; }
+.sipwclass .ui-state-default { color: #54893B; }
+.sipwclass .ui-widget { font-family: inherit; }
+.sipwclass .ui-widget-content { background: none; }
+
+/* toc numbering */
+.sipwclass nav ol { counter-reset: item }
+.sipwclass nav li { display: block }
+.sipwclass nav li:before { content: counters(item, ".") " "; counter-increment: item }
+
+/* header numbering */
+.sipwclass body { counter-reset: h2counter; counter-reset: h3counter; }
+h1 { counter-reset: h2counter; }
+.sipwclass h2:before { content: counter(h2counter) "\0000a0\0000a0"; counter-increment: h2counter; counter-reset: h3counter; }
+.sipwclass h2.nocount:before { content: none; counter-increment: none; }
+.sipwclass h2 { counter-reset: h3counter; }
+.sipwclass h3:before { counter-increment: h3counter; content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0"; }
+/*.sipwclass h3:before { content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0"; counter-increment: h3counter; }*/
+
+/* print properties */
+@media print { .ui-accordion > *{display:block !important;} }
+.pagebreak { page-break-after: always; }
+.sipwclass.chapter { page-break-inside: avoid; }
+
+.sipwclass {
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* use same width as swagger doc for intro chapters */
+body {
+	width: 100%;
+	max-width: 1460px;
+	margin: 8px auto;
+}
