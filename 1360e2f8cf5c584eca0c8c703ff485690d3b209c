@@ -70,6 +70,24 @@
       "revId": "1360e2f8cf5c584eca0c8c703ff485690d3b209c",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_499f0504",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-02-27T13:00:07Z",
+      "side": 1,
+      "message": "ok great. thanks for clarifying. so the multidomain feature doesn\u0027t affect our provisioning DB layout but it does make a difference in the kamailio tables.\n\nanyway, since, like you explained, the location info can still be stored in mysql, I am still going to implement a proper join via uuid here in case, mysql is used. this should always work independently of the multidomain feature.",
+      "parentUuid": "7a75e904_c94db5c6",
+      "revId": "1360e2f8cf5c584eca0c8c703ff485690d3b209c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
