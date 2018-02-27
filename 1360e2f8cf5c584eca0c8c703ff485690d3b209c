@@ -52,6 +52,24 @@
       "revId": "1360e2f8cf5c584eca0c8c703ff485690d3b209c",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_c94db5c6",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2018-02-27T12:54:38Z",
+      "side": 1,
+      "message": "\u003e probably not, since this is just a stub for the previous db\n \u003e queries. in a next step, we could drop the location table to make\n \u003e sure it\u0027s really never queried anymore and simplify this a bit.\n \u003e \n \u003e agranig, to clarify the multidomain feature: is this really needed\n \u003e here? can we not simply search for a subscriber always by their\n \u003e username AND domain? then we could drop quite some logic here\n\nI don\u0027t think so, the domain column is empty in kamailio.location if use_domain\u003d0 in kamailio.cfg.",
+      "parentUuid": "ba7be1f8_aecde35f",
+      "revId": "1360e2f8cf5c584eca0c8c703ff485690d3b209c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
