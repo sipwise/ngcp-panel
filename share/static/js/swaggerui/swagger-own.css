@@ -1,0 +1,79 @@
+ .swagger-ui table th, .swagger-ui table td {
+     padding: 10px !important;
+}
+ .swagger-ui table th {
+     color: white;
+     font-size:16px;
+}
+ .swagger-ui .response-col_description__inner p {
+     color: white;
+     font-style: normal;
+     font-size: 12px;
+}
+ .swagger-ui a.tablinks {
+     margin-right: 20px;
+}
+ .swagger-ui td.col.response-col_status {
+     padding: 10px !important;
+}
+ .swagger-ui .opblock .opblock-section-header h4 {
+     font-size: 18px !important;
+     font-weight: bold;
+     padding: 0px;
+}
+ .swagger-ui td.col, .swagger-ui td.col.col_header.response-col_description {
+     padding: 10px;
+}
+ .swagger-ui .scheme-container {
+     padding: 0px 0px 15px 0px;
+}
+ .swagger-ui .renderedMarkdown p {
+     font-size: 14px;
+}
+ .swagger-ui tr.response p {
+     font-style: italic;
+}
+ .swagger-ui table.model tbody tr td {
+     padding: 1em !important;
+}
+ .response-content-type.controls-accept-header small code {
+     font-size: 12px;
+}
+ .swagger-ui .info {
+    /* margin: -25px 0px !important;
+     */
+}
+ .swagger-ui .main span.url {
+     display: none;
+}
+ .swagger-ui .opblock-description-wrapper, .swagger-ui .opblock-external-docs-wrapper, .swagger-ui .opblock-title_normal {
+     padding: 15px 20px 5px 20px;
+}
+ .swagger-ui h1[id], .swagger-ui h2[id], .swagger-ui h3[id], .swagger-ui h4[id], .swagger-ui h5[id] {
+     margin: 0px;
+     padding: 0px;
+}
+ .swagger-ui pre {
+     font-family: Monaco, Monospace !important;
+     font-size: 11px;
+}
+ h6, h6 code.highlighter-rouge {
+     font-size: 16px;
+}
+ .swagger-ui .responses-inner h4, .swagger-ui .responses-inner h5 {
+     font-size: 16px;
+}
+ .swagger-ui code {
+     font-size: 12px;
+}
+
+/* disable the try it out buttons
+button.btn.try-out__btn {
+     display: none;
+}
+*/
+
+/* own additions: remove servers view */
+ .swagger-ui .global-server-container {
+     display: none;
+}
