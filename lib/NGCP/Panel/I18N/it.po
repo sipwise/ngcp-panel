@@ -3960,11 +3960,6 @@ msgstr ""
 "Se settato a vero, le chiamate anonime in ingresso (con restrizione del CLI) "
 "saranno bloccate"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"Indication of the costs announcement from SEMS for calls to this subscriber."
-msgstr ""
-
 #: share/templates/package/details.tt
 msgid "Initial Billing Profiles/Networks"
 msgstr "Profili di fatturazione/fatturazione reti iniziale"
@@ -5540,10 +5535,6 @@ msgstr "Porta"
 #: share/templates/lnp/list.tt
 msgid "Ported Numbers"
 msgstr "Numeri Portati"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Pre-call cost announcements"
-msgstr "Costo annuncio di Pre-Chiamata"
 
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm
@@ -8286,6 +8277,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Pre-call cost announcements"
+#~ msgstr "Costo annuncio di Pre-Chiamata"
 
 #~ msgid "\"Timely\" top-ups from"
 #~ msgstr "Ricariche \"nel tempo\" da"

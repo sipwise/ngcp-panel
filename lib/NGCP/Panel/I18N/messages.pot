@@ -3403,10 +3403,6 @@ msgstr ""
 msgid "Incoming anonymous calls (with calling line identification restriction) are blocked if set to true."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Indication of the costs announcement from SEMS for calls to this subscriber."
-msgstr ""
-
 #: share/templates/package/details.tt
 msgid "Initial Billing Profiles/Networks"
 msgstr ""
@@ -4886,10 +4882,6 @@ msgstr ""
 
 #: share/templates/lnp/list.tt
 msgid "Ported Numbers"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Pre-call cost announcements"
 msgstr ""
 
 #. ($attribute)

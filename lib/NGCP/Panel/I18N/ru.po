@@ -3848,11 +3848,6 @@ msgstr ""
 "Если установлено, входящие анонимные звонки будут заблокированы (учитываются "
 "\"Ограничения идентификации вызываемой стороны\" )"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"Indication of the costs announcement from SEMS for calls to this subscriber."
-msgstr ""
-
 #: share/templates/package/details.tt
 msgid "Initial Billing Profiles/Networks"
 msgstr ""
@@ -5400,10 +5395,6 @@ msgstr "Порт"
 
 #: share/templates/lnp/list.tt
 msgid "Ported Numbers"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Pre-call cost announcements"
 msgstr ""
 
 #. ($attribute)
