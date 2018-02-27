@@ -54,6 +54,10 @@ sub auto :Private {
 sub GET : Allow {
     my ($self, $c) = @_;
 
+    if ($c->req->params->{swaggerui}) {
+        $c->detach('swaggerui');
+    }
+
     my $blacklist = {
         "DomainPreferenceDefs" => 1,
         "SubscriberPreferenceDefs" => 1,
@@ -273,6 +277,19 @@ sub swagger :Private {
     $c->response->body(encode_json($result));
     $c->response->code(200);
     return;
+}
+
+sub swaggerui :Private {
+    my ($self, $c) = @_;
+
+
+    $c->stash(template => 'api/swaggerui.tt');
+    $c->forward($c->view);
+    # $c->response->headers(HTTP::Headers->new(
+    #     Content_Language => 'en',
+    #     Content_Type => 'application/xhtml+xml',
+    #     #$self->collections_link_headers,
+    # ));
 }
 
 sub HEAD : Allow {
