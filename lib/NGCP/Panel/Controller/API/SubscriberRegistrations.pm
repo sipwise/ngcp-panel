@@ -150,7 +150,7 @@ sub POST :Allow {
         last unless $item;
 
         $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+        $c->response->header(Location => sprintf('/%s%s', $c->request->path, $item->id));
         $c->response->body(q());
     }
     return;
