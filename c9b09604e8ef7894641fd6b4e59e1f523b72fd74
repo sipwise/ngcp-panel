@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a75e904_4fb6258c",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberRegistrations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-28T16:43:28Z",
+      "side": 1,
+      "message": "ok i see its the two phase commit situation",
+      "revId": "c9b09604e8ef7894641fd6b4e59e1f523b72fd74",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_cfa93526",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-28T16:43:28Z",
+      "side": 1,
+      "message": "afaik this is bit uncommon here -\u003e rather placed in the callier code",
+      "revId": "c9b09604e8ef7894641fd6b4e59e1f523b72fd74",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
