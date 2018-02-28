@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a75e904_0f4a6d83",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2018-02-28T16:49:02Z",
+      "side": 1,
+      "message": "This should be kept as it was before, because validate_form will already populate the error correctly!",
+      "revId": "3e2bc1e6665471b9568bb8b5206b15a34c5a035b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
