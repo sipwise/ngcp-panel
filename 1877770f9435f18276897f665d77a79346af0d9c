@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a75e904_ba36f9e5",
+        "filename": "lib/NGCP/Panel/Controller/API/NumbersItem.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-02-28T17:48:54Z",
+      "side": 0,
+      "message": "injecting -\u003eset_transaction_isolation_level() at this point will be needed for the race condition fix. is it possible with entities classes?",
+      "revId": "1877770f9435f18276897f665d77a79346af0d9c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
