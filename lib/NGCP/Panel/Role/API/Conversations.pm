@@ -748,18 +748,24 @@ sub process_hal_resource {
     $c->log->debug(Dumper($item));
     my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $item);
     if('call' eq $item->{type}){
-        my $cdr_subscriber_id = $c->model('DB')->resultset('voip_subscribers')->search_rs({
-            'uuid' => $item_mock_obj->source_user_id,
-        })->first->id;
-        my $cdr_customer_id = $item_mock_obj->source_account_id;
-        my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema, { subscriber_id => $cdr_subscriber_id } );
-        if(!$owner){
+        unless (exists $self->{owner}) {
+            my $source;
+            if ($c->req->params->{customer_id} or $c->req->params->{subscriber_id}) {
+                $source = $c->req->params;
+            } else {
+                $source = { subscriber_id => ($item_mock_obj->source_subscriber ? $item_mock_obj->source_subscriber->id : $item_mock_obj->destination_subscriber->id), };
+                #or better start over in customer context:
+                #$source = { customer_id => ($item_mock_obj->source_account_id ? $item_mock_obj->source_account_id : $item_mock_obj->destination_account_id), };
+            }
+            $self->{owner} = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema, $source);
+        }
+        if(!$self->{owner}){
             return;
         }
         $resource = NGCP::Panel::Utils::CallList::process_cdr_item(
             $c,
             $item_mock_obj,
-            $owner,
+            $self->{owner},
         );
         @{$resource}{qw/caller callee/} = @{$resource}{qw/own_cli other_cli/};
         $resource->{type} = $item->{type};
