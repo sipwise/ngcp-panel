@@ -1128,6 +1128,14 @@ sub get_transaction_control{
     $step //= 'init';
     if($self->check_transaction_control($c, $action, $step, %params)){
         #todo: put it into class variables?
+        if ($self->config->{set_transaction_isolation}) {
+            my $transaction_isolation_level = 
+                ( (length $self->config->{set_transaction_isolation} > 1 )
+                    && lc $self->config->{set_transaction_isolation} ne 'default' )
+                ? $self->config->{set_transaction_isolation}
+                : 'READ COMMITTED';
+            $c->model('DB')->set_transaction_isolation($transaction_isolation_level);
+        }
         $c->stash->{transaction_quard} = $schema->txn_scope_guard;
         return $c->stash->{transaction_quard};
     }
