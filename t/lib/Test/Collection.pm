@@ -515,6 +515,7 @@ sub get_hal_from_collection{
     }
     return ($reshal,$location,$total_count,$reshal_collection);
 }
+
 sub get_collection_hal{
     my($self,$name, $uri, $reload, $page, $rows) = @_;
     my (@reshals, $location,$total_count,$reshal_collection,$rescollection,$firstitem,$res,$list_collection,$req);
