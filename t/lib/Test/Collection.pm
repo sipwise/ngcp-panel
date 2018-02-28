@@ -515,6 +515,7 @@ sub get_hal_from_collection{
     }
     return ($reshal,$location,$total_count,$reshal_collection);
 }
+
 sub get_collection_hal{
     my($self,$name, $uri, $reload, $page, $rows) = @_;
     my (@reshals, $location,$total_count,$reshal_collection,$rescollection,$firstitem,$res,$list_collection,$req);
@@ -602,7 +603,9 @@ sub encode_content{
             ];
             $content_type_res = 'multipart/form-data';
         }elsif( $json_types{$type} && (('HASH' eq ref $content) ||('ARRAY' eq ref $content))  ){
-            $content_res = JSON::to_json($content);
+            #print Dumper $content;
+            my $json = JSON->new->allow_nonref;
+            $content_res = $json->encode($content);
             $type eq 'json' and $content_type_res = 'application/json';
         }
     }

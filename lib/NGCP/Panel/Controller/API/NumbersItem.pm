@@ -12,7 +12,8 @@ __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller subscriberadmin/],
         Journal => [qw/admin reseller/],
-    }
+    },
+    set_transaction_isolation => 'READ COMMITTED',
 });
 
 sub allowed_methods{
@@ -48,9 +49,14 @@ sub update_item_model {
         form => $form,
         resource => $resource,
     );
+    my @sub_ids = ($resource->{subscriber_id}, $old_resource->{subscriber_id});
+    my %subs = map {
+        $_ => $schema->resultset('voip_subscribers')->find(
+            {id => $_},{for => 'update'}
+        )
+    } sort {$a <=> $b } @sub_ids;
+    my ($sub,$old_sub) = @subs{@sub_ids};
 
-    my $sub = $schema->resultset('voip_subscribers')
-        ->find($resource->{subscriber_id});
     unless($sub) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id', does not exist.");
         return;
@@ -59,7 +65,6 @@ sub update_item_model {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id', does not exist.");
         return;
     }
-    my $old_sub = $schema->resultset('voip_subscribers')->find($old_resource->{subscriber_id});
     if($old_sub->primary_number_id == $old_resource->{id}) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot reassign primary number, already at subscriber ".$old_sub->id);
         return;
