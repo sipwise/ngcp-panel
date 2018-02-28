@@ -1,0 +1,19 @@
+[Unit]
+Description=NGCP Panel Webapp
+After=network.target
+After=mariadb.service
+Requires=network.target
+Requires=mariadb.service
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/ngcp-panel
+Environment="HOME=/usr/share/ngcp-panel"
+User=www-data
+Group=www-data
+RuntimeDirectory=fastcgi
+PIDFile=/var/run/fastcgi/ngcp-panel.pid
+ExecStart=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl --listen /var/run/fastcgi/ngcp-panel.sock --pidfile /var/run/fastcgi/ngcp-panel.pid --nproc $NPROC
+
+[Install]
+WantedBy=multi-user.target
