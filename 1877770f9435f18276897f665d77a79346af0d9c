@@ -22,6 +22,30 @@
       "revId": "1877770f9435f18276897f665d77a79346af0d9c",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_cf0215b4",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-02-28T14:51:32Z",
+      "side": 1,
+      "message": "Yes - because our custom \"cdr item\" doesn\u0027t have ResultRow methods )",
+      "parentUuid": "7a75e904_0f050dc2",
+      "range": {
+        "startLine": 52,
+        "startChar": 54,
+        "endLine": 52,
+        "endChar": 71
+      },
+      "revId": "1877770f9435f18276897f665d77a79346af0d9c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
