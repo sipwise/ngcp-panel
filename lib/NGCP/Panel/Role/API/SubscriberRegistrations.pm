@@ -178,16 +178,19 @@ sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form, $create) = @_;
 
     $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-        run => 1,
-        #form_params => { 'use_fields_for_input_without_param' => 1 },
-    );
+    unless ($self->validate_form(
+            c => $c,
+            form => $form,
+            resource => $resource, run => 1)) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Incorrect data values");
+        return;
+    }
 
     my $sub = $self->subscriber_from_id($c, $resource->{subscriber_id});
-    return unless $sub;
+    unless ($sub) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Could not find a subscriber with the provided subscriber_id");
+        return;
+    }
     unless($create) {
         $self->delete_item($c, $item);
     }
