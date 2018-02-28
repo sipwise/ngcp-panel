@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a75e904_8f249dc7",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2018-02-28T16:52:04Z",
+      "side": 1,
+      "message": "Don\u0027t rush, Kirill :)\n\nYou missed \"unless\" here.",
+      "revId": "df696bf4a19450330d5806aea9d827f1cf2273c8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
