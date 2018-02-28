@@ -916,10 +916,10 @@ sub hal_from_item {
     if(!$form){
         ($form) = $self->get_form($c);
     }
-    my $resource = $self->resource_from_item($c, $item, $form);
-    $resource = $self->process_hal_resource($c, $item, $resource, $form);
+    my $resource = $self->resource_from_item($c, $item, $form, $params);
+    $resource = $self->process_hal_resource($c, $item, $resource, $form, $params);
     return unless $resource;
-    my $links = $self->hal_links($c, $item, $resource, $form) // [];
+    my $links = $self->hal_links($c, $item, $resource, $form, $params) // [];
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -935,7 +935,7 @@ sub hal_from_item {
                 href => sprintf(
                     "%s%s",
                     $self->dispatch_path,
-                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
+                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href', 'item_hal_params' => $params })
                 ),
             ),
             Data::HAL::Link->new(
@@ -943,7 +943,7 @@ sub hal_from_item {
                 href => sprintf(
                     "/api/%s/%s",
                     $self->resource_name,
-                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
+                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href', 'item_hal_params' => $params })
                 )
             ),
             @$links,
