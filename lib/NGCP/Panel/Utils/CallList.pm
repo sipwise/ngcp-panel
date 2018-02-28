@@ -49,8 +49,10 @@ sub process_cdr_item {
     $params //= $c->req->params;
 
     foreach my $field (qw/id call_id call_type mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/) {
-        if ($item->has_column_loaded($field)) {
+        if ($item->can('has_column_loaded') && $item->has_column_loaded($field)) {
             $resource->{$field} = $item->get_column($field);
+        } elsif ($item->can($field)) {
+            $resource->{$field} = $item->$field;
         }
     }
     my $intra = 0;

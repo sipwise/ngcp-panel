@@ -300,7 +300,7 @@ sub GET :Allow {
             "subscriber_id=".$owner->{subscriber}->id :
             "customer_id=".$owner->{customer}->id;
         for my $item ($items->all) {
-            push @embedded, $self->hal_from_item($c, $item, $owner, $form, $href_data);
+            push @embedded, $self->hal_from_item($c, $item, $form, { 'owner' => $owner });
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%d?%s', $c->request->path, $item->id, $href_data),
