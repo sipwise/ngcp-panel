@@ -178,17 +178,20 @@ sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form, $create) = @_;
 
     $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-        run => 1,
-        #form_params => { 'use_fields_for_input_without_param' => 1 },
-    );
+    unless ($self->validate_form(
+            c => $c,
+            form => $form,
+            resource => $resource, run => 1)) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Incorrect data values");
+        return;
+    }
 
     my $sub = $self->subscriber_from_id($c, $resource->{subscriber_id});
-    return unless $sub;
-    unless($create) {
+    unless ($sub) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Could not find a subscriber with the provided subscriber_id");
+        return;
+    }
+    if ($item && ref $item && !$create) {
         $self->delete_item($c, $item);
     }
     my $cflags = 0;
@@ -211,10 +214,16 @@ sub update_item {
 sub fetch_item {
     my ($self, $c, $resource, $form, $old_item) = @_;
 
-    return unless $form;
+    unless ($form) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing data values");
+        return;
+    }
 
     my $sub = $self->subscriber_from_id($c, $resource->{subscriber_id});
-    return unless $sub;
+    unless ($sub) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Could not find a subscriber with the provided subscriber_id");
+        return;
+    }
 
     my $item;
     my $flush_timeout = 30;
