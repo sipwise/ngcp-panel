@@ -748,11 +748,7 @@ sub process_hal_resource {
     $c->log->debug(Dumper($item));
     my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $item);
     if('call' eq $item->{type}){
-        my $cdr_subscriber_id = $c->model('DB')->resultset('voip_subscribers')->search_rs({
-            'uuid' => $item_mock_obj->source_user_id,
-        })->first->id;
-        my $cdr_customer_id = $item_mock_obj->source_account_id;
-        my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema, { subscriber_id => $cdr_subscriber_id } );
+        my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
         if(!$owner){
             return;
         }
