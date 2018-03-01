@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a75e904_9a0bfd2a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-01T13:42:09Z",
+      "side": 1,
+      "message": "probably not the best commit message name considering that ngcp-panel is available publicly on github ...",
+      "range": {
+        "startLine": 7,
+        "startChar": 9,
+        "endLine": 7,
+        "endChar": 23
+      },
+      "revId": "5ac63f869a09138aad1a8fbd002a990be0d92f5d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
