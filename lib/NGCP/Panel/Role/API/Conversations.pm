@@ -211,8 +211,7 @@ sub get_list{
 #TODO: move to config and return to the SUPER (Entities) again
 #So: if config->{methtod}->{required_params} eq '' owner
 #and for other types of possible required parameters or predefined parameters groups
-    my $schema = $c->model('DB');
-    my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
+    my $owner = $self->get_owner_cached($c);
     unless (defined $owner) {
         return;
     }
@@ -241,8 +240,15 @@ sub get_item_id{
         $type = $item->type;
     }
     if(('HASH' eq ref $params) && 'hal_links_href' eq $params->{purpose}){
-        return $id.'?type='.$type;
-
+        my $owner = $self->get_owner_cached( $c);
+        return unless $owner;
+        return $id.'?type='.$type
+        .($owner->{subscriber} 
+            ? '&subscriber_id='.$owner->{subscriber}->id 
+            : ( $owner->{customer} )
+                ? '&customer_id='.$owner->{customer}->id 
+                : ''
+        );
     }
     return $id  ;
 }
@@ -748,14 +754,8 @@ sub process_hal_resource {
     $c->log->debug(Dumper($item));
     my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $item);
     if('call' eq $item->{type}){
-        my $cdr_subscriber_id = $c->model('DB')->resultset('voip_subscribers')->search_rs({
-            'uuid' => $item_mock_obj->source_user_id,
-        })->first->id;
-        my $cdr_customer_id = $item_mock_obj->source_account_id;
-        my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema, { subscriber_id => $cdr_subscriber_id } );
-        if(!$owner){
-            return;
-        }
+        my $owner = $self->get_owner_cached($c);
+        return unless $owner;
         $resource = NGCP::Panel::Utils::CallList::process_cdr_item(
             $c,
             $item_mock_obj,
@@ -820,6 +820,23 @@ sub process_hal_resource {
         $resource->{start_time} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
     }
     return $resource;
+}
+
+sub get_owner_cached{
+    my ($self,$c,$item) = @_;
+    my $schema = $c->model('DB');
+    unless (exists $c->stash->{owner}) {
+        my $source;
+        if ($c->req->params->{customer_id} or $c->req->params->{subscriber_id}) {
+            $source = $c->req->params;
+        } elsif($item) {
+            $source = { subscriber_id => ($item->source_subscriber ? $item->source_subscriber->id : $item->destination_subscriber->id), };
+            #or better start over in customer context:
+            #$source = { customer_id => ($item->source_account_id ? $item->source_account_id : $item->destination_account_id), };
+        }
+        $c->stash->{owner} = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema, $source);
+    }
+    return $c->stash->{owner};
 }
 
 sub _get_fields_names{
