@@ -117,6 +117,30 @@
       "revId": "20aaec5199119a807c514d5f856f25e960b3a133",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_1a2b8dec",
+        "filename": "debian/ngcp-panel.service",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-03-01T10:52:48Z",
+      "side": 1,
+      "message": "Right, for now I went for the current working solution.",
+      "parentUuid": "7a75e904_9a4a1d26",
+      "range": {
+        "startLine": 14,
+        "startChar": 146,
+        "endLine": 14,
+        "endChar": 152
+      },
+      "revId": "20aaec5199119a807c514d5f856f25e960b3a133",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
