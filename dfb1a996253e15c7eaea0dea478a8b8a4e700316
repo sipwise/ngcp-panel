@@ -22,6 +22,30 @@
       "revId": "dfb1a996253e15c7eaea0dea478a8b8a4e700316",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_3a1769a5",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-01T10:55:41Z",
+      "side": 1,
+      "message": "Intended use-case is: \nget collection list\ngo to the links from the hal resource links\n\nthese parameters are here to save owner info passed to the list in the items links\n\n     \"ngcp:conversations\" : {\n         \"href\" : \"/api/conversations/21?type\u003dcall\u0026subscriber_id\u003d319\"\n      },\n      \"profile\" : {\n         \"href\" : \"http://purl.org/sipwise/ngcp-api/\"\n      },\n      \"self\" : {\n         \"href\" : \"/api/conversations/21?type\u003dcall\u0026subscriber_id\u003d319\"\n      }",
+      "parentUuid": "7a75e904_1a046d7d",
+      "range": {
+        "startLine": 242,
+        "startChar": 64,
+        "endLine": 242,
+        "endChar": 71
+      },
+      "revId": "dfb1a996253e15c7eaea0dea478a8b8a4e700316",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
