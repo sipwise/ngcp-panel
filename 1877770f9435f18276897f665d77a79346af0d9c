@@ -16,6 +16,24 @@
       "revId": "1877770f9435f18276897f665d77a79346af0d9c",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_dae65544",
+        "filename": "lib/NGCP/Panel/Controller/API/NumbersItem.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-01T08:03:18Z",
+      "side": 0,
+      "message": "Yes, Please look at the https://gerrit.mgm.sipwise.com/#/c/19400/.\n\nIt is under testing, but transaction control ownership and level are manageable there.",
+      "parentUuid": "7a75e904_ba36f9e5",
+      "revId": "1877770f9435f18276897f665d77a79346af0d9c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
