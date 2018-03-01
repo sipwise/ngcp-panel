@@ -46,6 +46,75 @@
       "revId": "dfb1a996253e15c7eaea0dea478a8b8a4e700316",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_1a31cd0b",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-01T13:19:05Z",
+      "side": 1,
+      "message": "do we need get_owner_cached still considering that we are making subscriber_id/customer_id mandatory ?",
+      "range": {
+        "startLine": 756,
+        "startChar": 0,
+        "endLine": 758,
+        "endChar": 29
+      },
+      "revId": "dfb1a996253e15c7eaea0dea478a8b8a4e700316",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_fa54f122",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 825,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-01T13:19:05Z",
+      "side": 1,
+      "message": "do we need get_owner_cached still considering that we are making subscriber_id/customer_id mandatory ?",
+      "range": {
+        "startLine": 824,
+        "startChar": 0,
+        "endLine": 825,
+        "endChar": 20
+      },
+      "revId": "dfb1a996253e15c7eaea0dea478a8b8a4e700316",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_da573525",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 825,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-01T13:19:05Z",
+      "side": 1,
+      "message": "missing space",
+      "range": {
+        "startLine": 825,
+        "startChar": 20,
+        "endLine": 825,
+        "endChar": 21
+      },
+      "revId": "dfb1a996253e15c7eaea0dea478a8b8a4e700316",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
