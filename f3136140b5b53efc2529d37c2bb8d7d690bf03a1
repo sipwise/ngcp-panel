@@ -46,6 +46,30 @@
       "revId": "f3136140b5b53efc2529d37c2bb8d7d690bf03a1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_9ae69d15",
+        "filename": "lib/NGCP/Panel/Field/E164.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2018-03-01T10:23:02Z",
+      "side": 1,
+      "message": "Reviving this one so it doesn\u0027t get forgotten.\n\nAs for this change: the hardcoded values are the ones from the db schema (the length of the fields in the DB), so there is no way to make this dynamically configurable.\n\nWhat could be done in theory is to have this hardcoded values as last resort check, to make sure that whatever the operator configures in config.yml, it does not exceed the actual DB schema, otherwise the mysql error is propagated through to the web panel. This is why I introduces this check in the first place.\n\nOn top, we could also apply the rules defined in the ac/cc/sn_regex afterwards, to allow the operator to narrow down the formats even further.",
+      "parentUuid": "dab895d6_530309b8",
+      "range": {
+        "startLine": 63,
+        "startChar": 39,
+        "endLine": 63,
+        "endChar": 41
+      },
+      "revId": "f3136140b5b53efc2529d37c2bb8d7d690bf03a1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
