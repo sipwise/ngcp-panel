@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a75e904_35313aa3",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 828,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-01T15:09:32Z",
+      "side": 1,
+      "message": "would simply drop it here, only safe against real hashes",
+      "range": {
+        "startLine": 828,
+        "startChar": 12,
+        "endLine": 828,
+        "endChar": 18
+      },
+      "revId": "d333a3b9cf9735943c15a0cae7cf8c83574bee0c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
