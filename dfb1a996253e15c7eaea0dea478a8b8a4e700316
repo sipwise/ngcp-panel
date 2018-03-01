@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a75e904_1a046d7d",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-01T10:48:54Z",
+      "side": 1,
+      "message": "what is this query param good for?",
+      "range": {
+        "startLine": 242,
+        "startChar": 64,
+        "endLine": 242,
+        "endChar": 71
+      },
+      "revId": "dfb1a996253e15c7eaea0dea478a8b8a4e700316",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
