@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a75e904_15b6fedc",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-02T09:08:44Z",
+      "side": 1,
+      "message": "replace by\n\nif (\"out\" eq $resource-\u003e{direction}) {\n            @{$resource}{qw/caller callee/} \u003d @{$resource}{qw/own_cli other_cli/};\n        } else {\n            @{$resource}{qw/caller callee/} \u003d @{$resource}{qw/other_cli own_cli/};\n        }",
+      "range": {
+        "startLine": 764,
+        "startChar": 8,
+        "endLine": 764,
+        "endChar": 77
+      },
+      "revId": "d333a3b9cf9735943c15a0cae7cf8c83574bee0c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a75e904_35313aa3",
         "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
         "patchSetId": 8
