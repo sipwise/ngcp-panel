@@ -34,6 +34,24 @@
       "revId": "bb655be001064e2400cf4263f4c8f187c867d34a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_805f0a72",
+        "filename": "t/api-rest/api-numbers.t",
+        "patchSetId": 12
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-05T09:53:44Z",
+      "side": 1,
+      "message": "original issue \u003d unique number_idx broken",
+      "parentUuid": "7a75e904_e076fe05",
+      "revId": "bb655be001064e2400cf4263f4c8f187c867d34a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
