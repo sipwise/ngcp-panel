@@ -16,6 +16,24 @@
       "revId": "bb655be001064e2400cf4263f4c8f187c867d34a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a75e904_e076fe05",
+        "filename": "t/api-rest/api-numbers.t",
+        "patchSetId": 12
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-05T09:51:31Z",
+      "side": 1,
+      "message": "I decided not to demonstrate failing cases here. It will enough information if current OK test will start to fail due to some changes.\nI tried these tests with our usual transaction isolation level, they perfectly fail always with original issue and deadlocks.",
+      "parentUuid": "7a75e904_6083eecc",
+      "revId": "bb655be001064e2400cf4263f4c8f187c867d34a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
