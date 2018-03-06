@@ -3,10 +3,10 @@ use strict;
 use warnings;
 
 use Sipwise::Base;
+use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Generic qw(:all);
 use List::Util qw/first/;
 use Scalar::Util qw/blessed/;
-use DateTime::Format::Strptime;
 
 sub process {
     my ($c, $rs, $cols, $row_func, $params) = @_;
@@ -19,6 +19,8 @@ sub process {
     my $displayRecords = 0;
     my $aggregate_cols = [];
     my $aggregations = {};
+
+    my $user_tz = $c->session->{user_tz};
 
 
     # check if we need to join more tables
@@ -116,15 +118,11 @@ sub process {
         my $from_date_in = $c->request->params->{sSearch_0} // "";
         my $to_date_in = $c->request->params->{sSearch_1} // "";
         my($from_date,$to_date);
-        my $parser = DateTime::Format::Strptime->new(
-            #pattern => '%Y-%m-%d %H:%M',
-            pattern => '%Y-%m-%d',
-        );
         if($from_date_in) {
-            $from_date = $parser->parse_datetime($from_date_in);
+            $from_date = NGCP::Panel::Utils::DateTime::from_forminput_string($from_date_in, $c->session->{user_tz});
         }
         if($to_date_in) {
-            $to_date = $parser->parse_datetime($to_date_in);
+            $to_date = NGCP::Panel::Utils::DateTime::from_forminput_string($to_date_in, $c->session->{user_tz});
         }
         foreach my $col(@{ $cols }) {
             # avoid amigious column names if we have the same column in different joined tables
@@ -192,7 +190,7 @@ sub process {
     my $topId = $c->request->params->{iIdOnTop};
     if(defined $topId) {
         if(defined(my $row = $rs->find($topId))) {
-            push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
+            push @{ $aaData }, _prune_row($user_tz, $cols, $row->get_inflated_columns);
             if (defined $row_func) {
                 $aaData->[-1] = {%{$aaData->[-1]}, $row_func->($row)};
             }
@@ -247,7 +245,7 @@ sub process {
     }
 
     for my $row ($rs->all) {
-        push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
+        push @{ $aaData }, _prune_row($user_tz, $cols, $row->get_inflated_columns);
         if (defined $row_func) {
             $aaData->[-1] = {%{$aaData->[-1]}, $row_func->($row)} ;
         }
@@ -277,13 +275,17 @@ sub set_columns {
 }
 
 sub _prune_row {
-    my ($columns, %row) = @_;
+    my ($user_tz, $columns, %row) = @_;
     while (my ($k,$v) = each %row) {
         unless (first { $_->{accessor} eq $k && $_->{title} } @{ $columns }) {
             delete $row{$k};
             next;
         }
         if(blessed($v) && $v->isa('DateTime')) {
+            if($user_tz) {
+                $v->set_time_zone('local');  # starting point for conversion
+                $v->set_time_zone($user_tz);  # desired time zone
+            }
             $row{$k} = $v->ymd('-') . ' ' . $v->hms(':');
             $row{$k} .= '.'.$v->millisecond if $v->millisecond > 0.0;
         }

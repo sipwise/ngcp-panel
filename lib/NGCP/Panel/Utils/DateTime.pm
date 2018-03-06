@@ -1,18 +1,19 @@
 package NGCP::Panel::Utils::DateTime;
 
-#use Sipwise::Base; seg fault when creating threads in test scripts
 use strict;
 use warnings;
-use Time::HiRes; #prevent warning from Time::Warp
-use Time::Warp qw();
-#use Time::Fake; #load this before any use DateTime
-use DateTime;
+
 use DateTime::Format::ISO8601;
 use DateTime::Format::Strptime;
+use DateTime;
 use POSIX qw(floor fmod);
+use Readonly qw();
+use Time::HiRes; #prevent warning from Time::Warp
+use Time::Warp qw();
 
-use constant RFC_1123_FORMAT_PATTERN => '%a, %d %b %Y %T %Z';
-use constant TIMEZONE_MAP => { map { $_ => 1; } DateTime::TimeZone->all_names };
+ my $RFC_1123_FORMAT_PATTERN = '%a, %d %b %Y %T %Z';
+ my $TIMEZONE_MAP = { map { $_ => 1; } DateTime::TimeZone->all_names };
+ my $LOCAL_TZ = DateTime::TimeZone->new(name => 'local');
 
 my $is_fake_time = 0;
 
@@ -22,7 +23,7 @@ sub is_valid_timezone_name {
     if ($all) {
         return DateTime::TimeZone->is_valid_name($tz);
     } else {
-        return 0 unless exists TIMEZONE_MAP->{$tz};
+        return 0 unless exists $TIMEZONE_MAP->{$tz};
         return 1;
     }
 }
@@ -30,11 +31,11 @@ sub is_valid_timezone_name {
 sub current_local {
     if ($is_fake_time) {
         return DateTime->from_epoch(epoch => Time::Warp::time,
-            time_zone => DateTime::TimeZone->new(name => 'local')
+            time_zone => $LOCAL_TZ,
         );
     } else {
         return DateTime->now(
-            time_zone => DateTime::TimeZone->new(name => 'local')
+            time_zone => $LOCAL_TZ,
         );
     }
 }
@@ -43,7 +44,7 @@ sub current_local_hires {
 
     #If the epoch value is a floating-point value, it will be rounded to nearest microsecond.
     return DateTime->from_epoch( epoch => Time::HiRes::time,
-        time_zone => DateTime::TimeZone->new(name => 'local')
+        time_zone => $LOCAL_TZ,
     );
 
 }
@@ -51,7 +52,7 @@ sub current_local_hires {
 sub set_local_tz {
     my $dt = shift;
     if (defined $dt && ref $dt eq 'DateTime' && !is_infinite($dt)) {
-        $dt->set_time_zone('local');
+        $dt->set_time_zone($LOCAL_TZ);
     }
     return $dt;
 }
@@ -132,17 +133,16 @@ sub last_day_of_month {
 sub epoch_local {
     my $epoch = shift;
     return DateTime->from_epoch(
-        time_zone => DateTime::TimeZone->new(name => 'local'),
+        time_zone => $LOCAL_TZ,
         epoch => $epoch,
     );
 }
 
 sub epoch_tz {
-    my $epoch = shift;
-    my $tz = shift;
+    my ($epoch, $tz) = @_;
     #if(!$tz || !DateTime::TimeZone->is_valid_name($tz)) {
     if(not is_valid_timezone_name($tz,1)) {
-        $tz = DateTime::TimeZone->new(name => 'local');
+        $tz = $LOCAL_TZ;
     }
     return DateTime->from_epoch(
         time_zone => $tz,
@@ -168,10 +168,35 @@ sub from_string {
 sub from_rfc1123_string {
 
     my $s = shift;
-    my $strp = DateTime::Format::Strptime->new(pattern => RFC_1123_FORMAT_PATTERN,
+    my $strp = DateTime::Format::Strptime->new(pattern => $RFC_1123_FORMAT_PATTERN,
        locale => 'en_US',
        on_error => 'undef');
     return $strp->parse_datetime($s);
+}
+
+# this shall give a little freedom in how datetime is entered
+# this shall be allowed: Y-m-d H:M:S, Y-m-d H:M, Y-m-d
+# it returns a DateTime object in local timezone or the specified timezone
+sub from_forminput_string {
+    my($string, $tz) = @_;
+    my $parser1 = DateTime::Format::Strptime->new(
+        pattern => '%Y-%m-%d %H:%M:%S', $tz ? (time_zone => $tz) : (),
+    );
+    my $parser2 = DateTime::Format::Strptime->new(
+        pattern => '%Y-%m-%d %H:%M', $tz ? (time_zone => $tz) : (),
+    );
+    my $parser3 = DateTime::Format::Strptime->new(
+        pattern => '%Y-%m-%d', $tz ? (time_zone => $tz) : (),
+    );
+    $string =~ s/^\s*(.*)\s*$/$1/; # remove whitespace around
+    my $dt = $parser1->parse_datetime($string);
+    unless ($dt) {
+        $dt = $parser2->parse_datetime($string);
+    }
+    unless ($dt) {
+        $dt = $parser3->parse_datetime($string);
+    }
+    return $dt;
 }
 
 sub new_local {
@@ -181,7 +206,7 @@ sub new_local {
         !defined $params{$_} and delete $params{$_};
     }
     return DateTime->new(
-        time_zone => DateTime::TimeZone->new(name => 'local'),
+        time_zone => $LOCAL_TZ,
         %params,
     );
 }
@@ -209,10 +234,21 @@ sub to_string {
 
 sub to_rfc1123_string {
     my $dt = shift;
-    my $strp = DateTime::Format::Strptime->new(pattern => RFC_1123_FORMAT_PATTERN,
+    my $strp = DateTime::Format::Strptime->new(pattern => $RFC_1123_FORMAT_PATTERN,
        locale => 'en_US',
        on_error => 'undef');
     return $strp->format_datetime($dt);
+}
+
+sub to_local_string {
+    my ($dt) = @_;
+
+    unless ('DateTime' eq ref $dt) {
+        die 'needs a DateTime object to be converted';
+    }
+
+    $dt->set_time_zone($LOCAL_TZ);
+    return to_string($dt);
 }
 
 sub get_weekday_names {

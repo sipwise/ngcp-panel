@@ -15,6 +15,8 @@ use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
 use HTTP::Status qw(:constants);
 
+use NGCP::Schema qw//;
+
 #
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in MyApp.pm
@@ -52,6 +54,36 @@ sub auto :Private {
         $c->session->{lang} = $c->language;
         $c->log->debug("lang set by browser or config: " . $c->language);
     }
+
+    ################################################### timezone retrieval
+    if ($c->user_exists) {
+        if ($c->session->{user_tz}) {
+            # nothing to do
+        } elsif ($c->user->roles eq 'admin') {
+            my $reseller_id = $c->user->reseller_id;
+            my $tz_row = $c->model('DB')->resultset('reseller_timezone')->find({reseller_id => $reseller_id});
+            _set_session_tz_from_row($c, $tz_row, 'admin', $reseller_id);
+        } elsif($c->user->roles eq 'reseller') {
+            my $reseller_id = $c->user->reseller_id;
+            my $tz_row = $c->model('DB')->resultset('reseller_timezone')->find({reseller_id => $reseller_id});
+            _set_session_tz_from_row($c, $tz_row, 'reseller', $reseller_id);
+        } elsif($c->user->roles eq 'subscriberadmin') {
+            my $contract_id = $c->user->account_id;
+            my $tz_row = $c->model('DB')->resultset('contract_timezone')->find({contract_id => $contract_id});
+            _set_session_tz_from_row($c, $tz_row, 'subscriberadmin', $contract_id);
+        } elsif($c->user->roles eq 'subscriber') {
+            my $uuid = $c->user->uuid;
+            my $tz_row = $c->model('DB')->resultset('voip_subscriber_timezone')->find({uuid => $uuid});
+            _set_session_tz_from_row($c, $tz_row, 'subscriber', $uuid);
+        } else {
+            # this shouldnt happen
+        }
+        $NGCP::Schema::CURRENT_USER_TZ = $c->session->{user_tz};
+    } else {
+        $NGCP::Schema::CURRENT_USER_TZ = undef;
+    }
+
+    ###################################################
 
     if (
         __PACKAGE__ eq $c->controller->catalyst_component_name
@@ -314,18 +346,6 @@ sub end :Private {
     }
 }
 
-sub _prune_row {
-    my ($columns, %row) = @_;
-    while (my ($k,$v) = each %row) {
-        unless (grep { $k eq $_ } @$columns) {
-            delete $row{$k};
-            next;
-        }
-        $row{$k} = $v->datetime if blessed($v) && $v->isa('DateTime');
-    }
-    return { %row };
-}
-
 sub error_page :Private {
     my ($self,$c) = @_;
     $c->log->error( 'Failed to find path ' . $c->request->path );
@@ -469,6 +489,20 @@ sub api_apply_fake_time :Private {
         NGCP::Panel::Utils::DateTime::set_fake_time();
         $c->stash->{is_fake_time} = 0;
         #$c->log->debug('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));
+    }
+}
+
+sub _set_session_tz_from_row {
+    my ($c, $tz_row, $role, $identifier) = @_;
+
+    my $tz_name = $tz_row ? $tz_row->name : undef;
+    $tz_name =~ s/^localtime$/local/ if $tz_name;
+    eval { $c->session->{user_tz} = DateTime::TimeZone->new( name => $tz_name ); };
+    if ($@) {
+        $c->log->warning("couldnt set timezone. error in creation probably caused by invalid timezone name. role $role ($identifier) to $tz_name");
+    } else {
+        $c->session->{user_tz_name} = $tz_name;
+        $c->log->debug("timezone set for $role ($identifier) to $tz_name");
     }
 }
 

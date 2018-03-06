@@ -76,7 +76,8 @@ EOF
     my $config_failed_auth_attempts = $c->config->{security}->{failed_auth_attempts} // 3;
     for my $key (keys %{ $usr }) {
         my $last_auth = $usr->{$key}->{last_auth} ? NGCP::Panel::Utils::DateTime::epoch_local($usr->{$key}->{last_auth}) : undef;
-        if($last_auth && $params{data_for_json}){
+        if ($last_auth) {
+            $last_auth->set_time_zone($c->session->{user_tz}) if $c->session->{user_tz};
             $last_auth =  $last_auth->ymd.' '. $last_auth->hms;
         }
         if( defined $usr->{$key}->{auth_count} 
