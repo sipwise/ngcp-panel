@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a72e520_65edc68b",
+        "filename": "lib/NGCP/Panel/Controller/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-03-06T15:51:01Z",
+      "side": 0,
+      "message": "just old dead code",
+      "revId": "bb655be001064e2400cf4263f4c8f187c867d34a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
