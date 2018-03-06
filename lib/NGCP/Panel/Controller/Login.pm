@@ -63,6 +63,8 @@ sub index :Path Form {
 
         if($res) {
             # auth ok
+            $c->session->{user_tz} = undef;  # reset to reload from db
+            $c->session->{user_tz_name} = undef;  # reset to reload from db
             my $target = $c->session->{'target'} || '/';
             delete $c->session->{target};
             $target =~ s!^https?://[^/]+/!/!;
