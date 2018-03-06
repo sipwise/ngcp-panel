@@ -313,12 +313,20 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 if(length $form->values->{start}) {
-                    $form->values->{start} .= 'T00:00:00';
+                    $form->values->{start} .= ' 00:00:00';
+                    my $start_dt = NGCP::Panel::Utils::DateTime::from_forminput_string(
+                        $form->values->{start},
+                        $c->session->{user_tz});
+                    $form->values->{start} = NGCP::Panel::Utils::DateTime::to_local_string($start_dt);
                 } else {
                     $form->values->{start} = undef;
                 }
                 if(length $form->values->{end}) {
-                    $form->values->{end} .= 'T23:59:59';
+                    $form->values->{end} .= ' 23:59:59';
+                    my $end_dt = NGCP::Panel::Utils::DateTime::from_forminput_string(
+                        $form->values->{end},
+                        $c->session->{user_tz});
+                    $form->values->{end} = NGCP::Panel::Utils::DateTime::to_local_string($end_dt);
                 } else {
                     $form->values->{end} = undef;
                 }
