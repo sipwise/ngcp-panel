@@ -1,17 +1,43 @@
 package NGCP::Panel::Field::DateTime;
 use HTML::FormHandler::Moose;
+
 use Sipwise::Base;
+use NGCP::Panel::Utils::DateTime qw//;
 extends 'HTML::FormHandler::Field::Text';
 
 has '+deflate_method' => ( default => sub { \&datetime_deflate } );
+has '+inflate_method' => ( default => sub { \&datetime_inflate } );
 
-sub datetime_deflate {
-                my ( $self, $value ) = @_;             
-                if(blessed($value) && $value->isa('DateTime')) {
-                    return $value->ymd('-') . ' ' . $value->hms(':');
-                } else {
-                    return $value;
-                }
+sub datetime_deflate {  # deflate: DateTime (in any tz) -> User representation (with correct tz)
+    my ( $self, $value ) = @_;
+
+    my $c = $self->form->ctx;
+
+    if(blessed($value) && $value->isa('DateTime')) {
+        if($c && $c->session->{user_tz}) {
+            $value->set_time_zone('local');                 # starting point for conversion
+            $value->set_time_zone($c->session->{user_tz});  # desired time zone
+        }
+        return $value->ymd('-') . ' ' . $value->hms(':');
+    } else {
+        return $value;
+    }
+}
+
+sub datetime_inflate {  # inflate: User entry -> DateTime -> Plaintext but converted
+    my ( $self, $value ) = @_;
+
+    my $c = $self->form->ctx;
+
+    my $tz;
+    if($c && $c->session->{user_tz}) {
+        $tz = $c->session->{user_tz};
+    }
+
+    my $date = NGCP::Panel::Utils::DateTime::from_forminput_string($value, $tz);
+    $date->set_time_zone('local');  # convert to local
+
+    return $date->ymd('-') . ' ' . $date->hms(':');
 }
 
 no Moose;

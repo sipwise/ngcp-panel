@@ -21,7 +21,7 @@ sub api_description {
 
 sub get_list{
     my ($self, $c) = @_;
-    return NGCP::Panel::Utils::Security::list_banned_users($c, data_for_json => 1);
+    return NGCP::Panel::Utils::Security::list_banned_users($c);
 }
 1;
 
