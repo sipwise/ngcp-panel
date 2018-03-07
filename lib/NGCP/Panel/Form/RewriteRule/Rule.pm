@@ -151,6 +151,10 @@ sub validate {
         $self->field('replace_pattern')->add_error("Spaces are not allowed in replacement pattern");
     }
 
+    if ( $s =~ /\\\w/i ) {
+        $self->field('match_pattern')->add_error("Ambiguous escape of non special characters");
+    }
+
     my @acount;
     @acount = $s =~ /(\@\{\w+\})/g;
     if(@acount > 1) {
