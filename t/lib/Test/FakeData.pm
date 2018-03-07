@@ -673,6 +673,8 @@ sub get_existent_id{
         $id = $self->test_machine->get_id_from_created($self->created->{$collection_name}->{values}->[0]);
     }elsif(exists $self->loaded->{$collection_name}){
         $id = $self->test_machine->get_id_from_created($self->loaded->{$collection_name}->[0]);
+    }elsif(exists $self->data->{$collection_name}->{process_cycled}){
+        $id = $self->data_default->{$self->data->{$collection_name}->{default}}->{id};
     }
     return $id
 }
@@ -731,7 +733,7 @@ sub create{
     if($parents_in->{$collection_name}){
         if($self->data->{$collection_name}->{default}){
             $self->data->{$collection_name}->{process_cycled} = {'parents'=>$parents_in};
-            return $self->data_default->{$self->data->{$collection_name}->{default}}->{id};
+            return ;
         }else{
             die('Data absence', Dumper([$collection_name,$parents_in]));
         }
