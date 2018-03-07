@@ -160,7 +160,7 @@ sub update_item {
             $secret_renew_notify_rs->create($notify);
         }
         for my $acl (@{ $resource->{acl} }) {
-            $secret_renew_notify_rs->create($acl);
+            $acl_rs->create($acl);
         }
     } catch($e) {
         $c->log->error("Error Updating mailtofaxsettings: $e");
