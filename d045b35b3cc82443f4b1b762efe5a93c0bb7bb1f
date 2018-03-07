@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a6ff13c_c4767e06",
+        "filename": "lib/NGCP/Panel/Form/RewriteRule/Rule.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-07T13:20:55Z",
+      "side": 1,
+      "message": "what about\n\neval {\n  my $test \u003d qr/$s/;\n}\nif ($@) {\n$self-\u003efield(\u0027match_pattern\u0027)-\u003eadd_error($@);\n}\n\nas opposed to timezones, this would imho qualify more nicely for putting into general place for all regexp data entries (see https://gerrit.mgm.sipwise.com/#/c/19148/ ) ?",
+      "revId": "d045b35b3cc82443f4b1b762efe5a93c0bb7bb1f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
