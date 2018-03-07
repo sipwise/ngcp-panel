@@ -34,6 +34,24 @@
       "revId": "d045b35b3cc82443f4b1b762efe5a93c0bb7bb1f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a6ff13c_c44d9ec6",
+        "filename": "lib/NGCP/Panel/Form/RewriteRule/Rule.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-07T13:31:26Z",
+      "side": 1,
+      "message": "the error is not produced in perl itself but rather in kamailio/dialplan.\n\nso with eval/test it will pass the form validation and kamailio and its dialplan module it will fail with\n\nERROR: dialplan [dp_db.c:382]: reg_ex_comp(): PCRE compilation of \u0027^\\463949690([0-9]+)$\u0027 failed at offset 4: octal value is greater than \\377 in 8-bit non-UTF-8 mode\nERROR: dialplan [dp_db.c:449]: build_rule(): failed to compile match expression ^\\463949690([0-9]+)$\n\nhence thats why we need to explicitly prevent escaping of chars (mostly digits is enough though) in the search pattern part.",
+      "parentUuid": "3a6ff13c_c4767e06",
+      "revId": "d045b35b3cc82443f4b1b762efe5a93c0bb7bb1f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
