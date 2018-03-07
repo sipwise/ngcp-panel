@@ -16,6 +16,24 @@
       "revId": "d045b35b3cc82443f4b1b762efe5a93c0bb7bb1f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a6ff13c_645f8a73",
+        "filename": "lib/NGCP/Panel/Form/RewriteRule/Rule.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-07T13:28:56Z",
+      "side": 1,
+      "message": "ok that seems to happen here already \n\neval { use warnings FATAL \u003d\u003e qw(all); $_ \u003d \u0027\u0027; m/$re/; };\n\ni\u0027m wondering why this didnt capture teletek\u0027s malformed entry though.",
+      "parentUuid": "3a6ff13c_c4767e06",
+      "revId": "d045b35b3cc82443f4b1b762efe5a93c0bb7bb1f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
