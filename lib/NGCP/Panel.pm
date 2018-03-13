@@ -4,6 +4,7 @@ use Moose;
 use Catalyst::Runtime 5.80;
 use File::Slurp qw();
 use Config::General qw();
+use IO::Socket::UNIX qw(SOCK_DGRAM);
 
 # Set flags and add plugins for the application.
 #
@@ -264,6 +265,27 @@ __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
         $Data::HAL::__forcearray_underneath = {embedded => 1};
     }
 }
+
+after setup_finalize => sub {
+
+    my $app = shift;
+
+    if ($ENV{NOTIFY_SOCKET}) {
+        my $addr = $ENV{NOTIFY_SOCKET} =~ s/^@/\0/r;
+        my $client = IO::Socket::UNIX->new(
+            Type => SOCK_DGRAM(),
+            Peer => $addr,
+        ) or warn("can't connect to socket $ENV{NOTIFY_SOCKET}: $!\n");
+        if ($client) {
+            $client->autoflush(1);
+            print $client "READY=1\n" or warn("can't send to socket $ENV{NOTIFY_SOCKET}: $!\n");
+            close $client;
+        }
+    } else {
+        warn("NOTIFY_SOCKET not set\n");
+    }
+
+};
 
 # Start the application
 __PACKAGE__->setup();

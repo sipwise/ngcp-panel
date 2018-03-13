@@ -6,7 +6,7 @@ Requires=network.target
 Requires=mariadb.service
 
 [Service]
-Type=simple
+Type=notify
 EnvironmentFile=/etc/default/ngcp-panel
 Environment="HOME=/usr/share/ngcp-panel"
 User=www-data
