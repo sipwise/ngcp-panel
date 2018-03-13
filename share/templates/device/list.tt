@@ -115,8 +115,8 @@ $( document ).ready(function() {
     helper.ajax_uri = c.uri_for('/device/model/ajax');
 
     helper.dt_buttons = [
-            { name = c.loc('Front Image'), uri = "/device/model/'+full.id+'/frontimage", class = 'btn-small btn-tertiary', icon = 'icon-picture' },
-            { name = c.loc('MAC Image'), uri = "/device/model/'+full.id+'/macimage", class = 'btn-small btn-tertiary', icon = 'icon-picture' },
+            { name = c.loc('Front Image'), uri = "/device/model/'+full.id+'/frontimage", class = 'btn-small btn-tertiary', icon = 'icon-picture',condition = 'full[\'front_image_exists\']' },
+            { name = c.loc('MAC Image'), uri = "/device/model/'+full.id+'/macimage", class = 'btn-small btn-tertiary', icon = 'icon-picture', condition = 'full[\'mac_image_exists\']' },
     ];
     UNLESS c.user.read_only;
         helper.dt_buttons = helper.dt_buttons.merge([
