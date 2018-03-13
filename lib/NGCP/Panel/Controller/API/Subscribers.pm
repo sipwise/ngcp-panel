@@ -341,21 +341,6 @@ sub GET :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
-    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-    } elsif($c->user->roles eq "subscriber") {
-        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-        return;
-    } elsif($c->user->roles eq "subscriberadmin") {
-        unless($c->config->{features}->{cloudpbx}) {
-            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-            return;
-        }
-        my $customer = $self->get_customer($c, $c->user->account_id);
-        if($customer->get_column('product_class') ne 'pbxaccount') {
-            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-            return;
-        }
-    }
 
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
