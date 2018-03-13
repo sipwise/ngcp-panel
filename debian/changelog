@@ -1,3 +1,14 @@
+ngcp-panel (6.0.2.1+0~mr6.0.2.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [11beeb6] TT#30653 apply_rewrite() strict checks for $subscriber variable type
+  * [c0fb804] TT#33356 Rewrite rule validation checks for ambiguous non-char escapes
+  * [78dcb47] TT#33871 use a correct rs call in mailtofaxsettings
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 13 Mar 2018 14:05:18 +0100
+
 ngcp-panel (6.0.2.0+0~mr6.0.2.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
