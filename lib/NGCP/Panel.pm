@@ -283,6 +283,23 @@ sub _get_jwt_key {
     return $content;
 }
 
+after setup_finalize => sub {
+    my $app = shift;
+
+    if ($ENV{NOTIFY_SOCKET}) {
+        my $client = IO::Socket::UNIX->new(
+            Type => SOCK_STREAM(),
+            Peer => $SOCK_PATH
+        ) or warn("can't connect to socket $ENV{NOTIFY_SOCKET}: $!\n");
+        if ($client) {
+            $client->autoflush(1);
+            print $client "READY=1\n" or warn("can't send to socket $ENV{NOTIFY_SOCKET}: $!\n");
+            close $client;
+        }
+    }
+
+};
+
 1;
 
 # vim: set tabstop=4 expandtab:
