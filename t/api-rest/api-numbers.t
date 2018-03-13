@@ -1,12 +1,12 @@
 use strict;
 use warnings;
 
+use threads;
 use Test::Collection;
 use Test::FakeData;
 use Test::More;
 use Data::Dumper;
 use Clone qw/clone/;
-use threads;
 
 #use NGCP::Panel::Utils::Subscriber;
 
