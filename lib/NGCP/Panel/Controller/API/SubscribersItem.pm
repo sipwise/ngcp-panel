@@ -81,10 +81,7 @@ sub GET :Allow {
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
 
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-        return;
-    }
+    return unless $self->check_write_access($c);
 
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
@@ -140,10 +137,7 @@ sub PUT :Allow {
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
 
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-        return;
-    }
+    return unless $self->check_write_access($c);
 
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
@@ -206,22 +200,13 @@ sub PATCH :Allow {
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
 
-    if($c->user->roles eq "subscriber") {
-        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-        return;
-    }
+    return unless $self->check_write_access($c);
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $subscriber = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriber => $subscriber);
         if($c->user->roles eq "subscriberadmin") {
-
-            my $customer = $self->get_customer($c, $c->user->account_id);
-            if($customer->get_column('product_class') ne 'pbxaccount') {
-                $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-                return;
-            }
 
             my $prov_sub = $subscriber->provisioning_voip_subscriber;
             if($prov_sub->is_pbx_pilot) {
