@@ -331,7 +331,46 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         }
         $test_machine->runas('admin');
     }
+    {#TT#34021
+        diag("34021: check subscriberadmin PUT and PATCH. Possible only for pbx subscriberadmin. Access priveleges:".$remote_config->{config}->{acl}->{subscriberadmin}->{subscribers} .";\n");
+        my $data = clone $test_machine->DATA_ITEM;
+        $data->{administrative} = 1;
+        my $pbxsubscriberadmin = $test_machine->check_create_correct(1, sub {
+            my $num = $_[1]->{i};
+            $_[0]->{administrative} = 1;
+            $_[0]->{webusername} .= time().'_34021';
+            $_[0]->{webpassword} = 'api_test_webpassword';
+            $_[0]->{username} .= time().'_34021' ;
+            $_[0]->{pbx_extension} .= '34021';
+            $_[0]->{primary_number}->{ac} .= '34021';
+            $_[0]->{is_pbx_group} = 0;
+            $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
+            delete $_[0]->{alias_numbers};
+        } )->[0];
+        $test_machine->set_subscriber_credentials($pbxsubscriberadmin->{content});
+        $test_machine->runas('subscriber');
+        my $subscriber = $test_machine->check_create_correct(1, sub {
+            my $num = $_[1]->{i};
+            $_[0]->{webusername} .= time().'_34021_1';
+            $_[0]->{webpassword} = 'api_test_webpassword';
+            $_[0]->{username} .= time().'_34021_1' ;
+            $_[0]->{pbx_extension} .= '340211';
+            $_[0]->{primary_number}->{ac} .= '34021';
+            $_[0]->{is_pbx_group} = 0;
+            $_[0]->{is_pbx_pilot} = 0;
+            delete $_[0]->{alias_numbers};
+        } )->[0];
+        if ($remote_config->{config}->{acl}->{subscriberadmin}->{subscribers} =~/write/) {
+            $test_machine->check_get2put($subscriber,{},$put2get_check_params);
+            my($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_neame', value => 'patched 34021' } ], $subscriber->{location} );
+            $test_machine->http_code_msg(200, "Check display_name patch for subscriberadmin", $res, $content);
+        }else{
+            my($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_neame', value => 'patched 34021' } ], $subscriber->{location} );
+            $test_machine->http_code_msg(403, "Check display_name patch for subscriberadmin", $res, $content, "Read-only resource for authenticated role");
+        }
+    }
 }
+
 #TT#21818 variant 2 - pbx feature off, subscriberadmin is read-only. No subscriber exists
 if (!$remote_config->{config}->{features}->{cloudpbx}) {
     diag("21818: check password validation: subscriber and subscriberadmin are read-only roles;\n");
@@ -385,10 +424,10 @@ done_testing;
 #--------- aux
 sub check_password_validation_config{
     if(
-		$remote_config->{config}->{security}->{password_sip_validate}
-		&&
-		$remote_config->{config}->{security}->{password_web_validate}
-		&&
+        $remote_config->{config}->{security}->{password_sip_validate}
+        &&
+        $remote_config->{config}->{security}->{password_web_validate}
+        &&
         ok($remote_config->{config}->{security}->{password_sip_validate},"check www_admin.security.password_sip_validate should be true.")
         &&
         ok($remote_config->{config}->{security}->{password_web_validate},"check www_admin.security.password_web_validate should be true.")) {
@@ -396,6 +435,7 @@ sub check_password_validation_config{
     }
     return 0;
 }
+
 sub test_password_validation {
     my ($subscriber_put, $actions) = @_;
     my %fields = ('web' => 'web%s','' => '%s');

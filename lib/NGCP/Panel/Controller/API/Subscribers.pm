@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::API::Subscribers;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Subscribers/;
 
 use boolean qw(true);
 use Data::HAL qw();
@@ -15,6 +16,10 @@ use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Events qw();
 use UUID;
+
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+});
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
@@ -258,24 +263,6 @@ sub query_params {
     return $params;
 }
 
-use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Subscribers/;
-
-sub resource_name{
-    return 'subscribers';
-}
-
-sub dispatch_path{
-    return '/api/subscribers/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-subscribers';
-}
-
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
-});
-
 sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
@@ -341,21 +328,6 @@ sub GET :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
-    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-    } elsif($c->user->roles eq "subscriber") {
-        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-        return;
-    } elsif($c->user->roles eq "subscriberadmin") {
-        unless($c->config->{features}->{cloudpbx}) {
-            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-            return;
-        }
-        my $customer = $self->get_customer($c, $c->user->account_id);
-        if($customer->get_column('product_class') ne 'pbxaccount') {
-            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-            return;
-        }
-    }
 
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
