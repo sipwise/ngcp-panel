@@ -38,15 +38,21 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     }
 
     my $devmod_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs(undef,{
-            'columns' => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri extensions_num/],
-	});
+            'columns' => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri extensions_num/,
+                {
+                    mac_image_exists   => \'mac_image is not null',
+                    front_image_exists => \'front_image is not null',
+                }
+            ],
+    });
+    
     $reseller_id and $devmod_rs = $devmod_rs->search({ reseller_id => $reseller_id });
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'type', search => 1, title => $c->loc('Type') },
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
         { name => 'vendor', search => 1, title => $c->loc('Vendor') },
-        { name => 'model', search => 1, title => $c->loc('Model') },
+        { name => 'model', search => 1, title => $c->loc('Model') },        
     ]);
 
     my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search_rs(undef,{'columns' => [qw/id device_id version filename/],
@@ -143,18 +149,38 @@ sub devmod_ajax :Chained('base') :PathPart('model/ajax') :Args(0) :Does(ACL) :AC
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{devmod_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns},
+        sub {
+            my ($result) = @_;
+            my %data = ( 
+                mac_image_exists => $result->get_column('mac_image_exists'),
+                front_image_exists => $result->get_column('front_image_exists'),
+            );
+            return %data
+        },
+    );
     $c->detach( $c->view("JSON") );
 }
+
 sub extensionmodel_ajax :Chained('base') :PathPart('extensionmodel/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{devmod_rs}->search_rs({
         'me.type' => 'extension',
     });
-    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns},
+        sub {
+            my ($result) = @_;
+            my %data = ( 
+                mac_image_exists => $result->get_column('mac_image_exists'),
+                front_image_exists => $result->get_column('front_image_exists'),
+            );
+            return %data
+        },
+    );
     $c->detach( $c->view("JSON") );
 }
+
 sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
