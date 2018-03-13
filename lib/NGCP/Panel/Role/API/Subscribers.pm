@@ -5,7 +5,6 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -18,6 +17,18 @@ use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime;
+
+sub resource_name{
+    return 'subscribers';
+}
+
+sub dispatch_path{
+    return '/api/subscribers/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-subscribers';
+}
 
 sub get_form {
     my ($self, $c) = @_;
@@ -119,7 +130,7 @@ sub resource_from_item {
     # don't leak internal info to subscribers via API for those fields
     # not filtered via forms
     my $contract_id = int(delete $resource{contract_id});
-    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
         $resource{customer_id} = $contract_id;
         $resource{uuid} = $item->uuid;
 
@@ -134,16 +145,17 @@ sub resource_from_item {
             $resource{lock} = undef;
         }
     } else {
-        # fields we never want to see
-        foreach my $k(qw/domain_id status profile_id profile_set_id external_id/) {
-            delete $resource{$k};
-        }
+        if (!$self->subscriberadmin_write_access($c)) {
+            # fields we never want to see
+            foreach my $k(qw/domain_id status profile_id profile_set_id external_id/) {
+                delete $resource{$k};
+            }
 
-        # TODO: make custom filtering configurable!
-        foreach my $k(qw/password webpassword/) {
-            delete $resource{$k};
+            # TODO: make custom filtering configurable!
+            foreach my $k(qw/password webpassword/) {
+                delete $resource{$k};
+            }
         }
-
         if($c->user->roles eq "subscriberadmin") {
             $resource{customer_id} = $contract_id;
         }
@@ -597,10 +609,7 @@ sub prepare_resource {
 sub update_item {
     my ($self, $c, $schema, $item, $full_resource, $resource, $form) = @_;
 
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-        return;
-    }
+    return unless $self->check_write_access($c);
 
     my $subscriber = $item;
     my $customer = $full_resource->{customer};
@@ -815,6 +824,34 @@ sub update_item {
     );
 
     return $subscriber;
+}
+
+sub check_write_access {
+    my($self, $c) = @_;
+    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+    } elsif($c->user->roles eq "subscriber") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    } elsif($c->user->roles eq "subscriberadmin") {
+        unless($c->config->{features}->{cloudpbx}) {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            return;
+        }
+        my $customer = $self->get_customer($c, $c->user->account_id);
+        if($customer->get_column('product_class') ne 'pbxaccount') {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            return;
+        }
+    }
+    return 1;
+}
+
+sub subscriberadmin_write_access {
+    my($self,$c) = @_;
+    if ($c->user->roles eq "subscriberadmin" && $c->config->{acl}->{subscriberadmin}->{subscribers} =~/write/ ) {
+        return 1;
+    }
+    return 0;
 }
 
 1;
