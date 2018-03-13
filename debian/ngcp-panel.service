@@ -12,6 +12,7 @@ Environment="HOME=/usr/share/ngcp-panel"
 User=www-data
 Group=www-data
 RuntimeDirectory=fastcgi
+RuntimeDirectoryPreserve=yes
 PIDFile=/var/run/fastcgi/ngcp-panel.pid
 ExecStart=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl --listen /var/run/fastcgi/ngcp-panel.sock --pidfile /var/run/fastcgi/ngcp-panel.pid --nproc $NPROC
 
