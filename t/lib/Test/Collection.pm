@@ -1222,6 +1222,7 @@ sub check_get2put{
     $get_in //= {};
     $put_in //= {};
 
+    $put_in->{uri} //= $put_in->{location};
     $get_in->{uri} //= $put_in->{uri};
     $put_in->{uri} //= $get_in->{uri};
 
