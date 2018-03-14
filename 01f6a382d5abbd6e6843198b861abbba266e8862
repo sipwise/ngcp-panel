@@ -16,6 +16,40 @@
       "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a6ff13c_8e73bcb0",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-03-14T16:08:00Z",
+      "side": 1,
+      "message": "Actually this should be SOCK_DGRAM()",
+      "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a6ff13c_ae6798e9",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-03-14T16:08:00Z",
+      "side": 1,
+      "message": "And this can only be an absolute path (starting with /) or an abstract socket, a pathname prefixed with @, which requires that to be replaced with a NUL character.",
+      "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
