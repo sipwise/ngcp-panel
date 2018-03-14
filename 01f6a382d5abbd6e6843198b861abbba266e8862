@@ -86,6 +86,24 @@
       "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a6ff13c_8ee2dc01",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-03-14T20:13:55Z",
+      "side": 1,
+      "message": "My point is that systemd will most probably pass over an abstract socket encoded with a prefixed @, which you need to recode as the pseudo-code s/^@/\\0/.",
+      "parentUuid": "3a6ff13c_4e0aa4d3",
+      "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
