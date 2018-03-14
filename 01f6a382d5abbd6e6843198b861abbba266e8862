@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3a6ff13c_2e0568c2",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-14T17:44:31Z",
+      "side": 1,
+      "message": "no, it\u0027s perl standard lib",
+      "parentUuid": "3a6ff13c_eb2ee2a4",
+      "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a6ff13c_8e73bcb0",
         "filename": "lib/NGCP/Panel.pm",
         "patchSetId": 3
@@ -47,6 +65,24 @@
       "writtenOn": "2018-03-14T16:08:00Z",
       "side": 1,
       "message": "And this can only be an absolute path (starting with /) or an abstract socket, a pathname prefixed with @, which requires that to be replaced with a NUL character.",
+      "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a6ff13c_4e0aa4d3",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-14T17:44:31Z",
+      "side": 1,
+      "message": "i tested it with a /tmp/test.sock, its received there unfragmented\n\nsipwise@spce:~$ perl /vagrant/server.pl \n** New connection received **\nReceived 1 \u0027READY\u003d1\u0027",
+      "parentUuid": "3a6ff13c_ae6798e9",
       "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
