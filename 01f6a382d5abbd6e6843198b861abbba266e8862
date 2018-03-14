@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a6ff13c_eb2ee2a4",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-03-14T15:36:27Z",
+      "side": 1,
+      "message": "should some dependency be added to debian/control here?",
+      "revId": "01f6a382d5abbd6e6843198b861abbba266e8862",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
