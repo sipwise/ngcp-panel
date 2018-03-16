@@ -16,6 +16,24 @@
       "revId": "f2275b5e006ff9875684bb2d84f19a851f90e711",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_23bbcac5",
+        "filename": "debian/ngcp-panel.tmpfiles.d.conf",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-03-16T12:34:09Z",
+      "side": 1,
+      "message": "Why not to create the tmp folder in systemd unit file?\nso there will be no secret knowledge here.\n\nAlso on every start systemd ensure the folder exist, which is better then on package install. Isn\u0027t it?\n\nBTW, maybe we do not need this at all? I meam who created it in the past after the server reboot?",
+      "parentUuid": "1a6ced46_639ea258",
+      "revId": "f2275b5e006ff9875684bb2d84f19a851f90e711",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
