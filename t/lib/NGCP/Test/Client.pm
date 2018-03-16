@@ -156,6 +156,17 @@ has '_crt_path' => (
     }
 );
 
+has 'remote_config' => (
+    is => 'ro',
+    isa => 'HashRef',
+    lazy => 1,
+    default => sub {
+        my ($self) = @_;
+        my($res) = $self->_get($self->_normalize_uri('/api/metaconfigdefs/'));
+        return from_json($res->decoded_content);
+    }
+);
+
 has 'last_rtt' => (
     is => 'rw',
     isa => 'Num',
