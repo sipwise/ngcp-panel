@@ -34,6 +34,24 @@
       "revId": "e001a97650e94a763f56575d3069c257062def28",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_e3e1b29b",
+        "filename": "debian/ngcp-panel.service",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-03-16T14:00:14Z",
+      "side": 1,
+      "message": "Just add an override config for the service file, controlled as a template file. See the various unit-service.override in the templates repo.",
+      "parentUuid": "1a6ced46_23658a45",
+      "revId": "e001a97650e94a763f56575d3069c257062def28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
