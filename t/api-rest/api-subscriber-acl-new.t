@@ -341,45 +341,79 @@ my $items;
     $test->inc_test_count();
     my $sub_ext_2 = $item;
     $sub_res->push_created_item($sub_ext_2);
-
     # can we change own subscriber?
-    $sub_res->test_put(
-        name => 'modify-put subscriber as subadmin',
-        item => $subadm_ext,
-        expected_result => { 
-            code => '403',
-            error_re => 'Read-only resource for authenticated role'
-        },
-    );
-    $sub_res->test_patch(
-        name => 'modify-patch subscriber as subadmin',
-        item => $subadm_ext,
-        data_replace => { field => 'username', value => 'test', op => 'replace' },
-        expected_result => { 
-            code => '403',
-            error_re => 'Read-only resource for authenticated role'
-        },
-    );
+    diag("Subscriberadmin access rights to subscribers: ".$sub_res->client->remote_config->{acl}->{subscriberadmin}->{subscribers});
+    if ($sub_res->client->remote_config->{acl}->{subscriberadmin}->{subscribers} !~ /write/ ) {
+        $sub_res->test_put(
+            name => 'modify-put subscriber as subadmin',
+            item => $subadm_ext,
+            expected_result => { 
+                code => '403',
+                error_re => 'Read-only resource for authenticated role'
+            },
+        );
+        $sub_res->test_patch(
+            name => 'modify-patch subscriber as subadmin',
+            item => $subadm_ext,
+            data_replace => { field => 'username', value => 'test', op => 'replace' },
+            expected_result => { 
+                code => '403',
+                error_re => 'Read-only resource for authenticated role'
+            },
+        );
 
-    # can we change other subscriber?
-    $sub_res->test_put(
-        name => 'modify-put other subscriber as subadmin',
-        item => $sub_ext,
-        expected_result => { 
-            code => '403',
-            error_re => 'Read-only resource for authenticated role'
-        },
-    );
-    $sub_res->test_patch(
-        name => 'modify-patch other subscriber as subadmin',
-        item => $sub_ext,
-        data_replace => { field => 'username', value => 'test', op => 'replace' },
-        expected_result => { 
-            code => '403',
-            error_re => 'Read-only resource for authenticated role'
-        },
-    );
+        # can we change other subscriber?
+        $sub_res->test_put(
+            name => 'modify-put other subscriber as subadmin',
+            item => $sub_ext,
+            expected_result => { 
+                code => '403',
+                error_re => 'Read-only resource for authenticated role'
+            },
+        );
+        $sub_res->test_patch(
+            name => 'modify-patch other subscriber as subadmin',
+            item => $sub_ext,
+            data_replace => { field => 'username', value => 'test', op => 'replace' },
+            expected_result => { 
+                code => '403',
+                error_re => 'Read-only resource for authenticated role'
+            },
+        );
+    } else {
+        $sub_res->test_put(
+            name => 'modify-put subscriber as subadmin',
+            item => $subadm_ext,
+            expected_result => { 
+                code => '200',
+            },
+        );
+        $sub_res->test_patch(
+            name => 'modify-patch subscriber as subadmin',
+            item => $subadm_ext,
+            data_replace => { field => 'username', value => 'test', op => 'replace' },
+            expected_result => { 
+                code => '200',
+            },
+        );
 
+        # can we change other subscriber?
+        $sub_res->test_put(
+            name => 'modify-put other subscriber as subadmin',
+            item => $sub_ext,
+            expected_result => { 
+                code => '200',
+            },
+        );
+        $sub_res->test_patch(
+            name => 'modify-patch other subscriber as subadmin',
+            item => $sub_ext,
+            data_replace => { field => 'username', value => 'test', op => 'replace' },
+            expected_result => { 
+                code => '200',
+            },
+        );    
+    }
 
     # can we fetch subscriber details of foreign customer?
     $items = $sub_res->test_get(
