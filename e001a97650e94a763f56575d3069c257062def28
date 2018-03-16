@@ -16,6 +16,24 @@
       "revId": "e001a97650e94a763f56575d3069c257062def28",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_23658a45",
+        "filename": "debian/ngcp-panel.service",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2018-03-16T13:20:50Z",
+      "side": 1,
+      "message": "\u003e Then systemd unit read it and started necessary amount of services,\n \u003e now you have hardcoded it :-(\n \u003e \n \u003e I am not sure the proper way here, probably we need to teach\n \u003e /usr/share/ngcp-panel/ngcp_panel_fastcgi.pl read some file to know\n \u003e the processes count instead of passing the argument :-(\n \u003e Better ideas?\n\nIt can override the variable in the systemd unit, I suppose.  Don\u0027t know the mechanics yet, but should be possible and the right way.\n\n(Either that, or keep /etc/default/ngcp-panel, or using another \"env file\" for the same purpose).",
+      "parentUuid": "1a6ced46_43e7e6e4",
+      "revId": "e001a97650e94a763f56575d3069c257062def28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
