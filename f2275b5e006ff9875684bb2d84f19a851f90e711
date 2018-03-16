@@ -34,6 +34,24 @@
       "revId": "f2275b5e006ff9875684bb2d84f19a851f90e711",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_43352645",
+        "filename": "debian/ngcp-panel.tmpfiles.d.conf",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2018-03-16T12:49:15Z",
+      "side": 1,
+      "message": "\u003e Why not to create the tmp folder in systemd unit file?\n \u003e so there will be no secret knowledge here.\n \u003e\n \u003e Also on every start systemd ensure the folder exist, which is\n \u003e better then on package install. Isn\u0027t it?\n\nI thought about that for the very same reasons, I decided to do it with tmpfiles.d because we did it that way for sems, and because it would mean several chained commands of ExecStartPre.\n\n\n \u003e BTW, maybe we do not need this at all? I meam who created it in the\n \u003e past after the server reboot?\n\nAs Guillem says, this feels wrong.\n\nHowever, who I am to judge ngcp-panel? :)  And it should be harmless even if unused, and in this way the behaviour of the old script is preserved, so it should be \"safe\" (even if unneeded).\n\nMaybe it was done just because during upgrades, if there was such directory created with a different user, the new version of the service could not start.\n\nPerhaps even the path is not even used and only /var/run/fastcgi or some of the other temp dirs are used for this?  Could any of you ask ngcp-panel people or read the Perl code?",
+      "parentUuid": "1a6ced46_23bbcac5",
+      "revId": "f2275b5e006ff9875684bb2d84f19a851f90e711",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
