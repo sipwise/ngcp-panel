@@ -1795,6 +1795,10 @@ msgstr ""
 msgid "Discard Changes"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Divert Outgoing Blocked Calls"
+msgstr ""
+
 #: share/templates/subscriber/webphone.tt
 msgid "Do Not Disturb"
 msgstr ""
@@ -3313,6 +3317,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, npdi parameter will be added if there is a LNP query."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If set to a number, any outbound calls which are blocked due to outbound block lists or NCOS levels are diverted to the given number."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
