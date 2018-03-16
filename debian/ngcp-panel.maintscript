@@ -1,0 +1,2 @@
+rm_conffile /etc/default/ngcp-panel 6.3.0.0+0~ ngcp-panel
+rm_conffile /etc/init.d/ngcp-panel 6.3.0.0+0~ ngcp-panel
