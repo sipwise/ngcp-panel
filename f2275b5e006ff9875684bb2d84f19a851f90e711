@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a6ced46_639ea258",
+        "filename": "debian/ngcp-panel.tmpfiles.d.conf",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-03-16T12:30:53Z",
+      "side": 1,
+      "message": "This still feels rather wrong, but meh, better than in the maintscript. :/ This really belongs in /run.",
+      "revId": "f2275b5e006ff9875684bb2d84f19a851f90e711",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
