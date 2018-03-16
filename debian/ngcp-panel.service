@@ -7,8 +7,8 @@ Requires=mariadb.service
 
 [Service]
 Type=notify
-EnvironmentFile=/etc/default/ngcp-panel
 Environment="HOME=/usr/share/ngcp-panel"
+Environment="NPROC=1"
 User=www-data
 Group=www-data
 RuntimeDirectory=fastcgi
