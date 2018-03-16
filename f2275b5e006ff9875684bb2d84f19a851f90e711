@@ -52,6 +52,24 @@
       "revId": "f2275b5e006ff9875684bb2d84f19a851f90e711",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_a3feda36",
+        "filename": "debian/ngcp-panel.tmpfiles.d.conf",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-03-16T14:05:23Z",
+      "side": 1,
+      "message": "\u003e Why not to create the tmp folder in systemd unit file?\n \u003e so there will be no secret knowledge here.\n\nBecause that\u0027s unsecure as any user can create the directory as a symlink or as a directory and populate it with symlinks for an attack or a DoS. Doing it via tmpfiles.d is secure because it\u0027s performed at boot, once, before any user has any chance of messing with /tmp.\n\nBut this still belongs in /run, really.\n\n \u003e Also on every start systemd ensure the folder exist, which is\n \u003e better then on package install. Isn\u0027t it?\n\nThe code in the maintscript needs to go too, yes.\n\n \u003e BTW, maybe we do not need this at all? I meam who created it in the\n \u003e past after the server reboot?\n\nIf the panel is using that dir, then the only secure option is to pre-create it via tmpfiles.d.",
+      "parentUuid": "1a6ced46_23bbcac5",
+      "revId": "f2275b5e006ff9875684bb2d84f19a851f90e711",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
