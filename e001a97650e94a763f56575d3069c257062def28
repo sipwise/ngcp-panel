@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a6ced46_43e7e6e4",
+        "filename": "debian/ngcp-panel.service",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-03-16T12:39:10Z",
+      "side": 1,
+      "message": "this is actually will not work I am afraid :-(\n\nIn the past \"ngcpcfg apply\" changed /etc/default/ngcp-panel see NPROC\u003d[% www_admin.fastcgi_workers %] :\n\nhttps://gerrit.mgm.sipwise.com/gitweb?p\u003dtemplates.git;a\u003dblob;f\u003dngcp-panel/ngcp-panel.default;h\u003d0eb78233993896a663cb55504093549860107e46;hb\u003dHEAD\n\n\nThen systemd unit read it and started necessary amount of services, now you have hardcoded it :-(\n\nI am not sure the proper way here, probably we need to teach \n/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl read some file to know the processes count instead of passing the argument :-( \nBetter ideas?",
+      "revId": "e001a97650e94a763f56575d3069c257062def28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
