@@ -52,6 +52,24 @@
       "revId": "e001a97650e94a763f56575d3069c257062def28",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_439fe603",
+        "filename": "debian/ngcp-panel.service",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-03-16T14:22:43Z",
+      "side": 1,
+      "message": "Yeah, overwrite should work here as well. Good point!",
+      "parentUuid": "1a6ced46_e3e1b29b",
+      "revId": "e001a97650e94a763f56575d3069c257062def28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
