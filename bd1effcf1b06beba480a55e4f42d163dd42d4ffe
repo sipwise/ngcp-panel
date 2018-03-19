@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a6ced46_c9193524",
+        "filename": "lib/NGCP/Panel/Role/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-19T14:01:14Z",
+      "side": 1,
+      "message": "isnt it more straight-forward to use $item-\u003esubscriber-\u003eid in sub process_hal_resource instead of +column for the rs resultrows?",
+      "revId": "bd1effcf1b06beba480a55e4f42d163dd42d4ffe",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
