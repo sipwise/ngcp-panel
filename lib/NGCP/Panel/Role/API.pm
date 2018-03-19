@@ -30,10 +30,10 @@ use NGCP::Panel::Utils::Journal qw();
 sub get_valid_data{
     my ($self, %params) = @_;
 
-    my ($data,$resource);
+    my ($data,$resource,$special_data_process);
 
     my $c = $params{c};
-    my $method = $params{method};
+    my $method = $params{method} // uc($c->request->method);
     my $media_type = $params{media_type};
     my $json_media_type = $params{json_media_type};#for rare specific cases, like text/csv
 
@@ -59,6 +59,7 @@ sub get_valid_data{
         return unless $self->require_body($c);
         $data = $c->stash->{body};
         $resource = $c->req->query_params;
+        $special_data_process = 1;
     }
 
     #if($json_media_type =~/json/i){
@@ -75,9 +76,10 @@ sub get_valid_data{
         }
         return unless $self->get_uploads($c, $json, $params{uploads}, $params{form});
         $resource = $json;
+        $special_data_process = 0;
     }
 
-    return ($resource, $data);
+    return ($resource, $data, $special_data_process);
 }
 
 sub get_valid_post_data {
@@ -560,6 +562,7 @@ sub require_valid_patch {
 
     return 1;
 }
+
 sub item_by_id_valid {
     my ($self, $c, $id) = @_;
     return unless $self->valid_id($c, $id);
@@ -567,6 +570,7 @@ sub item_by_id_valid {
     return unless $self->resource_exists($c, $self->item_name => $item);
     return $item;
 }
+
 sub resource_exists {
     my ($self, $c, $entity_name, $resource) = @_;
     return 1 if $resource;
@@ -1218,14 +1222,18 @@ sub return_representation_post{
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
-    $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-        $hal->http_headers,
-    ), $hal->as_json);
 
     $c->response->status(HTTP_CREATED);
-    $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
-    if ('minimal' eq $preference) {
+
+    if ($item) {
+        $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
+        $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            $hal->http_headers,
+        ), $hal->as_json);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
+    }
+
+    if ('minimal' eq $preference || !$response) {
         $c->response->body(q());
     }else{
         $c->response->body($response->content);
