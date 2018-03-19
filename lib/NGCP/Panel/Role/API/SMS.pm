@@ -35,31 +35,33 @@ sub hal_links {
 sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
     $resource->{time} = NGCP::Panel::Utils::DateTime::to_string($resource->{time});
+    $resource->{subscriber_id} = $item->get_column('billing_voip_subscriber_id');
     return $resource;
 }
 
 sub _item_rs {
     my ($self, $c) = @_;
-    my $item_rs;
+
+    my $item_rs = $c->model('DB')->resultset('sms_journal')->search_rs(undef , {
+        join => { provisioning_voip_subscriber => 'voip_subscriber' },
+        '+columns' => { 'billing_voip_subscriber_id' => 'voip_subscriber.id' },
+    });
 
     if($c->user->roles eq "admin") {
-        $item_rs = $c->model('DB')->resultset('sms_journal');
     } elsif ($c->user->roles eq "reseller") {
         my $reseller_id = $c->user->reseller_id;
-        $item_rs = $c->model('DB')->resultset('sms_journal')
-            ->search_rs({
-                    'reseller_id' => $reseller_id,
-                } , {
-                    join => { provisioning_voip_subscriber => {'subscriber' => {'contract' => 'contact'} } },
-                });
+        $item_rs = $item_rs->search_rs({
+                'reseller_id' => $reseller_id,
+            } , {
+                join => { provisioning_voip_subscriber => {'voip_subscriber' => {'contract' => 'contact'} } },
+            });
     } elsif ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
         my $subscriber_uuid = $c->user->uuid;
-        $item_rs = $c->model('DB')->resultset('sms_journal')
-            ->search_rs({
-                    'provisioning_voip_subscriber.uuid' => $subscriber_uuid,
-                } , {
-                    join => 'provisioning_voip_subscriber',
-                });
+        $item_rs = $item_rs->search_rs({
+                'provisioning_voip_subscriber.uuid' => $subscriber_uuid,
+            } , {
+                join => 'provisioning_voip_subscriber',
+            });
     }
 
     return $item_rs;
