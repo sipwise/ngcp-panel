@@ -25,6 +25,7 @@ use NGCP::Panel::Utils::Fax;
 use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::Phonebook;
 
 use UUID;
 
@@ -182,6 +183,13 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         { name => "source_uuid", search => 1, title => $c->loc('Source UUID') },
     ]);
 
+    $c->stash->{phonebook_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "name", search => 1, title => $c->loc("Name") },
+        { name => "number", search => 1, title => $c->loc("Number") },
+        { name => "shared", search => 1, title => $c->loc("Shared") },
+    ]);
+
     if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
         $c->stash->{pbx_groups} = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_rs(
             c => $c,
@@ -201,6 +209,8 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     },{
         join => 'group',
     });
+
+    $c->stash->{phonebook} = $c->stash->{subscriber}->phonebook;
 }
 
 sub webfax :Chained('base') :PathPart('webfax') :Args(0) {
@@ -4853,6 +4863,192 @@ sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
     $c->response->content_type('text/html');
     $c->response->body($pkg->{payload});
 
+}
+
+sub phonebook_ajax :Chained('base') :PathPart('phonebook/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    NGCP::Panel::Utils::Datatables::process($c,
+        @{$c->stash}{qw(phonebook phonebook_dt_columns)});
+    $c->detach( $c->view("JSON") );
+}
+
+sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $subscriber = $c->stash->{subscriber};
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::Subscriber", $c);
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                $c->model('DB')->resultset('subscriber_phonebook')->create({
+                    subscriber_id => $subscriber->id,
+                    name => $form->values->{name},
+                    number => $form->values->{number},
+                    shared => $form->values->{shared},
+                });
+            });
+
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc => $c->loc('Phonebook entry successfully created'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create phonebook entry.'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/subscriber/details", [$subscriber->id]));
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action("/subscriber/details", [$subscriber->id]),
+        create_flag => 1,
+        form => $form
+    );
+}
+
+sub phonebook_base :Chained('base') :PathPart('phonebook') :CaptureArgs(1) {
+    my ($self, $c, $phonebook_id) = @_;
+
+    unless($phonebook_id && is_int($phonebook_id)) {
+        $phonebook_id //= '';
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            data => { id => $phonebook_id },
+            desc => $c->loc('Invalid phonebook id detected'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    my $res = $c->stash->{subscriber}->phonebook->find($phonebook_id);
+    unless(defined($res)) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            desc => $c->loc('Phonebook entry does not exist'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    $c->stash(phonebook => {$res->get_inflated_columns},
+              phonebook_result => $res);
+}
+
+sub phonebook_edit :Chained('phonebook_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $subscriber = $c->stash->{subscriber};
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::Subscriber", $c);
+    my $params = $c->stash->{phonebook};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                $c->stash->{'phonebook_result'}->update({
+                    name => $form->values->{name},
+                    number => $form->values->{number},
+                    shared => $form->values->{shared},
+                });
+            });
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc  => $c->loc('Phonebook entry successfully updated'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update phonebook entry'),
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/subscriber/details", [$subscriber->id]));
+
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action("/subscriber/details", [$subscriber->id]),
+        edit_flag => 1,
+        form => $form
+    );
+}
+
+sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $subscriber = $c->stash->{subscriber};
+    my $phonebook = $c->stash->{phonebook_result};
+
+    try {
+        $phonebook->delete;
+        NGCP::Panel::Utils::Message::info(
+            c => $c,
+            data => $c->stash->{phonebook},
+            desc => $c->loc('Phonebook entry successfully deleted'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            data  => $c->stash->{phonebook},
+            desc  => $c->loc('Failed to delete phonebook entry'),
+        );
+    };
+
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/subscriber/details", [$subscriber->id]));
+}
+
+sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $subscriber = $c->stash->{subscriber};
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::Upload", $c);
+    NGCP::Panel::Utils::Phonebook::ui_upload_csv(
+        $c, $c->stash->{phonebook}, $form, 'subscriber', $subscriber->id,
+        $c->uri_for_action('/subscriber/phonebook_upload_csv',[$subscriber->id]),
+        $c->uri_for_action('/subscriber/details',[$subscriber->id])
+    );
+
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+    return;
+}
+
+sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $subscriber = $c->stash->{subscriber};
+    $c->response->header ('Content-Disposition' => 'attachment; filename="subscriber_phonebook_entries.csv"');
+    $c->response->content_type('text/csv');
+    $c->response->status(200);
+    NGCP::Panel::Utils::Phonebook::download_csv(
+        $c, $c->stash->{phonebook}, 'subscriber', $subscriber->id
+    );
+    return;
 }
 
 =head1 AUTHOR
