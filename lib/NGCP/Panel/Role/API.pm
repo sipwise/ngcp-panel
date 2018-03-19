@@ -30,7 +30,7 @@ use NGCP::Panel::Utils::Journal qw();
 sub get_valid_data{
     my ($self, %params) = @_;
 
-    my ($data,$resource);
+    my ($data,$resource,$special_data_process);
 
     my $c = $params{c};
     my $method = $params{method};
@@ -59,6 +59,7 @@ sub get_valid_data{
         return unless $self->require_body($c);
         $data = $c->stash->{body};
         $resource = $c->req->query_params;
+        $special_data_process = 1;
     }
 
     #if($json_media_type =~/json/i){
@@ -75,9 +76,10 @@ sub get_valid_data{
         }
         return unless $self->get_uploads($c, $json, $params{uploads}, $params{form});
         $resource = $json;
+        $special_data_process = 0;
     }
 
-    return ($resource, $data);
+    return ($resource, $data, $special_data_process);
 }
 
 sub get_valid_post_data {
@@ -1218,14 +1220,18 @@ sub return_representation_post{
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
-    $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-        $hal->http_headers,
-    ), $hal->as_json);
 
     $c->response->status(HTTP_CREATED);
-    $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
-    if ('minimal' eq $preference) {
+
+    if ($item) {
+        $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
+        $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            $hal->http_headers,
+        ), $hal->as_json);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
+    }
+
+    if ('minimal' eq $preference || !$response) {
         $c->response->body(q());
     }else{
         $c->response->body($response->content);
