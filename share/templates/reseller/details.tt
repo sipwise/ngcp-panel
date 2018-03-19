@@ -365,6 +365,7 @@
             </div>
         </div>
     </div>
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_intemplate">[% c.loc('Invoice Templates') %]</a>
@@ -402,6 +403,44 @@
             </div>
         </div>
     </div>
+
+    [% IF c.user.roles == "admin" || c.user.roles == "reseller" -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_phonebook">[% c.loc('Phonebook') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_phonebook">
+            <div class="accordion-inner">
+
+[%
+    helper.name = c.loc('Phonebook');
+    helper.identifier = 'phonebook';
+    helper.messages = messages;
+    helper.length_change = 1;
+    helper.dt_columns = phonebook_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/reseller/phonebook_ajax', [ c.req.captures.0 ]);
+    helper.tmpuri = c.uri_for(reseller.first.id, 'phonebook');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Phonebook Entry'), uri = c.uri_for_action('/reseller/phonebook_create', c.req.captures), class = 'btn-small btn-primary', icon = 'icon-star' },
+            { name = c.loc('Download CSV'), uri = c.uri_for_action('/reseller/phonebook_download_csv', c.req.captures), class = 'btn-small btn-primary', icon = 'icon-star' },
+            { name = c.loc('Upload CSV'), uri = c.uri_for_action('/reseller/phonebook_upload_csv', c.req.captures), class = 'btn-small btn-primary', icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+%]
+
+            </div>
+        </div>
+    </div>
+    [% END -%]
+
 </div>
 
 [% IF edit_flag || create_flag -%]
