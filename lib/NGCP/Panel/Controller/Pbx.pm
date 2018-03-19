@@ -6,6 +6,7 @@ use parent 'Catalyst::Controller';
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::Phonebook;
 
 sub auto :Private {
     my ($self, $c) = @_;
