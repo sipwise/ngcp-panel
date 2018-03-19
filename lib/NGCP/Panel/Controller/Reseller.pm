@@ -16,6 +16,7 @@ use NGCP::Panel::Utils::BillingNetworks qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Billing qw();
 use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Utils::Phonebook;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -218,6 +219,12 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         { name => 'name', search => 1, title => $c->loc('Name') },
         NGCP::Panel::Utils::ProfilePackages::get_datatable_cols($c),
     ]);
+
+    $c->stash->{phonebook_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "name", search => 1, title => $c->loc("Name") },
+        { name => "number", search => 1, title => $c->loc("Number") },
+    ]);
     
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
     unless($c->stash->{reseller}->first) {
@@ -229,6 +236,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
     $c->stash->{branding} = $c->stash->{reseller}->first->branding;
+    $c->stash->{phonebook} = $c->stash->{reseller}->first->phonebook;
 }
 
 sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
@@ -672,8 +680,162 @@ sub get_branding_css :Chained('base') :PathPart('css/download') :Args(0) {
     $c->response->body($branding->css);
 }
 
-1;
+sub phonebook_ajax :Chained('base') :PathPart('phonebook/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    NGCP::Panel::Utils::Datatables::process($c,
+        @{$c->stash}{qw(phonebook phonebook_dt_columns)});
+    $c->detach( $c->view("JSON") );
+}
 
+sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::Reseller", $c);
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                $c->model('DB')->resultset('reseller_phonebook')->create({
+                    reseller_id => $reseller->id,
+                    name => $form->values->{name},
+                    number => $form->values->{number},
+                });
+            });
+
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc => $c->loc('Phonebook entry successfully created'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create phonebook entry.'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action("/reseller/details", [$reseller->id]),
+        create_flag => 1,
+        form => $form
+    );
+}
+
+sub phonebook_base :Chained('base') :PathPart('phonebook') :CaptureArgs(1) {
+    my ($self, $c, $phonebook_id) = @_;
+
+    unless($phonebook_id && is_int($phonebook_id)) {
+        $phonebook_id //= '';
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            data => { id => $phonebook_id },
+            desc => $c->loc('Invalid phonebook id detected'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    my $res = $c->stash->{reseller}->first->phonebook->find($phonebook_id);
+    unless(defined($res)) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            desc => $c->loc('Phonebook entry does not exist'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    $c->stash(phonebook => {$res->get_inflated_columns},
+              phonebook_result => $res);
+}
+
+sub phonebook_edit :Chained('phonebook_base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::Reseller", $c);
+    my $params = $c->stash->{phonebook};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                $c->stash->{'phonebook_result'}->update({
+                    name => $form->values->{name},
+                    number => $form->values->{number},
+                });
+            });
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc  => $c->loc('Phonebook entry successfully updated'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update phonebook entry'),
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
+
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action("/reseller/details", [$reseller->id]),
+        edit_flag => 1,
+        form => $form
+    );
+}
+
+sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $phonebook = $c->stash->{phonebook_result};
+
+    try {
+        $phonebook->delete;
+        NGCP::Panel::Utils::Message::info(
+            c => $c,
+            data => $c->stash->{phonebook},
+            desc => $c->loc('Phonebook entry successfully deleted'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            data  => $c->stash->{phonebook},
+            desc  => $c->loc('Failed to delete phonebook entry'),
+        );
+    };
+
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
+}
+
+1;
 
 __END__
 
