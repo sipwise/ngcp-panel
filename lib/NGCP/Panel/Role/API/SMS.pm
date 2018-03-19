@@ -35,6 +35,15 @@ sub hal_links {
 sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
     $resource->{time} = NGCP::Panel::Utils::DateTime::to_string($resource->{time});
+    my $subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+        'me.id' => $item->subscriber_id,
+        'voip_subscriber.status' => 'active',
+    },{
+        'join' => 'voip_subscriber',
+        '+columns' => { 'billing_voip_subscriber_id' => 'voip_subscriber.id' },
+    })->first;
+    #we have cascade deletion from provisioning.sms_journal, based on  provisioning.voip_subscribers.id, so for every sms we always will have acrive subscriber
+    $resource->{subscriber_id} = $subscriber->get_column('billing_voip_subscriber_id');
     return $resource;
 }
 
