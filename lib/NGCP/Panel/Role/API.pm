@@ -30,54 +30,55 @@ use NGCP::Panel::Utils::Journal qw();
 sub get_valid_data{
     my ($self, %params) = @_;
 
-    my ($data,$resource);
+    my ($data,$resource,$special_data_process);
 
     my $c = $params{c};
-    my $method = $params{method};
+    my $method = $params{method} // uc($c->request->method);
     my $media_type = $params{media_type};
     my $json_media_type = $params{json_media_type};#for rare specific cases, like text/csv
 
     return unless $self->forbid_link_header($c);
 
-    if(('POST' eq $method) || ('PUT' eq $method) ){
+    if ($method =~ /^(GET|PUT|POST)$/) {
         $json_media_type //=  'application/json';
-    }elsif('PATCH' eq $method){
+    } elsif ($method eq 'PATCH') {
         $json_media_type //= 'application/json-patch+json';
     }
     return unless $self->valid_media_type($c, $media_type);
 
-    if(('PUT' eq $method) || ('PATCH' eq $method)){
+    if ($method =~ /^(PUT|PATCH)$/) {
         my $id = $params{id};
         return unless $self->valid_id($c, $id);
     }
 
     my ($json_raw,$json);
-    if('multipart/form-data' eq $c->req->headers->content_type){
+    if ($c->req->headers->content_type eq 'multipart/form-data') {
         return unless $self->require_uploads($c);
         $json_raw = $c->req->param('json');
-    }else{
+    } else {
         return unless $self->require_body($c);
         $data = $c->stash->{body};
         $resource = $c->req->query_params;
+        $special_data_process = 1;
     }
 
-    #if($json_media_type =~/json/i){
-    if($json_media_type eq 'application/json'
-        || $json_media_type eq 'application/json-patch+json' ){
+    if ($json_media_type eq 'application/json' ||
+        $json_media_type eq 'application/json-patch+json' ) {
 
         $json_raw //= $data;
 
         return unless $self->require_wellformed_json($c, $json_media_type, $json_raw);
         $json = JSON::from_json($json_raw, { utf8 => 1 });
-        if('PATCH' eq $method){
+        if ($method eq 'PATCH') {
             my $ops = $params{ops} // [qw/replace copy/];
             return unless $self->require_valid_patch($c, $json, $ops);
         }
         return unless $self->get_uploads($c, $json, $params{uploads}, $params{form});
         $resource = $json;
+        $special_data_process = 0;
     }
 
-    return ($resource, $data);
+    return ($resource, $data, $special_data_process);
 }
 
 sub get_valid_post_data {
@@ -560,6 +561,7 @@ sub require_valid_patch {
 
     return 1;
 }
+
 sub item_by_id_valid {
     my ($self, $c, $id) = @_;
     return unless $self->valid_id($c, $id);
@@ -567,6 +569,7 @@ sub item_by_id_valid {
     return unless $self->resource_exists($c, $self->item_name => $item);
     return $item;
 }
+
 sub resource_exists {
     my ($self, $c, $entity_name, $resource) = @_;
     return 1 if $resource;
@@ -1218,14 +1221,18 @@ sub return_representation_post{
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
-    $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-        $hal->http_headers,
-    ), $hal->as_json);
 
     $c->response->status(HTTP_CREATED);
-    $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
-    if ('minimal' eq $preference) {
+
+    if ($item) {
+        $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
+        $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            $hal->http_headers,
+        ), $hal->as_json);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
+    }
+
+    if ('minimal' eq $preference || !$response) {
         $c->response->body(q());
     }else{
         $c->response->body($response->content);
