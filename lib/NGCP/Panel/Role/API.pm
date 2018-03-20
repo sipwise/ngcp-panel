@@ -1218,14 +1218,18 @@ sub return_representation_post{
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
-    $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-        $hal->http_headers,
-    ), $hal->as_json);
 
     $c->response->status(HTTP_CREATED);
-    $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
-    if ('minimal' eq $preference) {
+
+    if ($item) {
+        $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
+        $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            $hal->http_headers,
+        ), $hal->as_json);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
+    }
+
+    if ('minimal' eq $preference || !$response) {
         $c->response->body(q());
     }else{
         $c->response->body($response->content);

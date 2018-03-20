@@ -15,15 +15,13 @@ use NGCP::Panel::Utils::MySQL;
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PhonebookEntries/;
 
-
-
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin/],
+    POST => {
+        'ContentType' => ['text/csv', 'application/json'],
+    },
+    allowed_roles   => [qw/admin reseller subscriberadmin subscriber/],
+    allowed_methods => [qw/GET POST DELETE OPTIONS HEAD/],
 });
-
-sub allowed_methods{
-    return [qw/GET POST DELETE OPTIONS HEAD/];
-}
 
 sub api_description {
     return 'Defines Phonebook number entries. You can POST numbers individually one-by-one using json. To bulk-upload numbers, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/phonebookentries/?purge_existing=true"';
@@ -80,7 +78,7 @@ sub query_params {
 
 sub check_create_csv :Private {
     my ($self, $c) = @_;
-    return 'lnp_list.csv';
+    return 'phonebookentries_list.csv';
 }
 
 sub create_csv :Private {
@@ -90,67 +88,9 @@ sub create_csv :Private {
     );
 }
 
-sub GET :Allow {
-    my ($self, $c) = @_;
-    my $header_accept = $c->request->header('Accept');
-    if(defined $header_accept && $header_accept eq 'text/csv') {
-        $self->return_csv($c); #,$self->item_rs($c,$c->request->params->{'actual'});
-        return;
-    }
-    my $page = $c->request->params->{page} // 1;
-    my $rows = $c->request->params->{rows} // 10;
-    {
-        my $items = $self->item_rs($c,
-            $c->request->params->{'actual'},
-            $c->request->params->{'number'});
-        #my $t1 = time;
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
-        #my $t2 = time; print(($t2 - $t1) . "secs\n"); $t1 = time;
-        #my @test = $items->all;
-        #$t2 = time; print("page: " . ($t2 - $t1) . "secs\n"); $t1 = time;
-        my (@embedded, @links);
-        my $form = $self->get_form($c);
-        for my $item ($items->all) {
-            push @embedded, $self->hal_from_item($c, $item, $form);
-            push @links, Data::HAL::Link->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
-            );
-        }
-        push @links,
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
-        if(($total_count / $rows) > $page ) {
-            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
-        }
-        if($page > 1) {
-            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
-        }
 
-        my $hal = Data::HAL->new(
-            embedded => [@embedded],
-            links => [@links],
-        );
-        $hal->resource({
-            total_count => $total_count,
-        });
-        my $response = HTTP::Response->new(HTTP_OK, undef,
-            HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
-        return;
-    }
-    return;
-}
-
-sub POST :Allow {
-    my ($self, $c) = @_;
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {

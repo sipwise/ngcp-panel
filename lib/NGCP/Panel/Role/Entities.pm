@@ -248,39 +248,69 @@ sub post {
     my ($c) = @_;
     my $guard = $self->get_transaction_control($c);
     {
-       my ($form) = $self->get_form($c, 'add');
+
+        my $schema = $c->model('DB');
+        my $resource;
+        my $data = $self->get_valid_raw_post_data(
+            c => $c, 
+            media_type => [qw#application/json text/csv#],
+        );
+        last unless $data;
+
+        #instead of type parameter get_form can check request method
+        my ($form) = $self->get_form($c, 'add');
         my $method_config = $self->config->{action}->{POST};
         my $process_extras= {};
-        my ($resource) = $self->get_valid_data(
+        my ($resource, $data) = $self->get_valid_data(
             c               => $c,
-            method          =>  'POST',
-            media_type      =>  $method_config->{ContentType} // 'application/json',
+            method          => 'POST',
+            media_type      => $method_config->{ContentType} // 'application/json',
             uploads         => $method_config->{Uploads} // [] ,
             form            => $form,
         );
         last unless $resource;
-        #instead of type parameter get_form can check request method
-        last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
-        last unless $resource;
-        last unless $self->check_duplicate($c, undef, undef, $resource, $form, $process_extras);
-        last unless $self->check_resource($c, undef, undef, $resource, $form, $process_extras);
+        my ($item,$data_processed_result);
+        if (!$data) {
+            delete $resource->{purge_existing};
+            last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
+            last unless $self->validate_form(
+                c => $c,
+                resource => $resource,
+                form => $form,
+            );
+            last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
+            last unless $resource;
+            last unless $self->check_duplicate($c, undef, undef, $resource, $form, $process_extras);
+            last unless $self->check_resource($c, undef, undef, $resource, $form, $process_extras);
 
-        my $item = $self->create_item($c, $resource, $form, $process_extras);
-        last unless $item;
-
+            $item = $self->create_item($c, $resource, $form, $process_extras);
+            last unless $item;
+        } else {
+            try {
+                #$processed_ok(array), $processed_failed(array), $info, $error
+                $data_processed_result = $self->upload_data( 
+                    c        => $c, 
+                    data     => \$data, 
+                    resource => $resource,
+                    form     => $form,
+                    process_extras => $process_extras,
+                );
+            } catch($e) {
+                $c->log->error("failed to upload csv: $e");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                last;
+            };
+        }
         $self->complete_transaction($c);
 
         $self->post_process_commit($c, 'create', $item, undef, $resource, $form, $process_extras);
 
         return if defined $c->stash->{api_error_message};
 
-        $self->return_representation_post($c, 'item' => $item, 'form' => $form );
+        $self->return_representation_post($c, 
+            'item' => $item, 
+            'form' => $form, 
+            data_processed_result => $data_processed_result );
     }
     return;
 }

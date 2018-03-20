@@ -5,14 +5,10 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Utils::Lnp qw();
-
-
 
 sub resource_name{
     return 'phonebookentries';
@@ -25,99 +21,167 @@ sub dispatch_path{
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-phonebookentries';
 }
+
 sub _item_rs {
-    my ($self, $c, $now, $number) = @_;
-    return NGCP::Panel::Utils::Lnp::get_lnpnumber_rs($c, $now, $number);
+    my ($self, $c) = @_;
+    my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
+    return unless $owner;
+    my $method = 'get_'.$type.'_phonebook_rs';
+    my $item_rs = &{$method}($c, $value, $type);
+    return $item_rs;
 }
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::get("NGCP::Panel::Form::Lnp::Number", $c); #no bottleneck
+    if($c->user->roles eq "admin") {
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::AdminAPI", $c);
+    } elsif ($c->user->roles eq "reseller") {
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
+    } elsif ($c->user->roles eq 'subscriber' 
+        || $c->user->roles eq 'subscriberadmin') {
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Phone::SubscriberAPI", $c);
+    }
 }
 
-sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
-    my %resource = $item->get_inflated_columns; #no bottleneck
+sub check_owner_params {
+    my($self, $c) = @_;
+    my %allowed_params;
+    if ($c->user->roles eq "admin") {
+        @allowed_params{qw/reseller_id contract_id subscriber_id/} = (1) x 3;
+    } elsif ($c->user->roles eq "reseller") {
+        @allowed_params{qw/contract_id subscriber_id/} = (1) x 3;
+    } elsif ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        @allowed_params{qw/subscriber_id/} = (1) x 3;
+    }
 
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:lnpcarriers', href => sprintf("/api/lnpcarriers/%d", $item->lnp_provider_id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
+    my $params = $c->request->params;
+    my %owner_params = 
+        map { $_ => $params->{$_} } 
+        grep { exists $params->{$_} } 
+            (qw/reseller_id contract_id subscriber_id/);
 
-    $form //= $self->get_form($c);
-
-    $self->validate_form(
-        c => $c,
-        resource => \%resource,
-        form => $form,
-        run => 0,
-    );
-
-    $resource{id} = int($item->id);
-    $resource{carrier_id} = delete $resource{lnp_provider_id};
-    $resource{start} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $resource{start};
-    $resource{end} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $resource{end};
-    $hal->resource({%resource});
-    return $hal;
-}
-
-sub resource_from_item {
-    my ($self, $c, $item) = @_;
-    my $r = { $item->get_inflated_columns };
-    $r->{carrier_id} = delete $r->{lnp_provider_id};
-    $r->{start} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $r->{start};
-    $r->{end} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $r->{end};
-    return $r;
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c); #no bottleneck
-    return $item_rs->find($id);
-}
-
-sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
-
-    $form //= $self->get_form($c);
-    $resource->{lnp_provider_id} = delete $resource->{carrier_id};
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-    );
-
-    my $carrier = $c->model('DB')->resultset('lnp_providers')->find($resource->{lnp_provider_id});
-    unless($carrier) {
-        $c->log->error("invalid carrier_id '$$resource{lnp_provider_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist");
+    if (!grep { exists $allowed_params{$_}} keys %owner_params) {
+        $c->log->error('"'.join('" or "', keys %allowed_params).'" should be specified');
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, '"'.join('" or "', keys %allowed_params).'" should be specified.');
         return;
     }
 
-    $resource->{start} ||= undef;
-    if($resource->{start} && $resource->{start} =~ /^\d{4}-\d{2}-\d{2}$/) {
-        $resource->{start} .= 'T00:00:00';
+    if (1 < scalar keys %owner_params) {
+        $c->log->error('Too many owners: '.join(',',keys %owner_params));
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Only one of the reseller_id, contract_id,subscriber_id can be specified.");
+        return;
     }
-    $resource->{end} ||= undef;
-    if($resource->{end} && $resource->{end} =~ /^\d{4}-\d{2}-\d{2}$/) {
-        $resource->{end} .= 'T23:59:59';
+    my ($parameter,$value) = each %owner_params;
+    my ($owner,$type);
+    if ('reseller_id' eq $parameter) {
+        $type = 'reseller';
+        $owner = $c->model('DB')->resultset('resellers')->find($value);
+    } elsif ('contract_id' eq $parameter) {
+        $type = 'contract';
+        if ($c->user->roles eq "admin") {
+            $owner = $c->model('DB')->resultset('contracts')->find($value);
+        } elsif ($c->user->roles eq "reseller") {
+            $owner = $c->model('DB')->resultset('contracts')->find({
+                    id => $value,
+                    'contact.reseller_id' => $c->user->reseller_id,
+                },{ 
+                    join => 'contact',
+                });
+        }
+    } elsif ('subscriber_id' eq $parameter) {
+        $type = 'subscriber';
+        if ($c->user->roles eq "admin") {
+            $owner = $c->model('DB')->resultset('voip_subscribers')->find($value);
+        } elsif ($c->user->roles eq "reseller") {
+            $owner = $c->model('DB')->resultset('voip_subscribers')->find({
+                    id => $value,
+                    'contact.reseller_id' => $c->user->reseller_id,
+                },{ 
+                    join => { 'contract' => 'contact' },
+                });
+        } elsif ($c->user->roles eq "subscriberadmin") {
+            $owner = $c->model('DB')->resultset('voip_subscribers')->find({
+                    id => $value,
+                    'contract.id' => $c->user->contract->id,
+                },{ 
+                    join => 'contract',
+                });
+        } elsif ($c->user->roles eq "subscriber") {
+            $value = $c->user->voip_subscriber->id;
+            $owner = $c->model('DB')->resultset('voip_subscribers')->find({
+                    id => $c->user->voip_subscriber->id,
+                });
+        }
     }
+    unless($owner) {
+        $c->log->error("Unknown $parameter value '$value'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $parameter value '$value'");
+        return;
+    }
+    return ($owner,$type,$parameter,$value);
+}
 
-    $item->update($resource);
-    $item->discard_changes;
+sub get_reseller_phonebook_rs {
+    my ($c, $reseller_id, $context) = @_;
 
-    return $item;
+    return $reseller_pb_rs = $c->model('DB')->resultset('reseller_phonebook')->search({
+            reseller_id => $reseller_id,
+        },{
+            columns => [qw/id name number/,
+            {
+                'owner_type' => $context ? $context : \'reseller',
+                'owner_id' => 'reseller_id',
+                'shared'   => \'0',
+            }],
+        });
+}
+
+sub get_contract_phonebook_rs {
+    my ($c, $contract_id, $context) = @_;
+
+    my $contract_rs = $c->model('DB')->resultset('contracts')->search({
+        id => $contract_id,
+    });
+    my $reseller_pb_rs = get_reseller_phonebook_rs($c, $contract_rs->contact->reseller->id, 'contract');
+    my $contract_pb_rs = $c->model('DB')->resultset('reseller_phonebook')->search({
+            contract_id => $contract_id,
+        },{
+            columns => [qw/id name number/,
+            {
+                'owner_type' => $context ? $context : \'contract',
+                'owner_id' => 'contract_id',
+                'shared'   => \'0',
+            }],
+        });
+    return $contract_pb_rs->union_all($reseller_pb_rs);
+}
+
+sub get_subscriber_phonebook_rs {
+    my ($c, $subscriber_id) = @_;
+
+    my $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+        id => $subscriber_id,
+    });
+
+    my $reseller_pb_rs = get_reseller_phonebook_rs($c, $subscriber_rs->contract->contact->reseller->id, 'subscriber');
+    my $contract_pb_rs = get_reseller_phonebook_rs($c, $subscriber_rs->contract->id, 'subscriber');
+        my $subscriber_pb_rs = $c->model('DB')->resultset('subscriber_phonebook')->search({
+            -or => [
+                subscriber_id => $subscriber_id,
+                { shared => 1,
+                  'subscriber.contract_id' => $subscriber_rs->contract->id,
+                },
+            ],
+        },{
+            columns => [qw/id name number/,
+            {
+                'owner_type' =>  \['?', [{} => $context ? $context : 'subscriber']],
+                'owner_id' => 'contract_id',
+                'shared'   => 'shared',
+            }],
+            'join' => 'contract',
+        });
+    return $subscriber_pb_rs->union_all($contract_pb_rs,$reseller_pb_rs);
 }
 
 1;
