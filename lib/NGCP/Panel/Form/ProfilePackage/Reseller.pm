@@ -105,8 +105,10 @@ has_field 'balance_interval_start_mode' => (
     type => 'Select',
     label => 'Balance Interval Start',
     options => [
-        { value => '1st', label => '1st day of month' },
-        { value => 'create', label => 'upon customer creation' },
+        { value => '1st', label => '1st day of month, at 00:00 system time' },
+        { value => '1st_tz', label => '1st day of month, at 00:00 contract time' },
+        { value => 'create', label => 'customer creation date, at 00:00 system time' },
+        { value => 'create_tz', label => 'customer creation date, at 00:00 contract time' },
         { value => 'topup_interval', label => 'start interval upon top-up' },
         { value => 'topup', label => 'new interval for each top-up' },
     ],
