@@ -22,6 +22,30 @@
       "revId": "2b24dac5178b506baa8df1b75eb3f8645518fc60",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_e92b5192",
+        "filename": "lib/NGCP/Panel/Utils/Phonebook.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-20T07:17:40Z",
+      "side": 1,
+      "message": "I think subscriber.contract_id was meant here, and then no join with contract is necessary.",
+      "parentUuid": "1a6ced46_a92159b6",
+      "range": {
+        "startLine": 74,
+        "startChar": 9,
+        "endLine": 74,
+        "endChar": 29
+      },
+      "revId": "2b24dac5178b506baa8df1b75eb3f8645518fc60",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
