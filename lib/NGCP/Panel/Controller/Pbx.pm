@@ -134,13 +134,17 @@ sub spa_directory_list :Chained('base') :PathPart('pbx/directory/spa') :Args(1) 
     }
 
     my @entries = ();
+    my %entries = ();
     foreach my $sub($rs->search(undef,{page => $page, rows => $rows})->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
         my $display_name = $sub->get_column('display_name');
         push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+        $entries{$prov_sub->pbx_extension} = 1;
     }
 
+    $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
+    
     my $nexturi =  $baseuri . $delim . 'page='.($nextpage//0);
     my $prevuri = $baseuri . $delim . 'page='.($prevpage//0);
     
@@ -208,12 +212,16 @@ sub panasonic_directory_list :Chained('base') :PathPart('pbx/directory/panasonic
 	my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
+    my %entries = ();
     foreach my $sub($rs->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
         my $display_name = $sub->get_column('display_name');
         push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+        $entries{$prov_sub->pbx_extension} = 1;
     }
+
+    $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
 
     my $data = 
 '<?xml version="1.0" encoding="utf-8"?>
@@ -288,12 +296,16 @@ sub yealink_directory_list :Chained('base') :PathPart('pbx/directory/yealink') :
 	my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
+    my %entries = ();
     foreach my $sub($rs->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
         my $display_name = $sub->get_column('display_name');
         push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+        $entries{$prov_sub->pbx_extension} = 1;
     }
+
+    $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
 
     my $data = 
 '<?xml version="1.0" encoding="utf-8"?>
@@ -359,13 +371,22 @@ sub polycom_directory_list :Chained('base') :PathPart('pbx/directory/polycom') :
 	my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
+    my %entries = ();
     foreach my $sub($rs->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
         my $display_name = $sub->get_column('display_name');
-        my ($fname, @rest) = split / +/, $display_name;
+        push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+        $entries{$prov_sub->pbx_extension} = 1;
+    }
+
+    $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
+
+    foreach my $entry (@entries) {
+        my ($fname, @rest) = split / +/, $entry->{name};
         my $lname = join ' ', @rest;
-        push @entries, { fname => $fname, lname => $lname, ext => $prov_sub->pbx_extension };
+        $entry->{fname} = $fname;
+        $entry->{lname} = $lname;
     }
 
     my $data =
@@ -431,9 +452,22 @@ sub _get_dirsearch_rs :Private {
         order_by => { '-asc' => 'voip_usr_preferences.value' },
     });
 
-	return $rs;
+    return $rs;
 }
 
+sub add_phonebook_entries {
+    my ($self, $c, $dev, $entries, $entries_existent) = @_;
+    my %phonebook = ();
+    foreach my $private_line ($dev->autoprov_field_device_lines->search_rs({ line_type => 'private' })) {
+        my $private_line_subscriber_id = $private_line->provisioning_voip_subscriber->voip_subscriber->id;
+        $phonebook{$private_line_subscriber_id} //= NGCP::Panel::Utils::Phonebook::get_subscriber_phonebook($c, $private_line_subscriber_id);
+        foreach my $entry (@{$phonebook{$private_line_subscriber_id}}) {
+            push @$entries, { name => $entry->{name}, ext => $entry->{number} } 
+                unless $entries_existent->{$entry->{number}};
+            $entries_existent->{$entry->{number}} = 1;
+        }
+    }
+}
 
 1;
 # vim: set tabstop=4 expandtab:
