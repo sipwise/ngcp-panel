@@ -64,6 +64,18 @@ sub infinite_past {
     #$dt->epoch calls should be okay if perl >= 5.12.0
 }
 
+sub convert_tz {
+    my ($dt,$from_tz,$to_tz) = @_;
+    return $dt if is_infinite($dt);
+    my $tz = $dt->time_zone; #save away the original tz the dt was marked with
+    $dt->set_time_zone("floating"); #unmark
+    $dt->set_time_zone($from_tz); #set "from" tz
+    $dt->set_time_zone($to_tz); #convert to "to" tz
+    $dt->set_time_zone("floating"); #unmark
+    $dt->set_time_zone($tz) unless $tz->is_floating; #mark again with the original tz
+    return $dt;
+}
+
 sub is_infinite_past {
     my $dt = shift;
     return $dt->year <= 1000;
