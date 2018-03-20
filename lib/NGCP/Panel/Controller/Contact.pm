@@ -93,6 +93,7 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
                 delete $form->values->{reseller};
             }
             $form->values->{country} = $form->values->{country}{id};
+            $form->values->{timezone} = $form->values->{timezone}{name} || undef;
             my $contact = $c->stash->{contacts}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             $c->session->{created_objects}->{contact} = { id => $contact->id };
@@ -307,7 +308,7 @@ sub ajax_list_contacts{
     NGCP::Panel::Utils::Datatables::process(
         $c,
         $c->stash->{contacts}->search_rs(
-            $reseller_query->[0], 
+            $reseller_query->[0],
             $reseller_query->[1] ? $reseller_query->[1] : {
                 prefetch=>"contracts"
             }
