@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a6ced46_eceeffb3",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-20T15:38:31Z",
+      "side": 1,
+      "message": "cosmetic: the name of \"special_data_process\" sounds ambiguous to me and does not explain what it does",
+      "range": {
+        "startLine": 33,
+        "startChar": 24,
+        "endLine": 33,
+        "endChar": 45
+      },
+      "revId": "ccd9be62b4761ec69b07095396aec264c6653f99",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
