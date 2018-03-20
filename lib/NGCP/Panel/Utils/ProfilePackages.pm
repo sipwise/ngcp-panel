@@ -25,12 +25,17 @@ use constant _DEFAULT_INITIAL_BALANCE => 0.0;
 
 use constant _TOPUP_START_MODE => 'topup';
 use constant _1ST_START_MODE => '1st';
+use constant _1ST_TZ_START_MODE => '1st_tz';
 use constant _CREATE_START_MODE => 'create';
+use constant _CREATE_TZ_START_MODE => 'create_tz';
 use constant _TOPUP_INTERVAL_START_MODE => 'topup_interval';
 
-use constant _START_MODE_PRESERVE_EOM => { _TOPUP_START_MODE . '' => 0,
-                                     _1ST_START_MODE . '' => 0,
-                                     _CREATE_START_MODE . '' => 1};
+use constant _START_MODE_PRESERVE_EOM => {
+    _TOPUP_START_MODE . '' => 0,
+    _1ST_START_MODE . '' => 0,
+    _1ST_TZ_START_MODE . '' => 0,
+    _CREATE_START_MODE . '' => 1,
+    _CREATE_TZ_START_MODE . '' => 1};
 
 use constant _DEFAULT_START_MODE => '1st';
 use constant _DEFAULT_PROFILE_INTERVAL_UNIT => 'month';
@@ -127,7 +132,8 @@ sub resize_actual_contract_balance {
             my $end_of_resized_interval = _get_resized_interval_end(ctime => $now,
                                                                     create_timestamp => NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp),
                                                                     start_mode => $new_start_mode,
-                                                                    is_topup => $is_topup);
+                                                                    is_topup => $is_topup,
+                                                                    tz => $contract->timezone,);
             my $resized_balance_values = _get_resized_balance_values(schema => $schema,
                                                                     balance => $actual_balance,
                                                                     #old_start_mode => $old_start_mode,
@@ -213,6 +219,7 @@ sub catchup_contract_balances {
     $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->modify_timestamp);
     $old_package = $contract->profile_package if !exists $params{old_package};
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
+    my $tz = $contract->timezone;
     $suppress_underrun //= 0;
     $topup_amount //= 0.0;
     $profiles_added //= 0;
@@ -277,7 +284,8 @@ PREPARE_BALANCE_CATCHUP:
                                                       #now => $start_of_next_interval,
                                                       interval_unit => $interval_unit,
                                                       interval_value => $interval_value,
-                                                      create => $contract_create);
+                                                      create => $contract_create,
+                                                      tz => $tz);
 
         my $balance_values = _get_balance_values(schema => $schema, c => $c,
             stime => $stime,
@@ -612,7 +620,8 @@ PREPARE_BALANCE_INITIAL:
                                                       start_mode => $start_mode,
                                                       interval_unit => $interval_unit,
                                                       interval_value => $interval_value,
-                                                      create => NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp),);
+                                                      create => NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp),
+                                                      tz => $contract->timezone);
 
     my $balance_values = _get_balance_values(schema => $schema, c => $c,
             stime => $stime,
@@ -773,12 +782,12 @@ sub get_free_ratio {
 
 sub _get_balance_interval_start_end {
     my (%params) = @_;
-    my ($now,$start_mode,$last_etime,$interval_unit,$interval_value,$create) = @params{qw/now start_mode last_etime interval_unit interval_value create/};
+    my ($now,$start_mode,$last_etime,$interval_unit,$interval_value,$create,$tz) = @params{qw/now start_mode last_etime interval_unit interval_value create tz/};
 
     my ($stime,$etime,$ctime) = (undef,undef,$now // NGCP::Panel::Utils::DateTime::current_local);
 
     unless ($last_etime) { #initial interval
-        $stime = _get_interval_start($ctime,$start_mode);
+        $stime = _get_interval_start($ctime,$start_mode,$tz);
     } else {
         $stime = _add_second($last_etime->clone,1);
     }
@@ -807,8 +816,8 @@ sub _get_balance_interval_start_end {
 
 sub _get_resized_interval_end {
     my (%params) = @_;
-    my ($ctime, $create, $start_mode,$is_topup) = @params{qw/ctime create_timestamp start_mode is_topup/};
-    if (_CREATE_START_MODE eq $start_mode) {
+    my ($ctime, $create, $start_mode,$is_topup,$tz) = @params{qw/ctime create_timestamp start_mode is_topup tz/};
+    if (_CREATE_START_MODE eq $start_mode or _CREATE_TZ_START_MODE eq $start_mode) {
         my $start_of_next_interval;
         if ($ctime->day >= $create->day) {
             #e.g. ctime=30. Jan 2015 17:53, create=30. -> 28. Feb 2015 00:00
@@ -823,9 +832,16 @@ sub _get_resized_interval_end {
                 $start_of_next_interval = $ctime->clone->set(day => $create->day)->truncate(to => 'day');
             }
         }
+        if ($tz and _CREATE_TZ_START_MODE eq $start_mode) {
+            $start_of_next_interval = NGCP::Panel::Utils::DateTime::convert_tz($start_of_next_interval,$tz->name,'local');
+        }
         return $start_of_next_interval->subtract(seconds => 1);
-    } elsif (_1ST_START_MODE eq $start_mode) {
-        return $ctime->clone->truncate(to => 'month')->add(months => 1)->subtract(seconds => 1);
+    } elsif (_1ST_START_MODE eq $start_mode or _1ST_TZ_START_MODE eq $start_mode) {
+        my $start_of_next_interval = $ctime->clone->truncate(to => 'month')->add(months => 1);
+        if ($tz and _1ST_TZ_START_MODE eq $start_mode) {
+            $start_of_next_interval = NGCP::Panel::Utils::DateTime::convert_tz($start_of_next_interval,$tz->name,'local');
+        }
+        return $start_of_next_interval->subtract(seconds => 1);
     } elsif (_TOPUP_START_MODE eq $start_mode) {
         return $ctime->clone; #->add(seconds => 1);
         #return NGCP::Panel::Utils::DateTime::infinite_future;
@@ -841,17 +857,24 @@ sub _get_resized_interval_end {
 }
 
 sub _get_interval_start {
-    my ($ctime,$start_mode) = @_;
-    if (_CREATE_START_MODE eq $start_mode) {
-        return $ctime->clone->truncate(to => 'day');
-    } elsif (_1ST_START_MODE eq $start_mode) {
-        return $ctime->clone->truncate(to => 'month');
+    my ($ctime,$start_mode,$tz) = @_;
+    my $convert = 0;
+    my $start = undef;
+    if (_CREATE_START_MODE eq $start_mode or _CREATE_TZ_START_MODE eq $start_mode) {
+        $start = $ctime->clone->truncate(to => 'day');
+        $convert = 1 if _CREATE_TZ_START_MODE eq $start_mode;
+    } elsif (_1ST_START_MODE eq $start_mode or _1ST_TZ_START_MODE eq $start_mode) {
+        $start = $ctime->clone->truncate(to => 'month');
+        $convert = 1 if _1ST_TZ_START_MODE eq $start_mode;
     } elsif (_TOPUP_START_MODE eq $start_mode) {
-        return $ctime->clone; #->truncate(to => 'day');
+        $start = $ctime->clone; #->truncate(to => 'day');
     } elsif (_TOPUP_INTERVAL_START_MODE eq $start_mode) {
-        return $ctime->clone; #->truncate(to => 'day');
+        $start = $ctime->clone; #->truncate(to => 'day');
     }
-    return undef;
+    if ($tz and $convert) {
+        $start = NGCP::Panel::Utils::DateTime::convert_tz($start,$tz->name,'local');
+    }
+    return $start;
 }
 
 sub _add_interval {
