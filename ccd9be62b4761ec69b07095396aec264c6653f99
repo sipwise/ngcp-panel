@@ -22,6 +22,138 @@
       "revId": "ccd9be62b4761ec69b07095396aec264c6653f99",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_ac85e7ae",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-20T16:30:39Z",
+      "side": 1,
+      "message": "move into sub _item_rs",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 17
+      },
+      "revId": "ccd9be62b4761ec69b07095396aec264c6653f99",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_0c60bb34",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-20T16:30:39Z",
+      "side": 1,
+      "message": "mismatching,\n\nwhy not using simple dedicated vars $reseller_id, $contract_id and $subscriber_id?",
+      "range": {
+        "startLine": 54,
+        "startChar": 63,
+        "endLine": 54,
+        "endChar": 64
+      },
+      "revId": "ccd9be62b4761ec69b07095396aec264c6653f99",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_6cd68fc7",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-20T16:30:39Z",
+      "side": 1,
+      "message": "not sure why this is mandatory for the filter params?",
+      "revId": "ccd9be62b4761ec69b07095396aec264c6653f99",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_2ccc9735",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-20T16:30:39Z",
+      "side": 1,
+      "message": "as you are hardcoding the param names in this if branches anyway, the whole logic would be much more readable by explicitly check for allowed params in each branch here.",
+      "range": {
+        "startLine": 78,
+        "startChar": 4,
+        "endLine": 78,
+        "endChar": 38
+      },
+      "revId": "ccd9be62b4761ec69b07095396aec264c6653f99",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_cca94326",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-20T16:30:39Z",
+      "side": 1,
+      "message": "why no union_all now?\n\nwhere is the code to show a full phonebook, combining the reseller, contract and subscriber entries?",
+      "range": {
+        "startLine": 161,
+        "startChar": 36,
+        "endLine": 161,
+        "endChar": 45
+      },
+      "revId": "ccd9be62b4761ec69b07095396aec264c6653f99",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a6ced46_8caf4b2b",
+        "filename": "lib/NGCP/Panel/Role/Entities.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-20T16:30:39Z",
+      "side": 1,
+      "message": "this should be done with a code ref, where there might be a default sub doing the below",
+      "range": {
+        "startLine": 266,
+        "startChar": 13,
+        "endLine": 266,
+        "endChar": 34
+      },
+      "revId": "ccd9be62b4761ec69b07095396aec264c6653f99",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
