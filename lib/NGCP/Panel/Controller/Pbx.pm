@@ -134,20 +134,24 @@ sub spa_directory_list :Chained('base') :PathPart('pbx/directory/spa') :Args(1) 
     }
 
     my @entries = ();
+    my %entries = ();
     foreach my $sub($rs->search(undef,{page => $page, rows => $rows})->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
         my $display_name = $sub->get_column('display_name');
         push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+        $entries{$prov_sub->pbx_extension} = 1;
     }
+
+    $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
 
     my $nexturi =  $baseuri . $delim . 'page='.($nextpage//0);
     my $prevuri = $baseuri . $delim . 'page='.($prevpage//0);
-    
+
     my $searchuri = "$schema://$host:$port/pbx/directory/spasearch/$id";
 
     $data = "<CiscoIPPhoneDirectory><Title>PBX Address Book$dirsuffix</Title><Prompt>Select the User</Prompt>";
-    $data .= join '', map {"<DirectoryEntry><Name>$$_{name}</Name><Telephone>$$_{ext}</Telephone></DirectoryEntry>"} @entries; 
+    $data .= join '', map {"<DirectoryEntry><Name>$$_{name}</Name><Telephone>$$_{ext}</Telephone></DirectoryEntry>"} @entries;
     $data .= "<SoftKeyItem><Name>Dial</Name><URL>SoftKey:Dial</URL><Position>1</Position></SoftKeyItem>";
     if($prevpage) {
         $data .= "<SoftKeyItem><Name>Prev</Name><URL>$prevuri</URL><Position>2</Position></SoftKeyItem>";
@@ -208,17 +212,21 @@ sub panasonic_directory_list :Chained('base') :PathPart('pbx/directory/panasonic
 	my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
+    my %entries = ();
     foreach my $sub($rs->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
         my $display_name = $sub->get_column('display_name');
         push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+        $entries{$prov_sub->pbx_extension} = 1;
     }
 
-    my $data = 
+    $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
+
+    my $data =
 '<?xml version="1.0" encoding="utf-8"?>
-<ppxml xmlns="http://panasonic/sip_phone" 
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<ppxml xmlns="http://panasonic/sip_phone"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://panasonic/sip_phone sip_phone.xsd">
     <Screen version="2.0">
         <PhoneBook version="2.0">
@@ -285,17 +293,21 @@ sub yealink_directory_list :Chained('base') :PathPart('pbx/directory/yealink') :
     my $port = $c->stash->{port};
 
     my $customer = $dev->contract;
-	my $rs = $self->_get_dirsearch_rs($customer, $q);
+    my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
+    my %entries = ();
     foreach my $sub($rs->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
         my $display_name = $sub->get_column('display_name');
         push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+        $entries{$prov_sub->pbx_extension} = 1;
     }
 
-    my $data = 
+    $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
+
+    my $data =
 '<?xml version="1.0" encoding="utf-8"?>
 <SipwiseIPPhoneDirectory>
   <SoftKeyItem>
@@ -356,16 +368,25 @@ sub polycom_directory_list :Chained('base') :PathPart('pbx/directory/polycom') :
     my $port = $c->stash->{port};
 
     my $customer = $dev->contract;
-	my $rs = $self->_get_dirsearch_rs($customer, $q);
+    my $rs = $self->_get_dirsearch_rs($customer, $q);
 
     my @entries = ();
+    my %entries = ();
     foreach my $sub($rs->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
         my $display_name = $sub->get_column('display_name');
-        my ($fname, @rest) = split / +/, $display_name;
+        push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+        $entries{$prov_sub->pbx_extension} = 1;
+    }
+
+    $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
+
+    foreach my $entry (@entries) {
+        my ($fname, @rest) = split / +/, $entry->{name};
         my $lname = join ' ', @rest;
-        push @entries, { fname => $fname, lname => $lname, ext => $prov_sub->pbx_extension };
+        $entry->{fname} = $fname;
+        $entry->{lname} = $lname;
     }
 
     my $data =
@@ -412,7 +433,7 @@ bb  buddy block
 
 sub _get_dirsearch_rs :Private {
     my ($self, $customer, $q) = @_;
-    
+
     my $rs = $customer->voip_subscribers->search({
         'status' => 'active',
         'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
@@ -431,9 +452,22 @@ sub _get_dirsearch_rs :Private {
         order_by => { '-asc' => 'voip_usr_preferences.value' },
     });
 
-	return $rs;
+    return $rs;
 }
 
+sub add_phonebook_entries {
+    my ($self, $c, $dev, $entries, $entries_existent) = @_;
+    my %phonebook = ();
+    foreach my $private_line ($dev->autoprov_field_device_lines->search_rs({ line_type => 'private' })->all) {
+        my $private_line_subscriber_id = $private_line->provisioning_voip_subscriber->voip_subscriber->id;
+        $phonebook{$private_line_subscriber_id} //= NGCP::Panel::Utils::Phonebook::get_subscriber_phonebook($c, $private_line_subscriber_id);
+        foreach my $entry (@{$phonebook{$private_line_subscriber_id}}) {
+            push @$entries, { name => $entry->{name}, ext => $entry->{number} }
+                unless $entries_existent->{$entry->{number}};
+            $entries_existent->{$entry->{number}} = 1;
+        }
+    }
+}
 
 1;
 # vim: set tabstop=4 expandtab:
