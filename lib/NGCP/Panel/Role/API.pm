@@ -18,7 +18,7 @@ use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use HTTP::Headers::Util qw(split_header_words);
-use Data::HAL qw();
+use Data::Compare;
 use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
@@ -30,7 +30,7 @@ use NGCP::Panel::Utils::Journal qw();
 sub get_valid_data{
     my ($self, %params) = @_;
 
-    my ($data,$resource,$special_data_process);
+    my ($data,$resource,$non_json_data);
 
     my $c = $params{c};
     my $method = $params{method} // uc($c->request->method);
@@ -59,7 +59,7 @@ sub get_valid_data{
         return unless $self->require_body($c);
         $data = $c->stash->{body};
         $resource = $c->req->query_params;
-        $special_data_process = 1;
+        $non_json_data = 1;
     }
 
     #if($json_media_type =~/json/i){
@@ -76,10 +76,42 @@ sub get_valid_data{
         }
         return unless $self->get_uploads($c, $json, $params{uploads}, $params{form});
         $resource = $json;
-        $special_data_process = 0;
+        $non_json_data = 0;
     }
 
-    return ($resource, $data, $special_data_process);
+    return ($resource, $data, $non_json_data);
+}
+
+#method to take any informative input, i.e. 
+#   - json body, 
+#   - json part of multiform
+#   - request_params
+sub get_info_data {
+    my ($self, %params) = @_;
+    my $c = $params{c};
+    my $method = $params{method} // uc($c->request->method);
+    my $ctype = $self->get_content_type($c);
+    my $resource = $c->request->params;
+    my ($json_resource,$json_resource_raw);
+    if ('multipart/form-data' eq $ctype) {
+        $json_resource_raw = delete $resource->{json};
+    } elsif ('application/json' eq $ctype) {
+        return unless $self->require_body($c);
+        $json_resource_raw = $c->stash->{body};
+    }
+    if($json_resource_raw){
+        $json_resource = JSON::from_json($json_resource_raw, { utf8 => 1 });
+    }
+    {
+        my @common_keys = map { exists $resource->{$_} ? $_ : () }keys %$json_resource;
+        my (%resource_sub,%resource_json_sub);
+        @resource_sub{@common_keys} = @{$resource}{@common_keys};
+        @resource_json_sub{@common_keys} = @{$resource_json}{@common_keys};
+        if(!Compare(\%resource_sub,\%resource_json_sub)){
+            return;
+        }
+    }
+    return {%resource,%resource_json};
 }
 
 sub get_valid_post_data {
@@ -300,11 +332,17 @@ sub forbid_link_header {
     return;
 }
 
+sub get_content_type {
+    my ($self, $c, $media_type) = @_;
+    my $ctype = $c->request->header('Content-Type');
+    $ctype =~ s/;\s+boundary.+$// if $ctype;
+    return $ctype;
+}
+
 sub valid_media_type {
     my ($self, $c, $media_type) = @_;
 
-    my $ctype = $c->request->header('Content-Type');
-    $ctype =~ s/;\s+boundary.+$// if $ctype;
+    my $ctype = $self->get_content_type($c);
     my $type;
     if(ref $media_type eq "ARRAY") {
         $type = join ' or ', @{ $media_type };
@@ -1003,7 +1041,14 @@ sub update_item {
     return $item, $form, $process_extras;
 }
 
-#------ dummy & default methods
+sub update_item_model{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    $item->update($resource);
+    return $item;
+}
+#---------------- /default methods
+
+#------ dummy & default accessors methods
 
 sub query_params {
     return [
@@ -1099,16 +1144,13 @@ sub resource_from_item{
     return $res;
 }
 
-sub update_item_model{
-    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
-    $item->update($resource);
-    return $item;
-}
 
 sub post_process_commit{
     my($self, $c, $action, $item, $old_resource, $resource, $form, $process_extras) = @_;
     return;
 }
+
+#------ /dummy & default accessors methods
 
 sub check_transaction_control{
     my($self, $c, $action, $step, %params) = @_;

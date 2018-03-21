@@ -25,33 +25,12 @@ sub relation{
 }
 
 sub _item_rs {
-    my ($self, $c, $id, $resource) = @_;
-    if (!$resource) {
-        my $method = uc($c->request->method);
-        if ('PATCH' ne $method) {
-            ($resource) = $self->get_valid_data(
-                c => $c, 
-                media_type => ['application/json'],
-                method => uc($c->request->method),
-                id     => $id,
-                uploads => [],
-            ); 
-        } else {
-            $resource = $c->request->query_params;
-        }
-    }
-    my($owner,$type,$parameter,$value) = $self->check_owner_params($c, $resource);
+    my ($self, $c) = @_;
+    my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
     return unless $owner;
     my $method = 'get_'.$type.'_phonebook_rs';
     my ($list_rs,$item_rs) = &$method($c, $value, $type);
     return $list_rs;
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c, $id);
-    return unless $item_rs;
-    return $item_rs->find($id);
 }
 
 sub get_form {
@@ -77,7 +56,7 @@ sub check_owner_params {
         @allowed_params{qw/subscriber_id/} = (1) x 3;
     }
 
-    $params //= $c->request->params;
+    $params //= $self->get_info_data($c);
     my %owner_params = 
         map { $_ => $params->{$_} } 
         grep { exists $params->{$_} } 

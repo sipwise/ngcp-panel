@@ -24,6 +24,7 @@ sub auto :Private {
     if($self->config->{log_request}){
         $self->log_request($c);
     }
+    $self->validate_request($c);
     return 1;
 }
 
