@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa963961_e2eda626",
+        "filename": "lib/NGCP/Panel/Form/Phonebook/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-21T08:44:38Z",
+      "side": 1,
+      "message": "Should be renamed to SubscriberAPI.pm\n\nThat will align well from the naming perspective with already existing:\n\nForm/Phonebook/Admin.pm\nForm/Phonebook/Reseller.pm\nForm/Phonebook/Contract.pm\nForm/Phonebook/Subscriber.pm",
+      "range": {
+        "startLine": 1,
+        "startChar": 38,
+        "endLine": 1,
+        "endChar": 41
+      },
+      "revId": "b52465f20c4e851de90b49b84871a8870380b09c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa963961_02e9aa1a",
+        "filename": "lib/NGCP/Panel/Form/Phonebook/SubAdminAPI.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-21T08:44:38Z",
+      "side": 1,
+      "message": "Should be moved to API.pm as \"shared\" is meant for normal subscribers to share entries they want within their pbx group. And SubAdminAPI.pm removed.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 2
+      },
+      "revId": "b52465f20c4e851de90b49b84871a8870380b09c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
