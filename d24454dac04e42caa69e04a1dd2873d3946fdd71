@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa963961_a50d6839",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-21T13:55:19Z",
+      "side": 1,
+      "message": "shouldnt the subscriberadmin role be allowed to see its own contract_phonebookentries?",
+      "revId": "d24454dac04e42caa69e04a1dd2873d3946fdd71",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
