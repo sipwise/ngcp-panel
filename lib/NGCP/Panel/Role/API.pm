@@ -18,6 +18,7 @@ use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use HTTP::Headers::Util qw(split_header_words);
+use Data::Compare;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
@@ -30,7 +31,7 @@ use NGCP::Panel::Utils::Journal qw();
 sub get_valid_data{
     my ($self, %params) = @_;
 
-    my ($data,$resource,$special_data_process);
+    my ($data,$resource,$non_json_data);
 
     my $c = $params{c};
     my $method = $params{method} // uc($c->request->method);
@@ -59,7 +60,7 @@ sub get_valid_data{
         return unless $self->require_body($c);
         $data = $c->stash->{body};
         $resource = $c->req->query_params;
-        $special_data_process = 1;
+        $non_json_data = 1;
     }
 
     if ($json_media_type eq 'application/json' ||
@@ -75,10 +76,42 @@ sub get_valid_data{
         }
         return unless $self->get_uploads($c, $json, $params{uploads}, $params{form});
         $resource = $json;
-        $special_data_process = 0;
+        $non_json_data = 0;
     }
 
-    return ($resource, $data, $special_data_process);
+    return ($resource, $data, $non_json_data);
+}
+
+#method to take any informative input, i.e. 
+#   - json body, 
+#   - json part of multiform
+#   - request_params
+sub get_info_data {
+    my ($self, $c) = @_;
+    my $method = uc($c->request->method);
+    my $ctype = $self->get_content_type($c) // '';
+    my $resource = $c->request->params;
+    my ($resource_json,$resource_json_raw);
+    if ('multipart/form-data' eq $ctype) {
+        $resource_json_raw = delete $resource->{json};
+    } elsif ('application/json' eq $ctype) {
+        if ($self->require_body($c)) {
+            $resource_json_raw = $c->stash->{body};
+        }
+    }
+    if($resource_json_raw){
+        $resource_json = JSON::from_json($resource_json_raw, { utf8 => 1 });
+    }
+    {
+        my @common_keys = map { exists $resource->{$_} ? $_ : () }keys %$resource_json;
+        my (%resource_sub,%resource_json_sub);
+        @resource_sub{@common_keys} = @{$resource}{@common_keys};
+        @resource_json_sub{@common_keys} = @{$resource_json}{@common_keys};
+        if(!Compare(\%resource_sub,\%resource_json_sub)){
+            return;
+        }
+    }
+    return {%$resource,%$resource_json};
 }
 
 sub get_valid_post_data {
@@ -299,11 +332,17 @@ sub forbid_link_header {
     return;
 }
 
+sub get_content_type {
+    my ($self, $c, $media_type) = @_;
+    my $ctype = $c->request->header('Content-Type');
+    $ctype =~ s/;\s+boundary.+$// if $ctype;
+    return $ctype;
+}
+
 sub valid_media_type {
     my ($self, $c, $media_type) = @_;
 
-    my $ctype = $c->request->header('Content-Type');
-    $ctype =~ s/;\s+boundary.+$// if $ctype;
+    my $ctype = $self->get_content_type($c);
     my $type;
     if(ref $media_type eq "ARRAY") {
         $type = join ' or ', @{ $media_type };
@@ -1002,7 +1041,14 @@ sub update_item {
     return $item, $form, $process_extras;
 }
 
-#------ dummy & default methods
+sub update_item_model{
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    $item->update($resource);
+    return $item;
+}
+#---------------- /default methods
+
+#------ dummy & default accessors methods
 
 sub query_params {
     return [
@@ -1098,16 +1144,18 @@ sub resource_from_item{
     return $res;
 }
 
-sub update_item_model{
-    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
-    $item->update($resource);
-    return $item;
-}
 
 sub post_process_commit{
     my($self, $c, $action, $item, $old_resource, $resource, $form, $process_extras) = @_;
     return;
 }
+
+sub validate_request {
+    my($self, $c) = @_;
+    return 1;
+}
+
+#------ /dummy & default accessors methods
 
 sub check_transaction_control{
     my($self, $c, $action, $step, %params) = @_;
@@ -1240,7 +1288,7 @@ sub return_representation_post{
 }
 
 
-sub return_csv(){
+sub return_csv{
     my($self,$c) = @_;
     try{
         my $filename = $self->check_create_csv($c);

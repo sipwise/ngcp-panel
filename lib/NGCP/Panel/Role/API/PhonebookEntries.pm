@@ -25,20 +25,12 @@ sub relation{
 }
 
 sub _item_rs {
-    my ($self, $c, $id, $resource) = @_;
-    my $params = $c->request->query_params;
-    my($owner,$type,$parameter,$value) = $self->check_owner_params($c, $params);
+    my ($self, $c) = @_;
+    my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
     return unless $owner;
     my $method = 'get_'.$type.'_phonebook_rs';
     my ($list_rs,$item_rs) = &$method($c, $value, $type);
     return $list_rs;
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c, $id);
-    return unless $item_rs;
-    return $item_rs->find($id);
 }
 
 sub get_form {
@@ -64,8 +56,19 @@ sub get_form {
     return;
 }
 
+sub validate_request {
+    my($self, $c) = @_;
+    my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
+    return unless $owner;
+    return 1;
+}
+
 sub check_owner_params {
     my($self, $c, $params) = @_;
+    if ($c->stash->{check_owner_params}) {
+        return (@{$c->stash->{check_owner_params}});
+    }
+    
     my @allowed_params;
     if ($c->user->roles eq "admin") {
         @allowed_params = qw/reseller_id customer_id subscriber_id/;
@@ -77,7 +80,8 @@ sub check_owner_params {
         @allowed_params = qw/subscriber_id/;
     }
 
-    $params //= $c->request->params;
+    $params //= $self->get_info_data($c);
+
     my %owner_params =
         map { $_ => $params->{$_} }
             grep { exists $params->{$_} }
@@ -152,8 +156,8 @@ sub check_owner_params {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $parameter value '$value'");
         return;
     }
-
-    return ($owner,$type,$parameter,$value);
+    $c->stash->{check_owner_params} = [$owner,$type,$parameter,$value];
+    return @{$c->stash->{check_owner_params}};
 }
 
 sub get_reseller_phonebook_rs {
