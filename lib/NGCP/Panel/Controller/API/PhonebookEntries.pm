@@ -27,7 +27,7 @@ sub api_description {
 }
 
 sub order_by_cols {
-    return {name => 'me.name', number => 'me.number', shared => 'me.shared'};
+    return {name => 'me.name', number => 'me.number'};
 }
 
 sub query_params {
