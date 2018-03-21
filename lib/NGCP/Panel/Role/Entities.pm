@@ -20,7 +20,7 @@ sub auto :Private {
     if ($self->config->{log_request}) {
         $self->log_request($c);
     }
-    return 1;
+    return $self->validate_request($c);
 }
 
 sub end :Private {
@@ -249,12 +249,11 @@ sub post {
     my ($c) = @_;
     my $guard = $self->get_transaction_control($c);
     {
-
         #instead of type parameter get_form can check request method
         my ($form) = $self->get_form($c, 'add');
         my $method_config = $self->config->{action}->{POST};
         my $process_extras= {};
-        my ($resource, $data, $special_data_process) = $self->get_valid_data(
+        my ($resource, $data, $non_json_data) = $self->get_valid_data(
             c               => $c,
             method          => 'POST',
             media_type      => $method_config->{ContentType} // 'application/json',
@@ -263,7 +262,7 @@ sub post {
         );
         last unless $resource;
         my ($item,$data_processed_result);
-        if (!$special_data_process || !$data) {
+        if (!$non_json_data || !$data) {
             delete $resource->{purge_existing};
             last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
             last unless $self->validate_form(
@@ -281,7 +280,7 @@ sub post {
         } else {
             try {
                 #$processed_ok(array), $processed_failed(array), $info, $error
-                $data_processed_result = $self->upload_data( 
+                $data_processed_result = $self->process_data( 
                     c        => $c, 
                     data     => \$data, 
                     resource => $resource,
@@ -289,7 +288,7 @@ sub post {
                     process_extras => $process_extras,
                 );
             } catch($e) {
-                $c->log->error("failed to upload csv: $e");
+                $c->log->error("failed to proces non json data: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
             };
