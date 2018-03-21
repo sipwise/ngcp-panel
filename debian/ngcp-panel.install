@@ -1,3 +1,4 @@
+debian/ngcp-panel.tmpfiles.d.conf	usr/lib/tmpfiles.d/ngcp-panel.conf
 lib/NGCP/Panel/I18N/*	usr/share/perl5/NGCP/Panel/I18N
 logging.conf		etc/ngcp-panel/
 ngcp_panel.conf		etc/ngcp-panel/
@@ -5,4 +6,3 @@ ngcp_panel.psgi	usr/share/ngcp-panel/
 script/*		usr/share/ngcp-panel/script
 script/ngcp_panel_fastcgi.pl usr/share/ngcp-panel/
 share/*			usr/share/ngcp-panel/
-debian/ngcp-panel.tmpfiles.d.conf	usr/lib/tmpfiles.d/ngcp-panel.conf
