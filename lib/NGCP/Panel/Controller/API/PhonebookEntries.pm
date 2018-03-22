@@ -1,15 +1,11 @@
 package NGCP::Panel::Controller::API::PhonebookEntries;
-use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
-
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
-use HTTP::Headers qw();
-use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::Generic qw(:all);
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PhonebookEntries/;
+
+use NGCP::Panel::Utils::Phonebook;
 
 __PACKAGE__->set_config({
     POST => {
@@ -31,16 +27,10 @@ sub query_params {
         {
             param => 'reseller_id',
             description => 'Filter for Phonebook entries belonging to a specific reseeller',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { reseller_id => $q };
-                },
-                second => sub {},
-            },
+            query_type => 'string_eq',
         },
         {
-            param => 'contract_id',
+            param => 'customer_id',
             description => 'Filter for Phonebook entries belonging to a specific contract',
             query => {
                 first => sub {
@@ -53,24 +43,17 @@ sub query_params {
         {
             param => 'subscriber_id',
             description => 'Filter for Phonebook entries belonging to a specific subscriber',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { subscriber_id => $q };
-                },
-                second => sub {},
-            },
+            query_type => 'string_eq',
         },
         {
             param => 'number',
-            description => 'Filter for LNP numbers with a specific number (wildcards possible)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'me.number' => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for Phonebook numbers with a specific number (wildcards possible)',
+            query_type => 'string_like',
+        },
+        {
+            param => 'name',
+            description => 'Filter for Phonebook numbers with a specific name (wildcards possible)',
+            query_type => 'string_like',
         },
     ];
 }
@@ -81,18 +64,16 @@ sub check_create_csv :Private {
 }
 
 sub create_csv :Private {
-    my ($self, $c) = @_;
-    NGCP::Panel::Utils::Phonebook::create_csv(
-        c => $c,
-    );
-}
+    my ($self, %params) = @_;
+    my ($c,$data_ref,$resource,$form,$process_extras) = $params{qw/c data resource form process_extra/}; 
+    my($owner,$type,$parameter,$owner_id) = $self->check_owner_params($c);
+    return unless $owner;
+    my $rs = $self->_item_rs($c);
 
-sub create_item {
-    my ($self, $c, $resource, $form, $process_extras) = @_;
-    my $rs = $self->_item_rs($c,undef,$resource);#maybe copy-paste it here?
-    return unless $rs;
-    my $item = $rs->create($resource);
-    return $item;
+    my ($entries, $fails, $text) =
+        NGCP::Panel::Utils::Phonebook::upload_csv($c, $rs, $owner, $owner_id,
+            $c->req->params->{purge_existing}, $data_ref);
+    $c->log->info( $$text );
 }
 
 1;

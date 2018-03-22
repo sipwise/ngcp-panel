@@ -301,8 +301,8 @@ sub post {
 
         $self->return_representation_post($c, 
             'item' => $item, 
-            'form' => $form, 
-            data_processed_result => $data_processed_result );
+            'form' => $form
+        );
     }
     return;
 }
