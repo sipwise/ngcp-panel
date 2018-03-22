@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "da9b358b_81893acd",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 15
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-22T13:41:03Z",
+      "side": 1,
+      "message": "ok we are on the same page here then as I was also confused with that variable name :)",
+      "parentUuid": "da9b358b_a1eb1eb0",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 23
+      },
+      "revId": "5a68bf032b9dc5aeb46f8743349caad9b8fb398f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da9b358b_81d13afe",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 15
@@ -78,6 +102,29 @@
       "side": 1,
       "message": "Originally it worked only as parameter. I think we will keep all the flexibility with default.",
       "parentUuid": "da9b358b_81d13afe",
+      "revId": "5a68bf032b9dc5aeb46f8743349caad9b8fb398f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_c19e2207",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 15
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-22T13:41:03Z",
+      "side": 1,
+      "message": "this is also something for next iterations (commits) on the code but \"json_media\" type sounds odd to me, especially if it\u0027s just taken from the \"Content-Type\" header, which means that it is not really json only as Content-Type could be also .... application/pdf ;-)\nshould be imho renamed into $content_type",
+      "range": {
+        "startLine": 38,
+        "startChar": 34,
+        "endLine": 38,
+        "endChar": 49
+      },
       "revId": "5a68bf032b9dc5aeb46f8743349caad9b8fb398f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
