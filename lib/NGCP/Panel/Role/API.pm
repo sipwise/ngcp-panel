@@ -36,14 +36,14 @@ sub get_valid_data{
     my $c = $params{c};
     my $method = $params{method} // uc($c->request->method);
     my $media_type = $params{media_type};
-    my $json_media_type = $params{json_media_type};#for rare specific cases, like text/csv
+    my $resource_media_type = $params{resource_media_type};#for rare specific cases, like text/csv
 
     return unless $self->forbid_link_header($c);
 
     if ($method =~ /^(GET|PUT|POST)$/) {
-        $json_media_type //=  'application/json';
+        $resource_media_type //=  'application/json';
     } elsif ($method eq 'PATCH') {
-        $json_media_type //= 'application/json-patch+json';
+        $resource_media_type //= 'application/json-patch+json';
     }
     return unless $self->valid_media_type($c, $media_type);
 
@@ -52,7 +52,7 @@ sub get_valid_data{
         return unless $self->valid_id($c, $id);
     }
 
-    my ($json_raw,$json);
+    my ($json_raw,$json_decoded);
     if ($c->req->headers->content_type eq 'multipart/form-data') {
         return unless $self->require_uploads($c);
         $json_raw = $c->req->param('json');
@@ -63,19 +63,19 @@ sub get_valid_data{
         $non_json_data = 1;
     }
 
-    if ($json_media_type eq 'application/json' ||
-        $json_media_type eq 'application/json-patch+json' ) {
+    if ($resource_media_type eq 'application/json' ||
+        $resource_media_type eq 'application/json-patch+json' ) {
 
         $json_raw //= $data;
 
-        return unless $self->require_wellformed_json($c, $json_media_type, $json_raw);
-        $json = JSON::from_json($json_raw, { utf8 => 1 });
+        return unless $self->require_wellformed_json($c, $resource_media_type, $json_raw);
+        $json_decoded = JSON::from_json($json_raw, { utf8 => 1 });
         if ($method eq 'PATCH') {
             my $ops = $params{ops} // [qw/replace copy/];
-            return unless $self->require_valid_patch($c, $json, $ops);
+            return unless $self->require_valid_patch($c, $json_decoded, $ops);
         }
-        return unless $self->get_uploads($c, $json, $params{uploads}, $params{form});
-        $resource = $json;
+        return unless $self->get_uploads($c, $json_decoded, $params{uploads}, $params{form});
+        $resource = $json_decoded;
         $non_json_data = 0;
     }
 
@@ -90,9 +90,9 @@ sub get_info_data {
     my ($self, $c) = @_;
     my $ctype = $self->get_content_type($c) // '';
     my $resource = $c->request->params;
-    my ($resource_json,$resource_json_raw);
+    my ($resource_json,$resource_json_raw) = (undef,'');
     if ('multipart/form-data' eq $ctype) {
-        $resource_json_raw = delete $resource->{json};
+        $resource_json = delete $resource->{json};
     } elsif ('application/json' eq $ctype) {
         if ($self->require_body($c)) {
             $resource_json_raw = $c->stash->{body};
@@ -1276,7 +1276,12 @@ sub return_representation_post{
         $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             $hal->http_headers,
         ), $hal->as_json);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
+        $c->response->header(
+            Location => sprintf('/%s%s', 
+            $c->request->path, 
+            $self->get_item_id(
+                $c,$item, undef, undef, { purpose => 'hal_links_href' })
+            ));
     }
 
     if ('minimal' eq $preference || !$response) {
