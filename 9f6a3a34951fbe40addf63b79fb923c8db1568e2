@@ -156,6 +156,30 @@
       "revId": "9f6a3a34951fbe40addf63b79fb923c8db1568e2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_e13006a1",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 14
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-22T09:56:35Z",
+      "side": 1,
+      "message": "ack just saw they are not filtered for there, but added to the result columns",
+      "parentUuid": "da9b358b_c10e22e5",
+      "range": {
+        "startLine": 208,
+        "startChar": 19,
+        "endLine": 208,
+        "endChar": 25
+      },
+      "revId": "9f6a3a34951fbe40addf63b79fb923c8db1568e2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
