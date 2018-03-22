@@ -66,10 +66,11 @@ sub set_config {
         #DoesAdd
         #Method
         #Path
-        #ContentType => ['multipart/form-data'],#allowed REQUEST content type
-        #Uploads     => [qw/front_image mac_image/],#uploads filenames
+        #ContentType         => ['multipart/form-data'],#allowed REQUEST content type
+        #ResourceContentType => 'native' for request_params for csv upload cases to avoid default upload behavior when resource is taken from multipart/form-data {json} body part
+        #Uploads             => [qw/front_image mac_image/],#uploads filenames
         #  or
-        #Uploads     => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
+        #Uploads             => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
         #own_transaction_control->{PUT|POST|PATCH|DELETE|ALL} = 0|1 - don't start transaction guard in parent classes, implementation need to control it
         #ReturnContentType => 'binary'#mostly for GET. value different from 'application/json' says that method is going to return binary data using get_item_binary_data
     #}
@@ -254,11 +255,12 @@ sub post {
         my $method_config = $self->config->{action}->{POST};
         my $process_extras= {};
         my ($resource, $data, $non_json_data) = $self->get_valid_data(
-            c               => $c,
-            method          => 'POST',
-            media_type      => $method_config->{ContentType} // 'application/json',
-            uploads         => $method_config->{Uploads} // [] ,
-            form            => $form,
+            c                   => $c,
+            method              => 'POST',
+            media_type          => $method_config->{ContentType} // 'application/json',
+            uploads             => $method_config->{Uploads} // [] ,
+            form                => $form,
+            resource_media_type => $method_config->{ResourceContentType},
         );
         last unless $resource;
         my ($item,$data_processed_result);
@@ -301,12 +303,19 @@ sub post {
 
         $self->return_representation_post($c, 
             'item' => $item, 
-            'form' => $form, 
-            data_processed_result => $data_processed_result );
+            'form' => $form
+        );
     }
     return;
 }
 
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
+    my $rs = $self->_item_rs($c);
+    return unless $rs;
+    my $item = $rs->create($resource);
+    return $item;
+}
 
 sub POST {
     my ($self) = shift;
