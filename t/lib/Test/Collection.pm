@@ -669,6 +669,7 @@ sub get_request_put{
     $req->header('Prefer' => 'return=representation');
     return $req;
 }
+
 sub get_request_patch{
     my($self,$uri,$content) = @_;
     $uri ||= $self->get_uri_current;
@@ -678,6 +679,20 @@ sub get_request_patch{
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => $content_type );
     $content and $req->content($content);
+    return $req;
+}
+
+sub get_request_post{
+    my($self,$content,$uri) = @_;
+    $uri ||= $self->get_uri_current;
+    $uri = $self->normalize_uri($uri);
+    #This is for multipart/form-data cases
+    my $content_type;
+    ($content,$content_type) = $self->encode_content($content, $self->content_type->{POST});
+    my $req = POST $uri,
+        Content_Type => $content_type,
+        $content ? ( Content => $content ) : ();
+    $req->header('Prefer' => 'return=representation');
     return $req;
 }
 
@@ -707,16 +722,20 @@ sub request_patch{
 
 sub request_post{
     my($self, $content, $uri, $req) = @_;
-    $uri ||= $self->get_uri_collection;
-    $uri = $self->normalize_uri($uri);
-    diag("request_post: uri: $uri;");
-    my $content_type;
-    ($content,$content_type) = $self->encode_content($content, $self->content_type->{POST});
-    #form-data is set automatically, despite on $self->content_type->{POST}
-    $req ||= POST $uri,
-        Content_Type => $content_type,
-        Content => $content;
-    $req->header('Prefer' => 'return=representation');
+    if(!$req){
+        $uri ||= $self->get_uri_collection;
+        $uri = $self->normalize_uri($uri);
+        my $content_type;
+        ($content,$content_type) = $self->encode_content($content, $self->content_type->{POST});
+        #form-data is set automatically, despite on $self->content_type->{POST}
+        $req ||= POST $uri,
+            Content_Type => $content_type,
+            Content => $content;
+        $req->header('Prefer' => 'return=representation');
+    }
+    diag("request_post: uri: ".$req->uri.";");
+    diag("request_post: content: ".$req->content.";");
+    diag("request_post: content_type: ".$req->header('Content-Type').";");
     my $res = $self->request($req);
     my $rescontent = $self->get_response_content($res);
     my $location = $res->header('Location') // '';
@@ -773,8 +792,10 @@ sub request_delete{
 
 sub request_get{
     my($self,$uri,$req,$headers) = @_;
-    $uri = $self->normalize_uri($uri);
-    $req //= $self->get_request_get($uri,$headers);
+    if (!$req) {
+        $uri = $self->normalize_uri($uri);
+        $req //= $self->get_request_get($uri,$headers);    
+    }
     my $res = $self->request($req);
     my $content = $self->get_response_content($res);
     return wantarray ? ($res, $content, $req) : $res;
