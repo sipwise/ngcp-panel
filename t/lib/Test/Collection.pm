@@ -669,6 +669,7 @@ sub get_request_put{
     $req->header('Prefer' => 'return=representation');
     return $req;
 }
+
 sub get_request_patch{
     my($self,$uri,$content) = @_;
     $uri ||= $self->get_uri_current;
@@ -678,6 +679,20 @@ sub get_request_patch{
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => $content_type );
     $content and $req->content($content);
+    return $req;
+}
+
+sub get_request_post{
+    my($self,$content,$uri) = @_;
+    $uri ||= $self->get_uri_current;
+    $uri = $self->normalize_uri($uri);
+    #This is for multipart/form-data cases
+    my $content_type;
+    ($content,$content_type) = $self->encode_content($content, $self->content_type->{POST});
+    my $req = POST $uri,
+        Content_Type => $content_type,
+        $content ? ( Content => $content ) : ();
+    $req->header('Prefer' => 'return=representation');
     return $req;
 }
 
