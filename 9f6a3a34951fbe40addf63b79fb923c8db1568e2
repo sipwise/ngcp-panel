@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9b358b_41e7b240",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 14
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-22T08:25:47Z",
+      "side": 1,
+      "message": "this is supposed to be placed in the block where needed, actually critic should claim otherwise",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 17
+      },
+      "revId": "9f6a3a34951fbe40addf63b79fb923c8db1568e2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_c1c982ae",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 14
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-22T08:25:47Z",
+      "side": 1,
+      "message": "ok so the updated reqirement here is that a query param is mandatory. (not so obvious to know beforehand imho -\u003e eg. for call list we do that for performance reasons only)",
+      "revId": "9f6a3a34951fbe40addf63b79fb923c8db1568e2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_e1d48648",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 14
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-22T08:25:47Z",
+      "side": 1,
+      "message": "why is this needed, -\u003efind() will fail anyway",
+      "revId": "9f6a3a34951fbe40addf63b79fb923c8db1568e2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_01d08a52",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 14
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-22T08:25:47Z",
+      "side": 1,
+      "message": "maybe better add checks like this here:\n\nunless ($owner) {\n  $c-\u003elog-\u003eerror(\u0027Invalid reseller_id\u0027);\n  $self-\u003eerror($c, HTTP_UNPROCESSABLE_ENTITY, \"Invalid reseller id\");\n  return;\n}\n\ninstead of the is_int above.\n\nok forget this, its already added at the end..",
+      "revId": "9f6a3a34951fbe40addf63b79fb923c8db1568e2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_a1ce7eb2",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 14
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-22T08:25:47Z",
+      "side": 1,
+      "message": "so this is now also is introduced for contract and reseller entries",
+      "range": {
+        "startLine": 208,
+        "startChar": 19,
+        "endLine": 208,
+        "endChar": 25
+      },
+      "revId": "9f6a3a34951fbe40addf63b79fb923c8db1568e2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
