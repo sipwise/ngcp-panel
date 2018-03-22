@@ -848,7 +848,7 @@ sub check_write_access {
 
 sub subscriberadmin_write_access {
     my($self,$c) = @_;
-    if ($c->user->roles eq "subscriberadmin" && $c->config->{acl}->{subscriberadmin}->{subscribers} =~/write/ ) {
+    if ($c->user->roles eq "subscriberadmin" && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/ ) {
         return 1;
     }
     return 0;

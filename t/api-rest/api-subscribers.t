@@ -360,7 +360,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{is_pbx_pilot} = 0;
             delete $_[0]->{alias_numbers};
         } )->[0];
-        if ($remote_config->{config}->{acl}->{subscriberadmin}->{subscribers} =~/write/) {
+        if ($remote_config->{config}->{privileges}->{subscriberadmin}->{subscribers} =~/write/) {
             $test_machine->check_get2put($subscriber,{},$put2get_check_params);
             my($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched 34021' } ], $subscriber->{location} );
             $test_machine->http_code_msg(200, "Check display_name patch for subscriberadmin", $res, $content);
