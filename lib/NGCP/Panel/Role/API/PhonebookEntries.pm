@@ -63,12 +63,24 @@ sub validate_request {
     return 1;
 }
 
+sub get_item_id{
+    my($self, $c, $item, $resource, $form, $params) = @_;
+    my $id = int($item->id);
+    if(('HASH' eq ref $params) && 'hal_links_href' eq $params->{purpose}){
+        my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
+        return unless $owner;
+        return $id = $id.'?'.$parameter.'='.$value;
+    }
+    return $id  ;
+}
+
+
 sub check_owner_params {
     my($self, $c, $params) = @_;
     if ($c->stash->{check_owner_params}) {
         return (@{$c->stash->{check_owner_params}});
     }
-    
+
     my @allowed_params;
     if ($c->user->roles eq "admin") {
         @allowed_params = qw/reseller_id customer_id subscriber_id/;
@@ -163,15 +175,9 @@ sub check_owner_params {
 sub get_reseller_phonebook_rs {
     my ($c, $reseller_id, $context) = @_;
 
-    my $list_rs = $c->model('DB')->resultset('reseller_phonebook')->search_rs({
-            reseller_id => $reseller_id,
-        },{
-            columns => [qw/id name number/,
-                { 'owner_id'   => 'me.reseller_id' } ,
-                { 'shared'     => \'0'},
-            ],
-        });
-
+    my $list_rs = $c->model('DB')->resultset('resellers')->find({
+        id => $reseller_id,
+    })->phonebook;
     my $item_rs = $c->model('DB')->resultset('reseller_phonebook');
     return ($list_rs,$item_rs);
 }
@@ -179,20 +185,10 @@ sub get_reseller_phonebook_rs {
 sub get_contract_phonebook_rs {
     my ($c, $contract_id, $context) = @_;
 
-    my $contract_rs = $c->model('DB')->resultset('contracts')->search({
+    my $list_rs = $c->model('DB')->resultset('contracts')->find({
         id => $contract_id,
-    })->first;
+    })->phonebook;
 
-    my $contract_pb_rs = $c->model('DB')->resultset('contract_phonebook')->search_rs({
-            contract_id => $contract_id,
-        },{
-            columns => [qw/id name number/,
-                { 'owner_id'   => 'me.contract_id' } ,
-                { 'shared'     => \'0'},
-            ],
-        });
-
-    my $list_rs = $contract_pb_rs;
     my $item_rs = $c->model('DB')->resultset('contract_phonebook');
     return ($list_rs,$item_rs);
 }
@@ -200,21 +196,9 @@ sub get_contract_phonebook_rs {
 sub get_subscriber_phonebook_rs {
     my ($c, $subscriber_id) = @_;
 
-    my $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+    my $list_rs = $c->model('DB')->resultset('voip_subscribers')->find({
         id => $subscriber_id,
-    })->first;
-
-    my $subscriber_pb_rs = $c->model('DB')->resultset('subscriber_phonebook')->search_rs({
-            subscriber_id => $subscriber_id,
-        },{
-            columns => [qw/id name number/,
-                { 'owner_id'   => 'me.subscriber_id' } ,
-                { 'shared'     => 'me.shared'},
-            ],
-            'join' => 'subscriber',
-        });
-
-    my $list_rs = $subscriber_pb_rs;
+    })->phonebook;
     my $item_rs = $c->model('DB')->resultset('subscriber_phonebook');
     return ($list_rs,$item_rs);
 }
