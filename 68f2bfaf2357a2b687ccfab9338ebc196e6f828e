@@ -16,6 +16,24 @@
       "revId": "68f2bfaf2357a2b687ccfab9338ebc196e6f828e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_01376ab1",
+        "filename": "lib/NGCP/Panel/Role/API/SMS.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-22T08:41:18Z",
+      "side": 1,
+      "message": "do we want to apply it always? for subscribers only or for all probably id? maybe it can be solved on the schema side?",
+      "parentUuid": "1a6ced46_0ce99b1a",
+      "revId": "68f2bfaf2357a2b687ccfab9338ebc196e6f828e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
