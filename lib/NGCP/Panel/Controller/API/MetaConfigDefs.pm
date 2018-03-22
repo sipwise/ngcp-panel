@@ -68,7 +68,7 @@ sub GET :Allow {
         $config{numbermanagement}->{auto_allow_cli} = $config_internal{numbermanagement}->{auto_allow_cli};
         $config{security}->{password_web_validate}  = $config_internal{security}->{password_web_validate};
         $config{security}->{password_sip_validate}  = $config_internal{security}->{password_sip_validate};
-        $config{acl}  = $config_internal{acl};
+        $config{privileges}  = $config_internal{privileges};
         $config{features} = $config_internal{features};
 
         my $meta = {
