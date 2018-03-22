@@ -90,9 +90,9 @@ sub get_info_data {
     my ($self, $c) = @_;
     my $ctype = $self->get_content_type($c) // '';
     my $resource = $c->request->params;
-    my ($resource_json,$resource_json_raw);
+    my ($resource_json,$resource_json_raw) = (undef,'');
     if ('multipart/form-data' eq $ctype) {
-        $resource_json_raw = delete $resource->{json};
+        $resource_json = delete $resource->{json};
     } elsif ('application/json' eq $ctype) {
         if ($self->require_body($c)) {
             $resource_json_raw = $c->stash->{body};
@@ -1276,7 +1276,12 @@ sub return_representation_post{
         $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             $hal->http_headers,
         ), $hal->as_json);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
+        $c->response->header(
+            Location => sprintf('/%s%s', 
+            $c->request->path, 
+            $self->get_item_id(
+                $c,$item, undef, undef, { purpose => 'hal_links_href' })
+            ));
     }
 
     if ('minimal' eq $preference || !$response) {

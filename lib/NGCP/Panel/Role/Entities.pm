@@ -301,12 +301,19 @@ sub post {
 
         $self->return_representation_post($c, 
             'item' => $item, 
-            'form' => $form, 
-            data_processed_result => $data_processed_result );
+            'form' => $form
+        );
     }
     return;
 }
 
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
+    my $rs = $self->_item_rs($c);
+    return unless $rs;
+    my $item = $rs->create($resource);
+    return $item;
+}
 
 sub POST {
     my ($self) = shift;
