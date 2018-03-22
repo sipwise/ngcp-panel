@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9b358b_a1eb1eb0",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 15
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-03-22T12:32:43Z",
+      "side": 1,
+      "message": "this will be difficult for new people to understand (what it does). debug-info?",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 23
+      },
+      "revId": "5a68bf032b9dc5aeb46f8743349caad9b8fb398f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_81d13afe",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 15
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-03-22T12:32:43Z",
+      "side": 1,
+      "message": "not really needed?",
+      "revId": "5a68bf032b9dc5aeb46f8743349caad9b8fb398f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
