@@ -1,3 +1,12 @@
+ngcp-panel (5.5.3.2+0~mr5.5.3.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [4ebd4bc] TT#27469 fix callrouting verification form dependency
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 22 Mar 2018 11:45:43 +0100
+
 ngcp-panel (5.5.3.1+0~mr5.5.3.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
