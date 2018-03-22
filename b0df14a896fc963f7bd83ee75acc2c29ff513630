@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9b358b_419fb25f",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-22T11:32:41Z",
+      "side": 1,
+      "message": "hm, maybe per column instead of per row",
+      "revId": "b0df14a896fc963f7bd83ee75acc2c29ff513630",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_8195ba41",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-03-22T11:32:41Z",
+      "side": 1,
+      "message": "floating",
+      "range": {
+        "startLine": 179,
+        "startChar": 34,
+        "endLine": 179,
+        "endChar": 48
+      },
+      "revId": "b0df14a896fc963f7bd83ee75acc2c29ff513630",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
