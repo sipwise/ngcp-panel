@@ -16,6 +16,24 @@
       "revId": "bd1effcf1b06beba480a55e4f42d163dd42d4ffe",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_a1455e18",
+        "filename": "lib/NGCP/Panel/Role/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-22T08:43:18Z",
+      "side": 1,
+      "message": "I changed query a little, but anyway it is made on level of the item_rs to avoid additional query for each row",
+      "parentUuid": "1a6ced46_c9193524",
+      "revId": "bd1effcf1b06beba480a55e4f42d163dd42d4ffe",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
