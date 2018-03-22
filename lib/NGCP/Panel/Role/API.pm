@@ -1276,7 +1276,12 @@ sub return_representation_post{
         $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             $hal->http_headers,
         ), $hal->as_json);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $self->get_item_id($c, $item)));
+        $c->response->header(
+            Location => sprintf('/%s%s', 
+            $c->request->path, 
+            $self->get_item_id(
+                $c,$item, undef, undef, { purpose => 'hal_links_href' })
+            ));
     }
 
     if ('minimal' eq $preference || !$response) {
