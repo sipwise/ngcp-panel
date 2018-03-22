@@ -66,10 +66,11 @@ sub set_config {
         #DoesAdd
         #Method
         #Path
-        #ContentType => ['multipart/form-data'],#allowed REQUEST content type
-        #Uploads     => [qw/front_image mac_image/],#uploads filenames
+        #ContentType         => ['multipart/form-data'],#allowed REQUEST content type
+        #ResourceContentType => 'native' for request_params for csv upload cases to avoid default upload behavior when resource is taken from multipart/form-data {json} body part
+        #Uploads             => [qw/front_image mac_image/],#uploads filenames
         #  or
-        #Uploads     => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
+        #Uploads             => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
         #own_transaction_control->{PUT|POST|PATCH|DELETE|ALL} = 0|1 - don't start transaction guard in parent classes, implementation need to control it
         #ReturnContentType => 'binary'#mostly for GET. value different from 'application/json' says that method is going to return binary data using get_item_binary_data
     #}
@@ -110,11 +111,11 @@ sub set_config {
                 AllowedRole => $allowed_roles_by_methods->{$_},
                 Args => ( $params->{interface_type} eq 'item' ? 1 : 0 ),
                 Does => [
-                    'ACL', 
-                    ( $params->{interface_type} eq 'item' ? () : ('CheckTrailingSlash') ), 
+                    'ACL',
+                    ( $params->{interface_type} eq 'item' ? () : ('CheckTrailingSlash') ),
                     'RequireSSL',
-                    ( ref $params_all_methods->{DoesAdd} eq 'ARRAY' ? @$params_all_methods->{DoesAdd} : () ), 
-                    ( ref $params_method->{DoesAdd} eq 'ARRAY' ? @$params_method->{DoesAdd} : () ), 
+                    ( ref $params_all_methods->{DoesAdd} eq 'ARRAY' ? @$params_all_methods->{DoesAdd} : () ),
+                    ( ref $params_method->{DoesAdd} eq 'ARRAY' ? @$params_method->{DoesAdd} : () ),
                 ],
                 Method => $_,
                 Path => $self->dispatch_path($params->{resource_name}),
@@ -143,7 +144,7 @@ sub set_config {
                 AllowedRole => $allowed_roles_by_methods->{'Journal'},
                 Does => [qw(ACL RequireSSL)],
             }) }
-        : 
+        :
             () ),
         log_response => 1,
         log_request  => 1,
@@ -178,8 +179,8 @@ sub options {
     my $post_allowed = grep { $_ eq 'POST' } @{ $allowed_methods };
     $c->response->headers(HTTP::Headers->new(
         Allow => join(', ', @{ $allowed_methods }),
-#        $post_allowed 
-#        ? ( 
+#        $post_allowed
+#        ? (
         Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
 #        ) : (),
     ));
@@ -206,6 +207,7 @@ sub get {
         my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
         for my $item (@items) {
             push @embedded, $self->hal_from_item($c, $item, $form, {});
+            #TODO: replace hal_links_href by separated method that utilize get_item_id.
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%s', $c->request->path, $self->get_item_id($c,
@@ -254,11 +256,12 @@ sub post {
         my $method_config = $self->config->{action}->{POST};
         my $process_extras= {};
         my ($resource, $data, $non_json_data) = $self->get_valid_data(
-            c               => $c,
-            method          => 'POST',
-            media_type      => $method_config->{ContentType} // 'application/json',
-            uploads         => $method_config->{Uploads} // [] ,
-            form            => $form,
+            c                   => $c,
+            method              => 'POST',
+            media_type          => $method_config->{ContentType} // 'application/json',
+            uploads             => $method_config->{Uploads} // [] ,
+            form                => $form,
+            resource_media_type => $method_config->{ResourceContentType},
         );
         last unless $resource;
         my ($item,$data_processed_result);
@@ -280,9 +283,9 @@ sub post {
         } else {
             try {
                 #$processed_ok(array), $processed_failed(array), $info, $error
-                $data_processed_result = $self->process_data( 
-                    c        => $c, 
-                    data     => \$data, 
+                $data_processed_result = $self->process_data(
+                    c        => $c,
+                    data     => \$data,
                     resource => $resource,
                     form     => $form,
                     process_extras => $process_extras,
@@ -299,14 +302,21 @@ sub post {
 
         return if defined $c->stash->{api_error_message};
 
-        $self->return_representation_post($c, 
-            'item' => $item, 
-            'form' => $form, 
-            data_processed_result => $data_processed_result );
+        $self->return_representation_post($c,
+            'item' => $item,
+            'form' => $form
+        );
     }
     return;
 }
 
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
+    my $rs = $self->_item_rs($c);
+    return unless $rs;
+    my $item = $rs->create($resource);
+    return $item;
+}
 
 sub POST {
     my ($self) = shift;
