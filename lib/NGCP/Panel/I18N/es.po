@@ -112,8 +112,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 #: lib/NGCP/Panel/Controller/Package.pm lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
-#: lib/NGCP/Panel/Controller/Product.pm lib/NGCP/Panel/Controller/Reseller.pm
-#: lib/NGCP/Panel/Controller/Rewrite.pm lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Phonebook.pm lib/NGCP/Panel/Controller/Product.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Rewrite.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm lib/NGCP/Panel/Utils/Sounds.pm
 #: lib/NGCP/Panel/Utils/Voucher.pm share/templates/customer/details.tt
@@ -177,7 +178,7 @@ msgstr "%1<span class=\"pull-right\">para %2s</span>"
 
 #: lib/NGCP/Panel/Controller/Voucher.pm lib/NGCP/Panel/Utils/Billing.pm
 #: lib/NGCP/Panel/Utils/CallList.pm lib/NGCP/Panel/Utils/EmergencyMapping.pm
-#: lib/NGCP/Panel/Utils/Lnp.pm
+#: lib/NGCP/Panel/Utils/Lnp.pm lib/NGCP/Panel/Utils/Phonebook.pm
 msgid ", but skipped the following line numbers: "
 msgstr ", pero omitir los siguientes números: "
 
@@ -1629,6 +1630,11 @@ msgstr "Crear Servidor de Peering"
 msgid "Create Permanent Registration"
 msgstr "Crear Registro Permanente"
 
+#: share/templates/customer/details.tt share/templates/phonebook/list.tt
+#: share/templates/reseller/details.tt share/templates/subscriber/master.tt
+msgid "Create Phonebook Entry"
+msgstr ""
+
 #: share/templates/lnp/list.tt
 msgid "Create Ported Number"
 msgstr ""
@@ -1886,10 +1892,10 @@ msgstr ""
 #: share/templates/numberblock/block_list.tt
 #: share/templates/numberblock/profile_list.tt share/templates/package/list.tt
 #: share/templates/peering/list.tt share/templates/peering/servers_rules.tt
-#: share/templates/peeringoverview/list.tt share/templates/reseller/details.tt
-#: share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt
-#: share/templates/sound/handles_list.tt share/templates/sound/list.tt
-#: share/templates/subprofile/profile_list.tt
+#: share/templates/peeringoverview/list.tt share/templates/phonebook/list.tt
+#: share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt
+#: share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt
+#: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
 #: share/templates/subscriber/recording.tt
@@ -2185,7 +2191,9 @@ msgid "Download"
 msgstr "Descargar"
 
 #: share/templates/calllistsuppression/list.tt
-#: share/templates/emergencymapping/list.tt share/templates/lnp/list.tt
+#: share/templates/customer/details.tt share/templates/emergencymapping/list.tt
+#: share/templates/lnp/list.tt share/templates/phonebook/list.tt
+#: share/templates/reseller/details.tt share/templates/subscriber/master.tt
 msgid "Download CSV"
 msgstr ""
 
@@ -2231,10 +2239,10 @@ msgstr ""
 #: share/templates/network/list.tt share/templates/numberblock/block_list.tt
 #: share/templates/numberblock/profile_list.tt share/templates/package/list.tt
 #: share/templates/peering/list.tt share/templates/peering/servers_rules.tt
-#: share/templates/reseller/details.tt share/templates/reseller/list.tt
-#: share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt
-#: share/templates/sound/handles_list.tt share/templates/sound/list.tt
-#: share/templates/subprofile/profile_list.tt
+#: share/templates/phonebook/list.tt share/templates/reseller/details.tt
+#: share/templates/reseller/list.tt share/templates/rewrite/rules_list.tt
+#: share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt
+#: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt share/templates/voucher/list.tt
 msgid "Edit"
@@ -2729,6 +2737,15 @@ msgstr ""
 msgid "Failed to create peering server"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Phonebook.pm
+msgid "Failed to create phonebook entry"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to create phonebook entry."
+msgstr ""
+
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Failed to create preference %1"
@@ -2900,6 +2917,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Failed to delete peering server"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Phonebook.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete phonebook entry"
 msgstr ""
 
 #. ($attribute)
@@ -3253,6 +3276,12 @@ msgstr ""
 msgid "Failed to update peering server"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Phonebook.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to update phonebook entry"
+msgstr ""
+
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Failed to update preference %1"
@@ -3350,6 +3379,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Failed to upload LNP numbers"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Phonebook.pm
+msgid "Failed to upload Phonebook entries"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
@@ -4143,6 +4176,15 @@ msgstr "Id de regla de peering inválida detectada"
 msgid "Invalid peering server id"
 msgstr "Id de servidor de peering inválido"
 
+#: lib/NGCP/Panel/Controller/Phonebook.pm
+msgid "Invalid phonebook entry id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Invalid phonebook id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Invalid product id for this customer contract."
 msgstr "Id de producto inválido para este contrato de cliente."
@@ -4846,8 +4888,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Network.pm
 #: lib/NGCP/Panel/Controller/Package.pm lib/NGCP/Panel/Controller/Peering.pm
-#: lib/NGCP/Panel/Controller/Product.pm lib/NGCP/Panel/Controller/Reseller.pm
-#: lib/NGCP/Panel/Controller/Rewrite.pm
+#: lib/NGCP/Panel/Controller/Phonebook.pm lib/NGCP/Panel/Controller/Product.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Rewrite.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 #: lib/NGCP/Panel/Utils/Sounds.pm share/templates/customer/details.tt
 #: share/templates/helpers/pref_table.tt share/templates/sound/handles_list.tt
@@ -4928,6 +4971,10 @@ msgstr "No hay nuevos mensajes"
 msgid "No packets for this Call-ID found."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/Phonebook.pm
+msgid "No phonebook entries file specified!"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Sound.pm
 msgid "No product for this customer contract found."
 msgstr "No hay producto para este contrato"
@@ -4969,6 +5016,7 @@ msgid "Notify"
 msgstr "Notificar"
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Lnp.pm
+#: lib/NGCP/Panel/Controller/Phonebook.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Number"
 msgstr "Número"
@@ -5374,6 +5422,41 @@ msgstr "Estado del teléfono:"
 #: share/templates/customer/details.tt
 msgid "Phone/Fax"
 msgstr "Teléfono/Fax"
+
+#: share/templates/customer/details.tt share/templates/phonebook/list.tt
+#: share/templates/reseller/details.tt share/templates/subscriber/master.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/reseller_topmenu_settings.tt
+msgid "Phonebook"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Phonebook.pm
+msgid "Phonebook entries successfully uploaded"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Phonebook.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Phonebook entry does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Phonebook.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Phonebook entry successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Phonebook.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Phonebook entry successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Phonebook.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Phonebook entry successfully updated"
+msgstr ""
 
 #: share/templates/sound/handles_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/recording_streams.tt
@@ -5836,7 +5919,8 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/NCOS.pm
 #: lib/NGCP/Panel/Controller/Network.pm lib/NGCP/Panel/Controller/Package.pm
-#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Rewrite.pm
+#: lib/NGCP/Panel/Controller/Phonebook.pm lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 #: lib/NGCP/Panel/Utils/Sounds.pm lib/NGCP/Panel/Utils/Voucher.pm
 #: share/templates/customer/details.tt share/templates/reseller/details.tt
@@ -6357,6 +6441,10 @@ msgstr "Preferencia"
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt
 msgid "Settings"
 msgstr "Preferencias"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Shared"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 #, fuzzy
@@ -7540,7 +7628,9 @@ msgid "Upload"
 msgstr "Subir"
 
 #: share/templates/calllistsuppression/list.tt
-#: share/templates/emergencymapping/list.tt share/templates/lnp/list.tt
+#: share/templates/customer/details.tt share/templates/emergencymapping/list.tt
+#: share/templates/lnp/list.tt share/templates/phonebook/list.tt
+#: share/templates/reseller/details.tt share/templates/subscriber/master.tt
 msgid "Upload CSV"
 msgstr ""
 
