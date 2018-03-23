@@ -99,7 +99,9 @@ sub resize_actual_contract_balance {
         $underrun_profile_threshold = $new_package->underrun_profile_threshold;
         $underrun_lock_threshold = $new_package->underrun_lock_threshold;
     } elsif (defined $old_package && defined $new_package) {
-        if ($old_package->balance_interval_start_mode ne $new_package->balance_interval_start_mode) {
+        if ($old_package->balance_interval_start_mode ne $new_package->balance_interval_start_mode
+            || _CREATE_TZ_START_MODE eq $old_package->balance_interval_start_mode
+            || _1ST_TZ_START_MODE eq $old_package->balance_interval_start_mode) {
             $old_start_mode = $old_package->balance_interval_start_mode;
             $new_start_mode = $new_package->balance_interval_start_mode;
             $create_next_balance = (_TOPUP_START_MODE eq $new_package->balance_interval_start_mode ||
