@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9b358b_876dca34",
+        "filename": "lib/NGCP/Panel/Controller/API/PhonebookEntries.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 68,
+        "startChar": 6,
+        "endLine": 68,
+        "endChar": 7
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_676ac61c",
+        "filename": "lib/NGCP/Panel/Controller/API/PhonebookEntries.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 77,
+        "startChar": 6,
+        "endLine": 77,
+        "endChar": 7
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_c7599290",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 66,
+        "startChar": 15,
+        "endLine": 66,
+        "endChar": 16
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_a75e8e74",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 67,
+        "startChar": 6,
+        "endLine": 67,
+        "endChar": 7
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_8754aa54",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 69,
+        "startChar": 6,
+        "endLine": 69,
+        "endChar": 7
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_6751a662",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 69,
+        "startChar": 73,
+        "endLine": 69,
+        "endChar": 74
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_274b9eb2",
+        "filename": "t/api-rest/api-phonebookentries.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 25,
+        "startChar": 32,
+        "endLine": 25,
+        "endChar": 33
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_474ea2c2",
+        "filename": "t/api-rest/api-phonebookentries.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 92,
+        "startChar": 29,
+        "endLine": 92,
+        "endChar": 30
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_07c77a13",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 685,
+        "startChar": 20,
+        "endLine": 685,
+        "endChar": 21
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_e7cb761d",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-23T15:07:05Z",
+      "side": 1,
+      "message": "missing space char",
+      "range": {
+        "startLine": 686,
+        "startChar": 6,
+        "endLine": 686,
+        "endChar": 7
+      },
+      "revId": "dc864a3a6f1a0a5f86328594046f11d0ea44774e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
