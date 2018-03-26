@@ -22,6 +22,30 @@
       "revId": "8505eb24706dbadf4a13c59ba455fd1aebfb8ebc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_6ace0b5c",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 855,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-26T12:21:21Z",
+      "side": 1,
+      "message": "No, this will not work correctly - we may add privileges for other roles/api in the future, but this one still will be undefined, so checking should be exactly for the required role-pointer pair.",
+      "parentUuid": "da9b358b_eaba1bc0",
+      "range": {
+        "startLine": 851,
+        "startChar": 0,
+        "endLine": 855,
+        "endChar": 5
+      },
+      "revId": "8505eb24706dbadf4a13c59ba455fd1aebfb8ebc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
