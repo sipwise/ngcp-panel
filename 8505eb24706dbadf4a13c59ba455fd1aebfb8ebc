@@ -46,6 +46,30 @@
       "revId": "8505eb24706dbadf4a13c59ba455fd1aebfb8ebc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_4af2279c",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 855,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-26T12:46:07Z",
+      "side": 1,
+      "message": "not sure that I understand what you mean.\n\nif we are going to use \u0027privileges\u0027 for other roles and $c-\u003econfig-\u003e{privileges} key is not defined then it means that the behaviour should be the default one for this role (return 0).\n\nthen \n\nmy $priv \u003d $c-\u003econfig-\u003e{privileges}-\u003e{subscriberadmin}-\u003e{subscribers} // \u0027\u0027;\n\nmay create an empty \u0027subscriberadmin\u0027 key if \u0027privileges\u0027 exists but for some unknkown reason do not have the key.",
+      "parentUuid": "da9b358b_6ace0b5c",
+      "range": {
+        "startLine": 851,
+        "startChar": 0,
+        "endLine": 855,
+        "endChar": 5
+      },
+      "revId": "8505eb24706dbadf4a13c59ba455fd1aebfb8ebc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
