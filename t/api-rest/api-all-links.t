@@ -43,11 +43,14 @@ $ua = Test::Collection->new()->ua();
             # skip calllists collection, as it needs a subscriber_id parameter also in the collection
             next if $relname eq "calllists";
             next if $relname eq "conversations";
+            next if $relname eq "phonebookentries";
             #my $uri = "$uri/api/$relname/";
             #if('conversations' eq $relname){
             #    $uri .= '?type=call';
             #}elsif('calllist' eq $relname){
             #    $uri .= '?type=call';
+            #}elsif('calllist' eq $relname){
+            #    $uri .= '?reseller_id=1';
             #}
             $req = HTTP::Request->new('GET', "$uri/api/$relname/");
             $res = $ua->request($req);

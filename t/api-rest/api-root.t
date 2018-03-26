@@ -114,6 +114,7 @@ $ua = Test::Collection->new()->ua();
         peeringserverpreferencedefs => 1,
         peeringserverpreferences => 1,
         peeringservers => 1,
+        phonebookentries => 1,
         profilepackages => 1,
         profilepreferencedefs => 1,
         profilepreferences => 1,
