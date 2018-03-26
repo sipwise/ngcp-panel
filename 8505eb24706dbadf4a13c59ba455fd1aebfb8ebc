@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da9b358b_eaba1bc0",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 855,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-26T12:00:24Z",
+      "side": 1,
+      "message": "my idea was towards readability as your last code change should work as intended.\nbasically change it to:\n\nsub subscriberadmin_write_access {\n  my ($self,$c) \u003d @_;\n  return 0 unless $c-\u003econfig-\u003e{privileges};\n  my $priv \u003d $c-\u003econfig-\u003e{privileges}-\u003e{subscriberadmin}-\u003e{subscribers} // \u0027\u0027;\n  if ($c-\u003euser-\u003eroles eq \"subscriberadmin\" \u0026\u0026 $priv \u003d~/write/ ) {\n        return 1;\n   }\n\n...",
+      "range": {
+        "startLine": 851,
+        "startChar": 0,
+        "endLine": 855,
+        "endChar": 5
+      },
+      "revId": "8505eb24706dbadf4a13c59ba455fd1aebfb8ebc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
