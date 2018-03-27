@@ -22,6 +22,30 @@
       "revId": "a4cbfa38ca701136876988bf55ac1f2ce5fd86c6",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_1504447c",
+        "filename": "lib/NGCP/Panel/Controller/API/PhonebookEntries.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-27T15:10:33Z",
+      "side": 1,
+      "message": "in patch 2",
+      "parentUuid": "da9b358b_55dbec1b",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 1
+      },
+      "revId": "a4cbfa38ca701136876988bf55ac1f2ce5fd86c6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
