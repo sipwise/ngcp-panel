@@ -52,6 +52,24 @@
       "revId": "1fd698e98986dc5091a9c9a3c311494ad9f3d9ff",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_55f1accc",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-27T12:29:29Z",
+      "side": 1,
+      "message": "If we want to download csv - we need to say it through Accept, if we upload - we inform about it via Content-Type.",
+      "parentUuid": "da9b358b_95e73412",
+      "revId": "1fd698e98986dc5091a9c9a3c311494ad9f3d9ff",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
