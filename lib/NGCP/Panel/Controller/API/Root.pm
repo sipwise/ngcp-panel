@@ -159,14 +159,18 @@ sub GET : Allow {
             $sorting_cols = [ sort keys %$order_by_cols ];
         } else {
             my $item_rs;
-            try {
-                $item_rs = $full_mod->item_rs($c, "");
-            }
-            if ($item_rs) {
-                if(ref $item_rs eq "ARRAY") {
-                    $sorting_cols = [map { $_->{name} } @{ $item_rs }];
-                } else {
-                    $sorting_cols = [$item_rs->result_source->columns];
+            if ($full_mod->can("document_sorting_cols")) {
+                $sorting_cols = $full_mod->document_sorting_cols($c);
+            } else {
+                try {
+                    $item_rs = $full_mod->item_rs($c, "");
+                }
+                if ($item_rs) {
+                    if(ref $item_rs eq "ARRAY") {
+                        $sorting_cols = [map { $_->{name} } @{ $item_rs }];
+                    } else {
+                        $sorting_cols = [$item_rs->result_source->columns];
+                    }
                 }
             }
         }
