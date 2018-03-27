@@ -1,3 +1,12 @@
+ngcp-panel (1.14.9.0+0~mr4.5.9.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [3245a70] TT#33871 use a correct rs call in mailtofaxsettings
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 27 Mar 2018 18:33:08 +0200
+
 ngcp-panel (1.14.8.0+0~mr4.5.8.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
