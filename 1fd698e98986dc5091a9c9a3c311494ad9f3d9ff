@@ -16,6 +16,24 @@
       "revId": "1fd698e98986dc5091a9c9a3c311494ad9f3d9ff",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_d5dc9c48",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-03-27T12:20:38Z",
+      "side": 1,
+      "message": "In api-cert-auth.t we use:\n\n    $res \u003d $ua-\u003ehead($uri.\u0027/api/\u0027);\n    is($res-\u003ecode, 200, \"check valid client certificate\")\n        || note ($res-\u003emessage);\n\n\n\n\nroot@sp1:~# curl -i -X GET -H \u0027Connection: close\u0027 -H\u0027Accept: text/csv\u0027 --user administrator:administrator -k -sSL -D - \u0027https://127.0.0.1:1443/api/\u0027 -o /dev/null\n\n\u003d\u003d\u003e\n\nHTTP/1.1 422 Unprocessable Entity",
+      "parentUuid": "da9b358b_155e84e9",
+      "revId": "1fd698e98986dc5091a9c9a3c311494ad9f3d9ff",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
