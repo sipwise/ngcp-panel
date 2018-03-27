@@ -34,6 +34,24 @@
       "revId": "1fd698e98986dc5091a9c9a3c311494ad9f3d9ff",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9b358b_95e73412",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-03-27T12:25:44Z",
+      "side": 1,
+      "message": "Wondering, -H \u0027Accept: text/csv\u0027\nIsn\u0027t it supposed to be -H \u0027Content-Type: text/csv\u0027 ?",
+      "parentUuid": "da9b358b_d5dc9c48",
+      "revId": "1fd698e98986dc5091a9c9a3c311494ad9f3d9ff",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
