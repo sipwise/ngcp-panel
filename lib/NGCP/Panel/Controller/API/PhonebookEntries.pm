@@ -24,7 +24,11 @@ sub allowed_methods{
 
 sub api_description {
     return 'Defines Phonebook number entries. You can POST numbers individually one-by-one using json. To bulk-upload numbers, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/phonebookentries/?purge_existing=true"';
-};
+}
+
+sub order_by_cols {
+    return {name => 'me.name', number => 'me.number', shared => 'me.shared'};
+}
 
 sub query_params {
     return [
