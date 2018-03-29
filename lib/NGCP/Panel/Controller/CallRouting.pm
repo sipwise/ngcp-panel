@@ -250,7 +250,9 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                 }
             }
         }
-        my $match = map { $_ =~ s/\*/.*/g;
+        my $match = map { local $_ = $_;
+                          $_ =~ s/\*/.*/g;
+                          $_ =~ s/\?/./g;
                           $data->{caller_in} =~ /^$_$/;
                         } @{$usr_prefs{allowed_clis}};
         if ($match) {
