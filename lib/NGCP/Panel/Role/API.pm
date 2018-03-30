@@ -961,6 +961,38 @@ sub delay_commit {
 }
 
 #---------------- Entities staff
+sub get_config {
+    my ($self, $key) = @_;
+    if ($key) {
+        return $self->config->{$key};
+    }
+    return $self->config;
+}
+
+sub get_item_config {
+    my ($self) = shift;
+    if ('collection' eq $self->get_config('interface_type')) {
+        my $item_obj_name = $self;
+        $item_obj_name =~s/=HASH.*$//;
+        $item_obj_name .= 'Item';
+        if ($item_obj_name->can('get_config')) {
+            return $item_obj_name->get_config(@_);
+        }
+    }
+}
+
+sub get_collection_config {
+    my ($self) = shift;
+    if ('item' eq $self->get_config('interface_type')) {
+        my $collection_obj_name = $self;
+        $collection_obj_name =~s/=HASH.*$//;
+        $collection_obj_name =~ s/Item$//;
+        if ($collection_obj_name->can('get_config')) {
+            return $collection_obj_name->get_config(@_);
+        }
+    }
+}
+
 #---------------- default methods
 
 sub hal_from_item {
@@ -1158,23 +1190,23 @@ sub post_process_commit{
 }
 
 sub validate_request {
-    my($self, $c) = @_;
+    my ($self, $c) = @_;
     return 1;
 }
 
 #------ /dummy & default accessors methods
 
 sub check_transaction_control{
-    my($self, $c, $action, $step, %params) = @_;
+    my ($self, $c, $action, $step, %params) = @_;
     my $res = 1;
-    my $config = $self->config->{own_transaction_control};
-    if(!$config){
+    my $transaction_config = $self->get_config('own_transaction_control');
+    if (!$transaction_config) {
         $res = 1;
-    }else{
-        if($config->{ALL}){
+    } else {
+        if ($transaction_config->{ALL}) {
             $res = 0;
-        }elsif( ('HASH' eq ref $self->config->{own_transaction_control}->{$action} && $self->config->{own_transaction_control}->{$action}->{$step} )
-            || $self->config->{own_transaction_control}->{$action}){
+        } elsif ( ('HASH' eq ref $transaction_config->{$action} && $transaction_config->{$action}->{$step} )
+            || $transaction_config->{$action}) {
             $res = 0;
         }
     }
@@ -1189,11 +1221,12 @@ sub get_transaction_control{
     $step //= 'init';
     if($self->check_transaction_control($c, $action, $step, %params)){
         #todo: put it into class variables?
-        if ($self->config->{set_transaction_isolation}) {
+        my $til_config = $self->get_config('set_transaction_isolation');
+        if ($til_config) {
             my $transaction_isolation_level = 
-                ( (length $self->config->{set_transaction_isolation} > 1 )
-                    && lc $self->config->{set_transaction_isolation} ne 'default' )
-                ? $self->config->{set_transaction_isolation}
+                ( (length $til_config > 1 )
+                    && lc $til_config ne 'default' )
+                ? $til_config
                 : 'READ COMMITTED';
             $c->model('DB')->set_transaction_isolation($transaction_isolation_level);
         }
