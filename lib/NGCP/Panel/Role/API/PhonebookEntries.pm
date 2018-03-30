@@ -47,6 +47,12 @@ sub get_form {
     return;
 }
 
+sub process_hal_resource {
+    my($self, $c, $item, $resource, $form) = @_;
+    $resource->{customer_id} = $resource->{contract_id};
+    return $resource;
+}
+
 sub validate_request {
     my($self, $c) = @_;
     my $method = uc($c->request->method);
@@ -56,18 +62,6 @@ sub validate_request {
     }
     return 1;
 }
-
-sub get_item_id{
-    my($self, $c, $item, $resource, $form, $params) = @_;
-    my $id = int($item->id);
-    if(('HASH' eq ref $params) && 'hal_links_href' eq $params->{purpose}){
-        my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
-        return unless $owner;
-        return $id = $id.'?'.$parameter.'='.$value;
-    }
-    return $id  ;
-}
-
 
 sub check_owner_params {
     my($self, $c, $params) = @_;

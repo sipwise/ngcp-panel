@@ -231,26 +231,32 @@ sub valid_id {
 
 sub get_item_id{
     my($self, $c, $item, $resource, $form, $params) = @_;
-    my ($id, $type);
+    my $id;
     if('HASH' eq ref $item){
         $id = int($item->{id});
-        $type = $item->{type};
     }elsif(blessed $item){
         $id = int($item->id);
-        $type = $item->type;
     }
-    if(('HASH' eq ref $params) && 'hal_links_href' eq $params->{purpose}){
-        my $owner = $self->get_owner_cached( $c);
-        return unless $owner;
-        return $id.'?type='.$type
-        .($owner->{subscriber} 
-            ? '&subscriber_id='.$owner->{subscriber}->id 
-            : ( $owner->{customer} )
-                ? '&customer_id='.$owner->{customer}->id 
-                : ''
-        );
+    return $id;
+}
+
+sub get_mandatory_params {
+    my ($self, $c, $href_type, $item, $resource, $params) = @_;
+    my $owner = $self->get_owner_cached($c);
+    return unless $owner;
+    my %mandatory_params = (
+        $owner->{subscriber} 
+        ? ( subscriber_id => $owner->{subscriber}->id )
+        : ( customer_id => $owner->{customer}->id )
+    );
+    if ('item' eq $href_type) {
+        if('HASH' eq ref $item){
+            $mandatory_params{type} = $item->{type};
+        }elsif(blessed $item){
+            $mandatory_params{type} = $item->type;
+        }
     }
-    return $id  ;
+    return \%mandatory_params;
 }
 
 sub _item_rs {
