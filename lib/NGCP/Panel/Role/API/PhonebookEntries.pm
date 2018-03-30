@@ -123,12 +123,12 @@ sub check_owner_params {
         if ($c->user->roles eq "admin") {
             $owner = $schema->resultset('contracts')->find($value);
         } elsif ($c->user->roles eq "reseller") {
-            $owner = $schema->resultset('contracts')->find({
-                id => $value,
+            $owner = $schema->resultset('contracts')->search_rs({
+                'me.id' => $value,
                 'contact.reseller_id' => $c->user->reseller_id,
             },{
                 join => 'contact',
-            });
+            })->first;
         } elsif ($c->user->roles eq 'subscriberadmin' &&
                  $c->user->voip_subscriber->contract_id == $value) {
             $owner = $schema->resultset('contracts')->find({ id => $value });
@@ -138,12 +138,12 @@ sub check_owner_params {
         if ($c->user->roles eq "admin") {
             $owner = $schema->resultset('voip_subscribers')->find($value);
         } elsif ($c->user->roles eq "reseller") {
-            $owner = $schema->resultset('voip_subscribers')->find({
-                id => $value,
+            $owner = $schema->resultset('voip_subscribers')->search_rs({
+                'me.id' => $value,
                 'contact.reseller_id' => $c->user->reseller_id,
             },{
                 join => { 'contract' => 'contact' },
-            });
+            })->first;
         } elsif (($c->user->roles eq 'subscriberadmin' ||
                   $c->user->roles eq "subscriber") &&
                  $c->user->voip_subscriber->id == $value) {
@@ -151,7 +151,7 @@ sub check_owner_params {
         }
     }
 
-    unless($owner) {
+    unless ($owner) {
         $c->log->error("Unknown $parameter value '$value'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $parameter value '$value'");
         return;

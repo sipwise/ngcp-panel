@@ -58,7 +58,7 @@ $fake_data->set_data_from_script({
             $num++;
             my ($self,$collection_name,$test_machine) = @_;
             my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$self->data->{$collection_name}->{data}->{customer_id}.'&'.'is_pbx_pilot=1');
-            if($pilot->{total_count} <= 0){
+            if(!$pilot->{total_count} || $pilot->{total_count} <= 0){
                 undef $pilot;
             }
             return $test_machine->check_create_correct(1, sub{

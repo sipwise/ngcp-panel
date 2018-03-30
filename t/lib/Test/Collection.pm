@@ -23,6 +23,9 @@ use Storable;
 use Carp qw(cluck longmess shortmess);
 use IO::Uncompress::Unzip;
 use File::Temp qw();
+use Log::Log4perl;
+
+Log::Log4perl::init('/etc/ngcp-panel/logging.conf');
 
 my $tmpfilename : shared;
 
@@ -49,7 +52,11 @@ has 'local_test' => (
     isa => 'Str',
     default => sub {$ENV{LOCAL_TEST} // ''},
 );
-
+has 'logger' => (
+    is => 'rw',
+    isa => 'Log::Log4perl::Logger',
+    default => sub { Log::Log4perl->get_logger('NGCP::Panel'); },
+);
 has 'DEBUG' => (
     is => 'rw',
     isa => 'Bool',
@@ -190,6 +197,16 @@ has 'QUERY_PARAMS' =>(
     is => 'rw',
     isa => 'Str',
     default => '',
+);
+has 'PAGE' =>(
+    is => 'rw',
+    isa => 'Str',
+    default => '1',
+);
+has 'ROWS' =>(
+    is => 'rw',
+    isa => 'Str',
+    default => '1',
 );
 has 'URI_CUSTOM_STORE' =>(
     is => 'rw',
@@ -334,6 +351,14 @@ sub clear_cert {
     delete $self->{ua};
     return $self;
 }
+sub ssl_auth_allowed {
+    my $self = shift;
+    my($role) = @_;
+    if ($role eq 'admin' || $role eq 'default' || $role eq 'reseller') {
+        return 1;
+    }
+    return 0;
+}
 
 sub runas {
     my $self = shift;
@@ -345,9 +370,13 @@ sub runas {
     $self->base_uri($base_url);
     $uri //= $self->base_uri;
     $uri =~ s/^https?:\/\/|\/$//g;
-    $self->runas_role($role);
-    #print Dumper ["runas",$uri, $realm, $user, $pass];
+    #print Dumper ["runas",$uri, $realm, $user, $pass,"requested",$role_in,"old",$self->runas_role];
+    if ($role_in ne $self->runas_role) {
+        $self->clear_cert;
+        $self->ua($self->_create_ua(0));
+    }
     $self->ua->credentials( $uri, $realm, $user, $pass);
+    $self->runas_role($role);
     $self->init_ssl_cert($self->ua, $role);
     diag("runas: $role;");
     return $self;
@@ -424,6 +453,12 @@ sub get_uri_collection{
     $name //= $self->name;
     return $self->normalize_uri("/api/".$name.($name ? "/" : "").($self->QUERY_PARAMS ? "?".$self->QUERY_PARAMS : ""));
 }
+sub get_uri_collection_paged{
+    my($self,$name) = @_;
+    my $uri = $self->get_uri_collection($name);
+    return $uri.($uri !~/\?/ ? '?':'&').'page='.($self->PAGE // '1').'&rows='.($self->ROWS // '1');
+}
+
 sub get_uri_get{
     my($self,$query_string, $name) = @_;
     $name //= $self->name;
@@ -457,7 +492,7 @@ sub get_item_hal{
     }
     if(!$resitem){
         my ($reshal, $location,$total_count,$reshal_collection);
-        $uri //= $self->get_uri_collection($name)."?page=1&rows=1";
+        $uri //= $self->get_uri_collection_paged($name);
         #print "uri=$uri;";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
         ($reshal,$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name,$number);
@@ -863,32 +898,36 @@ sub check_methods{
 
 sub check_list_collection{
     my($self, $check_embedded_cb) = @_;
-    my $nexturi = $self->get_uri_collection."?page=1&rows=5";
+    my $nexturi = $self->get_uri_collection_paged;
     my @href = ();
+    my $test_info_prefix = "$self->{name}: check_list_collection: ";
     do {
         #print "nexturi=$nexturi;\n";
         my ($res,$list_collection) = $self->check_item_get($nexturi);
         my $selfuri = $self->normalize_uri($list_collection->{_links}->{self}->{href});
-        is($selfuri, $nexturi, "$self->{name}: check _links.self.href of collection");
+        my $sub_sort_params = sub {my $str = $_[0]; return (substr $str, 0, (index $str, '?') + 1) . join('&', sort split /&/, substr  $str, ((index $str, '?') + 1))};
+        $selfuri = $sub_sort_params->($selfuri);
+        $nexturi = $sub_sort_params->($nexturi);
+        is($selfuri, $nexturi, $test_info_prefix."check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
         if(($list_collection->{total_count} && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
-            ok($list_collection->{total_count} > 0, "$self->{name}: check 'total_count' of collection");
+            ok($list_collection->{total_count} > 0, $test_info_prefix."check 'total_count' of collection");
         }
 
         my %q = $colluri->query_form;
-        ok(exists $q{page} && exists $q{rows}, "$self->{name}: check existence of 'page' and 'row' in 'self'");
+        ok(exists $q{page} && exists $q{rows}, $test_info_prefix."check existence of 'page' and 'row' in 'self'");
         my $page = int($q{page});
         my $rows = int($q{rows});
-        ok($rows != 0, "check existence of the 'rows'");
+        ok($rows != 0, $test_info_prefix."check existence of the 'rows'");
         if($page == 1) {
-            ok(!exists $list_collection->{_links}->{prev}->{href}, "$self->{name}: check absence of 'prev' on first page");
+            ok(!exists $list_collection->{_links}->{prev}->{href}, $test_info_prefix."check absence of 'prev' on first page");
         } else {
-            ok(exists $list_collection->{_links}->{prev}->{href}, "$self->{name}: check existence of 'prev'");
+            ok(exists $list_collection->{_links}->{prev}->{href}, $test_info_prefix."check existence of 'prev'");
         }
         if(($rows != 0) && ($list_collection->{total_count} / $rows) <= $page) {
-            ok(!exists $list_collection->{_links}->{next}->{href}, "$self->{name}: check absence of 'next' on last page");
+            ok(!exists $list_collection->{_links}->{next}->{href}, $test_info_prefix."check absence of 'next' on last page");
         } else {
-            ok(exists $list_collection->{_links}->{next}->{href}, "$self->{name}: check existence of 'next'");
+            ok(exists $list_collection->{_links}->{next}->{href}, $test_info_prefix."check existence of 'next'");
         }
 
         if($list_collection->{_links}->{next}->{href}) {
@@ -899,8 +938,10 @@ sub check_list_collection{
 
         my $hal_name = $self->get_hal_name;
         if(($list_collection->{total_count} && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
-            ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
-                (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), "$self->{name}: check if 'ngcp:".$self->name."' is array/hash-ref");
+            if (! ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
+                (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), $test_info_prefix."check if 'ngcp:".$self->name."' is array/hash-ref")) {
+                    diag($list_collection->{_links}->{$hal_name});
+                }
         }
 
 
@@ -1176,12 +1217,12 @@ sub check_create_correct{
     for(my $i = 1; $i <= $number; ++$i) {
         my $created_info={};
         my ($res, $content, $req, $content_post) = $self->check_item_post( $uniquizer_cb , $data_in, { i => $i } );
-        if(exists $self->methods->{'item'}->{allowed}->{'GET'}){
-            $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
-        }else{
-            $self->http_code_msg(200, "create test item '".$self->name."' $i",$res,$content);
-        }
         my $location = $res->header('Location');
+        if(exists $self->methods->{'item'}->{allowed}->{'GET'}){
+            $self->http_code_msg(201, "create test item '".$self->name."' $i. Location: ".($location // ''),$res,$content);
+        }else{
+            $self->http_code_msg(200, "create test item '".$self->name."' $i. Location: ".($location // ''),$res,$content);
+        }
         if($location){
             #some interfaces (e.g. subscribers) don't provide hal after creation - is it correct, by the way?
             my $get ={};
