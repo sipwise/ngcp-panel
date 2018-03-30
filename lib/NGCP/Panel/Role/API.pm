@@ -100,16 +100,16 @@ sub get_info_data {
     my $resource = $c->request->params;
     my ($resource_json,$resource_json_raw) = (undef,'');
     if ('multipart/form-data' eq $ctype) {
-        $resource_json = delete $resource->{json};
+        $resource_json = $c->req->param('json');
+        delete $resource->{json};
     } elsif ('application/json' eq $ctype) {
-        if ($self->require_body($c)) {
-            $resource_json_raw = $c->stash->{body};
-        }
+        $resource_json_raw = $c->stash->{body};
     }
     if($resource_json_raw){
         $resource_json = JSON::from_json($resource_json_raw, { utf8 => 1 });
     }
     {
+        #check that we don't provide different data via different request type
         my @common_keys = map { exists $resource->{$_} ? $_ : () }keys %$resource_json;
         my (%resource_sub,%resource_json_sub);
         @resource_sub{@common_keys} = @{$resource}{@common_keys};
@@ -688,9 +688,14 @@ sub paginate_order_collection_rs {
 }
 
 sub collection_nav_links {
-    my ($self, $page, $rows, $total_count, $path, $params) = @_;
+    my ($self, $c, $page, $rows, $total_count, $path, $params) = @_;
 
-    $params = { %{ $params } }; #copy
+    my $params_default = $self->get_mandatory_params($c, 'collection');
+    $params = { 
+        'HASH' eq ref $params_default ? %$params_default : (), 
+    #$params has priority
+        'HASH' eq ref $params ? %{ $params } : () 
+    }; #copy
     delete @{$params}{'page', 'rows'};
     my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
     $rest_params = $rest_params ? "&$rest_params" : "";
@@ -1012,23 +1017,28 @@ sub hal_from_item {
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(
+                relation => 'collection', 
+                href => $self->apply_mandatory_parameters($c, 'collection', sprintf(
+                    "/api/%s/", 
+                    $self->resource_name
+                ), $item, $resource, $params)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(
                 relation => 'self',
-                href => sprintf(
+                href => $self->apply_mandatory_parameters($c, 'item', sprintf(
                     "%s%s",
                     $self->dispatch_path,
-                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href', 'item_hal_params' => $params })
-                ),
+                    $self->get_item_id($c, $item)
+                ), $item, $resource, $params),
             ),
             Data::HAL::Link->new(
                 relation => "ngcp:".$self->resource_name,
-                href => sprintf(
+                href => $self->apply_mandatory_parameters($c, 'item', sprintf(
                     "/api/%s/%s",
                     $self->resource_name,
-                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href', 'item_hal_params' => $params })
-                )
+                    $self->get_item_id($c, $item)
+                ), $item, $resource, $params)
             ),
             @$links,
             $self->get_journal_relation_link($self->get_item_id($c, $item)),
@@ -1047,6 +1057,61 @@ sub hal_from_item {
     $resource = $self->post_process_hal_resource($c, $item, $resource, $form);
     $hal->resource({%$resource});
     return $hal;
+}
+
+sub get_mandatory_params {
+    my ($self, $c, $href_type, $item, $resource, $params) = @_;
+    #href type - item or collection
+
+    my $mandatory_parameters = $c->stash->{mandatory_parameters};
+    if ($mandatory_parameters) {
+        #we will not set stash->{mandatory_parameters} here, this is reserved for well validated parameters
+        return $mandatory_parameters;
+    }
+    my $mandatory_params_config;
+    if ($self->get_config('interface_type') eq $href_type) {
+        $mandatory_params_config = $self->get_config('mandatory_parameters');
+    } elsif ($href_type eq 'collection') {
+        $mandatory_params_config = $self->get_collection_config('mandatory_parameters');
+    } elsif ($href_type eq 'item') {
+        $mandatory_params_config = $self->get_item_config('mandatory_parameters');
+    }
+    if ($mandatory_params_config) {
+        #mandatory params config will always look as:
+        #HashRef {
+        # policy (e.g. - all, any, single) => { parameter_name => {type info,validator and other}}
+        # OR policy (e.g. - all, any, single) => [/mandatory params/]
+        #}
+        my $request_data = $self->get_info_data($c);
+        my $resource = {
+            'HASH' eq ref $resource ? %$resource : (),
+            #overwrite from specially created source
+            'HASH' eq ref $params ? %$params : (),
+        };
+        $mandatory_parameters = {
+            map { $resource->{$_} 
+                ? ( $_ => $resource->{$_} )
+                : ( $request_data->{$_} 
+                    ? ( $_ => $request_data->{$_} )
+                    : () ) }
+            map { 'ARRAY' eq ref $_ ? ( @$_ ) : ( keys %$_ ) } 
+                values %$mandatory_params_config 
+        };
+    }
+    return $mandatory_parameters;
+}
+
+sub apply_mandatory_parameters {
+    my ($self, $c, $href_type, $href, $item, $resource, $params) = @_;
+    #href type - item or collection
+    my $mandatory_parameters = $self->get_mandatory_params($c, $href_type, $item, $resource, $params);
+    if ($mandatory_parameters) {
+        my $mandatory_params_str = join('&', map {
+               $_.'='.$mandatory_parameters->{$_}
+            } keys %$mandatory_parameters );
+        return $href.( $mandatory_params_str ? (($href !~ /\?/) ? '?' : '&').$mandatory_params_str : '' );
+    }
+    return $href;
 }
 
 sub update_item {
@@ -1287,7 +1352,7 @@ sub return_representation{
 
     $preference //= $self->require_preference($c);
     return unless $preference;
-    $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
+    $hal //= $self->hal_from_item($c, $item, $form, \%params);
     $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
         $hal->http_headers,
     ), $hal->as_json);
@@ -1313,7 +1378,7 @@ sub return_representation_post{
     $c->response->status(HTTP_CREATED);
 
     if ($item) {
-        $hal //= $self->hal_from_item($c, $item, $form, \%params);#form_excptions will goes with params
+        $hal //= $self->hal_from_item($c, $item, $form, \%params);
         $response //= HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             $hal->http_headers,
         ), $hal->as_json);
