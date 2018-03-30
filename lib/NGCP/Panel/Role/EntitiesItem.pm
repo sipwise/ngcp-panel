@@ -21,7 +21,7 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    if($self->config->{log_request}){
+    if ($self->get_config('log_request')) {
         $self->log_request($c);
     }
     return $self->validate_request($c);
@@ -29,7 +29,7 @@ sub auto :Private {
 
 sub end :Private {
     my ($self, $c) = @_;
-    if($self->config->{log_response}){
+    if ($self->get_config('log_response')) {
         $self->log_response($c);
     }
     return 1;
@@ -182,13 +182,14 @@ sub get {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
         my $header_accept = $c->request->header('Accept');
+        my $action_config = $self->get_config('action');
 
         if( ( defined $header_accept
                 && ($header_accept ne 'application/json')
                 && ($header_accept ne '*/*')
             )
-            || ( $self->config->{action}->{GET}->{ReturnContentType} 
-                && $self->config->{action}->{GET}->{ReturnContentType} ne 'application/json'
+            || ( $action_config->{GET}->{ReturnContentType} 
+                && $action_config->{GET}->{ReturnContentType} ne 'application/json'
             )
         ) {
             $self->return_requested_type($c,$id,$item);
@@ -265,7 +266,7 @@ sub put {
 
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
-        my $method_config = $self->config->{action}->{PUT};
+        my $method_config = $self->get_config('action')->{PUT};
         my ($resource, $data) = $self->get_valid_data(
             c          => $c,
             id         => $id,
