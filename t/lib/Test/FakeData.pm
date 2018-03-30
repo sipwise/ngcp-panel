@@ -194,7 +194,6 @@ sub build_data{
             'data_callbacks' => {
                 'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{login}); },
             },
-            'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{login}); },
         },
         'applyrewrites' => {
             'data' => {
