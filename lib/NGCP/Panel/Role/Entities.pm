@@ -17,7 +17,7 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    if ($self->config->{log_request}) {
+    if ($self->get_config('log_request')) {
         $self->log_request($c);
     }
     return $self->validate_request($c);
@@ -25,7 +25,7 @@ sub auto :Private {
 
 sub end :Private {
     my ($self, $c) = @_;
-    if ($self->config->{log_response}) {
+    if ($self->get_config('log_response')) {
         $self->log_response($c);
     }
     return 1;
@@ -253,7 +253,7 @@ sub post {
     {
         #instead of type parameter get_form can check request method
         my ($form) = $self->get_form($c, 'add');
-        my $method_config = $self->config->{action}->{POST};
+        my $method_config = $self->get_config('action')->{POST};
         my $process_extras= {};
         my ($resource, $data, $non_json_data) = $self->get_valid_data(
             c                   => $c,
