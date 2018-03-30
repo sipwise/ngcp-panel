@@ -17,7 +17,7 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    if($self->config->{log_request}){
+    if ($self->get_config('log_request')) {
         $self->log_request($c);
     }
     return 1;
@@ -25,7 +25,7 @@ sub auto :Private {
 
 sub end :Private {
     my ($self, $c) = @_;
-    if($self->config->{log_response}){
+    if ($self->get_config('log_response')) {
         $self->log_response($c);
     }
     return 1;
@@ -190,7 +190,7 @@ sub get {
         my $hal = Data::HAL->new(
             links => [@links],
         );
-        my $resource = NGCP::Panel::Utils::Preferences::api_preferences_defs( c => $c, preferences_group => $self->config->{'preferences_group'} );
+        my $resource = NGCP::Panel::Utils::Preferences::api_preferences_defs( c => $c, preferences_group => $self->get_config('preferences_group') );
         $hal->resource($resource);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, 
