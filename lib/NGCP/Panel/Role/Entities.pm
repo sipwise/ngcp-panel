@@ -207,17 +207,7 @@ sub get {
         my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
         for my $item (@items) {
             push @embedded, $self->hal_from_item($c, $item, $form, {});
-            #TODO: replace hal_links_href by separated method that utilize get_item_id.
-            push @links, Data::HAL::Link->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => $self->apply_mandatory_parameters($c, 'item', 
-                    sprintf(
-                        '/%s%s', 
-                        $c->request->path, 
-                        $self->get_item_id($c, $item)
-                    ), $item, $resource
-                ),
-            );
+            push @links, grep { $_->relation->_original eq 'ngcp:'.$self->resource_name } @{$embedded[-1]->links};
         }
         push @links,
             Data::HAL::Link->new(
