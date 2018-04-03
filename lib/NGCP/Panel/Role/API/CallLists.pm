@@ -89,21 +89,14 @@ sub resource_from_item {
     return $resource;
 }
 
-sub get_item_id{
-    my($self, $c, $item, $resource, $form, $params) = @_;
-    my $id = $item->id;
-    if(('HASH' eq ref $params) && 'hal_links_href' eq $params->{purpose}){
-        my $item_hal_params = $params->{item_hal_params};
-        my $owner = $item_hal_params->{owner};
-        my $href_data = $owner->{subscriber} ?
-            "subscriber_id=".$owner->{subscriber}->id :
-            "customer_id=".$owner->{customer}->id;
-        return $id.'?'.$href_data;
+sub get_mandatory_params {
+    my ($self, $c, $href_type, $item, $resource, $params) = @_;
+    my $owner = $params->{owner};
+    return $owner->{subscriber} 
+        ? { subscriber_id => $owner->{subscriber}->id }
+        : { customer_id => $owner->{customer}->id };
 
-    }
-    return $id;
 }
-
 
 1;
 # vim: set tabstop=4 expandtab:
