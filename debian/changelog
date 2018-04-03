@@ -1,3 +1,126 @@
+ngcp-panel (6.3.0.0+0~mr6.3.0.0) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [38fb686] TT#31502 collapse swagger-ui tags per default
+  * [00633d1] TT#30376 filter interception numbers from log
+  * [985d433] TT#29909 fix perlcritic RequireUseStrict
+  * [4a37138] TT#29909 fix missing warnings on tests
+  * [56b6067] TT#30375 make IP addres optional for peering servers
+  * [9fd0260] TT#29909 fix remaining "use warnings" perlcritic errors
+  * [196ddd7] TT#31504 restructure OpenAPI tags
+  * [c9e0723] TT#32600 block grep, block map percritic fixes
+  * [398edbd] TT#32990 validate if hostname or ip is set for peers
+  * [6e93a25] TT#32600 fix accidental debug statement data printer
+  * [38aa85d] TT#32986 remove remaining parts of kibana
+  * [20d6c7b] TT#33107 Revert "TT#32990 validate if hostname or ip is set for peers"
+  * [b5f0192] TT#33107 Revert "TT#30375 make IP addres optional for peering servers"
+
+  [ Irina Peshinskaya ]
+  * [fa7705d] TT#28460 Fix emergencymappings upload
+  * [a26351c] TT#31195 Use field specific validation to keep form validation
+  * [84c1bac] TT#28462 Rewrite admins API to Entities
+  * [7d45180] TT#28462 Rewrite PbxDeviceImages API to Entities
+  * [3db78ad] TT#28508 Fix tests
+  * [e1c660e] TT#28460 Introduce log_request config param
+  * [b9f593b] TT#28460 Entities classes use more unified config
+  * [b14f34f] TT#28460 Change parents in API controllers
+  * [a113cbf] TT#28460 Remove copy-pasted sub auto
+  * [05774c2] TT#28460 Remove copy-pasted sub OPTIONS
+  * [2498c88] TT#28460 Remove copy-pasted sub HEAD and sub end
+  * [6dbb3b2] TT#28460 Introduce return_representation in item packages
+  * [92e6215] TT#28460 Remove gather_default_action_roles
+  * [1e2f069] TT#28460 Adapt PreferenceDefs APIs to new parent
+  * [d527ebd] TT#28460 Configs - replace Journalized items
+  * [9fa2a19] TT#28460 Replace configs - not journalized
+  * [bad54e0] TT#28460 Configs - adapt balanceinterfals item
+  * [d28b6b6] TT#28460 Adapt already customized configs
+  * [75d6edb] TT#28460 Format: add line between subs in API controllers
+  * [0d4d8cd] TT#28460 Format: Remove excrescent empty lines
+  * [bfee03f] TT#28460 Format: parentheses
+  * [75d0a61] TT#28460 Separate resource_from_item for CustomerBalances
+  * [08724a6] TT#32108 Fix "around" method parameters
+  * [09eba50] TT#32203 Fix voicemailgreetings filters
+  * [2f76c1b] TT#32011 Fix connect to Panasonic RPS
+  * [2b8ae95] TT#28460 Remove unused libraries
+  * [232a847] TT#28460 Fix CCMapEntries get-put use case
+  * [058ff76] TT#21818 Check password validation in API
+  * [e816bec] TT#21818 Disable checking password validation configuration
+  * [60bb147] TT#26800 Adapt API to generate "fake" sms on demand
+  * [ef943eb] TT#15059 Add mos avg data to call info representation
+  * [14496cc] TT#14501 Allow any value for the Prefer header
+  * [5330d1a] TT#32910 Consider possible null initial_cash_balance
+  * [1877770] TT#33391 Adapt process_cdr_item to special conversation cdr item
+  * [fea5aa7] TT#33399 Make owner a mandatory parameter for the conversations API
+  * [ab10122] TT#33851 Allow to use specific creation method in tests
+  * [469d481] TT#32913 Remove excrescent code from /api/numbers
+  * [bb655be] TT#32913 Synchronize access to voip_numbers
+  * [8f0ad5a] TT#33851 Consider default data for cycled items in get_existing_id
+  * [84447ae] TT#15059 Use has_column instead of has_column_loaded
+  * [06f167b] TT#33354 Show device image buttons only if exists
+  * [cb1a3a4] TT#34021 Allow PUT and PATCH to subscriberadmin on subscribers
+  * [2252eff] TT#34014 Add phonebooks entries to the phones directories xml
+  * [60e209c] TT#34015 Introduce /api/phonebookentries
+  * [ad97488] TT#34454 Show billing voip_subscriber.id instead of provisioning
+  * [fd6fe07] TT#34021 Rename acl to privileges
+  * [ca8f0c2] TT#34565 Consider empty privileges for the subscriberadmin
+  * [8505eb2] TT#34565 Consider existent but undefined privileges
+  * [25c8365] TT#34566 Fix api-all-links and api-root test scripts for phonebookentries
+  * [a4cbfa3] TT#34566 Fix /api/ call response code
+  * [3308321] TT#34015 Clear and stable implementation of early input check
+  * [4c53ac4] TT#34564 Add csv download and upload to PhonebookEntries API
+
+  [ Alexander Lutay ]
+  * [79d60ad] TT#31815 Remove libnumber-phone-perl from ngcp-panel dependencies
+  * [4bcd90c] TT#32971 Disable REST API test subscriberregistrations as it is unstable now
+  * [ad523d4] TT#33276 Remove sysv init scripts dependency on sshd
+  * [1fa17d7] TT#33911 Perform 'wrap-and-sort -sat'
+  * [a824c6a] TT#34017 Do not remove /var/run/fastcgi/ on systemd service stop
+  * [2d002f5] TT#33911 Run 'wrap-and-sort -sat'
+
+  [ Rene Krenn ]
+  * [feee8da] TT#31179 fix PATCH subscriberpreferences /lock
+  * [528faeb] Revert "TT#31179 fix PATCH subscriberpreferences /lock"
+  * [ae937a1] TT#32996 correct "POSIX" re labels to "PCRE"
+  * [c81ca69] TT#32910 TT#33037 initial cash_balance, free_time_balance
+  * [f54c69e] TT#34022 write READY=1 to notify socket
+  * [fd0265d] TT#27469 fix callrouting verification form dependency in Verify.pm
+  * [cee3348] TT#34013 save contract_balances in the contract's tz
+  * [b57c845] TT#34013 new profile package "tz" interval start modes for api
+  * [778c484] TT#34013 altered timezone to get into effect in balances by re-saving contract
+
+  [ Sipwise Jenkins Builder ]
+  * [e590e8a] TT#4166 I18N dump: snapshot 2018.02.15-03.36.05
+  * [4feebe3] TT#4166 I18N dump: snapshot 2018.02.20-03.35.02
+  * [1385e29] TT#4166 I18N dump: snapshot 2018.02.22-11.42.22
+  * [9b764c4] TT#4166 I18N dump: snapshot 2018.02.23-03.42.52
+  * [d30caf3] TT#4166 I18N dump: snapshot 2018.02.27-03.48.43
+  * [0093c33] TT#4166 I18N dump: snapshot 2018.03.16-03.51.50
+  * [b87f143] TT#4166 I18N dump: snapshot 2018.03.23-03.17.00
+
+  [ Roman Romanchenko ]
+  * [3c6a7ff] TT#29350 call flow advanced diagram builder
+
+  [ Andreas Granig ]
+  * [3a1d30b] TT#32972 Fetch location data from redis
+  * [5e76543] TT#32972 Fix non-numeric item id for subscriberreg
+  * [9b9a2dd] TT#21050 Add length check to E164 number
+  * [272e658] TT#21050 Tighten POST checks
+
+  [ Kirill Solomko ]
+  * [ad04649] TT#26652 addditional subscriberregistrations error checks
+  * [d045b35] TT#33356 Rewrite rule validation checks for ambiguous non-char escapes
+  * [da4bc4e] TT#33871 use a correct rs call in mailtofaxsettings
+  * [4dbd1e2] TT#34014 TT#34016 Introduce phonebook entries
+
+  [ Guillem Jover ]
+  * [ca86809] TT#26264 Add a systemd service file
+
+  [ Manuel Montecelo ]
+  * [e001a97] TT#34302 Remove /etc/{default,init.d}/ngcp-panel
+  * [f2275b5] TT#34302 Create /tmp/ngcp with tmpfiles.d, remove .preinst
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Apr 2018 22:30:22 +0200
+
 ngcp-panel (6.2.0.0+0~mr6.2.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
