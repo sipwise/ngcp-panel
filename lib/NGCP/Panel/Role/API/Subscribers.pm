@@ -829,7 +829,12 @@ sub update_item {
 sub check_write_access {
     my($self, $c) = @_;
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-    } elsif($c->user->roles eq "subscriber") {
+    } elsif($c->user->roles eq "subscriber" 
+        || ( 
+              $c->user->roles eq "subscriberadmin" 
+            && !$self->subscriberadmin_write_access($c) 
+        )
+    ) {
         $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
         return;
     } elsif($c->user->roles eq "subscriberadmin") {
