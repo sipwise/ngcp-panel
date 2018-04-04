@@ -52,7 +52,6 @@ if( !$remote_config->{config}->{features}->{faxserver} ){
     $test_machine->DATA_ITEM_STORE($fake_data->process('faxes'));
     $test_machine->form_data_item();
 
-
     set_faxes_preferences($test_machine->DATA_ITEM->{json}->{subscriber_id});
 
     $test_machine->resource_fill_file($test_machine->DATA_ITEM->{faxfile}->[0]);
@@ -63,6 +62,44 @@ if( !$remote_config->{config}->{features}->{faxserver} ){
     $test_machine->DATA_ITEM->{json}->{data}="äöüß";
     $test_machine->form_data_item();
     $test_machine->check_create_correct( 1 );
+
+    #we will create other customer's subscriber
+    diag("create subscriber of other customer");
+    my $fake_data_other_customer = Test::FakeData->new(keep_db_data => 1);
+    $fake_data_other_customer->{data}->{customers}->{data}->{external_id} = 'not_default_one_cust';
+    my $subscriber_other_customer = $fake_data_other_customer->create('subscribers')->[0];
+    set_faxes_preferences($subscriber_other_customer->{content}->{id});
+    diag("login as subscriber of other customer");
+    $test_machine->set_subscriber_credentials($subscriber_other_customer->{content});
+    $test_machine->runas('subscriber');
+
+    $fake_data->{data}->{subscribers}->{data}->{administrative} = 1;
+    my $subscriberadmin = $fake_data->create('subscribers')->[0];
+    set_faxes_preferences($subscriberadmin->{content}->{id});
+    $test_machine->set_subscriber_credentials($subscriberadmin->{content});
+    $test_machine->runas('subscriber');
+    diag("\n\n\nSUBSCRIBERADMIN ".$subscriberadmin->{content}->{id}.":");
+
+    $test_machine->DATA_ITEM->{json}->{subscriber_id} = $subscriber_other_customer->{content}->{id};
+    $test_machine->form_data_item();
+    my($res,$content) = $test_machine->check_item_post();
+    $test_machine->http_code_msg(422, "Check that we cant send a fax in a name of other customers subscriber",$res,$content);
+    diag("check that we can create as a subscriberadmin role");
+    $test_machine->check_create_correct( 1, sub { $_[0]->{json}->{subscriber_id} = $subscriberadmin->{content}->{id};} );
+
+    
+    $fake_data->{data}->{subscribers}->{data}->{administrative} = 0;
+    my $subscriber = $fake_data->create('subscribers')->[0];
+    set_faxes_preferences($subscriber->{content}->{id});
+    $test_machine->set_subscriber_credentials($subscriber->{content});
+    $test_machine->runas('subscriber');
+    diag("\n\n\nSUBSCRIBER ".$subscriber->{content}->{id}.":");
+
+    ($res,$content) = $test_machine->check_item_post();
+    $test_machine->http_code_msg(422, "Check that we cant send a fax in a name of other customers subscriber",$res,$content);
+    diag("check that we can create as a subscriber role");
+    $test_machine->check_create_correct( 1, sub { $_[0]->{json}->{subscriber_id} = $subscriber->{content}->{id};} );
+
 }
 
 $test_machine->check_bundle();

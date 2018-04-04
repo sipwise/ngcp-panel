@@ -18,6 +18,16 @@ sub get_active_subscriber{
         },{
             join => { contract => 'contact' },
         });
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $sub_rs = $sub_rs->search({
+            'contract.id' => $c->user->account_id,
+        },{
+            join => { 'contract' },
+        });
+    } elsif($c->user->roles eq "subscriber") {
+        $sub_rs = $sub_rs->search({
+            'me.uuid' => $c->user->uuid,
+        });
     }
     my $sub = $sub_rs->first;
     unless($sub && $sub->provisioning_voip_subscriber) {
