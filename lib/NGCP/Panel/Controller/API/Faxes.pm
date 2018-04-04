@@ -15,6 +15,15 @@ use NGCP::Panel::Utils::API::Subscribers;
 use NGCP::Panel::Utils::Fax;
 use Encode qw( encode_utf8 );
 
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Faxes/;
+
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    GET           => {
+        ContentType => ['multipart/form-data'],
+    }
+});
+
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
@@ -22,12 +31,6 @@ sub allowed_methods{
 sub api_description {
     return 'Defines the meta information like duration, sender etc for fax recordings. The actual recordings can be fetched via the <a href="#faxrecordings">FaxRecordings</a> relation. NOTE: There is no Location header in the POST method response, as creation is asynchronous.';
 };
-
-#sub properties {
-#    return {
-#        asynchronous => 1,
-#    };
-#}
 
 sub query_params {
     return [
@@ -84,27 +87,6 @@ sub query_params {
 
     ];
 }
-
-use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Faxes/;
-
-sub resource_name{
-    return 'faxes';
-}
-
-sub dispatch_path{
-    return '/api/faxes/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-faxes';
-}
-
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller/],
-    GET           => {
-        ContentType => ['multipart/form-data'],
-    }
-});
 
 sub GET :Allow {
     my ($self, $c) = @_;
@@ -179,7 +161,7 @@ sub POST :Allow {
         my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});
         unless($billing_subscriber) {
             $c->log->error("invalid subscriber id $$resource{subscriber_id} for fax send");
-            $self->error($c, HTTP_NOT_FOUND, "Fax subscriber not found.");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
             last;
         }
         my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;

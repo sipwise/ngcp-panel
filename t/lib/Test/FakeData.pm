@@ -72,6 +72,11 @@ has 'use_data_callbacks' => (
     isa => 'Bool',
     default => sub { 0 },
 );
+has 'keep_db_data' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => sub { 0 },
+);
 has 'FLAVOUR' => (
     is => 'rw',
     isa => 'Str',
@@ -627,7 +632,9 @@ sub load_collection_data{
         $self->load_data_from_script($collection_name);
     }
     if(! ( $self->collection_id_exists($collection_name) ) ){
-        $self->clear_db(undef,undef,[$collection_name]);
+        if(! ( $self->keep_db_data ) ){
+            $self->clear_db(undef,undef,[$collection_name]);
+        }
         $self->load_db(undef,[$collection_name]);
     }
 }
