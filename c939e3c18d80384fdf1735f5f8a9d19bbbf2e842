@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_0fd0b152",
+        "filename": "lib/NGCP/Panel/Controller/API/CallQueues.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-04-06T10:54:29Z",
+      "side": 1,
+      "message": "As far as I can see - this method can be removed easily",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 24
+      },
+      "revId": "c939e3c18d80384fdf1735f5f8a9d19bbbf2e842",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_efd46d48",
+        "filename": "lib/NGCP/Panel/Controller/API/CallQueuesItem.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-04-06T10:54:29Z",
+      "side": 1,
+      "message": "this method also is standard",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 45
+      },
+      "revId": "c939e3c18d80384fdf1735f5f8a9d19bbbf2e842",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_4f5599c4",
+        "filename": "lib/NGCP/Panel/Role/API/CallQueues.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-04-06T10:54:29Z",
+      "side": 1,
+      "message": "this method can be replaced by:\n\nsub hal_links {\n    my($self, $c, $item, $resource, $form) \u003d @_;\n    return [\n        Data::HAL::Link-\u003enew(relation \u003d\u003e \u0027ngcp:subscribers\u0027, href \u003d\u003e sprintf(\"/api/subscribers/%d\", $item-\u003eid)),\n    ];\n}",
+      "range": {
+        "startLine": 121,
+        "startChar": 0,
+        "endLine": 124,
+        "endChar": 29
+      },
+      "revId": "c939e3c18d80384fdf1735f5f8a9d19bbbf2e842",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_cfc9a9ae",
+        "filename": "lib/NGCP/Panel/Role/API/CallQueues.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-04-06T10:54:29Z",
+      "side": 1,
+      "message": "the same behavior is inherited and method can be deleted",
+      "range": {
+        "startLine": 186,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 1
+      },
+      "revId": "c939e3c18d80384fdf1735f5f8a9d19bbbf2e842",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
