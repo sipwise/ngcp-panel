@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "baa041b7_efa58db5",
+        "filename": "lib/NGCP/Panel/Controller/API/CallQueues.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-06T11:51:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baa041b7_0fd0b152",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 24
+      },
+      "revId": "c939e3c18d80384fdf1735f5f8a9d19bbbf2e842",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa041b7_efd46d48",
         "filename": "lib/NGCP/Panel/Controller/API/CallQueuesItem.pm",
         "patchSetId": 6
@@ -36,6 +60,30 @@
       "writtenOn": "2018-04-06T10:54:29Z",
       "side": 1,
       "message": "this method also is standard",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 45
+      },
+      "revId": "c939e3c18d80384fdf1735f5f8a9d19bbbf2e842",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_2fc5b55a",
+        "filename": "lib/NGCP/Panel/Controller/API/CallQueuesItem.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-06T11:51:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baa041b7_efd46d48",
       "range": {
         "startLine": 35,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "baa041b7_6fcbbd73",
+        "filename": "lib/NGCP/Panel/Role/API/CallQueues.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-06T11:51:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baa041b7_4f5599c4",
+      "range": {
+        "startLine": 121,
+        "startChar": 0,
+        "endLine": 124,
+        "endChar": 29
+      },
+      "revId": "c939e3c18d80384fdf1735f5f8a9d19bbbf2e842",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa041b7_cfc9a9ae",
         "filename": "lib/NGCP/Panel/Role/API/CallQueues.pm",
         "patchSetId": 6
@@ -82,6 +154,30 @@
       "writtenOn": "2018-04-06T10:54:29Z",
       "side": 1,
       "message": "the same behavior is inherited and method can be deleted",
+      "range": {
+        "startLine": 186,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 1
+      },
+      "revId": "c939e3c18d80384fdf1735f5f8a9d19bbbf2e842",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_4fc8f974",
+        "filename": "lib/NGCP/Panel/Role/API/CallQueues.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-06T11:51:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baa041b7_cfc9a9ae",
       "range": {
         "startLine": 186,
         "startChar": 0,
