@@ -24,7 +24,7 @@ use Catalyst qw/
     Authentication
     Authorization::Roles
     Session
-    Session::Store::FastMmap
+    Session::Store::Redis
     Session::State::Cookie
     I18N
 /;
