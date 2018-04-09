@@ -51,6 +51,7 @@ $ua = Test::Collection->new()->ua();
         callcontrols => 1,
         callforwards => 1,
         calllists => 1,
+        callqueues => 1,
         callrecordingfiles => 1,
         callrecordings => 1,
         callrecordingstreams => 1,
