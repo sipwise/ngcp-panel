@@ -57,20 +57,20 @@ $test_machine->QUERY_PARAMS('');
     my $subscriberadmin = $fake_data->create('subscribers')->[0];
     $fake_data->{data}->{subscribers}->{data}->{administrative} = 0;
     my $subscriber = $fake_data->create('subscribers')->[0];
-    diag("create subscriber of other customer of other reseller");
-
-    my $fake_data_other = Test::FakeData->new(keep_db_data => 1);
-    $fake_data_other->{data}->{customers}->{data}->{external_id} = 'not_default_one';
-    $fake_data_other->{data}->{customercontacts}->{data}->{email} = 'not_default_one@email.com';
-    $fake_data_other->{data}->{contracts}->{data}->{external_id} = 'not_default_one';
-    $fake_data_other->{data}->{resellers}->{data}->{name} = 'not_default_one';
 
     my $fake_data_api_test_reseller = Test::FakeData->new(keep_db_data => 1);
     $fake_data_api_test_reseller->{data}->{customers}->{data}->{external_id} = 'api_test_reseller';
     $fake_data_api_test_reseller->{data}->{customercontacts}->{data}->{email} = 'api_test_reseller@email.com';
     $fake_data_api_test_reseller->{data}->{contracts}->{data}->{external_id} = 'api_test_reseller';
     $fake_data_api_test_reseller->{data}->{resellers}->{data}->{name} = 'api_test';
-
+    my $subscriber_api_test_reseller = $fake_data_api_test_reseller->create('subscribers')->[0];
+    
+    diag("create subscriber of other customer of other reseller");
+    my $fake_data_other = Test::FakeData->new(keep_db_data => 1);
+    $fake_data_other->{data}->{customers}->{data}->{external_id} = 'not_default_one';
+    $fake_data_other->{data}->{customercontacts}->{data}->{email} = 'not_default_one@email.com';
+    $fake_data_other->{data}->{contracts}->{data}->{external_id} = 'not_default_one';
+    $fake_data_other->{data}->{resellers}->{data}->{name} = 'not_default_one';
     my $subscriber_other_customer = $fake_data_other->create('subscribers')->[0];
     diag("create subscriber_other_phonebookentries");
     my $subscriber_other_phonebookentries = $test_machine->check_create_correct(2, sub {
@@ -146,7 +146,7 @@ $test_machine->QUERY_PARAMS('');
         delete $_[0]->{reseller_id};
         delete $_[0]->{subscriber_id};
         delete $_[0]->{shared};
-        $_[0]->{subscriber_id} = $subscriber_other_customer->{content}->{id};
+        $_[0]->{customer_id} = $subscriber_api_test_reseller->{content}->{customer_id};
         $_[0]->{number} = time() + seq();
     } );
     push @$reseller_phonebookentries_created, @{
@@ -161,6 +161,7 @@ $test_machine->QUERY_PARAMS('');
         $test_machine->check_create_correct(1, sub {
                 delete $_[0]->{customer_id};
                 delete $_[0]->{reseller_id};
+                $_[0]->{subscriber_id} = $subscriber_api_test_reseller->{content}->{id};
                 $_[0]->{number} = time() + seq();
             } )    
     };
