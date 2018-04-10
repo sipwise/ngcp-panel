@@ -5,23 +5,10 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-no strict 'refs';
-
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
 sub resource_name{
     return 'phonebookentries';
-}
-
-sub dispatch_path{
-    return '/api/phonebookentries/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-phonebookentries';
 }
 
 sub _item_rs {
@@ -29,7 +16,11 @@ sub _item_rs {
     my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
     return unless $owner;
     my $method = 'get_'.$type.'_phonebook_rs';
-    my ($list_rs,$item_rs) = &$method($c, $value, $type);
+    my ($list_rs,$item_rs);
+    {
+        no strict 'refs';
+        ($list_rs,$item_rs) = &$method($c, $value, $type);
+    }
     return $list_rs;
 }
 
@@ -138,12 +129,12 @@ sub check_owner_params {
         if ($c->user->roles eq "admin") {
             $owner = $schema->resultset('contracts')->find($value);
         } elsif ($c->user->roles eq "reseller") {
-            $owner = $schema->resultset('contracts')->find({
-                id => $value,
+            $owner = $schema->resultset('contracts')->search_rs({
+                'me.id' => $value,
                 'contact.reseller_id' => $c->user->reseller_id,
             },{
                 join => 'contact',
-            });
+            })->first;
         } elsif ($c->user->roles eq 'subscriberadmin' &&
                  $c->user->voip_subscriber->contract_id == $value) {
             $owner = $schema->resultset('contracts')->find({ id => $value });
@@ -153,12 +144,12 @@ sub check_owner_params {
         if ($c->user->roles eq "admin") {
             $owner = $schema->resultset('voip_subscribers')->find($value);
         } elsif ($c->user->roles eq "reseller") {
-            $owner = $schema->resultset('voip_subscribers')->find({
-                id => $value,
+            $owner = $schema->resultset('voip_subscribers')->search_rs({
+                'me.id' => $value,
                 'contact.reseller_id' => $c->user->reseller_id,
             },{
                 join => { 'contract' => 'contact' },
-            });
+            })->first;
         } elsif (($c->user->roles eq 'subscriberadmin' ||
                   $c->user->roles eq "subscriber") &&
                  $c->user->voip_subscriber->id == $value) {
@@ -166,7 +157,7 @@ sub check_owner_params {
         }
     }
 
-    unless($owner) {
+    unless ($owner) {
         $c->log->error("Unknown $parameter value '$value'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $parameter value '$value'");
         return;
