@@ -1,3 +1,13 @@
+ngcp-panel (6.1.1.2+0~mr6.1.1.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b1ff678] TT#27469 backport callrouting verification form dependency
+  * [624da4f] TT#35261 fix callroutingverify allowed_cli wildcards
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Apr 2018 01:29:58 +0200
+
 ngcp-panel (6.1.1.1+0~mr6.1.1.1) unstable; urgency=medium
 
   * New release.
