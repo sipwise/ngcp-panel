@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_6ae72841",
+        "filename": "lib/Catalyst/Plugin/Session/Store/Redis.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-10T09:08:48Z",
+      "side": 1,
+      "message": "i guess adding the plugin code is because of the connect part here?",
+      "revId": "bfdf68ea40cd50bc80128bffe48c622f1a17b7a3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
