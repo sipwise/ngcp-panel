@@ -205,6 +205,8 @@ sub get {
         my (@embedded, @links);
         my ($form) = $self->get_form($c);
         my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
+        my $href_params = $self->get_mandatory_params($c, 'collection') // '';
+        $href_params and $href_params = '&'.$href_params;
         for my $item (@items) {
             push @embedded, $self->hal_from_item($c, $item, $form, {});
             #TODO: replace hal_links_href by separated method that utilize get_item_id.
@@ -222,12 +224,12 @@ sub get {
                 templated => true,
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
+            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $c->request->path, $page, $rows, $href_params));
         if(($total_count / $rows) > $page ) {
-            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
+            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $c->request->path, $page + 1, $rows, $href_params));
         }
         if($page > 1) {
-            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
+            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d%s', $c->request->path, $page - 1, $rows, $href_params));
         }
 
         my $hal = Data::HAL->new(

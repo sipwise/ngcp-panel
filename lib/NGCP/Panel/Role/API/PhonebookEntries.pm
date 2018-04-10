@@ -57,6 +57,12 @@ sub validate_request {
     return 1;
 }
 
+sub get_mandatory_params {
+    my ($self, $c, $href_type, $item, $resource, $params) = @_;
+    my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
+    return $parameter.'='.$value;
+}
+
 sub get_item_id{
     my($self, $c, $item, $resource, $form, $params) = @_;
     my $id = int($item->id);

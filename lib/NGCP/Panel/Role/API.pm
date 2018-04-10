@@ -1119,6 +1119,11 @@ sub hal_links {
     return [];
 }
 
+sub get_mandatory_params {
+    my ($self, $c, $href_type, $item, $resource, $params) = @_;
+    return '';
+}
+
 sub get_form {
     my($self, $c) = @_;
     return ;
