@@ -5,23 +5,10 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-no strict 'refs';
-
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
 sub resource_name{
     return 'phonebookentries';
-}
-
-sub dispatch_path{
-    return '/api/phonebookentries/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-phonebookentries';
 }
 
 sub _item_rs {
@@ -29,7 +16,11 @@ sub _item_rs {
     my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
     return unless $owner;
     my $method = 'get_'.$type.'_phonebook_rs';
-    my ($list_rs,$item_rs) = &$method($c, $value, $type);
+    my ($list_rs,$item_rs);
+    {
+        no strict 'refs';
+        ($list_rs,$item_rs) = &$method($c, $value, $type);
+    }
     return $list_rs;
 }
 
@@ -54,6 +45,12 @@ sub get_form {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::SubscriberAPI", $c);
     }
     return;
+}
+
+sub process_hal_resource {
+    my($self, $c, $item, $resource, $form) = @_;
+    $resource->{customer_id} = $resource->{contract_id};
+    return $resource;
 }
 
 sub validate_request {
