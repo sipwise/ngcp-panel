@@ -70,12 +70,15 @@ sub set_config {
         #DoesAdd
         #Method
         #Path
-        #ContentType => ['multipart/form-data'],#allowed REQUEST content type
-        #Uploads     => [qw/front_image mac_image/],#uploads filenames
-        #  or
-        #Uploads     => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
-        #own_transaction_control->{PUT|POST|PATCH|DELETE|ALL} = 0|1 - don't start transaction guard in parent classes, implementation need to control it
+
+        #ContentType         => ['multipart/form-data'],#allowed REQUEST content type
+        #ResourceContentType => 'native' for request_params for csv upload cases to avoid default upload behavior when resource is taken from multipart/form-data {json} body part
         #ReturnContentType => 'binary'#mostly for GET. value different from 'application/json' says that method is going to return binary data using get_item_binary_data
+        #Uploads             => [qw/front_image mac_image/],#uploads filenames
+        #  or
+        #Uploads             => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
+        #own_transaction_control->{PUT|POST|PATCH|DELETE|ALL} = 0|1 - don't start transaction guard in parent classes, implementation need to control it
+
     #}
 
     my $obj_name = $self;
