@@ -23,9 +23,6 @@ use Storable;
 use Carp qw(cluck longmess shortmess);
 use IO::Uncompress::Unzip;
 use File::Temp qw();
-use Log::Log4perl;
-
-Log::Log4perl::init('/etc/ngcp-panel/logging.conf');
 
 my $tmpfilename : shared;
 
@@ -51,11 +48,6 @@ has 'local_test' => (
     is => 'rw',
     isa => 'Str',
     default => sub {$ENV{LOCAL_TEST} // ''},
-);
-has 'logger' => (
-    is => 'rw',
-    isa => 'Log::Log4perl::Logger',
-    default => sub { Log::Log4perl->get_logger('NGCP::Panel'); },
 );
 has 'DEBUG' => (
     is => 'rw',
