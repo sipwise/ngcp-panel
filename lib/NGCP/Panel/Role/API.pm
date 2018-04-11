@@ -1062,7 +1062,6 @@ sub hal_from_item {
 sub get_mandatory_params {
     my ($self, $c, $href_type, $item, $resource, $params) = @_;
     #href type - item or collection
-
     my $mandatory_parameters = $c->stash->{mandatory_parameters};
     if ($mandatory_parameters) {
         #we will not set stash->{mandatory_parameters} here, this is reserved for well validated parameters
@@ -1104,11 +1103,19 @@ sub get_mandatory_params {
 sub apply_mandatory_parameters {
     my ($self, $c, $href_type, $href, $item, $resource, $params) = @_;
     #href type - item or collection
+    if (!$self->get_config('apply_mandatory_parameters')) {
+        return $href;
+    }
     my $mandatory_parameters = $self->get_mandatory_params($c, $href_type, $item, $resource, $params);
+    my $mandatory_params_str = '';
     if ($mandatory_parameters) {
-        my $mandatory_params_str = join('&', map {
-               $_.'='.$mandatory_parameters->{$_}
-            } keys %$mandatory_parameters );
+        if (ref $mandatory_parameters eq 'HASH' && scalar keys %$mandatory_parameters) {
+            $mandatory_params_str = join('&', map {
+                   $_.'='.$mandatory_parameters->{$_}
+                } keys %$mandatory_parameters );
+        } elsif (!ref $mandatory_parameters) {
+            $mandatory_params_str = $mandatory_parameters;
+        }
         return $href.( $mandatory_params_str ? (($href !~ /\?/) ? '?' : '&').$mandatory_params_str : '' );
     }
     return $href;

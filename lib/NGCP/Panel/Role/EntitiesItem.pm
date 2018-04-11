@@ -79,6 +79,14 @@ sub set_config {
         #Uploads             => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
         #own_transaction_control->{PUT|POST|PATCH|DELETE|ALL} = 0|1 - don't start transaction guard in parent classes, implementation need to control it
 
+
+        #'apply_mandatory_parameters' => [0|1], #default 0. Says that we should apply mandatory parameters taken from method get_mandatory_params, or from config values "mandatory_parameters", see below. This one parameter was introduced to avoid unnecessary config processing
+        #'mandatory_parameters' => { 
+        #    [single|any|all] => [qw/field_name1 field_name2 etc/],
+        #      or
+        #    [single|any|all] => { 
+        #        'field_name1' => { config_info1 => 'value', config_info2 => 'value'},
+        #} }
     #}
 
     my $obj_name = $self;
