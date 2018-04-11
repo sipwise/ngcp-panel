@@ -49,6 +49,7 @@ sub get_form {
 
 sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
+    #this is necessary for hal links. We require customer_id as mandatory parameter, but record from DB provides contract_id
     $resource->{customer_id} = $resource->{contract_id};
     return $resource;
 }

@@ -14,6 +14,7 @@ __PACKAGE__->set_config({
         'ResourceContentType' => 'native',
     },
     allowed_roles   => [qw/admin reseller subscriberadmin subscriber/],
+    apply_mandatory_parameters => 1,
     mandatory_parameters => { 'single' => [qw/reseller_id customer_id subscriber_id/],},
 });
 

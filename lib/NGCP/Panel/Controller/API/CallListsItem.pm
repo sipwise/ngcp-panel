@@ -3,37 +3,26 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CallLists/;
+
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::API::Calllist;
-
 use NGCP::Panel::Utils::ValidateJSON qw();
 use DateTime::TimeZone;
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
+
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    apply_mandatory_parameters => 1,
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::CallLists/;
-
 sub resource_name{
     return 'calllists';
 }
-
-sub dispatch_path{
-    return '/api/calllists/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-calllists';
-}
-
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
-});
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;

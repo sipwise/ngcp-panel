@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::API::CallLists;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CallLists/;
 
 use boolean qw(true);
 use Data::HAL qw();
@@ -14,9 +15,19 @@ use NGCP::Panel::Utils::API::Calllist;
 use DateTime::TimeZone;
 use NGCP::Panel::Utils::CallList qw();
 
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    apply_mandatory_parameters => 1,
+});
+
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
+
+sub resource_name{
+    return 'calllists';
+}
+
 
 sub api_description {
     return 'Defines call lists in simplified form for showing call histories of subscribers.';
@@ -259,24 +270,6 @@ sub query_params {
         },
     ];
 }
-
-use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CallLists/;
-
-sub resource_name{
-    return 'calllists';
-}
-
-sub dispatch_path{
-    return '/api/calllists/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-calllists';
-}
-
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
-});
 
 sub GET :Allow {
     my ($self, $c) = @_;
