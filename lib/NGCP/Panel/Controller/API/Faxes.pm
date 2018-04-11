@@ -3,10 +3,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Faxes/;
 
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
@@ -15,13 +13,12 @@ use NGCP::Panel::Utils::API::Subscribers;
 use NGCP::Panel::Utils::Fax;
 use Encode qw( encode_utf8 );
 
-use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Faxes/;
-
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
-    GET           => {
-        ContentType => ['multipart/form-data'],
-    }
+    POST => {
+        'ContentType' => ['multipart/form-data','application/json'],
+        'Uploads'     => [qw/front_image mac_image/],
+    },
 });
 
 sub allowed_methods{
@@ -46,7 +43,6 @@ sub query_params {
                 second => sub { },
             },
         },
-
         {
             param => 'time_from',
             description => 'Filter for faxes performed after or at the given time stamp.',
@@ -59,7 +55,6 @@ sub query_params {
                 second => sub { },
             },
         },
-
         {
             param => 'time_to',
             description => 'Filter for faxes performed before or at the given time stamp.',
@@ -72,126 +67,57 @@ sub query_params {
                 second => sub { },
             },
         }, 
-
         {
             param => 'sid',
             description => 'Filter for a fax with the specific session id',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'me.sid' => $q };
-                },
-                second => sub { },
-            },
+            query_type => 'string_eq',
         },
-
     ];
 }
 
-sub GET :Allow {
-    my ($self, $c) = @_;
-    my $page = $c->request->params->{page} // 1;
-    my $rows = $c->request->params->{rows} // 10;
-    {
-        my $items = $self->item_rs($c);
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
-        my (@embedded, @links);
-        for my $item ($items->all) {
-            push @embedded, $self->hal_from_item($c, $item);
-            push @links, Data::HAL::Link->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
-            );
-        }
-        push @links,
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
-        if(($total_count / $rows) > $page ) {
-            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
-        }
-        if($page > 1) {
-            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
-        }
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
 
-        my $hal = Data::HAL->new(
-            embedded => [@embedded],
-            links => [@links],
-        );
-        $hal->resource({
-            total_count => $total_count,
-        });
-        my $response = HTTP::Response->new(HTTP_OK, undef,
-            HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
+
+    if (!$c->config->{features}->{faxserver}) {
+        $c->log->error("faxserver feature is not active.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Faxserver feature is not active.");
         return;
     }
-    return;
-}
 
-sub POST :Allow {
-    my ($self, $c) = @_;
-    {
-        if (!$c->config->{features}->{faxserver}) {
-            $c->log->error("faxserver feature is not active.");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Faxserver feature is not active.");
-            return;
-        }
-        last unless $self->forbid_link_header($c);
-        last unless $self->valid_media_type($c, 'multipart/form-data');
-        my $json_utf8 = encode_utf8($c->req->param('json'));
-        last unless $self->require_wellformed_json($c, 'application/json', $json_utf8 );
-        my $resource = JSON::from_json($json_utf8, { utf8 => 0 });
-        $resource->{faxfile} = $self->get_upload($c, 'faxfile');
-        $c->log->debug("upload received");
-
-        my $form = $self->get_form($c);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        $c->log->debug("form validated");
-        my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});
-        unless($billing_subscriber) {
-            $c->log->error("invalid subscriber id $$resource{subscriber_id} for fax send");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
-            last;
-        }
-        my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
-        last unless $prov_subscriber;
-        my $faxpref = $prov_subscriber->voip_fax_preference;
-        unless ($faxpref && $faxpref->active){
-            $c->log->error("invalid subscriber fax preferences");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid  subscriber fax preferences");
-            last;
-        }
-        try {
-            $c->log->debug("contacting fax server");
-            my $output = NGCP::Panel::Utils::Fax::send_fax(
-                c => $c,
-                subscriber => $billing_subscriber,
-                destination => $form->values->{destination},
-                upload => $form->values->{faxfile},
-                data => $form->values->{data},
-            );
-            $c->log->debug("faxserver output:\n");
-            $c->log->debug($output);
-        } catch($e) {
-            $c->log->error("failed to send fax: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
-            return;
-        };
-        $c->response->status(HTTP_CREATED);
-        $c->response->body(q());
+    my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});
+    unless($billing_subscriber) {
+        $c->log->error("invalid subscriber id $$resource{subscriber_id} for fax send");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
+        return;
     }
-    return;
+    my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
+    return unless $prov_subscriber;
+    my $faxpref = $prov_subscriber->voip_fax_preference;
+    unless ($faxpref && $faxpref->active){
+        $c->log->error("invalid subscriber fax preferences");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid  subscriber fax preferences");
+        return;
+    }
+    try {
+        $c->log->debug("contacting fax server");
+        my $output = NGCP::Panel::Utils::Fax::send_fax(
+            c => $c,
+            subscriber => $billing_subscriber,
+            destination => $form->values->{destination},
+            upload => $form->values->{faxfile},
+            data => $form->values->{data},
+        );
+        $c->log->debug("faxserver output:\n");
+        $c->log->debug($output);
+    } catch($e) {
+        $c->log->error("failed to send fax: $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+        return;
+    };
+    return 1;
 }
 
 1;

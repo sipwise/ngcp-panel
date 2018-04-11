@@ -103,11 +103,5 @@ sub resource_from_item {
     return \%resource;
 }
 
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
-}
-
 1;
 # vim: set tabstop=4 expandtab:
