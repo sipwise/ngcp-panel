@@ -52,29 +52,12 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::WebfaxAPI", $c);
 }
 
-sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->provisioning_voip_subscriber->voip_subscriber->id)),
-            Data::HAL::Link->new(relation => 'ngcp:faxrecordings', href => sprintf("/api/faxrecordings/%d", $item->id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    my $resource = $self->resource_from_item($c, $item, $form);
-    $hal->resource($resource);
-    return $hal;
+sub hal_links {
+    my($self, $c, $item, $resource, $form) = @_;
+    return [
+        Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->provisioning_voip_subscriber->voip_subscriber->id)),
+        Data::HAL::Link->new(relation => 'ngcp:faxrecordings', href => sprintf("/api/faxrecordings/%d", $item->id)),
+    ];
 }
 
 sub resource_from_item {
@@ -101,12 +84,6 @@ sub resource_from_item {
     my $data = NGCP::Panel::Utils::Fax::process_fax_journal_item($c, $item, $subscriber);
     map { $resource{$_} = $data->{$_} } qw(caller callee);
     return \%resource;
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
 }
 
 1;
