@@ -78,6 +78,7 @@ sub get_valid_data{
     }
 
     return ($resource, $data);
+
 }
 
 sub get_valid_post_data {
@@ -414,7 +415,7 @@ sub allowed_methods_filtered {
 #
 #old: allowed_roles = [qw/admin subscriber /]
 #
-#from now also possible: 
+#from now also possible:
 #sub config_allowed_roles {
 #    return {
 #        'Default' => [qw/admin reseller subscriberadmin/],
@@ -610,7 +611,6 @@ sub paginate_order_collection_rs {
     my ($self, $c, $item_rs, $params) = @_;
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
-    
     my $total_count;
     my $no_count = $self->dont_count_collection_total($c);
     if ( !$no_count ) {
@@ -648,13 +648,13 @@ sub collection_nav_links {
     $params //= $c->request->params;
 
     delete @{$params}{'page', 'rows'};
-    my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
+    my $rest_params = join( '&', map {"$_=".(defined $params->{$_} ? $params->{$_} : '');} keys %{$params});
     $rest_params = $rest_params ? "&$rest_params" : "";
 
     my @links = (NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
-    if ( (! defined $total_count 
-            && ! $c->stash->{collection_infinite_pager_stop} ) 
+    if ( (! defined $total_count
+            && ! $c->stash->{collection_infinite_pager_stop} )
         || ( defined $total_count && ($total_count / $rows) > $page ) ) {
         push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
     }
@@ -934,10 +934,31 @@ sub hal_from_item {
                 name => 'ngcp',
                 templated => true,
             ),
+<<<<<<< HEAD
             NGCP::Panel::Utils::DataHalLink->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $self->get_item_id($c, $item))),
             NGCP::Panel::Utils::DataHalLink->new(relation => "ngcp:".$self->resource_name, href => sprintf("/api/%s/%s", $self->resource_name, $self->get_item_id($c, $item))),
+=======
+            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(
+                relation => 'self',
+                href => sprintf(
+                    "%s%s",
+                    $self->dispatch_path,
+                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
+                ),
+            ),
+            Data::HAL::Link->new(
+                relation => "ngcp:".$self->resource_name,
+                href => sprintf(
+                    "/api/%s/%s",
+                    $self->resource_name,
+                    $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
+                )
+            ),
+>>>>>>> b7e82fdf... TT#35662 move product_id to billing.contracts
             @$links
         ],
         relation => 'ngcp:'.$self->resource_name,

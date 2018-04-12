@@ -85,7 +85,7 @@ sub _item_rs {
         });
 		my $customer = $customer_rs->first;
 
-        my $cpbx = ($customer->get_column('product_class') eq 'pbxaccount') ? 1 : 0;
+        my $cpbx = ($customer->product->class eq 'pbxaccount') ? 1 : 0;
         $cloudpbx &= $cpbx;
 
         # TODO: sms and rtcengine are not specially restricted; should it?
