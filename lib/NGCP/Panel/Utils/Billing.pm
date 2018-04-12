@@ -444,6 +444,8 @@ sub get_datatable_cols {
 
     my ($c) = @_;
     return (
+        { name => "prepaid", "search" => 0, "title" => $c->loc("Prepaid"),
+          custom_renderer => 'function ( data, type, full ) { data.escapeHtml = false; return \'<input type="checkbox" disabled="disabled"\' + (full.prepaid == 1 ? \' checked="checked"\': \'\') + \'/>\'; }' },
         { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"), },
         { name => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"), },
 
