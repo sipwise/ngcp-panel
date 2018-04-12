@@ -141,7 +141,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
     }
-    my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $contract );
     $c->stash->{billing_mapping} = $billing_mapping;
 
     $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
@@ -3624,7 +3624,7 @@ sub ajax_registered :Chained('master') :PathPart('registered/ajax') :Args(0) {
             username => $c->stash->{subscriber}->username,
             $c->config->{features}->{multidomain} ? (domain => $c->stash->{subscriber}->domain->domain) : (),
         }
-    );   
+    );
     NGCP::Panel::Utils::Datatables::process($c, $reg_rs, $c->stash->{reg_dt_columns});
 
     $c->detach( $c->view("JSON") );

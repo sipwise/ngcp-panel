@@ -12,6 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract qw();
+use NGCP::Panel::Utils::BillingMappings qw();
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -99,14 +100,15 @@ sub PATCH :Allow {
 
         my $old_resource = { $customer->get_inflated_columns };
         delete $old_resource->{profile_package_id};
-        my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+        my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
+        #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
         $old_resource->{billing_profile_definition} = undef;
 
         my $resource = $self->apply_patch($c, $old_resource, $json, sub {
             my ($missing_field,$entity) = @_;
             if ($missing_field eq 'billing_profiles') {
-                $entity->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_future_mappings($customer);
+                $entity->{billing_profiles} = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($customer);
                 $entity->{billing_profile_definition} //= 'profiles';
             } elsif ($missing_field eq 'profile_package_id') {
                 $entity->{profile_package_id} = $customer->profile_package_id;

@@ -166,7 +166,7 @@ sub update_profile {
                         profile_id => $profile->id,
                         old_prepaid => $old_prepaid,
                         new_prepaid => $profile->prepaid,
-                        contract_rs => NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB')),
+                        contract_rs => NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB')), #ok
                     );
     } catch($e) {
         $c->log->error("Failed to update billing profile '".$profile->id."': $e");

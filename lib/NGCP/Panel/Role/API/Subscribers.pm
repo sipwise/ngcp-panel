@@ -52,7 +52,7 @@ sub resource_from_item {
     my %resource = %{ merge($bill_resource, $prov_resource) };
     $resource{administrative} = delete $resource{admin};
 
-    unless($customer->get_column('product_class') eq 'pbxaccount') {
+    unless($customer->product->class eq 'pbxaccount') {
         delete $resource{is_pbx_group};
         delete $resource{is_pbx_pilot};
         delete $resource{pbx_extension};
@@ -81,7 +81,7 @@ sub resource_from_item {
         run => 0,
     );
 
-    if($customer->get_column('product_class') eq 'pbxaccount') {
+    if($customer->product->class eq 'pbxaccount') {
         $resource{pbx_group_ids} = [];
         foreach my $group($item->provisioning_voip_subscriber->voip_pbx_groups->search_rs(undef,{'order_by' => 'me.id'})->all) {
             push @{ $resource{pbx_group_ids} }, int($group->group->voip_subscriber->id);
@@ -273,10 +273,7 @@ sub get_customer {
                 'product.class' => 'sipaccount',
                 'product.class' => 'pbxaccount',
             ],
-        },{
-            '+select' => [ 'billing_mappings.id', 'product.class' ],
-            '+as' => [ 'bmid', 'product_class' ],
-        });
+        },undef);
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $customer_rs = $customer_rs->search({
@@ -292,11 +289,11 @@ sub get_customer {
 }
 
 sub get_billing_profile {
-    my ($self, $c, $customer) = @_;
+    my ($self, $c, $customer, $now) = @_;
 
-    my $mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-    if($mapping) {
-        return $mapping->billing_profile;
+    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
+    if($billing_mapping) {
+        return $billing_mapping->billing_profile;
     } else {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'customer_id', doesn't have a valid billing mapping.");
         return;
@@ -410,7 +407,7 @@ sub prepare_resource {
     }
 
     my $pilot;
-    if($customer->get_column('product_class') eq 'pbxaccount') {
+    if($customer->product->class eq 'pbxaccount') {
         $pilot = $customer->voip_subscribers->search({
             'provisioning_voip_subscriber.is_pbx_pilot' => 1,
         },{
@@ -432,7 +429,7 @@ sub prepare_resource {
 
     my $preferences = {};
     my $admin = 0;
-    unless($customer->get_column('product_class') eq 'pbxaccount') {
+    unless($customer->product->class eq 'pbxaccount') {
         for my $pref(qw/is_pbx_group pbx_extension pbx_hunt_policy pbx_hunt_timeout is_pbx_pilot/) {
             delete $resource->{$pref};
         }
@@ -843,7 +840,7 @@ sub check_write_access {
             return;
         }
         my $customer = $self->get_customer($c, $c->user->account_id);
-        if($customer->get_column('product_class') ne 'pbxaccount') {
+        if($customer->product->class ne 'pbxaccount') {
             $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
             return;
         }

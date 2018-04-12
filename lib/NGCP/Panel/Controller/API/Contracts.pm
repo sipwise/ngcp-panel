@@ -12,6 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::BillingMappings qw();
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
@@ -167,7 +168,7 @@ sub POST :Allow {
         }
 
         my $mappings_to_create = [];
-        last unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+        last unless NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
             c => $c,
             resource => $resource,
             old_resource => undef,
@@ -179,11 +180,12 @@ sub POST :Allow {
             });
 
         my $product_class = delete $resource->{type};
-        my $product = $schema->resultset('products')->find({ class => $product_class });
+        my $product = $schema->resultset('products')->search_rs({ class => $product_class })->first;
         unless($product) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type'.");
             last;
         }
+        $resource->{product_id} = $product->id;
 
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;

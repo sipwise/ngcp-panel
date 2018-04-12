@@ -12,6 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract qw();
+use NGCP::Panel::Utils::BillingMappings qw();
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
@@ -80,7 +81,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -89,9 +90,10 @@ sub PATCH :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $contract = $self->contract_by_id($c, $id, $now);
         last unless $self->resource_exists($c, contract => $contract);
-        
+
         my $old_resource = { $contract->get_inflated_columns };
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
+        #my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
         $old_resource->{billing_profile_definition} = undef;
         delete $old_resource->{profile_package_id};
@@ -99,7 +101,7 @@ sub PATCH :Allow {
         my $resource = $self->apply_patch($c, $old_resource, $json, sub {
             my ($missing_field,$entity) = @_;
             if ($missing_field eq 'billing_profiles') {
-                $entity->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_future_mappings($contract);
+                $entity->{billing_profiles} = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($contract);
                 $entity->{billing_profile_definition} //= 'profiles';
             }
         });
@@ -111,7 +113,7 @@ sub PATCH :Allow {
 
         my $hal = $self->hal_from_contract($c, $contract, $form, $now);
         last unless $self->add_update_journal_item_hal($c,$hal);
-        
+
         $guard->commit;
 
         $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
@@ -137,13 +139,14 @@ sub PUT :Allow {
         );
         last unless $resource;
         my $old_resource = { $contract->get_inflated_columns };
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
+        #my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
         $old_resource->{type} = $billing_mapping->product->class;
 
         my $form = $self->get_form($c);
         $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
         last unless $contract;
-        
+
         my $hal = $self->hal_from_contract($c, $contract, $form, $now);
         last unless $self->add_update_journal_item_hal($c,$hal);
 

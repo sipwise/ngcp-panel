@@ -33,7 +33,7 @@ sub validate_max_subscribers {
 
     my $product = $form->field('product');
     my $max_subscribers = $form->field('max_subscribers');
-    my $sipaccount = $c->model('DB')->resultset('products')->find({class => 'sipaccount'});
+    my $sipaccount = $c->model('DB')->resultset('products')->search_rs({class => 'sipaccount'})->first;
     return unless $sipaccount;
     my $sipaccount_id = $sipaccount->id // 0;
 

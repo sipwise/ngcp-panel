@@ -64,7 +64,7 @@ sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
     my $adm = $c->user->roles eq "admin";
     return [
-        $adm ? Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),    
+        $adm ? Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),
     ];
 }
 
@@ -79,6 +79,7 @@ sub process_form_resource{
         $resource->{md5pass} = undef;
         $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
     }
+
     return $resource;
 }
 

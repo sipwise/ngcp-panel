@@ -56,7 +56,7 @@ sub get_valid_data{
     if ($c->req->headers->content_type eq 'multipart/form-data') {
         return unless $self->require_uploads($c);
         $json_raw = $c->req->param('json');
-    } elsif ($c->req->headers->content_type eq 'application/json' 
+    } elsif ($c->req->headers->content_type eq 'application/json'
         && 'GET' ne $method) {
         return unless $self->require_body($c);
         #overwrite for the first variant of the dual upload
@@ -90,8 +90,8 @@ sub get_valid_data{
     return ($resource, $data, $non_json_data);
 }
 
-#method to take any informative input, i.e. 
-#   - json body, 
+#method to take any informative input, i.e.
+#   - json body,
 #   - json part of multiform
 #   - request_params
 sub get_info_data {
@@ -660,7 +660,9 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
+
     my $total_count = int($item_rs->count);
+
     $item_rs = $item_rs->search(undef, {
         page => $page,
         rows => $rows,
@@ -692,7 +694,7 @@ sub collection_nav_links {
 
     $params = { %{ $params } }; #copy
     delete @{$params}{'page', 'rows'};
-    my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
+    my $rest_params = join( '&', map {"$_=".(defined $params->{$_} ? $params->{$_} : '');} keys %{$params});
     $rest_params = $rest_params ? "&$rest_params" : "";
 
     my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
@@ -1195,7 +1197,7 @@ sub get_transaction_control{
     if($self->check_transaction_control($c, $action, $step, %params)){
         #todo: put it into class variables?
         if ($self->config->{set_transaction_isolation}) {
-            my $transaction_isolation_level = 
+            my $transaction_isolation_level =
                 ( (length $self->config->{set_transaction_isolation} > 1 )
                     && lc $self->config->{set_transaction_isolation} ne 'default' )
                 ? $self->config->{set_transaction_isolation}
@@ -1290,8 +1292,8 @@ sub return_representation_post{
             $hal->http_headers,
         ), $hal->as_json);
         $c->response->header(
-            Location => sprintf('/%s%s', 
-            $c->request->path, 
+            Location => sprintf('/%s%s',
+            $c->request->path,
             $self->get_item_id(
                 $c,$item, undef, undef, { purpose => 'hal_links_href' })
             ));
