@@ -370,8 +370,8 @@ sub require_body {
 }
 sub require_uploads {
     my ($self, $c) = @_;
-    return 1 if $c->req->upload;
-    $self->error($c, HTTP_BAD_REQUEST, "Thismultipart/form-data request is missing upload part.");
+    return 1 if $c->req->upload || $self->get_config('backward_allow_empty_upload');
+    $self->error($c, HTTP_BAD_REQUEST, "This multipart/form-data request is missing upload part.");
     return;
 }
 
@@ -1045,13 +1045,15 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
-    if($form){
-        $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-            run => 0,
-        );
+    if (!$self->get_config('dont_validate_hal')) {
+        if($form){
+            $self->validate_form(
+                c => $c,
+                resource => $resource,
+                form => $form,
+                run => 0,
+            );
+        }
     }
     $resource->{id} = $self->get_item_id($c, $item);
     $resource = $self->post_process_hal_resource($c, $item, $resource, $form);
