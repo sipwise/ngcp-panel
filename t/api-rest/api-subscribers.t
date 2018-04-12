@@ -398,6 +398,7 @@ if (!$remote_config->{config}->{features}->{cloudpbx}) {
         $test_machine->runas('admin');
     }
 }
+$test_machine->runas('admin');
 
 #TT#8680
 {

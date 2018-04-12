@@ -60,6 +60,18 @@ SKIP:
 {
     my ($res,$sub1,$cf_collection1,$cft_collection1,$cf_collection2,$cft_collection2);
     
+    {#todo: move to fake_data
+        my $reseller_admin = $test_machine->get_item_hal('admins','/api/admins/?login=api_test');
+        if (!(exists $reseller_admin->{total_count} && $reseller_admin->{total_count})) {
+            $fake_data->test_machine($test_machine);#because we removed shared certs when runas admin
+            my $data = $fake_data->process('admins');
+            $data->{login}   = 'api_test';
+            $data->{password} = 'api_test';
+            my($res,$content) = $test_machine->request_post($data, '/api/admins/');
+            $test_machine->http_code_msg(201, "create reseller",$res,$content);
+            $test_machine->set_reseller_credentials($data);
+        }
+    }
     $test_machine->runas('reseller');
     
     ($res, $cf_collection1) = $test_machine->request_get('/api/cfdestinationsets/?page=1&rows=10');
@@ -129,6 +141,7 @@ SKIP:
     $test_machine->http_code_msg(422, "Check announcement_id from other group", $res, $content);
 
 }
+$test_machine->runas('admin');
 $fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();
 undef $fake_data;

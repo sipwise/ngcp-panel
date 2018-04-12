@@ -302,10 +302,9 @@ sub init_ssl_cert {
         return;
     }
     lock $tmpfilename;
-    unless ($tmpfilename) {
+    unless ($tmpfilename && -e $tmpfilename) {
         my $_ua = $ua // $self->_create_ua(0);
         my $res = $_ua->post(
-
             $self->base_uri . '/api/admincerts/',
             Content_Type => 'application/json',
             Content => '{}'
@@ -664,6 +663,7 @@ sub request{
         print "$curl\n\n";
     }
     if(!$self->DEBUG_ONLY){
+        $self->init_ssl_cert($self->ua, $self->runas_role);
         my $res = $self->ua->request($req);
         diag(sprintf($self->name_prefix."request:%s: %s", $req->method, $req->uri));
         #draft of the debug mode
