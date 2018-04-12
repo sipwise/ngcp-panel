@@ -13,11 +13,17 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::BillingMappings qw();
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Subscriber qw();
 
 sub _item_rs {
     my ($self, $c, $now) = @_;
+
+    #return NGCP::Panel::Utils::BillingMappings::get_customer_rs(
+    #    c => $c,
+    #    include_terminated => 1,
+    #);
 
     # returns a contracts rs filtered based on role
     my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(
