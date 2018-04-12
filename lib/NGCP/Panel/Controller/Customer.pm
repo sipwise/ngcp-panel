@@ -286,10 +286,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my $contract_terminated_rs = $c->stash->{contract_select_all_rs}
         ->search({
             'me.id' => $contract_id,
-        },{
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-        });
+        },undef);
 
     if($c->user->roles eq 'reseller') {
         $contract_rs = $contract_rs->search({
@@ -579,7 +576,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
                     );
 
-                $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+                $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping($contract);
                 $billing_profile = $billing_mapping->billing_profile;
 
                 my $new_ext_id = $contract->external_id // '';

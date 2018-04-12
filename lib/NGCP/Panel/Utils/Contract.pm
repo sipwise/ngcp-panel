@@ -108,71 +108,54 @@ sub recursively_lock_contract {
 }
 
 sub get_contract_rs {
-    my %params = @_;
-    my ($schema,$now,$contract_id) = @params{qw/schema now contract_id/};
-    $now //= NGCP::Panel::Utils::DateTime::current_local;
-    my $dtf = $schema->storage->datetime_parser;
-    my $rs = $schema->resultset('contracts')
-        ->search({
-            $params{include_terminated} ? () : ('me.status' => { '!=' => 'terminated' }),
-        },{
-            bind => [ ( $dtf->format_datetime($now) ) x 2, ( $contract_id ) x 2 ],
-            'join' => { 'billing_mappings_actual' => { 'billing_mappings' => 'product'}},
-            '+select' => [
-                'billing_mappings.id',
-                'billing_mappings.start_date',
-                'billing_mappings.product_id',
-            ],
-            '+as' => [
-                'billing_mapping_id',
-                'billing_mapping_start_date',
-                'product_id',
-            ],
-            alias => 'me',
-        });
 
+    my %params = @_;
+    my ($c,$schema,$include_terminated) = @params{qw/c schema include_terminated/};
+    $schema //= $c->model('DB');
+    my $rs = $schema->resultset('contracts')->search({
+        $include_terminated ? () : ('me.status' => { '!=' => 'terminated' }),
+    },{
+        join => 'product',
+    });
     return $rs;
+
 }
 
 sub get_customer_rs {
     my %params = @_;
-    my ($c,$now,$contract_id) = @params{qw/c now contract_id/};
+    my ($c,$schema,$include_terminated) = @params{qw/c schema include_terminated/};
 
-    my $customers = get_contract_rs(
-        schema => $c->model('DB'),
-        include_terminated => $params{include_terminated},
-        now => $now,
-        contract_id => $contract_id,
-    );
-
-    $customers = $customers->search({
-        'contact.reseller_id' => { '-not' => undef },
+    my $rs = get_contract_rs(
+        c => $c,
+        schema => $schema,
+        include_terminated => $include_terminated,
+    )->search_rs({
+        'product.class' => { -in => [ 'sipaccount', 'pbxaccount' ] },
     },{
-        join => 'contact',
+        join => 'product',
     });
 
     if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $customers = $customers->search({
-                'contact.reseller_id' => $c->user->reseller_id,
+        $rs = $rs->search_rs({
+            'contact.reseller_id' => { '-not' => undef },
+        },{
+            join => 'contact',
         });
-    } elsif($c->user->roles eq "subscriberadmin") {
-        $customers = $customers->search({
-                'contact.reseller_id' => $c->user->contract->contact->reseller_id,
+    } elsif($c->user->roles eq "reseller") {
+        $rs = $rs->search({
+            'contact.reseller_id' => $c->user->reseller_id,
+        },{
+            join => 'contact',
+        });
+    } elsif($c->user->roles eq "subscriberadmin" or $c->user->roles eq "subscriber") {
+        $rs = $rs->search({
+            'contact.reseller_id' => $c->user->contract->contact->reseller_id,
+        },{
+            join => 'contact',
         });
     }
 
-    $customers = $customers->search({
-            '-or' => [
-                'product.class' => 'sipaccount',
-                'product.class' => 'pbxaccount',
-            ],
-        },{
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-    });
-
-    return $customers;
+    return $rs;
 }
 
 sub get_contract_zonesfees_rs {
@@ -356,7 +339,7 @@ sub prepare_billing_mappings {
     if (defined $old_resource) {
         # TODO: what about changed product, do we allow it?
         my $billing_mapping = $schema->resultset('billing_mappings')->find($old_resource->{billing_mapping_id});
-        $product_id = $billing_mapping->product->id;
+        $product_id = $billing_mapping->contract->product->id;
         $prepaid = $billing_mapping->billing_profile->prepaid;
         $billing_profile_id = $billing_mapping->billing_profile->id;
     } else {
@@ -387,7 +370,7 @@ sub prepare_billing_mappings {
                     my ($profile) = @$entities{qw/profile/};
                     push(@$mappings_to_create,{billing_profile_id => $profile->id,
                         network_id => undef,
-                        product_id => $product_id,
+                        #product_id => $product_id,
                         start_date => $now,
                         end_date => undef,
                     });
@@ -416,7 +399,7 @@ sub prepare_billing_mappings {
             my ($profile) = @$entities{qw/profile/};
             push(@$mappings_to_create,{billing_profile_id => $profile->id,
                 network_id => undef,
-                product_id => $product_id,
+                #product_id => $product_id,
                 #we don't change the former behaviour in update situations:
                 start_date => undef,
                 end_date => undef,
@@ -513,7 +496,7 @@ sub prepare_billing_mappings {
             push(@$mappings_to_create,{
                 billing_profile_id => $profile->id,
                 network_id => ($is_customer && defined $network ? $network->id : undef),
-                product_id => $product_id,
+                #product_id => $product_id,
                 start_date => $start,
                 end_date => $stop,
             });
@@ -550,7 +533,7 @@ sub prepare_billing_mappings {
                     push(@$mappings_to_create,{ #assume not terminated,
                         billing_profile_id => $mapping->profile_id,
                         network_id => ($is_customer ? $mapping->network_id : undef),
-                        product_id => $product_id,
+                        #product_id => $product_id,
                         start_date => $now,
                         end_date => undef,
                     });
@@ -569,7 +552,7 @@ sub prepare_billing_mappings {
                         push(@$mappings_to_create,{ #assume not terminated,
                             billing_profile_id => $mapping->profile_id,
                             network_id => ($is_customer ? $mapping->network_id : undef),
-                            product_id => $product_id,
+                            #product_id => $product_id,
                             start_date => $now,
                             end_date => undef,
                         });
@@ -594,7 +577,7 @@ sub prepare_billing_mappings {
                 push(@$mappings_to_create,{ #assume not terminated,
                     billing_profile_id => $mapping->profile_id,
                     network_id => ($is_customer ? $mapping->network_id : undef),
-                    product_id => $product_id,
+                    #product_id => $product_id,
                     start_date => undef, #$now,
                     end_date => undef,
                 });
