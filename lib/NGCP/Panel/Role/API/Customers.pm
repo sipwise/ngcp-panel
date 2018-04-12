@@ -13,6 +13,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::BillingMappings qw();
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Subscriber qw();
 
@@ -23,7 +24,7 @@ sub _item_rs {
     my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(
         c => $c,
         include_terminated => 1,
-        now => $now,
+        #now => $now,
     );
     return $item_rs;
 }
@@ -41,10 +42,11 @@ sub hal_from_customer {
         $is_adm = 1;
     }
 
-    my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
+    #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile_id = $billing_mapping->billing_profile->id;
-    my $future_billing_profiles = NGCP::Panel::Utils::Contract::resource_from_future_mappings($customer);
-    my $billing_profiles = NGCP::Panel::Utils::Contract::resource_from_mappings($customer);
+    my $future_billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($customer);
+    my $billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_mappings($customer);
 
     NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $customer,
@@ -129,17 +131,19 @@ sub update_customer {
         return;
     }
 
-    my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
+    #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile = $billing_mapping->billing_profile;
 
     my $old_package = $customer->profile_package;
 
     $old_resource->{prepaid} = $billing_profile->prepaid;
+    $old_resource->{billing_mapping_id} = $billing_mapping->id;
 
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
     $resource->{contact_id} //= undef;
-    $resource->{type} //= $billing_mapping->product->class;
+    $resource->{type} //= $customer->product->class;
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -152,7 +156,7 @@ sub update_customer {
     my $mappings_to_create = [];
     my $delete_mappings = 0;
     my $set_package = ($resource->{billing_profile_definition} // 'id') eq 'package';
-    return unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+    return unless NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
         c => $c,
         resource => $resource,
         old_resource => $old_resource,
@@ -209,7 +213,7 @@ sub update_customer {
 
     try {
         $customer->update($resource);
-        NGCP::Panel::Utils::Contract::remove_future_billing_mappings($customer,$now) if $delete_mappings;
+        NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($customer,$now) if $delete_mappings;
         foreach my $mapping (@$mappings_to_create) {
             $customer->billing_mappings->create($mapping);
         }
@@ -227,7 +231,8 @@ sub update_customer {
             profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
             );
 
-        $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+        $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
+        #$billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
         $billing_profile = $billing_mapping->billing_profile;
 
         if(($customer->external_id // '') ne $old_ext_id) {

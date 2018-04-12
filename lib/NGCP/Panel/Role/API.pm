@@ -90,8 +90,8 @@ sub get_valid_data{
     return ($resource, $data, $non_json_data);
 }
 
-#method to take any informative input, i.e. 
-#   - json body, 
+#method to take any informative input, i.e.
+#   - json body,
 #   - json part of multiform
 #   - request_params
 sub get_info_data {
@@ -681,7 +681,7 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
-    
+
     my $total_count;
     my $no_count = $self->dont_count_collection_total($c);
     if ( !$no_count ) {
@@ -722,14 +722,23 @@ sub collection_nav_links {
     $path   //= $c->request->path;
     $params //= $c->request->params;
 
+<<<<<<< HEAD
+=======
+    my $params_default = $self->get_mandatory_params($c, 'collection');
+    $params = {
+        'HASH' eq ref $params_default ? %$params_default : (),
+    #$params has priority
+        'HASH' eq ref $params ? %{ $params } : ()
+    }; #copy
+>>>>>>> b35b0e1c... TT#35662 move product_id to billing.contracts
     delete @{$params}{'page', 'rows'};
-    my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
+    my $rest_params = join( '&', map {"$_=".(defined $params->{$_} ? $params->{$_} : '');} keys %{$params});
     $rest_params = $rest_params ? "&$rest_params" : "";
 
     my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
-    if ( (! defined $total_count 
-            && ! $c->stash->{collection_infinite_pager_stop} ) 
+    if ( (! defined $total_count
+            && ! $c->stash->{collection_infinite_pager_stop} )
         || ( defined $total_count && ($total_count / $rows) > $page ) ) {
 
         push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
@@ -1014,7 +1023,16 @@ sub hal_from_item {
                 name => 'ngcp',
                 templated => true,
             ),
+<<<<<<< HEAD
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
+=======
+            Data::HAL::Link->new(
+                relation => 'collection',
+                href => $self->apply_mandatory_parameters($c, 'collection', sprintf(
+                    "/api/%s/",
+                    $self->resource_name
+                ), $item, $resource, $params)),
+>>>>>>> b35b0e1c... TT#35662 move product_id to billing.contracts
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(
                 relation => 'self',
@@ -1051,6 +1069,64 @@ sub hal_from_item {
     return $hal;
 }
 
+<<<<<<< HEAD
+=======
+sub get_mandatory_params {
+    my ($self, $c, $href_type, $item, $resource, $params) = @_;
+    #href type - item or collection
+
+    my $mandatory_parameters = $c->stash->{mandatory_parameters};
+    if ($mandatory_parameters) {
+        #we will not set stash->{mandatory_parameters} here, this is reserved for well validated parameters
+        return $mandatory_parameters;
+    }
+    my $mandatory_params_config;
+    if ($self->get_config('interface_type') eq $href_type) {
+        $mandatory_params_config = $self->get_config('mandatory_parameters');
+    } elsif ($href_type eq 'collection') {
+        $mandatory_params_config = $self->get_collection_config('mandatory_parameters');
+    } elsif ($href_type eq 'item') {
+        $mandatory_params_config = $self->get_item_config('mandatory_parameters');
+    }
+    if ($mandatory_params_config) {
+        #mandatory params config will always look as:
+        #HashRef {
+        # policy (e.g. - all, any, single) => { parameter_name => {type info,validator and other}}
+        # OR policy (e.g. - all, any, single) => [/mandatory params/]
+        #}
+        my $request_data = $self->get_info_data($c);
+        my $resource = {
+            'HASH' eq ref $resource ? %$resource : (),
+            #overwrite from specially created source
+            'HASH' eq ref $params ? %$params : (),
+        };
+        $mandatory_parameters = {
+            map { $resource->{$_}
+                ? ( $_ => $resource->{$_} )
+                : ( $request_data->{$_}
+                    ? ( $_ => $request_data->{$_} )
+                    : () ) }
+            map { 'ARRAY' eq ref $_ ? ( @$_ ) : ( keys %$_ ) }
+                values %$mandatory_params_config
+        };
+    }
+    return $mandatory_parameters;
+}
+
+sub apply_mandatory_parameters {
+    my ($self, $c, $href_type, $href, $item, $resource, $params) = @_;
+    #href type - item or collection
+    my $mandatory_parameters = $self->get_mandatory_params($c, $href_type, $item, $resource, $params);
+    if ($mandatory_parameters) {
+        my $mandatory_params_str = join('&', map {
+               $_.'='.$mandatory_parameters->{$_}
+            } keys %$mandatory_parameters );
+        return $href.( $mandatory_params_str ? (($href !~ /\?/) ? '?' : '&').$mandatory_params_str : '' );
+    }
+    return $href;
+}
+
+>>>>>>> b35b0e1c... TT#35662 move product_id to billing.contracts
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form, $params) = @_;
     my $process_extras;
@@ -1228,11 +1304,20 @@ sub get_transaction_control{
     $step //= 'init';
     if($self->check_transaction_control($c, $action, $step, %params)){
         #todo: put it into class variables?
+<<<<<<< HEAD
         if ($self->config->{set_transaction_isolation}) {
             my $transaction_isolation_level = 
                 ( (length $self->config->{set_transaction_isolation} > 1 )
                     && lc $self->config->{set_transaction_isolation} ne 'default' )
                 ? $self->config->{set_transaction_isolation}
+=======
+        my $til_config = $self->get_config('set_transaction_isolation');
+        if ($til_config) {
+            my $transaction_isolation_level =
+                ( (length $til_config > 1 )
+                    && lc $til_config ne 'default' )
+                ? $til_config
+>>>>>>> b35b0e1c... TT#35662 move product_id to billing.contracts
                 : 'READ COMMITTED';
             $c->model('DB')->set_transaction_isolation($transaction_isolation_level);
         }
