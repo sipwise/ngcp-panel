@@ -17,6 +17,8 @@ use DateTime::Format::HTTP qw();
 use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
+use Encode qw( encode_utf8 );
+
 use HTTP::Headers::Util qw(split_header_words);
 use Data::Compare;
 use Data::HAL qw();
@@ -55,7 +57,7 @@ sub get_valid_data{
     my ($json_raw,$json_decoded);
     if ($c->req->headers->content_type eq 'multipart/form-data') {
         return unless $self->require_uploads($c);
-        $json_raw = $c->req->param('json');
+        $json_raw = encode_utf8($c->req->param('json'));
     } elsif ($c->req->headers->content_type eq 'application/json' 
         && 'GET' ne $method) {
         return unless $self->require_body($c);
@@ -77,7 +79,11 @@ sub get_valid_data{
         $json_raw //= $data;
 
         return unless $self->require_wellformed_json($c, $resource_media_type, $json_raw);
-        $json_decoded = JSON::from_json($json_raw, { utf8 => 1 });
+        if ($c->req->headers->content_type eq 'multipart/form-data') {
+            $json_decoded = JSON::from_json($json_raw, { utf8 => 0 });
+        } else {
+            $json_decoded = JSON::from_json($json_raw, { utf8 => 1 });
+        }
         if ($method eq 'PATCH') {
             my $ops = $params{ops} // [qw/replace copy/];
             return unless $self->require_valid_patch($c, $json_decoded, $ops);
@@ -370,8 +376,8 @@ sub require_body {
 }
 sub require_uploads {
     my ($self, $c) = @_;
-    return 1 if $c->req->upload;
-    $self->error($c, HTTP_BAD_REQUEST, "Thismultipart/form-data request is missing upload part.");
+    return 1 if $c->req->upload || $self->get_config('backward_allow_empty_upload');
+    $self->error($c, HTTP_BAD_REQUEST, "This multipart/form-data request is missing upload part.");
     return;
 }
 
@@ -1053,13 +1059,15 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
-    if($form){
-        $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-            run => 0,
-        );
+    if (!$self->get_config('dont_validate_hal')) {
+        if($form){
+            $self->validate_form(
+                c => $c,
+                resource => $resource,
+                form => $form,
+                run => 0,
+            );
+        }
     }
     $resource->{id} = $self->get_item_id($c, $item);
     $resource = $self->post_process_hal_resource($c, $item, $resource, $form);
