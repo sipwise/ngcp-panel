@@ -58,7 +58,7 @@ sub get_valid_data{
     if ($c->req->headers->content_type eq 'multipart/form-data') {
         return unless $self->require_uploads($c);
         $json_raw = encode_utf8($c->req->param('json'));
-    } elsif ($c->req->headers->content_type eq 'application/json' 
+    } elsif ($c->req->headers->content_type eq 'application/json'
         && 'GET' ne $method) {
         return unless $self->require_body($c);
         #overwrite for the first variant of the dual upload
@@ -96,8 +96,8 @@ sub get_valid_data{
     return ($resource, $data, $non_json_data);
 }
 
-#method to take any informative input, i.e. 
-#   - json body, 
+#method to take any informative input, i.e.
+#   - json body,
 #   - json part of multiform
 #   - request_params
 sub get_info_data {
@@ -687,7 +687,7 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
-    
+
     my $total_count;
     my $no_count = $self->dont_count_collection_total($c);
     if ( !$no_count ) {
@@ -729,19 +729,19 @@ sub collection_nav_links {
     $params //= $c->request->params;
 
     my $params_default = $self->get_mandatory_params($c, 'collection');
-    $params = { 
-        'HASH' eq ref $params_default ? %$params_default : (), 
+    $params = {
+        'HASH' eq ref $params_default ? %$params_default : (),
     #$params has priority
-        'HASH' eq ref $params ? %{ $params } : () 
+        'HASH' eq ref $params ? %{ $params } : ()
     }; #copy
     delete @{$params}{'page', 'rows'};
-    my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
+    my $rest_params = join( '&', map {"$_=".(defined $params->{$_} ? $params->{$_} : '');} keys %{$params});
     $rest_params = $rest_params ? "&$rest_params" : "";
 
     my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
-    if ( (! defined $total_count 
-            && ! $c->stash->{collection_infinite_pager_stop} ) 
+    if ( (! defined $total_count
+            && ! $c->stash->{collection_infinite_pager_stop} )
         || ( defined $total_count && ($total_count / $rows) > $page ) ) {
 
         push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
@@ -1059,9 +1059,9 @@ sub hal_from_item {
                 templated => true,
             ),
             Data::HAL::Link->new(
-                relation => 'collection', 
+                relation => 'collection',
                 href => $self->apply_mandatory_parameters($c, 'collection', sprintf(
-                    "/api/%s/", 
+                    "/api/%s/",
                     $self->resource_name
                 ), $item, $resource, $params)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
@@ -1132,13 +1132,13 @@ sub get_mandatory_params {
             'HASH' eq ref $params ? %$params : (),
         };
         $mandatory_parameters = {
-            map { $resource->{$_} 
+            map { $resource->{$_}
                 ? ( $_ => $resource->{$_} )
-                : ( $request_data->{$_} 
+                : ( $request_data->{$_}
                     ? ( $_ => $request_data->{$_} )
                     : () ) }
-            map { 'ARRAY' eq ref $_ ? ( @$_ ) : ( keys %$_ ) } 
-                values %$mandatory_params_config 
+            map { 'ARRAY' eq ref $_ ? ( @$_ ) : ( keys %$_ ) }
+                values %$mandatory_params_config
         };
     }
     return $mandatory_parameters;
@@ -1331,7 +1331,7 @@ sub get_transaction_control{
         #todo: put it into class variables?
         my $til_config = $self->get_config('set_transaction_isolation');
         if ($til_config) {
-            my $transaction_isolation_level = 
+            my $transaction_isolation_level =
                 ( (length $til_config > 1 )
                     && lc $til_config ne 'default' )
                 ? $til_config
