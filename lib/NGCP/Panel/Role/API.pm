@@ -78,6 +78,39 @@ sub get_valid_data{
     }
 
     return ($resource, $data);
+
+}
+
+#method to take any informative input, i.e.
+#   - json body,
+#   - json part of multiform
+#   - request_params
+sub get_info_data {
+    my ($self, $c) = @_;
+    my $ctype = $self->get_content_type($c) // '';
+    my $resource = $c->request->params;
+    my ($resource_json,$resource_json_raw) = (undef,'');
+    if ('multipart/form-data' eq $ctype) {
+        $resource_json = delete $resource->{json};
+    } elsif ('application/json' eq $ctype) {
+        if ($self->require_body($c)) {
+            $resource_json_raw = $c->stash->{body};
+        }
+    }
+    if($resource_json_raw){
+        $resource_json = JSON::from_json($resource_json_raw, { utf8 => 1 });
+    }
+    {
+        my @common_keys = map { exists $resource->{$_} ? $_ : () }keys %$resource_json;
+        my (%resource_sub,%resource_json_sub);
+        @resource_sub{@common_keys} = @{$resource}{@common_keys};
+        @resource_json_sub{@common_keys} = @{$resource_json}{@common_keys};
+        if(!Compare(\%resource_sub,\%resource_json_sub)){
+            return;
+        }
+    }
+    return {%$resource,%$resource_json};
+>>>>>>> 2492ef27... TT#35662 move product_id to billing.contracts
 }
 
 sub get_valid_post_data {
@@ -412,7 +445,7 @@ sub allowed_methods_filtered {
 #
 #old: allowed_roles = [qw/admin subscriber /]
 #
-#from now also possible: 
+#from now also possible:
 #sub config_allowed_roles {
 #    return {
 #        'Default' => [qw/admin reseller subscriberadmin/],
@@ -613,7 +646,7 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
-    
+
     my $total_count;
     my $no_count = $self->dont_count_collection_total($c);
     if ( !$no_count ) {
@@ -655,13 +688,13 @@ sub collection_nav_links {
     $params //= $c->request->params;
 
     delete @{$params}{'page', 'rows'};
-    my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
+    my $rest_params = join( '&', map {"$_=".(defined $params->{$_} ? $params->{$_} : '');} keys %{$params});
     $rest_params = $rest_params ? "&$rest_params" : "";
 
     my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
-    if ( (! defined $total_count 
-            && ! $c->stash->{collection_infinite_pager_stop} ) 
+    if ( (! defined $total_count
+            && ! $c->stash->{collection_infinite_pager_stop} )
         || ( defined $total_count && ($total_count / $rows) > $page ) ) {
 
         push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
@@ -943,18 +976,18 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(
-                relation => 'self', 
+                relation => 'self',
                 href => sprintf(
-                    "%s%s", 
-                    $self->dispatch_path, 
+                    "%s%s",
+                    $self->dispatch_path,
                     $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
                 ),
             ),
             Data::HAL::Link->new(
-                relation => "ngcp:".$self->resource_name, 
+                relation => "ngcp:".$self->resource_name,
                 href => sprintf(
-                    "/api/%s/%s", 
-                    $self->resource_name, 
+                    "/api/%s/%s",
+                    $self->resource_name,
                     $self->get_item_id($c, $item, undef, undef, { purpose => 'hal_links_href' })
                 )
             ),

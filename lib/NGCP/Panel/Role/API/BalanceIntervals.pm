@@ -63,8 +63,8 @@ sub hal_from_balance {
 
     my $contract = $item->contract;
     my $is_customer = (defined $contract->contact->reseller_id ? 1 : 0);
-    my $bm_start = NGCP::Panel::Utils::ProfilePackages::get_actual_billing_mapping(c => $c, contract => $contract, now => $item->start);
-    my $profile_at_start = $bm_start->billing_mappings->first->billing_profile;
+    my $bm_start = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $contract, now => $item->start);
+    my $profile_at_start = $bm_start->billing_profile;
     my $is_actual = NGCP::Panel::Utils::DateTime::is_infinite_future($item->end) || NGCP::Panel::Utils::DateTime::set_local_tz($item->end) >= $now;
     my ($is_timely,$timely_start,$timely_end) = NGCP::Panel::Utils::ProfilePackages::get_timely_range(
         package => $contract->profile_package,
