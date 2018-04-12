@@ -6,6 +6,7 @@ extends 'HTML::FormHandler';
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use DateTime::Format::Strptime qw();
 use Storable qw();
+use NGCP::Panel::Utils::BillingMappings qw();
 
 with 'NGCP::Panel::Render::RepeatableJs';
 
@@ -16,7 +17,7 @@ sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'billing_profile_definition' => (
     type => 'Select',
-    label => 'Set billing profiles',
+    label => 'Set billing profiles by',
     options => [
         { value => 'id', label => 'single (actual billing mapping)' },
         { value => 'profiles', label => 'schedule (billing mapping intervals)' },
@@ -265,7 +266,7 @@ sub validate {
     my $old_resource = (exists $c->stash->{contract} ? { $c->stash->{contract}->get_inflated_columns } : undef);
 
     my $mappings_to_create = [];
-    NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+    NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
         c => $c,
         resource => $resource,
         old_resource => $old_resource,
