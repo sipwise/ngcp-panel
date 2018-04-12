@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::BillingMappings qw();
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -22,16 +23,17 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
 sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
     $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
-        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => "product.name", search => 1, title => $c->loc("Product") },
+        { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
+          literal_sql => NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping_stmt(c => $c, now => $now, projection => 'billing_profile.name' ) },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
 
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
         schema => $c->model('DB'),
         now => $now
@@ -81,17 +83,11 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     my $contract_rs = $c->stash->{contract_select_rs}
         ->search({
             'me.id' => $contract_id,
-        },{
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-        });
+        },undef);
     my $contract_terminated_rs = $c->stash->{contract_select_all_rs}
         ->search({
             'me.id' => $contract_id,
-        },{
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-        });
+        },undef);
 
     my $contract_first = $contract_rs->first;
 
@@ -104,16 +100,16 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
 
-    my $billing_mapping = $contract_first->billing_mappings->find($contract_first->get_column('bmid'));
+    my $now = $c->stash->{now};
+    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $contract_first, now => $now, );
     if (! defined ($billing_mapping->product) || (
         $billing_mapping->product->handle ne 'VOIP_RESELLER' &&
         $billing_mapping->product->handle ne 'SIP_PEERING' &&
         $billing_mapping->product->handle ne 'PSTN_PEERING')) {
 
     }
-    my $now = $c->stash->{now};
-    my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_first->get_column('bmid'));
-    my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
+    my $billing_mappings_ordered = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered($contract_first->billing_mappings,$now,$billing_mapping->id);
+    my $future_billing_mappings = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered(NGCP::Panel::Utils::BillingMappings::future_billing_mappings($contract_first->billing_mappings,$now));
 
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
@@ -144,8 +140,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     }
     $params = merge($params, $c->session->{created_objects});
     my ($form, $is_peering_reseller);
-    if (defined $billing_mapping->product &&
-        grep {$billing_mapping->product->handle eq $_}
+    if (defined $contract->product &&
+        grep {$contract->product->handle eq $_}
             ("SIP_PEERING", "PSTN_PEERING", "VOIP_RESELLER") ) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
         $is_peering_reseller = 1;
@@ -186,7 +182,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 my $mappings_to_create = [];
                 my $delete_mappings = 0;
                 my $set_package = ($form->values->{billing_profile_definition} // 'id') eq 'package';
-                NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+                NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
                     c => $c,
                     resource => $form->values,
                     old_resource => { $contract->get_inflated_columns },
@@ -202,11 +198,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 my $old_package = $contract->profile_package;
 
                 $contract->update($form->values);
-                NGCP::Panel::Utils::Contract::remove_future_billing_mappings($contract,$now) if $delete_mappings;
+                NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($contract,$now) if $delete_mappings;
                 foreach my $mapping (@$mappings_to_create) {
                     $contract->billing_mappings->create($mapping);
                 }
-                $contract = $c->stash->{contract_terminated_rs}->first;
+                #$contract = $c->stash->{contract_terminated_rs}->first;
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
@@ -316,7 +312,7 @@ sub billingmappings_ajax :Chained('base') :PathPart('billingmappings/ajax') :Arg
     my ($self, $c) = @_;
     $c->stash(timeline_data => {
         contract => { $c->stash->{contract}->get_columns },
-        events => NGCP::Panel::Utils::Contract::get_billingmappings_timeline_data($c,$c->stash->{contract}),
+        events => NGCP::Panel::Utils::BillingMappings::get_billingmappings_timeline_data($c,$c->stash->{contract}),
     });
     $c->detach( $c->view("JSON") );
 }
@@ -354,6 +350,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
         delete $params->{contact};
     }
     $c->stash->{type} = 'sippeering';
+    $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
     $form->process(
         posted => $posted,
@@ -378,9 +375,10 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 }
                 $form->values->{external_id} = $form->field('external_id')->value;
                 $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                $form->values->{product_id} = $schema->resultset('products')->search_rs({ class => $c->stash->{type} })->first->id;
 
                 my $mappings_to_create = [];
-                NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+                NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
                     c => $c,
                     resource => $form->values,
                     mappings_to_create => $mappings_to_create,
@@ -393,13 +391,10 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 foreach my $mapping (@$mappings_to_create) {
                     $contract->billing_mappings->create($mapping);
                 }
-                $contract = $c->stash->{contract_select_rs}
-                    ->search({
-                        'me.id' => $contract->id,
-                    },{
-                        '+select' => 'billing_mappings.id',
-                        '+as' => 'bmid',
-                    })->first;
+                #$contract = $c->stash->{contract_select_rs}
+                #    ->search({
+                #        'me.id' => $contract->id,
+                #    },undef)->first;
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,
@@ -478,16 +473,15 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
     my $now = $c->stash->{now};
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
             schema => $c->model('DB'),
-            now => $now,
-            contract_id => $contract_id )
-        ->search_rs({
+            now => $now)->search_rs({
             'me.id' => $contract_id,
         });
     my $contract_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
+          literal_sql => NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping_stmt(c => $c, now => $now, projection => 'billing_profile.name' ) },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
     NGCP::Panel::Utils::Datatables::process($c, $rs,  $contract_columns);
@@ -504,6 +498,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
         delete $params->{contact};
     }
     $c->stash->{type} = 'reseller';
+    $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
     $form->process(
         posted => $posted,
@@ -529,9 +524,10 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 }
                 $form->values->{external_id} = $form->field('external_id')->value;
                 $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                $form->values->{product_id} = $schema->resultset('products')->search_rs({ class => $c->stash->{type} })->first->id;
 
                 my $mappings_to_create = [];
-                NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+                NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
                     c => $c,
                     resource => $form->values,
                     mappings_to_create => $mappings_to_create,
@@ -544,13 +540,10 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 foreach my $mapping (@$mappings_to_create) {
                     $contract->billing_mappings->create($mapping);
                 }
-                $contract = $c->stash->{contract_select_rs}
-                    ->search({
-                        'me.id' => $contract->id,
-                    },{
-                        '+select' => 'billing_mappings.id',
-                        '+as' => 'bmid',
-                    })->first;
+                #$contract = $c->stash->{contract_select_rs}
+                #    ->search({
+                #        'me.id' => $contract->id,
+                #    },undef)->first;
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,
