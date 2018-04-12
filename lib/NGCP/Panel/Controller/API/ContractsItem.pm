@@ -80,7 +80,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -89,8 +89,9 @@ sub PATCH :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $contract = $self->contract_by_id($c, $id, $now);
         last unless $self->resource_exists($c, contract => $contract);
-        
+
         my $old_resource = { $contract->get_inflated_columns };
+        xxx$billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
         my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
         $old_resource->{billing_profile_definition} = undef;
@@ -111,7 +112,7 @@ sub PATCH :Allow {
 
         my $hal = $self->hal_from_contract($c, $contract, $form, $now);
         last unless $self->add_update_journal_item_hal($c,$hal);
-        
+
         $guard->commit;
 
         $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
@@ -137,13 +138,14 @@ sub PUT :Allow {
         );
         last unless $resource;
         my $old_resource = { $contract->get_inflated_columns };
+        xxx$billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
         my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
         $old_resource->{type} = $billing_mapping->product->class;
 
         my $form = $self->get_form($c);
         $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
         last unless $contract;
-        
+
         my $hal = $self->hal_from_contract($c, $contract, $form, $now);
         last unless $self->add_update_journal_item_hal($c,$hal);
 

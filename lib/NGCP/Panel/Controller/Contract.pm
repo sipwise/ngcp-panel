@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::BillingMappings qw();
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -26,8 +27,8 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
-        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => "product.name", search => 1, title => $c->loc("Product") },
+        xxx{ name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
 
@@ -81,17 +82,11 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     my $contract_rs = $c->stash->{contract_select_rs}
         ->search({
             'me.id' => $contract_id,
-        },{
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-        });
+        },undef);
     my $contract_terminated_rs = $c->stash->{contract_select_all_rs}
         ->search({
             'me.id' => $contract_id,
-        },{
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-        });
+        },undef);
 
     my $contract_first = $contract_rs->first;
 
@@ -104,7 +99,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
 
-    my $billing_mapping = $contract_first->billing_mappings->find($contract_first->get_column('bmid'));
+    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping($contract_first);
     if (! defined ($billing_mapping->product) || (
         $billing_mapping->product->handle ne 'VOIP_RESELLER' &&
         $billing_mapping->product->handle ne 'SIP_PEERING' &&
@@ -112,8 +107,8 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
 
     }
     my $now = $c->stash->{now};
-    my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_first->get_column('bmid'));
-    my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
+    my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_first->billing_mappings,$now,$billing_mapping->id);
+    my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_first->billing_mappings,$now));
 
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
@@ -144,8 +139,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     }
     $params = merge($params, $c->session->{created_objects});
     my ($form, $is_peering_reseller);
-    if (defined $billing_mapping->product &&
-        grep {$billing_mapping->product->handle eq $_}
+    if (defined $contract->product &&
+        grep {$contract->product->handle eq $_}
             ("SIP_PEERING", "PSTN_PEERING", "VOIP_RESELLER") ) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
         $is_peering_reseller = 1;
@@ -396,10 +391,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 $contract = $c->stash->{contract_select_rs}
                     ->search({
                         'me.id' => $contract->id,
-                    },{
-                        '+select' => 'billing_mappings.id',
-                        '+as' => 'bmid',
-                    })->first;
+                    },undef)->first;
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,
@@ -478,16 +470,14 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
     my $now = $c->stash->{now};
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
             schema => $c->model('DB'),
-            now => $now,
-            contract_id => $contract_id )
-        ->search_rs({
+            now => $now)->search_rs({
             'me.id' => $contract_id,
         });
     my $contract_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        xxx{ name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
     NGCP::Panel::Utils::Datatables::process($c, $rs,  $contract_columns);
@@ -547,10 +537,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 $contract = $c->stash->{contract_select_rs}
                     ->search({
                         'me.id' => $contract->id,
-                    },{
-                        '+select' => 'billing_mappings.id',
-                        '+as' => 'bmid',
-                    })->first;
+                    },undef)->first;
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,

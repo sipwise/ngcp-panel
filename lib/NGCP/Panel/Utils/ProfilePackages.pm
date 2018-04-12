@@ -1453,7 +1453,7 @@ sub get_customer_datatable_cols {
     return (
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
-        #{ name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
+        #{ name => "product.name", search => 1, title => $c->loc("Product") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
         { name => "status", search => 1, title => $c->loc("Status") },
     );

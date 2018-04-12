@@ -99,6 +99,7 @@ sub PATCH :Allow {
 
         my $old_resource = { $customer->get_inflated_columns };
         delete $old_resource->{profile_package_id};
+        xxx$billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
         my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
         $old_resource->{billing_profile_definition} = undef;
