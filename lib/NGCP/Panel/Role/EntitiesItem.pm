@@ -74,8 +74,12 @@ sub set_config {
         #Uploads     => [qw/front_image mac_image/],#uploads filenames
         #  or
         #Uploads     => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
+        #'backward_allow_empty_upload' => [0}1], #default 0. For backward compatibility, when we allowed faxes data input as json field, but not as file
+
         #own_transaction_control->{PUT|POST|PATCH|DELETE|ALL} = 0|1 - don't start transaction guard in parent classes, implementation need to control it
         #ReturnContentType => 'binary'#mostly for GET. value different from 'application/json' says that method is going to return binary data using get_item_binary_data
+        #'dont_validate_hal' => [0|1], #default 0. Apply or not hal resource validation through form. Validation can be avoided if no PUT or PATCH method supposed for "information" collections
+        #'no_item_created' => [0|1], #default 0. For rare case when we create something asynchronously
     #}
 
     my $obj_name = $self;
