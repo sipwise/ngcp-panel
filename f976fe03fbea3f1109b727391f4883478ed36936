@@ -22,6 +22,30 @@
       "revId": "f976fe03fbea3f1109b727391f4883478ed36936",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_2c1258b5",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-04-13T13:45:00Z",
+      "side": 1,
+      "message": "yes that enables a possibility for custom params.\n\ncollection_nav_links($c, $page, $rows, $total_count)\nor\ncollection_nav_links($c, $page, $rows, $total_count, $c-\u003erequest-\u003epath, $c-\u003erequest-\u003eparams) \u003c- how it\u0027s in the controllers code now\nor\ncollection_nav_links($c, $page, $rows, $total_count, \"/my/custom/path\", \"?custom\u003dparam\")",
+      "parentUuid": "baa041b7_ec34704b",
+      "range": {
+        "startLine": 693,
+        "startChar": 0,
+        "endLine": 695,
+        "endChar": 0
+      },
+      "revId": "f976fe03fbea3f1109b727391f4883478ed36936",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
