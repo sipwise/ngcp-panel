@@ -690,6 +690,9 @@ sub paginate_order_collection_rs {
 sub collection_nav_links {
     my ($self, $c, $page, $rows, $total_count, $path, $params) = @_;
 
+    $path   //= $c->request->path;
+    $params //= $c->request->params;
+
     my $params_default = $self->get_mandatory_params($c, 'collection');
     $params = { 
         'HASH' eq ref $params_default ? %$params_default : (), 
