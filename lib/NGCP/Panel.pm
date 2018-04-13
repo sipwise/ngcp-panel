@@ -116,7 +116,7 @@ __PACKAGE__->config(
         },
     },
 
-    session => {
+    'Plugin::Session' => {
         flash_to_stash => 1,
         expires => 3600,
     },
