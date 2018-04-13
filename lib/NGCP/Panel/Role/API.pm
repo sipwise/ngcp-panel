@@ -688,9 +688,11 @@ sub paginate_order_collection_rs {
 }
 
 sub collection_nav_links {
-    my ($self, $page, $rows, $total_count, $path, $params) = @_;
+    my ($self, $c, $page, $rows, $total_count, $path, $params) = @_;
 
-    $params = { %{ $params } }; #copy
+    $path   //= $c->request->path;
+    $params //= $c->request->params;
+
     delete @{$params}{'page', 'rows'};
     my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
     $rest_params = $rest_params ? "&$rest_params" : "";
