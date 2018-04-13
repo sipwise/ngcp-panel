@@ -91,7 +91,7 @@ sub resource_from_item {
 
 sub get_mandatory_params {
     my ($self, $c, $href_type, $item, $resource, $params) = @_;
-    my $owner = $params->{owner};
+    my $owner = $c->stash->{owner};
     return $owner->{subscriber} 
         ? { subscriber_id => $owner->{subscriber}->id }
         : { customer_id => $owner->{customer}->id };
