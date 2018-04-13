@@ -251,7 +251,7 @@ sub handle_api_journals_get {
                 templated => true,
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            $self->collection_nav_links($c, $page, $rows, $total_count, $c->request->path, $c->request->query_params);
+            $controller->collection_nav_links($c, $page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
         my $hal = Data::HAL->new(
             embedded => [@embedded],
