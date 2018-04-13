@@ -128,8 +128,8 @@ sub get_fax {
                 return;
             }
             binmode $tmp_fh;
-            close $tmp_fh;
             print $tmp_fh $item->voip_fax_data->data;
+            close $tmp_fh;
         } else {
             return ($item->voip_fax_data->data, $ext);
         }
