@@ -124,8 +124,8 @@ sub get_fax {
                 File::Temp::tempfile( DIR => $cfg->{spool_dir}."/tmp")
                     or $self->error("Cannot create temp file: $ERRNO");
             binmode $tmp_fh;
-            close $tmp_fh;
             print $tmp_fh $item->voip_fax_data->data;
+            close $tmp_fh;
         } else {
             return ($item->voip_fax_data->data, $ext);
         }
