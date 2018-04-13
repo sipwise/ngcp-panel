@@ -139,9 +139,8 @@ sub GET :Allow {
                 name => 'ngcp',
                 templated => true,
             ),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
-
-        push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            $self->collection_nav_links($c, $page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
         my $hal = NGCP::Panel::Utils::DataHal->new(
             embedded => [@embedded],
