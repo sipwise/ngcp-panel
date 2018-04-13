@@ -118,15 +118,7 @@ sub GET :Allow {
                 templated => true,
             ),
             NGCP::Panel::Utils::DataHalLink->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('%s?page=%s&rows=%s&%s', $self->dispatch_path, $page, $rows, $query_string));
-        if(($total_count / $rows) > $page ) {
-            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'next',
-                                              href => sprintf('%s?page=%d&rows=%d&%s', $self->dispatch_path, $page + 1, $rows, $query_string));
-        }
-        if($page > 1) {
-            push @links, NGCP::Panel::Utils::DataHalLink->new(relation => 'prev',
-                                              href => sprintf('%s?page=%d&rows=%d&%s', $self->dispatch_path, $page - 1, $rows, $query_string));
-        }
+            $self->collection_nav_links($c, $page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
         my $hal = NGCP::Panel::Utils::DataHal->new(
             embedded => [@embedded],
