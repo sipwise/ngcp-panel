@@ -275,6 +275,7 @@ $test_machine->QUERY_PARAMS('');
     test_phonebook_collection($subscriber_phonebookentries_created, '/api/phonebookentries/?subscriber_id='.$subscriber->{content}->{id});
 }
 
+$test_machine->runas('admin');
 $fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 $fake_data->clear_test_data_all();
