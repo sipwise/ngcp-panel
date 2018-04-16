@@ -16,6 +16,24 @@
       "revId": "b1789974560e0b11ad1d8596ed39d90b14c3f269",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_55319c0a",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-04-16T13:04:24Z",
+      "side": 1,
+      "message": "or just ({no_count} is not auto created in this case)\n\nmy $no_count \u003d $c-\u003ereq-\u003equery_params-\u003e{no_count} // \u0027\u0027;\nif ($no_count eq \u00270\u0027 || $no_count eq \u0027false\u0027) {\n\n}",
+      "parentUuid": "baa041b7_759020ed",
+      "revId": "b1789974560e0b11ad1d8596ed39d90b14c3f269",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
