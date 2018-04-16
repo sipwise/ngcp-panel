@@ -660,7 +660,12 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
-    my $total_count = int($item_rs->count);
+    
+    my $total_count;
+    my $no_count = defined $c->req->query_params->{no_count} ? $c->req->query_params->{no_count} : 0;
+    if ( !$no_count || ($no_count ne 'true' && $no_count ne '1' ) ) {
+         $total_count = int($item_rs->count);
+    }
     $item_rs = $item_rs->search(undef, {
         page => $page,
         rows => $rows,
@@ -705,10 +710,10 @@ sub collection_nav_links {
 
     my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
-    if(($total_count / $rows) > $page ) {
+    if ( ! defined $total_count || ( ($total_count / $rows) > $page ) ) {
         push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
     }
-    if($page > 1) {
+    if ($page > 1) {
         push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page - 1, $rows, $rest_params));
     }
     return @links;
