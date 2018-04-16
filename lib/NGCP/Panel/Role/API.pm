@@ -655,16 +655,45 @@ sub paginate_order_collection_array {
     return ($total_count, $items);
 }
 
+sub dont_count_collection_total {
+    my ($self, $c) = @_;
+    my $no_count = defined $c->req->query_params->{no_count} ? $c->req->query_params->{no_count} : 0;
+    if ( !$no_count || ($no_count ne 'true' && $no_count ne '1' ) ) {
+        $no_count = 0;
+    } else {
+        $no_count = 1;
+    }
+    return $no_count;
+}
+
+sub define_collection_infinite_pager {
+    my ($self, $c, $items_count, $item_rs, $rows_on_page, $no_count) = @_;
+    $no_count //= $self->dont_count_collection_total($c);
+    if (! defined $c->stash->{collection_infinite_pager_stop}) {
+        #$item_rs->pager->entries_on_this_page leads to the count query
+        my $entries_on_this_page = $items_count // $item_rs->count;
+        $c->stash->{collection_infinite_pager_stop} = (( $entries_on_this_page < $rows_on_page ) and $no_count );
+    }
+}
+
 sub paginate_order_collection_rs {
     my ($self, $c, $item_rs, $params) = @_;
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
-    my $total_count = int($item_rs->count);
+    
+    my $total_count;
+    my $no_count = $self->dont_count_collection_total($c);
+    if ( !$no_count ) {
+        $total_count = int($item_rs->count);
+    }
+
     $item_rs = $item_rs->search(undef, {
         page => $page,
         rows => $rows,
     });
+    $self->define_collection_infinite_pager($c, undef, $item_rs, $rows, $no_count);
+
     if ($order_by && ((my $explicit = ($self->can('order_by_cols') && exists $self->order_by_cols()->{$order_by})) or $item_rs->result_source->has_column($order_by))) {
         my $col = ($explicit ? $self->order_by_cols()->{$order_by} : $item_rs->current_source_alias . '.' . $order_by);
         if (lc($direction) eq 'desc') {
@@ -699,10 +728,13 @@ sub collection_nav_links {
 
     my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
-    if(($total_count / $rows) > $page ) {
+    if ( (! defined $total_count 
+            && ! $c->stash->{collection_infinite_pager_stop} ) 
+        || ( defined $total_count && ($total_count / $rows) > $page ) ) {
+
         push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
     }
-    if($page > 1) {
+    if ($page > 1) {
         push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page - 1, $rows, $rest_params));
     }
     return @links;
