@@ -1,3 +1,22 @@
+ngcp-panel (5.5.4.1+0~mr5.5.4.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [025b2e3] TT#33356 Rewrite rule validation checks for ambiguous non-char escapes
+  * [4e70eee] TT#33871 use a correct rs call in mailtofaxsettings
+  * [55c0c2f] TT#35426 get_fax(): fix fax data print into a closed filehandle
+
+  [ Irina Peshinskaya ]
+  * [9173c6e] TT#32203 Fix voicemailgreetings filters
+  * [a33a576] TT#33354 Show device image buttons only if exists
+
+  [ Rene Krenn ]
+  * [cd84252] TT#27469 fix callrouting verification form dependency
+  * [3376a6f] TT#27469 fix callrouting verification form dependency in Verify.pm
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Apr 2018 16:06:48 +0200
+
 ngcp-panel (5.5.4.0+0~mr5.5.4.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
