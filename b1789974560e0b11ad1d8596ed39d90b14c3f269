@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_759020ed",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-16T12:43:44Z",
+      "side": 1,
+      "message": "if (not defined $c-\u003ereq-\u003equery_params-\u003e{no_count}\n    or $c-\u003ereq-\u003equery_params-\u003e{no_count} eq \u00270\u0027\n    or lc($c-\u003ereq-\u003equery_params-\u003e{no_count}) eq \u0027false\u0027) {",
+      "revId": "b1789974560e0b11ad1d8596ed39d90b14c3f269",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
