@@ -22,6 +22,30 @@
       "revId": "c389c95c1c816194c2b955f7484eb2281ee29072",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_18dd8b42",
+        "filename": "lib/NGCP/Panel/Controller/API/Faxes.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-04-16T15:42:57Z",
+      "side": 1,
+      "message": "You see, no one other interface, that uses mutlipart/form-data doesn\u0027t allow empty upload. But faxes does. I really would like to remove this, but it wouldn\u0027t be correct from backward compatibility point of view. So I marked this configuration parameter as backward compatibility related.",
+      "parentUuid": "baa041b7_585e73ea",
+      "range": {
+        "startLine": 19,
+        "startChar": 4,
+        "endLine": 19,
+        "endChar": 31
+      },
+      "revId": "c389c95c1c816194c2b955f7484eb2281ee29072",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
