@@ -660,11 +660,25 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
-    my $total_count = int($item_rs->count);
+    
+    my $total_count;
+    my $no_count = defined $c->req->query_params->{no_count} ? $c->req->query_params->{no_count} : 0;
+    if ( !$no_count || ($no_count ne 'true' && $no_count ne '1' ) ) {
+        $total_count = int($item_rs->count);
+        $no_count = 0;
+    } else {
+        #just to make it more clear
+        $no_count = 1;
+    }
+
     $item_rs = $item_rs->search(undef, {
         page => $page,
         rows => $rows,
     });
+    #$item_rs->pager->entries_on_this_page leads to the count query
+    my $entries_on_this_page = scalar $item_rs->all;
+    $c->stash->{collection_infinite_pager_stop} = (( $entries_on_this_page < $rows ) && $no_count );
+
     if ($order_by && ((my $explicit = ($self->can('order_by_cols') && exists $self->order_by_cols()->{$order_by})) or $item_rs->result_source->has_column($order_by))) {
         my $col = ($explicit ? $self->order_by_cols()->{$order_by} : $item_rs->current_source_alias . '.' . $order_by);
         if (lc($direction) eq 'desc') {
@@ -705,10 +719,13 @@ sub collection_nav_links {
 
     my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
-    if(($total_count / $rows) > $page ) {
+    if ( (! defined $total_count 
+            && ! $c->stash->{collection_infinite_pager_stop} ) 
+        || ( defined $total_count && ($total_count / $rows) > $page ) ) {
+
         push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
     }
-    if($page > 1) {
+    if ($page > 1) {
         push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page - 1, $rows, $rest_params));
     }
     return @links;
