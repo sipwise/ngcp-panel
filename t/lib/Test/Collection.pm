@@ -191,6 +191,11 @@ has 'QUERY_PARAMS' =>(
     isa => 'Str',
     default => '',
 );
+has 'NO_COUNT' =>(
+    is => 'rw',
+    isa => 'Str',
+    default => '',
+);
 has 'URI_CUSTOM_STORE' =>(
     is => 'rw',
     isa => 'Str',
@@ -417,6 +422,12 @@ sub get_uri_collection{
     $name //= $self->name;
     return $self->normalize_uri("/api/".$name.($name ? "/" : "").($self->QUERY_PARAMS ? "?".$self->QUERY_PARAMS : ""));
 }
+sub get_uri_collection_paged{
+    my($self,$name) = @_;
+    my $uri = $self->get_uri_collection($name);
+    return $uri.($uri !~/\?/ ? '?':'&').'page='.($self->PAGE // '1').'&rows='.($self->ROWS // '1').($self->NO_COUNT ? '&no_count=1' : '');
+}
+
 sub get_uri_get{
     my($self,$query_string, $name) = @_;
     $name //= $self->name;
@@ -829,10 +840,15 @@ sub check_list_collection{
         #print "nexturi=$nexturi;\n";
         my ($res,$list_collection) = $self->check_item_get($nexturi);
         my $selfuri = $self->normalize_uri($list_collection->{_links}->{self}->{href});
-        is($selfuri, $nexturi, "$self->{name}: check _links.self.href of collection");
+        my $sub_sort_params = sub {my $str = $_[0]; return (substr $str, 0, (index $str, '?') + 1) . join('&', sort split /&/, substr  $str, ((index $str, '?') + 1))};
+        $selfuri = $sub_sort_params->($selfuri);
+        $nexturi = $sub_sort_params->($nexturi);
+        is($selfuri, $nexturi, $test_info_prefix."check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
-        if(($list_collection->{total_count} && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
-            ok($list_collection->{total_count} > 0, "$self->{name}: check 'total_count' of collection");
+        if(
+            ((!$self->NO_COUNT) && $list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 ) 
+            || !$self->ALLOW_EMPTY_COLLECTION){
+            ok($list_collection->{total_count} > 0, $test_info_prefix."check 'total_count' of collection");
         }
 
         my %q = $colluri->query_form;
@@ -845,10 +861,12 @@ sub check_list_collection{
         } else {
             ok(exists $list_collection->{_links}->{prev}->{href}, "$self->{name}: check existence of 'prev'");
         }
-        if(($rows != 0) && ($list_collection->{total_count} / $rows) <= $page) {
-            ok(!exists $list_collection->{_links}->{next}->{href}, "$self->{name}: check absence of 'next' on last page");
-        } else {
-            ok(exists $list_collection->{_links}->{next}->{href}, "$self->{name}: check existence of 'next'");
+        if (!$self->NO_COUNT) {
+            if(($rows != 0) && ($list_collection->{total_count} / $rows) <= $page) {
+                ok(!exists $list_collection->{_links}->{next}->{href}, $test_info_prefix."check absence of 'next' on last page");
+            } else {
+                ok(exists $list_collection->{_links}->{next}->{href}, $test_info_prefix."check existence of 'next'");
+            }
         }
 
         if($list_collection->{_links}->{next}->{href}) {
@@ -858,9 +876,11 @@ sub check_list_collection{
         }
 
         my $hal_name = $self->get_hal_name;
-        if(($list_collection->{total_count} && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
-            ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
-                (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), "$self->{name}: check if 'ngcp:".$self->name."' is array/hash-ref");
+        if(($list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
+            if (! ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
+                (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), $test_info_prefix."check if 'ngcp:".$self->name."' is array/hash-ref")) {
+                    diag($list_collection->{_links}->{$hal_name});
+                }
         }
 
 
@@ -1078,6 +1098,9 @@ sub check_bundle{
     if($self->methods->{collection}->{allowed}->{GET}){
         $listed = $self->check_list_collection();
         $self->check_created_listed($listed);
+        $self->NO_COUNT('1');
+        $self->check_list_collection();
+        $self->NO_COUNT('');
     }
     # test model item
     if(@$listed && !$self->NO_ITEM_MODULE){
@@ -1438,5 +1461,11 @@ sub clear_cache{
         `$cmd`;
     }
 }
-
+sub is_int {
+    my $val = shift;
+    if($val =~ /^[+-]?[0-9]+$/) {
+        return 1;
+    }
+    return;
+}
 1;
