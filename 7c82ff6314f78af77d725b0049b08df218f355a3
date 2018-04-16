@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_18b46bf0",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 11
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-16T16:37:15Z",
+      "side": 1,
+      "message": "btw., why is there a need to reject this explicitly?",
+      "range": {
+        "startLine": 43,
+        "startChar": 25,
+        "endLine": 43,
+        "endChar": 43
+      },
+      "revId": "7c82ff6314f78af77d725b0049b08df218f355a3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_989f5b5f",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 11
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-16T16:37:15Z",
+      "side": 1,
+      "message": "so this can be either a query param value containing json, or a POST form data field. \n\ncatalyst doc states it is trying to decode if it can find encoding. so maybe better to only encode here (for comprehensive decodaing later on), if the string isnt already utf8? eg.\n\n$json_raw \u003d $c-\u003ereq-\u003eparam(\u0027json\u0027);\n$json_raw \u003d (Encode::is_utf8($json_raw) ? $json_raw: encode_utf8($json_raw));",
+      "range": {
+        "startLine": 60,
+        "startChar": 33,
+        "endLine": 60,
+        "endChar": 54
+      },
+      "revId": "7c82ff6314f78af77d725b0049b08df218f355a3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
