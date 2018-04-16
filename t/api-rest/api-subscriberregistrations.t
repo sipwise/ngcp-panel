@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::DateTime;
 #init test_machine
 my $test_machine = Test::Collection->new(
     name => 'subscriberregistrations',
+    ALLOW_EMPTY_COLLECTION => 1,
 );
 my $fake_data = Test::FakeData->new;
 
