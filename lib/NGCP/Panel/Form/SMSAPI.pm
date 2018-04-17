@@ -48,7 +48,7 @@ has_field 'caller' => (
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Our CLI in case of sent messages. Must be valid according to the preferences allowed_clis, user_cli, cli'],
+        title => ['A valid caller number in the E164 format. Must be valid according to the preferences alloed_clis, user_cli, cli'],
     },
 );
 
@@ -58,7 +58,17 @@ has_field 'callee' => (
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A valid CLI in the E164 format'],
+        title => ['A valid callee number in the E164 format'],
+    },
+);
+
+has_field 'cli' => (
+    type => 'Text',
+    required => 0,
+    maxlength => 128,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Our CLI in case of sent messages. Automatically filled in from user_cli > cli'],
     },
 );
 

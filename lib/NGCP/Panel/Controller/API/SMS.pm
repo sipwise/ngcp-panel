@@ -168,9 +168,9 @@ sub create_item {
     #    }
     #}
 
-    my $rs = $self->item_rs($c);
-    my $item = $rs->create({
-        subscriber_id => $resource->{subscriber_id},
+    my $item = NGCP::Utils::SMS::add_journal_record({
+        c => $c,
+        prov_subscriber => $subscriber,
         direction => 'out',
         caller => $resource->{caller},
         callee => $resource->{callee},

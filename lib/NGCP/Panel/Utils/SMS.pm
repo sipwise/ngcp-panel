@@ -8,6 +8,7 @@ use UUID;
 use Module::Load::Conditional qw/can_load/;
 
 use NGCP::Panel::Utils::Utf8;
+use NGCP::Panel::Utils::Preferences;
 
 sub get_coding {
     my $text = shift;
@@ -323,6 +324,36 @@ sub perform_prepaid_billing {
         NGCP::Rating::Inew::SmsSession::destroy($amqr);
     }
     return;
+}
+
+sub add_journal_record {
+    my (%args) = @_;
+    my $c = $args{c};
+    my $prov_subscriber = $args{prov_subscriber};
+
+    $args{status} //= '';
+    $args{reason} //= '';
+    $args{subscriber_id} = $args{prov_subscriber}->id;
+
+    delete $args{c};
+    delete $args{prov_subscriber};
+
+    my $pref_rs_cli = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => "user_cli",
+            prov_subscriber => $prov_subscriber,
+        );
+
+    my $cli = defined $pref_rs_cli->first ? $pref_rs_cli->first->value : undef;
+
+    unless ($cli) {
+        my $pref_rs_cli = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => "cli",
+                prov_subscriber => $prov_subscriber,
+            );
+        $cli = defined $pref_rs_cli->first ? $pref_rs_cli->first->value : '';
+    }
+
+    return $c->model('DB')->resultset('sms_journal')->create(\%args));
 }
 
 1;
