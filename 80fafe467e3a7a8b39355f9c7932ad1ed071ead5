@@ -39,6 +39,24 @@
       "revId": "80fafe467e3a7a8b39355f9c7932ad1ed071ead5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_02dd2c14",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-04-17T13:58:46Z",
+      "side": 1,
+      "message": "agree, but here we basically use all the data in the item creation, so to avoid\n$scalars list \u003c %args\n$scalars_list -\u003e $params\nitem-\u003ecreate($params)",
+      "parentUuid": "9aa53dc9_6279982f",
+      "revId": "80fafe467e3a7a8b39355f9c7932ad1ed071ead5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
