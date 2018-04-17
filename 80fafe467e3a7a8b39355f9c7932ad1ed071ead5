@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9aa53dc9_2273904f",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-17T13:45:33Z",
+      "side": 1,
+      "message": "nice to have it as a dedicated method!",
+      "range": {
+        "startLine": 171,
+        "startChar": 33,
+        "endLine": 171,
+        "endChar": 51
+      },
+      "revId": "80fafe467e3a7a8b39355f9c7932ad1ed071ead5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_6279982f",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-17T13:45:33Z",
+      "side": 1,
+      "message": "separating args from record data could be more safe when adding new args in future, eg.\n\nmy %params \u003d @_;\nmy ($c,$prov_subs,$schema,.. ,$record) \u003d @params{qw/c prov_subs schema record/};",
+      "revId": "80fafe467e3a7a8b39355f9c7932ad1ed071ead5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
