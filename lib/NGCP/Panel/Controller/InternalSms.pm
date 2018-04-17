@@ -97,8 +97,9 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
             }
             $c->log->info("pcc is set to $pcc_enabled for prov subscriber id " . $prov_dbalias->subscriber_id);
 
-            my $created_item = $c->model('DB')->resultset('sms_journal')->create({
-                subscriber_id => $prov_dbalias->subscriber_id,
+            my $created_item = NGCP::Utils::SMS::add_journal_record({
+                c => $c,
+                prov_subscriber => $prov_dbalias->subscriber,
                 direction => "in",
                 caller => $from,
                 callee => $to,
@@ -106,7 +107,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 pcc_status => "none",
                 pcc_token => $pcc_token,
                 coding => $coding,
-                });
+            });
 
             # check for cfs
             {
@@ -188,8 +189,9 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 $c->log->info(">>>> forward sms to $dst");
 
                 my $pcc_status = $pcc_enabled ? "pending" : "none";
-                my $fwd_item = $c->model('DB')->resultset('sms_journal')->create({
-                    subscriber_id => $prov_dbalias->subscriber_id,
+                my $fwd_item = NGCP::Utils::SMS::add_journal_record({
+                    c => $c,
+                    prov_subscriber => $prov_dbalias->subscriber,
                     direction => "forward",
                     caller => $to,
                     callee => $dst,
