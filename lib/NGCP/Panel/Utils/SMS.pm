@@ -36,6 +36,7 @@ sub send_sms {
     my $text = $args{text};
     my $coding = $args{coding};
     my $err_code = $args{err_code};
+    my $smsc_peer = $args{smsc_peer};
 
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return; };
@@ -52,6 +53,15 @@ sub send_sms {
     my $user = $c->config->{sms}{user};
     my $pass = $c->config->{sms}{pass};
 
+    my @smsc = grep { $_->{id} and $_->{id} eq $id } @{$config->{sms}{smsc}};
+
+    if ($#smsc == -1) {
+        &{$err_code}("Error sending sms: invalid smsc peer id");
+        return;
+    }
+
+    my $charset = $smsc[0]->{charset} // 'utf-8';
+
     my $fullpath = "$schema://$host:$port$path";
     my $ua = LWP::UserAgent->new(
             #ssl_opts => { verify_hostname => 0, SSL_verify_mode => 0 },
@@ -59,7 +69,8 @@ sub send_sms {
         );
     my $uri = URI->new($fullpath);
     $uri->query_form(
-            charset => "utf-8",
+            id => $smsc_peer,
+            charset => $charset,
             coding => $coding,
             user => "$user",
             pass => "$pass",

@@ -6,6 +6,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::SMS/;
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Utf8;
 use NGCP::Panel::Utils::SMS;
+use NGCP::Panel::Utils::Preferences;
 
 
 __PACKAGE__->set_config();
@@ -116,6 +117,7 @@ sub create_item {
     }
     my $test_mode = $c->request->params->{test_mode} // '';
     my $session;
+    my $smsc_peer = '';
     try {
         my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
         $session = NGCP::Panel::Utils::SMS::init_prepaid_billing(c => $c,
@@ -130,10 +132,20 @@ sub create_item {
         }
 
         $session->{coding} = NGCP::Panel::Utils::SMS::get_coding($resource->{text});
+
+        my $smsc_peer_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+            c => $c, attribute => 'smsc_peer',
+            prov_domain => $subscriber->domain,
+        );
+        if ($smsc_peer_rs && $smsc_peer_rs->first && $smsc_peer_rs->first->value) {
+            my $smsc_peer = $smsc_peer_rs->first->value;
+        }
+
         if ( 'dont_send_sms' ne $test_mode ) {
 
             NGCP::Panel::Utils::SMS::send_sms(
                     c => $c,
+                    smsc_peer => $smsc_peer,
                     caller => $resource->{caller},
                     callee => $resource->{callee},
                     text => $resource->{text},
@@ -178,6 +190,7 @@ sub create_item {
         coding => $session->{coding},
         status => $session->{status} // '',
         reason => $session->{reason} // '',
+        smsc_peer => $smsc_peer,
     });
 
     return $item;

@@ -12,6 +12,7 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::SMS;
+use NGCP::Panel::Utils::Preferences;
 
 
 sub allowed_methods{
@@ -108,9 +109,18 @@ sub POST :Allow {
             }
             if($status eq "ACCEPT") {
                 $c->log->info("status for pcc sms of $callid is $status, forward sms");
+                my $smsc_peer = '';
+                my $smsc_peer_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                    c => $c, attribute => 'smsc_peer',
+                    prov_domain => $sms->provisioning_voip_subscriber->domain,
+                );
+                if ($smsc_peer_rs && $smsc_peer_rs->first && $smsc_peer_rs->first->value) {
+                    my $smsc_peer = $smsc_peer_rs->first->value;
+                }
                 try {
                     NGCP::Panel::Utils::SMS::send_sms(
                         c => $c,
+                        smsc_peer => $smsc_peer,
                         caller => $sms->caller,
                         callee => $sms->callee,
                         text => $sms->text,
