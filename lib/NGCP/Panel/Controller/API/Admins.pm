@@ -36,7 +36,7 @@ sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
     unless($c->user->is_master) {
         $self->error($c, HTTP_FORBIDDEN, "Cannot create admin without master permissions");
-        last;
+        return;
     }
     my $item;
     try {
@@ -44,7 +44,7 @@ sub create_item {
     } catch($e) {
         $c->log->error("failed to create admin: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create admin.");
-        last;
+        return;
     }
     return $item;
 }
