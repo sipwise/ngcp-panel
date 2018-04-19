@@ -78,6 +78,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
             my $pcc_timeout = $c->config->{pcc}->{timeout};
             my $pcc_enabled = 0;
             my ($pcc_uuid, $pcc_token);
+            my $smsc_peer = '';
             UUID::generate($pcc_uuid);
             UUID::unparse($pcc_uuid, $pcc_token);
             my $fwd_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -97,6 +98,14 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
             }
             $c->log->info("pcc is set to $pcc_enabled for prov subscriber id " . $prov_dbalias->subscriber_id);
 
+            my $smsc_peer_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                c => $c, attribute => 'smsc_peer',
+                prov_domain => $prov_dbalias->domain,
+            );
+            if ($smsc_peer_rs && $smsc_peer_rs->first && $smsc_peer_rs->first->value) {
+                my $smsc_peer = $smsc_peer_rs->first->value;
+            }
+
             my $created_item = NGCP::Utils::SMS::add_journal_record({
                 c => $c,
                 prov_subscriber => $prov_dbalias->subscriber,
@@ -107,6 +116,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 pcc_status => "none",
                 pcc_token => $pcc_token,
                 coding => $coding,
+                smsc_peer => $smsc_peer,
             });
 
             # check for cfs
@@ -199,6 +209,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                     pcc_status => $pcc_status,
                     pcc_token => $pcc_token,
                     coding => $coding,
+                    smsc_peer => $smsc_peer,
                 });
 
                 if($pcc_enabled && $pcc_url) {
@@ -227,6 +238,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                     my $error_msg;
                     NGCP::Panel::Utils::SMS::send_sms(
                             c => $c,
+                            smsc_peer => $smsc_peer;
                             caller => $to, # use the original to as new from
                             callee => $dst,
                             text => $text,
