@@ -1,7 +1,9 @@
 package Test::FakeData;
 
 use strict;
+use warnings;
 
+use Moose::Exporter;
 use Moose;
 use Test::Collection;
 use JSON;
@@ -17,6 +19,11 @@ use File::Grep qw/fgrep/;
 use feature 'state';
 use Storable;
 use File::Temp qw(tempfile);
+
+
+Moose::Exporter->setup_import_methods(
+    as_is     => [ 'seq' ],
+);
 
 sub BUILD {
     my $self = shift;
@@ -189,17 +196,6 @@ sub build_data_default{
 sub build_data{
     my ($self) = @_;
     my $data = {
-        'admins' => {
-            'data' => {
-                login       => 'api_test_admin',
-                password    => 'api_test_admin',
-                reseller_id => sub { return shift->get_id('resellers',@_); },
-            },
-            'query' => ['login'],
-            'data_callbacks' => {
-                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{login}); },
-            },
-        },
         'applyrewrites' => {
             'data' => {
                 direction => "caller_in",
@@ -887,6 +883,13 @@ sub DEMOLISH{
         print "We have test items, which can't delete through API:\n";
         print Dumper [ sort { $a cmp $b } keys %{$self->undeletable} ];
     }
+}
+
+sub seq{
+    my ($number) = @_;
+    state $seq = 0;
+    $number //= 0;
+    return $number + $seq++;
 }
 
 1;
