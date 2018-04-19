@@ -319,10 +319,5 @@ sub test_phonebook_collection{
     $test_machine->content_type(clone $content_type_old);
 }
 
-sub seq{
-    my ($number) = @_;
-    state $seq = 0;
-    $number //= 0;
-    return $number + $seq++;
-}
+
 # vim: set tabstop=4 expandtab:
