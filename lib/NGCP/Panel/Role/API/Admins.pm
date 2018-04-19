@@ -79,6 +79,10 @@ sub process_form_resource{
         $resource->{md5pass} = undef;
         $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
     }
+    foreach my $f(qw/billing_data call_data is_active is_master is_superuser lawful_intercept read_only show_passwords/) {
+        $resource->{$f} = (ref $resource->{$f} eq 'JSON::true' ) ? 1 : 0;
+        #|| $resource->{$f} eq 'true'
+    }
     return $resource;
 }
 
@@ -98,7 +102,7 @@ sub check_duplicate{
     if ($existing_item && (!$item || $item->id != $existing_item->id)) {
         $c->log->error("admin with login '$$resource{login}' already exists");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this login already exists");
-        last;
+        return;
     }
     return 1;
 }
