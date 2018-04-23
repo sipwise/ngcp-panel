@@ -22,6 +22,30 @@
       "revId": "3a1d30bee6eb717e3d80a3e9f2cecfc70f2dd417",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_399cdf68",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-23T07:39:20Z",
+      "side": 1,
+      "message": "the intention was to have the arg syntax of search() to be similar to SQL::Abstract\n\nregarding line 93pp, seems it was the intention to add rows manually and skip this filter logic. contact is not considered though",
+      "parentUuid": "9aa53dc9_b9b8efe6",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 54
+      },
+      "revId": "3a1d30bee6eb717e3d80a3e9f2cecfc70f2dd417",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
