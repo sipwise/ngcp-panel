@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9aa53dc9_d9597390",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-23T09:59:37Z",
+      "side": 1,
+      "message": "-\u003ecount()",
+      "range": {
+        "startLine": 679,
+        "startChar": 48,
+        "endLine": 679,
+        "endChar": 51
+      },
+      "revId": "184fa56e17af220ec8deb7bf3a112e2c0a59285d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
