@@ -179,53 +179,6 @@ sub _filter {
                     $match = 1;
                 }
             }
-            if (0) {
-            my $f;
-            if ($f eq "-and" && ref $filter->{$f} eq "ARRAY") {
-                irka::loglong(['_filter.f',$f]);
-                foreach my $andcondition (@{ $filter->{$f} }) {
-                    irka::loglong(['_filter.andcondition',$andcondition]);
-                    next unless (ref $andcondition eq "ARRAY");
-                    irka::loglong(['_filter.andcondition is array']);
-                    foreach my $innercol (@{ $andcondition }) {
-                        if (ref $innercol eq "HASH") {
-                            foreach my $colname (keys %{ $innercol }) {
-                                my $searchname = $colname;
-                                $colname =~ s/^me\.//;
-                                next if ($colname =~ /\./); # we don't support joined table columns
-                                $filter_applied = 1;
-                                irka::loglong(['_filter.innercol is scalar:', (ref $innercol->{$searchname} eq ""), 'attr exists',(exists $attr{$colname}),'colname',$colname,'$innercol->{$searchname}',$innercol->{$searchname}]);
-                                if (ref $innercol->{$searchname} eq "") {
-                                    if (!exists $attr{$colname} || lc($row->$colname) ne lc($innercol->{$searchname})) {
-                                    #we have met unsatisfied condition - for "and" logic we should complete to process this row and goes to next row
-                                    } else {
-                                    irka::loglong(['_filter.match 1: attr.colname', $attr{$colname}]);
-                                        $match = 1;
-                                        last;#it means that we will not check other columns from innercols like
-                                        #{
-                                        #    colname1 => value1,
-                                        #    colname2 => value2,
-                                        #}
-                                        #or logic ?
-                                    }
-                                } elsif (ref $innercol->{$searchname} eq "HASH" && exists $innercol->{$searchname}->{like}) {
-                                    my $fil = $innercol->{$searchname}->{like};
-                                    $fil =~ s/^\%//;
-                                    $fil =~ s/\%$//;
-                                    if (!exists $attr{$colname} || $row->$colname !~ /$fil/i) {
-                                    } else {
-                                        $match = 1;
-                                        last;
-                                    }
-                                }
-                            }#foreach key in hash in '-and' => [[{ here }]]
-                            last if ($match);
-                        }#if innercol (element of '-and' => [[]] array) is a hash
-                    }#foreach element in  '-and' => [ [===>HERE<==] ]
-                }#foreach element in '-and' array ( '-and' => [ ===>HERE<== ])
-                last if ($match);#there is no reason for last, as for me - we shouldn't end to check rows even if we have met one to match
-            }#key -s '-and' and value is array ref
-            }#commented code
         }#end of keys of filters, the only possible key is '-and'
         next if ($filter_applied && !$match);
         push @newrows, $row;
