@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9aa53dc9_b9b8efe6",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-04-23T07:26:21Z",
+      "side": 1,
+      "message": "These conditions are in contradiction with expected in lines 93-99 format data structure. Lines 93-99 expect currently provided \n        {\n            username \u003d\u003e $val,\n            domain \u003d\u003e $val,\n        }\n\n\nBut here we expect filter structure like:\n\n    search({\n        \u0027-and\u0027 \u003d\u003e [\n            [\n                {\u0027contact\u0027  \u003d\u003e $cval},\n                {\u0027username\u0027 \u003d\u003e $val},\n                {\u0027domain\u0027   \u003d\u003e $val}\n            ],\n        ]\n    })\n\nWas some code forgotten? Do we really need this \u0027-and\u0027 and array structure?",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 54
+      },
+      "revId": "3a1d30bee6eb717e3d80a3e9f2cecfc70f2dd417",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
