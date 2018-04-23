@@ -36,7 +36,7 @@ sub send_sms {
     my $text = $args{text};
     my $coding = $args{coding};
     my $err_code = $args{err_code};
-    my $smsc_peer = $args{smsc_peer};
+    my $smsc_peer = $args{smsc_peer} // 'default_smsc';
 
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return; };
@@ -53,7 +53,7 @@ sub send_sms {
     my $user = $c->config->{sms}{user};
     my $pass = $c->config->{sms}{pass};
 
-    my @smsc = grep { $_->{id} and $_->{id} eq $id } @{$config->{sms}{smsc}};
+    my @smsc = grep { $_->{id} and $_->{id} eq $smsc_peer } @{$c->config->{sms}{smsc}};
 
     if ($#smsc == -1) {
         &{$err_code}("Error sending sms: invalid smsc peer id");
