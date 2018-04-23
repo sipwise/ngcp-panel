@@ -168,9 +168,13 @@ sub _item_by_aor {
     my ($self, $c, $sub, $contact) = @_;
 
     return $self->item_rs($c)->search({
-        'me.contact'  => $contact,
-        'me.username' => $sub->provisioning_voip_subscriber->username,
-        'me.domain'   => $sub->provisioning_voip_subscriber->domain->domain,
+        '-and' => [
+            [
+            {'contact'  => $contact},
+            {'username' => $sub->provisioning_voip_subscriber->username},
+            {'domain'   => $sub->provisioning_voip_subscriber->domain->domain}
+            ],
+        ]
     })->first;
 }
 

@@ -146,14 +146,22 @@ sub _filter {
     my ($self, $filter) = @_;
     my @newrows = ();
     my $i = 0;
+    use irka;
+    use Data::Dumper;
+    use Carp qw /longmess/;
+    irka::loglong(['rows',$self->_rows]);
+    irka::loglong(['filter',$filter]);
     foreach my $row (@{ $self->_rows }) {
         my $match = 0;
         my $filter_applied = 0;
         my %attr = map { $_->name => 1 } $row->meta->get_all_attributes;
         foreach my $f (keys %{ $filter }) {
             if ($f eq "-and" && ref $filter->{$f} eq "ARRAY") {
+                irka::loglong(['_filter.f',$f]);
                 foreach my $col (@{ $filter->{$f} }) {
+                    irka::loglong(['_filter.col',$col]);
                     next unless (ref $col eq "ARRAY");
+                    irka::loglong(['_filter.col is array']);
                     foreach my $innercol (@{ $col }) {
                         if (ref $innercol eq "HASH") {
                             foreach my $colname (keys %{ $innercol }) {
@@ -161,9 +169,11 @@ sub _filter {
                                 $colname =~ s/^me\.//;
                                 next if ($colname =~ /\./); # we don't support joined table columns
                                 $filter_applied = 1;
+                                irka::loglong(['_filter.innercol is scalar:', (ref $innercol->{$searchname} eq ""), 'attr exists',(exists $attr{$colname}),'colname',$colname,'$innercol->{$searchname}',$innercol->{$searchname}]);
                                 if (ref $innercol->{$searchname} eq "") {
                                     if (!exists $attr{$colname} || lc($row->$colname) ne lc($innercol->{$searchname})) {
                                     } else {
+                                    irka::loglong(['_filter.match 1: attr.colname', $attr{$colname}]);
                                         $match = 1;
                                         last;
                                     }
@@ -181,14 +191,15 @@ sub _filter {
                             last if ($match);
                         }
                     }
-                }
+                }#foreach element in '-and' array
                 last if ($match);
-            }
-
-        }
+            }#key -s '-and' and value is array ref
+        }#end of keys of filters, the only possible key is '-and'
         next if ($filter_applied && !$match);
         push @newrows, $row;
-    }
+    }#end of rows
+    irka::loglong(['result',\@newrows]);
+    irka::loglong(longmess);
     $self->_rows(\@newrows);
 }
 
