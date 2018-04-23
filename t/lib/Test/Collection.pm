@@ -487,6 +487,7 @@ sub get_uri_item{
     $resuri = $self->normalize_uri('/'.( $item->{location} // '' ));
     return $resuri;
 }
+
 sub get_item_hal{
     my($self, $name, $uri, $reload, $number) = @_;
     $name ||= $self->name;
@@ -1320,13 +1321,20 @@ sub check_get2put{
     delete $put_out->{content_in}->{_embedded};
     # check if put is ok
     $put_out->{content_in} = $self->process_data($put_in->{data_cb}, $put_out->{content_in});
+    #we are going to use created or loaded item - lets take it to redefine it's uri if will be necessary after put
     @{$put_out}{qw/response content request/} = $self->request_put( $put_out->{content_in}, $put_in->{uri} );
     foreach my $field (@{$ignore_fields}){
         delete $get_out->{content}->{$field};
         delete $put_out->{content}->{$field};
     }
     $self->http_code_msg(200, "check_get2put: check put successful", $put_out->{response},  $put_out->{content} );
-    is_deeply($get_out->{content}, $put_out->{content}, "$self->{name}: check_get2put: check put if unmodified put returns the same");
+    if (!is_deeply($get_out->{content}, $put_out->{content}, "$self->{name}: check_get2put: check put if unmodified put returns the same")) {
+        diag(Dumper([$put_out->{content},$get_out->{content}]));
+    }
+    if ($put_out->{response}->header('Location') && ! $put_in->{uri} ) {
+        my $default_item = $self->get_item_hal($self->name);
+       $default_item->{location} = $put_out->{response}->header('Location');
+    }
     return ($put_out,$get_out);
 }
 
