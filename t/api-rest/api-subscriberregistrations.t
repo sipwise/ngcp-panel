@@ -48,7 +48,10 @@ $test_machine->check_bundle();
 $test_machine->clear_test_data_all();
 
 $test_machine->check_create_correct( 1, sub{ $_[0]->{contact} .= time().'_'.$_[1]->{i} ; } );
-#$test_machine->check_get2put(undef, undef, { ignore_fields => [qw/id _links/] });
+
+for (my $i=0; $i < 15; $i++) {
+    $test_machine->check_get2put(undef, undef, { ignore_fields => [qw/id _links/] });
+}
 $test_machine->clear_data_created();
 
 $test_machine->check_create_correct( 1, sub{ $_[0]->{contact} .= time().'_'.$_[1]->{i} ; } );
