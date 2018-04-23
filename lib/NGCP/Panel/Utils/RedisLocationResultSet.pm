@@ -150,41 +150,30 @@ sub _filter {
         my $match = 0;
         my $filter_applied = 0;
         my %attr = map { $_->name => 1 } $row->meta->get_all_attributes;
-        foreach my $f (keys %{ $filter }) {
-            if ($f eq "-and" && ref $filter->{$f} eq "ARRAY") {
-                foreach my $col (@{ $filter->{$f} }) {
-                    next unless (ref $col eq "ARRAY");
-                    foreach my $innercol (@{ $col }) {
-                        if (ref $innercol eq "HASH") {
-                            foreach my $colname (keys %{ $innercol }) {
-                                my $searchname = $colname;
-                                $colname =~ s/^me\.//;
-                                next if ($colname =~ /\./); # we don't support joined table columns
-                                $filter_applied = 1;
-                                if (ref $innercol->{$searchname} eq "") {
-                                    if (!exists $attr{$colname} || lc($row->$colname) ne lc($innercol->{$searchname})) {
-                                    } else {
-                                        $match = 1;
-                                        last;
-                                    }
-                                } elsif (ref $innercol->{$searchname} eq "HASH" && exists $innercol->{$searchname}->{like}) {
-                                    my $fil = $innercol->{$searchname}->{like};
-                                    $fil =~ s/^\%//;
-                                    $fil =~ s/\%$//;
-                                    if (!exists $attr{$colname} || $row->$colname !~ /$fil/i) {
-                                    } else {
-                                        $match = 1;
-                                        last;
-                                    }
-                                }
-                            }
-                            last if ($match);
-                        }
-                    }
+        foreach my $colname (keys %{ $filter }) {
+            my $condition = $filter->{$colname};
+            my $searchname = $colname;
+            $colname =~ s/^me\.//;
+            next if ($colname =~ /\./); # we don't support joined table columns
+            $filter_applied = 1;
+            if (ref $condition eq "") {
+                if (!exists $attr{$colname} || lc($row->$colname) ne lc($condition)) {
+                    $match = 0;
+                    last;
+                } else {
+                    $match = 1;
                 }
-                last if ($match);
+            } elsif (ref $condition eq "HASH" && exists $condition->{like}) {
+                my $fil = $condition->{like};
+                $fil =~ s/^\%//;
+                $fil =~ s/\%$//;
+                if (!exists $attr{$colname} || $row->$colname !~ /$fil/i) {
+                    $match = 0;
+                    last;
+                } else {
+                    $match = 1;
+                }
             }
-
         }
         next if ($filter_applied && !$match);
         push @newrows, $row;
