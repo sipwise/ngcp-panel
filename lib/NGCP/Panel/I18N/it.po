@@ -6341,6 +6341,14 @@ msgstr ""
 msgid "SMS Number"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SMSC Peer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SMSC peer to use for outgoing sms messages"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "SN Length"
 msgstr "Lunghezza SN"
