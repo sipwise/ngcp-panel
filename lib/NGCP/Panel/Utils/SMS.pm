@@ -53,15 +53,6 @@ sub send_sms {
     my $user = $c->config->{sms}{user};
     my $pass = $c->config->{sms}{pass};
 
-    my @smsc = grep { $_->{id} and $_->{id} eq $id } @{$config->{sms}{smsc}};
-
-    if ($#smsc == -1) {
-        &{$err_code}("Error sending sms: invalid smsc peer id");
-        return;
-    }
-
-    my $charset = $smsc[0]->{charset} // 'utf-8';
-
     my $fullpath = "$schema://$host:$port$path";
     my $ua = LWP::UserAgent->new(
             #ssl_opts => { verify_hostname => 0, SSL_verify_mode => 0 },
@@ -70,7 +61,6 @@ sub send_sms {
     my $uri = URI->new($fullpath);
     $uri->query_form(
             smsc => $smsc_peer,
-            charset => $charset,
             coding => $coding,
             user => "$user",
             pass => "$pass",
@@ -364,7 +354,7 @@ sub add_journal_record {
         $cli = defined $pref_rs_cli->first ? $pref_rs_cli->first->value : '';
     }
 
-    return $c->model('DB')->resultset('sms_journal')->create(\%args));
+    return $c->model('DB')->resultset('sms_journal')->create(\%args);
 }
 
 1;
