@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aaa499b_1ebb4d10",
+        "filename": "lib/NGCP/Panel/Controller/InternalSms.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-24T07:34:01Z",
+      "side": 1,
+      "message": "die(shift);",
+      "range": {
+        "startLine": 246,
+        "startChar": 45,
+        "endLine": 246,
+        "endChar": 64
+      },
+      "revId": "779fae3b1a4ebbc547599541a2ae040b75f5ef27",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
