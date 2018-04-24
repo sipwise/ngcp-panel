@@ -238,7 +238,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                     my $error_msg;
                     NGCP::Panel::Utils::SMS::send_sms(
                             c => $c,
-                            smsc_peer => $smsc_peer;
+                            smsc_peer => $smsc_peer,
                             caller => $to, # use the original to as new from
                             callee => $dst,
                             text => $text,
