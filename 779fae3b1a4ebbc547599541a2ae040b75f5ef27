@@ -46,6 +46,30 @@
       "revId": "779fae3b1a4ebbc547599541a2ae040b75f5ef27",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aaa499b_3e76093f",
+        "filename": "lib/NGCP/Panel/Controller/InternalSms.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-04-24T09:43:37Z",
+      "side": 1,
+      "message": "The $error_msg is unhandled indeed, it is safe the add die here so it will be caught by catch($e)",
+      "parentUuid": "7aaa499b_1ebb4d10",
+      "range": {
+        "startLine": 246,
+        "startChar": 45,
+        "endLine": 246,
+        "endChar": 64
+      },
+      "revId": "779fae3b1a4ebbc547599541a2ae040b75f5ef27",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
