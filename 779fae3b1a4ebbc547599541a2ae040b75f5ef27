@@ -22,6 +22,30 @@
       "revId": "779fae3b1a4ebbc547599541a2ae040b75f5ef27",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aaa499b_be40d908",
+        "filename": "lib/NGCP/Panel/Controller/InternalSms.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-04-24T07:34:56Z",
+      "side": 1,
+      "message": "Separate commit if necessary, talk to Kirill.\nThose typo fix makes panel start again.",
+      "parentUuid": "7aaa499b_1ebb4d10",
+      "range": {
+        "startLine": 246,
+        "startChar": 45,
+        "endLine": 246,
+        "endChar": 64
+      },
+      "revId": "779fae3b1a4ebbc547599541a2ae040b75f5ef27",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
