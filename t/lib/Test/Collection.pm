@@ -375,12 +375,12 @@ sub runas {
     $uri //= $self->base_uri;
     $uri =~ s/^https?:\/\/|\/$//g;
     #print Dumper ["runas",$uri, $realm, $user, $pass,"requested",$role_in,"old",$self->runas_role];
+    $self->ua->credentials( $uri, $realm, $user, $pass);
     if ($role_in ne $self->runas_role) {
         $self->clear_cert;
-        $self->ua($self->_create_ua(0));
+    } else {
+        $self->runas_role($role);
     }
-    $self->ua->credentials( $uri, $realm, $user, $pass);
-    $self->runas_role($role);
     $self->init_ssl_cert($self->ua, $role);
     diag("runas: $role;");
     return $self;
