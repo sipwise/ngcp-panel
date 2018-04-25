@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aaa499b_e4d48e48",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-04-25T13:54:35Z",
+      "side": 1,
+      "message": "why is again a file operation introduced here?\nit was intentional that there is none",
+      "range": {
+        "startLine": 305,
+        "startChar": 28,
+        "endLine": 305,
+        "endChar": 43
+      },
+      "revId": "58fabf41d505d052cf789b36be05290faba05218",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
