@@ -377,7 +377,6 @@ sub runas {
     #print Dumper ["runas",$uri, $realm, $user, $pass,"requested",$role_in,"old",$self->runas_role];
     if ($role_in ne $self->runas_role) {
         $self->clear_cert;
-        $self->ua($self->_create_ua(0));
     }
     $self->ua->credentials( $uri, $realm, $user, $pass);
     $self->runas_role($role);
