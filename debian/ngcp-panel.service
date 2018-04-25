@@ -3,7 +3,7 @@ Description=NGCP Panel Webapp
 After=network.target
 After=mariadb.service
 Requires=network.target
-Requires=mariadb.service
+Wants=mariadb.service
 
 [Service]
 Type=notify
