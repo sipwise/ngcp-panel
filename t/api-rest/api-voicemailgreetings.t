@@ -9,7 +9,6 @@ use Data::Dumper;
 use File::Basename;
 use File::Slurp qw/read_file write_file/;
 use File::Temp;
-use NGCP::Panel::Utils::Generic qw(:all);
 
 #init test_machine
 my $fake_data = Test::FakeData->new;

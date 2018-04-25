@@ -24,6 +24,9 @@ use Carp qw(cluck longmess shortmess);
 use IO::Uncompress::Unzip;
 use File::Temp qw();
 
+Moose::Exporter->setup_import_methods(
+    as_is     => [ 'is_int' ],
+);
 my $tmpfilename : shared;
 
 has 'ssl_cert' => (
