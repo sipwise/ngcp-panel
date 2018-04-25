@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aaa499b_04bc1a6b",
+        "filename": "t/api-rest/control",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-04-25T17:05:51Z",
+      "side": 1,
+      "message": "JFYI, to trigger docker rebuild you will have to bump DATE field into Dockerfile.\nOthewise it will not notice changes here and will not rebuild docker container for Jenkins.",
+      "revId": "66c87f2b479a334869b261509c8a9f1820b6774d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
