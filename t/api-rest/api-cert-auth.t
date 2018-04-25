@@ -57,7 +57,7 @@ sub _download_certs {
 
     my $coll = Test::Collection->new();
     rename $coll->ssl_cert, $invalid_cert;
-    $coll->clear_cert;
+    Test::Collection::clear_cert;
     rename $coll->ssl_cert, $valid_cert;
 
     return ($invalid_cert, $valid_cert);
