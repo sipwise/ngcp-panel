@@ -11,7 +11,6 @@ use Test::More;
 use File::Basename;
 use Data::Dumper;
 use Test::DeepHashUtils qw(reach nest deepvalue);
-use Clone qw/clone/;
 use File::Slurp qw/read_file/;
 use URI::Escape;
 use Storable;
@@ -19,7 +18,7 @@ use File::Grep qw/fgrep/;
 use feature 'state';
 use Storable;
 use File::Temp qw(tempfile);
-
+use Clone qw/clone/;
 
 Moose::Exporter->setup_import_methods(
     as_is     => [ 'seq' ],
@@ -744,7 +743,7 @@ sub create{
     #create itself
     my $data = clone($self->data->{$collection_name}->{data});
     #$self->test_machine->ssl_cert;
-    my $test_machine = clone $self->test_machine;
+    my $test_machine = $self->test_machine->clone;
     $test_machine->set(
         name            => $self->get_collection_interface($collection_name),
         DATA_ITEM       => $data,
