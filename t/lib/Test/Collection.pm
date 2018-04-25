@@ -291,23 +291,15 @@ sub _create_ua {
         SSL_verify_mode => 0,
     );
     if($init_cert) {
-        $self->init_ssl_cert($ua, $role);
+        $self->init_ssl_cert($ua);
     }
     return $ua;
 }
 
 sub init_ssl_cert {
-    my ($self, $ua, $role) = @_;
-    $role //= 'default';
-    if($role ne "default" && $role ne "admin" && $role ne "reseller") {
-        $ua->ssl_opts(
-            SSL_cert_file => undef,
-            SSL_key_file => undef,
-        );
-        return;
-    }
+    my ($self, $ua) = @_;
     lock $tmpfilename;
-    unless ($tmpfilename && -e $tmpfilename) {
+    unless ($tmpfilename) {
         my $_ua = $ua // $self->_create_ua(0);
         my $res = $_ua->post(
             $self->base_uri . '/api/admincerts/',
@@ -355,6 +347,13 @@ sub clear_cert {
     delete $self->{ua};
     return $self;
 }
+sub clone {
+    my $self = shift;
+    lock $tmpfilename;
+    delete $self->{ssl_cert};
+    delete $self->{ua};
+    return clone $self; #todo: use/implement a copy constructor...
+}
 sub ssl_auth_allowed {
     my $self = shift;
     my($role) = @_;
@@ -367,22 +366,18 @@ sub ssl_auth_allowed {
 sub runas {
     my $self = shift;
     my($role_in,$uri) = @_;
-    my($user,$pass,$role,$realm,$port) = $self->get_role_credentials($role_in);
     my $base_url = $self->base_uri;
+    my($user,$pass,$role,$realm,$port) = $self->get_role_credentials($role_in);
     $base_url =~ s/^(https?:[^:]+:)\d+(?:$|\/)/$1$port\//;
-    #print Dumper ["base_url",$base_url,"role",$role,$user,$pass];
     $self->base_uri($base_url);
     $uri //= $self->base_uri;
     $uri =~ s/^https?:\/\/|\/$//g;
-    #print Dumper ["runas",$uri, $realm, $user, $pass,"requested",$role_in,"old",$self->runas_role];
+    $self->ua->credentials( $uri, $realm, $user, $pass);
     if ($role_in ne $self->runas_role) {
         $self->clear_cert;
-        $self->ua($self->_create_ua(0));
+        $self->runas_role($role_in);
     }
-    $self->ua->credentials( $uri, $realm, $user, $pass);
-    $self->runas_role($role);
-    $self->init_ssl_cert($self->ua, $role);
-    diag("runas: $role;");
+    diag("runas: $role_in - $user");
     return $self;
 }
 
@@ -407,6 +402,8 @@ sub get_role_credentials{
         $pass = $self->subscriber_pass;
         $realm = 'api_subscriber_http';
         $port = '443';
+    } else {
+        die("unsupported role $role");
     }
     return($user,$pass,$role,$realm,$port);
 }
