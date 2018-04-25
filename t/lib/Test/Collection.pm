@@ -923,8 +923,10 @@ sub check_list_collection{
         is($selfuri, $nexturi, $test_info_prefix."check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
         if(
-            ((!$self->NO_COUNT) && $list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 ) 
-            || !$self->ALLOW_EMPTY_COLLECTION){
+            (!$self->NO_COUNT) 
+            && (
+                ( $list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 ) 
+                || !$self->ALLOW_EMPTY_COLLECTION)){
             ok($list_collection->{total_count} > 0, $test_info_prefix."check 'total_count' of collection");
         }
 
@@ -953,7 +955,10 @@ sub check_list_collection{
         }
 
         my $hal_name = $self->get_hal_name;
-        if(($list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 ) || !$self->ALLOW_EMPTY_COLLECTION){
+        if((!$self->NO_COUNT) 
+            && (
+                ($list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 ) 
+                || !$self->ALLOW_EMPTY_COLLECTION) ){
             if (! ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
                 (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), $test_info_prefix."check if 'ngcp:".$self->name."' is array/hash-ref")) {
                     diag($list_collection->{_links}->{$hal_name});
