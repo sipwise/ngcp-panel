@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aaa499b_449fc25f",
+        "filename": "t/api-rest/control",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-04-25T15:36:27Z",
+      "side": 1,
+      "message": "I removed this dependency in https://gerrit.mgm.sipwise.com/#/c/20760/, as wrote in the chat",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 36
+      },
+      "revId": "049d2f5529706f08a53f0528d440d820e3edf15d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
