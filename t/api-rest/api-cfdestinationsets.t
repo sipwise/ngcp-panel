@@ -63,7 +63,6 @@ SKIP:
     {#todo: move to fake_data
         my $reseller_admin = $test_machine->get_item_hal('admins','/api/admins/?login=api_test');
         if (!(exists $reseller_admin->{total_count} && $reseller_admin->{total_count})) {
-            $fake_data->test_machine($test_machine);#because we removed shared certs when runas admin
             my $data = $fake_data->process('admins');
             $data->{login}   = 'api_test';
             $data->{password} = 'api_test';
