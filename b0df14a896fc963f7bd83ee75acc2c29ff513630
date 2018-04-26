@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7aaa499b_9272ac7b",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-04-26T14:01:16Z",
+      "side": 1,
+      "message": "I didn\u0027t change the logic here. It was already like this. This is the place, where the DT object got stringified before; and I just added the TZ conversion",
+      "parentUuid": "da9b358b_419fb25f",
+      "revId": "b0df14a896fc963f7bd83ee75acc2c29ff513630",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da9b358b_8195ba41",
         "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2018-03-22T11:32:41Z",
       "side": 1,
       "message": "floating",
+      "range": {
+        "startLine": 179,
+        "startChar": 34,
+        "endLine": 179,
+        "endChar": 48
+      },
+      "revId": "b0df14a896fc963f7bd83ee75acc2c29ff513630",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aaa499b_92206c4b",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-04-26T14:01:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9b358b_8195ba41",
       "range": {
         "startLine": 179,
         "startChar": 34,
