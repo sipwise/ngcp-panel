@@ -27,7 +27,23 @@ use File::Temp qw();
 Moose::Exporter->setup_import_methods(
     as_is     => [ 'is_int' ],
 );
-my $tmpfilename : shared;
+
+BEGIN {
+    my $cert_temp_filename : shared;
+
+    sub get_cert_filename {
+        return $cert_temp_filename;
+    }
+
+    sub set_cert_filename {
+        $cert_temp_filename = $_[0];
+    }
+
+    sub get_cert_filename_ref {
+        return \$cert_temp_filename;
+    }
+
+}
 
 has 'ssl_cert' => (
     is => 'ro',
@@ -285,10 +301,15 @@ sub init_ua {
 sub _create_ua {
     my ($self,$init_cert) = @_;
     my $ua = LWP::UserAgent->new;
+    my($user,$pass,$role,$realm,$port) = $self->get_role_credentials();
+    my $base_url = $self->base_uri;
+    $base_url =~ s/^(https?:[^:]+:)\d+(?:$|\/)/$1$port\//;
+    $self->base_uri($base_url);
     my $uri = $self->base_uri;
-    $uri =~ s/^https?:\/\///;
-    my($user,$pass,$role,$realm) = $self->get_role_credentials();
+    $uri =~ s/^https?:\/\/|\/$//g;
     $ua->credentials( $uri, $realm, $user, $pass);
+    $self->runas_role($role);
+    diag("runas: $role;");
     $ua->ssl_opts(
         verify_hostname => 0,
         SSL_verify_mode => 0,
@@ -309,8 +330,9 @@ sub init_ssl_cert {
         );
         return;
     }
-    lock $tmpfilename;
-    unless ($tmpfilename && -e $tmpfilename) {
+    my $cert_filename_ref = get_cert_filename_ref();
+    lock($cert_filename_ref);
+    unless (get_cert_filename()) {
         my $_ua = $ua // $self->_create_ua(0);
         my $res = $_ua->post(
             $self->base_uri . '/api/admincerts/',
@@ -338,54 +360,38 @@ sub init_ssl_cert {
         unless($data) {
             die "failed to find PEM file in client certificate zip file\n";
         }
-        (my $tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
+        my($tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
+        set_cert_filename($tmpfilename);
         print $tmpfh $data;
         close $tmpfh;
     }
     $ua->ssl_opts(
-        SSL_cert_file => $tmpfilename,
-        SSL_key_file => $tmpfilename,
+        SSL_cert_file => get_cert_filename(),
+        SSL_key_file => get_cert_filename(),
     ) if $ua;
-    return $tmpfilename;
+    return get_cert_filename();
 }
+
 sub clear_cert {
     my $self = shift;
-    lock $tmpfilename;
-    return $self unless $tmpfilename;
-    unlink $tmpfilename;
-    undef $tmpfilename;
+    my $cert_filename_ref = get_cert_filename_ref();
+    lock($cert_filename_ref);
+    return $self unless get_cert_filename();
+    unlink get_cert_filename();
+    set_cert_filename(undef);
     delete $self->{ssl_cert};
     delete $self->{ua};
     return $self;
 }
-sub ssl_auth_allowed {
-    my $self = shift;
-    my($role) = @_;
-    if ($role eq 'admin' || $role eq 'default' || $role eq 'reseller') {
-        return 1;
-    }
-    return 0;
-}
 
 sub runas {
-    my $self = shift;
-    my($role_in,$uri) = @_;
-    my($user,$pass,$role,$realm,$port) = $self->get_role_credentials($role_in);
-    my $base_url = $self->base_uri;
-    $base_url =~ s/^(https?:[^:]+:)\d+(?:$|\/)/$1$port\//;
-    #print Dumper ["base_url",$base_url,"role",$role,$user,$pass];
-    $self->base_uri($base_url);
-    $uri //= $self->base_uri;
-    $uri =~ s/^https?:\/\/|\/$//g;
-    #print Dumper ["runas",$uri, $realm, $user, $pass,"requested",$role_in,"old",$self->runas_role];
-    if ($role_in ne $self->runas_role) {
+    my($self,$role_in,$force) = @_;
+    #$force if we want to relogin with credentials
+    if ($role_in ne $self->runas_role || $force) {
         $self->clear_cert;
-        $self->ua($self->_create_ua(0));
+        $self->runas_role($role_in);
+        $self->ua($self->_create_ua(1));
     }
-    $self->ua->credentials( $uri, $realm, $user, $pass);
-    $self->runas_role($role);
-    $self->init_ssl_cert($self->ua, $role);
-    diag("runas: $role;");
     return $self;
 }
 
@@ -676,7 +682,7 @@ sub request{
         my $res = $self->ua->request($req);
         diag(sprintf($self->name_prefix."request:%s: %s", $req->method, $req->uri));
         #draft of the debug mode
-        if(1 && $self->DEBUG){
+        if($self->DEBUG){
             if($res->code >= 400){
                 print longmess();
                 print Dumper $req;
