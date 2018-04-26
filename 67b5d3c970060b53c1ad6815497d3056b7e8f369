@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aaa499b_870cac43",
+        "filename": "t/api-rest/control",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-04-26T11:52:13Z",
+      "side": 1,
+      "message": "Once again, bump date in Docketfile to apply those changes.",
+      "revId": "67b5d3c970060b53c1ad6815497d3056b7e8f369",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
