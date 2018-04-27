@@ -112,7 +112,6 @@ Depends:
  libuuid-perl,
  libxml-mini-perl,
  libxml-xpath-perl,
- lsb-base (>= 3.0-6),
  ngcp-schema,
  nginx-common,
  openssl,
