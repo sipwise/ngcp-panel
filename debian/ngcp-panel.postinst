@@ -5,6 +5,8 @@ set -e
 # don't do anything when called with other argument than configure
 case "$1" in
   configure)
+    # Remove obsolete rc.d links.
+    update-rc.d ngcp-panel remove
   ;;
   abort-upgrade|abort-remove|abort-deconfigure)
     exit 0
