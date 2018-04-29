@@ -24,6 +24,7 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $type) = @_;
 
+    $type //= $self->preference_resource_type;
     my $print_type = $type;
     $print_type = "customers" if $print_type eq "contracts";
     my $hal = Data::HAL->new(
@@ -268,6 +269,11 @@ sub get_resource {
     }
 
     return $resource;
+}
+
+sub get_list{
+    my ($self, $c) = @_;
+    return $self->item_rs($c, $self->preference_resource_type);
 }
 
 sub _item_rs {
