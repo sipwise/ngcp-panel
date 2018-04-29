@@ -16,8 +16,10 @@ sub _translate_fields_recursive {
     my @strings = ();
     for my $field (@$fields) {
         if ($field->label) {
+            my $label = $field->label;
             push @strings, $field->label if $extract_strings;
-            $field->label( $c->loc($field->label) );
+            $label =~s/^_+//;
+            $field->label( $c->loc($label) );
         }
         if ($field->isa('HTML::FormHandler::Field::Submit')
                 || $field->isa('HTML::FormHandler::Field::Button')) {
