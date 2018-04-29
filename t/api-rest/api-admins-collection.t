@@ -44,6 +44,7 @@ $test_machine->form_data_item( );
 my $admins = $test_machine->check_create_correct( 3 , sub {
     $_[0]->{login}.=seq()
 });
+ok($admins->[0]->{content}->{is_active},"Check if newly created admin is active");
 $test_machine->check_bundle();
 $test_machine->clear_test_data_all();
 
