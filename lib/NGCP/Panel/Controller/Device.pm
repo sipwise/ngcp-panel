@@ -17,6 +17,8 @@ use DateTime::Format::HTTP;
 
 use parent 'Catalyst::Controller';
 
+use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
+
 sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
@@ -260,6 +262,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
         form => $form,
     );
 }
+
 sub prepare_connectable :Private{
     my ($self, $c, $model) = @_;
     my $values = [];
@@ -1380,6 +1383,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $c->response->content_type($result->{content_type});
     $c->response->body(${$result->{content}});
 }
+
 sub dev_field_encrypt :Private{
     my ($self, $c, $dev, $processed_data, $vars) = @_;
 
@@ -1915,7 +1919,6 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
     ));
 }
 
-
 sub devices_preferences_list :Chained('devmod_base') :PathPart('preferences') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
@@ -1930,13 +1933,23 @@ sub devices_preferences_list :Chained('devmod_base') :PathPart('preferences') :C
     NGCP::Panel::Utils::Preferences::load_preference_list(
         c => $c,
         pref_values => $pref_values,
+        #we don't need fielddev_pref flag, because it always will be just more narrow than dev_pref. 
         dev_pref => 1,
-        search_conditions => {
-            '-or' => [
-                {'attribute' => {'like' => 'vnd_'.lc($c->stash->{devmod}->vendor).'%' } },
-                {'attribute' => {'-not_like' => 'vnd_%' }}
-            ],
-        }
+        search_conditions => [{
+            'attribute' =>
+                [ -or =>
+                    { 'like' => 'vnd_'.lc($c->stash->{devmod}->vendor).'%' },
+                    {'-not_like' => 'vnd_%' },
+                ],
+            #relation type is defined by preference flag dev_pref, 
+            #so here we select only linked to the current model, or not linked to any model at all
+            '-or' => ['voip_preference_relations.autoprov_device_id' => $c->stash->{devmod}->id,
+                    'voip_preference_relations.autoprov_device_id' => undef
+                ],
+            },{
+                join => {'voip_preferences' => 'voip_preference_relations'},
+            }
+        ]
     );
 
     $c->stash(template => 'device/preferences.tt');
@@ -1968,6 +1981,121 @@ sub devices_preferences_base :Chained('devices_preferences_list') :PathPart('') 
         });
     return;
 }
+
+sub devices_preferences_create :Chained('devices_preferences_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Preference", $c);
+
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $resource = $form->values;
+
+                $resource->{voip_preference_groups_id} = $c->model('DB')->resultset('voip_preference_groups')->find({name => 'CPBX Device Administration'})->id;
+                $resource->{attribute} =~s/^_*/_DYNAMIC_PREFERENCE_PREFIX/e;
+                $resource->{dev_pref} = 1;
+                $resource->{dynamic} = 1;
+                $resource->{expose_to_customer} = 1;
+
+                my $preference = $c->model('DB')->resultset('voip_preferences')->create($resource);
+                $preference->create_related('voip_preference_relations', {
+                    autoprov_device_id => $c->stash->{devmod}->id
+                });
+                $c->session->{created_objects}->{preference} = { id => $preference->id };
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully created device model preference'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to create device model preference'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+    $c->stash(
+        create_flag => 1,
+        form => $form,
+    );
+}
+
+sub devices_preferences_editmeta :Chained('devices_preferences_base') :PathPart('editmeta') :Args(0) {
+    my ($self, $c) = @_;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Preference", $c);
+
+    my $params = { $c->stash->{preference_meta}->get_inflated_columns };
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $resource = $form->values;
+                $resource->{voip_preference_groups_id} = $c->model('DB')->resultset('voip_preference_groups')->find({name => 'CPBX Device Administration'})->id;
+                $resource->{dev_pref} = 1;
+                $resource->{dynamic} = 1;
+                $resource->{attribute} =~s/^_*/_DYNAMIC_PREFERENCE_PREFIX/e;
+                $c->stash->{preference_meta}->update($resource);
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully updated device model preference'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to update device model preference'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+    $c->stash(
+        editmeta_flag => 1,
+        form => $form,
+    );
+}
+
+sub devices_preferences_delete :Chained('devices_preferences_base') :PathPart('delete') :Args(0):Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{preference_meta}->delete;
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { id => $c->stash->{preference_meta}->id,
+                      attribute => $c->stash->{preference_meta}->attribute },
+            desc => $c->loc('Device model preference successfully deleted'),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => "failed to delete device model preference with id '".$c->stash->{preference_meta}->id."': $e",
+            desc => $c->loc('Failed to delete device model preference'),
+        );
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+}
+
 
 sub devices_preferences_edit :Chained('devices_preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
