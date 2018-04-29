@@ -260,6 +260,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
         form => $form,
     );
 }
+
 sub prepare_connectable :Private{
     my ($self, $c, $model) = @_;
     my $values = [];
@@ -1968,6 +1969,116 @@ sub devices_preferences_base :Chained('devices_preferences_list') :PathPart('') 
         });
     return;
 }
+
+sub devices_preferences_create :Chained('devices_preferences_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Preference", $c);
+
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $resource = $form->values;
+                $resource->{voip_preference_groups_id} = $c->model('DB')->resultset('voip_preference_groups')->find({name => 'CPBX Device Administration'})->id;
+                $resource->{dev_pref} = 1;
+                $resource->{customer_defined} = 1;
+                my $preference = $c->model('DB')->resultset('voip_preferences')->create($resource);
+                $preference->create_related('voip_preference_relations', {
+                    autoprov_device_id => $c->stash->{devmod}->id,
+                });
+                $c->session->{created_objects}->{preference} = { id => $preference->id };
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully created device model preference'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to create device model preference'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+    $c->stash(
+        create_flag => 1,
+        form => $form,
+    );
+}
+
+sub devices_preferences_editmeta :Chained('devices_preferences_base') :PathPart('editmeta') :Args(0) {
+    my ($self, $c) = @_;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Device::Preference", $c);
+
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $resource = $form->values;
+                $resource->{voip_preference_groups_id} = $c->model('DB')->resultset('voip_preference_groups')->find({name => 'CPBX Device Administration'})->id;
+                $resource->{dev_pref} = 1;
+                $resource->{customer_defined} = 1;
+                $c->stash->{preference_meta}->update($resource);
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully updated device model preference'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to update device model preference'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+    $c->stash(
+        editmeta_flag => 1,
+        form => $form,
+    );
+}
+
+sub devices_preferences_delete :Chained('devices_preferences_base') :PathPart('editmeta') :Args(0):Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{preference_meta}->delete;
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { id => $c->stash->{preference_meta}->id,
+                      model => $c->stash->{preference_meta}->name },
+            desc => $c->loc('Device model preference successfully deleted'),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => "failed to delete device model preference with id '".$c->stash->{preference_meta}->id."': $e",
+            desc => $c->loc('Failed to delete device model preference'),
+        );
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+}
+
 
 sub devices_preferences_edit :Chained('devices_preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
