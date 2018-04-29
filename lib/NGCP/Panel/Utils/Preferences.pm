@@ -412,9 +412,9 @@ sub create_preference_form {
     }
 
     if($posted && $form->validated) {
-       my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
-       my $attribute = $c->stash->{preference_meta}->attribute;
-       if ($attribute eq "allowed_ips") {
+        my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
+        my $attribute = $c->stash->{preference_meta}->attribute;
+        if ($attribute eq "allowed_ips") {
             unless(validate_ipnet($form->field($attribute))) {
                 goto OUT;
             }
