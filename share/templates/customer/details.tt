@@ -373,6 +373,9 @@ $(function() {
                                     </a>
                                         [% END -%]
                                     [% END -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_preferences_list", dev.identifier) %]">
+                                        <i class="icon-edit"></i> [% c.loc('Preferences') %]
+                                    </a>
                                 </div>
                             </td>
                         </tr>

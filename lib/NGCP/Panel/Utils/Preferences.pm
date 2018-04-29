@@ -412,9 +412,9 @@ sub create_preference_form {
     }
 
     if($posted && $form->validated) {
-       my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
-       my $attribute = $c->stash->{preference_meta}->attribute;
-       if ($attribute eq "allowed_ips") {
+        my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
+        my $attribute = $c->stash->{preference_meta}->attribute;
+        if ($attribute eq "allowed_ips") {
             unless(validate_ipnet($form->field($attribute))) {
                 goto OUT;
             }
@@ -920,6 +920,7 @@ sub get_preferences_rs {
         'dom'      => [qw/voip_dom_preferences dom_pref domain_id/],
         'prof'     => [qw/voip_prof_preferences prof_pref profile_id/],
         'peer'     => [qw/voip_peer_preferences peer_pref peer_host_id/],
+        'fielddev' => [qw/voip_fielddev_preferences dev_pref device_id/,{}],
         'dev'      => [qw/voip_dev_preferences dev_pref device_id/],
         'devprof'  => [qw/voip_devprof_preferences devprof_pref profile_id/],
         'contract' => [qw/voip_contract_preferences contract_pref contract_id/],
@@ -927,7 +928,8 @@ sub get_preferences_rs {
     );
     my $pref_rs = $schema->resultset($config{$preferences_type}->[0])->search({
             'attribute.'.$config{$preferences_type}->[1] => 1,
-            $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : ()  ,
+            $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : () ,
+            ref $config{$preferences_type}->[3] eq 'HASH' ? %{$config{$preferences_type}->[3]} : () ,
             $item_id ? ('me.'.$config{$preferences_type}->[2] => $item_id) : (),
         },{
             '+select' => ['attribute.attribute'],
