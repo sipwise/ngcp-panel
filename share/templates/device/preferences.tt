@@ -1,5 +1,6 @@
 [% site_config.title = c.loc('Device model "[_1]" for reseller #[_2] - Preferences', devmod.vendor _ " " _ devmod.model, devmod.reseller_id) -%]
 
+
 [%
     helper.messages = messages;
     
@@ -9,11 +10,17 @@
     helper.preference_values = preference_values;
     helper.pref_groups = pref_groups;
     helper.form = form;
+    helper.create_flag = create_flag;
+    helper.editmeta_flag = editmeta_flag;
     helper.base_uri = c.uri_for_action("/device/devices_preferences_root", [c.req.captures.0]);
  
     helper.top_buttons = [
         { name = c.loc('Back'), uri = c.uri_for(""), icon = 'icon-arrow-left' },
     ];
+    UNLESS c.user.read_only;
+    helper.top_buttons.push ( { name = c.loc('Create Custom Preference'), uri = c.uri_for_action('/device/devices_preferences_create', [c.req.captures.0]), icon = 'icon-star' } );
+    END;
+   
 
     PROCESS 'helpers/pref_table.tt';
 %]
