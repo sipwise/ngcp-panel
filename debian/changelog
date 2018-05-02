@@ -1,3 +1,31 @@
+ngcp-panel (6.2.1.1+0~mr6.2.1.1) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [76a6bdb] TT#35058 Apply write access checking for subscriberadin on subscribers API
+  * [2aea38d] TT#34567 Consider already destroyed Collection in FakeData destructor
+  * [95a8d9c] TT#34567 Add phonebook testing script
+  * [3c815a7] TT#34567 Fix incorrect DBIC find using
+  * [541f79e] TT#34567 Consider mandatory params in collection navigation links
+  * [64abace] TT#34567 Remove log4perl dependency from Test::Collection
+  * [305da2a] TT#35702 Fix broken cert files for test_machine from fake_data
+  * [366ae37] TT#35702 Fixed deprecated Catalyst::Plugin::Session config option "session"
+
+  [ Kirill Solomko ]
+  * [544ed61] TT#35426 get_fax(): fix fax data print into a closed filehandle
+
+  [ Rene Krenn ]
+  * [064a6f9] TT#34256 disable subscriberregistrations.t put2get
+
+  [ Alexander Lutay ]
+  * [8c1af38] TT#35502 Replace Requires= with Wants= for ngcp-panel.service
+
+  [ Guillem Jover ]
+  * [2590cad] TT#26264 Remove obsolete rc.d symlinks
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 02 May 2018 12:57:12 +0200
+
 ngcp-panel (6.2.1.0+0~mr6.2.1.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
