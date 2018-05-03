@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ab451fb_3c6291d9",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1138,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-03T08:23:24Z",
+      "side": 1,
+      "message": "just idea: what about putting a replace+pattern in the config (even per vendor name eventually), in case this ssl distinctive name string is different for other vendors..",
+      "revId": "59c81d4f8a8bd66ce851cc1c5a476b0f3301ec51",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
