@@ -1116,16 +1116,12 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $c->response->headers->remove_header('X-Catalyst');
     $c->response->headers->push_header('Last-Modified' => DateTime::Format::HTTP->format_datetime());
 
-    # this is going to be used if we want to do the cert check on the server,
-    # the format is like this:
-    # /C=US/ST=708105B37234/L=CBT153908BX/O=Cisco Systems, Inc./OU=cisco.com/CN=SPA-525G2, MAC: 708105B37234, Serial: CBT153908BX/emailAddress=linksys-certadmin@cisco.com
-    # however, we should do it on nginx, but we need a proper CA cert
-    # from cisco for checking the client cert?
     $c->log->debug("SSL_CLIENT_M_DN: " . ($c->request->env->{SSL_CLIENT_M_DN} // ""));
     unless(
         ($c->user_exists && ($c->user->roles eq "admin" || $c->user->roles eq "reseller")) ||
         defined $c->request->env->{SSL_CLIENT_M_DN}
     ) {
+        $c->log->notice("unauthenticated config access to id '$id' via ip " . $c->req->address);
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("403 - unauthenticated config access");
@@ -1175,6 +1171,28 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     } else {
         $ip = $c->req->address;
     }
+
+    # example DN format is:
+    # /C=US/ST=708105B37234/L=CBT153908BX/O=Cisco Systems, Inc./OU=cisco.com/CN=SPA-525G2, MAC: 708105B37234, Serial: CBT153908BX/emailAddress=linksys-certadmin@cisco.com
+    # if check is enabled, lowercase both DN and given MAC, strip colons and dashes from both, and try to
+    # find given MAC as substring in DN
+    if ($c->config->{security}->{autoprov_ssl_mac_check}) {
+        my $mac = lc($id);
+        my $dn = $c->request->env->{SSL_CLIENT_M_DN} // '';
+        $dn = lc($dn);
+        $dn =~ s/[:\-]//g;
+        if (index($dn, $id) == -1) {
+            $c->log->notice("unauthorized config access to id '$id' from dn '$dn' via ip '$ip'");
+            $c->response->content_type('text/plain');
+            if($c->config->{features}->{debug}) {
+                $c->response->body("403 - unauthorized config access");
+            } else {
+                $c->response->body("403 - forbidden");
+            }
+            $c->response->status(403);
+            return;
+        }
+    } 
 
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id
