@@ -16,6 +16,29 @@
       "revId": "59c81d4f8a8bd66ce851cc1c5a476b0f3301ec51",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ab451fb_dc9f2db3",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-03T08:33:19Z",
+      "side": 1,
+      "message": "I think this processing may be necessary for checking mac against SSL_CLIENT_M_DN",
+      "range": {
+        "startLine": 1173,
+        "startChar": 0,
+        "endLine": 1179,
+        "endChar": 19
+      },
+      "revId": "59c81d4f8a8bd66ce851cc1c5a476b0f3301ec51",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
