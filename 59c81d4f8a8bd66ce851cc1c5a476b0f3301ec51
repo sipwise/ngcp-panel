@@ -39,6 +39,30 @@
       "revId": "59c81d4f8a8bd66ce851cc1c5a476b0f3301ec51",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ab451fb_fccf89b1",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2018-05-03T09:34:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ab451fb_dc9f2db3",
+      "range": {
+        "startLine": 1173,
+        "startChar": 0,
+        "endLine": 1179,
+        "endChar": 19
+      },
+      "revId": "59c81d4f8a8bd66ce851cc1c5a476b0f3301ec51",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
