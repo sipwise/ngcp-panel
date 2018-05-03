@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3ab451fb_bcc901af",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1138,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2018-05-03T09:35:07Z",
+      "side": 1,
+      "message": "We could do that in the future, just trying to keep it simple for now.",
+      "parentUuid": "3ab451fb_3c6291d9",
+      "revId": "59c81d4f8a8bd66ce851cc1c5a476b0f3301ec51",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ab451fb_dc9f2db3",
         "filename": "lib/NGCP/Panel/Controller/Device.pm",
         "patchSetId": 2
