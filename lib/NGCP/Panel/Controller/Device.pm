@@ -1126,6 +1126,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         ($c->user_exists && ($c->user->roles eq "admin" || $c->user->roles eq "reseller")) ||
         defined $c->request->env->{SSL_CLIENT_M_DN}
     ) {
+        $c->log->notice("unauthenticated config access to id '$id' via ip " . $c->req->address);
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("403 - unauthenticated config access");
@@ -1135,6 +1136,23 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->status(403);
         return;
     }
+    if ($c->config->{security}->{autoprov_ssl_mac_check}) {
+        my $mac = lc($id);
+        $mac =~ s/[\s:\-]//g;
+        my $dn = $c->request->env->{SSL_CLIENT_M_DN} // '';
+        $dn = lc($dn);
+        if (index($dn, $id) == -1) {
+            $c->log->notice("unauthorized config access to id '$id' from dn '$dn' via ip " . $c->req->address);
+            $c->response->content_type('text/plain');
+            if($c->config->{features}->{debug}) {
+                $c->response->body("403 - unauthorized config access");
+            } else {
+                $c->response->body("403 - forbidden");
+            }
+            $c->response->status(403);
+            return;
+        }
+    } 
 
     unless($id) {
         $c->response->content_type('text/plain');
