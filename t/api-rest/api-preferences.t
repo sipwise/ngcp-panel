@@ -24,6 +24,7 @@ $fake_data->set_data_from_script({
             domain_id  =>  sub { return shift->get_id('domains',@_); },
             profile_id  =>  sub { return shift->get_id('subscriberprofiles',@_); },
             pbxdevice_id  =>  sub { return shift->get_id('pbxdevicemodels',@_); },
+            pbxfielddevice_id  =>  sub { return shift->get_id('pbxdevices',@_); },
             pbxdeviceprofile_id  =>  sub { return shift->get_id('pbxdeviceprofiles',@_); },
             emergencymappingcontainer_id  =>  sub { return shift->get_id('emergencymappingcontainers',@_); },
 

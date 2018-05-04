@@ -415,6 +415,13 @@ sub create_preference_form {
                       device_vendor   => $c->stash->{devprof}->{config_id},
                       device_model    => $c->stash->{devprof}->{name},
                     );
+    } elsif ($c->stash->{devprof}) {
+        %log_data = ( %log_data,
+                      type            => 'fielddev',
+                      device_id       => $c->stash->{pbx_device}->{id},
+                      device_vendor   => $c->stash->{pbx_device}->{profile_id},
+                      device_model    => $c->stash->{pbx_device}->{identifier},
+                    );
     }
 
     if($posted && $form->validated) {
@@ -928,7 +935,7 @@ sub get_preferences_rs {
         'peer'     => [qw/voip_peer_preferences peer_pref peer_host_id/],
         'dev'      => [qw/voip_dev_preferences dev_pref device_id/],
         'devprof'  => [qw/voip_devprof_preferences devprof_pref profile_id/],
-        'fielddev' => [qw/voip_fielddev_preferences dev_pref device_id/],
+        'fielddev' => [qw/voip_fielddev_preferences fielddev_pref device_id/],
         'contract' => [qw/voip_contract_preferences contract_pref contract_id/],
         'contract_location' => [qw/voip_contract_preferences contract_location_pref location_id/],
     );
@@ -1036,6 +1043,7 @@ sub get_peer_preference_rs {
             peer_host_id => $host->id,
         });
 }
+
 sub get_dev_preference_rs {
     my %params = @_;
 
@@ -1051,6 +1059,7 @@ sub get_dev_preference_rs {
            device_id => $device->id,
         });
 }
+
 sub get_devprof_preference_rs {
     my %params = @_;
 
@@ -1066,6 +1075,23 @@ sub get_devprof_preference_rs {
            profile_id => $profile->id,
         });
 }
+
+sub get_devprof_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $device = $params{device};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'fielddev_pref' => 1,
+        });
+    return unless($preference);
+    return $preference->voip_fielddev_preferences->search_rs({
+           device_id => $device->id,
+        });
+}
+
 sub get_contract_preference_rs {
     my %params = @_;
 
