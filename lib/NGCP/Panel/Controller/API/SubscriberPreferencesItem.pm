@@ -3,6 +3,8 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Preferences/;
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -11,15 +13,17 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
+
+__PACKAGE__->set_config({
+    allowed_roles => {
+        Default => [qw/admin reseller subscriberadmin subscriber/],
+        Journal => [qw/admin reseller subscriberadmin subscriber/],
+    }
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
-
-use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Preferences/;
 
 sub resource_name{
     return 'subscriberpreferences';
@@ -41,13 +45,6 @@ sub journal_query_params {
     my($self,$query_params) = @_;
     return $self->get_journal_query_params($query_params);
 }
-
-__PACKAGE__->set_config({
-    allowed_roles => {
-        Default => [qw/admin reseller subscriberadmin subscriber/],
-        Journal => [qw/admin reseller subscriberadmin subscriber/],
-    }
-});
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;

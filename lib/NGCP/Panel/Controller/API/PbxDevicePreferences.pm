@@ -10,8 +10,16 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller/],
+});
+
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
+}
+
+sub item_name{
+    return 'pbxdevicepreference';
 }
 
 sub api_description {
@@ -27,18 +35,6 @@ sub resource_name{
 sub container_resource_type{
     return 'pbxdevicemodels';
 }
-
-sub dispatch_path{
-    return '/api/pbxdevicepreferences/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicepreferences';
-}
-
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller/],
-});
 
 sub GET :Allow {
     my ($self, $c) = @_;
@@ -65,7 +61,6 @@ sub GET :Allow {
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             $self->collection_nav_links($c, $page, $rows, $total_count, $c->request->path, $c->request->query_params);
-
         my $hal = Data::HAL->new(
             embedded => [@embedded],
             links => [@links],
@@ -81,7 +76,6 @@ sub GET :Allow {
     }
     return;
 }
-
 1;
 
 # vim: set tabstop=4 expandtab:
