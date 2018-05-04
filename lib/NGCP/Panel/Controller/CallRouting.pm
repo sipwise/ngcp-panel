@@ -89,7 +89,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
         $data->{caller_peer_host} = $data->{caller_peer}->voip_peer_hosts->first;
     } else {
         my $caller_uri = $data->{caller_domain}
-                            ? $data->{caller}.'@'.$data->{caller_domain}
+                            ? 'sip:'.$data->{caller}.'@'.$data->{caller_domain}
                             : $data->{caller};
         push @log, sprintf "no caller subscriber/peer was specified, using subscriber lookup based on caller %s",
             $caller_uri;
@@ -101,7 +101,7 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
     }
     if ($data->{caller_subscriber}) {
         $data->{caller_subscriber_id} = $data->{caller_subscriber}->id;
-        my $caller_uri = sprintf '%s@%s',
+        my $caller_uri = sprintf 'sip:%s@%s',
             $data->{caller_subscriber}->username,
             $data->{caller_subscriber}->domain->domain;
         $data->{caller_domain} = $data->{caller_subscriber}->domain->domain;
@@ -329,9 +329,11 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                         $sub, $data->{callee_subscriber_id};
         } else {
             foreach my $type (qw(caller callee)) {
-                $data->{$type.'_uri'} = $data->{$type.'_in'};
+                $data->{$type.'_uri'} = 'sip:'.$data->{$type.'_in'};
                 if ($data->{$type.'_domain'}) {
                     $data->{$type.'_uri'} .= '@' . $data->{$type.'_domain'};
+                } elsif ($type eq 'callee' && $data->{caller_domain}) {
+                    $data->{$type.'_uri'} .= '@' . $data->{caller_domain};
                 }
             }
             push @log,
