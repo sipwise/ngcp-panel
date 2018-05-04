@@ -32,6 +32,10 @@ sub resource_name{
     return 'peeringserverpreferences';
 }
 
+sub preference_resource_type{
+    return 'peerings';
+}
+
 sub dispatch_path{
     return '/api/peeringserverpreferences/';
 }

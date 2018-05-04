@@ -24,6 +24,14 @@ sub resource_name{
     return 'pbxdeviceprofilepreferences';
 }
 
+sub item_name{
+    return 'pbxdeviceprofilepreference';
+}
+
+sub preference_resource_type{
+    return 'pbxdeviceprofiles';
+}
+
 sub dispatch_path{
     return '/api/pbxdeviceprofilepreferences/';
 }

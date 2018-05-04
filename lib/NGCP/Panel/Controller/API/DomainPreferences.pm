@@ -41,6 +41,10 @@ sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-domainpreferences';
 }
 
+sub preference_resource_type{
+    return 'domains';
+}
+
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
 });
