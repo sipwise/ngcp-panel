@@ -25,6 +25,10 @@ sub resource_name{
     return 'subscriberpreferences';
 }
 
+sub container_resource_type{
+    return 'subscribers';
+}
+
 sub dispatch_path{
     return '/api/subscriberpreferences/';
 }

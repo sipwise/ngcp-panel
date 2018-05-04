@@ -24,6 +24,10 @@ sub resource_name{
     return 'profilepreferences';
 }
 
+sub container_resource_type{
+    return 'profiles';
+}
+
 sub dispatch_path{
     return '/api/profilepreferences/';
 }

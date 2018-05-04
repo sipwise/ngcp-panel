@@ -22,8 +22,9 @@ sub get_form {
 }
 
 sub hal_from_item {
-    my ($self, $c, $item, $type) = @_;
+    my ($self, $c, $item) = @_;
 
+    my $type = $self->container_resource_type;
     my $print_type = $type;
     $print_type = "customers" if $print_type eq "contracts";
     my $hal = Data::HAL->new(
@@ -58,7 +59,9 @@ sub _check_profile {
 }
 
 sub get_resource {
-    my ($self, $c, $item, $type) = @_;
+    my ($self, $c, $item) = @_;
+
+    my $type = $self->container_resource_type;
 
     my $prefs;
     my %profile_attrs = (); # for filtering profiles based list
@@ -271,8 +274,9 @@ sub get_resource {
 }
 
 sub _item_rs {
-    my ($self, $c, $type) = @_;
+    my ($self, $c) = @_;
     my $item_rs;
+    my $type = $self->container_resource_type;
 
     if($type eq "domains") {
         # we actually return the domain rs here, as we can easily
@@ -377,13 +381,6 @@ sub _item_rs {
     return $item_rs;
 }
 
-sub item_by_id {
-    my ($self, $c, $id, $type) = @_;
-
-    my $item_rs = $self->item_rs($c, $type);
-    return $item_rs->find($id);
-}
-
 sub get_preference_rs {
     my ($self, $c, $type, $elem, $attr) = @_;
 
@@ -437,7 +434,10 @@ sub get_preference_rs {
 }
 
 sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $replace, $type) = @_;
+    my ($self, $c, $item, $old_resource, $resource) = @_;
+
+    my $type = $self->container_resource_type;
+    my $replace = uc($c->request->method) eq 'PUT';
 
     delete $resource->{id};
     my $accessor;
