@@ -66,6 +66,10 @@ sub resource_name{
     return 'subscriberpreferences';
 }
 
+sub preference_resource_type{
+    return 'subscribers';
+}
+
 sub dispatch_path{
     return '/api/subscriberpreferences/';
 }
