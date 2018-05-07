@@ -1,3 +1,12 @@
+ngcp-panel (6.2.1.2+0~mr6.2.1.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [7cfa313] TT#33369 remove check for LI number in 3306 db (again)
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 07 May 2018 16:04:55 +0200
+
 ngcp-panel (6.2.1.1+0~mr6.2.1.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
