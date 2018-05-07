@@ -32,6 +32,10 @@ sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-customerpreferences';
 }
 
+sub container_resource_type{
+    return 'contracts';
+}
+
 sub journal_query_params {
     my($self,$query_params) = @_;
     return $self->get_journal_query_params($query_params);

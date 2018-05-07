@@ -24,6 +24,10 @@ sub resource_name{
     return 'domainpreferences';
 }
 
+sub container_resource_type{
+    return 'domains';
+}
+
 sub dispatch_path{
     return '/api/domainpreferences/';
 }
