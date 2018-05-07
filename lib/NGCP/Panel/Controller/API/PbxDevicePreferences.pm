@@ -24,6 +24,10 @@ sub resource_name{
     return 'pbxdevicepreferences';
 }
 
+sub container_resource_type{
+    return 'pbxdevicemodels';
+}
+
 sub dispatch_path{
     return '/api/pbxdevicepreferences/';
 }
