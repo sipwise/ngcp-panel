@@ -1778,6 +1778,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         description => $c->loc('PBX Device'),
     );
 }
+
 sub pbx_device_lines_update :Private{
     my($self, $c, $schema, $fdev, $lines) = @_;
     my $err = 0;
@@ -1812,6 +1813,7 @@ sub pbx_device_lines_update :Private{
     }
     return $err;
 }
+
 sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
@@ -1987,6 +1989,103 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
         autoprov_method => $sync_method,
         autoprov_params => \@sync_params,
     );
+}
+
+sub pbx_device_preferences_list :Chained('pbx_device_base') :PathPart('preferences') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+    my $fdev = $c->stash->{pbx_device};
+    my $devmod = $fdev->profile->config->device;
+    $c->stash->{devmod} = $devmod;
+    my $dev_pref_rs = NGCP::Panel::Utils::Preferences::get_preferences_rs(
+        c => $c,
+        type => 'fielddev',
+        id => $fdev->id,
+    );
+
+    my $pref_values = get_inflated_columns_all($dev_pref_rs,'hash' => 'attribute', 'column' => 'value', 'force_array' => 1);
+
+    NGCP::Panel::Utils::Preferences::load_preference_list(
+        c => $c,
+        pref_values => $pref_values,
+        fielddev_pref => 1,
+        search_conditions => [{
+            'attribute' =>
+                [ -or =>
+                    { 'like' => 'vnd_'.lc($devmod->vendor).'%' },
+                    {'-not_like' => 'vnd_%' },
+                ],
+            #relation type is defined by preference flag dev_pref, 
+            #so here we select only linked to the current model, or not linked to any model at all
+            '-or' => ['voip_preference_relations.autoprov_device_id' => $devmod->id,
+                    'voip_preference_relations.autoprov_device_id' => undef
+                ],
+            },{
+                join => {'voip_preferences' => 'voip_preference_relations'},
+            }
+        ]
+    );
+
+    $c->stash(template => 'customer/pbx_fdev_preferences.tt');
+    return;
+}
+
+sub pbx_device_preferences_root :Chained('pbx_device_preferences_list') :PathPart('') :Args(0) {
+    return;
+}
+
+sub pbx_device_preferences_base :Chained('pbx_device_preferences_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $pref_id) = @_;
+
+    $c->stash->{preference_meta} = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->search({
+            -or => ['voip_preferences_enums.fielddev_pref' => 1,
+                'voip_preferences_enums.fielddev_pref' => undef],
+        },{
+            prefetch => 'voip_preferences_enums',
+        })
+        ->find({id => $pref_id});
+
+    $c->stash->{preference} = $c->model('DB')
+        ->resultset('voip_fielddev_preferences')
+        ->search({
+            'attribute_id' => $pref_id,
+            'device_id'    => $c->stash->{pbx_device}->id,
+        });
+    return;
+}
+
+sub pbx_device_preferences_edit :Chained('pbx_device_preferences_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(edit_preference => 1);
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->all;
+
+    my $pref_rs = $c->stash->{pbx_device}->voip_fielddev_preferences->search_rs({
+            'attribute' =>
+                [ -or =>
+                    { 'like' => 'vnd_'.lc($c->stash->{devmod}->vendor).'%' },
+                    {'-not_like' => 'vnd_%' },
+                ],
+            #relation type is defined by preference flag dev_pref, 
+            #so here we select only linked to the current model, or not linked to any model at all
+            '-or' => ['voip_preference_relations.autoprov_device_id' => $c->stash->{devmod}->id,
+                    'voip_preference_relations.autoprov_device_id' => undef
+                ],
+            },{
+                join => {'attribute' => 'voip_preference_relations'},
+            });
+    NGCP::Panel::Utils::Preferences::create_preference_form(
+        c => $c,
+        pref_rs => $pref_rs,
+        enums   => \@enums,
+        base_uri => $c->uri_for_action('/customer/pbx_device_preferences_root', [@{ $c->req->captures }[0,1]] ),
+        edit_uri => $c->uri_for_action('/customer/pbx_device_preferences_edit', $c->req->captures ),
+    );
+    return;
 }
 
 sub location_ajax :Chained('base') :PathPart('location/ajax') :Args(0) {
