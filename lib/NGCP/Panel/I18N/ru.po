@@ -3777,6 +3777,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"If set and a CF to an outbound number is configured on the subscriber, the "
+"selection of the outbound peer is done using the forwarder as caller number."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "If set to a number, any outbound calls which are blocked due to outbound "
 "block lists or NCOS levels are diverted to the given number."
 msgstr ""
@@ -5326,6 +5332,10 @@ msgstr ""
 msgid "Peer registration error"
 msgstr "Ошибка регистрации SIP Транка"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peer selection based on forwarder number"
+msgstr ""
+
 #: share/templates/widgets/admin_billing_overview.tt
 msgid "Peering Costs"
 msgstr "Стоимость SIP Транка"
@@ -5521,7 +5531,7 @@ msgstr "Настройки"
 msgid "Prefix"
 msgstr ""
 
-#: share/templates/customer/details.tt
+#: lib/NGCP/Panel/Utils/Billing.pm share/templates/customer/details.tt
 msgid "Prepaid"
 msgstr "Предоплата"
 
