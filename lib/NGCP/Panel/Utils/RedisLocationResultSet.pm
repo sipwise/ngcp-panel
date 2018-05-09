@@ -97,6 +97,10 @@ sub search {
             push @{ $new_rs->_rows },
                 @{ $new_rs->_rows_from_mapkey("location:usrdom::" .
                     $filter->{username} . ":" . $filter->{domain}, $filter) };
+        } elsif ($filter->{username}) {
+            push @{ $new_rs->_rows },
+                @{ $new_rs->_rows_from_mapkey("location:usrdom::" .
+                    $filter->{username}, $filter) };
         } else {
             $new_rs->_scan($filter);
         }
