@@ -23,9 +23,7 @@ $(document).ready(function() {
 });
 </script>
 
-[% site_config.title = c.loc('Call Routing Verification');
-   form = translate_form(form);
--%]
+[% site_config.title = c.loc('Call Routing Verification'); -%]
 
 <div class="row">
     <span>

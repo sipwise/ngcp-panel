@@ -58,7 +58,7 @@ has_field 'source.source' => (
     wrapper_class => [qw/hfh-rep-field/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['The calling party number in E164 format to match. Shell patterns like 431* or 49123~~~[1-5~~~]67 are possible. ' .
+        title => ['The calling party number in E164 format to match. Shell patterns like 431* or 49123~[1-5~]67 are possible. ' .
             'Use &quot;anonymous&quot; to match suppressed numbers.'],
     },
 );

@@ -10,6 +10,7 @@ use Scalar::Util qw(blessed);
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Statistics qw();
 use NGCP::Panel::Utils::Admin;
+use NGCP::Panel::Form qw();
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
@@ -38,6 +39,8 @@ sub auto :Private {
             $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
             $c->log->debug("Setting language to ". $c->request->params->{lang});
         }
+        # clear form cache (they need to be properly re-translated)
+        NGCP::Panel::Form::clear_form_cache();
     }
     if (defined $c->session->{lang}) {
         $c->languages([$c->session->{lang}, "i-default"]);

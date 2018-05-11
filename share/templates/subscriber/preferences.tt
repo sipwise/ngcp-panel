@@ -866,7 +866,7 @@ $( document ).ready(function() {
 [% IF cf_form.has_for_js -%]
 [% cf_form.render_repeatable_js %]
 [% END -%]
-[% translate_form(cf_form).render %]
+[% cf_form.render %]
 
 [%
     modal_footer();
@@ -1033,7 +1033,7 @@ $( document ).ready(function() {
     [% IF ccmap_form.has_for_js -%]
     [% ccmap_form.render_repeatable_js %]
     [% END -%]
-    [% translate_form(ccmap_form).render %]
+    [% ccmap_form.render %]
 
 [%
     modal_footer();
