@@ -24,6 +24,7 @@ $fake_data->set_data_from_script({
             domain_id  =>  sub { return shift->get_id('domains',@_); },
             profile_id  =>  sub { return shift->get_id('subscriberprofiles',@_); },
             pbxdevice_id  =>  sub { return shift->get_id('pbxdevicemodels',@_); },
+            pbxfielddevice_id  =>  sub { return shift->get_id('pbxdevices',@_); },
             pbxdeviceprofile_id  =>  sub { return shift->get_id('pbxdeviceprofiles',@_); },
             emergencymappingcontainer_id  =>  sub { return shift->get_id('emergencymappingcontainers',@_); },
 
@@ -38,7 +39,7 @@ $fake_data->set_data_from_script({
 $test_machine->DATA_ITEM_STORE($fake_data->process('preferences'));
 $test_machine->form_data_item( );
 
-my @apis = qw/subscriber domain peeringserver customer profile pbxdevice pbxdeviceprofile/;
+my @apis = qw/subscriber domain peeringserver customer profile pbxdevice pbxfielddevice pbxdeviceprofile/;
 #my @apis = qw/pbxdevice/;
 
 foreach my $api (@apis){
