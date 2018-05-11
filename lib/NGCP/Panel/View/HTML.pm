@@ -17,13 +17,7 @@ __PACKAGE__->config(
             URI::Escape::uri_unescape(@_);
         },
     },
-    expose_methods => [qw/translate_form/],
 );
-
-sub translate_form {
-    my $self = shift;
-    NGCP::Panel::Utils::I18N->translate_form(@_);
-}
 
 =head1 NAME
 

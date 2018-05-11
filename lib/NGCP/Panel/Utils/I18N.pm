@@ -1,9 +1,20 @@
 package NGCP::Panel::Utils::I18N;
 
 use Sipwise::Base;
+# use Scalar::Util qw/weaken/;
+
+# my $_translated_forms = {};
 
 sub translate_form {
     my ($self, $c, $form, $extract_strings) = @_;
+    # my $weak_form = \$form;
+    # weaken ( $weak_form );
+    # if ($_translated_forms->{$weak_form}) {  # only call the translation once
+    #     use DDP use_prototypes=>0; p "DEBUG!!!! ALREADY TRANSLATED";
+    #     return $form;
+    # } else {
+    #     $_translated_forms->{$weak_form} = 1;
+    # }
     if ($extract_strings) {
         return $self->_translate_fields_recursive($c, [$form->fields], $extract_strings);
     }

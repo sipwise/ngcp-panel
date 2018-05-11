@@ -81,7 +81,7 @@
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
                  m.name = edit_default_flag ? c.loc('Default Files') : file_result.handle.name );
-    translate_form(form).render;
+    form.render;
     modal_footer();
     END;
 -%]
