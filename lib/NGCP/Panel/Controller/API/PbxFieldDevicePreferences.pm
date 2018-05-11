@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::PbxDevicePreferences;
+package NGCP::Panel::Controller::API::PbxFieldDevicePreferences;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
@@ -14,20 +14,21 @@ sub allowed_methods{
 }
 
 sub item_name{
-    return 'pbxdevicepreference';
+    return 'pbxfielddevicepreference';
 }
 
 sub resource_name{
-    return 'pbxdevicepreferences';
+    return 'pbxfielddevicepreferences';
 }
 
 sub container_resource_type{
-    return 'pbxdevicemodels';
+    return 'pbxdevices';
 }
 
 sub api_description {
-    return 'Specifies certain properties (preferences) for a <a href="#pbxdevicemodels">PBX Device Models</a>. The full list of properties can be obtained via <a href="/api/pbxdevicepreferencedefs/">PbxDevicePreferenceDefs</a>.';
+    return 'Specifies certain properties (preferences) for a <a href="#pbxdevices">PBX Deployed Devices</a>. The full list of properties can be obtained via <a href="/api/pbxfielddevicepreferencedefs/">PbxFieldDevicePreferenceDefs</a>.';
 };
+
 1;
 
 # vim: set tabstop=4 expandtab:
