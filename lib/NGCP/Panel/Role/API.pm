@@ -306,11 +306,13 @@ sub validate_fields {
 
         if (defined $resource->{$k} &&
                 $fields->{$k}->$_isa('HTML::FormHandler::Field::Repeatable') &&
-                "ARRAY" eq ref $resource->{$k} ) {
-            for my $elem (@{ $resource->{$k} }) {
-                my ($subfield_instance) = $fields->{$k}->fields;
+                "ARRAY" eq ref $resource->{$k}) {
+            my ($subfield_instance) = $fields->{$k}->fields;
+            if ($subfield_instance) {
                 my %subfields = map { $_->name => $_ } $subfield_instance->fields;
-                $self->validate_fields($c, $elem, \%subfields, $run);
+                for my $elem (@{ $resource->{$k} }) {
+                    $self->validate_fields($c, $elem, \%subfields, $run);
+                }
             }
         }
 
