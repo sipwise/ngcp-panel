@@ -314,7 +314,6 @@ $(document).ready(function() {
                  m.duplicate_flag=helper.duplicate_flag,
                  m.edit_flag=helper.edit_flag,
                  m.name = helper.name);
-        helper.form_object = translate_form( helper.form_object );
         helper.form_object.render;
     modal_footer();
     modal_script(m.close_target = helper.close_target);
