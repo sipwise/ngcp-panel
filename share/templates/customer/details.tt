@@ -771,7 +771,7 @@ $(function() {
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag = create_flag,
                  m.name = description.defined ? description : c.loc("Subscriber"));
-    translate_form(form).render;
+    form.render;
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]
@@ -784,7 +784,7 @@ $(function() {
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
                  m.name = c.loc("Settings"));
-    translate_form(form).render;
+    form.render;
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]
@@ -793,7 +793,7 @@ $(function() {
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0, m.edit_flag=0,
                  m.name = c.loc("Deployed Device"));
-    translate_form(form).render;
+    form.render;
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]

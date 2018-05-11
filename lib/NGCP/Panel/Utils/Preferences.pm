@@ -5,6 +5,7 @@ use Sipwise::Base;
 use Data::Validate::IP qw/is_ipv4 is_ipv6/;
 use NGCP::Panel::Form::Preferences;
 use NGCP::Panel::Utils::Generic qw(:all);
+use NGCP::Panel::Utils::I18N qw//;
 use NGCP::Panel::Utils::Sems;
 
 use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
@@ -354,6 +355,10 @@ sub create_preference_form {
         }],
     });
     $form->create_structure([$c->stash->{preference_meta}->attribute]);
+    # we have to translate this form separately since it bypasses caching in NGCP::Panel::Form
+    if ( $c->stash->{preference_meta}->attribute !~ '(ncos|sound_set|emergency_mapping_container)$' ) {
+        NGCP::Panel::Utils::I18N->translate_form($c, $form);
+    }
 
     my $posted = ($c->request->method eq 'POST');
     $form->process(

@@ -33,7 +33,7 @@ $(document).ready(function() {
     modal_header(m.create_flag=0,
                  m.name = c.loc("Peering Overview Columns"));
 
-    helper.form = translate_form(form);
+    helper.form = form;
 -%]
 
 

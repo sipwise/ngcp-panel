@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 use Module::Load::Conditional qw/can_load/;
+use NGCP::Panel::Utils::I18N qw//;
 
 my %forms = ();
 
@@ -22,8 +23,15 @@ sub get {
             return;
         }
         $form = $forms{$name} = $name->new(ctx => $c);
+        # translate form here to prevent multiple translations which leads to errors and doesn't work since the
+        # source IDs (english) are no longer present
+        NGCP::Panel::Utils::I18N->translate_form($c, $form);
     }
     return $form;
+}
+
+sub clear_form_cache {
+    %forms = ();
 }
 
 1;
