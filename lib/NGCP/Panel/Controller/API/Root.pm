@@ -62,6 +62,7 @@ sub GET : Allow {
         "PeeringServerPreferenceDefs" => 1,
         "PbxDevicePreferenceDefs" => 1,
         "PbxDeviceProfilePreferenceDefs" => 1,
+        "PbxFieldDevicePreferenceDefs" => 1,
         "MetaConfigDefs" => 1,
     };
 
