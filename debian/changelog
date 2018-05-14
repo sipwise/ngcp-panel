@@ -1,3 +1,30 @@
+ngcp-panel (6.1.2.1+0~mr6.1.2.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [72bae10] TT#33356 Rewrite rule validation checks for ambiguous non-char escapes
+  * [90b4da0] TT#33871 use a correct rs call in mailtofaxsettings
+  * [e778d3a] TT#35426 get_fax(): fix fax data print into a closed filehandle
+  * [160dfeb] TT#36061 CallRouting: fix peer selection
+  * [4762f54] TT#35714 use collection_nav_links in all API controllers
+  * [8177a4c] TT#35714 fix collection_nav_links object name
+
+  [ Irina Peshinskaya ]
+  * [4947a4e] TT#32203 Fix voicemailgreetings filters
+  * [0733438] TT#33354 Show device image buttons only if exists
+  * [07395ed] TT#32108 Fix "around" method parameters
+  * [f90d281] TT#31195 Use field specific validation to keep form validation
+  * [6898c6d] TT#35607 Consider no_count query parameter and infinite next link
+  * [47ce037] TT#35607 Fix tests. Consider possible empty last page
+
+  [ Rene Krenn ]
+  * [01a76d8] TT#33369 remove check for LI number in 3306 db (again)
+  * [2b3464d] TT#32910 TT#33037 initial cash_balance, free_time_balance
+  * [b7e82fd] TT#35662 move product_id to billing.contracts
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 May 2018 23:03:38 +0200
+
 ngcp-panel (6.1.2.0+0~mr6.1.2.0) unstable; urgency=medium
 
   * New release.
