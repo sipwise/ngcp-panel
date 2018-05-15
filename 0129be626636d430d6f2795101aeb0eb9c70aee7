@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_fa5f8973",
+        "filename": "lib/NGCP/Panel/Controller/API/PbxDevicePreferences.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-05-15T07:38:33Z",
+      "side": 1,
+      "message": "offtopic: if we used a more generic format here, we could also reasonably make use of these links in the swagger documentation",
+      "range": {
+        "startLine": 30,
+        "startChar": 61,
+        "endLine": 30,
+        "endChar": 88
+      },
+      "revId": "0129be626636d430d6f2795101aeb0eb9c70aee7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
