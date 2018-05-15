@@ -16,6 +16,24 @@
       "revId": "a66b1aa438fd7930674cb4419d946980a3cce929",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_3de73b42",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-15T11:28:34Z",
+      "side": 1,
+      "message": "And actually it doesn\u0027t help here \nhttps://jenkins.mgm.sipwise.com/job/ngcp-panel-tap-test/5465/tapResults/\n\nso I will remove the file from review.",
+      "parentUuid": "fabf19d9_1d8d977b",
+      "revId": "a66b1aa438fd7930674cb4419d946980a3cce929",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
