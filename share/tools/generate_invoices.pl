@@ -689,7 +689,11 @@ exit;
 __END__
 
 
-=head1 generate_invoices.pl
+=head1 NAME
+
+generate_invoices.pl
+
+=head1 DESCRIPTION
 
 Script to generate invoices and/or send them via email to customers.
 location: /usr/share/ngcp-panel/tools/generate_invoices.pl
@@ -774,7 +778,7 @@ Prints the manual page and exits.
 
 =back
 
-=head1 SAMPLES
+=head1 SYNOPSIS
 
 =over 4
 
@@ -805,5 +809,14 @@ perl /usr/share/ngcp-panel/tools/generate_invoices.pl --sendonly --prevmonth
 =head1 DESCRIPTION
 
 B<generate_invoices.pl> Script to generate invoices and/or send them via email to customers..
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut

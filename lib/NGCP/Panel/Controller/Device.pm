@@ -2078,7 +2078,27 @@ sub profile_preferences_edit :Chained('profile_preferences_base') :PathPart('edi
     return;
 }
 
-
 1;
+
+__END__
+
+=head1 NAME
+
+NGCP::Panel::Controller::Device
+
+=head1 DESCRIPTION
+
+A helper to manipulate devices data
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
 
 # vim: set tabstop=4 expandtab:
