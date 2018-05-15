@@ -12,3 +12,5 @@ sub deserialize {
     my ($self, $sereal) = @_;
     return Sereal::Decoder::decode_sereal($sereal);
 }
+
+1;

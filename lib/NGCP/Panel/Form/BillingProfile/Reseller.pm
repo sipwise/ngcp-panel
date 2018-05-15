@@ -226,5 +226,6 @@ sub validate {
 
 }
 
-1
+1;
+
 # vim: set tabstop=4 expandtab:

@@ -98,8 +98,10 @@ sub uri_deflate {
 }
 
 no Moose;
-1;
+
 __PACKAGE__->meta->make_immutable;
 use namespace::autoclean
+
+1;
 
 # vim: set tabstop=4 expandtab:

@@ -43,4 +43,6 @@ sub get_item_binary_data{
     return \$item->recording, 'audio/x-wav', 'voicemail_'. NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_type( dir => $item->dir ).'_'.$item->get_column('subscriber_id').'.wav',
 }
 
+1;
+
 # vim: set tabstop=4 expandtab:
