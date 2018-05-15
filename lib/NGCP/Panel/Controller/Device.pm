@@ -1297,6 +1297,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         };
         foreach my $line($linerange->autoprov_field_device_lines->search({ device_id => $dev->id })->all) {
             my $sub = $line->provisioning_voip_subscriber;
+
             my %sub_preferences_vars = (
                 display_name               => $sub->username,
                 enable_t38                 => 0,
@@ -1343,19 +1344,59 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         }
         push @{ $vars->{phone}->{lineranges} }, $range;
     }
-    my $pref_rs_model = NGCP::Panel::Utils::Preferences::get_preferences_rs(
-        c => $c,
-        id => $model->id,
-        type => 'dev',
-    );
-    my $pref_rs_profile = NGCP::Panel::Utils::Preferences::get_preferences_rs(
-        c => $c,
-        id => $dev->profile->id,
-        type => 'devprof',
-    );
+    my $preferences_device;
+    my $preferences_device_dynamic;
+    my $preferences_id = {
+        'fielddev' => $dev->id,
+        'dev'      => $model->id,
+        'devprof'  => $dev->profile->id,
+    };
+    foreach my $type (keys %$preferences_id) {
+        my $pref_rs = NGCP::Panel::Utils::Preferences::get_preferences_rs(
+            c => $c,
+            id => $preferences_id->{$type},
+            type => $type,
+        );
+        my $pref_rs_dynamic = $pref_rs->search_rs({
+                    'attribute.dynamic' => 1,
+                }, {
+                '+select' => [\'replace(attribute.attribute,"__","")' ],
+                '+as' => ['attribute_normalized'],
+        });
+        $preferences_device_dynamic->{$type} = get_inflated_columns_all($pref_rs_dynamic, 
+            'hash' => 'attribute_normalized', 
+            'column' => 'value' 
+        );
+        if ($type ne 'fielddev') {
+            my $pref_rs_static = $pref_rs->search_rs({
+                'attribute.dynamic' => 0,
+            });
+            $preferences_device->{$type} = get_inflated_columns_all($pref_rs_static, 
+                'hash' => 'attribute', 
+                'column' => 'value' 
+            );
+        }
+    }
     my %preferences_device = (
-        'model' => get_inflated_columns_all($pref_rs_model, c => $c, 'hash' => 'attribute', 'column' => 'value' ),
-        'profile' => get_inflated_columns_all($pref_rs_profile, c => $c, 'hash' => 'attribute', 'column' => 'value' ),
+        'model'    => $preferences_device->{dev},
+        'profile'  => $preferences_device->{devprof},
+        'persistent'   => {
+            'model'    => {%$preferences_device->{dev}},
+            'profile'  => {%$preferences_device->{devprof}},
+            'device'   => $preferences_device->{fielddev},
+        },
+        'dynamic'   => {
+            'model'    => $preferences_device_dynamic->{dev},
+            'profile'  => $preferences_device_dynamic->{devprof},
+            'device'   => $preferences_device_dynamic->{fielddev},
+        },
+        'device' => {
+            %{$preferences_device->{dev}},
+            %{$preferences_device_dynamic->{dev}},
+            %{$preferences_device->{devprof}},
+            %{$preferences_device_dynamic->{devprof}},
+            %{$preferences_device_dynamic->{fielddev}},
+        }
     );
     $vars->{preferences} //= {};
     $vars->{preferences}->{device} = \%preferences_device;
