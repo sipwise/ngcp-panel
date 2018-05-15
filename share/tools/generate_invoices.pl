@@ -689,7 +689,11 @@ exit;
 __END__
 
 
-=head1 generate_invoices.pl
+=head1 NAME
+
+generate_invoices.pl
+
+=head1 DESCRIPTION
 
 Script to generate invoices and/or send them via email to customers.
 location: /usr/share/ngcp-panel/tools/generate_invoices.pl
@@ -774,7 +778,7 @@ Prints the manual page and exits.
 
 =back
 
-=head1 SAMPLES
+=head1 SYNOPSIS
 
 =over 4
 

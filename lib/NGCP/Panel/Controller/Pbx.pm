@@ -470,4 +470,26 @@ sub add_phonebook_entries {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+NGCP::Panel::Controller::Pbx
+
+=head1 DESCRIPTION
+
+A controller to manipulate the PBX data
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
 # vim: set tabstop=4 expandtab:

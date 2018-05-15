@@ -158,8 +158,27 @@ sub DELETE :Allow {
 }
 =cut
 
-
-
 1;
+
+__END__
+
+=head1 NAME
+
+NGCP::Panel::Controller::API::PbxDeviceProfilesItem
+
+=head1 DESCRIPTION
+
+A helper to manipulate the PBX device profiles via API
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
 
 # vim: set tabstop=4 expandtab:

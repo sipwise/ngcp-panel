@@ -198,6 +198,14 @@ sub csv :Chained('list') :PathPart('csv') :Args(0) {
 
 __END__
 
+=head1 NAME
+
+NGCP::Panel::Controller::PeeringOverview
+
+=head1 DESCRIPTION
+
+A controller to manipulate the peering overview
+
 =head1 AUTHOR
 
 Kirill Solomko <ksolomko@sipwise.com>

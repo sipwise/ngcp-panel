@@ -23,4 +23,28 @@ has_field 'create' => (
 =cut
 
 no Moose;
+
 1;
+
+__END__
+
+=head1 NAME
+
+NGCP::Panel::Field::SubscriberProfile
+
+=head1 DESCRIPTION
+
+A helper to manipulate the subscriber profile fields
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
+# vim: set tabstop=4 expandtab:

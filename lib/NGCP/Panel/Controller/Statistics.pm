@@ -152,6 +152,14 @@ sub supportstatus :Chained('/') :PathPart('statistics/supportstatus') :Args() {
 
 __END__
 
+=head1 NAME
+
+NGCP::Panel::Controller::Statistics
+
+=head1 DESCRIPTION
+
+A controller to manipulate the statistics data
+
 =head1 AUTHOR
 
 Andreas Granig,,,

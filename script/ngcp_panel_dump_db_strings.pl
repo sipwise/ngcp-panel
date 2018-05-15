@@ -112,7 +112,7 @@ Dump Strings from database to a dummy module, for localisation.
 
 Gerhard Jungwirth C<< <gjungwirth@sipwise.com> >>
 
-=head1 COPYRIGHT
+=head1 LICENSE
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.

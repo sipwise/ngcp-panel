@@ -316,9 +316,11 @@ L<https://github.com/neilbowers/perl-deep-hash-utils>
 
 Chris Becker, E<lt>clbecker@gmail.com<gt>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 COPYRIGHT
 
 Copyright (C) 2009 by Chris Becker
+
+=head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.5 or,

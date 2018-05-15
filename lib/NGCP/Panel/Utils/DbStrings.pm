@@ -687,6 +687,20 @@ sub form_strings {
 
 1;
 
+__END__
+
+=head1 NAME
+
+NGCP::Panel::Utils::Phonebook
+
+=head1 DESCRIPTION
+
+A helper to manipulate the phonebook data
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
 =head1 LICENSE
 
 This library is free software. You can redistribute it and/or modify
