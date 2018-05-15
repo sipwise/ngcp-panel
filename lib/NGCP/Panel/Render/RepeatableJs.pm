@@ -185,9 +185,11 @@ HTML::FormHandler::Render::RepeatableJs
 
 FormHandler Contributors - see HTML::FormHandler
 
-=head1 COPYRIGHT AND LICENSE
+=head1 COPYRIGHT
 
 This software is copyright (c) 2013 by Gerda Shank.
+
+=head1 LICENSE
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

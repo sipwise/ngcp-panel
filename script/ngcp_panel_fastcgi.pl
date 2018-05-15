@@ -39,11 +39,11 @@ ngcp_panel_fastcgi.pl [options]
 
 Run a Catalyst application as fastcgi.
 
-=head1 AUTHORS
+=head1 AUTHOR
 
 Catalyst Contributors, see Catalyst.pm
 
-=head1 COPYRIGHT
+=head1 LICENSE
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.

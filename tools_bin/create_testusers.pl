@@ -298,7 +298,11 @@ __END__
 
 =head1 NAME
 
-create_testusers.pl - Optimized batch-creation for test customers/subscribers
+create_testusers.pl
+
+=head1 DESCRIPTION
+
+Optimized batch-creation for test customers/subscribers
 
 =head1 SYNOPSIS
 
@@ -321,4 +325,14 @@ Options:
     --sip-password=s
     --number-cc=i
     --number-ac=i
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
 =cut

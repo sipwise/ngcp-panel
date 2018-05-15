@@ -521,6 +521,14 @@ RESULT:
 
 __END__
 
+=head1 NAME
+
+NGCP::Panel::Controller::CallRouting
+
+=head1 DESCRIPTION
+
+A helper to manipulate the call routing data
+
 =head1 AUTHOR
 
 Kirill Solomko <ksolomko@sipwise.com>
