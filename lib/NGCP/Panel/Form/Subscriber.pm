@@ -224,4 +224,25 @@ sub update_fields {
 
 1;
 
+__END__
+
+=head1 NAME
+
+NGCP::Panel::Form::Subscriber
+
+=head1 DESCRIPTION
+
+A helper to manipulate the subscriber forms
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
 # vim: set tabstop=4 expandtab:

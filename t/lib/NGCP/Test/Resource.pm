@@ -898,3 +898,24 @@ sub DEMOLISH {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+NGCP::Test::Resource
+
+=head1 DESCRIPTION
+
+NGCP Panel test resource
+
+=head1 AUTHOR
+
+Sipwise Development Team
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

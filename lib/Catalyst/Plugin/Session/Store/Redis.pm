@@ -198,9 +198,11 @@ Thomas Klausner C<< domm@cpan.org >>
 
 Thomas Klausner <domm@cpan.org>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 COPYRIGHT
 
 This software is copyright (c) 2016 by Thomas Klausner.
+
+=head1 LICENSE
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
