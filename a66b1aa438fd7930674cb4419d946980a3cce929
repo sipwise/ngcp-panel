@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_1d8d977b",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-15T11:21:59Z",
+      "side": 1,
+      "message": "I am not sure about the changes here... the old syntax might have some magic reason...",
+      "revId": "a66b1aa438fd7930674cb4419d946980a3cce929",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
