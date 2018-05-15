@@ -64,5 +64,6 @@ sub end : Private {
     return;
 }
 
+1;
 
 # vim: set tabstop=4 expandtab:
