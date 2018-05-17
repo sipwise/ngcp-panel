@@ -1121,7 +1121,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         ($c->user_exists && ($c->user->roles eq "admin" || $c->user->roles eq "reseller")) ||
         defined $c->request->env->{SSL_CLIENT_M_DN}
     ) {
-        $c->log->notice("unauthenticated config access to id '$id' via ip " . $c->req->address);
+        $c->log->info("unauthenticated config access to id '$id' via ip " . $c->req->address);
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("403 - unauthenticated config access");
@@ -1181,7 +1181,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $dn = lc($dn);
         $dn =~ s/[:\-]//g;
         if (index($dn, $id) == -1) {
-            $c->log->notice("unauthorized config access to id '$id' from dn '$dn' via ip '$ip'");
+            $c->log->info("unauthorized config access to id '$id' from dn '$dn' via ip '$ip'");
             $c->response->content_type('text/plain');
             if($c->config->{features}->{debug}) {
                 $c->response->body("403 - unauthorized config access");
