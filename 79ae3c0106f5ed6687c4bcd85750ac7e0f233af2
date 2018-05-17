@@ -16,6 +16,24 @@
       "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_c3829cc8",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:13:16Z",
+      "side": 1,
+      "message": "Testing it here https://gerrit.mgm.sipwise.com/#/c/21266/",
+      "parentUuid": "fabf19d9_833f0425",
+      "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
