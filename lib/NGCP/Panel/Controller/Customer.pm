@@ -980,9 +980,9 @@ sub delete_fraud :Chained('base_restricted') :PathPart('fraud/delete') :Args(1) 
     if($fraud_prefs) {
         try {
             $fraud_prefs->update({
-                "fraud_".$type."_limit" => undef,
-                "fraud_".$type."_lock" => undef,
-                "fraud_".$type."_notify" => undef,
+                "fraud_${type}_limit" => undef,
+                "fraud_${type}_lock" => undef,
+                "fraud_${type}_notify" => undef,
             });
         } catch($e) {
             NGCP::Panel::Utils::Message::error(
