@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_833f0425",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:07:40Z",
+      "side": 1,
+      "message": "can the missing ; here be the reason of \nhttps://jenkins.mgm.sipwise.com/job/ngcp-panel-tap-test/5465/tapResults/\n\nat l103:c1 [severity 4] Modules::RequireEndWithOne \u003d Module does not end with \"1;\" \n\n?",
+      "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
