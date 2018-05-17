@@ -94,6 +94,30 @@
       "revId": "c7285bd60937219bc3bc1b7ab29b1ed7bc58c08b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_2e481f5b",
+        "filename": "share/templates/helpers/pref_table.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-05-17T10:16:42Z",
+      "side": 1,
+      "message": "I just did some digging. This Form (NGCP::Panel::Form::Preferences) is the only exception for Form caching (it is never cached). Therefore, currently no errors are produced, but there is also no more translation there at all.\n\nIt is a valid point and I will restore the old behavior. I will push a new patchset soon",
+      "parentUuid": "fabf19d9_ce1f635a",
+      "range": {
+        "startLine": 171,
+        "startChar": 0,
+        "endLine": 173,
+        "endChar": 9
+      },
+      "revId": "c7285bd60937219bc3bc1b7ab29b1ed7bc58c08b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
