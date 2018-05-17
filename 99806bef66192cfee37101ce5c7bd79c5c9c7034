@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_6993b1a4",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-17T21:02:05Z",
+      "side": 1,
+      "message": "As it is not new code - I wouldn\u0027t change it in context of this task",
+      "parentUuid": "fabf19d9_ae10afa9",
+      "range": {
+        "startLine": 943,
+        "startChar": 54,
+        "endLine": 943,
+        "endChar": 55
+      },
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_4e20f3f7",
         "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2018-05-17T16:27:30Z",
       "side": 1,
       "message": "why is this required to be done at sql level?",
+      "range": {
+        "startLine": 948,
+        "startChar": 12,
+        "endLine": 948,
+        "endChar": 91
+      },
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_4990ed95",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-17T21:02:05Z",
+      "side": 1,
+      "message": "Really I was going to remove changes in  this method, but forgot. now removed",
+      "parentUuid": "fabf19d9_4e20f3f7",
       "range": {
         "startLine": 948,
         "startChar": 12,
