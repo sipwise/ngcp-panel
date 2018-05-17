@@ -51,7 +51,7 @@ sub validate {
 
     return $self->add_error("Invalid date, must be in format YYYY-MM-DD")
         if($self->required and (
-            !defined $self->value or !length($self->value) or $self->value !~ /^\d{4}-\d{2}-\d{2}$/
+            !defined $self->value || !length($self->value) || $self->value !~ /^\d{4}-\d{2}-\d{2}$/
         ));
     return 1;
 }
