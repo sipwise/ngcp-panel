@@ -47,7 +47,7 @@ sub dispatch {
                 my $buf;
                 my $n = $s->read_entity_body($buf, 1024);
                 if (!defined($n) || $n == -1) {
-                    $!{EINTR} || $!{EAGAIN} and next;
+                    $!{EINTR} || $!{EAGAIN} && next;
                     die;
                 }
                 $n == 0 and last;

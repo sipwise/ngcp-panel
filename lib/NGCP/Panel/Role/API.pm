@@ -765,7 +765,7 @@ sub apply_patch {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
-                            if (blessed $pe and $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
+                            if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
                                 &$optional_field_code_ref(substr($op->{path},1),$entity,$op);
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                             }
@@ -778,7 +778,7 @@ sub apply_patch {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{path});
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
-                            if (blessed $pe and $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
+                            if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
                                 &$optional_field_code_ref(substr($op->{path},1),$entity);
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{path});
                             }
@@ -791,7 +791,7 @@ sub apply_patch {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
-                            if (blessed $pe and $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
+                            if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
                                 &$optional_field_code_ref(substr($op->{path},1),$entity);
                                 $entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
                             }
@@ -805,7 +805,7 @@ sub apply_patch {
                             unless $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
-                            if (blessed $pe and $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
+                            if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
                                 &$optional_field_code_ref(substr($op->{path},1),$entity);
                                 die "test failed - path: $op->{path} value: $op->{value}\n"
                                     unless $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
