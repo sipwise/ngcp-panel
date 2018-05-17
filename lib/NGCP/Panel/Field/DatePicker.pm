@@ -49,10 +49,10 @@ sub render {
 sub validate {
     my ( $self ) = @_;
 
-    return $self->add_error("Invalid date, must be in format YYYY-MM-DD")
-        if($self->required and (
-            !defined $self->value or !length($self->value) or $self->value !~ /^\d{4}-\d{2}-\d{2}$/
-        ));
+    if($self->required &&
+        ( !defined $self->value || !length($self->value) || $self->value !~ /^\d{4}-\d{2}-\d{2}$/ ) ) {
+        return $self->add_error("Invalid date, must be in format YYYY-MM-DD");
+    }
     return 1;
 }
 

@@ -1621,8 +1621,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                 $err = NGCP::Panel::Utils::DeviceBootstrap::dispatch(
                     $c, 'register', $fdev);
                 unless($err) {
-                    my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
-                    !$err and ( $err = $err_lines );
+                    $err = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
                 }
 
             });
@@ -1744,8 +1743,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
 
                 unless($err) {
                     $fdev->autoprov_field_device_lines->delete_all;
-                    my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
-                    !$err and ( $err = $err_lines );
+                    $err = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
                 }
 
             });
