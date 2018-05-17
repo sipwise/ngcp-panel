@@ -1,0 +1,170 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_ae10afa9",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:27:30Z",
+      "side": 1,
+      "message": "it\u0027s cryptic, should be switched to named ones, ie.\n\nmy %config \u003d (\n  \"usr\" \u003d\u003e { table \u003d\u003e \"voip_usr_preferences\", key_col \u003d\u003e \"subscriber_id\" },\n  ...\n);\nmy %pref_type_cols \u003d (\n  \"usr\" \u003d\u003e \"usr_pref\",\n  \"dom\" \u003d\u003e \"dom_pref\",\n  ...\n);",
+      "range": {
+        "startLine": 943,
+        "startChar": 54,
+        "endLine": 943,
+        "endChar": 55
+      },
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_4e20f3f7",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:27:30Z",
+      "side": 1,
+      "message": "why is this required to be done at sql level?",
+      "range": {
+        "startLine": 948,
+        "startChar": 12,
+        "endLine": 948,
+        "endChar": 91
+      },
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_2e1dbfbd",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1333,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:27:30Z",
+      "side": 1,
+      "message": "type_flags, ok..\nmaybe its better to have them strictly checked, ie.\n\nmy %type_flags \u003d ();\nforeach my $type_flag (qw(usr_pref dom_pref ...)) {\n  $type_flags{$type_flag} \u003d (exists $resource-\u003e{$type_flag} ? 1 : 0);\n}",
+      "range": {
+        "startLine": 1333,
+        "startChar": 8,
+        "endLine": 1333,
+        "endChar": 13
+      },
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_ce82c3c8",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1341,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:27:30Z",
+      "side": 1,
+      "message": "afaik the enums have unique names, so it it might be more user-friendly to not require any id\u0027s of enums here.",
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_0e79dbfc",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1342,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:27:30Z",
+      "side": 1,
+      "message": ".. thys would be more readable then i guess.",
+      "range": {
+        "startLine": 1342,
+        "startChar": 31,
+        "endLine": 1342,
+        "endChar": 44
+      },
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_ae878fd6",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1352,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:27:30Z",
+      "side": 1,
+      "message": "if you do updating based on id, you should to this delete step first. otherwise it gives duplciate key err if you update an exisitng enum to an already existing one.",
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_8e6deb34",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1382,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:27:30Z",
+      "side": 1,
+      "message": "ok and what if neither nor is given?",
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_6e6a971c",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1394,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:27:30Z",
+      "side": 1,
+      "message": "maybe it\u0027s simpler to just have it as a my $DYNAMIC_PREFERECE_PREFIX instead of the use constant...",
+      "range": {
+        "startLine": 1394,
+        "startChar": 50,
+        "endLine": 1394,
+        "endChar": 51
+      },
+      "revId": "99806bef66192cfee37101ce5c7bd79c5c9c7034",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
