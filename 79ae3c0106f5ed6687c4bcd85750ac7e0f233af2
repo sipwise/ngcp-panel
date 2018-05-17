@@ -34,6 +34,24 @@
       "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_63519062",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T09:19:51Z",
+      "side": 1,
+      "message": "possibly;\nputting the \"use\" stmts at the end does not have an effect; perl usually idententifies \"use\" stmts whereever they are in code, and runs them very firs (that\u0027ts also why its difficult to force a conditional \"use\", a trick is therefore nedded eg.\n\neval \"use Blah::Blah\" if $cond\n\n)\n\nbtw. i ever discouraged using namespace::clean/sweep, as a module should import methods explicitly. also gives a better overview of what methods from a lib are about to be used in the code.",
+      "parentUuid": "fabf19d9_833f0425",
+      "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
