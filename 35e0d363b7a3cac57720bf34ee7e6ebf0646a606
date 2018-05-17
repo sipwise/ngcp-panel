@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_8e960b93",
+        "filename": "lib/NGCP/Panel/Form/Device/Preference.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T11:43:46Z",
+      "side": 1,
+      "message": "copy-paste regression",
+      "range": {
+        "startLine": 67,
+        "startChar": 19,
+        "endLine": 67,
+        "endChar": 77
+      },
+      "revId": "35e0d363b7a3cac57720bf34ee7e6ebf0646a606",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
