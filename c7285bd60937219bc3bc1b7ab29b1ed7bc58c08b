@@ -70,6 +70,30 @@
       "revId": "c7285bd60937219bc3bc1b7ab29b1ed7bc58c08b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_ce1f635a",
+        "filename": "share/templates/helpers/pref_table.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-17T10:08:16Z",
+      "side": 1,
+      "message": "So Do I get it right that now we translate it somewhere unconditionally? I saw translate_form in ::NGCP::Panel::Form - but it is not related, if I get it right",
+      "parentUuid": "fabf19d9_e32fe0f4",
+      "range": {
+        "startLine": 171,
+        "startChar": 0,
+        "endLine": 173,
+        "endChar": 9
+      },
+      "revId": "c7285bd60937219bc3bc1b7ab29b1ed7bc58c08b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
