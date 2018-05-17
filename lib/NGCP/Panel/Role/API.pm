@@ -856,7 +856,7 @@ sub apply_patch {
 
 sub set_body {
     my ($self, $c) = @_;
-    $c->stash->{body} = $c->request->body ? (do { local $/; $c->request->body->getline }) : '';
+    $c->stash->{body} = $c->request->body ? (do { local $/ = undef; $c->request->body->getline }) : '';
 }
 
 sub log_request {

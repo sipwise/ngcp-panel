@@ -40,7 +40,7 @@ sub root :Chained('/') :PathPart('grafana') :Args() {
     my $req = HTTP::Request->new($c->req->method => $url);
     $req->header('Content-Type' => $c->req->header('Content-Type'));
     $req->header('X-WEBAUTH-USER' => $grafana_user);
-    my $body = $c->request->body ? (do { local $/; $c->request->body->getline }) : '';
+    my $body = $c->request->body ? (do { local $/ = undef; $c->request->body->getline }) : '';
     $req->content($body);
     my $res = $ua->request($req);
     $c->res->content_type($res->header('Content-Type') // 'text/plain');
