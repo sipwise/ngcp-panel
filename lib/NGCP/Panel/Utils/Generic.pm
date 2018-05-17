@@ -94,7 +94,8 @@ sub get_inflated_columns_all{
                 $hash->{$key} = $value;
             }
         };
-        my $hashvalue_column = $params{column};        foreach($rs->all){
+        my $hashvalue_column = $params{column};
+        foreach($rs->all){
             $register_value->(\%lres,$_->{$hashkey_column}, $hashvalue_column ? $_->{$hashvalue_column} : $_);
         }
         $res = \%lres;
