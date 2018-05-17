@@ -145,10 +145,14 @@
                         </select>
                     [% END %]
                 </td>
-                <td>
+                <td class="ngcp-actions-column">
                     <div class="sw_actions pull-right">
                         [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only -%]
                         <a class="btn btn-small btn-primary" href="[% helper.base_uri _ "/" _ r.id _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                        [%IF r.dynamic && !helper.no_edit_meta %]
+                        <a class="btn btn-small btn-primary" href="[% helper.base_uri _ "/" _ r.id _ "/editmeta" %]"><i class="icon-edit"></i> [% c.loc('Edit Meta') %]</a>
+                        <a class="btn btn-secondary btn-small" href="[% helper.base_uri _ "/" _ r.id _ "/delete" %]"  data-confirm="Delete"><i class="icon-remove"></i> [% c.loc('Delete') %]</a>
+                        [% END -%]
                         [% END -%]
                     </div>
                 </td>
@@ -224,6 +228,7 @@
     [% ELSE %]
         [% helper.form.render -%]
     [% END %]
+
 [%
     modal_footer();
 -%]
@@ -237,5 +242,23 @@
     });
 </script>
 [% END -%]
+
+[% IF helper.create_flag == 1 || helper.editmeta_flag == 1 -%]
+[%
+    IF helper.form.has_for_js;
+        helper.form.render_repeatable_js;
+    END;
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=helper.create_flag,
+                 m.duplicate_flag=helper.duplicate_flag,
+                 m.edit_flag=helper.editmeta_flag,
+                 m.name = helper.name);
+        helper.form = translate_form( helper.form );
+        helper.form.render;
+    modal_footer();
+    modal_script(m.close_target = helper.close_target);
+-%]
+[% END -%]
+
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
 
