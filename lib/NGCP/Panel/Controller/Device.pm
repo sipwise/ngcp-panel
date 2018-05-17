@@ -1381,8 +1381,8 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         'model'    => $preferences_device->{dev},
         'profile'  => $preferences_device->{devprof},
         'persistent'   => {
-            'model'    => {%$preferences_device->{dev}},
-            'profile'  => {%$preferences_device->{devprof}},
+            'model'    => {%{$preferences_device->{dev}}},
+            'profile'  => {%{$preferences_device->{devprof}}},
             'device'   => $preferences_device->{fielddev},
         },
         'dynamic'   => {
