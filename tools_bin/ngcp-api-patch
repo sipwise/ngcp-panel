@@ -1,6 +1,6 @@
 #!/bin/bash
 CURL="/usr/bin/curl"
-CREDS="$HOME/.ngcp-api"
+export CREDS="${HOME}/.ngcp-api" # used in ngcp-api.inc
 TOOLS="/usr/share/ngcp-panel-tools/ngcp-api.inc"
 
 usage () {
