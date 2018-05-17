@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_ae02ef6d",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T16:01:43Z",
+      "side": 1,
+      "message": "if such is introduced, i would expect to drop that $type from the args? just complicates otherwise",
+      "revId": "681d5e93c3564527c2aabf539f13543ddbb842d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
