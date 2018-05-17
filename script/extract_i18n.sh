@@ -32,10 +32,10 @@ xgettext.pl \
 	$DIRS \
 	 -P perl=tt,pm
 
-for po in $(find lib/NGCP/Panel/I18N -name "*.po"); do
+while IFS= read -r -d '' po ; do
 	echo; echo "Merging $po"; echo
-	msgmerge --no-fuzzy-matching --add-location=file --update $po $POT
-done
+	msgmerge --no-fuzzy-matching --add-location=file --update "$po" "$POT"
+done < <(find lib/NGCP/Panel/I18N -name "*.po" -print0)
 
 echo; echo "Removing line numbers"; echo
 sed -i -e '/#: /s!\(\(lib\|share\)\S*\):[0-9]*!\1!g' lib/NGCP/Panel/I18N/*
