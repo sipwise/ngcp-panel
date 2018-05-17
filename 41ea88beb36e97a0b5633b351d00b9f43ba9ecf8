@@ -22,6 +22,30 @@
       "revId": "41ea88beb36e97a0b5633b351d00b9f43ba9ecf8",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_eee107d2",
+        "filename": "sandbox/banlist.pl",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T15:57:31Z",
+      "side": 1,
+      "message": "This is a code from Gerhard :-)\nWill it not work this way?",
+      "parentUuid": "fabf19d9_4ead9387",
+      "range": {
+        "startLine": 9,
+        "startChar": 16,
+        "endLine": 9,
+        "endChar": 32
+      },
+      "revId": "41ea88beb36e97a0b5633b351d00b9f43ba9ecf8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
