@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_8354a454",
+        "filename": "lib/Catalyst/Plugin/Session/Store/Redis.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:19:58Z",
+      "side": 1,
+      "message": "If the real changes are necessary here - sure, so far the change here is just a split section into two pieces which IMHO worth to keep like now.",
+      "parentUuid": "fabf19d9_e3080094",
+      "revId": "0c098b0b69f176e1241fe085e5dd51f342ed91c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_c3fdfc6f",
         "filename": "lib/NGCP/Panel/Utils/DbStrings.pm",
         "patchSetId": 3
@@ -30,6 +48,30 @@
       "writtenOn": "2018-05-17T08:17:49Z",
       "side": 1,
       "message": "dbstrings",
+      "range": {
+        "startLine": 694,
+        "startChar": 20,
+        "endLine": 694,
+        "endChar": 29
+      },
+      "revId": "0c098b0b69f176e1241fe085e5dd51f342ed91c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_8326e414",
+        "filename": "lib/NGCP/Panel/Utils/DbStrings.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 694,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:19:58Z",
+      "side": 1,
+      "message": "good catch , tnx!",
+      "parentUuid": "fabf19d9_c3fdfc6f",
       "range": {
         "startLine": 694,
         "startChar": 20,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_6323d006",
+        "filename": "lib/NGCP/Panel/Utils/DbStrings.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:19:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_a302086e",
+      "range": {
+        "startLine": 698,
+        "startChar": 0,
+        "endLine": 698,
+        "endChar": 41
+      },
+      "revId": "0c098b0b69f176e1241fe085e5dd51f342ed91c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_83f8247e",
         "filename": "lib/NGCP/Panel/Utils/Utf8.pm",
         "patchSetId": 3
@@ -82,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_c30bbc7c",
+        "filename": "lib/NGCP/Panel/Utils/Utf8.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:19:58Z",
+      "side": 1,
+      "message": "true, while what is the option?\nAlso I didn\u0027t change the LICENSE/COPYRIGHT I have just split them into two sections.",
+      "parentUuid": "fabf19d9_83f8247e",
+      "revId": "0c098b0b69f176e1241fe085e5dd51f342ed91c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_63f51082",
         "filename": "t/lib/Test/DeepHashUtils.pm",
         "patchSetId": 3
@@ -93,6 +177,24 @@
       "writtenOn": "2018-05-17T08:17:49Z",
       "side": 1,
       "message": "external module",
+      "revId": "0c098b0b69f176e1241fe085e5dd51f342ed91c0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_a310c8a9",
+        "filename": "t/lib/Test/DeepHashUtils.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:19:58Z",
+      "side": 1,
+      "message": "true, while what is the option?\nAlso I didn\u0027t change the LICENSE/COPYRIGHT I have just split them into two sections.",
+      "parentUuid": "fabf19d9_63f51082",
       "revId": "0c098b0b69f176e1241fe085e5dd51f342ed91c0",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
