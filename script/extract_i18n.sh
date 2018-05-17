@@ -20,7 +20,7 @@ POT="lib/NGCP/Panel/I18N/messages.pot"
 
 DIRS=""
 for d in ${I18_DIRS}; do
-	DIRS="$DIRS --directory $d";
+	DIRS="$DIRS --directory $d"
 done
 
 echo; echo "Dumping DB and Form strings"; echo
