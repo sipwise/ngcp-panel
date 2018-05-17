@@ -1,10 +1,10 @@
 #!/bin/bash
 
-for i in $(find /usr/ -name "*.orig"); do
+while IFS= read -r -d '' i ; do
     f=${i%.orig};
     if [ -L "$f" ]; then
         echo "reverting $i to $f"
-        rm $f
-        mv $i $f
+        rm "$f"
+        mv "$i" "$f"
     fi
-done
+done < <(find /usr/ -name "*.orig" -print0)
