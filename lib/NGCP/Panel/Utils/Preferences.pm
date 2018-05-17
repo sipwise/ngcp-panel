@@ -7,6 +7,8 @@ use NGCP::Panel::Form::Preferences;
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::Sems;
 
+use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
+
 sub validate_ipnet {
     my ($field) = @_;
     my ($ip, $net) = split /\//, $field->value;
@@ -38,6 +40,7 @@ sub load_preference_list {
     my $dom_pref = $params{dom_pref};
     my $dev_pref = $params{dev_pref};
     my $devprof_pref = $params{devprof_pref};
+    my $fielddev_pref = $params{fielddev_pref};
     my $prof_pref = $params{prof_pref};
     my $usr_pref = $params{usr_pref};
     my $contract_pref = $params{contract_pref};
@@ -70,6 +73,9 @@ sub load_preference_list {
             $devprof_pref ? ('voip_preferences.devprof_pref' => 1,
                 -or => ['voip_preferences_enums.devprof_pref' => 1,
                     'voip_preferences_enums.devprof_pref' => undef]) : (),
+            $fielddev_pref ? ('voip_preferences.fielddev_pref' => 1,
+                -or => ['voip_preferences_enums.fielddev_pref' => 1,
+                    'voip_preferences_enums.fielddev_pref' => undef]) : (),
             $prof_pref ? ('voip_preferences.prof_pref' => 1,
                 -or => ['voip_preferences_enums.prof_pref' => 1,
                     'voip_preferences_enums.prof_pref' => undef]) : (),
@@ -88,7 +94,7 @@ sub load_preference_list {
         });
     }
     if($search_conditions) {
-        if('ARRAY' eq $search_conditions){
+        if('ARRAY' eq ref $search_conditions){
             $pref_rs = $pref_rs->search(@$search_conditions);
         }else{
             $pref_rs = $pref_rs->search($search_conditions);
@@ -409,12 +415,19 @@ sub create_preference_form {
                       device_vendor   => $c->stash->{devprof}->{config_id},
                       device_model    => $c->stash->{devprof}->{name},
                     );
+    } elsif ($c->stash->{pbx_device}) {
+        %log_data = ( %log_data,
+                      type            => 'fielddev',
+                      device_id       => $c->stash->{pbx_device}->{id},
+                      device_vendor   => $c->stash->{pbx_device}->{profile_id},
+                      device_model    => $c->stash->{pbx_device}->{identifier},
+                    );
     }
 
     if($posted && $form->validated) {
-       my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
-       my $attribute = $c->stash->{preference_meta}->attribute;
-       if ($attribute eq "allowed_ips") {
+        my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
+        my $attribute = $c->stash->{preference_meta}->attribute;
+        if ($attribute eq "allowed_ips") {
             unless(validate_ipnet($form->field($attribute))) {
                 goto OUT;
             }
@@ -922,16 +935,18 @@ sub get_preferences_rs {
         'peer'     => [qw/voip_peer_preferences peer_pref peer_host_id/],
         'dev'      => [qw/voip_dev_preferences dev_pref device_id/],
         'devprof'  => [qw/voip_devprof_preferences devprof_pref profile_id/],
+        'fielddev' => [qw/voip_fielddev_preferences fielddev_pref device_id/],
         'contract' => [qw/voip_contract_preferences contract_pref contract_id/],
         'contract_location' => [qw/voip_contract_preferences contract_location_pref location_id/],
     );
     my $pref_rs = $schema->resultset($config{$preferences_type}->[0])->search({
             'attribute.'.$config{$preferences_type}->[1] => 1,
-            $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : ()  ,
+            $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : () ,
+            ref $config{$preferences_type}->[3] eq 'HASH' ? %{$config{$preferences_type}->[3]} : () ,
             $item_id ? ('me.'.$config{$preferences_type}->[2] => $item_id) : (),
         },{
-            '+select' => ['attribute.attribute'],
-            '+as' => ['attribute'],
+            '+select' => ['attribute.attribute', \'replace(attribute.attribute,"__","")' ],
+            '+as' => ['attribute', 'attribute_normalized'],
             'join' => 'attribute',
     });
 
@@ -1028,6 +1043,7 @@ sub get_peer_preference_rs {
             peer_host_id => $host->id,
         });
 }
+
 sub get_dev_preference_rs {
     my %params = @_;
 
@@ -1043,6 +1059,7 @@ sub get_dev_preference_rs {
            device_id => $device->id,
         });
 }
+
 sub get_devprof_preference_rs {
     my %params = @_;
 
@@ -1058,6 +1075,23 @@ sub get_devprof_preference_rs {
            profile_id => $profile->id,
         });
 }
+
+sub get_fielddev_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $device = $params{device};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'fielddev_pref' => 1,
+        });
+    return unless($preference);
+    return $preference->voip_fielddev_preferences->search_rs({
+           device_id => $device->id,
+        });
+}
+
 sub get_contract_preference_rs {
     my %params = @_;
 
@@ -1250,6 +1284,115 @@ sub get_subscriber_allowed_prefs {
     }
 
     return \%allowed_prefs
+}
+
+sub create_dynamic_preference {
+    my ($c, $resource, %params) = @_;
+
+    my $group_name = $params{group_name};
+    my $relations = {};
+
+    $resource->{voip_preference_groups_id} = $c->model('DB')
+        ->resultset('voip_preference_groups')->find({name => $group_name})->id;
+    $resource->{attribute} = dynamic_pref_attribute_to_db($resource->{attribute});
+    $resource->{dynamic}   = 1;
+    $resource->{internal}  = 0;
+    $resource->{expose_to_customer} = 1;
+
+    $relations->{autoprov_device_id} = delete $resource->{autoprov_device_id};
+    $relations->{reseller_id} = delete $resource->{reseller_id};
+
+    my $enums = delete $resource->{enum};
+    my $preference = $c->model('DB')->resultset('voip_preferences')->create($resource);
+    my @flags = grep {$_ =~/^[a-z]+_pref$/} keys %$resource;
+    if(defined $enums and ref $enums eq 'ARRAY'){
+        foreach my $enum (@$enums) {
+            @{$enum}{@flags} = (1) x @flags;
+            $preference->create_related('voip_preferences_enums', $enum);
+        }
+    }
+
+    save_dynamic_preference_relations($c, $resource, $preference, $relations);
+
+    return $preference;
+}
+
+sub update_dynamic_preference {
+    my ($c, $preference, $resource, %params) = @_;
+
+    my $relations = {};
+
+    $resource->{attribute} = dynamic_pref_attribute_to_db($resource->{attribute});
+
+    $relations->{autoprov_device_id} = delete $resource->{autoprov_device_id};
+    $relations->{reseller_id} = delete $resource->{reseller_id};
+
+    my $enums = delete $resource->{enum};
+
+    $preference->update($resource);
+    my @flags = grep {$_ =~/^[a-z]+_pref$/} keys %$resource;
+    if(defined $enums and ref $enums eq 'ARRAY'){
+        my $enums_rs = $preference->voip_preferences_enums;
+        my @old_enum_ids =  $enums_rs->get_column('id')->all;
+        my %old_enum_ids;
+        @old_enum_ids{@old_enum_ids} = @old_enum_ids;
+        foreach my $enum (@$enums) {
+            my $id = delete $enum->{id};
+            my $enum_exists = $enums_rs->find($id);
+            @{$enum}{@flags} = (1) x @flags;
+            if ($enum_exists) {
+                $enum_exists->update($enum);
+                delete $old_enum_ids{$id};
+            } else {
+                $preference->create_related('voip_preferences_enums', $enum);
+            }
+        }
+        $enums_rs->search_rs({
+            id => { -in => [ keys %old_enum_ids ] }, 
+        })->delete;
+    } else {
+        $preference->voip_preferences_enums->delete;
+    }
+
+    save_dynamic_preference_relations($c, $resource, $preference, $relations);
+
+    return $preference;
+}
+
+sub delete_dynamic_preference {
+    my ($c, $preference) = @_;
+    $preference->voip_preferences_enums->delete;
+    $preference->delete;
+}
+
+sub save_dynamic_preference_relations {
+    my ($c, $resource, $preference, $relations) = @_;
+
+    if (defined $resource->{dev_pref} && $resource->{dev_pref}) {
+        if ($relations->{autoprov_device_id}) {
+            $preference->search_related_rs('voip_preference_relations')->update_or_create({
+                autoprov_device_id => $relations->{autoprov_device_id},
+                reseller_id        => undef,
+            });
+        } elsif ($relations->{reseller_id}) {
+            $preference->search_related_rs('voip_preference_relations')->update_or_create({
+                autoprov_device_id => undef,
+                reseller_id => $relations->{reseller_id},
+            });        
+        }
+    }
+}
+
+sub dynamic_pref_attribute_to_standard {
+    my ($attribute) = @_;
+    $attribute =~s/^_*//;
+    return $attribute;
+}
+
+sub dynamic_pref_attribute_to_db {
+    my ($attribute) = @_;
+    $attribute =~s/^_*/_DYNAMIC_PREFERENCE_PREFIX/e;
+    return $attribute;
 }
 
 1;
