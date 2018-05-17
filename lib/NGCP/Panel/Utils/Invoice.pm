@@ -25,7 +25,7 @@ sub get_invoice_amounts{
         $customer_contract->{add_vat}
         ?
             $invoice->{amount_net} * ($customer_contract->{vat_rate}/100)
-            : 0,
+            : 0;
     $invoice->{amount_total} =  $invoice->{amount_net} + $invoice->{amount_vat};
     return $invoice;
 }
@@ -166,7 +166,7 @@ sub create_invoice{
         amount_vat   => $invoice_data->{amount_vat},
         amount_total => $invoice_data->{amount_total},
     };
-    $vars->{calls} = $calllist,
+    $vars->{calls} = $calllist;
     $vars->{zones} = {
         totalcost => $balance->cash_balance_interval,
         data => [ values(%{ $zonecalls }) ],
