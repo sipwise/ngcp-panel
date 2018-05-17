@@ -49,10 +49,10 @@ sub render {
 sub validate {
     my ( $self ) = @_;
 
-    return $self->add_error($self->label . " is invalid")
-        if($self->required and (
-            !defined $self->value or !length($self->value)
-        ));
+    if($self->required &&
+        ( !defined $self->value || !length($self->value) ) ) {
+        return $self->add_error($self->label . " is invalid");
+    }
     return 1;
 }
 

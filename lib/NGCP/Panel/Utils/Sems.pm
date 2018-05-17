@@ -322,7 +322,7 @@ EOF
 
     use Data::Dumper;
     $c->log->info("received from dispatcher: " . Dumper $ret);
-    if(!$ret or $ret->[1] != 1 or $ret->[2] =~ m#<name>faultString</name>#) {
+    if(!$ret || $ret->[1] != 1 || $ret->[2] =~ m#<name>faultString</name>#) {
         die "failed to trigger dial-out";
     }
     return 1;

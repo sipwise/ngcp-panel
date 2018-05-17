@@ -221,7 +221,7 @@ sub new_local {
     my %params;
     @params{qw/year month day hour minute second nanosecond/} = @_;
     foreach(keys %params){
-        !defined $params{$_} and delete $params{$_};
+        defined($params{$_}) or delete($params{$_});
     }
     return DateTime->new(
         time_zone => $LOCAL_TZ,
