@@ -46,6 +46,30 @@
       "revId": "c7285bd60937219bc3bc1b7ab29b1ed7bc58c08b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_e32fe0f4",
+        "filename": "share/templates/helpers/pref_table.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-05-17T08:26:13Z",
+      "side": 1,
+      "message": "found it: https://gerrit.mgm.sipwise.com/#/c/6050/\n\n\"because it contains the NCOS Level name (or soundset name), which may contain invalid l10n escape-characters, and translation of it would be wrong anyway\"",
+      "parentUuid": "fabf19d9_23ef18b2",
+      "range": {
+        "startLine": 171,
+        "startChar": 0,
+        "endLine": 173,
+        "endChar": 9
+      },
+      "revId": "c7285bd60937219bc3bc1b7ab29b1ed7bc58c08b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
