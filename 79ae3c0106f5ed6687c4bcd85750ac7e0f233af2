@@ -70,6 +70,24 @@
       "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_a3a3284f",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-17T09:28:12Z",
+      "side": 1,
+      "message": "the bahaviour of namespace::* methods is different i just read..\n\nfor this ::autoclean one, you could try put it ontop to the others, and add a semicolon.",
+      "parentUuid": "fabf19d9_a3d568ba",
+      "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
