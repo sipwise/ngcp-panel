@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_ce11a35f",
+        "filename": "script/extract_i18n.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-17T18:01:45Z",
+      "side": 1,
+      "message": "This looks like a workaround? Why not set DIRS as an array of options such as OPT_DIR+\u003d(\"--directory\u003d$d\"), and then expand that normally here?",
+      "revId": "2307a038e851e209932bbd3ec01762ab6787942e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
