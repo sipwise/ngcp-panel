@@ -25,7 +25,7 @@ if [ -z "$APIUSER" ] ; then
     APIUSER="administrator:administrator"
   fi
 fi
-INPUT="-T -"
+INPUT=(-T -)
 CTYPE="application/json-patch+json"
 PREFER="representation"
 
@@ -36,8 +36,8 @@ do
 			usage
 			;;
 		f)
-			INPUT=""
-			FILE_INPUT="--data-binary @$OPTARG"
+			INPUT=()
+			FILE_INPUT=(--data-binary @$OPTARG)
 			if [ ! -f "$OPTARG" ]; then
 				echo "No '$OPTARG' file found"
 				usage
@@ -64,4 +64,4 @@ fi
 ${CURL} -i ${VERBOSE} -X PATCH \
     -H 'Connection: close' -H "Prefer: return=$PREFER" \
     -H "Content-Type: $CTYPE" \
-    --user "$APIUSER" --insecure ${FILE_INPUT} "$URL" ${INPUT}
+    --user "$APIUSER" --insecure "${FILE_INPUT[@]}" "$URL" "${INPUT[@]}"
