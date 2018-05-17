@@ -52,6 +52,24 @@
       "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_a3d568ba",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:21:49Z",
+      "side": 1,
+      "message": "I have no ideas about the Perl code here, honestly, please improve it if you see the \"proper\" way. My goal was to fix TAP tests to increase the quality standards for ngcp-panel codebase.",
+      "parentUuid": "fabf19d9_63519062",
+      "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
