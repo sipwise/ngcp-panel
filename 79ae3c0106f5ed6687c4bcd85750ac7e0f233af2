@@ -88,6 +88,24 @@
       "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_43932cfb",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T09:30:01Z",
+      "side": 1,
+      "message": "I would keep it as https://gerrit.mgm.sipwise.com/#/c/21266/ as I am fixing warning there, and sure you can optimize the code in your the next review on top of https://gerrit.mgm.sipwise.com/#/c/21266/ ;-)",
+      "parentUuid": "fabf19d9_a3a3284f",
+      "revId": "79ae3c0106f5ed6687c4bcd85750ac7e0f233af2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
