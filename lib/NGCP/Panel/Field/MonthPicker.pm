@@ -51,7 +51,7 @@ sub validate {
 
     return $self->add_error($self->label . " is invalid")
         if($self->required and (
-            !defined $self->value or !length($self->value)
+            !defined $self->value || !length($self->value)
         ));
     return 1;
 }

@@ -74,7 +74,7 @@ sub init {
     fatal('No mode argument specified, one of [' . join(', ',(MODE_STRINGS)). "] required") unless $mode;
 
     $output_dir .= '/' if $output_dir && '/' ne substr($output_dir,-1);
-    makedir($output_dir) if $output_dir && not -e $output_dir;
+    makedir($output_dir) if $output_dir && ! -e $output_dir;
     $output_filename =  "api_dump_" . $mode . "_results_" . datetime_to_string(current_local()) . $output_file_suffix unless $output_filename;
     $output_filename = $output_dir . $output_filename;
 
