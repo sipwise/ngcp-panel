@@ -16,6 +16,24 @@
       "revId": "2307a038e851e209932bbd3ec01762ab6787942e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_6e097731",
+        "filename": "script/extract_i18n.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-17T18:05:15Z",
+      "side": 1,
+      "message": "You are right, I have tired, I tried \"--directory $d\" while was fighting with quotes... and --directory\u003d$d is definitely a solution here :-)",
+      "parentUuid": "fabf19d9_ce11a35f",
+      "revId": "2307a038e851e209932bbd3ec01762ab6787942e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
