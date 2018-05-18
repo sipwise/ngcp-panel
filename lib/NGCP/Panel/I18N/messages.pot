@@ -537,7 +537,7 @@ msgstr ""
 msgid "BLF Key"
 msgstr ""
 
-#: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt share/templates/calllistsuppression/list.tt share/templates/callrouting/verify.tt share/templates/customer/details.tt share/templates/customer/preferences.tt share/templates/denied_page.tt share/templates/device/list.tt share/templates/device/preferences.tt share/templates/device/profilepreferences.tt share/templates/domain/preferences.tt share/templates/emergencymapping/list.tt share/templates/helpers/datatables.tt share/templates/invoice/template.tt share/templates/lnp/list.tt share/templates/package/details.tt share/templates/peering/preferences.tt share/templates/reseller/branding.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/security/list.tt share/templates/sound/handles_list.tt share/templates/statistics/list.tt share/templates/statistics/supportstatus.tt share/templates/statistics/versions.tt share/templates/subprofile/preferences.tt share/templates/subscriber/calllist.tt share/templates/subscriber/callmap.tt share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/recording.tt share/templates/subscriber/recording_streams.tt share/templates/subscriber/reglist.tt share/templates/subscriber/voicemail.tt share/templates/subscriber/webphone.tt
+#: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt share/templates/calllistsuppression/list.tt share/templates/callrouting/verify.tt share/templates/customer/details.tt share/templates/customer/pbx_fdev_preferences.tt share/templates/customer/preferences.tt share/templates/denied_page.tt share/templates/device/list.tt share/templates/device/preferences.tt share/templates/device/profilepreferences.tt share/templates/domain/preferences.tt share/templates/emergencymapping/list.tt share/templates/helpers/datatables.tt share/templates/invoice/template.tt share/templates/lnp/list.tt share/templates/package/details.tt share/templates/peering/preferences.tt share/templates/reseller/branding.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/security/list.tt share/templates/sound/handles_list.tt share/templates/statistics/list.tt share/templates/statistics/supportstatus.tt share/templates/statistics/versions.tt share/templates/subprofile/preferences.tt share/templates/subscriber/calllist.tt share/templates/subscriber/callmap.tt share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/recording.tt share/templates/subscriber/recording_streams.tt share/templates/subscriber/reglist.tt share/templates/subscriber/voicemail.tt share/templates/subscriber/webphone.tt
 msgid "Back"
 msgstr ""
 
@@ -1278,6 +1278,10 @@ msgstr ""
 msgid "Create Contact"
 msgstr ""
 
+#: share/templates/device/preferences.tt
+msgid "Create Custom Preference"
+msgstr ""
+
 #: share/templates/customer/list.tt
 msgid "Create Customer"
 msgstr ""
@@ -1592,7 +1596,7 @@ msgstr ""
 msgid "Defines whether this subscriber or domain is handled in an IMS application server context, so no direct registrations and calls are possible, but are signalled via an IMS S-CSCF instead"
 msgstr ""
 
-#: share/templates/administrator/list.tt share/templates/billing/fees.tt share/templates/billing/peaktimes.tt share/templates/billing/zones.tt share/templates/calllistsuppression/list.tt share/templates/contact/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/emailtemplate/list.tt share/templates/emergencymapping/list.tt share/templates/emergencymapping/list.tt share/templates/helpers/datatables.tt share/templates/invoice/invoice_list.tt share/templates/invoice/template_list.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/maliciouscall/list.tt share/templates/ncos/list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peeringoverview/list.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/recording.tt share/templates/subscriber/voicemail.tt share/templates/voucher/list.tt
+#: share/templates/administrator/list.tt share/templates/billing/fees.tt share/templates/billing/peaktimes.tt share/templates/billing/zones.tt share/templates/calllistsuppression/list.tt share/templates/contact/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/emailtemplate/list.tt share/templates/emergencymapping/list.tt share/templates/emergencymapping/list.tt share/templates/helpers/datatables.tt share/templates/helpers/pref_table.tt share/templates/invoice/invoice_list.tt share/templates/invoice/template_list.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/maliciouscall/list.tt share/templates/ncos/list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peeringoverview/list.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/recording.tt share/templates/subscriber/voicemail.tt share/templates/voucher/list.tt
 msgid "Delete"
 msgstr ""
 
@@ -1712,6 +1716,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model not found"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Device model preference successfully deleted"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
@@ -1906,7 +1914,7 @@ msgstr ""
 msgid "Edit Content"
 msgstr ""
 
-#: share/templates/invoice/template_list.tt share/templates/reseller/details.tt
+#: share/templates/helpers/pref_table.tt share/templates/invoice/template_list.tt share/templates/reseller/details.tt
 msgid "Edit Meta"
 msgstr ""
 
@@ -2291,6 +2299,10 @@ msgid "Failed to create device model"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to create device model preference"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to create device profile"
 msgstr ""
 
@@ -2489,6 +2501,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to delete device model"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to delete device model preference"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
@@ -2836,6 +2852,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to update device model"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to update device model preference"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
@@ -4654,6 +4674,11 @@ msgstr ""
 msgid "PBX Device"
 msgstr ""
 
+#. (devmod.vendor, devmod.model, pbx_device.identifier)
+#: share/templates/customer/pbx_fdev_preferences.tt
+msgid "PBX Device %1 \"%2\" %3 - Preferences"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "PBX Device successfully deleted"
 msgstr ""
@@ -4979,7 +5004,7 @@ msgstr ""
 msgid "Preference '"
 msgstr ""
 
-#: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/domain/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subscriber/master.tt
+#: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/domain/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subscriber/master.tt
 msgid "Preferences"
 msgstr ""
 
@@ -6176,6 +6201,10 @@ msgid "Successfully created device model"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
+msgid "Successfully created device model preference"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully created device profile"
 msgstr ""
 
@@ -6302,6 +6331,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully updated device model"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Successfully updated device model preference"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm

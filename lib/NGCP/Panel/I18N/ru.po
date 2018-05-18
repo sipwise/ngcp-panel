@@ -687,6 +687,7 @@ msgstr "BLF ключ"
 #: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt
 #: share/templates/calllistsuppression/list.tt
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
+#: share/templates/customer/pbx_fdev_preferences.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
 #: share/templates/device/list.tt share/templates/device/preferences.tt
 #: share/templates/device/profilepreferences.tt
@@ -1537,6 +1538,10 @@ msgstr ""
 msgid "Create Contact"
 msgstr "Создать Контакт"
 
+#: share/templates/device/preferences.tt
+msgid "Create Custom Preference"
+msgstr ""
+
 #: share/templates/customer/list.tt
 msgid "Create Customer"
 msgstr "Создать Клиента"
@@ -1892,7 +1897,7 @@ msgstr ""
 #: share/templates/customer/details.tt share/templates/device/list.tt
 #: share/templates/domain/list.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
-#: share/templates/helpers/datatables.tt
+#: share/templates/helpers/datatables.tt share/templates/helpers/pref_table.tt
 #: share/templates/invoice/invoice_list.tt
 #: share/templates/invoice/template_list.tt share/templates/lnp/list.tt
 #: share/templates/maliciouscall/list.tt share/templates/ncos/list.tt
@@ -2043,6 +2048,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model not found"
 msgstr "Модель устройства не найдена"
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Device model preference successfully deleted"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model successfully deleted"
@@ -2273,6 +2282,7 @@ msgstr "Редактировать Контакт"
 msgid "Edit Content"
 msgstr "Редактировать содержимое"
 
+#: share/templates/helpers/pref_table.tt
 #: share/templates/invoice/template_list.tt share/templates/reseller/details.tt
 msgid "Edit Meta"
 msgstr "Редактировать метаданные"
@@ -2675,6 +2685,10 @@ msgid "Failed to create device model"
 msgstr "Не удалось создать модель устройства"
 
 #: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to create device model preference"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to create device profile"
 msgstr "Не удалось создать профиль устройства"
 
@@ -2875,6 +2889,10 @@ msgstr "Не удалось удалить прошивку устройства
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to delete device model"
 msgstr "Не удалось удалить модель устройства"
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to delete device model preference"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to delete device profile"
@@ -3224,6 +3242,10 @@ msgstr "Не удалось обновить прошивку устройств
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to update device model"
 msgstr "Не удалось обновить модель устройства"
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to update device model preference"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to update device profile"
@@ -5172,6 +5194,11 @@ msgstr ""
 msgid "PBX Device"
 msgstr "Устройство PBX"
 
+#. (devmod.vendor, devmod.model, pbx_device.identifier)
+#: share/templates/customer/pbx_fdev_preferences.tt
+msgid "PBX Device %1 \"%2\" %3 - Preferences"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "PBX Device successfully deleted"
 msgstr "Устройство PBX успешно удалено"
@@ -6940,6 +6967,10 @@ msgid "Successfully created device model"
 msgstr "Модель устройства успешно добавлена"
 
 #: lib/NGCP/Panel/Controller/Device.pm
+msgid "Successfully created device model preference"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully created device profile"
 msgstr "Профиль устройства успешно добавлен"
 
@@ -7066,6 +7097,10 @@ msgstr "Прошивка устройства успешно обновлена"
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully updated device model"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Successfully updated device model preference"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm

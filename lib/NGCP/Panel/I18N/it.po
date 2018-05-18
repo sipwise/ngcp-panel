@@ -743,6 +743,7 @@ msgstr "Tasto BLF"
 #: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt
 #: share/templates/calllistsuppression/list.tt
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
+#: share/templates/customer/pbx_fdev_preferences.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
 #: share/templates/device/list.tt share/templates/device/preferences.tt
 #: share/templates/device/profilepreferences.tt
@@ -1597,6 +1598,10 @@ msgstr "Crea Voucher Ricarica"
 msgid "Create Contact"
 msgstr "Crea Contatto"
 
+#: share/templates/device/preferences.tt
+msgid "Create Custom Preference"
+msgstr ""
+
 #: share/templates/customer/list.tt
 msgid "Create Customer"
 msgstr "Crea Cliente"
@@ -1964,7 +1969,7 @@ msgstr ""
 #: share/templates/customer/details.tt share/templates/device/list.tt
 #: share/templates/domain/list.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
-#: share/templates/helpers/datatables.tt
+#: share/templates/helpers/datatables.tt share/templates/helpers/pref_table.tt
 #: share/templates/invoice/invoice_list.tt
 #: share/templates/invoice/template_list.tt share/templates/lnp/list.tt
 #: share/templates/maliciouscall/list.tt share/templates/ncos/list.tt
@@ -2115,6 +2120,10 @@ msgstr "Dispositivo modello \"%1\" per rivenditore #%2 - Preferenze"
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model not found"
 msgstr "Modello dispositivo non trovato"
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Device model preference successfully deleted"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Device model successfully deleted"
@@ -2347,6 +2356,7 @@ msgstr "Modifica Contatto"
 msgid "Edit Content"
 msgstr "Modifica Contenuto"
 
+#: share/templates/helpers/pref_table.tt
 #: share/templates/invoice/template_list.tt share/templates/reseller/details.tt
 msgid "Edit Meta"
 msgstr "Modifica Meta"
@@ -2755,6 +2765,10 @@ msgid "Failed to create device model"
 msgstr "Creazione del modello dispositivo fallita"
 
 #: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to create device model preference"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to create device profile"
 msgstr "Creazione del profilo dispositivo fallita"
 
@@ -2955,6 +2969,10 @@ msgstr "Eliminazione firmware dispositivo fallita"
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to delete device model"
 msgstr "Eliminazione modello dispositivo fallita"
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to delete device model preference"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to delete device profile"
@@ -3304,6 +3322,10 @@ msgstr "Aggiornamento firmware dispositivo fallito"
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to update device model"
 msgstr "Aggiornamento modello dispositivo fallito"
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Failed to update device model preference"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Failed to update device profile"
@@ -5308,6 +5330,11 @@ msgstr "Coda PBX"
 msgid "PBX Device"
 msgstr "Dispositivo PBX"
 
+#. (devmod.vendor, devmod.model, pbx_device.identifier)
+#: share/templates/customer/pbx_fdev_preferences.tt
+msgid "PBX Device %1 \"%2\" %3 - Preferences"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "PBX Device successfully deleted"
 msgstr "Dispositivo PBX eliminato con successo"
@@ -7093,6 +7120,10 @@ msgid "Successfully created device model"
 msgstr "Modello dispositivo creato con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm
+msgid "Successfully created device model preference"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully created device profile"
 msgstr "Profilo dispositivo creato con successo"
 
@@ -7224,6 +7255,10 @@ msgstr "Firmware dispositivo aggiornato con successo"
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully updated device model"
 msgstr "Modello dispositivo aggiornato con successo"
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Successfully updated device model preference"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Successfully updated device profile"
