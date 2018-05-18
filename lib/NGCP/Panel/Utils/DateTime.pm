@@ -58,8 +58,8 @@ sub set_local_tz {
 }
 
 sub infinite_past {
-    #mysql 5.5: The supported range is '1000-01-01 00:00:00' ...
-    return DateTime->new(year => 1000, month => 1, day => 1, hour => 0, minute => 0, second => 0,
+    #mysql 5.5: The supported range is '0000-00-00 00:00:00' ...
+    return DateTime->new(year => 0, month => 0, day => 0, hour => 0, minute => 0, second => 0,
         time_zone => DateTime::TimeZone->new(name => 'UTC')
     );
     #$dt->epoch calls should be okay if perl >= 5.12.0
@@ -85,12 +85,12 @@ sub convert_tz {
 
 sub is_infinite_past {
     my $dt = shift;
-    return $dt->year <= 1000;
+    return $dt->year <= 1970;
 }
 
 sub infinite_future {
-    #... to '9999-12-31 23:59:59'
-    return DateTime->new(year => 9999, month => 12, day => 31, hour => 23, minute => 59, second => 59,
+    #... to '2038-01-19 05:14:07'
+    return DateTime->new(year => 2038, month => 1, day => 19, hour => 5, minute => 14, second => 7,
         #applying the 'local' timezone takes too long -> "The current implementation of DateTime::TimeZone
         #will use a huge amount of memory calculating all the DST changes from now until the future date.
         #Use UTC or the floating time zone and you will be safe."
@@ -102,7 +102,7 @@ sub infinite_future {
 
 sub is_infinite_future {
     my $dt = shift;
-    return $dt->year >= 9999;
+    return $dt->year >= 2038;
 }
 
 sub is_infinite {
