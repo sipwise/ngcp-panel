@@ -910,6 +910,8 @@ sub inbound_rules_up :Chained('inbound_rules_base') :PathPart('up') :Args(0) {
             desc  => $c->loc('Failed to move inbound peering rule up.'),
         );
     }
+    #to clear $c->stash->{close_target} that was set in the Navigation::check_redirect_chain from the back parameter
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;
 }
 
@@ -942,6 +944,8 @@ sub inbound_rules_down :Chained('inbound_rules_base') :PathPart('down') :Args(0)
             desc  => $c->loc('Failed to move inbound peering rule down.'),
         );
     }
+    #to clear $c->stash->{close_target} that was set in the Navigation::check_redirect_chain from the back parameter
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;
 }
 
