@@ -6,6 +6,7 @@ with 'NGCP::Panel::Render::RepeatableJs';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Utils::Preferences;
+use Storable qw();
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/fields actions/]}
@@ -180,5 +181,42 @@ sub validate_enum_value {
         $field->add_error($err_msg);
     }
 }
+
+sub validate {
+    my ($self, $field) = @_;
+    my $c = $self->ctx;
+    return unless $c;
+    my $schema = $c->model('DB');
+
+    my $resource = Storable::dclone($self->values);
+    if ($resource->{dev_pref}) {
+        if ($resource->{reseller_id}) {
+            if ($resource->{autoprov_device_id}) {
+                my $err = "reseller_id and autoprov_device_id can't be specified together.";
+                $c->log->error($err);
+                $self->field('autoprov_device_id')->add_error($err);
+                $self->field('reseller_id')->add_error($err);
+            }   
+            if ($c->user->roles ne "reseller") {
+                unless($schema->resultset('resellers')->find($resource->{reseller_id})) {
+                    my $err = "Invalid reseller_id '$$resource{reseller_id}'";
+                    $c->log->error($err);
+                    $self->field('reseller_id')->add_error($err);
+                }
+            }
+        } elsif ($resource->{autoprov_device_id}) {
+            my $rs = $schema->resultset('autoprov_devices')->search({ 
+                id => $resource->{autoprov_device_id},
+                ($c->user->roles eq "reseller") ? (reseller_id => $c->user->reseller_id) : (),
+            });
+            unless ($rs->first) {
+                my $err = "Invalid reseller_id '$$resource{reseller_id}'";
+                $c->log->error($err);
+                $self->field('autoprov_device_id')->add_error($err);
+            }
+        }
+    }
+}
+
 1;
 # vim: set tabstop=4 expandtab:

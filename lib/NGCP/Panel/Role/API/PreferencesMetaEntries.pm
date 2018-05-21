@@ -44,49 +44,22 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::Device::PreferenceAPI", $c);
 }
 
-sub check_resource{
-    my($self, $c, $item, $old_resource, $resource, $form) = @_;
-
-    my $schema = $c->model('DB');
-    if ($resource->{dev_pref}) {
-        if ($resource->{reseller_id}) {
-            if ($resource->{autoprov_device_id}) {
-                $c->log->error("reseller_id and autoprov_device_id can't be specified together.");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "reseller_id and autoprov_device_id can't be specified together.");
-                return;
-            }   
-            if ($c->user->roles eq "reseller") {
-                $resource->{reseller_id} = $c->user->reseller_id;
-            } else {
-                unless($schema->resultset('resellers')->find($resource->{reseller_id})) {
-                    $c->log->error("Invalid reseller_id '$$resource{reseller_id}'");
-                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "invalid reseller_id '$$resource{reseller_id}'");
-                    return;
-                }
-            }
-        } elsif ($resource->{autoprov_device_id}) {
-            my $rs = $schema->resultset('autoprov_devices')->search({ 
-                id => $resource->{autoprov_device_id},
-                ($c->user->roles eq "reseller") ? (reseller_id => $c->user->reseller_id) : (),
-            });
-            unless ($rs->first) {
-                $c->log->error("Invalid autoprov_device_id '$$resource{autoprov_device_id}'");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "invalid autoprov_device_id '$$resource{autoprov_device_id}'");
-                return;
-            }
-        }
-    }
-    return 1;
-}
-
-sub process_form_resource{
-    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
-    if ($resource->{dev_pref} && !$resource->{reseller_id} && !$resource->{autoprov_device_id} ) {
+sub process_form_resource {
+    my ($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    if ( $resource->{dev_pref} && !$resource->{autoprov_device_id} ) {
         if ($c->user->roles eq "reseller") {
             $resource->{reseller_id} = $c->user->reseller_id;
         }    
     }
     return $resource;
 }
+
+sub resource_from_item {
+    my ($self, $c, $item) = @_;
+    my $resource = { $item->get_inflated_columns };
+    $resource->{enum} = [ map { my $e = {$_->get_inflated_columns}; delete $e->{preference_id}; $e; } $item->voip_preferences_enums->all ];
+    return $resource;
+}
+
 1;
 # vim: set tabstop=4 expandtab:
