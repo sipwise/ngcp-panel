@@ -1332,23 +1332,19 @@ sub update_dynamic_preference {
     my @flags = grep {$_ =~/^[a-z]+_pref$/} keys %$resource;
     if(defined $enums and ref $enums eq 'ARRAY'){
         my $enums_rs = $preference->voip_preferences_enums;
-        my @old_enum_ids =  $enums_rs->get_column('id')->all;
-        my %old_enum_ids;
-        @old_enum_ids{@old_enum_ids} = @old_enum_ids;
+        $enums_rs->search_rs({
+            id => { -not_in => [ map { $_->{id} } @$enums ] }, 
+        })->delete;
         foreach my $enum (@$enums) {
             my $id = delete $enum->{id};
             my $enum_exists = $enums_rs->find($id);
             @{$enum}{@flags} = (1) x @flags;
             if ($enum_exists) {
                 $enum_exists->update($enum);
-                delete $old_enum_ids{$id};
             } else {
                 $preference->create_related('voip_preferences_enums', $enum);
             }
         }
-        $enums_rs->search_rs({
-            id => { -in => [ keys %old_enum_ids ] }, 
-        })->delete;
     } else {
         $preference->voip_preferences_enums->delete;
     }
