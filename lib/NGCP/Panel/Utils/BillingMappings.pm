@@ -40,8 +40,8 @@ sub get_actual_billing_mapping_stmt {
       join billing.products product on actual_billing_mapping.product_id = product.id
     where
       actual_billing_mapping.contract_id = %s
-      and (actual_billing_mapping.end_date >= %s or actual_billing_mapping.end_date is null)
       and (actual_billing_mapping.start_date <= %s or actual_billing_mapping.start_date is null)
+      and (actual_billing_mapping.end_date >= %s or actual_billing_mapping.end_date is null)
     order by actual_billing_mapping.start_date desc, actual_billing_mapping.id desc limit 1
 EOS
     , $projection, $contract_id_alias, ( map { '"'.$_.'"'; } ( $dtf->format_datetime($now), $dtf->format_datetime($now) ) ));
