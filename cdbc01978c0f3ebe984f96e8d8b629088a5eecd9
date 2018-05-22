@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_946dfc34",
+        "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T14:59:00Z",
+      "side": 1,
+      "message": "This is POD markup, which will not play nice with the POD at __END__. This even produces errors now. You can see those with: perldoc path-to-perl-module.pm",
+      "revId": "cdbc01978c0f3ebe984f96e8d8b629088a5eecd9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
