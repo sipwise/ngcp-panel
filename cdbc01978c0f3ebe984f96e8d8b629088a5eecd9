@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_94dbbced",
+        "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:04:02Z",
+      "side": 1,
+      "message": "This is being used here as some kind of code disabler. Removing the markup would enable the code again, which I guess is not desirable? The options are IMO:\n\n* Fix the code (!?) so that it can be renabled.\n* Remove the code completely.\n* Switch from POD disablement to # disablement, which will be a pain. :/\n\nProbably the panel developers will need to chime in here.\n\n(Also just to make sure, there are multiple similar instances, I just mentioned this one as an example.)",
+      "parentUuid": "fabf19d9_9454dc54",
+      "revId": "cdbc01978c0f3ebe984f96e8d8b629088a5eecd9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_14c7ac13",
         "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
         "patchSetId": 4
