@@ -16,6 +16,24 @@
       "revId": "97e4506869bc1e4e40f026bc95c0051ac8bce463",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_b4480089",
+        "filename": "script/extract_i18n.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-22T15:44:23Z",
+      "side": 1,
+      "message": "It has been fixed into the next commit :-) to keep the atomic :-)",
+      "parentUuid": "fabf19d9_54aac41a",
+      "revId": "97e4506869bc1e4e40f026bc95c0051ac8bce463",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
