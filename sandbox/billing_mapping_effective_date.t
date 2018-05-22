@@ -13,6 +13,7 @@ eval '
     use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
     use NGCP::Schema;
 ';
+print $@;
 unless ($@) {
     diag("connecting to ngcp db");
     $schema = NGCP::Schema->connect({
@@ -27,6 +28,7 @@ unless ($@) {
 # ... or a separate csv file otherwise:
 my $filename = 'api_balanceintervals_test_reference.csv';
 
+#goto SKIP;
 test_contracts(sub {
     my $contract = shift;
 
@@ -43,54 +45,279 @@ test_contracts(sub {
         my $id = $mapping->{id};
         $mappings{$id} = $mapping;
         my $s = $mapping->{start_date};
-        $s = $contract->{contract_create} unless $s;
-        $s = dt_from_string($s)->epoch;
+        if ($s) {
+            $s = dt_from_string($s)->epoch;
+        } else {
+            $s = 0;
+        }
+        #$s = $contract->{contract_create} unless $s;
+        #$s = dt_from_string($s)->epoch;
         my $e = $mapping->{end_date};
+        my $e_tree;
         if ($e) {
             $e = dt_from_string($e)->epoch;
+            $e_tree = $e;
         } else {
-            $e = 2147483647;
+            $e_tree = 2147483647.0;
+            $e = $e_tree - 0.001;
         }
-        $tree->insert($s,$e,$id);
-        $event_list->Push($s => $id);
-        $event_list->Push($e => $id);
+        $tree->insert($s,$e_tree,$id);
+        $mapping->{"s"} = $s;
+        $mapping->{"e"} = $e;
+        $event_list->Push($s."-0" => $id);
+        $event_list->Push($e."-1" => $id);
     }
+
+    #if ($contract->{contract_id} == 89) {
+    #    print "blah";
+    #}
 
     # 2. sort events by time ascending:
-    $event_list->Reorder( sort { $a <=> $b } $event_list->Keys );
+    $event_list->Reorder( sort { my ($t_a,$is_end_a) = split(/-/,$a); my ($t_b,$is_end_b) = split(/-/,$b); $t_a <=> $t_b || $is_end_a <=> $is_end_b; } $event_list->Keys );
 
     # 3. generate the "effective start" list by determining the mappings effective at any event time:
-    my $effective_start_list = create_linked_hash();
-    foreach my $t ($event_list->Keys) {
-        my $msec = 0.000;
-        foreach my $id (sort { $a <=> $b } @{$tree->find($t)}) { # sort by max(billing_mapping_id)
-            if ($effective_start_list->EXISTS($t + $msec)) {
-                die("MUST NOT HAPPEN");
-            } else {
-                $effective_start_list->Push(($t + $msec) => $mappings{$id});
-                $msec += 0.001; # to allow unique effective start times per contract, we use microsecond resolution
+    my @effective_start_list = ();
+    my $old_bm_ids = '';
+    foreach my $se ($event_list->Keys) {
+        my ($t,$is_end) = split(/-/,$se);
+        my @group = ();
+        my $max_bm_id;
+        my $bm_ids = "";
+        my $max_s;
+        foreach my $id (sort { $mappings{$b}->{"s"} <=> $mappings{$a}->{"s"} || $mappings{$a}->{id} <=> $mappings{$b}->{id}; } @{$tree->find($t)}) { # sort by max(billing_mapping_id)
+            my $mapping = $mappings{$id};
+            if ($is_end) {
+                next if $mapping->{"e"} == $t;
             }
+            $max_s = $mapping->{"s"} unless defined $max_s;
+            last unless $max_s == $mapping->{"s"};
+            my $row = {
+                contract_id => $contract->{contract_id},
+                billing_mapping_id => $id,
+                "last" => 0,
+                start_date => $mapping->{start_date},
+                end_date => $mapping->{end_date},
+                effective_start_date => ($is_end ? $t + 0.001 : $t),
+                profile_id => $mapping->{profile_id},
+                network_id => $mapping->{network_id},
+            };
+            push(@group,$row);
+            $max_bm_id = $id;
+            $bm_ids .= '-' . $id;
         }
+        foreach my $row (@group) {
+            $row->{"last"} = ($max_bm_id == $row->{billing_mapping_id} ? 1 : 0);
+        }
+        #if ($old_bm_ids ne $bm_ids) {
+            push(@effective_start_list,@group);
+        #}
+        $old_bm_ids = $bm_ids;
     }
 
-    # 4. done, save it.
+    # 4. done (dump the list to db).
 
     # 5. test it with actual billing mapping impl:
-    my @past_mappings = ();
-    foreach my $t ($effective_start_list->Keys) {
-        if ($t <= $contract->{now}) {
-            push(@past_mappings,$effective_start_list->FETCH($t));
+    test_events("perl impl - ",$contract,sub {
+        my $now = shift;
+        my $bm_actual_id;
+        foreach my $row (@effective_start_list) {
+            next unless $row->{"last"};
+            last if $row->{effective_start_date} > $now;
+            $bm_actual_id = $row->{billing_mapping_id};
         }
-    }
-    is(pop(@past_mappings)->{id},$contract->{bm_actual_id},"xxxx");
+        return $bm_actual_id;
+    },sub {
+        foreach my $row (@effective_start_list) {
+            print join("\t",(map { "$_=".((not defined $row->{$_}) ? "\t" : $row->{$_}); } sort keys %$row)) . "\n";
+               #print $mapping[0]."\t".$mapping[1]."\t".$mapping[2]."\t".$mapping->{end_date}."\t".$mapping->{profile_id}."\t".$mapping->{network_id}."\n";
+        }
+    });
 
 });
+
+SKIP:
+if ($schema) {
+    $schema->storage->dbh_do(sub {
+        my ($storage, $dbh, @args) = @_;
+        $dbh->do('use billing');
+        $dbh->do(<<EOS1
+create temporary table tmp_transformed (
+  contract_id int(11) unsigned,
+  billing_mapping_id int(11) unsigned,
+  last tinyint(3),
+  start_date datetime,
+  end_date datetime,
+  effective_start_date decimal(13,3),
+  profile_id int(11) unsigned,
+  network_id int(11) unsigned
+);
+EOS1
+        );
+        $dbh->do('drop procedure if exists transform_billing_mappings');
+        #$dbh->do('delimiter ;;');
+        $dbh->do(<<EOS2
+create procedure transform_billing_mappings() begin
+
+  declare _contracts_done, _events_done, _mappings_done, _is_end boolean default false;
+  declare _contract_id, _bm_id, _default_bm_id, _profile_id, _network_id int(11) unsigned;
+  declare _t, _start_date, _end_date datetime;
+  declare _effective_start_time decimal(13,3);
+  declare _bm_ids, _old_bm_ids varchar(65535);
+
+  declare contracts_cur cursor for select contract_id
+    from billing_mappings bm group by contract_id;
+  declare continue handler for not found set _contracts_done = true;
+
+  set _old_bm_ids = "";
+
+  open contracts_cur;
+  contracts_loop: loop
+    fetch contracts_cur into _contract_id;
+    if _contracts_done then
+      leave contracts_loop;
+    end if;
+    nested1: begin
+
+      declare events_cur cursor for select t,is_end from (
+#        (select coalesce(bm.start_date,if(c.create_timestamp = "0000-00-00 00:00:00",c.modify_timestamp,c.create_timestamp)) as t, 0 as is_end
+        (select coalesce(bm.start_date,from_unixtime(0)) as t, 0 as is_end
+          from billing_mappings bm join contracts c on bm.contract_id = c.id where contract_id = _contract_id)
+        union all
+        (select coalesce(end_date,from_unixtime(2147483647) - 0.001) as t, 1 as is_end from billing_mappings where contract_id = _contract_id)
+      ) as events group by t, is_end order by t, is_end;
+      declare continue handler for not found set _events_done = true;
+
+      set _events_done = false;
+      open events_cur;
+      events_loop: loop
+        fetch events_cur into _t, _is_end;
+        if _events_done then
+          leave events_loop;
+        end if;
+
+        nested2: begin
+
+          declare mappings_cur cursor for select bm1.id, bm1.start_date, bm1.end_date, bm1.billing_profile_id, bm1.network_id from
+              billing_mappings bm1 where bm1.contract_id = _contract_id and bm1.start_date <=> (select bm2.start_date
+              from billing_mappings bm2 where
+              bm2.contract_id = _contract_id
+              and (bm2.start_date <= _t or bm2.start_date is null)
+              and (if(_is_end,bm2.end_date > _t,bm2.end_date >= _t) or bm2.end_date is null)
+              order by bm2.start_date desc limit 1) order by bm1.id asc;
+          declare continue handler for not found set _mappings_done = true;
+
+          set _effective_start_time = (select unix_timestamp(if(_is_end,_t + 0.001,_t)));
+          set _bm_ids = "";
+          set _mappings_done = false;
+          open mappings_cur;
+          mappings_loop1: loop
+            fetch mappings_cur into _bm_id, _start_date, _end_date, _profile_id, _network_id;
+            if _mappings_done then
+              leave mappings_loop1;
+            end if;
+            set _bm_ids = (select concat(_bm_ids,"-",_bm_id));
+            set _default_bm_id = _bm_id;
+          end loop mappings_loop1;
+          close mappings_cur;
+
+          #if _old_bm_ids != _bm_ids then
+            set _mappings_done = false;
+            open mappings_cur;
+            mappings_loop2: loop
+              fetch mappings_cur into _bm_id, _start_date, _end_date, _profile_id, _network_id;
+              if _mappings_done then
+                leave mappings_loop2;
+              end if;
+
+              #INSERT......
+              #select _contract_id,_effective_start_time,_profile_id, _network_id;
+              insert into tmp_transformed values(_contract_id,_bm_id,if(_bm_id = _default_bm_id,1,0),_start_date,_end_date,_effective_start_time,_profile_id,_network_id);
+
+              #set _effective_start_time = _effective_start_time + 0.001;
+            end loop mappings_loop2;
+            close mappings_cur;
+          #end if;
+          set _old_bm_ids = _bm_ids;
+        end nested2;
+      end loop events_loop;
+      close events_cur;
+    end nested1;
+  end loop contracts_loop;
+  close contracts_cur;
+end;;
+EOS2
+        );
+        #$dbh->do('delimiter ;');
+        $dbh->do('call transform_billing_mappings()');
+        $dbh->do('drop procedure transform_billing_mappings');
+
+    },);
+
+    test_contracts(sub {
+        my $contract = shift;
+        $schema->storage->dbh_do(sub {
+            my ($storage, $dbh, @args) = @_;
+            my $sth = $dbh->prepare("select from_unixtime(tr.effective_start_date),tr.* from tmp_transformed tr where tr.contract_id = ? order by tr.effective_start_date asc");
+            $sth->execute($contract->{contract_id});
+            my $mappings = $sth->fetchall_arrayref();
+            $sth->finish();
+
+            test_events("sql impl - ",$contract,sub {
+                my $now = shift;
+                my $sth = $dbh->prepare("select max(effective_start_date) from tmp_transformed where contract_id = ? and effective_start_date <= ? and last = 1");
+                $sth->execute($contract->{contract_id},$now);
+                my ($effective_start_date) = $sth->fetchrow_array();
+                $sth = $dbh->prepare("select billing_mapping_id from tmp_transformed where contract_id = ? and effective_start_date = ? and last = 1");
+                $sth->execute($contract->{contract_id},$effective_start_date);
+                my ($bm_actual_id) = $sth->fetchrow_array();
+                $sth->finish();
+                unless (defined $bm_actual_id) {
+                    $sth = $dbh->prepare("select min(billing_mapping_id) from tmp_transformed where contract_id = ? and last = 1");
+                    $sth->execute($contract->{contract_id});
+                    ($bm_actual_id) = $sth->fetchrow_array();
+                    $sth->finish();
+                }
+                return $bm_actual_id;
+            },sub {
+                foreach my $mapping (@$mappings) {
+                    print join("\t",(map { (not defined $_) ? "\t" : $_ ; } @$mapping)) . "\n";
+                    #print $mapping[0]."\t".$mapping[1]."\t".$mapping[2]."\t".$mapping->{end_date}."\t".$mapping->{profile_id}."\t".$mapping->{network_id}."\n";
+                }
+            });
+
+        },);
+    });
+}
 
 done_testing;
 
 sub create_linked_hash {
     my %hash = ();
     return tie(%hash, 'Tie::IxHash');
+}
+
+sub test_events {
+    my ($label,$contract,$get_actual_billing_mapping,$print_debug_details) = @_;
+    my $event_list = create_linked_hash();
+    foreach my $mapping (@{$contract->{mappings}}) {
+        my $id = $mapping->{id};
+        my $s = $mapping->{start_date};
+        $s = $contract->{contract_create} unless $s;
+        my $e = $mapping->{end_date};
+        $e = dt_to_string(DateTime->from_epoch(epoch => 2147483647)) unless $e;
+        $event_list->Push($s => $id);
+        $event_list->Push($e => $id);
+    }
+
+    foreach ($event_list->Keys) {
+        my $dt = dt_from_string($_);
+        my $i = -1;
+        foreach my $dt (dt_from_string($_)->subtract(seconds => 1),dt_from_string($_),dt_from_string($_)->add(seconds => 1)) {
+            &$print_debug_details() unless (is(&$get_actual_billing_mapping($dt->epoch),get_actual_billing_mapping($schema,$contract->{contract_id},$dt),
+            $label."contract $contract->{contract_id} billing mapping id at t".($i<0?$i:"+$i")." = $dt"));
+            $i++;
+        }
+    }
 }
 
 sub test_contracts {
@@ -102,20 +329,13 @@ sub test_contracts {
         my $now = DateTime->now(
             time_zone => DateTime::TimeZone->new(name => 'local')
         );
-        my $dtf = $schema->storage->datetime_parser;
+        #my $dtf = $schema->storage->datetime_parser;
         while (my @page = $contract_rs->search_rs(undef,{
             page => $page,
             rows => 100,
         })->all) {
             foreach my $contract (@page) {
-                my $bm_actual_id = $schema->resultset('contracts')->search_rs({
-                    id => $contract->id,
-                },{
-                    bind    => [ ( $dtf->format_datetime($now) ) x 2, ( $contract->id ) x 2 ],
-                    'join'  => 'billing_mappings_actual',
-                    '+select' => [ 'billing_mappings_actual.actual_bm_id' ],
-                    '+as' => [ 'billing_mapping_id' ],
-                })->first->get_column("billing_mapping_id");
+                my $bm_actual_id = get_actual_billing_mapping($schema,$contract->id,$now);
 
                 &$code({
                     now => $now->epoch,
@@ -218,6 +438,20 @@ sub test_contracts {
         &$code($contract) if $contract;
         close $fh;
     }
+
+}
+
+sub get_actual_billing_mapping {
+    my ($schema, $contract_id, $now) = @_;
+    my $dtf = $schema->storage->datetime_parser;
+    return $schema->resultset('contracts')->search_rs({
+                    id => $contract_id,
+                },{
+                    bind    => [ ( $dtf->format_datetime($now) ) x 2, ( $contract_id ) x 2 ],
+                    'join'  => 'billing_mappings_actual',
+                    '+select' => [ 'billing_mappings_actual.actual_bm_id' ],
+                    '+as' => [ 'billing_mapping_id' ],
+                })->first->get_column("billing_mapping_id");
 
 }
 
@@ -429,8 +663,8 @@ sub dt_from_string {
     }
 
     sub intersect {
-        my ( $self, $start, $end, $sort ) = @_;
-        $sort = 1 if !defined $sort;
+        my ( $self, $start, $end ) = @_;
+        #$sort = 1 if !defined $sort;
         my $results = [];
         $self->_intersect( $start, $end, $results );
         return $results;
@@ -453,8 +687,8 @@ sub dt_from_string {
     }
 
     sub find {
-        my ( $self, $t, $sort ) = @_;
-        $sort = 1 if !defined $sort;
+        my ( $self, $t ) = @_;
+        #$sort = 1 if !defined $sort;
         my $results = [];
         $self->_find( $t, $results );
         return $results;
