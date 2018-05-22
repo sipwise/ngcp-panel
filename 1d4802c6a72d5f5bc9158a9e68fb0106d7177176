@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_f44e7895",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1625,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-05-22T15:43:27Z",
+      "side": 1,
+      "message": "agree, something looks strange here in any case, since in this line, $err should always be false (empty)",
+      "parentUuid": "fabf19d9_54fc043e",
+      "range": {
+        "startLine": 1625,
+        "startChar": 26,
+        "endLine": 1625,
+        "endChar": 28
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_f4f2f86e",
         "filename": "lib/NGCP/Panel/Field/DataTable.pm",
         "patchSetId": 3
