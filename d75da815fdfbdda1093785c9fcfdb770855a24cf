@@ -34,6 +34,24 @@
       "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_8f3a85cc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T16:36:08Z",
+      "side": 1,
+      "message": "My point is that this is still wrong. I just checked locally to make sure. The export here is just to shut up shellcheck, the current usage works just fine. I\u0027d rather we used a shellcheck override instead of doing this which seems rather confusing.",
+      "parentUuid": "fabf19d9_745b8855",
+      "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
