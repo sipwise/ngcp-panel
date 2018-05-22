@@ -94,6 +94,29 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_f4c0b8e2",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 770,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-22T15:18:28Z",
+      "side": 1,
+      "message": "will it tie together to one argument for \"blessed\"?\n\nthe safest is to have the original form here, and replace all \u0026\u0026 to \"and\"",
+      "range": {
+        "startLine": 770,
+        "startChar": 44,
+        "endLine": 770,
+        "endChar": 46
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_14956ce3",
         "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
         "patchSetId": 3
