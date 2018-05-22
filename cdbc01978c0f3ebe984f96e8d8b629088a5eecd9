@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_34e2b0a0",
+        "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-05-22T15:05:25Z",
+      "side": 1,
+      "message": "it\u0027s commented out essentially. doesn\u0027t trigger any perlcritic erros though.",
+      "parentUuid": "fabf19d9_9454dc54",
+      "revId": "cdbc01978c0f3ebe984f96e8d8b629088a5eecd9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_14c7ac13",
         "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
         "patchSetId": 4
