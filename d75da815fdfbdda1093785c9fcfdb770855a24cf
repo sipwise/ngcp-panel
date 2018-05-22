@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_b4ba406d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:19:16Z",
+      "side": 1,
+      "message": "What is that default setting that makes this work, and would not work otherwise? That seems surprising to me. :)",
+      "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
