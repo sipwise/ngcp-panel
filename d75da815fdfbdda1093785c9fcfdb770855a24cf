@@ -16,6 +16,24 @@
       "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_745b8855",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-22T15:47:39Z",
+      "side": 1,
+      "message": "I can bet I saw some bash/shell option like \"set -something\" which prevent automatic export. while I cannot find it now. I will remove those like from commit message.",
+      "parentUuid": "fabf19d9_b4ba406d",
+      "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
