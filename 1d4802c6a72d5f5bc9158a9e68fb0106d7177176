@@ -117,6 +117,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_349070ec",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-22T15:15:52Z",
+      "side": 1,
+      "message": "this code will not work with \u0027\u0026\u0026\u0027",
+      "parentUuid": "fabf19d9_14956ce3",
+      "range": {
+        "startLine": 224,
+        "startChar": 29,
+        "endLine": 224,
+        "endChar": 31
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_f499d820",
         "filename": "lib/NGCP/Panel/Utils/XMLDispatcher.pm",
         "patchSetId": 3
