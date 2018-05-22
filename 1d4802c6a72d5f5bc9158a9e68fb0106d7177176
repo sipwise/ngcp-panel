@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_54fc043e",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1625,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:11:58Z",
+      "side": 1,
+      "message": "I\u0027m not a fan of using boolean operators for normal control flow like this one. One thing is things like error conditions, for which using low-precedence is the correct thing to do «$foo or die \"error\";», but for things like assignments and similar I think it\u0027s clearer to have the control flow spelled out, like «$err \u003d $err_lines if !$err;» for example. Altiugh in this case I\u0027m not even sure I see the point, we are inside a !$err conditional anyway? So why not simply $err \u003d $c-\u003eforward(...)?",
+      "range": {
+        "startLine": 1625,
+        "startChar": 26,
+        "endLine": 1625,
+        "endChar": 28
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_f4f2f86e",
+        "filename": "lib/NGCP/Panel/Field/DataTable.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:11:58Z",
+      "side": 1,
+      "message": "You probably want to unify this one too, even if it currently does not trigger.",
+      "range": {
+        "startLine": 75,
+        "startChar": 27,
+        "endLine": 75,
+        "endChar": 31
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_d4e7f4aa",
+        "filename": "lib/NGCP/Panel/Field/DatePicker.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:11:58Z",
+      "side": 1,
+      "message": "here too",
+      "range": {
+        "startLine": 53,
+        "startChar": 27,
+        "endLine": 53,
+        "endChar": 30
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_34f9904e",
+        "filename": "lib/NGCP/Panel/Field/MonthPicker.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:11:58Z",
+      "side": 1,
+      "message": "ditto.",
+      "range": {
+        "startLine": 53,
+        "startChar": 27,
+        "endLine": 53,
+        "endChar": 30
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_14956ce3",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:11:58Z",
+      "side": 1,
+      "message": "control flow boolean, IMO no. :)",
+      "range": {
+        "startLine": 224,
+        "startChar": 29,
+        "endLine": 224,
+        "endChar": 31
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_f499d820",
+        "filename": "lib/NGCP/Panel/Utils/XMLDispatcher.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:11:58Z",
+      "side": 1,
+      "message": "control flow boolean, IMO no. Post-conditional would be better.",
+      "range": {
+        "startLine": 50,
+        "startChar": 44,
+        "endLine": 50,
+        "endChar": 46
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
