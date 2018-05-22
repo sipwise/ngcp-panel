@@ -1,3 +1,12 @@
+ngcp-panel (6.2.1.3+0~mr6.2.1.3) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [67412e2] TT#36224 Fix showing loc entries when ignore realm
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 22 May 2018 17:28:11 +0200
+
 ngcp-panel (6.2.1.2+0~mr6.2.1.2) unstable; urgency=medium
 
   [ Rene Krenn ]
