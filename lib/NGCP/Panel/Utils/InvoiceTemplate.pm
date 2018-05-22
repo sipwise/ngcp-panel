@@ -44,28 +44,21 @@ sub nsvg_pdf {
         # so we need to scale it down by 0.8 to get a mediabox of 595,842
         # when using 90dpi.
         # (it doesn't happen with inkscape, no idea what rsvg does)
-        #-z 0.8 , --dpi-x 72 --dpi-y 72
-        my @cmd_args = (qw/-a -f pdf -z 0.8/, @next_pages);
+        #-z 0.8 , --dpi-x 72 --dpi-y 72,  -w 595 -h 842/
+        my @cmd_args = (qw/-a -f pdf/, @next_pages);
         my $cmd = 'rsvg-convert';
         my $cmd_full = $cmd.' '.join(' ', @cmd_args);
         $c and $c->log->debug( $cmd_full );
         print  $cmd_full.";\n";
-        if($join_necessary){
-            $pdf_file_number ++;
-            `$cmd_full > $tempdir/$pdf_file_number.pdf`;
-        }else{
-            $$pdf_ref = capturex([0], $cmd, @cmd_args);
-        }
+        $pdf_file_number ++;
+        `$cmd_full > $tempdir/$pdf_file_number.pdf`;
     }
-    if($join_necessary){
-        #gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile=- mine1.pdf mine2.pdf
-        my @cmd_args = ('-dBATCH', '-dNOPAUSE', '-q', '-sDEVICE=pdfwrite', '-dPDFSETTINGS=/prepress', '-sOutputFile=-', map { $tempdir.'/'.$_.'.pdf'} ( 1..$pdf_file_number ));
-        my $cmd = 'gs';
-        my $cmd_full = $cmd.' '.join(' ', @cmd_args);
-        $c and $c->log->debug( $cmd_full );
-        print  $cmd_full.";\n";
-        $$pdf_ref = capturex([0], $cmd, @cmd_args);
-    }
+    my @cmd_args = ('-dBATCH', '-dNOPAUSE', '-q', '-sDEVICE=pdfwrite', '-dPDFSETTINGS=/prepress','-sPAPERSIZE=a4', '-dFIXEDMEDIA', '-dPDFFitPage', '-sOutputFile=-', map { $tempdir.'/'.$_.'.pdf'} ( 1..$pdf_file_number ));
+    my $cmd = 'gs';
+    my $cmd_full = $cmd.' '.join(' ', @cmd_args);
+    $c and $c->log->debug( $cmd_full );
+    print  $cmd_full.";\n";
+    $$pdf_ref = capturex([0], $cmd, @cmd_args);
     return 1;
 }
 
