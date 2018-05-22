@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_54aac41a",
+        "filename": "script/extract_i18n.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-22T15:23:59Z",
+      "side": 1,
+      "message": "Didn\u0027t you fix something similar recently to use --directory\u003d$d instead? I think this does not look good. :)",
+      "revId": "97e4506869bc1e4e40f026bc95c0051ac8bce463",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
