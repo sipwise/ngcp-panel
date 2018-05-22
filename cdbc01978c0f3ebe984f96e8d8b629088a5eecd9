@@ -16,6 +16,47 @@
       "revId": "cdbc01978c0f3ebe984f96e8d8b629088a5eecd9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_9454dc54",
+        "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-22T15:01:10Z",
+      "side": 1,
+      "message": "should it be removed? or... ?",
+      "parentUuid": "fabf19d9_946dfc34",
+      "revId": "cdbc01978c0f3ebe984f96e8d8b629088a5eecd9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_14c7ac13",
+        "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-22T15:01:10Z",
+      "side": 1,
+      "message": "the same here?",
+      "range": {
+        "startLine": 188,
+        "startChar": 0,
+        "endLine": 188,
+        "endChar": 4
+      },
+      "revId": "cdbc01978c0f3ebe984f96e8d8b629088a5eecd9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
