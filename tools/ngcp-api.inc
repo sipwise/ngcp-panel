@@ -3,6 +3,13 @@
 set -e
 
 importcreds () {
+  local CREDS=$1
+
+  if [ -z "${CREDS}" ]; then
+    echo "Error: missing mandatory file name to read" >&2
+    exit 1
+  fi
+
   if [ ! -f "${CREDS}" ]; then
     return
   fi

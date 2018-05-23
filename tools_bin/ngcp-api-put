@@ -20,7 +20,7 @@ EOF
 if [ -z "$APIUSER" ] ; then
   if [ -f "$TOOLS" ] ; then
     source "$TOOLS"
-    importcreds
+    importcreds "$CREDS"
   else
     APIUSER="administrator:administrator"
   fi
