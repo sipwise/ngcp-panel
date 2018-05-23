@@ -109,6 +109,24 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_cf82bdc8",
+        "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-23T10:12:04Z",
+      "side": 1,
+      "message": "why those code it not deleted then? It is a git, it will always be available into the history.",
+      "parentUuid": "fabf19d9_0fff9502",
+      "revId": "cdbc01978c0f3ebe984f96e8d8b629088a5eecd9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_14c7ac13",
         "filename": "lib/NGCP/Panel/Controller/API/ContractsItem.pm",
         "patchSetId": 4
