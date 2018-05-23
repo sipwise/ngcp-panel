@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_0fa1d5a9",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1625,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-23T08:50:54Z",
+      "side": 1,
+      "message": "Gerhard, may I ask you to upload new partchset to this review with \"proper\" changes? Since I am not Perl-enough to fix it properly then.",
+      "parentUuid": "fabf19d9_f44e7895",
+      "range": {
+        "startLine": 1625,
+        "startChar": 26,
+        "endLine": 1625,
+        "endChar": 28
+      },
+      "revId": "1d4802c6a72d5f5bc9158a9e68fb0106d7177176",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_f4f2f86e",
         "filename": "lib/NGCP/Panel/Field/DataTable.pm",
         "patchSetId": 3
