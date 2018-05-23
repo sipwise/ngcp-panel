@@ -70,6 +70,24 @@
       "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_611d0566",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-23T11:23:00Z",
+      "side": 1,
+      "message": "export is not necessary when sourcing a script, only when forking and executing a child, source implies executing code in the current environment. So in this case we are adding export:s just to shut up shellcheck, which seems wrong and confusing. I did get confused, as I thought for some reason the source\u0027d file was not seeing the variable, which it does.\n\nAnother alternative if you do not like adding an override, would be to pass the variable as an argument to the function.",
+      "parentUuid": "fabf19d9_2f17f9ee",
+      "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
