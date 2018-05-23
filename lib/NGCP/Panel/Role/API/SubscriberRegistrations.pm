@@ -26,6 +26,8 @@ sub _item_rs {
             my $sub = $c->model('DB')->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
             if ($sub) {
                 $filter->{username} = $sub->username;
+            }
+            if($c->config->{features}->{multidomain}) {
                 $filter->{domain} = $sub->domain->domain;
             }
         }
