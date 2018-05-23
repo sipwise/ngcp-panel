@@ -36,7 +36,7 @@ has_field 'sources' => (
                   'which will be matched against the calling party number to determine ' .
                   'whether to apply the callforward or not. ' .
                   '"source" is the calling party number in E164 format to match. ' .
-                  'Shell patterns like 431* or 49123[1-5]67 are possible. ' .
+                  'Shell patterns like 431* or 49123~[1-5~]67 are possible. ' .
                   'Use "anonymous" to match suppressed numbers.',
         ],
     },
