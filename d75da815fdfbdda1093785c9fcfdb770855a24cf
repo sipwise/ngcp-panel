@@ -52,6 +52,24 @@
       "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_2f17f9ee",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-23T08:12:37Z",
+      "side": 1,
+      "message": "Why? this is exactly how it should be. If you need the variable to some scripts you include into main one, export it.\nWe have the same logic in deployment.sh and ngcp-installer.\n\nWhat is the problem to export variable here?",
+      "parentUuid": "fabf19d9_8f3a85cc",
+      "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
