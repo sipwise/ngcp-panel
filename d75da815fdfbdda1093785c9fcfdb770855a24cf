@@ -88,6 +88,24 @@
       "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_a13afdcb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-23T11:42:23Z",
+      "side": 1,
+      "message": "\u003e Another alternative if you do not like adding an override, would be to pass the variable as an argument to the function.\n\nHow can you pass variable on sourcing? Like this:\n  \n\u003e CREDS\u003d\"${HOME}/.ngcp-api\"\n\u003e TOOLS\u003d\"/usr/share/ngcp-panel-tools/ngcp-api.inc\"\n\u003e source CREDS\u003d${CREDS} \"${TOOLS}\"\n\n?\n\nExporting the variable is the way I saw in a lot of places in Sipwise.\nYou never now the code inside all the child scripts which can fork something and variable will be invisible there.\n\nHaving variable into the script AND not using it is MORE confusing (see my patchset 1 as an example).\nI am not shuting up shellcheck here, I do agree with it. I would submit it AS IS.\nWe are clearly exporting the variable which is in use somewhere into the child scripts of child script, of ... .\n\nAlso it is not harmful, the exported variable is available into the current thread only, while a bit future proved.\nI agree on mistake on commit message which confused you, it has been removed.",
+      "parentUuid": "fabf19d9_611d0566",
+      "revId": "d75da815fdfbdda1093785c9fcfdb770855a24cf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
