@@ -307,7 +307,7 @@ sub _delete_system_contact {
         $req = HTTP::Request->new('GET', $url);
         $res = $ua->request($req);
         is($res->code, 200, "test system contact is still found");
-        return undef;
+        return;
     }
 
 }

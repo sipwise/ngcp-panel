@@ -860,7 +860,7 @@ sub test_ccmapentries {
 
     _test_journal_collection('ccmapentries',$subscriber->{id},$journals);
     
-    return undef;
+    return;
     
 }
 
@@ -925,7 +925,7 @@ sub test_callforwards {
 
     _test_journal_collection('callforwards',$subscriber->{id},$journals);
     
-    return undef;
+    return;
     
 }
 
@@ -2477,7 +2477,7 @@ sub _get_preference_value {
             }
         }
     }
-    return undef;
+    return;
 }
 
 sub _to_json {

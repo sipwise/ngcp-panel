@@ -178,7 +178,7 @@ sub lock_provisoning_voip_subscriber {
 sub get_provisoning_voip_subscriber_lock_level {
     my %params = @_;
 
-    NGCP::Panel::Utils::Preferences::get_provisoning_voip_subscriber_first_int_attr_value(%params,
+    return NGCP::Panel::Utils::Preferences::get_provisoning_voip_subscriber_first_int_attr_value(%params,
         attribute => 'lock'
         );
 }

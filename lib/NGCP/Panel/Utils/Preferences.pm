@@ -1207,7 +1207,7 @@ sub get_provisoning_voip_subscriber_first_int_attr_value {
     my $prov_subscriber= $params{prov_subscriber};
     my $attribute = $params{attribute};
 
-    return undef unless $prov_subscriber;
+    return unless $prov_subscriber;
 
     my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c,

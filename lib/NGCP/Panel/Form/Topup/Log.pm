@@ -181,7 +181,7 @@ sub deflate_money {
 sub _deflate_lock_level {
     my ($self,$value) = @_;
     if (defined $value and length($value) == 0) {
-        return undef;
+        return;
     }
     return $value;
 }

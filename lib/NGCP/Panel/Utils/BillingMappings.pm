@@ -18,7 +18,7 @@ sub get_actual_billing_mapping {
     if ($bm_actual) {
         return $bm_actual->billing_mappings->first;
     }
-    return undef;
+    return;
 }
 
 sub get_actual_billing_mapping_stmt {

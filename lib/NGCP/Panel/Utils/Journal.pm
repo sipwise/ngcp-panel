@@ -220,7 +220,7 @@ sub get_api_journal_query_params {
 sub handle_api_item_base_journal {
     my ($controller,$c,$id) = @_;
     $c->stash->{item_id_journal} = $id;
-    return undef;
+    return;
 }
 
 sub handle_api_journals_get {
@@ -500,6 +500,7 @@ sub get_journal_relation_link {
                 )
         }
     }
+    ## no critic (ProhibitExplicitReturnUndef)
     return undef;
 
 }
@@ -582,7 +583,7 @@ sub _serialize_content { #run this in eval only, deflate somehow inflicts a segf
             return Sereal::Encoder::encode_sereal($data);
         }
     }
-    return undef;
+    return;
 }
 
 sub _deserialize_content {
@@ -600,7 +601,7 @@ sub _deserialize_content {
             return Sereal::Decoder::decode_sereal($serialized);
         }
     }
-    return undef;
+    return;
 }
 
 sub _create_journal {
@@ -649,7 +650,7 @@ sub _create_journal {
             last;
         };
     }
-    return undef;
+    return;
 }
 
 1;

@@ -712,7 +712,7 @@ sub get_relation_value {
             return $relation_data->val;
         }
     }
-    return undef;
+    return;
 }
 
 sub get_tag_value {
@@ -728,7 +728,7 @@ sub get_tag_value {
             return $tag_data->val;
         }
     }
-    return undef;
+    return;
 }
 
 1;

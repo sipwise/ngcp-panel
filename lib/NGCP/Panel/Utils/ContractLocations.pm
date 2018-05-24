@@ -89,7 +89,7 @@ sub _set_ip_net_from_to {
         $resource->{_ipv6_net_from} = $from;
         $resource->{_ipv6_net_to} = $to;
     }
-    return undef;
+    return;
 }
 
 #deflate column values for search parameters doesn't work, so we need this sub
@@ -112,6 +112,8 @@ sub _prepare_query_param_value {
     my ($q,$v) = @_;
     my ($bytes,$version) = _ip_to_bytes($q);
     if (defined $v) {
+        # really complex interaction
+        ## no critic (ProhibitExplicitReturnUndef)
         return undef if (!defined $bytes || $v != $version);
         return $bytes;
     } else {

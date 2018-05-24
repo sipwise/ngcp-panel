@@ -859,7 +859,7 @@ sub _get_resized_interval_end {
             return NGCP::Panel::Utils::DateTime::infinite_future;
         }
     }
-    return undef;
+    return;
 }
 
 sub _get_interval_start {
@@ -905,7 +905,7 @@ sub _add_interval {
         }
         return $to;
     }
-    return undef;
+    return;
 }
 
 sub _add_second {
@@ -992,7 +992,7 @@ sub get_timely_range {
             $timely_end = _add_interval(NGCP::Panel::Utils::DateTime::set_local_tz($balance->start),$package->balance_interval_unit,$package->balance_interval_value,
                         _START_MODE_PRESERVE_EOM->{$package->balance_interval_start_mode} ? NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp) : undef)->subtract(seconds => 1);
         }
-        $timely_start = _add_second(_add_interval($timely_end,$timely_duration_unit,-1 * $timely_duration_value),1);
+        $timely_start = _add_second(scalar(_add_interval($timely_end,$timely_duration_unit,-1 * $timely_duration_value)),1);
         $timely_start = NGCP::Panel::Utils::DateTime::set_local_tz($balance->start) if $timely_start < NGCP::Panel::Utils::DateTime::set_local_tz($balance->start);
 
         $is_timely = ($now >= $timely_start && $now <= $timely_end ? 1 : 0);
