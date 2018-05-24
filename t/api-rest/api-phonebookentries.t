@@ -83,7 +83,7 @@ $test_machine->QUERY_PARAMS('');
     my $reseller_other_phonebookentries = $test_machine->check_create_correct(2, sub {
         delete $_[0]->{subscriber_id};
         delete $_[0]->{customer_id};
-        $_[0]->{reseller_id} = $fake_data_other->get_id('resellers',@_),
+        $_[0]->{reseller_id} = $fake_data_other->get_id('resellers',@_);
         $_[0]->{number} = time() + seq();
     } );
 

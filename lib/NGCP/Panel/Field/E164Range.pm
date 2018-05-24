@@ -58,7 +58,7 @@ sub validate {
 
     my @sub_fields = qw/cc ac snbase snlength/;
     my %sub_errors = 
-        map {$_, 1} 
+        map { $_ => 1 }
             map { ($self->field($_) && $self->field($_)->result ) ? @{$self->field($_)->errors} : () } 
                 @sub_fields;
     for my $sub_error( keys %sub_errors ) {
