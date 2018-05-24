@@ -13,7 +13,6 @@ use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::ProfilePackages;
-use NGCP::Panel::Utils::BillingMappings qw();
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Voucher;
 use NGCP::Panel::Utils::ContractLocations qw();
@@ -42,7 +41,6 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
     $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
@@ -51,17 +49,17 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "contact.firstname", search => 1, title => '' },
         { name => "contact.lastname", search => 1, title => $c->loc("Name"),
             custom_renderer => 'function ( data, type, full ) { var sep = (full.contact_firstname && full.contact_lastname) ? " " : ""; return (full.contact_firstname || "") + sep + (full.contact_lastname || ""); }' },
-        { name => "product.name", search => 1, title => $c->loc("Product") },
-        { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
-          literal_sql => '""' },
+        { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
+        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
         { name => "status", search => 1, title => $c->loc("Status") },
         { name => "max_subscribers", search => 1, title => $c->loc("Max. Subscribers") },
     ]);
 
-    my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c); #, now => $now);
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, now => $now);
     my $rs_all = NGCP::Panel::Utils::Contract::get_contract_rs(
         schema => $c->model('DB'),
-        #now => $now,
+        now => $now,
         include_terminated => 1,
     );
     $c->stash(
@@ -78,14 +76,11 @@ sub root :Chained('list_customer') :PathPart('') :Args(0) :Does(ACL) :ACLDetachT
 
 sub ajax :Chained('list_customer') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $now = NGCP::Panel::Utils::DateTime::current_local; #uniform ts
     my $res = $c->stash->{contract_select_rs};
     NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns}, sub {
         my $item = shift;
         my %contact = $item->contact->get_inflated_columns;
         my %result = map { (ref $contact{$_}) ? () : ('contact_'.$_ => $contact{$_}); } keys %contact;
-        my $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $item, now => $now, );
-        $result{'billing_profile_name'} = $bm_actual->billing_profile->name if $bm_actual;
         return %result;
     },);
     $c->detach( $c->view("JSON") );
@@ -112,7 +107,7 @@ sub ajax_reseller_filter :Chained('list_customer') :PathPart('ajax/reseller') :A
     my $reseller_customer_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
-        { name => "product.name", search => 1, title => $c->loc("Product") },
+        { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
@@ -145,14 +140,11 @@ sub ajax_package_filter :Chained('list_customer') :PathPart('ajax/package') :Arg
 
 sub ajax_pbx_only :Chained('list_customer') :PathPart('ajax_pbx_only') :Args(0) {
     my ($self, $c) = @_;
-    my $now = NGCP::Panel::Utils::DateTime::current_local; #uniform ts
     my $res = $c->stash->{contract_select_rs}->search_rs({'product.class' => 'pbxaccount'});
     NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns}, sub {
         my $item = shift;
         my %contact = $item->contact->get_inflated_columns;
         my %result = map { (ref $contact{$_}) ? () : ('contact_'.$_ => $contact{$_}); } keys %contact;
-        my $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $item, now => $now, );
-        $result{'billing_profile_name'} = $bm_actual->billing_profile->name if $bm_actual;
         return %result;
     },);
     $c->detach( $c->view("JSON") );
@@ -209,13 +201,12 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                 #$form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
                 $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 $form->values->{external_id} = $form->field('external_id')->value;
-                $form->values->{product_id} //= $schema->resultset('products')->search_rs({ class => $c->stash->{type} })->first->id;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
                     delete $form->values->{max_subscribers};
                 }
 
                 my $mappings_to_create = [];
-                NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
+                NGCP::Panel::Utils::Contract::prepare_billing_mappings(
                     c => $c,
                     resource => $form->values,
                     mappings_to_create => $mappings_to_create,
@@ -223,16 +214,19 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                         my ($err,@fields) = @_;
                         die( [$err, "showdetails"] );
                     });
-                #delete $form->values->{product_id};
+                delete $form->values->{product_id};
 
                 my $contract = $schema->resultset('contracts')->create($form->values);
                 foreach my $mapping (@$mappings_to_create) {
                     $contract->billing_mappings->create($mapping);
                 }
-                #$contract = $c->stash->{contract_select_rs}
-                #    ->search({
-                #        'me.id' => $contract->id,
-                #    },undef)->first;
+                $contract = $c->stash->{contract_select_rs}
+                    ->search({
+                        'me.id' => $contract->id,
+                    },{
+                        '+select' => 'billing_mappings.id',
+                        '+as' => 'bmid',
+                    })->first;
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,
@@ -284,11 +278,17 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my $contract_rs = $c->stash->{contract_select_rs}
         ->search({
             'me.id' => $contract_id,
-        },undef);
+        },{
+            '+select' => 'billing_mappings.id',
+            '+as' => 'bmid',
+        });
     my $contract_terminated_rs = $c->stash->{contract_select_all_rs}
         ->search({
             'me.id' => $contract_id,
-        },undef);
+        },{
+            '+select' => 'billing_mappings.id',
+            '+as' => 'bmid',
+        });
 
     if($c->user->roles eq 'reseller') {
         $contract_rs = $contract_rs->search({
@@ -305,8 +305,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             $c->detach('/denied_page');
         }
     }
-    my $contract_first = $contract_rs->first;
-    unless(defined($contract_first)) {
+    unless(defined($contract_rs->first)) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Customer was not found',
@@ -315,11 +314,10 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
     }
 
-
     my $now = $c->stash->{now};
-    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $contract_first, now => $now, );
-    my $billing_mappings_ordered = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered($contract_first->billing_mappings,$now,$billing_mapping->id);
-    my $future_billing_mappings = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered(NGCP::Panel::Utils::BillingMappings::future_billing_mappings($contract_first->billing_mappings,$now));
+    my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_rs->first->get_column('bmid'));
+    my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
+    my $billing_mapping = $contract_rs->first->billing_mappings->find($contract_rs->first->get_column('bmid'));
 
     my $balance;
     try {
@@ -348,19 +346,19 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::ProfilePackages::get_topuplog_datatable_cols($c),
     ]);
 
-    my $product = $contract_first->product;
+    my $product_id = $contract_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message::error(
         c => $c,
         error => "No product for customer contract id $contract_id found",
         desc  => $c->loc('No product for this customer contract found.'),
-    ) unless($product);
+    ) unless($product_id);
 
-    #my $product = $c->model('DB')->resultset('products')->find($product_id);
-    #NGCP::Panel::Utils::Message::error(
-    #    c => $c,
-    #    error => "No product with id $product_id for customer contract id $contract_id found",
-    #    desc  => $c->loc('Invalid product id for this customer contract.'),
-    #) unless($product);
+    my $product = $c->model('DB')->resultset('products')->find($product_id);
+    NGCP::Panel::Utils::Message::error(
+        c => $c,
+        error => "No product with id $product_id for customer contract id $contract_id found",
+        desc  => $c->loc('Invalid product id for this customer contract.'),
+    ) unless($product);
 
     # only show the extension if it's a pbx extension. otherwise (and in case of a pilot?) show the
     # number
@@ -409,6 +407,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     })->all ];
 
     # contents of details page:
+    my $contract_first = $contract_rs->first;
     NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $contract_first);
     $c->stash->{contact_hash} = { $contract_first->contact->get_inflated_columns };
     if(defined $contract_first->max_subscribers) {
@@ -535,7 +534,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 my $mappings_to_create = [];
                 my $delete_mappings = 0;
                 my $set_package = ($form->values->{billing_profile_definition} // 'id') eq 'package';
-                NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
+                NGCP::Panel::Utils::Contract::prepare_billing_mappings(
                     c => $c,
                     resource => $form->values,
                     old_resource => { $contract->get_inflated_columns },
@@ -546,7 +545,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                         my ($err,@fields) = @_;
                         die( [$err, "showdetails"] );
                     });
-                #delete $form->values->{product_id};
+                delete $form->values->{product_id};
 
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
                 my $old_ext_id = $contract->external_id // '';
@@ -554,11 +553,11 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 my $old_package = $contract->profile_package;
 
                 $contract->update($form->values);
-                NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($contract,$now) if $delete_mappings;
+                NGCP::Panel::Utils::Contract::remove_future_billing_mappings($contract,$now) if $delete_mappings;
                 foreach my $mapping (@$mappings_to_create) {
                     $contract->billing_mappings->create($mapping);
                 }
-                #$contract = $c->stash->{contract_terminated_rs}->first;
+                $contract = $c->stash->{contract_terminated_rs}->first;
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
@@ -572,7 +571,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
                     );
 
-                $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(contract => $contract, schema => $schema, now => $now, );
+                $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
                 $billing_profile = $billing_mapping->billing_profile;
 
                 my $new_ext_id = $contract->external_id // '';
@@ -1258,7 +1257,7 @@ sub billingmappings_ajax :Chained('base') :PathPart('billingmappings/ajax') :Arg
     my ($self, $c) = @_;
     $c->stash(timeline_data => {
         contract => { $c->stash->{contract}->get_columns },
-        events => NGCP::Panel::Utils::BillingMappings::get_billingmappings_timeline_data($c,$c->stash->{contract}),
+        events => NGCP::Panel::Utils::Contract::get_billingmappings_timeline_data($c,$c->stash->{contract}),
     });
     $c->detach( $c->view("JSON") );
 }

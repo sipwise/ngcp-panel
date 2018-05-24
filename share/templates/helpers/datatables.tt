@@ -96,16 +96,11 @@ $(document).ready(function() {
                     if(data == null)
                         return '';
                     [% IF helper.custom_renderers.${f} -%]
-                        data.escapeHtml = true; //true by default;
                         var renderCustom = [% helper.custom_renderers.${f} -%];
                     [% ELSE -%]
-                        var renderCustom = function(data, type, full) { data.escapeHtml = true; return data; };
+                        var renderCustom = function(data, type, full) { return data; };
                     [% END -%]
-                    var str = String(renderCustom(data, type, full));
-                    if (data.escapeHtml) {
-                        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');//"
-                    }
-                    return str;
+                    return String(renderCustom(data, type, full)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');//"
                 },
                 "bSortable": [% IF helper.column_sortable_map.${f} %] true [% ELSE %] false [% END %]
             },
@@ -113,7 +108,7 @@ $(document).ready(function() {
             {   "mRender": function ( data, type, full ) {
                     var html = '' +
                     '<div class="sw_actions pull-right">';
-                    [%
+                    [% 
                         backuri = backuri | uri;
                         FOR button IN helper.dt_buttons;
                             separator = '?';
@@ -128,7 +123,7 @@ $(document).ready(function() {
                             IF button.condition;
                     -%]
                                 if([% button.condition %]) {
-                    [%
+                    [% 
                             END;
                     -%]
                         html +=
@@ -140,7 +135,7 @@ $(document).ready(function() {
                             IF button.condition;
                     -%]
                         }
-                    [%
+                    [% 
                             END;
                         END;
                     -%]
