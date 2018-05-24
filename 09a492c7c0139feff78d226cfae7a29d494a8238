@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_9795fb41",
+        "filename": "lib/NGCP/Panel/Controller/Pbx.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-24T17:06:21Z",
+      "side": 1,
+      "message": "Not important, but this should be interpolable.",
+      "range": {
+        "startLine": 314,
+        "startChar": 18,
+        "endLine": 314,
+        "endChar": 31
+      },
+      "revId": "09a492c7c0139feff78d226cfae7a29d494a8238",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
