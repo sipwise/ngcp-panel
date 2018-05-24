@@ -361,7 +361,7 @@ sub _delete_customer_contact {
         $req = HTTP::Request->new('GET', $url);
         $res = $ua->request($req);
         is($res->code, 200, "test customer contact is still found");
-        return undef;
+        return;
     }
 
 }
@@ -452,7 +452,7 @@ sub _delete_subscriber {
         $req = HTTP::Request->new('GET', $url);
         $res = $ua->request($req);
         is($res->code, 200, "test subscriber is still found");
-        return undef;
+        return;
     }
 
 }

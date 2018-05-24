@@ -202,7 +202,7 @@ sub _create_lnp_number {
         return $number;
     } else {
         is($res->code, $expected_code, "create test lnp number returns $expected_code");
-        return undef;
+        return;
     }
 
 }
@@ -234,7 +234,7 @@ sub _update_lnp_number {
         is($res->code, 200, "fetch test lnp number");
         my $got_number = JSON::from_json($res->decoded_content);
         is_deeply($got_number,$number,"lnp number unchanged");
-        return undef;
+        return;
     }
 }
 
@@ -259,7 +259,7 @@ sub _delete_lnp_number {
         $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         $res = $ua->request($req);
         is($res->code, 200, "test lnp number is still found");
-        return undef;
+        return;
     }
 
 }
@@ -313,7 +313,7 @@ sub _create_lnp_provider {
         return $carrier;
     } else {
         is($res->code, $expected_code, "create test lnp carrier returns $expected_code");
-        return undef;
+        return;
     }
 
 }
@@ -336,7 +336,7 @@ sub _delete_lnp_provider {
         $req = HTTP::Request->new('GET', $url);
         $res = $ua->request($req);
         is($res->code, 200, "test lnp carrier is still found");
-        return undef;
+        return;
     }
 
 }

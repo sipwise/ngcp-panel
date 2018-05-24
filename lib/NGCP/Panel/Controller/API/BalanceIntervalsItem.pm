@@ -149,7 +149,7 @@ sub GET :Allow {
 sub item_base {
     my ($self,$c,$id) = @_;
     $c->stash->{contract_id} = $id;
-    return undef;
+    return;
 }
 
 sub item_get {

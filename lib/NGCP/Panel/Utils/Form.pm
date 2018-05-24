@@ -82,7 +82,7 @@ sub validate_entities {
 
     my $schema = $c->model('DB');
     if ('CODE' ne ref $err_code) {
-        $err_code = sub { return undef; };
+        $err_code = sub { return; };
     }
     
     my $validate_field = sub {

@@ -131,7 +131,7 @@ sub lookup {
         order_by => { -desc => qw/callee_prefix/ },
     });
 
-    return undef unless $rs->first;
+    return unless $rs->first;
 
     my %peer_data;
     my @peer_groups;
