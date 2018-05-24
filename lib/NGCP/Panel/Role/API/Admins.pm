@@ -81,7 +81,6 @@ sub hal_from_item {
     $resource{id} = int($item->id);
     $hal->resource({%resource});
     return $hal;
-
 }
 
 sub item_by_id {
