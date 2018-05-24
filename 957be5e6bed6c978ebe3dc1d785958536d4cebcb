@@ -52,6 +52,24 @@
       "revId": "957be5e6bed6c978ebe3dc1d785958536d4cebcb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_e4c923ae",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 1747,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-24T08:46:21Z",
+      "side": 1,
+      "message": "it has been removed completely in the next patchset 8.",
+      "parentUuid": "fabf19d9_84da6777",
+      "revId": "957be5e6bed6c978ebe3dc1d785958536d4cebcb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
