@@ -78,3 +78,4 @@ I18N
 
         msginit --input=lib/NGCP/Panel/I18N/messages.pot --output=lib/NGCP/Panel/I18N/$LANG.po --locale=$LANG
 
+Thu May 24 14:12:59 CEST 2018
