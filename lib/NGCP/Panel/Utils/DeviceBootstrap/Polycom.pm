@@ -39,52 +39,73 @@ sub register_model{
 
 sub register_package_content {
     my $self = shift;
-    #.'_'.$self->content_params->{mac}
-    $self->{register_package_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
-<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001'>
-<add-package account-id='".uri_escape($self->params->{redirect_params}->{profile})."'>
-<package-data>
-<base-package-name>default</base-package-name>
-</package-data>
-</add-package>
-</request>";
+    
+    my $param_user = $self->params->{credentials}->{user};
+    my $param_password = $self->params->{credentials}->{password};
+    my $param_profile = uri_escape($self->params->{redirect_params}->{profile});
+
+    $self->{register_package_content} ||= <<EOS_XML;
+<?xml version='1.0' encoding='UTF-8'?>
+<request userid='$param_user' password='$param_password' message-id='1001'>
+    <add-package account-id='$param_profile'>
+        <package-data>
+            <base-package-name>default</base-package-name>
+        </package-data>
+    </add-package>
+</request>
+EOS_XML
     return $self->{register_package_content};
 }
 sub register_content {
     my $self = shift;
-    #.'_'.$self->content_params->{mac}
-    $self->{register_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
-<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001'>
-<add-sip-device account-id='".uri_escape($self->params->{redirect_params}->{profile})."'>
-<device-params><deviceId>".$self->content_params->{mac}."</deviceId>
-<serialNo>".$self->content_params->{mac}."</serialNo>
-<vendor>Polycom</vendor>
-<vendorModel>Polycom_UCS_Device</vendorModel>
-</device-params>
-<sip-device-common-params>
-<templateCriteria>".uri_escape($self->params->{redirect_params}->{profile})."</templateCriteria>
-</sip-device-common-params>
-<package-data><base-package-name>default</base-package-name></package-data>
-<vendor-extensions/>
-</add-sip-device>
-</request>";
+
+    my $param_user = $self->params->{credentials}->{user};
+    my $param_password = $self->params->{credentials}->{password};
+    my $param_profile = uri_escape($self->params->{redirect_params}->{profile});
+    my $param_mac = $self->content_params->{mac};
+
+    $self->{register_content} ||= <<EOS_XML;
+<?xml version='1.0' encoding='UTF-8'?>
+<request userid='$param_user' password='$param_password' message-id='1001'>
+    <add-sip-device account-id='$param_profile'>
+        <device-params>
+            <deviceId>$param_mac</deviceId>
+            <serialNo>$param_mac</serialNo>
+            <vendor>Polycom</vendor>
+            <vendorModel>Polycom_UCS_Device</vendorModel>
+        </device-params>
+        <sip-device-common-params>
+            <templateCriteria>$param_profile</templateCriteria>
+        </sip-device-common-params>
+        <package-data><base-package-name>default</base-package-name></package-data>
+        <vendor-extensions/>
+    </add-sip-device>
+</request>
+EOS_XML
     return $self->{register_content};
 }
 
 sub unregister_content {
     my $self = shift;
-    #.'_'.$self->content_params->{mac}
-    $self->{unregister_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
-<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001' >
-<delete-sip-device account-id='".uri_escape($self->params->{redirect_params}->{profile})."'>
-<device-params>
-<deviceId>".$self->content_params->{mac}."</deviceId>
-<serialNo>".$self->content_params->{mac}."</serialNo>
-<vendor>Polycom</vendor>
-<vendorModel>Polycom_UCS_Device</vendorModel>
-</device-params>
-</delete-sip-device>
-</request>";
+
+    my $param_user = $self->params->{credentials}->{user};
+    my $param_password = $self->params->{credentials}->{password};
+    my $param_profile = uri_escape($self->params->{redirect_params}->{profile});
+    my $param_mac = $self->content_params->{mac};
+
+    $self->{unregister_content} ||=  <<EOS_XML;
+<?xml version='1.0' encoding='UTF-8'?>
+<request userid='$param_user' password='$param_password' message-id='1001' >
+    <delete-sip-device account-id='$param_profile'>
+        <device-params>
+            <deviceId>$param_mac</deviceId>
+            <serialNo>$param_mac</serialNo>
+            <vendor>Polycom</vendor>
+            <vendorModel>Polycom_UCS_Device</vendorModel>
+        </device-params>
+    </delete-sip-device>
+</request>
+EOS_XML
     return $self->{unregister_content};
 }
 

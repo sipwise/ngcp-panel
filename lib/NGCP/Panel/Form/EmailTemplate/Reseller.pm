@@ -38,8 +38,8 @@ has_field 'body' => (
     rows => 10,
     maxlength => '67108864', # 64MB
     element_class => [qw/ngcp-autoconf-area/],
-    default =>
-'Dear Customer,
+    default => <<'EOS_DEFAULT_TEXT',
+Dear Customer,
 
 A new subscriber [% subscriber %] has been created for you.
 
@@ -48,7 +48,8 @@ Please go to [% url %] to set your password and log into your self-care interfac
 Your faithful Sipwise system
 
 -- 
-This is an automatically generated message. Do not reply. '
+This is an automatically generated message. Do not reply.
+EOS_DEFAULT_TEXT
 );
 
 has_field 'save' => (

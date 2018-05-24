@@ -74,11 +74,12 @@ my @opt_spec = (
             }
             return $res." ";
         };
-        open CONFIG, "$config_file" or die "Program stopping, couldn't open the configuration file '$config_file'.\n";
+        open my $config_fh, '<', "$config_file"
+            or die "Program stopping, couldn't open the configuration file '$config_file'.\n";
 
         #can try CONFIG::Hash, Env::Sourced
         my $opt_str = '';
-        while (<CONFIG>) {
+        while (<$config_fh>) {
             chomp;                  # no newline
             s/#.*//;                # no comments
             s/^\s+//;               # no leading white
@@ -91,7 +92,7 @@ my @opt_spec = (
             $opt_str .= $cfg2opt->($opt_key,$value);
             #$opt->{lc $var} = $value;
         }
-        close CONFIG;
+        close $config_fh;
         GetOptionsFromString($opt_str, $opt_cfg, @opt_spec);
     }
 }
@@ -203,15 +204,15 @@ sub process_invoices{
                         $logger->debug( "No billing profile;\n");
                     }
                 }else{
-                    $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.id from invoices where invoices.generator="auto" 
-                    '.ifp(' and ',
-                        join(' and ',
-                            !$opt->{resend}?' invoices.sent_date is null ':(),
-                            (ify(' invoices.contract_id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
-                            (ifk(' date(invoices.period_start) >= ? ', v2a($stime ? $stime->ymd : undef))),
-                            (ifk(' date(invoices.period_start) <= ? ', v2a($etime ? $etime->ymd : undef))),
-                        )
-                    ),  { Slice => {} }, @{$opt->{client_contract_id}}, v2a($client_contract->{id}), v2a($stime->ymd),v2a($etime->ymd) );
+                    $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.id from invoices where invoices.generator="auto" '
+                        . ifp(' and ',
+                            join(' and ',
+                                !$opt->{resend}?' invoices.sent_date is null ':(),
+                                (ify(' invoices.contract_id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
+                                (ifk(' date(invoices.period_start) >= ? ', v2a($stime ? $stime->ymd : undef))),
+                                (ifk(' date(invoices.period_start) <= ? ', v2a($etime ? $etime->ymd : undef))),
+                            )
+                        ),  { Slice => {} }, @{$opt->{client_contract_id}}, v2a($client_contract->{id}), v2a($stime->ymd),v2a($etime->ymd) );
                 }
                 if($opt->{send} || $opt->{sendonly}){
                     my $email_template = get_email_template($provider_contract,$client_contract);
@@ -246,10 +247,10 @@ sub get_provider_clients_contacts{
 }
 sub get_client_contracts{
     my($client_contact,$stime,$etime) = @_;
-    my $contacts = $dbh->selectall_arrayref('select contracts.* 
-    from contracts 
-    left join invoices on contracts.id=invoices.contract_id and invoices.generator="auto" '
-        .ifp(' and ',
+    my $contacts = $dbh->selectall_arrayref('select contracts.* ' .
+    'from contracts ' .
+    'left join invoices on contracts.id=invoices.contract_id and invoices.generator="auto" '
+        . ifp(' and ',
             join(' and ',
                 (ifk(' date(invoices.period_start) >= ? ', v2a($stime ? $stime->ymd : undef))),
                 (ifk(' date(invoices.period_start) <= ? ', v2a($etime ? $etime->ymd : undef ))),
@@ -270,22 +271,22 @@ sub get_client_contracts{
 sub get_billing_profile{
     my($client_contract, $stime, $etime) = @_;
     my $billing_profile;
-    if(my $actual_billing_mapping = $dbh->selectrow_hashref('select * FROM billing_mappings 
-        where contract_id = ? 
-            and (billing_mappings.start_date <= ? OR billing_mappings.start_date is null)
-            and (billing_mappings.end_date >= ? OR billing_mappings.end_date is null)
-        order by billing_mappings.start_date desc, billing_mappings.id desc limit 1'
-        , undef,  $client_contract->{id}, $etime->epoch, $stime->epoch)){
+    if(my $actual_billing_mapping = $dbh->selectrow_hashref('select * FROM billing_mappings ' .
+        'where contract_id = ? ' .
+            'and (billing_mappings.start_date <= ? OR billing_mappings.start_date is null) ' .
+            'and (billing_mappings.end_date >= ? OR billing_mappings.end_date is null) ' .
+        'order by billing_mappings.start_date desc, billing_mappings.id desc limit 1',
+        undef,  $client_contract->{id}, $etime->epoch, $stime->epoch)){
 
         #don't allow auto-generation for terminated contracts
-        $billing_profile = $dbh->selectrow_hashref('select distinct billing_profiles.* 
-        from billing_mappings
-        inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
-        inner join contracts on contracts.id=billing_mappings.contract_id
-        inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
-        where billing_mappings.id=? '
-            .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ':'' )
-        , undef, $actual_billing_mapping->{id}
+        $billing_profile = $dbh->selectrow_hashref('select distinct billing_profiles.* ' .
+        'from billing_mappings ' .
+        'inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id ' .
+        'inner join contracts on contracts.id=billing_mappings.contract_id ' .
+        'inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount") ' .
+        'where billing_mappings.id=? ' .
+            ( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ':'' ),
+        undef, $actual_billing_mapping->{id}
         );
     }
     return $billing_profile;
@@ -295,37 +296,37 @@ sub get_invoice_data_raw{
     $opt_local //= {};
     my ($invoice_details_calls,$invoice_details_zones);
     if(!$opt_local->{count_contract_balance}){
-        $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,from_unixtime(cdr.start_time) as start_time,bzh.zone, bzh.detail as zone_detail 
-    from accounting.cdr 
-    LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id
-    where
-    cdr.source_user_id != "0"
-    and cdr.call_status="ok" 
-    and cdr.rating_status="ok"
-    and cdr.source_account_id=?
-    and cdr.start_time >= ?
-    and cdr.start_time <= ?
-    order by cdr.start_time '
-        , { Slice => {} }
-        , $client_contract->{id},$stime->epoch,$etime->epoch
+        $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,from_unixtime(cdr.start_time) as start_time,bzh.zone, bzh.detail as zone_detail ' .
+    'from accounting.cdr ' .
+    'LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id ' .
+    'where ' .
+    'cdr.source_user_id != "0" ' .
+    'and cdr.call_status="ok"  ' .
+    'and cdr.rating_status="ok" ' .
+    'and cdr.source_account_id=? ' .
+    'and cdr.start_time >= ? ' .
+    'and cdr.start_time <= ? ' .
+    'order by cdr.start_time ',
+        { Slice => {} },
+        $client_contract->{id},$stime->epoch,$etime->epoch
         );
     }
-    $invoice_details_zones = $dbh->selectall_arrayref('select SUM(cdr.source_customer_cost) AS customercost, COUNT(*) AS number, SUM(cdr.duration) AS duration,sum(cdr.source_customer_free_time) as free_time '
-    .(!$opt_local->{count_contract_balance}?', bzh.zone':'')
-    .'
-    from accounting.cdr '
-    .(!$opt_local->{count_contract_balance}?'LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id ':'')
-    .' where
-    cdr.source_user_id != "0"
-    and cdr.call_status="ok" 
-    and cdr.rating_status="ok"
-    and cdr.source_account_id=?
-    and cdr.start_time >= ?
-    and cdr.start_time <= ?'
-    .(!$opt_local->{count_contract_balance}?'group by bzh.zone
-    order by bzh.zone':'')
-    , {Slice => {} }
-    , $client_contract->{id},$stime->epoch,$etime->epoch
+    $invoice_details_zones = $dbh->selectall_arrayref('select SUM(cdr.source_customer_cost) AS customercost, COUNT(*) AS number, SUM(cdr.duration) AS duration,sum(cdr.source_customer_free_time) as free_time ' .
+    (!$opt_local->{count_contract_balance}?', bzh.zone':'') .
+    ' from accounting.cdr ' .
+    (!$opt_local->{count_contract_balance}?'LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id ':'') .
+    ' where ' .
+    'cdr.source_user_id != "0" ' .
+    'and cdr.call_status="ok"  ' .
+    'and cdr.rating_status="ok" ' .
+    'and cdr.source_account_id=? ' .
+    'and cdr.start_time >= ? ' .
+    'and cdr.start_time <= ?' .
+    (!$opt_local->{count_contract_balance}
+        ? 'group by bzh.zone order by bzh.zone'
+        : ''),
+    {Slice => {} },
+    $client_contract->{id},$stime->epoch,$etime->epoch
     );
     #/data for invoice generation
 
@@ -348,18 +349,18 @@ sub check_unrated_calls{
     if($opt->{force_unrated}){
         return 1;
     }
-    my $unrated_calls_info = $dbh->selectall_arrayref('select cdr.source_account_id, from_unixtime(min(cdr.start_time)) as start_time_min, from_unixtime(max(cdr.start_time)) as start_time_max, count(*) as calls_number
-    from accounting.cdr 
-    where
-    cdr.source_user_id != "0"
-    and cdr.call_status="ok" 
-    and cdr.rating_status != "ok"
-    and cdr.start_time >= ?
-    and cdr.start_time <= ?
-    group by cdr.source_account_id 
-    order by cdr.source_account_id '
-        , { Slice => {} }
-        , $stime->epoch,$etime->epoch
+    my $unrated_calls_info = $dbh->selectall_arrayref('select cdr.source_account_id, from_unixtime(min(cdr.start_time)) as start_time_min, from_unixtime(max(cdr.start_time)) as start_time_max, count(*) as calls_number ' .
+    'from accounting.cdr  ' .
+    'where ' .
+    'cdr.source_user_id != "0" ' .
+    'and cdr.call_status="ok"  ' .
+    'and cdr.rating_status != "ok" ' .
+    'and cdr.start_time >= ? ' .
+    'and cdr.start_time <= ? ' .
+    'group by cdr.source_account_id ' .
+    'order by cdr.source_account_id ',
+        { Slice => {} },
+        $stime->epoch,$etime->epoch
     );
     if(@$unrated_calls_info){
         my $msg = "\n\n\n\n".'There are '.@$unrated_calls_info.' customers which have unrated calls in the '.$stime->ymd.' - '.$etime->ymd.' period. Run '.__FILE__.' script with option --force_unrated to generate invoices anyway.'."\n\n\n\n";

@@ -26,52 +26,69 @@ sub rpc_server_params{
 
 sub register_content {
     my $self = shift;
-    $self->{register_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
+
+    my $param_servername = $self->content_params->{server_name};
+    my $param_mac = $self->content_params->{mac};
+
+    $self->{register_content} ||= <<EOS_XML;
+<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
-<methodName>redirect.registerDevice</methodName>
-<params>
-<param>
-<value><string>".$self->content_params->{mac}."</string></value>
-</param>
-<param>
-<value><string><![CDATA[".$self->content_params->{server_name}."]]></string></value>
-</param>
-</params>
-</methodCall>";
+    <methodName>redirect.registerDevice</methodName>
+    <params>
+        <param>
+            <value><string>$param_mac</string></value>
+        </param>
+        <param>
+            <value><string><![CDATA[$param_servername]]></string></value>
+        </param>
+    </params>
+</methodCall>
+EOS_XML
     return $self->{register_content};
 }
 
 sub unregister_content {
     my $self = shift;
-    $self->{unregister_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
+
+    my $param_macold = $self->content_params->{mac_old} // '';
+
+    $self->{unregister_content} ||=  <<EOS_XML;
+<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
-<methodName>redirect.deRegisterDevice</methodName>
-<params>
-<param>
-<value><string>".($self->content_params->{mac_old} // '')."</string></value>
-</param>
-</params>
-</methodCall>";
+    <methodName>redirect.deRegisterDevice</methodName>
+    <params>
+        <param>
+            <value><string>$param_macold</string></value>
+        </param>
+    </params>
+</methodCall>
+EOS_XML
     return $self->{unregister_content};
 }
 sub register_model_content {
     my $self = shift;
-    $self->{register_model_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
+
+    my $param_servername = $self->content_params->{server_name};
+    my $param_uri = $self->content_params->{uri};
+
+    $self->{register_model_content} ||=  <<EOS_XML;
+<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
-<methodName>redirect.addServer</methodName>
-<params>
-<param>
-<value>
-<string><![CDATA[".$self->content_params->{server_name}."]]></string>
-</value>
-</param>
-<param>
-<value>
-<string><![CDATA[".$self->content_params->{uri}."]]></string>
-</value>
-</param>
-</params>
-</methodCall>";
+    <methodName>redirect.addServer</methodName>
+    <params>
+        <param>
+            <value>
+                <string><![CDATA[$param_servername]]></string>
+            </value>
+        </param>
+        <param>
+            <value>
+                <string><![CDATA[$param_uri]]></string>
+            </value>
+        </param>
+    </params>
+</methodCall>
+EOS_XML
     return $self->{register_model_content};
 }
 
