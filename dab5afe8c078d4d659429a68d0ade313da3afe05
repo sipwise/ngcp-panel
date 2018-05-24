@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_d78133fd",
+        "filename": "t/api-rest/api-customercontacts.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-24T17:08:54Z",
+      "side": 1,
+      "message": "you probably want to change this too, to make sure these match.",
+      "range": {
+        "startLine": 397,
+        "startChar": 18,
+        "endLine": 397,
+        "endChar": 19
+      },
+      "revId": "dab5afe8c078d4d659429a68d0ade313da3afe05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
