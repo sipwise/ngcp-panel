@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_6462b3da",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 1747,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-05-24T08:09:06Z",
+      "side": 1,
+      "message": "should be deleted like in line 1624",
+      "revId": "957be5e6bed6c978ebe3dc1d785958536d4cebcb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
