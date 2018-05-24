@@ -16,6 +16,24 @@
       "revId": "957be5e6bed6c978ebe3dc1d785958536d4cebcb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_84da6777",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 1747,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-24T08:44:46Z",
+      "side": 1,
+      "message": "please change this condition back to \"and\" as otherwise it wont work :)",
+      "parentUuid": "fabf19d9_6462b3da",
+      "revId": "957be5e6bed6c978ebe3dc1d785958536d4cebcb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
