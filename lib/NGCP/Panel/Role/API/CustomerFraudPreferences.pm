@@ -81,7 +81,7 @@ sub _item_rs {
     my ($self, $c, $include_terminated) = @_;
 
     my $customer_rs = $c->model('DB')->resultset('contracts')->search({
-        $include_terminated ? () : ('me.status' => { '!=' => 'terminated' }),
+        $include_terminated ? () : ('me.status' => { '!=' => 'terminated' })
     }, {
         join => 'contact',
         alias => 'me',

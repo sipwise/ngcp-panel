@@ -669,7 +669,7 @@ my %customer_map = ();
           pilot_primary_alias_username_before => $cc.$ac.$sn,
           pilot_primary_alias_username_after => $cc.$ac.$sn,
 
-    ),
+    );
     _check_event_history("end_profile when terminating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
         {},{},{},{},{},
         { %subscriber_event,
