@@ -34,6 +34,24 @@
       "revId": "957be5e6bed6c978ebe3dc1d785958536d4cebcb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_24d03b53",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 1747,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-24T08:46:03Z",
+      "side": 1,
+      "message": "nvm precedence operators should cover that.",
+      "parentUuid": "fabf19d9_84da6777",
+      "revId": "957be5e6bed6c978ebe3dc1d785958536d4cebcb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
