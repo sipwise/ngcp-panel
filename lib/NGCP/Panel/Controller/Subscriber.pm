@@ -140,7 +140,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
     }
-    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $contract );
+    my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     $c->stash->{billing_mapping} = $billing_mapping;
 
     $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
