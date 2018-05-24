@@ -400,7 +400,7 @@ sub _update_customer {
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
         %$customer,
-        @further_opts,
+        %further_opts,
     }));
     $res = $ua->request($req);
     is($res->code, 200, "patch test customer");

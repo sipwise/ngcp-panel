@@ -505,7 +505,7 @@ sub get_allowed_roles {
     if('HASH' eq ref $roles_config){
         $allowed_roles_default = delete $roles_config->{Default};
         $allowed_roles_per_methods = {map {
-            $_ => $roles_config->{$_} // $allowed_roles_default,
+            $_ => $roles_config->{$_} // $allowed_roles_default;
         } @{ $self->allowed_methods }, 'Journal' };
     }else{
         $allowed_roles_default = 'ARRAY' eq ref $roles_config ? $roles_config : [$self->config_allowed_roles];
@@ -514,7 +514,7 @@ sub get_allowed_roles {
             $allowed_roles_journal = $roles_config->[1] // $allowed_roles_default;
         }
         $allowed_roles_per_methods = {map {
-            $_ => $allowed_roles_default,
+            $_ => $allowed_roles_default;
         } @{ $self->allowed_methods }};
         $allowed_roles_per_methods->{Journal} = $allowed_roles_journal;
     }
