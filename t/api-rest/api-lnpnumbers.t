@@ -46,8 +46,10 @@ $test_machine->DATA_ITEM_STORE($data);
 {
 #test "upload csv" interface variant
     $test_machine->DATA_ITEM($data);
-    my $csv_data = "aaa,111,222,2221,2016-10-02,2016-10-31,1,1
-aaa,111,333,3331,2016-10-01,2016-10-31,1,1\n";
+    my $csv_data = <<EOS_CSV;
+aaa,111,222,2221,2016-10-02,2016-10-31,1,1
+aaa,111,333,3331,2016-10-01,2016-10-31,1,1
+EOS_CSV
     my $csv_upload_url = '/api/lnpnumbers/';
     my $csv_download_url = '/api/lnpnumbers/';
     $test_machine->resource_fill_file($test_machine->DATA_ITEM->{file}->[0], $csv_data);

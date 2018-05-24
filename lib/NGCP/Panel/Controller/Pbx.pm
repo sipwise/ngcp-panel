@@ -223,28 +223,32 @@ sub panasonic_directory_list :Chained('base') :PathPart('pbx/directory/panasonic
 
     $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
 
-    my $data =
-'<?xml version="1.0" encoding="utf-8"?>
+    my $data = <<'EOS_XML';
+<?xml version="1.0" encoding="utf-8"?>
 <ppxml xmlns="http://panasonic/sip_phone"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://panasonic/sip_phone sip_phone.xsd">
     <Screen version="2.0">
         <PhoneBook version="2.0">
-';
-        my $person_id = 1;
+EOS_XML
+        my $person_id = 0;
         $data .= join '', map {
-            "<Personnel id=\"".($person_id++)."\">
+            $person_id++;
+            <<EOS_XMLLOOP;
+            <Personnel id="$person_id">
                  <Name>$$_{name}</Name>
                  <PhoneNums>
-                    <PhoneNum type=\"ext\">$$_{ext}</PhoneNum>
+                    <PhoneNum type="ext">$$_{ext}</PhoneNum>
                  </PhoneNums>
              </Personnel>
-        "} @entries;
+EOS_XMLLOOP
+        } @entries;
 
-    $data .=
-'       </PhoneBook>
+    $data .= <<EOS_XML;
+        </PhoneBook>
     </Screen>
-</ppxml>';
+</ppxml>
+EOS_XML
 
 
     $c->log->debug("providing config to $id");
@@ -307,20 +311,22 @@ sub yealink_directory_list :Chained('base') :PathPart('pbx/directory/yealink') :
 
     $self->add_phonebook_entries($c, $dev, \@entries, \%entries);
 
-    my $data =
-'<?xml version="1.0" encoding="utf-8"?>
+    my $req_uri = $c->req->uri;
+    my $data = <<EOS_XML;
+<?xml version="1.0" encoding="utf-8"?>
 <SipwiseIPPhoneDirectory>
   <SoftKeyItem>
     <Name>0</Name>
-    <URL>'.$c->req->uri.'</URL>
+    <URL>$req_uri</URL>
   </SoftKeyItem>
-';
-    $data .= join '', map {
-        "<DirectoryEntry>
+EOS_XML
+    $data .= join '', map { <<EOS_XMLLOOP;
+        <DirectoryEntry>
              <Name>$$_{name}</Name>
              <Telephone>$$_{ext}</Telephone>
          </DirectoryEntry>
-    "} @entries;
+EOS_XMLLOOP
+    } @entries;
     $data .= '</SipwiseIPPhoneDirectory>';
 
 
@@ -389,27 +395,25 @@ sub polycom_directory_list :Chained('base') :PathPart('pbx/directory/polycom') :
         $entry->{lname} = $lname;
     }
 
-    my $data =
-'<?xml version="1.0" encoding="utf-8"?>
+    my $data = <<EOS_XML;
+<?xml version="1.0" encoding="utf-8"?>
 <directory>
   <item_list>
-';
+EOS_XML
 
-=pod
-ln  last name
-fn  first name
-ct  contact
-sd  speed-dial index
-rt  ring type
-dc  divert contact for auto divert
-ad  auto divert
-ar  auto reject
-bw  buddy watching
-bb  buddy block
-=cut
+# ln  last name
+# fn  first name
+# ct  contact
+# sd  speed-dial index
+# rt  ring type
+# dc  divert contact for auto divert
+# ad  auto divert
+# ar  auto reject
+# bw  buddy watching
+# bb  buddy block
 
-    $data .= join '', map {
-        "<item>
+    $data .= join '', map { <<EOS_XMLLOOP;
+        <item>
              <ln>$$_{lname}</ln>
              <fn>$$_{fname}</fn>
              <ct>$$_{ext}</ct>
@@ -421,7 +425,8 @@ bb  buddy block
              <bw>0</bw>
              <bb>0</bb>
          </item>
-    "} @entries;
+EOS_XMLLOOP
+    } @entries;
     $data .= '</item_list></directory>';
 
     $c->log->debug("providing config to $id");

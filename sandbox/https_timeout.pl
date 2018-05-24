@@ -38,19 +38,20 @@ sub test_timeout {
                 'path'    => $cfg->{path},
                 'headers' => $cfg->{headers},
                 'Content-Type' => 'text/xml',
-                'content' => "<?xml version='1.0' encoding='UTF-8'?>
+                'content' => <<EOFCONTENT } );
+<?xml version='1.0' encoding='UTF-8'?>
     <methodCall>
-    <methodName>redirect.registerDevice</methodName>
-    <params>
-    <param>
-    <value><string>"."0080f0d4dbf1"."</string></value>
-    </param>
-    <param>
-    <value><string><![CDATA["."0080f0d4dbf10080f0d4"."]]></string></value>
-    </param>
-    </params>
-    </methodCall>",
-            },);
+        <methodName>redirect.registerDevice</methodName>
+        <params>
+            <param>
+                <value><string>"."0080f0d4dbf1"."</string></value>
+            </param>
+            <param>
+                <value><string><![CDATA["."0080f0d4dbf10080f0d4"."]]></string></value>
+            </param>
+        </params>
+    </methodCall>
+EOFCONTENT
             #if ( $page ) {
             #    print "qqq;\n";
             #} else {
