@@ -90,8 +90,8 @@ sub get_valid_data{
     return ($resource, $data, $non_json_data);
 }
 
-#method to take any informative input, i.e. 
-#   - json body, 
+#method to take any informative input, i.e.
+#   - json body,
 #   - json part of multiform
 #   - request_params
 sub get_info_data {
@@ -681,7 +681,7 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
-    
+
     my $total_count;
     my $no_count = $self->dont_count_collection_total($c);
     if ( !$no_count ) {
@@ -723,13 +723,13 @@ sub collection_nav_links {
     $params //= $c->request->params;
 
     delete @{$params}{'page', 'rows'};
-    my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
+    my $rest_params = join( '&', map {"$_=".(defined $params->{$_} ? $params->{$_} : '');} keys %{$params});
     $rest_params = $rest_params ? "&$rest_params" : "";
 
     my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
-    if ( (! defined $total_count 
-            && ! $c->stash->{collection_infinite_pager_stop} ) 
+    if ( (! defined $total_count
+            && ! $c->stash->{collection_infinite_pager_stop} )
         || ( defined $total_count && ($total_count / $rows) > $page ) ) {
 
         push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));

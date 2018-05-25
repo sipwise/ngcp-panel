@@ -20,7 +20,7 @@ sub auto :Private {
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
     # only allow access to admin/reseller if cloudpbx is not enabled
-    if(!$c->config->{features}->{cloudpbx} && 
+    if(!$c->config->{features}->{cloudpbx} &&
        $c->user->roles ne "admin" &&
        $c->user->roles ne "reseller") {
 
@@ -35,12 +35,10 @@ sub auto :Private {
     # and then again, it's only for subscriberadmins with pbxaccount product
     if($c->user->roles eq "subscriberadmin") {
         my $contract_id = $c->user->account_id;
-        my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'), 
-            contract_id => $contract_id,
-        );
-        $contract_select_rs = $contract_select_rs->search({ 'me.id' => $contract_id });
-        my $product_id = $contract_select_rs->first ? $contract_select_rs->first->get_column('product_id') : undef;
+        my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB'))->search_rs({
+            'me.id' => $contract_id,
+        });
+        my $product_id = $contract_select_rs->first ? $contract_select_rs->first->product->id : undef;
         unless($product_id) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
@@ -49,9 +47,9 @@ sub auto :Private {
             );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
         }
-        my $product = $c->model('DB')->resultset('products')->find({ 
+        my $product = $c->model('DB')->resultset('products')->search_rs({
             id => $product_id, class => 'pbxaccount',
-        });
+        })->first;
         unless($product) {
             $c->detach('/denied_page');
         }
@@ -66,7 +64,7 @@ sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
 
     if($c->stash->{contract_rs}) {
         NGCP::Panel::Utils::Sounds::stash_soundset_list(
-            c => $c, 
+            c => $c,
             contract => $c->stash->{contract_rs}->first,
         );
     } else {
@@ -106,7 +104,7 @@ sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1)
     }
 
     NGCP::Panel::Utils::Sounds::stash_soundset_list(
-        c => $c, 
+        c => $c,
         contract => $contract,
     );
     $c->stash(template => 'sound/list.tt');
@@ -120,7 +118,7 @@ sub root :Chained('sets_list') :PathPart('') :Args(0) {
 
 sub ajax :Chained('sets_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $resultset = $c->stash->{sets_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{soundset_dt_columns});
     $c->detach( $c->view("JSON") );
@@ -129,7 +127,7 @@ sub ajax :Chained('sets_list') :PathPart('ajax') :Args(0) {
 
 sub contract_ajax :Chained('contract_sets_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $resultset = $c->stash->{sets_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{soundset_dt_columns});
     $c->detach( $c->view("JSON") );
@@ -228,7 +226,7 @@ sub edit :Chained('base') :PathPart('edit') {
                 my $old_contract_default = $c->stash->{set_result}->contract_default;
                 $c->stash->{set_result}->update($form->values);
 
-                if($c->stash->{set_result}->contract && 
+                if($c->stash->{set_result}->contract &&
                    $c->stash->{set_result}->contract_default == 1 && $old_contract_default != 1) {
                     # go over each subscriber in the contract and set the contract_sound_set
                     # preference if it doesn't have one set yet
@@ -237,7 +235,7 @@ sub edit :Chained('base') :PathPart('edit') {
                         my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
                         if($prov_subscriber) {
                             my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                               c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set', 
+                               c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set',
                             );
                             unless($pref_rs->first) {
                                 $pref_rs->create({ value => $c->stash->{set_result}->id });
@@ -280,7 +278,7 @@ sub delete :Chained('base') :PathPart('delete') {
             # remove all usr_preferenes where this set is assigned
             if($c->stash->{set_result}->contract_id) {
                 my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                    c => $c, attribute => 'contract_sound_set', 
+                    c => $c, attribute => 'contract_sound_set',
                 );
                 $pref_rs->search({ value => $c->stash->{set_result}->id })->delete;
             }
@@ -402,7 +400,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
                         my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
                         if($prov_subscriber) {
                             my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                               c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set', 
+                               c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set',
                             );
                             unless($pref_rs->first) {
                                 $pref_rs->create({ value => $set->id });
@@ -436,13 +434,13 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
 
 sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
-    
+
     my $files_rs = $c->stash->{set_result}->voip_sound_files;
 
     $c->stash(files_rs => $files_rs);
     $c->stash(handles_base_uri =>
         $c->uri_for_action("/sound/handles_root", [$c->req->captures->[0]]));
-    
+
     my $handles_rs = $c->model('DB')->resultset('voip_sound_groups')
         ->search({
         },{
@@ -464,8 +462,8 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
         });
 
     if($c->stash->{set_result}->contract_id) {
-        $handles_rs = $handles_rs->search({ 
-            'groups.name' => { '-in' => [qw/pbx music_on_hold digits/] } 
+        $handles_rs = $handles_rs->search({
+            'groups.name' => { '-in' => [qw/pbx music_on_hold digits/] }
         });
     } else {
         #$handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
@@ -484,9 +482,9 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
         $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'mobile_push' } });
     }
 
-    
+
     my @rows = $handles_rs->all;
-    
+
     my %groups;
     for my $handle (@rows) {
         $groups{ $handle->get_column('groupname') } = []
@@ -562,12 +560,12 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
         fields => {},
         back_uri => $c->req->uri,
     );
-    
+
     if($posted && $form->validated) {
         if (defined $upload) {
             my $soundfile = eval { $upload->slurp };
             my $filename = eval { $upload->filename };
-            
+
             my $ft = File::Type->new();
             unless ($ft->checktype_contents($soundfile) eq 'audio/x-wav') {
                 NGCP::Panel::Utils::Message::error(
@@ -577,7 +575,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 );
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
-            
+
             my $target_codec = 'WAV';
 
             # clear audio caches
@@ -604,7 +602,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 );
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
-           
+
             try {
                 $file_result->update({
                     loopplay => $form->values->{loopplay},
@@ -650,7 +648,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
 
 sub handles_delete :Chained('handles_base') :PathPart('delete') {
     my ($self, $c) = @_;
-    
+
     try {
         $c->stash->{file_result}->delete;
         NGCP::Panel::Utils::Message::info(
@@ -681,7 +679,7 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
 
 sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $file = $c->stash->{file_result};
     my $filename = $file->filename;
     $filename =~ s/\.\w+$/.wav/;
@@ -702,7 +700,7 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     } else {
         $data = $file->data;
     }
-    
+
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename . '"');
     $c->response->content_type('audio/x-wav');
     $c->response->body($data);
@@ -725,7 +723,7 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
         fields => {},
         back_uri => $c->req->uri,
     );
-    
+
     if($posted && $form->validated) {
         my $lang = $form->params->{language};
         my $base = "/var/lib/ngcp-soundsets";

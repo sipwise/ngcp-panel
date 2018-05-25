@@ -1,7 +1,8 @@
 package NGCP::Panel::Utils::Invoice;
 
 use Sipwise::Base;
-use NGCP::Panel::Utils::ProfilePackages;
+use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::BillingMappings qw();
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Message;
@@ -18,12 +19,12 @@ sub get_invoice_amounts{
     $billing_profile->{interval_charge} //= 0;
     $customer_contract->{vat_rate} //= 0;
     #use Data::Dumper;
-    #print Dumper [$contract_balance,$billing_profile]; 
+    #print Dumper [$contract_balance,$billing_profile];
     $invoice->{amount_net} = $contract_balance->{cash_balance_interval} / 100 + $billing_profile->{interval_charge};
-    $invoice->{amount_vat} = 
-        $customer_contract->{add_vat} 
+    $invoice->{amount_vat} =
+        $customer_contract->{add_vat}
         ?
-            $invoice->{amount_net} * ($customer_contract->{vat_rate}/100) 
+            $invoice->{amount_net} * ($customer_contract->{vat_rate}/100)
             : 0,
     $invoice->{amount_total} =  $invoice->{amount_net} + $invoice->{amount_vat};
     return $invoice;
@@ -60,11 +61,11 @@ sub create_invoice{
         etime => $etime,);
     $stime = $balance->start;
     $etime = $balance->end;
-    my $bm_actual = NGCP::Panel::Utils::ProfilePackages::get_actual_billing_mapping(
-        c => $c, 
-        contract => $customer, 
+    my $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(
+        c => $c,
+        contract => $customer,
         now => $balance->start);
-    my $billing_profile = $bm_actual->billing_mappings->first->billing_profile;
+    my $billing_profile = $bm_actual->billing_profile;
     my $zonecalls = NGCP::Panel::Utils::Contract::get_contract_zonesfees(
         c => $c,
         contract_id => $contract_id,
@@ -124,9 +125,9 @@ sub create_invoice{
     try {
         $invoice = $schema->resultset('invoices')->create($invoice_data);
     } catch($e) {
-        die { 
-            showdetails => $c->loc('Failed to save invoice meta data.'), 
-            error => $e, 
+        die {
+            showdetails => $c->loc('Failed to save invoice meta data.'),
+            error => $e,
             httpcode => HTTP_UNPROCESSABLE_ENTITY,
         };
     }
@@ -174,9 +175,9 @@ sub create_invoice{
         my $error = $t->error();
         my $error_msg = "error processing template, type=".$error->type.", info='".$error->info."'";
         my $msg =$c->loc('Failed to render template. Type is [_1], info is [_2].', $error->type, $error->info);
-        die { 
-            showdetails => $msg, 
-            error => $error_msg, 
+        die {
+            showdetails => $msg,
+            error => $error_msg,
             httpcode => HTTP_UNPROCESSABLE_ENTITY,
         };
     };
@@ -205,12 +206,11 @@ sub check_invoice_data{
     my $invoice_data = {};
 
     my $schema = $c->model('DB');
-    my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, contract_id => $contract_id);
-    my $customer = $customer_rs->find({ 'me.id' => $contract_id });
+    my $customer = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c)->find({ 'me.id' => $contract_id });
     unless($customer) {
-        die { 
-            showdetails => $c->loc('Customer not found'), 
-            error => "invalid contract_id $contract_id", 
+        die {
+            showdetails => $c->loc('Customer not found'),
+            error => "invalid contract_id $contract_id",
             httpcode => HTTP_UNPROCESSABLE_ENTITY,
         };
     }
@@ -229,24 +229,24 @@ sub check_invoice_data{
 
     $tmpl = $tmpl->first;
     unless($tmpl) {
-        die { 
-            showdetails => $c->loc('Invoice template not found'), 
-            error => "invalid template id $tmpl_id", 
+        die {
+            showdetails => $c->loc('Invoice template not found'),
+            error => "invalid template id $tmpl_id",
             httpcode => HTTP_UNPROCESSABLE_ENTITY,
         };
     }
     unless($tmpl->data) {
-        die { 
-            showdetails => $c->loc('Invoice template does not have an SVG stored yet'), 
-            error => "invalid template id $tmpl_id, data is empty", 
+        die {
+            showdetails => $c->loc('Invoice template does not have an SVG stored yet'),
+            error => "invalid template id $tmpl_id, data is empty",
             httpcode => HTTP_UNPROCESSABLE_ENTITY,
         };
     }
 
     unless($customer->contact->reseller_id == $tmpl->reseller_id) {
-        die { 
-            showdetails => $c->loc('Template and customer must belong to same reseller'), 
-            error => "template id ".$tmpl->id." has different reseller than contract id $contract_id", 
+        die {
+            showdetails => $c->loc('Template and customer must belong to same reseller'),
+            error => "template id ".$tmpl->id." has different reseller than contract id $contract_id",
             httpcode => HTTP_UNPROCESSABLE_ENTITY,
         };
     }
