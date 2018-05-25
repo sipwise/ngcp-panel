@@ -1,3 +1,12 @@
+ngcp-panel (6.2.1.5+0~mr6.2.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [16bd473] TT#35662 move product_id to billing.contracts
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 25 May 2018 16:03:00 +0200
+
 ngcp-panel (6.2.1.4+0~mr6.2.1.4) unstable; urgency=medium
 
   [ Andrew Pogrebennyk ]
