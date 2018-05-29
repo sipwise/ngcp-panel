@@ -16,6 +16,24 @@
       "revId": "8f28e18ba33934f84ae085aed294ca0b88185f53",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_eb0e8ee4",
+        "filename": "lib/NGCP/Panel/Model/Storage.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T16:06:49Z",
+      "side": 1,
+      "message": "Currently we have\n\nCatalyst -\u003e Model (DB) -\u003e Schema\nCatalyst -\u003e Model (Intercept) -\u003e InterceptSchema\n\nThe advantage is that \n\nCatalyst \u003e Model (Storage) -\u003e Schema \n                                                  Schema2\n                                                  Schema3\n\nSo the \"Model\" layer is used to be able to contain and work with more than one \"Schema\" objects.\n\nif we do that directly in Schema we already work with DBIC::Schema which does not have multiple dsn support per instance.\n\nnevertheless, that would be possible to implement directly in Schema but then it will require implementing multi dsn support there which will be a little more complicated.\n\neither way it works now and I would prefer to have it merged for this time, if we come up with better ideas/implementation we can rework that easily cause no cfg/db up scripts :)",
+      "parentUuid": "fabf19d9_8b6f1292",
+      "revId": "8f28e18ba33934f84ae085aed294ca0b88185f53",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
