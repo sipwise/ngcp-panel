@@ -1,6 +1,6 @@
 package NGCP::Panel::Utils::GD::Simple;
 
-## no critic (RequireUseWarnings, RequirePodSections)
+## no critic (RequireUseWarnings, RequirePodSections, RequireLocalizedPunctuationVars, ProhibitStringySplit, ProhibitStringyEval)
 # disable perlcritic because it's upstream code
 
 =head1 NAME

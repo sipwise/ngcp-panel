@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 BEGIN {
+   ## no critic (RequireLocalizedPunctuationVars)
     $ENV{CATALYST_SCRIPT_GEN} = 40;
 }
 
@@ -12,11 +13,13 @@ Catalyst::ScriptRunner->run('NGCP::Panel', 'Server');
 
 1;
 
+__END__
+
 =head1 NAME
 
 ngcp_panel_server.pl - Catalyst Test Server
 
-=head1 SYNOPSIS
+=head1 SYNOPSIS/USAGE
 
 ngcp_panel_server.pl [options]
 
