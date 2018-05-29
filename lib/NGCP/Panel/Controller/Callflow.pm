@@ -49,8 +49,8 @@ sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
 
     my $calls_rs_cb = sub {
         my %params = @_;
-        my $total_count =  $c->model('DB')->resultset('messages')->search(undef,{group_by => 'call_id'})->count;
-        my $base_rs =  $c->model('DB')->resultset('messages_custom');
+        my $total_count =  $c->model('Storage')->resultset('messages')->search(undef,{group_by => 'call_id'})->count;
+        my $base_rs =  $c->model('Storage')->resultset('messages_custom');
         my $searchstring = $params{searchstring} ? $params{searchstring}.'%' : '';
 
         my @bind_vals = (($searchstring) x 3, $params{offset}, $params{rows});
@@ -88,7 +88,7 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $packet_rs = $c->model('DB')->resultset('packets')->search({
+    my $packet_rs = $c->model('Storage')->resultset('packets')->search({
         'message.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         join => { message_packets => 'message' },
@@ -106,7 +106,7 @@ sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+    my $calls_rs = $c->model('Storage')->resultset('messages')->search({
         'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         order_by => { -asc => 'timestamp' },
@@ -125,7 +125,7 @@ sub get_callmap :Chained('callflow_base') :PathPart('callmap') :Args(0) {
     my $cid = $c->stash->{callid};
     $c->stash->{template} = 'callflow/callmap.tt';
 
-    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+    my $calls_rs = $c->model('Storage')->resultset('messages')->search({
         'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         order_by => { -asc => 'timestamp' },
@@ -145,7 +145,7 @@ sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
     my ($self, $c, $packet_id) = @_;
     my $cid = $c->stash->{callid};
 
-    my $packet = $c->model('DB')->resultset('messages')->find({
+    my $packet = $c->model('Storage')->resultset('messages')->find({
         'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
         'me.id' => $packet_id,
     }, {
