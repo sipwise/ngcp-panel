@@ -140,6 +140,29 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_6b203ef8",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-29T21:04:37Z",
+      "side": 1,
+      "message": "this can be replaced by config param log_response \u003d\u003e 0, like:\n\n__PACKAGE__-\u003eset_config({\n....\n    log_response  \u003d\u003e 0,\n    allowed_roles \u003d\u003e [qw/admin reseller subscriberadmin subscriber/],\n});",
+      "range": {
+        "startLine": 70,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 0
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_4befbab0",
         "filename": "lib/NGCP/Panel/Role/API/SIPCaptures.pm",
         "patchSetId": 5
