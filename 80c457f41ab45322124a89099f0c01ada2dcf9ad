@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "fabf19d9_cb02aa6f",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-29T20:44:43Z",
+      "side": 1,
+      "message": "the same as in item - can be moved to the role",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 1
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_abf8967d",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-29T20:44:43Z",
+      "side": 1,
+      "message": "can be removed",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 1
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_0b09c295",
         "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
         "patchSetId": 5
