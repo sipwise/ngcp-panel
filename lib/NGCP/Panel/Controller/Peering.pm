@@ -155,7 +155,7 @@ sub edit :Chained('base') :PathPart('edit') {
     return;
 }
 
-sub delete :Chained('base') :PathPart('delete') {
+sub delete_peering :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
     
     try {

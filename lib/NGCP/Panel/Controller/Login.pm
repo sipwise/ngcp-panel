@@ -9,7 +9,7 @@ use NGCP::Panel::Form;
 
 use NGCP::Panel::Utils::Admin;
 
-sub index :Path Form {
+sub login_index :Path Form {
     my ( $self, $c, $realm ) = @_;
 
     $realm = 'subscriber' 
