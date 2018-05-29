@@ -29,6 +29,7 @@ sub _test_preconditions {
 
     if ($opt{'wd-server'}) {
         my ($wd_host, $wd_port) = $opt{'wd-server'} =~ m{([^/:]+):([0-9]+)};
+        ## no critic (RequireLocalizedPunctuationVars)
         $ENV{TWD_HOST} = $wd_host;
         $ENV{TWD_PORT} = $wd_port;
     }
@@ -38,6 +39,7 @@ sub _test_preconditions {
         blib->import($opt{'schema-base-dir'});
     }
 
+    ## no critic (RequireLocalizedPunctuationVars)
     $SIG{'INT'} = sub { exit(1) }; # for clean stopping of servers
 
     unless ($opt{server} =~ m|^https?://|) {

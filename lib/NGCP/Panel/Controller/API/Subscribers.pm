@@ -278,7 +278,7 @@ sub GET :Allow {
             contract_id_field => 'contract_id');
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links, %contract_map);
-        my ($form) //= $self->get_form($c);
+        my ($form) = $self->get_form($c);
         for my $subscriber (@$subscribers) {
             my $contract = $subscriber->contract;
             NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
