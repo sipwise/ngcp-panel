@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_b077e5d3",
+        "filename": "lib/NGCP/Panel/Field/E164.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-29T14:08:39Z",
+      "side": 1,
+      "message": "I don\u0027t think this is needed though?",
+      "range": {
+        "startLine": 54,
+        "startChar": 23,
+        "endLine": 54,
+        "endChar": 24
+      },
+      "revId": "0c7fb15cc94b58773ae65b178bca27542bca677a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_9074e1cf",
+        "filename": "lib/NGCP/Panel/Field/E164Range.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-29T14:08:39Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 61,
+        "startChar": 23,
+        "endLine": 61,
+        "endChar": 24
+      },
+      "revId": "0c7fb15cc94b58773ae65b178bca27542bca677a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_70814d8f",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-29T14:08:39Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 508,
+        "startChar": 63,
+        "endLine": 508,
+        "endChar": 64
+      },
+      "revId": "0c7fb15cc94b58773ae65b178bca27542bca677a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_507e49af",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-29T14:08:39Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 517,
+        "startChar": 40,
+        "endLine": 517,
+        "endChar": 41
+      },
+      "revId": "0c7fb15cc94b58773ae65b178bca27542bca677a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
