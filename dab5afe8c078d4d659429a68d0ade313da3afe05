@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "fabf19d9_d0ba596e",
+        "filename": "lib/NGCP/Panel/Field/E164.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-29T14:04:02Z",
+      "side": 1,
+      "message": "should be round parentheses?",
+      "range": {
+        "startLine": 54,
+        "startChar": 14,
+        "endLine": 54,
+        "endChar": 15
+      },
+      "revId": "dab5afe8c078d4d659429a68d0ade313da3afe05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_d78133fd",
         "filename": "t/api-rest/api-customercontacts.t",
         "patchSetId": 1
