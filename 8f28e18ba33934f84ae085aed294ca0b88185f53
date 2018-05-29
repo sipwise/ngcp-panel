@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_8b6f1292",
+        "filename": "lib/NGCP/Panel/Model/Storage.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-29T15:52:47Z",
+      "side": 1,
+      "message": "what is the advantage of using this - isn\u0027t it easier to not use another dependency but declare additional \"classical\" approach by keeping model defs in ngcp-schem repo, and declaring them in ngcp_panel.conf, ie.\n\n[%- foreach ... %]\n\u003cModel::STO1\u003e\n    schema_class   NGCP::StorageSchema\n\u003c/Model::STO1\u003e\n[% end %]\n\nall that connect_xy logic would then be the same as with existing models like NGCP::Schema, NGCP::BareSchema, NGCP::InterceptSchema etc. plus it\u0027s also located where those others are.",
+      "revId": "8f28e18ba33934f84ae085aed294ca0b88185f53",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
