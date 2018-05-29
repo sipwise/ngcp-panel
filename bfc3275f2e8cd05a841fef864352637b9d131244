@@ -63,6 +63,24 @@
       "revId": "bfc3275f2e8cd05a841fef864352637b9d131244",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_5055291b",
+        "filename": "lib/NGCP/Panel/Role/EntitiesItem.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-05-29T14:13:55Z",
+      "side": 1,
+      "message": "ok, yes, makes sense",
+      "parentUuid": "fabf19d9_1068d1f4",
+      "revId": "bfc3275f2e8cd05a841fef864352637b9d131244",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
