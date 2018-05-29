@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_2b05a6c1",
+        "filename": "lib/NGCP/Panel/Field/E164.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-29T16:06:29Z",
+      "side": 1,
+      "message": "But that seems to be unrelated, that was on a scalar ref. :)\n\nI\u0027d have written this simply as something like:\n\nmap {\n  $_ \u003d\u003e 1\n} map {\n  ...\n} @array;\n\nor similar, no need for the internal \";\", which you do not have either on the second map.",
+      "parentUuid": "fabf19d9_d03ff9d4",
+      "range": {
+        "startLine": 54,
+        "startChar": 23,
+        "endLine": 54,
+        "endChar": 24
+      },
+      "revId": "0c7fb15cc94b58773ae65b178bca27542bca677a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_9074e1cf",
         "filename": "lib/NGCP/Panel/Field/E164Range.pm",
         "patchSetId": 3
