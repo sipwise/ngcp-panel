@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_70aa6d1b",
+        "filename": "lib/NGCP/Panel/Controller/Statistics.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-29T14:06:26Z",
+      "side": 1,
+      "message": "Is this correct? I don\u0027t know this framework, but I\u0027d have assumed the HTTP path is defined via the PathPart attribute which didn\u0027t change? Same for the others down below.",
+      "range": {
+        "startLine": 61,
+        "startChar": 63,
+        "endLine": 61,
+        "endChar": 74
+      },
+      "revId": "bfc3275f2e8cd05a841fef864352637b9d131244",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_1068d1f4",
+        "filename": "lib/NGCP/Panel/Role/EntitiesItem.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-05-29T14:06:26Z",
+      "side": 1,
+      "message": "This disabled this check for the whole file onwards, maybe better to mark just this sub as such, as «sub blabla { ## no critic ...».",
+      "revId": "bfc3275f2e8cd05a841fef864352637b9d131244",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
