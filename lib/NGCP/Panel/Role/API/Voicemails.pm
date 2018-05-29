@@ -83,7 +83,7 @@ sub resource_from_item {
     $resource{subscriber_id} = int($item->mailboxuser->provisioning_voip_subscriber->voip_subscriber->id);
 
     # type is last item of path like /var/spool/asterisk/voicemail/default/uuid/INBOX
-    my @p = split '/', $item->dir;
+    my @p = split /\//, $item->dir;
     $resource{folder} = pop @p;
 
     return \%resource;

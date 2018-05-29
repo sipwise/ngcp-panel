@@ -149,7 +149,7 @@ sub process_connectable_models{
                 push @$connectable_models_ids, $name_or_id;
             }
         }
-        my @columns = ('device_id' , 'extension_id');
+        my @columns = qw(device_id extension_id);
         if('extension' eq $devmod->type){
         #extension can be connected to other extensions? If I remember right - yes.
             @columns = reverse @columns;

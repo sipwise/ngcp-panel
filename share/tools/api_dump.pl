@@ -96,19 +96,18 @@ sub main {
 
     if (BALANCEINTERVALS_MODE eq $mode) {
 
-        my @cols = (
-            'subscriber_id',
-            'subscriber_status',
-            'primary_number',
-            'contract_id',
-            'contract_status',
-            #'has_actual_balance_interval',
-            'interval_start',
-            'interval_stop',
-            'cash_balance',
-            'notopup_discard_expiry',
-            'package_id',
-        );
+        my @cols = qw/
+            subscriber_id
+            subscriber_status
+            primary_number
+            contract_id
+            contract_status
+            interval_start
+            interval_stop
+            cash_balance
+            notopup_discard_expiry
+            package_id
+        /;
 
         my $rowcount = 0;
         my ($fh,$filename) = prepare_file($mode,$output_filename,\@cols);
@@ -161,28 +160,26 @@ sub main {
 
     } elsif (TOPUPLOG_MODE eq $mode) {
 
-        my @cols = (
-            'username',
-            'timestamp',
-            'request_token',
-            #'subscriber_id',
-            #'primary_number',
-            'contract_id',
-            'outcome',
-            'message',
-            'type',
-            'voucher_id',
-            'voucher_code',
-            'amount',
-            'cash_balance_before',
-            'cash_balance_after',
-            'lock_level_before',
-            'lock_level_after',
-            'package_before',
-            'package_after',
-            'profile_before',
-            'profile_after',
-        );
+        my @cols = qw/
+            username
+            timestamp
+            request_token
+            contract_id
+            outcome
+            message
+            type
+            voucher_id
+            voucher_code
+            amount
+            cash_balance_before
+            cash_balance_after
+            lock_level_before
+            lock_level_after
+            package_before
+            package_after
+            profile_before
+            profile_after
+        /;
 
         my $rowcount = 0;
         my ($fh,$filename) = prepare_file($mode,$output_filename,\@cols);

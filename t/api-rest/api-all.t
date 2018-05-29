@@ -143,7 +143,7 @@ sub get_opt{#get $opt
         "test-groups"     ,
     ) or pod2usage(2);
     my @opt_keys = keys %$opt_in;
-    @{$opt}{ map{my $k=$_;$k=~s/\-/_/;$k;} @opt_keys } = map {my $v = $opt_in->{$_}; $v={ map {$_=>1;} split(/[^[:alnum:]]+/,$v ) }; $v;} @opt_keys ;
+    @{$opt}{ map{ s/\-/_/; } @opt_keys } = map {my $v = $opt_in->{$_}; $v={ map {$_=>1;} split(/[^[:alnum:]]+/,$v ) }; $v;} @opt_keys ;
     print Dumper $opt;
     pod2usage(1) if $opt->{help};
     pod2usage(1) unless( 1
@@ -203,7 +203,7 @@ sub init_config{#init config
             ->mindepth(1)
             ->maxdepth(1)
             ->name('api-*.t');
-        %test_exists = map {$_=~s/\Q$dir\/\E//;$_ => 1} $rule->in($dir);
+        %test_exists = map { s/\Q$dir\/\E//r => 1} $rule->in($dir);
     }
     $config->{tests_exists} = \%test_exists;
     $config->{tests_exclude} = \%test_exclude;

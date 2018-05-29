@@ -14,7 +14,7 @@ sub as_curl {
     my ($request, %params) = @_;
 
     my $content = $request->content;
-    my @data    = split '&', $content;
+    my @data    = split /&/, $content;
     my $method  = $request->method;
     my $uri     = $request->uri;
     my $headers = $request->headers;

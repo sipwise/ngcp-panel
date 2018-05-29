@@ -804,7 +804,7 @@ sub process_hal_resource {
         })->first->mailboxuser->provisioning_voip_subscriber->voip_subscriber->id;
         # type is last item of path like /var/spool/asterisk/voicemail/default/uuid/INBOX
         my $filename = NGCP::Panel::Utils::Subscriber::get_voicemail_filename($c,$item_mock_obj);
-        my @p = split '/', $item_mock_obj->dir;
+        my @p = split /\//, $item_mock_obj->dir;
         $resource->{folder} = pop @p;
         $resource->{direction} = 'in';
         $resource->{filename} = $filename;
