@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "fabf19d9_0b09c295",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-29T20:43:06Z",
+      "side": 1,
+      "message": "isn\u0027t necessary",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 42
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_8bcef258",
         "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
         "patchSetId": 5
@@ -18,6 +41,52 @@
         "startChar": 0,
         "endLine": 18,
         "endChar": 41
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_2b04867c",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-29T20:43:06Z",
+      "side": 1,
+      "message": "this can be moved to the role",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 1
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_4bd8da1d",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-29T20:43:06Z",
+      "side": 1,
+      "message": "these aren\u0027t necessary, the same as in collection",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 1
       },
       "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
