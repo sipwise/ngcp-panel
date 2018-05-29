@@ -33,7 +33,7 @@ sub build_langs {
         ->not(File::Find::Rule->new->name(qr/^\.\.?$/))
         ->in('/var/lib/ngcp-soundsets/system');
 
-    @options = map { $_ =~ s/^.+\///; { label => $_, value => $_ } } @dirs;
+    @options = map { my $val = $_ =~ s/^.+\///r; { label => $val, value => $val } } @dirs;
         
     return \@options;
 }

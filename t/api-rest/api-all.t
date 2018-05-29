@@ -203,7 +203,7 @@ sub init_config{#init config
             ->mindepth(1)
             ->maxdepth(1)
             ->name('api-*.t');
-        %test_exists = map {$_=~s/\Q$dir\/\E//;$_ => 1} $rule->in($dir);
+        %test_exists = map { ($_=~s/\Q$dir\/\E//r) => 1} $rule->in($dir);
     }
     $config->{tests_exists} = \%test_exists;
     $config->{tests_exclude} = \%test_exclude;

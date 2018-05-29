@@ -10,6 +10,8 @@ use charnames ':full';
 
 our $VERSION = "1.01";
 
+## no critic (Subroutines::ProhibitSubroutinePrototypes)
+
 # A Regexp string to match valid UTF8 bytes
 # this info comes from page 78 of "The Unicode Standard 4.0"
 # published by the Unicode Consortium

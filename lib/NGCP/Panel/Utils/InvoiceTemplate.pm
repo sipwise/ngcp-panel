@@ -23,7 +23,7 @@ sub svg_pdf {
         push @pagefiles, $pagefile;
 
         open($fh, ">", $pagefile);
-        binmode($fh, ":utf8");
+        binmode($fh, ":encoding(UTF-8)");
         print $fh $page;
         close $fh;
 

@@ -36,7 +36,7 @@ sub get_log_params {
         my $caller = (caller 2)[3];
         $caller !~ /::/ and $caller = (caller 3)[3];
         if ($caller) {
-            my @caller = split('::', $caller);
+            my @caller = split(/::/, $caller);
             $#caller >= 3 and $called = join('::', @caller[-3...-1]);
         }
     }

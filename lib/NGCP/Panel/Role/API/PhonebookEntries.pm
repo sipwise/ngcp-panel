@@ -15,11 +15,16 @@ sub _item_rs {
     my ($self, $c) = @_;
     my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
     return unless $owner;
-    my $method = 'get_'.$type.'_phonebook_rs';
     my ($list_rs,$item_rs);
-    {
-        no strict 'refs';
-        ($list_rs,$item_rs) = &$method($c, $value, $type);
+
+    if ($type eq 'reseller') {
+        ($list_rs,$item_rs) = get_reseller_phonebook_rs($c, $value, $type);
+    } elsif ($type eq 'contract') {
+        ($list_rs,$item_rs) = get_contract_phonebook_rs($c, $value, $type);
+    } elsif ($type eq 'subscriber') {
+        ($list_rs,$item_rs) = get_subscriber_phonebook_rs($c, $value, $type);
+    } else {
+        die 'This shouln\'t happen';
     }
     return $list_rs;
 }
