@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_8be4b20d",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T16:17:10Z",
+      "side": 1,
+      "message": "then in SipCaptures.pm I should return the JSON representation with callids",
+      "parentUuid": "fabf19d9_ab20964a",
+      "revId": "0bf8d48492c587c78c0da0b825095ed1d4ecaae0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_4b48da5b",
         "filename": "lib/NGCP/Panel/Role/API/SIPCaptures.pm",
         "patchSetId": 1
