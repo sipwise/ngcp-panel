@@ -178,7 +178,7 @@ sub edit :Chained('base') :PathPart('edit') {
     $c->stash(edit_flag => 1);
 }
 
-sub delete :Chained('base') :PathPart('delete') {
+sub delete_phonebook :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {
