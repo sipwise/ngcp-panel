@@ -1,3 +1,107 @@
+ngcp-panel (6.4.0.0+0~mr6.4.0.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [f103d31] TT#35058 Apply write access checking for subscriberadin on subscribers API
+  * [13cc8b6] TT#35057 Enable fax sending to subscriber and subscriberadmin roles
+  * [8d59e70] TT#34752 Add calqueues collection to standard test scripts
+  * [bf2e05e] TT#34567 Consider already destroyed Collection in FakeData destructor
+  * [7eb649b] TT#34567 Add phonebook testing script
+  * [5c2dab3] TT#34567 Fix incorrect DBIC find using
+  * [5adf181] TT#34567 Use getter for the API controller config
+  * [05c2708] TT#34567 Apply mandatory parameters to hal links
+  * [8eec82f] TT#34567 Use already created hal links for embedded and Location
+  * [e1e2613] TT#34567 Remove log4perl dependency from Test::Collection
+  * [58fabf4] TT#35702 Fix broken cert files for test_machine from fake_data
+  * [5778646] TT#35714 Fix calllists mandatory parameters
+  * [98f4f7b] TT#35702 Fixed deprecated Catalyst::Plugin::Session config option "session"
+  * [0e0e1ec] TT#35702 Fix faxes tests
+  * [8874ad3] TT#35425 Remove svg-editor php files
+  * [9ea0a79] TT#35425 Change .php extension to neutral .t in sandbox
+  * [22e5472] TT#35702 Fix phonebooks tests
+  * [ce3fde0] TT#35607 Consider no_count query parameter and infinite next link
+  * [174bfc9] TT#35516 Apply simplest filter logic for subscribersregistrations
+  * [1d9907a] TT#35429 Allow both 0/1 an true/false as boolean input in /api/admins
+  * [6d69eeb] TT#35538 Prepare API to faxes changes
+  * [a3382a9] TT#35538 Faxes allow application/json and multipart/form-data
+  * [ea76e0e] TT#35607 Fix tests. Consider possible empty last page
+  * [295135d] TT#35607 Remove NGCP::Panel dependency from tests
+  * [17d36cc] TT#35429 Fix using boolean json strings in /api/admins
+  * [c38021d] TT#35429 Test admins /api/ with boolean values
+  * [681d5e9] TT#36055 Introduce container_resource parameter for preferences
+  * [9b10bc5] TT#36055 Remove common code from preferences
+  * [0cea7ca] TT#36055 Fix code 500 on unauthorized provisioning
+  * [1fb0e8a] TT#36055 Add field device preferences web UI
+  * [3552d78] TT#36055 Provide custom preferences to device config
+  * [17a7887] TT#36402 Add field device preferences API
+  * [bfb760c] TT#36402 Fix preferencesmetaentries enum processing
+  * [d031596] TT#36056 Clear close_target after inbound rules prioritisation
+  * [5021763] TT#36057 Workaround rsvg-convert multiple scaling using gs
+  * [f7f2f4d] TT#36404 Escape brackets to satisfy Locale::Maketext and fix tests
+
+  [ Rene Krenn ]
+  * [fefcaef] TT#34751 TT#34752 /api/callqueues
+  * [64a96be] TT#35261 fix callroutingverify allowed_cli wildcards
+  * [20264df] TT#34256 disable subscriberregistrations.t put2get
+  * [297e0ad] TT#28157 billing mappings scanline PoC
+  * [c7d14e5] TT#35803 add fee's billing_profile_id for apidoc
+  * [b35b0e1] TT#35662 move product_id to billing.contracts
+  * [17082b3] TT#33369 remove check for LI number in 3306 db (again)
+  * [db0adbd] TT#36660 SQL proc for new billing_mappings schema
+
+  [ Andreas Granig ]
+  * [bfdf68e] TT#35523 Persist sessions in redis
+  * [99c856f] TT#16922 Check MAC in SSL DN while autoprov
+  * [54a5627] TT#36224 Fix showing loc entries when ignore realm
+
+  [ Kirill Solomko ]
+  * [f976fe0] TT#35714 use collection_nav_links in all API controllers
+  * [c93392e] TT#35714 fix collection_nav_links object name
+  * [794b178] TT#35426 get_fax(): fix fax data print into a closed filehandle
+  * [db1d5ef] TT#35508 Improve SMS journaling, add SMS 'cli' field
+  * [091dee6] TT#35507 use domain sms_peer preference for SMS outbound routing
+  * [3cd93a7] TT#35507 fix send_sms() smsc checks
+  * [92cc608] TT#36061 CallRouting: fix peer selection
+
+  [ Sipwise Jenkins Builder ]
+  * [6634af9] TT#4166 I18N dump: snapshot 2018.04.24-03.44.14
+  * [135404a] TT#4166 I18N dump: snapshot 2018.05.09-03.53.44
+  * [a122f65] TT#4166 I18N dump: snapshot 2018.05.18-03.56.51
+
+  [ Alexander Lutay ]
+  * [779fae3] TT#35507 Fix 091dee6: typo fix in InternalSms.pm
+  * [58a48a6] TT#35502 Replace Requires= with Wants= for ngcp-panel.service
+  * [79ae3c0] TT#29620 Clean TAP test warning: Module does not end with '1;'
+  * [bcbd490] TT#29620 Switch lib/NGCP/Panel/Utils/CSVSeparator.pm from Windows \r\n to Unix \n
+  * [cdbc019] TT#29620 Clean TAP test warning: Missing AUTHOR/DESCRIPTION/LICENSE section in POD
+  * [a9b94c4] TT#29620 Switch Perl code from  Windows \r\n to Unix \n
+  * [7b470ab] TT#29620 Clean TAP test warning: Module does not end with '1;' in lib/NGCP/Panel/Field/URI.pm
+  * [ad059c3] TT#29620 Clean TAP test warning: ProhibitCommaSeparatedStatements = Comma used to separate statements
+  * [8cba6b5] TT#29620 Clean TAP test warning: RequireInitializationForLocalVars = local variable not initialized
+  * [ab47a1f] TT#29620 Clean TAP test warning: $ on variables in (( )) is unnecessary [SC2004]
+  * [dbd3007] TT#29620 Clean TAP test warning: Double quote to prevent globbing and word splitting [SC2086]
+  * [d392de4] TT#29620 Clean TAP test warning: For loops over find output are fragile. Use find -exec or a while read loop [SC2044]
+  * [63d6adb] TT#29620 Clean shellcheck TAP test warning: SC2046 and SC2006
+  * [de34aaa] TT#29620 Update script/extract_i18n.sh to modern Sipwise shell policy
+  * [5626bfc] TT#29620 Clean TAP test warning: ProhibitMutatingListFunctions = Don't modify  in list functions
+  * [b1e004b] TT#29620 Update ngcp-api.inc to follow Sipwise shell style
+  * [e0a6c87] TT#29620 Clean TAP test warning: CREDS appears unused [SC2034]
+  * [2bb814d] TT#29620 Clean TAP test warning: ProhibitMixedBooleanOperators
+
+  [ Jozef Kenyeres ]
+  * [3357d33] TT#36154 Added AMR-WB codec to codecs_list preference
+
+  [ Guillem Jover ]
+  * [b880951] TT#26264 Remove obsolete rc.d symlinks
+
+  [ Gerhard Jungwirth ]
+  * [001474f] TT#34800 inflate/deflate DateTime for timestamps
+  * [2b89431] TT#36404 restructure form-translation
+
+  [ Andrew Pogrebennyk ]
+  * [40502cd] TT#36224 Show loc entries in /api/subscriberregistrations when ignore realm
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 29 May 2018 10:07:20 +0200
+
 ngcp-panel (6.3.0.0+0~mr6.3.0.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
