@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_50a7694f",
+        "filename": "lib/NGCP/Panel/Field/E164.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-05-29T14:05:58Z",
+      "side": 1,
+      "message": "oh yes, this is wrong, thx!",
+      "parentUuid": "fabf19d9_d0ba596e",
+      "range": {
+        "startLine": 54,
+        "startChar": 14,
+        "endLine": 54,
+        "endChar": 15
+      },
+      "revId": "dab5afe8c078d4d659429a68d0ade313da3afe05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_d78133fd",
         "filename": "t/api-rest/api-customercontacts.t",
         "patchSetId": 1
