@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_8b6a7219",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_0b7e62e4",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 14
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_eb820ec8",
         "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2018-05-29T21:15:19Z",
       "side": 1,
       "message": "can be replaced by query_type \u003d\u003e  \u0027string_eq\u0027,",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 14
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_ab6d3634",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_eb820ec8",
       "range": {
         "startLine": 65,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_cb106aab",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_cb02aa6f",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 1
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_abf8967d",
         "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
         "patchSetId": 5
@@ -82,6 +154,30 @@
       "writtenOn": "2018-05-29T20:44:43Z",
       "side": 1,
       "message": "can be removed",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 1
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_ab265614",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_abf8967d",
       "range": {
         "startLine": 106,
         "startChar": 0,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_4b469ac0",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_0b09c295",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 42
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_8bcef258",
         "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
         "patchSetId": 5
@@ -128,6 +248,30 @@
       "writtenOn": "2018-05-29T20:40:16Z",
       "side": 1,
       "message": "These aren\u0027t necessary.",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 41
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_2b1246b5",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_8bcef258",
       "range": {
         "startLine": 16,
         "startChar": 0,
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_0b1782a4",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_2b04867c",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 1
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_4bd8da1d",
         "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
         "patchSetId": 5
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "fabf19d9_eb0b2e7c",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_4bd8da1d",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 1
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_6b203ef8",
         "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
         "patchSetId": 5
@@ -197,6 +389,30 @@
       "writtenOn": "2018-05-29T21:04:37Z",
       "side": 1,
       "message": "this can be replaced by config param log_response \u003d\u003e 0, like:\n\n__PACKAGE__-\u003eset_config({\n....\n    log_response  \u003d\u003e 0,\n    allowed_roles \u003d\u003e [qw/admin reseller subscriberadmin subscriber/],\n});",
+      "range": {
+        "startLine": 70,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 0
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_2b7926fd",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_6b203ef8",
       "range": {
         "startLine": 70,
         "startChar": 0,
@@ -292,6 +508,30 @@
       "side": 1,
       "message": "I see, nice thanks! :)",
       "parentUuid": "fabf19d9_cb398a43",
+      "range": {
+        "startLine": 85,
+        "startChar": 0,
+        "endLine": 117,
+        "endChar": 1
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_8b239205",
+        "filename": "lib/NGCP/Panel/Role/API/SIPCaptures.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-05-29T21:22:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fabf19d9_8b3cb230",
       "range": {
         "startLine": 85,
         "startChar": 0,
