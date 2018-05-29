@@ -138,7 +138,7 @@ sub edit :Chained('base') :PathPart('edit') {
     );
 }
 
-sub delete :Chained('base') :PathPart('delete') {
+sub delete_ncos :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {

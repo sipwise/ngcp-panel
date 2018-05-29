@@ -298,7 +298,7 @@ sub auto :Private {
     return 1;
 }
 
-sub index :Path :Args(0) {
+sub root_index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     $c->response->redirect($c->uri_for('/dashboard'));

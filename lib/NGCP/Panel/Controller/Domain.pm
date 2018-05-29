@@ -258,7 +258,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(edit_flag => 1);
 }
 
-sub delete :Chained('base') :PathPart('delete') :Args(0) {
+sub delete_domain :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     my $domain = $c->stash->{'domain_result'}->domain;

@@ -22,7 +22,7 @@ sub root :PathPart('/') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 }
 
-sub index :Chained('/') :PathPart('statistics') :Args(0) {
+sub statistics_index :Chained('/') :PathPart('statistics') :Args(0) {
     my ( $self, $c ) = @_;
 
     my $posted = ($c->req->method eq 'POST');
@@ -58,7 +58,7 @@ sub index :Chained('/') :PathPart('statistics') :Args(0) {
     );
     if($posted && !$form->validated) {
         $c->log->error("tried to select invalid host/folder pair");
-        $c->response->redirect($c->uri_for_action('/statistics/index'));
+        $c->response->redirect($c->uri_for_action('/statistics/statistics_index'));
         return;
     }
     delete $c->stash->{hosts};
@@ -110,7 +110,7 @@ sub rrd : Chained('/') :PathPart('statistics/rrd') :Args() {
 
     unless(defined $host && defined $folder && defined $file) {
         $c->log->error("tried to fetch rrd with incomplete path");
-        $c->response->redirect($c->uri_for_action('/statistics/index'));
+        $c->response->redirect($c->uri_for_action('/statistics/statistics_index'));
         return;
     }
 
@@ -122,7 +122,7 @@ sub rrd : Chained('/') :PathPart('statistics/rrd') :Args() {
         return;
     }
 
-    $c->response->redirect($c->uri_for_action('/statistics/index'));
+    $c->response->redirect($c->uri_for_action('/statistics/statistics_index'));
     return;
 }
 

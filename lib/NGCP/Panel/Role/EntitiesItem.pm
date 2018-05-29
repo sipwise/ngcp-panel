@@ -299,7 +299,7 @@ sub put {
     return;
 }
 
-
+## no critic (ProhibitBuiltinHomonyms)
 sub delete {
     my ($self, $c, $id) = @_;
 

@@ -97,7 +97,7 @@ sub base :Chained('mcid_list') :PathPart('') :CaptureArgs(1) {
     $c->stash->{mcid_res} = $res;
 }
 
-sub delete :Chained('base') :PathPart('delete') {
+sub delete_mcall :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
