@@ -274,9 +274,9 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
     my $param_move  = $c->req->params->{move};
     my $param_where = $c->req->params->{where};
     
-    my $elem = $rules_rs->find($param_move)
-        if ($param_move && is_int($param_move) && $param_where);
-    if($elem) {
+    if ($param_move && is_int($param_move) && $param_where &&
+            my $elem = $rules_rs->find($param_move)) {
+
         my $use_next = ($param_where eq "down") ? 1 : 0;
         my $swap_elem = $rules_rs->search({
             field => $elem->field,

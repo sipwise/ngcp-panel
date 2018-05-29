@@ -11,7 +11,7 @@ use Exporter qw(import);
 our @EXPORT = qw();
 our @EXPORT_OK = qw(typed);
 our %EXPORT_TAGS = qw();
-$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
+local $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 
 sub typed;
 sub dotype;

@@ -1068,7 +1068,8 @@ sub update_subadmin_sub_aliases {
                 domain_id => $subscriber->provisioning_voip_subscriber->domain_id,
             });
             $sub = $sub->subscriber if($sub);
-            my $acli_pref_tmpsub = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            my $acli_pref_tmpsub;
+            $acli_pref_tmpsub = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, attribute => 'allowed_clis', prov_subscriber => $sub)
                 if($sub && $c->config->{numbermanagement}->{auto_allow_cli});
             if(defined $acli_pref_tmpsub) {

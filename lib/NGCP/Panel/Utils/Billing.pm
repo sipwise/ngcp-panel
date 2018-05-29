@@ -401,7 +401,7 @@ sub switch_prepaid {
     my %params = @_;
     my ($c,$profile_id,$old_prepaid,$new_prepaid,$contract_rs) = @params{qw/c profile_id old_prepaid new_prepaid contract_rs/};
 
-    my $schema //= $c->model('DB');
+    my $schema = $c->model('DB');
     # if prepaid flag changed, update all subscribers for customers
     # who currently have the billing profile active
     my $rs = $schema->resultset('billing_mappings')->search({
