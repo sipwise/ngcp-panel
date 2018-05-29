@@ -3679,7 +3679,7 @@ sub ajax_recording_streams :Chained('recording') :PathPart('streams/ajax') :Args
 sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
     my ($self, $c) = @_;
 
-    my $rs = $c->model('DB')->resultset('messages')->search({
+    my $rs = $c->model('Storage')->resultset('messages')->search({
         -or => [
             'me.caller_uuid' => $c->stash->{subscriber}->uuid,
             'me.callee_uuid' => $c->stash->{subscriber}->uuid,
@@ -4736,7 +4736,7 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $packet_rs = $c->model('DB')->resultset('packets')->search({
+    my $packet_rs = $c->model('Storage')->resultset('packets')->search({
         'message.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         join => { message_packets => 'message' },
@@ -4770,7 +4770,7 @@ sub get_json :Chained('callflow_base') :PathPart('json') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+    my $calls_rs = $c->model('Storage')->resultset('messages')->search({
         'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         order_by => { -asc => 'timestamp' },
@@ -4799,7 +4799,7 @@ sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+    my $calls_rs = $c->model('Storage')->resultset('messages')->search({
         'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         order_by => { -asc => 'timestamp' },
@@ -4817,7 +4817,7 @@ sub get_callmap :Chained('callflow_base') :PathPart('callmap') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
-    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+    my $calls_rs = $c->model('Storage')->resultset('messages')->search({
         'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         order_by => { -asc => 'timestamp' },
@@ -4836,7 +4836,7 @@ sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
     my ($self, $c, $packet_id) = @_;
     my $cid = $c->stash->{callid};
 
-    my $packet = $c->model('DB')->resultset('messages')->find({
+    my $packet = $c->model('Storage')->resultset('messages')->find({
         'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
         'me.id' => $packet_id,
     }, {
