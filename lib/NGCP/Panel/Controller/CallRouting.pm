@@ -250,10 +250,9 @@ sub callroutingverify :Chained('/') :PathPart('callroutingverify') :Args(0) {
                 }
             }
         }
-        my $match = map { local $_ = $_;
-                          $_ =~ s/\*/.*/g;
-                          $_ =~ s/\?/.?/g;
-                          $data->{caller_in} =~ /^$_$/;
+        my $match = map { my $val = s/\*/.*/gr;
+                          $val =~ s/\?/.?/g;
+                          $data->{caller_in} =~ /^$val$/;
                         } @{$usr_prefs{allowed_clis}};
         if ($match) {
             push @log, sprintf

@@ -591,7 +591,7 @@ sub set_data_from_script{
     }
     #dirty hack, part 2
     if(grep {/^load_data_only$/} @ARGV){
-        no strict "vars";
+        no strict "vars";  ## no critic (ProhibitNoStrict)
         $data_out = $data_in;
         die;
     }

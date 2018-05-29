@@ -462,7 +462,7 @@ sub test_contracts {
         my $old_contract_id = undef;
         my $contract = undef;
         while (my $row = <$fh>) {
-            my @cleaned = map { $_ =~ s/\\N//g; $_ =~ s/[\r\n]//gi; $_; } split(/,/,$row);
+            my @cleaned = map { s/\\N//gr =~ s/[\r\n]//gir; } split(/,/,$row);
             my ($now,$contract_id,$contract_create,$bm_actual_id,$id,$start_date,$end_date,
                 $profile_id,$profile_name,$network_id,$network_name,$product_id,$product_class) = @cleaned;
             #print join("\t",@cleaned) . "\n";

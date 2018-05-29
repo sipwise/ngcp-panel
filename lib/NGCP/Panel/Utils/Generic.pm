@@ -121,12 +121,14 @@ sub hash2obj {
     }
     $classname = __PACKAGE__ . '::' . $classname unless $classname =~ /::/;
     bless($obj,$classname);
-    no strict "refs";
+    no strict "refs";  ## no critic (ProhibitNoStrict)
     return $obj if scalar %{$classname . '::'};
+    use strict "refs";
     #print "registering class $classname\n";
     $accessors //= {};
     foreach my $accessor (keys %$accessors) {
         #print "registering accessor $classname::$accessor\n";
+        no strict "refs";  ## no critic (ProhibitNoStrict)
         *{$classname . '::' . $accessor} = sub {
             my $self = shift;
             return &{$accessors->{$accessor}}($self,@_);

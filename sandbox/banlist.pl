@@ -6,7 +6,7 @@ use XML::Mini::Document;
 use Data::Printer;
 
 my $f = 'banlist.xml';
-my $data = do { local $/ = undef; open my $fh, $f or die $!; <$fh> };
+my $data = do { local $/ = undef; open (my $fh, '<', $f) or die $!; <$fh> };
 my $xmlDoc = XML::Mini::Document->new();
 $xmlDoc->parse($data);
 my $xmlHash = $xmlDoc->toHash();

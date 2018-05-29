@@ -22,13 +22,15 @@ __END__
 
 =encoding UTF-8
 
-=head1 NGCP-Panel
-
-A completely overhauled provisioning interface for the NGCP system.
-
 =head1 NAME
 
 Build.PL - NGCP-Panel build system including test fixtures
+
+=head1 DESCRIPTION
+
+NGCP-Panel
+
+A completely overhauled provisioning interface for the NGCP system.
 
 =head1 SYNOPSIS
 
@@ -92,3 +94,10 @@ In case your language did not exist already:
 
     msginit --input=lib/NGCP/Panel/I18N/messages.pot --output=lib/NGCP/Panel/I18N/$LANG.po --locale=$LANG
 
+=head1 AUTHOR
+
+Sipwise Development Team <support@sipwise.com>.
+
+=head1 LICENSE
+
+GPL-3+, Sipwise GmbH, Austria.

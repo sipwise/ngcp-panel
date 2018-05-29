@@ -73,8 +73,10 @@ sub hash2obj {
   }
   $classname = __PACKAGE__ . '::' . $classname unless $classname =~ /::/;
   bless($obj,$classname);
-  no strict "refs"; # for below and to register new methods in package
+  # for below and to register new methods in package
+  no strict "refs";  ## no critic (ProhibitNoStrict)
   return $obj if scalar %{$classname . '::'};
+  use strict "refs";
   print "registering class $classname\n";
   $accessors //= {};
   my %accessors = ( (map { $_ => undef; } keys %$obj), %$accessors); # create accessors for fields too
@@ -82,6 +84,7 @@ sub hash2obj {
     print "registering accessor $classname::$accessor\n";
     # see http://search.cpan.org/~gsar/perl-5.6.1/pod/perltootc.pod
     # accessor can be a coderef ...
+    no strict "refs";  ## no critic (ProhibitNoStrict)
     *{$classname . '::' . $accessor} = sub {
       my $self = shift;
       &{$accessors{$accessor}}($self,shift) if scalar @_; #setter
@@ -93,6 +96,7 @@ sub hash2obj {
       $self->{$accessors{$accessor}} = shift if scalar @_; #setter
       return $self->{$accessors{$accessor}}; #getter
     } if '' eq ref $accessors{$accessor};
+    use strict "refs";
   }
   return $obj;
 }
