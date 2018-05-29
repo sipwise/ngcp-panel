@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_8bcef258",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-05-29T20:40:16Z",
+      "side": 1,
+      "message": "These aren\u0027t necessary.",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 41
+      },
+      "revId": "80c457f41ab45322124a89099f0c01ada2dcf9ad",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
