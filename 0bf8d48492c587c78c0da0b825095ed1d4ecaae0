@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "fabf19d9_ab20964a",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCapturesItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-29T16:14:08Z",
+      "side": 1,
+      "message": "what about utilizing the GET here, considering the call_id as part of the path instead of a query_param?",
+      "revId": "0bf8d48492c587c78c0da0b825095ed1d4ecaae0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fabf19d9_4b48da5b",
         "filename": "lib/NGCP/Panel/Role/API/SIPCaptures.pm",
         "patchSetId": 1
@@ -31,6 +48,24 @@
       "side": 1,
       "message": "hm, but what kind of form should be here ?\nfor instance in FaxRecordings there is no form",
       "parentUuid": "fabf19d9_4b48da5b",
+      "revId": "0bf8d48492c587c78c0da0b825095ed1d4ecaae0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_0b31c2a2",
+        "filename": "lib/NGCP/Panel/Role/API/SIPCaptures.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-29T16:14:08Z",
+      "side": 1,
+      "message": "ack, forgot, it\u0027s pure file rail",
+      "parentUuid": "fabf19d9_6bbefe00",
       "revId": "0bf8d48492c587c78c0da0b825095ed1d4ecaae0",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
