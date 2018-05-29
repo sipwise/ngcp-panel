@@ -299,8 +299,7 @@ sub put {
     return;
 }
 
-
-sub delete {
+sub delete {  ## no critic (ProhibitBuiltinHomonyms)
     my ($self, $c, $id) = @_;
 
     my $guard = $self->get_transaction_control($c);
