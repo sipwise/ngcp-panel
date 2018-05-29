@@ -22,6 +22,30 @@
       "revId": "dab5afe8c078d4d659429a68d0ade313da3afe05",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_50c1a92d",
+        "filename": "t/api-rest/api-customercontacts.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-05-29T12:20:13Z",
+      "side": 1,
+      "message": "done (reset this fix; it\u0027s part of the discussable ones)",
+      "parentUuid": "fabf19d9_d78133fd",
+      "range": {
+        "startLine": 397,
+        "startChar": 18,
+        "endLine": 397,
+        "endChar": 19
+      },
+      "revId": "dab5afe8c078d4d659429a68d0ade313da3afe05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
