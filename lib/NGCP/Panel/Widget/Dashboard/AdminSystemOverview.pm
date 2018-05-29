@@ -35,7 +35,7 @@ sub emergency_mode {
     return $em_count.'';
 }
 
-sub system {
+sub system_status {
     my ($self, $c) = @_;
     return { color => "#000000", text => $c->loc("OK") };
 }

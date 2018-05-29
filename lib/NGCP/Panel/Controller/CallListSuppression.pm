@@ -182,7 +182,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     $c->stash(form => $form);
 }
 
-sub delete :Chained('base') :PathPart('delete') :Args(0) {
+sub delete_suppression :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     try {

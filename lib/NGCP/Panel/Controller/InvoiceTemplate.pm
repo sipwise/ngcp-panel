@@ -240,7 +240,7 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
     $c->stash(edit_flag => 1);
 }
 
-sub delete :Chained('base') :PathPart('delete') {
+sub delete_invoicetemplate :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {

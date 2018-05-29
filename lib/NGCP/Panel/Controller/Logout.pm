@@ -23,7 +23,7 @@ Catalyst Controller.
 
 =cut
 
-sub index :Path {
+sub logout_index :Path {
     my ( $self, $c, $realm ) = @_;
 
     $c->logout;

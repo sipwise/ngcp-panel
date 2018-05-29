@@ -215,7 +215,7 @@ sub edit_without_reseller :Chained('base') :PathPart('edit/noreseller') :Args(0)
     $self->edit($c, 1);
 }
 
-sub delete :Chained('base') :PathPart('delete') :Args(0) {
+sub delete_contact :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     try {

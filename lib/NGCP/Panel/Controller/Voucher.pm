@@ -122,7 +122,7 @@ sub base :Chained('voucher_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(voucher_result => $res);
 }
 
-sub delete :Chained('base') :PathPart('delete') {
+sub delete_voucher :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')

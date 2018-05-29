@@ -21,7 +21,7 @@ sub root :PathPart('/') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 }
 
-sub index :Chained('/') :PathPart('security') :Args(0) {
+sub security_index :Chained('/') :PathPart('security') :Args(0) {
     my ( $self, $c ) = @_;
 
     my $ips = NGCP::Panel::Utils::Security::list_banned_ips($c);

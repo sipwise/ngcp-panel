@@ -35,7 +35,7 @@ sub root :Chained('/') :PathPart('callflow') :CaptureArgs(0) {
 
 }
 
-sub index :Chained('root') :PathPart('') :Args(0) {
+sub callflow_index :Chained('root') :PathPart('') :Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(

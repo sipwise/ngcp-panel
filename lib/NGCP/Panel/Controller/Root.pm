@@ -298,7 +298,7 @@ sub auto :Private {
     return 1;
 }
 
-sub index :Path :Args(0) {
+sub root_index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     $c->response->redirect($c->uri_for('/dashboard'));
@@ -323,7 +323,8 @@ sub back :Path('/back') :Args(0) {
     $c->detach;
 }
 
-sub default :Path {
+# any path that is not matched by anything else (e.g. /foo/bar)
+sub root_default :Path {
     my ( $self, $c ) = @_;
     $c->detach( '/error_page' );
 }

@@ -205,7 +205,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
     $c->stash(create_flag => 1);
 }
 
-sub delete :Chained('base') :PathPart('delete') {
+sub delete_invoice :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {

@@ -237,7 +237,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     );
 }
 
-sub delete :Chained('base') :PathPart('delete') :Args(0) {
+sub delete_admin :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     if($c->stash->{administrator}->id == $c->user->id) {

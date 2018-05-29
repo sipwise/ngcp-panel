@@ -15,7 +15,7 @@ sub thewsdl : GET Path('/SOAP/Intercept.wsdl') :Local :Args() {
     $c->response->content_type('text/xml');
 }
 
-sub index : POST Path('/SOAP/Intercept') {
+sub intercept_index : POST Path('/SOAP/Intercept') {
     my ($self, $c) = @_;
     my $h = Sipwise::SOAP::Intercept->new(c => $c);
     my $server = SOAP::Transport::LOCAL::Client->new;
