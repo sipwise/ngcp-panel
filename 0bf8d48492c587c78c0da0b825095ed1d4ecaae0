@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_4b48da5b",
+        "filename": "lib/NGCP/Panel/Role/API/SIPCaptures.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-29T14:55:27Z",
+      "side": 1,
+      "message": "form would be good at least for sake of api-dok",
+      "revId": "0bf8d48492c587c78c0da0b825095ed1d4ecaae0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
