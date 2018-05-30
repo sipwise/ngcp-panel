@@ -34,6 +34,29 @@
       "revId": "8f28e18ba33934f84ae085aed294ca0b88185f53",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_665513c5",
+        "filename": "lib/NGCP/Panel/Model/Storage.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-05-30T10:07:48Z",
+      "side": 1,
+      "message": "fails on CE\n\nMay 30 03:32:04 spce ngcp-panel: ERROR: IP\u003d192.168.51.36 CALLED\u003dAPI[GET 200]/api/sipcaptures/ TX\u003d1533480E38E04530 USER\u003dadministrator DATA\u003d{} MSG\u003d\"\" LOG\u003d\"Caught exception in NGCP::Panel::Controller::API::SIPCaptures-\u003eGET \"Can\u0027t use an undefined value as an ARRAY reference at /usr/share/perl5/NGCP/Panel/Model/Storage.pm line 55.\"\"",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 40
+      },
+      "revId": "8f28e18ba33934f84ae085aed294ca0b88185f53",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
