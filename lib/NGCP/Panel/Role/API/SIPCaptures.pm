@@ -10,6 +10,8 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 
+use DateTime::TimeZone;
+
 sub resource_name {
     return 'sipcaptures';
 }
@@ -104,6 +106,18 @@ sub resource_from_item {
 sub get_item_id {
    my ($self, $c, $item, $resource, $form) = @_;
    return $item->call_id;
+}
+
+sub validate_request {
+    my($self, $c) = @_;
+    my $method = uc($c->request->method);
+    if ($method eq 'GET') {
+        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
+            return;
+        }
+    }
+    return 1;
 }
 
 1;
