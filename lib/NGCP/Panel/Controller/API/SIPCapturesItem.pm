@@ -26,17 +26,11 @@ sub allowed_methods {
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
-        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
-            return;
-        }
-
         my $packets = $self->packets_by_callid($c, $id);
         unless ($packets) {
             $self->error($c, HTTP_NOT_FOUND, "Non-existing call id");
             last;
         }
-
         my $pcap = NGCP::Panel::Utils::Callflow::generate_pcap($packets);
         last unless $pcap;
 
@@ -44,6 +38,7 @@ sub GET :Allow {
         my $file_dt = sprintf "%s_%s%s%s",
             $dt->ymd, $dt->hour, $dt->minute, $dt->second;
         my $filename = sprintf "%s_-%s.pcap", $file_dt, $id;
+
         $c->response->header("Content-Disposition" => "attachment; filename=$filename");
         $c->response->content_type('application/vnd.tcpdump.pcap');
         $c->response->body($pcap);
