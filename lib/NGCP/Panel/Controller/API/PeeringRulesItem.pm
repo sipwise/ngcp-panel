@@ -107,7 +107,8 @@ sub PUT :Allow {
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
-        $guard->commit;        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
+        $guard->commit;
+        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
 }

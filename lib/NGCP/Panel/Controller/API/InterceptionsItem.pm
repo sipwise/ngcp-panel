@@ -96,7 +96,8 @@ sub PATCH :Allow {
         $guard->commit;
         $cguard->commit; 
 
-        $cguard->commit;        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
+        $cguard->commit;
+        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
 }
@@ -126,7 +127,8 @@ sub PUT :Allow {
         $guard->commit; 
         $cguard->commit; 
 
-        $cguard->commit;        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
+        $cguard->commit;
+        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
 }
