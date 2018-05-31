@@ -120,7 +120,8 @@ sub PUT :Allow {
         my $hal = $self->hal_from_item($c, $item, $form);
         last unless $self->add_update_journal_item_hal($c, $hal);
         
-        $guard->commit;        $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
+        $guard->commit;
+        $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
     }
     return;
 }
