@@ -106,5 +106,17 @@ sub get_item_id {
    return $item->call_id;
 }
 
+sub validate_request {
+    my($self, $c) = @_;
+    my $method = uc($c->request->method);
+    if ($method eq 'GET') {
+        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
+            return;
+        }
+    }
+    return 1;
+}
+
 1;
 # vim: set tabstop=4 expandtab:
