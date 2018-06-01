@@ -121,6 +121,10 @@ sub update_item {
         form => $form,
         resource => $resource,
     );
+    if (defined $resource->{lines} && ref $resource->{lines} ne 'ARRAY') {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid "lines" value. Must be an array.');
+        last;
+    }
 
     my $iden_device = $schema->resultset('autoprov_field_devices')->find({identifier => $resource->{identifier}});
     if($iden_device && $iden_device->id != $item->id) {
