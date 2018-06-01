@@ -250,8 +250,7 @@
                  m.duplicate_flag=helper.duplicate_flag,
                  m.edit_flag=helper.editmeta_flag,
                  m.name = helper.name);
-        helper.form = translate_form( helper.form );
-        helper.form.render;
+    helper.form.render;
     modal_footer();
     modal_script(m.close_target = helper.close_target);
 -%]
