@@ -140,6 +140,10 @@ sub POST :Allow {
             resource => $resource,
             form => $form,
         );
+        if (defined $resource->{lines} && ref $resource->{lines} ne 'ARRAY') {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid "lines" value. Must be an array.');
+            last;
+        }
 
         my $iden_device = $schema->resultset('autoprov_field_devices')->find({identifier => $resource->{identifier}});
         if ($iden_device) {

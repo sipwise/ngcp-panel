@@ -39,7 +39,8 @@ has_field 'lines' => (
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 1,
-    required => 1,
+    required => 0,
+    validate_when_empty => 1,
     tags => {
         controls_div => 1,
     },
