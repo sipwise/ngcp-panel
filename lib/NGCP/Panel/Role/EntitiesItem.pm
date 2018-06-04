@@ -126,6 +126,15 @@ sub set_config {
                 %{$params_all_methods},
                 %{$params_method},
         } } @{ $self->allowed_methods }),
+        ( 'item' eq $params->{interface_type}
+        ?
+            @{ $self->get_journal_action_config($self->resource_name,{
+                ACLDetachTo => '/api/root/invalid_user',
+                AllowedRole => $allowed_roles_by_methods->{'Journal'},
+                Does => [qw(ACL RequireSSL)],
+            }) }
+        : 
+            () ),
         %{$params_action_add},
     };
     #$config_action = {
@@ -140,15 +149,6 @@ sub set_config {
     #};
     my $config = {
         action => $config_action,
-        ( 'item' eq $params->{interface_type}
-        ?
-            @{ $self->get_journal_action_config($self->resource_name,{
-                ACLDetachTo => '/api/root/invalid_user',
-                AllowedRole => $allowed_roles_by_methods->{'Journal'},
-                Does => [qw(ACL RequireSSL)],
-            }) }
-        : 
-            () ),
         log_response => 1,
         log_request  => 1,
         %{$params},
@@ -158,6 +158,8 @@ sub set_config {
     #Global to don't pass undefined method and initiate it every time in the _set_config
     #    %{$self->_set_config('Global')},
     #};
+    use irka;
+    irka::loglong($config);
     $self->config($config);
 }
 
