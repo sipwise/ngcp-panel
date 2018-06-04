@@ -155,18 +155,22 @@ sub GET : Allow {
         my ($form) = $full_mod->get_form($c);
 
         my $sorting_cols = [];
-        if (my $order_by_cols = eval { $full_mod->order_by_cols(); }) {
-            $sorting_cols = [ sort keys %$order_by_cols ];
-        } else {
+        my ($explicit_order_cols, $explicit_order_cols_params);
+        if ($full_mod->can('order_by_cols')) {
+            ($explicit_order_cols,$explicit_order_cols_params) = $full_mod->order_by_cols();
+            $sorting_cols = [ sort keys %$explicit_order_cols ];
+            $explicit_order_cols_params //= {};
+        }
+        if (!$explicit_order_cols || $explicit_order_cols_params->{columns_are_additional}) {
             my $item_rs;
             try {
                 $item_rs = $full_mod->item_rs($c, "");
             }
             if ($item_rs) {
                 if(ref $item_rs eq "ARRAY") {
-                    $sorting_cols = [map { $_->{name} } @{ $item_rs }];
+                    $sorting_cols = [sort (@$sorting_cols, map { $_->{name} } @{ $item_rs })];
                 } else {
-                    $sorting_cols = [$item_rs->result_source->columns];
+                    $sorting_cols = [sort (@$sorting_cols, $item_rs->result_source->columns)];
                 }
             }
         }
