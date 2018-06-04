@@ -2442,7 +2442,7 @@ sub _test_journal_collection {
                 $res = $ua->request($req);
                 is($res->code, 200, _get_request_test_message("fetch page journal item"));
 
-                my $original = delete $journals->{$journal->{href}};
+                my $original = delete $journals->{ref $journal eq 'ARRAY' ? $journal->[0]->{href} : $journal->{href}};
                 $page_journals->{$original->{id}} = $original;
             }
             foreach my $journal (@{ $collection->{_embedded}->{'ngcp:journal'} }) {
