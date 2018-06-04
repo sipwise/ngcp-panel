@@ -491,7 +491,7 @@ sub load_db{
                 $values = ('HASH' eq ref $values) ? [$values] : $values;
                 $self->loaded->{$collection_name} = [ map {
                     {
-                        location => $_->{_links}->{self}->{href},
+                        location => ref $_->{_links}->{self} eq 'ARRAY' ? $_->{_links}->{self}->[0]->{href} : $_->{_links}->{self}->{href},
                         content => $_,
                     }
                 } @$values ];
