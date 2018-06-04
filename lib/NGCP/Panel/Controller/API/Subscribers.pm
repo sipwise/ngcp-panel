@@ -263,6 +263,17 @@ sub query_params {
     return $params;
 }
 
+sub order_by_cols {
+    return 
+        { create_timestamp => 'provisioning_voip_subscriber.create_timestamp' }, 
+        { 
+            columns_are_additional => 1,
+            create_timestamp => {
+                join => 'provisioning_voip_subscriber',
+            },
+        };
+}
+
 sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
