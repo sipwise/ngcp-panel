@@ -1,3 +1,37 @@
+ngcp-panel (5.5.5.1+0~mr5.5.5.1) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [5fc5da6] TT#31195 Use field specific validation to keep form validation
+  * [ae7b8af] TT#35607 Consider no_count query parameter and infinite next link
+  * [a07c718] TT#35607 Fix tests. Consider possible empty last page
+  * [ee75a01] TT#28460 Fix OPTIONS for the balanceintervals item/item request
+  * [6088d0b] TT#28460 Fix UpnRewriteSets API
+  * [d1990e6] TT#28460 Fix PbxDeviceProfiles PUT
+  * [446f5ce] TT#28460 Fix customer balances get-put use case
+  * [c21f1a5] TT#28460 Fix RTC networks and RTC apps get-put use case
+  * [6bbc7c2] TT#36056 Clear close_target after inbound rules prioritisation
+  * [45d25a2] TT#36057 Workaround rsvg-convert multiple scaling using gs
+  * [2ed5ff4] TT#28460 Merge changes for test all script
+  * [64b9094] TT#32910 Consider possible null initial_cash_balance
+  * [ba89b31] TT#28460 Fix emergencymappings upload
+
+  [ Kirill Solomko ]
+  * [b8610e8] TT#36061 CallRouting: fix peer selection
+  * [22560cf] TT#35714 fix collection_nav_links object name
+
+  [ Rene Krenn ]
+  * [6e2dae1] TT#33369 remove check for LI number in 3306 db (again)
+  * [90dfbb5] TT#32910 TT#33037 initial cash_balance, free_time_balance
+  * [a56100b] TT#35662 move product_id to billing.contracts
+  * [05170ba] Revert "TT#35662 move product_id to billing.contracts"
+
+  [ Andreas Granig ]
+  * [f0ac41b] TT#23569 Fix interception ACLs
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 04 Jun 2018 16:17:35 +0200
+
 ngcp-panel (5.5.5.0+0~mr5.5.5.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
