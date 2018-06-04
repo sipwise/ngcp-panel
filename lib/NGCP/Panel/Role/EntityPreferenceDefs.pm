@@ -123,6 +123,15 @@ sub set_config {
                 %{$params_all_methods},
                 %{$params_method},
         } } @{ $self->allowed_methods }),
+        ( 'item' eq $params->{interface_type}
+        ?
+            @{ $self->get_journal_action_config($self->resource_name,{
+                ACLDetachTo => '/api/root/invalid_user',
+                AllowedRole => $allowed_roles_by_methods->{'Journal'},
+                Does => [qw(ACL RequireSSL)],
+            }) }
+        : 
+            () ),
         %{$params_action_add},
     };
     #$config_action = {
@@ -137,15 +146,6 @@ sub set_config {
     #};
     my $config = {
         action => $config_action,
-        ( 'item' eq $params->{interface_type}
-        ?
-            @{ $self->get_journal_action_config($self->resource_name,{
-                ACLDetachTo => '/api/root/invalid_user',
-                AllowedRole => $allowed_roles_by_methods->{'Journal'},
-                Does => [qw(ACL RequireSSL)],
-            }) }
-        : 
-            () ),
         log_response => 1,
         log_request  => 1,
         %{$params},
