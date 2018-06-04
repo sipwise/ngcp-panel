@@ -158,8 +158,6 @@ sub set_config {
     #Global to don't pass undefined method and initiate it every time in the _set_config
     #    %{$self->_set_config('Global')},
     #};
-    use irka;
-    irka::loglong($config);
     $self->config($config);
 }
 
