@@ -269,7 +269,10 @@ __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
     my $panel_config = get_panel_config;
     if ($panel_config->{appearance}{api_embedded_forcearray}) {
         require Data::HAL;
-        $Data::HAL::__forcearray_underneath = {embedded => 1};
+        $Data::HAL::__forcearray_underneath = {
+            embedded => 1,
+            links    => 1,
+        };
     }
 }
 

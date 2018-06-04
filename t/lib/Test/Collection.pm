@@ -25,7 +25,7 @@ use IO::Uncompress::Unzip;
 use File::Temp qw();
 
 Moose::Exporter->setup_import_methods(
-    as_is     => [ 'is_int' ],
+    as_is     => [ 'is_int', 'get_links_href', 'get_links_self_href' ],
 );
 my $tmpfilename : shared;
 
@@ -539,26 +539,26 @@ sub get_hal_from_collection{
     if( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'ARRAY') {
         #print Dumper ["get_hal_from_collection","1"];
         $reshal = $list_collection->{_embedded}->{$hal_name}->[$number];
-        $location = $reshal->{_links}->{self}->{href};
+        $location = get_links_self_href($reshal);
         $total_count = $reshal->{total_count} // $list_collection->{total_count};
     } elsif( $list_collection->{_embedded} && ref $list_collection->{_embedded}->{$hal_name} eq 'HASH') {
         #print Dumper ["get_hal_from_collection","2"];
         $reshal = $list_collection->{_embedded}->{$hal_name};
-        $location = $reshal->{_links}->{self}->{href};
+        $location = get_links_self_href($reshal);
         $total_count = $list_collection->{total_count};
         #todo: check all collections
     } elsif(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
 #found first subscriber
         #print Dumper ["get_hal_from_collection","3"];
         $reshal = $list_collection;
-        $location = $reshal->{_links}->{$hal_name}->{href};
+        $location = get_links_href($reshal,$hal_name);
         $total_count = $reshal->{total_count};
     } elsif( ref $list_collection eq 'HASH' && $list_collection->{_links}->{self}->{href}) {
 #preferencedefs collection
 #or empty collection, see "/api/pbxdeviceprofiles/?name=two"
 #or just got requested item, as /api/sibscribers/id
         $reshal = $list_collection;
-        $location = $reshal->{_links}->{self}->{href};
+        $location = get_links_self_href($reshal);
         $total_count = $reshal->{total_count} // 1;
         #print Dumper ["get_hal_from_collection","4",$total_count];
     }
@@ -920,7 +920,7 @@ sub check_list_collection{
     do {
         #print "nexturi=$nexturi;\n";
         my ($res,$list_collection) = $self->check_item_get($nexturi);
-        my $selfuri = $self->normalize_uri($list_collection->{_links}->{self}->{href});
+        my $selfuri = $self->normalize_uri(get_links_self_href($list_collection));
         my $sub_sort_params = sub {my $str = $_[0]; return (substr $str, 0, (index $str, '?') + 1) . join('&', sort split /&/, substr  $str, ((index $str, '?') + 1))};
         $selfuri = $sub_sort_params->($selfuri);
         $nexturi = $sub_sort_params->($nexturi);
@@ -952,8 +952,8 @@ sub check_list_collection{
             }
         }
 
-        if($list_collection->{_links}->{next}->{href}) {
-            $nexturi = $self->normalize_uri($list_collection->{_links}->{next}->{href});
+        if(get_links_href($list_collection,'next')) {
+            $nexturi = $self->normalize_uri(get_links_href($list_collection,'next'));
         } else {
             $nexturi = undef;
         }
@@ -974,7 +974,7 @@ sub check_list_collection{
         #the only thing that saves us - we really will not get into the if ever
         if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
             $self->check_embedded($list_collection->{_embedded}->{$hal_name}, $check_embedded_cb);
-            push @href, $list_collection->{_links}->{$hal_name}->{href};
+            push @href, get_links_self_href($list_collection);
         } else {
             foreach my $item_c(@{ $list_collection->{_links}->{$hal_name} }) {
                 push @href, $item_c->{href};
@@ -982,7 +982,7 @@ sub check_list_collection{
             foreach my $item_c(@{ $list_collection->{_embedded}->{$hal_name} }) {
             # these relations are only there if we have zones/fees, which is not the case with an empty model
                 $self->check_embedded($item_c, $check_embedded_cb);
-                push @href, $item_c->{_links}->{self}->{href};
+                push @href, get_links_self_href($item_c);
             }
         }
     } while($nexturi);
@@ -1075,8 +1075,8 @@ sub check_patch_correct{
     my($self,$content) = @_;
     my ($res,$rescontent,$req) = $self->request_patch( $content );
     $self->http_code_msg(200, "check patched item", $res, $rescontent);
-    is($rescontent->{_links}->{self}->{href}, $self->uri2location($req->uri), "$self->{name}: check patched self link");
-    is($rescontent->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "$self->{name}: check patched collection link");
+    is(get_links_self_href($rescontent), $self->uri2location($req->uri), "$self->{name}: check patched self link");
+    is(get_links_href($rescontent,'collection'), '/api/'.$self->name.'/', "$self->{name}: check patched collection link");
     return ($res,$rescontent,$req);
 }
 
@@ -1487,7 +1487,8 @@ sub resource_clear_file{
 sub get_id_from_hal{
     my($self,$hal,$name) = @_;
     my $embedded = $self->get_embedded_item($hal,$name);
-    (my ($id)) = $embedded->{_links}{self}{href}=~ m!${name}/([0-9]*)$! if $embedded;
+    my $self_href = get_links_self_href($embedded);
+    (my ($id)) = $self_href=~ m!${name}/([0-9]*)$! if $embedded;
     return $id;
 }
 
@@ -1568,4 +1569,31 @@ sub is_int {
     }
     return;
 }
+
+sub get_links {
+    my ($container,$link_name) = @_;
+    return ref $container->{_links}->{$link_name} eq 'ARRAY' ? $container->{_links}->{$link_name}->[0] :$container->{_links}->{$link_name};
+}
+
+sub get_links_self {
+    my ($container) = @_;
+    if ($_[1]) {
+        die('ERROR: Second parameter in get_links_self_href.');
+    }
+    return get_links($container,'self');
+}
+
+sub get_links_href {
+    my ($container,$link_name) = @_;
+    return ref $container->{_links}->{$link_name} eq 'ARRAY' ? $container->{_links}->{$link_name}->[0]->{href} :$container->{_links}->{$link_name}->{href};
+}
+
+sub get_links_self_href {
+    my ($container) = @_;
+    if ($_[1]) {
+        die('ERROR: Second parameter in get_links_self_href.');
+    }
+    return get_links_href($container,'self');
+}
+
 1;
