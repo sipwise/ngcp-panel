@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_f811cdb0",
+        "filename": "t/api-rest/api-journals.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-05T12:28:01Z",
+      "side": 1,
+      "message": "use JSON -support_by_pp, -no_export;\n\nshould do the trick",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 14
+      },
+      "revId": "e43128342a1d86bc8c81c0e59641bc3e6ef77b15",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
