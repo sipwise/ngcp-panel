@@ -2428,7 +2428,7 @@ sub _test_journal_collection {
                 is($res->code, 200, _get_request_test_message("fetch page journal item"));            
                 
                 my $original = delete $journals->{$journal->{href}};
-                $page_journals->{$original->{id}} = $original;
+                $page_journals->{$original->{id}} = $original if $original;
             }
             foreach my $journal (@{ $collection->{_embedded}->{'ngcp:journal'} }) {
                 ok(exists $page_journals->{$journal->{id}},"check existence of linked journal item among embedded");
@@ -2491,10 +2491,12 @@ sub _from_json {
 sub _get_request_test_message {
     my ($message) = @_;
     my $code = $res->code;
+    diag("code: $code");
     if ($code == 200 || $code == 201 || $code == 204) {
         return $message;
     } else {
-        my $error_content = _from_json($res->content);
+        my $error_content = {};
+        eval { $error_content = _from_json($res->content); };
         if (defined $error_content && defined $error_content->{message}) {
             return $message . ' (' . $res->message . ': ' . $error_content->{message} . ')';
         } else {
