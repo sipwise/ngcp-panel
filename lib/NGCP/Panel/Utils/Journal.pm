@@ -358,8 +358,8 @@ sub _has_journal_method {
 
 sub handle_api_journals_head {
     my ($controller, $c) = @_;
-    if (_has_journal_method($controller,'journals_get')) {
-        $c->forward('journals_get');
+    if (_has_journal_method($controller,'handle_journals_get')) {
+        $c->forward('handle_journals_get');
         $c->response->body(q());
         return;
     } else {
@@ -372,8 +372,8 @@ sub handle_api_journals_head {
 
 sub handle_api_journalsitem_head {
     my ($controller, $c) = @_;
-    if (_has_journal_method($controller,'journalsitem_get')) {
-        $c->forward('journalsitem_get');
+    if (_has_journal_method($controller,'handle_journalsitem_get')) {
+        $c->forward('handle_journalsitem_get');
         $c->response->body(q());
         return;
     } else {
