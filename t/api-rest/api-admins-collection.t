@@ -41,10 +41,19 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('admins'));
 
 $test_machine->form_data_item( );
 # create 3 new admins from DATA_ITEM
-my $admins = $test_machine->check_create_correct( 3 , sub {
-    $_[0]->{login}.=seq()
+my $admins = $test_machine->check_create_correct( 2 , sub {
+    $_[0]->{login}.=time().seq()
 });
 ok($admins->[0]->{content}->{is_active},"Check if newly created admin is active");
+my $admins2 = $test_machine->check_create_correct( 2 , sub {
+    $_[0]->{login}.=time().seq();
+    print "login=".$_[0]->{login}.";";
+    foreach my $field(qw/is_active is_master is_superuser billing_data call_data lawful_intercept read_only show_passwords/) {
+        $_[0]->{$field} = $_[0]->{$field} eq 'true' ? '1' : '0';
+    }
+});
+ok($admins2->[0]->{content}->{is_active},"Check if newly created admin is active");
+
 $test_machine->check_bundle();
 $test_machine->clear_test_data_all();
 
