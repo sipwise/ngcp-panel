@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_89dde972",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-07T23:44:53Z",
+      "side": 1,
+      "message": "This gives more uniform code, but it is redundant. :) The first s///r could be assigned directly.",
+      "range": {
+        "startLine": 253,
+        "startChar": 36,
+        "endLine": 253,
+        "endChar": 39
+      },
+      "revId": "bf79b79816922a9aa4ec7f2d2e4566be2e83fbf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_a9f785f4",
+        "filename": "lib/NGCP/Panel/Form/Sound/LoadDefault.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-07T23:44:53Z",
+      "side": 1,
+      "message": "redundant",
+      "range": {
+        "startLine": 36,
+        "startChar": 31,
+        "endLine": 36,
+        "endChar": 37
+      },
+      "revId": "bf79b79816922a9aa4ec7f2d2e4566be2e83fbf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_298db57b",
+        "filename": "lib/NGCP/Panel/Utils/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-07T23:44:53Z",
+      "side": 1,
+      "message": "I tend to use () instead of // to help visually distinguish from regexes and constructs like qr//, because this is a list.",
+      "range": {
+        "startLine": 152,
+        "startChar": 24,
+        "endLine": 152,
+        "endChar": 25
+      },
+      "revId": "bf79b79816922a9aa4ec7f2d2e4566be2e83fbf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_09e9d91a",
+        "filename": "lib/NGCP/Panel/Utils/Generic.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-07T23:44:53Z",
+      "side": 1,
+      "message": "The other way to go about this is to use eval. But there is some other perlcritic policy that complains about that. :D",
+      "revId": "bf79b79816922a9aa4ec7f2d2e4566be2e83fbf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_c9f2c106",
+        "filename": "sandbox/billing_mapping_effective_date.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-07T23:44:53Z",
+      "side": 1,
+      "message": "redundant",
+      "range": {
+        "startLine": 465,
+        "startChar": 32,
+        "endLine": 465,
+        "endChar": 38
+      },
+      "revId": "bf79b79816922a9aa4ec7f2d2e4566be2e83fbf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_e9ed7d26",
+        "filename": "t/api-rest/api-all.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-07T23:44:53Z",
+      "side": 1,
+      "message": "redundant and also the parens.",
+      "range": {
+        "startLine": 206,
+        "startChar": 30,
+        "endLine": 206,
+        "endChar": 34
+      },
+      "revId": "bf79b79816922a9aa4ec7f2d2e4566be2e83fbf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
