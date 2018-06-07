@@ -80,7 +80,7 @@ sub process_form_resource{
         $resource->{saltedpass} = NGCP::Panel::Utils::Admin::generate_salted_hash($pass);
     }
     foreach my $f(qw/billing_data call_data is_active is_master is_superuser lawful_intercept read_only show_passwords/) {
-        $resource->{$f} = (ref $resource->{$f} eq 'JSON::true' || (defined $resource->{$f} and $resource->{$f} eq 'true')) ? 1 : 0;
+        $resource->{$f} = (ref $resource->{$f} eq 'JSON::true' || ( defined $resource->{$f} && ( $resource->{$f} eq 'true' || $resource->{$f} eq '1' ) ) ) ? 1 : 0;
     }
     return $resource;
 }
