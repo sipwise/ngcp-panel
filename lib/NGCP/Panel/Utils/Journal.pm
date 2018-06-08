@@ -316,9 +316,9 @@ sub handle_api_journals_options {
     my ($controller, $c, $id) = @_;
     my @allowed_methods = ('OPTIONS');
     my %journal_actions_found = map { $_ => 1 } @{ $controller->get_journal_methods };
-    if (exists $journal_actions_found{'journals_get'}) {
+    if (exists $journal_actions_found{'handle_journals_get'}) {
         push(@allowed_methods,'GET');
-        if (exists $journal_actions_found{'journals_head'}) {
+        if (exists $journal_actions_found{'handle_journals_head'}) {
             push(@allowed_methods,'HEAD');
         }
     }
@@ -334,9 +334,9 @@ sub handle_api_journalsitem_options {
     my ($controller, $c, $id) = @_;
     my @allowed_methods = ('OPTIONS');
     my %journal_actions_found = map { $_ => 1 } @{ $controller->get_journal_methods };
-    if (exists $journal_actions_found{'journalsitem_get'}) {
+    if (exists $journal_actions_found{'handle_journalsitem_get'}) {
         push(@allowed_methods,'GET');
-        if (exists $journal_actions_found{'journalsitem_head'}) {
+        if (exists $journal_actions_found{'handle_journalsitem_head'}) {
             push(@allowed_methods,'HEAD');
         }
     }
@@ -654,3 +654,4 @@ sub _create_journal {
 }
 
 1;
+
