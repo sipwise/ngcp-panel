@@ -2373,8 +2373,8 @@ sub _test_journal_options_head {
         my @hopts = split /\s*,\s*/, $res->header('Allow');
         ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
         foreach my $opt(qw( GET HEAD OPTIONS )) {
-            ok(grep { /^$opt$/ } @hopts, "check for existence of '$opt' in Allow header");
-            ok(grep { /^$opt$/ } @{ $opts->{methods} }, "check for existence of '$opt' in body");
+            ok(scalar (grep { /^$opt$/ } @hopts), "check for existence of '$opt' in Allow header");
+            ok(scalar ( grep { /^$opt$/ } @{ $opts->{methods} }), "check for existence of '$opt' in body");
         }
         $req = HTTP::Request->new('HEAD', $url);
         $res = $ua->request($req);
