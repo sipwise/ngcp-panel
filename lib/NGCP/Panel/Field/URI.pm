@@ -21,8 +21,8 @@ apply(
     [
         {
             transform => sub { 
-	    	    lc($_[0]);
-		    },
+                lc($_[0]);
+            },
         },
         {
             transform => sub {
