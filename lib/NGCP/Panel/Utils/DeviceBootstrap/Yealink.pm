@@ -14,8 +14,8 @@ sub rpc_server_params{
     my $self = shift;
     my $cfg  = {
         proto    => 'https',
-        host     => 'rps.yealink.com',
-        port     => '443',
+        host     => 'api-dm.yealink.com',
+        port     => '8443',
         path     => '/xmlrpc',
     };
     $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
