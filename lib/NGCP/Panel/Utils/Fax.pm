@@ -58,6 +58,26 @@ sub send_fax {
     } else {
         $number = $sender;
     }
+    {
+        my ($user, $domain) = split(/\@/, $args{destination});
+        $user =~ s/^sips?://;
+        $user = uri_unescape(NGCP::Panel::Utils::Subscriber::apply_rewrite(
+            c => $c, subscriber => $subscriber, number => $user, direction => 'callee_in'
+        ));
+
+        if ($user) {
+            if($domain && $domain ne $subscriber->domain->domain) {
+                $user = $user . '@' . $domain;
+            }
+            $c->log->debug('number normalization: caller_in apply_rewrite result for '.$args{destination}.', billing subscriber id '.$subscriber->id.': user='.$user.'.');
+
+            $args{destination} = $user;
+
+        } else {
+            $c->log->debug('number normalization: caller_in apply_rewrite result is empty for '.$args{destination}.', billing subscriber id '.$subscriber->id.'.');    
+        }
+    }
+
     $sendfax_args{caller} = $number;
     $sendfax_args{callee} = $args{destination};
 
@@ -210,11 +230,11 @@ sub process_fax_journal_item {
                 #try harder:
                 my $callee = $resource->{callee};
                 if (my $rt_callee = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                                    c => $c,
-                                    number => $callee,
-                                    subscriber => $src_sub // $subscriber,
-                                    direction => 'callee_in'
-                                )) {
+                    c => $c,
+                    number => $callee,
+                    subscriber => $src_sub // $subscriber,
+                    direction => 'callee_in'
+                )) {
                     $callee = $rt_callee; #e164
                     $c->log->debug($label . ' no destination, normalized ' . $resource->{callee} . ' to ' . $callee);
                     my $prov_dst_alias = $c->model('DB')->resultset('voip_dbaliases')->search({
