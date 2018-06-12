@@ -596,7 +596,7 @@ my %customer_map = ();
         profile_id => $subscriberprofile3->{id},
         profile_set_id => $subscriberprofile3set->{id},
     );
-    my %pilot_event = (
+     %pilot_event = (
         subscriber_id => $pilot_subscriber->{id},
           subscriber_profile_id => $subscriberprofile3->{id}, subscriber_profile_name => $subscriberprofile3->{name},
           subscriber_profile_set_id => $subscriberprofile3set->{id}, subscriber_profile_set_name => $subscriberprofile3set->{name},
@@ -692,7 +692,7 @@ my %customer_map = ();
     ]);
 
     _update_subscriber($pilot_subscriber, status => 'terminated');
-    my %pilot_event = (
+    %pilot_event = (
         subscriber_id => $pilot_subscriber->{id},
           subscriber_profile_id => $subscriberprofile3->{id}, subscriber_profile_name => $subscriberprofile3->{name},
           subscriber_profile_set_id => $subscriberprofile3set->{id}, subscriber_profile_set_name => $subscriberprofile3set->{name},
@@ -812,7 +812,7 @@ sub _create_cftimeset {
     $req->content(JSON::to_json({
         name => "cf_time_set_".$t,
         subscriber_id => $subscriber->{id},
-        times => \@times,
+        times => $times,
     }));
     $res = $ua->request($req);
     is($res->code, 201, "create test cftimeset");
@@ -1026,7 +1026,7 @@ sub _compare_event {
     my $ok = 1;
 
     foreach my $field (keys %$expected) {
-        $ok = is($got->{$field},$expected->{$field},$label . "check event " . $got->{$field} . " $field") && $ok;
+        $ok = is($got->{$field},$expected->{$field},$label . "check event " . ($got->{$field} // '') . " $field") && $ok;
     }
 
     return $ok;

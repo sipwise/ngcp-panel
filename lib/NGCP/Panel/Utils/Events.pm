@@ -388,24 +388,19 @@ sub _get_pilot_subscriber {
         prov_subscriber
         now_hires
     /};
-    #now_hires
     $schema //= $c->model('DB');
-    #$now_hires //= NGCP::Panel::Utils::DateTime::current_local_hires;
     $customer //= $subscriber->contract;
     $prov_subscriber //= $subscriber->provisioning_voip_subscriber;
     my $pilot_subscriber = undef;
-    #my $bm_actual = _get_actual_billing_mapping(c => $c,schema => $schema, contract => $customer, now => $now_hires);
-    #if ($bm_actual->billing_mappings->first->product->class eq 'pbxaccount') {
-        if ($prov_subscriber and $prov_subscriber->is_pbx_pilot) {
-            $pilot_subscriber = $subscriber;
-        } else {
-            $pilot_subscriber = $customer->voip_subscribers->search({
-                'provisioning_voip_subscriber.is_pbx_pilot' => 1,
-            },{
-                join => 'provisioning_voip_subscriber',
-            })->first;
-        }
-    #}
+    if ($prov_subscriber and $prov_subscriber->is_pbx_pilot) {
+        $pilot_subscriber = $subscriber;
+    } else {
+        $pilot_subscriber = $customer->voip_subscribers->search({
+            'provisioning_voip_subscriber.is_pbx_pilot' => 1,
+        },{
+            join => 'provisioning_voip_subscriber',
+        })->first;
+    }
     return $pilot_subscriber;
 }
 

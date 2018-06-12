@@ -279,19 +279,14 @@ sub POST :Allow {
         }
 
         try {
-            foreach my $mapping (@$mappings_to_create) {
-                $customer->billing_mappings->create($mapping);
-            }
+            NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                contract => $customer,
+                mappings_to_create => $mappings_to_create,
+            );
             $customer = $self->customer_by_id($c, $customer->id,$now);
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                 contract => $customer,
-                #bm_actual => $customer->billing_mappings->find($customer->get_column('bmid')),
             );
-            #NGCP::Panel::Utils::Contract::create_contract_balance(
-            #    c => $c,
-            #    profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,
-            #    contract => $customer,
-            #);
         } catch($e) {
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
