@@ -27,6 +27,7 @@ unless ($@) {
         on_connect_do       => "SET NAMES utf8mb4",
         quote_char          => "`",
     });
+    print $@;
 }
 # ... or a separate csv file otherwise:
 my $filename = 'api_balanceintervals_test_reference.csv';
@@ -34,7 +35,7 @@ my $filename = 'api_balanceintervals_test_reference.csv';
 my @perl_records = ();
 my @sql_records = ();
 
-#goto SKIP;
+goto SKIP;
 test_contracts(sub {
     my $contract = shift;
 
@@ -141,6 +142,18 @@ SKIP:
 if ($schema) {
     $schema->storage->dbh_do(sub {
         my ($storage, $dbh, @args) = @_;
+
+
+
+               my  $sth = $dbh->prepare('select @@sql_log_bin');
+    $sth->execute();
+    my ($sql_bin_log) = $sth->fetchrow_array();
+    $sth->finish();
+    $dbh->do("set sql_log_bin = 0") if $sql_bin_log;
+     $sth->execute();
+     ($sql_bin_log) = $sth->fetchrow_array();
+    $sth->finish();
+
         $dbh->do('use billing');
         $dbh->do(<<EOS1
 create temporary table tmp_transformed (
@@ -256,9 +269,14 @@ EOS2
         diag("time to transform all billing_mappings: ".sprintf("%.3f secs",time()-$t1));
         $dbh->do('drop procedure transform_billing_mappings');
 
+        $dbh->do(<<EOS3
+
+EOS3
+        );
+
     },);
 
-    goto SKIP1;
+    #goto SKIP1;
     test_contracts(sub {
         my $contract = shift;
         $schema->storage->dbh_do(sub {
@@ -290,6 +308,22 @@ EOS2
             },$mappings);
             push(@sql_records,@$mappings);
 
+            $sth = $dbh->prepare("select billing_mapping_id as id,contract_id,start_date,end_date,profile_id as billing_profile_id,network_id from tmp_transformed where contract_id = ? group by billing_mapping_id order by billing_mapping_id asc");
+            $sth->execute($contract->{contract_id});
+            my $got_bm = $sth->fetchall_arrayref({});
+            $sth->finish();
+
+            $sth = $dbh->prepare("select id,contract_id,start_date,end_date,billing_profile_id,network_id from billing_mappings where contract_id = ? order by id asc");
+            $sth->execute($contract->{contract_id});
+            my $expected_bm = $sth->fetchall_arrayref({});
+            $sth->finish();
+
+            is_deeply($got_bm,$expected_bm,"fetching all contract id $contract->{contract_id} mappings deeply");
+
+            $dbh->do('call append_billing_mappings(?,now(),?)',undef,$contract->{contract_id},
+                "2018-07-01 00:00:00,2018-07-01 01:00:00",1,undef,0);
+            #diag("time to transform all billing_mappings: ".sprintf("%.3f secs",time()-$t1));
+
         },);
 
     });
@@ -309,7 +343,7 @@ SKIP1:
             my ($storage, $dbh, @args) = @_;
             $dbh->do("create temporary table tmp_transformed_copy like tmp_transformed");
             $dbh->do("insert into tmp_transformed_copy select * from tmp_transformed");
-            my $sth = $dbh->prepare(<<EOS3
+            my $sth = $dbh->prepare(<<EOS4
 select t2.contract_id,t2.billing_mapping_id from
 (select
 contract_id,
@@ -319,7 +353,7 @@ where effective_start_date <= ?
 and last = 1
 group by contract_id) as t1
 join tmp_transformed_copy t2 on t2.contract_id = t1.contract_id and t2.effective_start_date = t1.effective_start_date and t2.last = 1
-EOS3
+EOS4
             );
             $t1 = time();
             $sth->execute($now->epoch); #,$contract->{contract_id});
@@ -408,7 +442,7 @@ sub test_contracts {
                         $mapping{network_name} = ($_->network ? $_->network->name : '');
                         $mapping{product_class} = $_->product->class;
                         \%mapping;
-                    } $contract->billing_mappings->all ],
+                    } $contract->billing_mappings_old->all ],
                 });
             }
             $page++;

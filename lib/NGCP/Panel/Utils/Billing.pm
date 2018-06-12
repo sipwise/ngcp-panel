@@ -412,7 +412,7 @@ sub switch_prepaid {
        !$old_prepaid && $new_prepaid) {
 
         #this will taking too long, prohibit it:
-        #die("changing the prepaid flag is not allowed");
+        die("changing the prepaid flag is not allowed");
 
         foreach my $mapping ($rs->all) {
             my $contract = $mapping->contract;
@@ -434,7 +434,8 @@ sub switch_prepaid {
 }
 
 sub get_contract_count_stmt {
-    return "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`billing_profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
+    #die("todo");
+    return "select count(distinct c.id) from `billing`.`tmp_transformed` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
 }
 sub get_package_count_stmt {
     return "select count(distinct pp.id) from `billing`.`package_profile_sets` pps join `billing`.`profile_packages` pp on pp.id = pps.package_id where pps.`profile_id` = `me`.`id`"; # and pp.status != 'terminated'";
