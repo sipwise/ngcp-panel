@@ -16,6 +16,23 @@
       "revId": "fa967c4d9261aabc2edf78efaec84c6d521dad05",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_1effcc02",
+        "filename": "lib/NGCP/Panel/Role/API/PhonebookEntries.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-12T15:16:24Z",
+      "side": 0,
+      "message": "what rule claimed here, even if the no strict was put into a block?",
+      "revId": "fa967c4d9261aabc2edf78efaec84c6d521dad05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
