@@ -57,7 +57,7 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    unless(defined $c->request->header('Content-Type') && 
+    unless(defined $c->request->header('Content-Type') &&
       $c->request->header('Content-Type') eq 'text/csv') {
         $self->log_request($c);
     }
@@ -96,7 +96,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -112,13 +112,13 @@ sub POST :Allow {
         my $schema = $c->model('DB');
         my $resource;
         my $data = $self->get_valid_raw_post_data(
-            c => $c, 
+            c => $c,
             media_type => [qw#application/json text/csv#],
         );
         last unless $data;
 
         if($c->request->header('Content-Type') eq 'text/csv') {
-            $resource = $c->req->query_params; 
+            $resource = $c->req->query_params;
         } else {
             last unless $self->require_wellformed_json($c, 'application/json', $data);
             $resource = JSON::from_json($data, { utf8 => 1 });
@@ -151,17 +151,17 @@ sub POST :Allow {
             }
 
             try {
-                (my($fees, $fails, $text_success)) = NGCP::Panel::Utils::Billing::process_billing_fees( 
-                    c       => $c, 
-                    data    => \$data, 
+                (my($fees, $fails, $text_success)) = NGCP::Panel::Utils::Billing::process_billing_fees(
+                    c       => $c,
+                    data    => \$data,
                     profile => $profile,
                     schema  => $schema,
                 );
-                
+
                 $c->log->info( $$text_success );
-                
+
                 $guard->commit;
-                
+
                 $c->response->status(HTTP_CREATED);
                 $c->response->body(q());
 
@@ -173,7 +173,7 @@ sub POST :Allow {
         } else {
             delete $resource->{purge_existing};
             my $form = $self->get_form($c);
- 
+
             my $zone = $self->get_billing_zone($c,$profile,$resource);
             unless($zone) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'.");

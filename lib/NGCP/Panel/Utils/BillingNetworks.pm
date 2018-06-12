@@ -15,18 +15,18 @@ sub check_network_update_item {
     my ($c,$new_resource,$old_item,$err_code) = @_;
 
     return 1 unless $old_item;
-    
+
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { return 0; };
     }
-    
+
     if ($old_item->status eq 'terminated') {
         return 0 unless &{$err_code}("Billing network is already terminated and cannot be changed.",'status');
     }
-    
+
     #my $contract_cnt = $old_item->get_column('contract_cnt');
     #my $package_cnt = $old_item->get_column('package_cnt');
-    
+
     return 1;
 
 }
@@ -48,7 +48,7 @@ sub set_blocks_from_to {
             if ((defined $version && $version == 4 && $block->{_version} != 4) ||
                 (defined $version && $version == 6 && $block->{_version} != 6)) {
                 return &{$err_code}('Ipv4 and ipv6 must not be mixed in block definitions');
-            } 
+            }
             $version //= $block->{_version};
             if (defined $intersecter) {
                 my $to = $block->{_to}->copy->badd(1); #right open intervals
@@ -81,7 +81,7 @@ sub _set_ip_net_from_to {
     my $to = $net->broadcast->bigint; #last->bigint;
     #if (NetAddr::IP::Util::hasbits($net->{mask} ^ _CIDR127)) { #other than point-to-point
     #  $from->bsub(1); #include network addr
-    #  $to->badd(1); #include broadcast addr      
+    #  $to->badd(1); #include broadcast addr
     #}
     ($resource->{_from},$resource->{_to},$resource->{_version}) = ($from,$to,$net->version);
     #whatever format we want to save:
@@ -89,8 +89,8 @@ sub _set_ip_net_from_to {
         $resource->{_ipv4_net_from} = $from;
         $resource->{_ipv4_net_to} = $to;
         $resource->{_ipv6_net_from} = undef;
-        $resource->{_ipv6_net_to} = undef;        
-    } elsif ($resource->{_version} == 6) {   
+        $resource->{_ipv6_net_to} = undef;
+    } elsif ($resource->{_version} == 6) {
         $resource->{_ipv4_net_from} = undef;
         $resource->{_ipv4_net_to} = undef;
         $resource->{_ipv6_net_from} = $from;
@@ -146,24 +146,24 @@ sub _bigint_to_bytes {
 
 sub _validate_ip {
     my ($ip) = @_;
-    return (is_ipv4($ip) || is_ipv6($ip));  
+    return (is_ipv4($ip) || is_ipv6($ip));
 }
 
 sub get_contract_count_stmt {
-    return "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`network_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
+    return "select count(distinct c.id) from `billing`.`tmp_transformed` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`network_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
 }
 sub get_package_count_stmt {
     return "select count(distinct pp.id) from `billing`.`package_profile_sets` pps join `billing`.`profile_packages` pp on pp.id = pps.package_id where pps.`network_id` = `me`.`id`"; # and pp.status != 'terminated'";
 }
 
 sub get_datatable_cols {
-    
+
     my ($c) = @_;
     my $grp_stmt = "group_concat(if(`billing_network_blocks`.`mask` is null,`billing_network_blocks`.`ip`,concat(`billing_network_blocks`.`ip`,'/',`billing_network_blocks`.`mask`)) separator ', ')";
     my $grp_len = 30;
     return (
         { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"), },
-        { name => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"), },           
+        { name => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"), },
         { name => 'blocks_grp', accessor => "blocks_grp", search => 0, title => $c->loc('Network Blocks'), literal_sql =>
           "if(length(".$grp_stmt.") > ".$grp_len.", concat(left(".$grp_stmt.", ".$grp_len."), '...'), ".$grp_stmt.")" },
         { name => "billing_network_blocks._ipv4_net_from", search_lower_column => 'ipv4', convert_code => sub {

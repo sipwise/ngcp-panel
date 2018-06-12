@@ -1083,7 +1083,7 @@ sub add_profile_mappings {
         $bm_actual //= NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c,
             contract => $contract,
             now => $now);
-        my $product_id = $bm_actual->product->id;
+        my $product_id = $contract->product->id; #$bm_actual->product->id;
         #my $old_prepaid = $bm_actual->billing_mappings->first->billing_profile->prepaid;
         my @mappings_to_create = ();
         foreach my $mapping (@profiles) {
@@ -1095,9 +1095,15 @@ sub add_profile_mappings {
                 end_date => undef,
             });
         }
-        foreach my $mapping (@mappings_to_create) {
-            $contract->billing_mappings->create($mapping);
-        }
+        NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+            contract => $contract,
+            mappings_to_create => \@mappings_to_create,
+            #now => $stime->epoch,
+        );
+        #die("todo");
+        #foreach my $mapping (@mappings_to_create) {
+        #    $contract->billing_mappings->create($mapping);
+        #}
         $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c,
             contract => $contract,
             now => $now);
