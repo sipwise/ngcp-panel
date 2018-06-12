@@ -21,13 +21,6 @@ has_field 'active_callforward' => (
     wrapper_class => [qw/hfh-rep/],
 );
 
-has_field 'active_callforward.destination_set' => (
-    type => '+NGCP::Panel::Field::SubscriberDestinationSet',
-    label => 'Destination Set',
-    wrapper_class => [qw/hfh-rep-field/],
-
-);
-
 has_field 'active_callforward.time_set' => (
     type => '+NGCP::Panel::Field::SubscriberTimeSet',
     label => 'during Time Set',
@@ -37,6 +30,18 @@ has_field 'active_callforward.time_set' => (
 has_field 'active_callforward.source_set' => (
     type => '+NGCP::Panel::Field::SubscriberSourceSet',
     label => 'from Source Set',
+    wrapper_class => [qw/hfh-rep-field/],
+);
+
+has_field 'active_callforward.bnumber_set' => (
+    type => '+NGCP::Panel::Field::SubscriberBNumberSet',
+    label => 'to B-Number Set',
+    wrapper_class => [qw/hfh-rep-field/],
+);
+
+has_field 'active_callforward.destination_set' => (
+    type => '+NGCP::Panel::Field::SubscriberDestinationSet',
+    label => 'Destination Set',
     wrapper_class => [qw/hfh-rep-field/],
 );
 
@@ -107,6 +112,14 @@ has_field 'cf_actions.edit_source_sets' => (
     type => 'Button',
     do_label => 0,
     value => 'Manage Source Sets',
+    element_class => [qw(btn btn-tertiary)],
+    wrapper_class => [qw(pull-right)],
+);
+
+has_field 'cf_actions.edit_bnumber_sets' => (
+    type => 'Button',
+    do_label => 0,
+    value => 'Manage B-Number Sets',
     element_class => [qw(btn btn-tertiary)],
     wrapper_class => [qw(pull-right)],
 );
