@@ -6,45 +6,124 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::DateTime qw();
 use DateTime::Format::Strptime qw();
 
+sub append_billing_mappings {
+    my %params = @_;
+    my ($c,$schema,$contract,$now,$mappings_to_create,$delete_mappings) = @params{qw/c schema contract now mappings_to_create delete_mappings/};
+    return unless $mappings_to_create;
+    $schema //= $c->model('DB');
+    my $dtf = $schema->storage->datetime_parser;
+    my $mappings = '';
+    foreach my $mapping (@$mappings_to_create) {
+        $mappings .= (defined $mapping->{start_date} ? $dtf->format_datetime($mapping->{start_date}) : '') . ',';
+        $mappings .= (defined $mapping->{end_date} ? $dtf->format_datetime($mapping->{end_date}) : '') . ',';
+        $mappings .= (defined $mapping->{billing_profile_id} ? $mapping->{billing_profile_id} : '') . ',';
+        $mappings .= (defined $mapping->{network_id} ? $mapping->{network_id} : '') . ',';
+        $mappings .= ';'; #last = 1 by default
+    }
+    $c->log->debug('create contract id ' . $contract->id . " billing mappings via proc: $mappings") if $c;
+    $schema->storage->dbh_do(sub {
+        my ($storage, $dbh, @args) = @_;
+        local $dbh->{AutoCommit} = 0;
+        $dbh->do('call billing.append_billing_mappings(?,?,?)',undef,
+            $contract->id,
+            ((defined $now and $delete_mappings) ? $dtf->format_datetime($now) : undef),
+            $mappings
+        );
+    });
+
+}
+
 sub get_actual_billing_mapping {
     my %params = @_;
     my ($c,$schema,$contract,$now) = @params{qw/c schema contract now/};
     $schema //= $c->model('DB');
-    $now //= NGCP::Panel::Utils::DateTime::current_local;
-    my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
-    my $dtf = $schema->storage->datetime_parser;
-    $now = $contract_create if $now < $contract_create; #if there is no mapping starting with or before $now, it would returns the mapping with max(id):
-    my $bm_actual = $schema->resultset('billing_mappings_actual')->search({ contract_id => $contract->id },{bind => [ ( $dtf->format_datetime($now) ) x 2, ($contract->id) x 2 ],})->first;
-    if ($bm_actual) {
-        return $bm_actual->billing_mappings->first;
+    if ($now) {
+        $now = NGCP::Panel::Utils::DateTime::set_local_tz($now);
+    } else {
+        $now = NGCP::Panel::Utils::DateTime::current_local;
     }
-    return;
+    my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
+    #my $dtf = $schema->storage->datetime_parser;
+    $now = $contract_create if $now < $contract_create; #if there is no mapping starting with or before $now, it would returns the mapping with max(id):
+
+    my $effective_start_date = $schema->resultset('contracts_billing_profile_network_schedule')->search({
+        'profile_network.contract_id' => $contract->id,
+        effective_start_time => { '<=' => $now->epoch },
+        'profile_network.base' => 1,
+    },{
+        join => 'profile_network',
+    })->get_column('effective_start_time')->max;
+    if (defined $effective_start_date) {
+        my $bm = $schema->resultset('contracts_billing_profile_network_schedule')->search({
+            contract_id => $contract->id,
+            effective_start_time => $effective_start_date,
+            base => 1,
+        },{
+            join => 'profile_network',
+        })->first;
+        $bm = $bm->profile_network if $bm;
+        $c->log->debug("contract id " . $contract->id . " billing profile at $now (" . $now->epoch . ") is " . $bm->billing_profile->name) if $c;
+        return $bm;
+    } else {
+        $c->log->error("no billing profile for contract id " . $contract->id . " at $now (" . $now->epoch . ")") if $c;
+    }
+
+    #my $bm_actual = $schema->resultset('billing_mappings_actual')->search({ contract_id => $contract->id },{bind => [ ( $dtf->format_datetime($now) ) x 2, ($contract->id) x 2 ],})->first;
+    #if ($bm_actual) {
+    #    return $bm_actual->billing_mappings->first;
+    #}
+
+    #return;
 }
 
 sub get_actual_billing_mapping_stmt {
     my %params = @_;
     my ($c,$schema,$contract,$now,$projection,$contract_id_alias) = @params{qw/c schema contract now projection contract_id_alias/};
     $schema //= $c->model('DB');
-    $now //= NGCP::Panel::Utils::DateTime::current_local;
-    my $dtf = $schema->storage->datetime_parser;
+    if ($now) {
+        $now = NGCP::Panel::Utils::DateTime::set_local_tz($now);
+    } else {
+        $now = NGCP::Panel::Utils::DateTime::current_local;
+    }
+    #my $dtf = $schema->storage->datetime_parser;
     $projection //= 'actual_billing_mapping.id';
     $contract_id_alias //= 'me.id';
 
     return sprintf(<<EOS
-    select
-      %s
-    from
-      billing.billing_mappings actual_billing_mapping
-      join billing.billing_profiles billing_profile on actual_billing_mapping.billing_profile_id = billing_profile.id
-      left join billing.billing_networks billing_network on actual_billing_mapping.network_id = billing_network.id
-      join billing.products product on actual_billing_mapping.product_id = product.id
-    where
-      actual_billing_mapping.contract_id = %s
-      and (actual_billing_mapping.start_date <= %s or actual_billing_mapping.start_date is null)
-      and (actual_billing_mapping.end_date >= %s or actual_billing_mapping.end_date is null)
-    order by actual_billing_mapping.start_date desc, actual_billing_mapping.id desc limit 1
+select
+  %s
+from
+     billing.contracts_billing_profile_network_schedule cbpns
+join billing.contracts_billing_profile_network actual_billing_mapping on cbpns.profile_network_id = actual_billing_mapping.id
+join (select
+  contract_id,
+  max(effective_start_time) as effective_start_date,
+  from billing.contracts_billing_profile_network_schedule cbpns join billing.contracts_billing_profile_network cbpn on cbpns.profile_network_id = cbpn.id
+  where
+  contract_id = %s
+  and effective_start_date <= %s
+  and cbpn.base = 1) as esd on actual_billing_mapping.contract_id = esd.contract_id and cbpns.effective_start_time = esd.effective_start_date
+join billing.billing_profiles billing_profile on actual_billing_mapping.billing_profile_id = billing_profile.id
+left join billing.billing_networks billing_network on actual_billing_mapping.billing_network_id = billing_network.id
+where actual_billing_mapping.base = 1
 EOS
-    , $projection, $contract_id_alias, ( map { '"'.$_.'"'; } ( $dtf->format_datetime($now), $dtf->format_datetime($now) ) ));
+    , $projection, $contract_id_alias, $now->epoch);
+
+#    return sprintf(<<EOS
+#    select
+#      %s
+#    from
+#      billing.billing_mappings actual_billing_mapping
+#      join billing.billing_profiles billing_profile on actual_billing_mapping.billing_profile_id = billing_profile.id
+#      left join billing.billing_networks billing_network on actual_billing_mapping.network_id = billing_network.id
+#      join billing.products product on actual_billing_mapping.product_id = product.id
+#    where
+#      actual_billing_mapping.contract_id = %s
+#      and (actual_billing_mapping.start_date <= %s or actual_billing_mapping.start_date is null)
+#      and (actual_billing_mapping.end_date >= %s or actual_billing_mapping.end_date is null)
+#    order by actual_billing_mapping.start_date desc, actual_billing_mapping.id desc limit 1
+#EOS
+#    , $projection, $contract_id_alias, ( map { '"'.$_.'"'; } ( $dtf->format_datetime($now), $dtf->format_datetime($now) ) ));
 
 }
 
@@ -71,14 +150,14 @@ sub prepare_billing_mappings {
         }
     }
 
-    my $product_id = undef; #any subsequent create will fail without product_id
+#    my $product_id = undef; #any subsequent create will fail without product_id
     my $prepaid = undef;
     my $billing_profile_id = undef;
     if (defined $old_resource) {
         # TODO: what about changed product, do we allow it?
         my $billing_mapping;
-        if (exists $old_resource->{billing_mapping_id}) {
-            $billing_mapping = $schema->resultset('billing_mappings')->find($old_resource->{billing_mapping_id});
+        if (exists $old_resource->{billing_mapping}) {
+            $billing_mapping = $old_resource->{billing_mapping}; #$schema->resultset('billing_mappings')->find($old_resource->{billing_mapping_id});
         } elsif (exists $old_resource->{id}) {
             $billing_mapping = get_actual_billing_mapping(schema => $schema,
                 contract => $schema->resultset('contracts')->find($old_resource->{id}),
@@ -86,19 +165,19 @@ sub prepare_billing_mappings {
         #} else {
         #    return 0 unless &{$err_code}("No billing mapping or contract defined");
         }
-        $product_id = $billing_mapping->contract->product->id;
+#        $product_id = $billing_mapping->contract->product->id;
         $prepaid = $billing_mapping->billing_profile->prepaid;
         $billing_profile_id = $billing_mapping->billing_profile->id;
-    } else {
-        if (exists $resource->{type} || exists $c->stash->{type}) {
-            my $productclass = (exists $c->stash->{type} ? $c->stash->{type} : $resource->{type});
-            my $product = $schema->resultset('products')->search_rs({ class => $productclass })->first;
-            if ($product) {
-                $product_id = $product->id;
-            }
-        } elsif (exists $resource->{product_id}) {
-            $product_id = $resource->{product_id};
-        }
+#    } else {
+#        if (exists $resource->{type} || exists $c->stash->{type}) {
+#            my $productclass = (exists $c->stash->{type} ? $c->stash->{type} : $resource->{type});
+#            my $product = $schema->resultset('products')->search_rs({ class => $productclass })->first;
+#            if ($product) {
+#                $product_id = $product->id;
+#            }
+#        } elsif (exists $resource->{product_id}) {
+#            $product_id = $resource->{product_id};
+#        }
     }
 
     if ('id' eq $profile_def_mode) {
@@ -117,7 +196,7 @@ sub prepare_billing_mappings {
                     my ($profile) = @$entities{qw/profile/};
                     push(@$mappings_to_create,{billing_profile_id => $profile->id,
                         network_id => undef,
-                        product_id => $product_id,
+#                        product_id => $product_id,
                         start_date => $now,
                         end_date => undef,
                     });
@@ -146,7 +225,7 @@ sub prepare_billing_mappings {
             my ($profile) = @$entities{qw/profile/};
             push(@$mappings_to_create,{billing_profile_id => $profile->id,
                 network_id => undef,
-                product_id => $product_id,
+#                product_id => $product_id,
                 #we don't change the former behaviour in update situations:
                 start_date => undef,
                 end_date => undef,
@@ -243,7 +322,7 @@ sub prepare_billing_mappings {
             push(@$mappings_to_create,{
                 billing_profile_id => $profile->id,
                 network_id => ($is_customer && defined $network ? $network->id : undef),
-                product_id => $product_id,
+#                product_id => $product_id,
                 start_date => $start,
                 end_date => $stop,
             });
@@ -280,7 +359,7 @@ sub prepare_billing_mappings {
                     push(@$mappings_to_create,{ #assume not terminated,
                         billing_profile_id => $mapping->profile_id,
                         network_id => ($is_customer ? $mapping->network_id : undef),
-                        product_id => $product_id,
+#                        product_id => $product_id,
                         start_date => $now,
                         end_date => undef,
                     });
@@ -299,7 +378,7 @@ sub prepare_billing_mappings {
                         push(@$mappings_to_create,{ #assume not terminated,
                             billing_profile_id => $mapping->profile_id,
                             network_id => ($is_customer ? $mapping->network_id : undef),
-                            product_id => $product_id,
+#                            product_id => $product_id,
                             start_date => $now,
                             end_date => undef,
                         });
@@ -324,7 +403,7 @@ sub prepare_billing_mappings {
                 push(@$mappings_to_create,{ #assume not terminated,
                     billing_profile_id => $mapping->profile_id,
                     network_id => ($is_customer ? $mapping->network_id : undef),
-                    product_id => $product_id,
+#                    product_id => $product_id,
                     start_date => undef, #$now,
                     end_date => undef,
                 });
@@ -434,6 +513,7 @@ sub resource_from_mappings {
         $m{stop} = delete $m{end_date};
         $m{start} = $datetime_fmt->format_datetime($m{start}) if defined $m{start};
         $m{stop} = $datetime_fmt->format_datetime($m{stop}) if defined $m{stop};
+        $m{effective_start_time} = $datetime_fmt->format_datetime(delete $m{effective_start_date});
         $m{profile_id} = delete $m{billing_profile_id};
         delete $m{contract_id};
         delete $m{product_id};
@@ -446,7 +526,7 @@ sub resource_from_mappings {
 }
 
 sub billing_mappings_ordered {
-    my ($rs,$now,$actual_bmid) = @_;
+    my ($rs,$now,$actual_bm) = @_;
 
     my $dtf;
     $dtf = $rs->result_source->schema->storage->datetime_parser if defined $now;
@@ -455,27 +535,28 @@ sub billing_mappings_ordered {
     if ($now) {
         push(@select,{ '' => \[ 'if(`me`.`start_date` is null,0,`me`.`start_date` > ?)', $dtf->format_datetime($now) ], -as => 'is_future' });
     }
-    if ($actual_bmid) {
-        push(@select,{ '' => \[ '`me`.`id` = ?', $actual_bmid ], -as => 'is_actual' });
+    if ($actual_bm) {
+        #push(@select,{ '' => \[ '`me`.`id` = ?', $actual_bmid ], -as => 'is_actual' });
+        push(@select,{ '' => \[ '`me`.`id` = ?', $actual_bm->id ], -as => 'is_actual' });
     }
 
     return $rs->search_rs(
         {},
-        { order_by => { '-asc' => ['start_date', 'id']},
+        { order_by => { '-asc' => ['effective_start_date', 'id']},
           (scalar @select == 1 ? ('+select' => $select[0]) : ()),
           (scalar @select > 1 ? ('+select' => \@select) : ()),
         });
 
 }
 
-sub remove_future_billing_mappings {
-
-    my ($contract,$now) = @_;
-    $now //= NGCP::Panel::Utils::DateTime::current_local;
-
-    future_billing_mappings($contract->billing_mappings,$now)->delete;
-
-}
+#sub remove_future_billing_mappings {
+#
+#    my ($contract,$now) = @_;
+#    $now //= NGCP::Panel::Utils::DateTime::current_local;
+#
+#    future_billing_mappings($contract->billing_mappings,$now)->delete;
+#
+#}
 
 sub future_billing_mappings {
 

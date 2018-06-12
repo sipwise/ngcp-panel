@@ -260,7 +260,7 @@ my @allcontracts = ();
     like($contract->{contact_id}, qr/[0-9]+/, "check existence of contact_id");
     like($contract->{id}, qr/[0-9]+/, "check existence of id");
     ok(exists $contract->{all_billing_profiles}, "check existence of billing_profiles");
-    is_deeply($contract->{all_billing_profiles},[ { profile_id => $billing_profile_id, start => undef, stop => undef} ],"check billing_profiles deeply");
+    is_deeply([ map { delete $_->{effective_start_time}; $_; } @{$contract->{all_billing_profiles}} ],[ { profile_id => $billing_profile_id, start => undef, stop => undef} ],"check billing_profiles deeply");
 
 
     # PUT same result again
@@ -298,6 +298,7 @@ my @allcontracts = ();
     is($res->code, 200, "check put successful");
 
     my $new_contract = JSON::from_json($res->decoded_content);
+    $new_contract->{all_billing_profiles} = [ map { delete $_->{effective_start_time}; $_; } @{$new_contract->{all_billing_profiles}} ];
     is_deeply($old_contract, $new_contract, "check put if unmodified put returns the same");
 
     # check if we have the proper links
@@ -490,7 +491,7 @@ my @allcontracts = ();
     ok(exists $contract->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
     ok(!exists $contract->{profile_package_id}, "multi-bill-prof: check non-existence of profile_package_id");
     ok(exists $contract->{all_billing_profiles}, "multi-bill-prof: check existence of all_billing_profiles");
-    is_deeply($contract->{all_billing_profiles},$data->{billing_profiles},"multi-bill-prof: check billing mappings deeply");
+    is_deeply([ map { delete $_->{effective_start_time}; $_; } @{$contract->{all_billing_profiles}} ],$data->{billing_profiles},"multi-bill-prof: check billing mappings deeply");
 
 
     $req = HTTP::Request->new('PATCH', $contracturi);
@@ -606,7 +607,7 @@ my @allcontracts = ();
     ok(exists $patched_contract->{billing_profile_id}, "multi-bill-prof: check existence of billing_profile_id");
     is($patched_contract->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(exists $contract->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
-    is_deeply($patched_contract->{billing_profiles},\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
+    is_deeply([ map { delete $_->{effective_start_time}; $_; } @{$patched_contract->{billing_profiles}} ],\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
 
     $req = HTTP::Request->new('PUT', $contracturi);
     $req->header('Prefer' => "return=representation");
@@ -625,7 +626,7 @@ my @allcontracts = ();
     ok(exists $updated_contract->{billing_profile_id}, "multi-bill-prof: check existence of billing_profile_id");
     is($updated_contract->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(exists $updated_contract->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
-    is_deeply($updated_contract->{billing_profiles},\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
+    is_deeply([ map { delete $_->{effective_start_time}; $_; } @{$updated_contract->{billing_profiles}} ],\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
 
     #$req = HTTP::Request->new('DELETE', $billingnetwork_uri);
     #$res = $ua->request($req);
@@ -701,7 +702,7 @@ my @allcontracts = ();
     is($res->code, 200, "check existence of contract with id (1)");
     my $contract_1 = JSON::from_json($res->decoded_content);
     is($contract_1->{id}, 1, 'id of contract (1) is 1');
-    is($contract_1->{type}, 'reseller', 'tpye of contract (1) is "reseller"');
+    is($contract_1->{type}, 'reseller', 'type of contract (1) is "reseller"');
 
     $req = HTTP::Request->new('PATCH', $uri.'/api/contracts/1');
     $req->header('Content-Type' => 'application/json-patch+json');
@@ -710,7 +711,7 @@ my @allcontracts = ();
         { "op" => "replace", "path" => "/status", "value" => "terminated" }
     ]));
     $res = $ua->request($req);
-    is($res->code, 403, "check that its impossible to termination contract (1)");
+    is($res->code, 403, "check that its impossible to terminate contract (1)");
 }
 
 sub _strip_future_mappings {

@@ -498,9 +498,15 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
                     my ($err) = @_;
                     die( [$err, "showdetails"] );
             });
-            foreach my $mapping (@$mappings_to_create) {
-                $r{contracts}->billing_mappings->create($mapping);
-            }
+            #die("todo");
+            #foreach my $mapping (@$mappings_to_create) {
+            #    $r{contracts}->billing_mappings->create($mapping);
+            #}
+            NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                contract => $r{contracts},
+                mappings_to_create => $mappings_to_create,
+                #now => $now,
+            );
             $r{contracts} = NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB'))->find($r{contracts}->id);
             $r{billing_mappings} = $r{contracts}->billing_mappings;
 
