@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_6a095b31",
+        "filename": "lib/NGCP/Panel/Controller/CallRouting.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-12T15:13:19Z",
+      "side": 0,
+      "message": "btw. what rule complained bout this? got localized, to not modify in place..",
+      "revId": "fa967c4d9261aabc2edf78efaec84c6d521dad05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
