@@ -99,7 +99,7 @@ if(ok($soxi_output =~/GSM/, "Check that we converted wav to GSM encoding:".$soxi
     diag("Check empty file:");
     #btw - other vriant of tha put data - closer to stored. will be changed by Collection::encode_content
     my ($res_put_empty,$content_put_empty) = $test_machine->request_put( {
-        %{$test_machine->DATA_ITEM_STORE},
+        %{$test_machine->DATA_ITEM_STORE},  ## no critic (ProhibitCommaSeparatedStatements)
         greetingfile => [ dirname($0).'/resources/empty.wav' ],
     } );
     $test_machine->http_code_msg(422, "check response code on put empty file", $res_put_empty, $content_put_empty);

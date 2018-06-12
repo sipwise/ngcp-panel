@@ -113,7 +113,7 @@ sub get_contract_rs {
     my ($c,$schema,$include_terminated) = @params{qw/c schema include_terminated/};
     $schema //= $c->model('DB');
     my $rs = $schema->resultset('contracts')->search({
-        $include_terminated ? () : ('me.status' => { '!=' => 'terminated' }),
+        $include_terminated ? () : ('me.status' => { '!=' => 'terminated' }),  ## no critic (ProhibitCommaSeparatedStatements)
     },{
         join => 'product',
     });

@@ -170,7 +170,7 @@ sub _update_subscriber {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
-        %$subscriber,
+        %$subscriber,  ## no critic (ProhibitCommaSeparatedStatements)
         @further_opts,
     }));
     $res = $ua->request($req);

@@ -945,7 +945,7 @@ sub get_preferences_rs {
         'contract_location' => [qw/voip_contract_preferences contract_location_pref location_id/],
     );
     my $pref_rs = $schema->resultset($config{$preferences_type}->[0])->search({
-            'attribute.'.$config{$preferences_type}->[1] => 1,
+            'attribute.'.$config{$preferences_type}->[1] => 1,  ## no critic (ProhibitCommaSeparatedStatements)
             $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : ()  ,
             $item_id ? ('me.'.$config{$preferences_type}->[2] => $item_id) : (),
         },{

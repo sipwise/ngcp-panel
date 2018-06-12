@@ -472,7 +472,7 @@ sub process_data{
     $collections_slice //= [keys %$data];
     foreach my $collection_name( @$collections_slice ){
         if($self->FLAVOUR && exists $data->{$collection_name}->{flavour} && exists $data->{$collection_name}->{flavour}->{$self->FLAVOUR}){
-            $data = {%$data, %{$data->{$collection_name}->{flavour}->{$self->FLAVOUR}}},
+            $data = {%$data, %{$data->{$collection_name}->{flavour}->{$self->FLAVOUR}}};
         }
     }
     #$self->clear_db($data);

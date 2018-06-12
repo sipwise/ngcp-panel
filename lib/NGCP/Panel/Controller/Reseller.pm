@@ -477,11 +477,11 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
         $billing->txn_do(sub {
             $r{contacts} = $billing->resultset('contacts')->create({ %{ $defaults{contacts} } });
             $r{contracts} = $billing->resultset('contracts')->create({
-                %{ $defaults{contracts} },
+                %{ $defaults{contracts} },  ## no critic (ProhibitCommaSeparatedStatements)
                 contact_id => $r{contacts}->id,
             });
             $r{resellers} = $billing->resultset('resellers')->create({
-                %{ $defaults{resellers} },
+                %{ $defaults{resellers} },  ## no critic (ProhibitCommaSeparatedStatements)
                 contract_id => $r{contracts}->id,
             });
             my $mappings_to_create = [];
@@ -505,7 +505,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             $r{billing_mappings} = $r{contracts}->billing_mappings;
 
             $r{admins} = $billing->resultset('admins')->create({
-                %{ $defaults{admins} },
+                %{ $defaults{admins} },  ## no critic (ProhibitCommaSeparatedStatements)
                 reseller_id => $r{resellers}->id,
             });
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,

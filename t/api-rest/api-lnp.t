@@ -218,7 +218,7 @@ sub _update_lnp_number {
     $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
-        %$number,
+        %$number,  ## no critic (ProhibitCommaSeparatedStatements)
         %further_opts,
     }));
     $res = $ua->request($req);

@@ -399,7 +399,7 @@ sub _update_customer {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
-        %$customer,
+        %$customer,  ## no critic (ProhibitCommaSeparatedStatements)
         @further_opts,
     }));
     $res = $ua->request($req);

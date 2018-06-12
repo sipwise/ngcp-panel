@@ -501,7 +501,7 @@ sub get_billingmappings_timeline_data {
     $c->log->debug("timeline range $start - $end");
     #the max start date (of mappings with NULL end date) less than
     #the visible range end will become the range start:
-    my $max_start_date = $contract->billing_mappings->search({
+    my $max_start_date = $contract->billing_mappings->search({  ## no critic (ProhibitCommaSeparatedStatements)
         ($end ? (start_date => [ -or =>
                 { '<=' => $end },
                 { '=' => undef },
@@ -518,7 +518,7 @@ sub get_billingmappings_timeline_data {
             $start = $max_start_date->start_date;
         }
     }
-    my $res = $contract->billing_mappings->search({
+    my $res = $contract->billing_mappings->search({  ## no critic (ProhibitCommaSeparatedStatements)
         ($end ? (start_date => ($start ? [ -and => {
                 '<=' => $end },{ #hide mappings beginning after range end
                 '>=' => $start   #and beginning before range start (max_start_date).

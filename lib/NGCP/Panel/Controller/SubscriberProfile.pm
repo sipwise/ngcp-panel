@@ -283,7 +283,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/
                 }
                 delete $form->values->{reseller};
                 my $new_set = $schema->resultset('voip_subscriber_profile_sets')->create({
-                    %{ $form->values },
+                    %{ $form->values },  ## no critic (ProhibitCommaSeparatedStatements)
                     reseller_id => $c->stash->{set}->reseller_id,
                 });
                 foreach my $prof($c->stash->{set}->voip_subscriber_profiles->all) {
