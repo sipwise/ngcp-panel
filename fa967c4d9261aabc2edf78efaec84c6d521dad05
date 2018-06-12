@@ -33,6 +33,23 @@
       "revId": "fa967c4d9261aabc2edf78efaec84c6d521dad05",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_7e3ec0b9",
+        "filename": "t/lib/Test/FakeData.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-12T15:25:04Z",
+      "side": 0,
+      "message": "hm, think it was put here on purpose, won\u0027t removing it break the tests that read item setup from other files?",
+      "revId": "fa967c4d9261aabc2edf78efaec84c6d521dad05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
