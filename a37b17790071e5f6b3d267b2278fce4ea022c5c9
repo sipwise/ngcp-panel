@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_8ab0378d",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-12T14:41:43Z",
+      "side": 1,
+      "message": "nice!",
+      "revId": "a37b17790071e5f6b3d267b2278fce4ea022c5c9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_ea67ab23",
+        "filename": "lib/NGCP/Panel/Controller/API/Subscribers.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-12T14:41:43Z",
+      "side": 1,
+      "message": "well would be nice if there is no need to specify it twice here, but having the orderby args and join args explicitly here is also nice.\n\nanother thing to consider is something to prevent it from joining again in the item_rs (i remember running into hard-to-find issues because of this)\n\nbut thats not important for now; if you tested it, i would merge it.",
+      "revId": "a37b17790071e5f6b3d267b2278fce4ea022c5c9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
