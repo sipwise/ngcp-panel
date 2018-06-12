@@ -33,6 +33,23 @@
       "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_5e1d4465",
+        "filename": "lib/NGCP/Panel/Utils/Generic.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-12T15:18:29Z",
+      "side": 1,
+      "message": "would put the \n\nno strict \"refs\";  ## no critic (ProhibitNoStrict)\n\nin here each.",
+      "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
