@@ -31,6 +31,16 @@ sub query_params {
                 },
                 second => sub {},
             },
+        },{
+            param => 'billing_zone_id',
+            description => 'Filter for fees of a specific billing zone',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { billing_zone_id => $q };
+                },
+                second => sub {},
+            },
         },
     ];
 }
