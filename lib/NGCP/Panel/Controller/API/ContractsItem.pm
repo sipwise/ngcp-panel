@@ -93,8 +93,7 @@ sub PATCH :Allow {
 
         my $old_resource = { $contract->get_inflated_columns };
         my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
-        #my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-        $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
+        $old_resource->{billing_profile_id} = $billing_mapping->billing_profile->id;
         $old_resource->{billing_profile_definition} = undef;
         delete $old_resource->{profile_package_id};
 
@@ -109,6 +108,8 @@ sub PATCH :Allow {
 
         my $form = $self->get_form($c);
         $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
+        #use Data::Dumper;
+        #$c->log->debug(Dumper($contract));
         last unless $contract;
 
         my $hal = $self->hal_from_contract($c, $contract, $form, $now);
@@ -118,6 +119,7 @@ sub PATCH :Allow {
 
         $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
     }
+    undef $guard;
     return;
 }
 
@@ -139,9 +141,7 @@ sub PUT :Allow {
         );
         last unless $resource;
         my $old_resource = { $contract->get_inflated_columns };
-        my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
-        #my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-        $old_resource->{type} = $billing_mapping->product->class;
+        $old_resource->{type} = $contract->product->class;
 
         my $form = $self->get_form($c);
         $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
