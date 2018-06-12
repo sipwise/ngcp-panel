@@ -101,7 +101,7 @@ sub PATCH :Allow {
         delete $old_resource->{profile_package_id};
         my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
         #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-        $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
+        $old_resource->{billing_profile_id} = $billing_mapping->billing_profile->id; #->billing_profile_id;
         $old_resource->{billing_profile_definition} = undef;
 
         my $resource = $self->apply_patch($c, $old_resource, $json, sub {

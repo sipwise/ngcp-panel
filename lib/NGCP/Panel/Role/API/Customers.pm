@@ -57,7 +57,7 @@ sub hal_from_customer {
     my @profile_links = ();
     my @network_links = ();
     foreach my $mapping ($customer->billing_mappings->all) {
-        push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile_id)));
+        push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile->id)));
         if ($mapping->network_id) {
             push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingnetworks', href => sprintf("/api/billingnetworks/%d", $mapping->network_id)));
         }
@@ -106,7 +106,7 @@ sub hal_from_customer {
         $resource{$field} =  defined $resource{$field} ? NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::from_string($resource{$field})) : undef ;
     }
     # return the virtual "type" instead of the actual product id
-    $resource{type} = $billing_mapping->product->class;
+    $resource{type} = $customer->product->class; #$billing_mapping->product->class;
     $resource{billing_profiles} = $future_billing_profiles;
     $resource{all_billing_profiles} = $billing_profiles;
 
@@ -138,7 +138,7 @@ sub update_customer {
     my $old_package = $customer->profile_package;
 
     $old_resource->{prepaid} = $billing_profile->prepaid;
-    $old_resource->{billing_mapping_id} = $billing_mapping->id;
+    $old_resource->{billing_mapping} = $billing_mapping; #$billing_mapping->id;
 
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
@@ -213,10 +213,17 @@ sub update_customer {
 
     try {
         $customer->update($resource);
-        NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($customer,$now) if $delete_mappings;
-        foreach my $mapping (@$mappings_to_create) {
-            $customer->billing_mappings->create($mapping);
-        }
+        #die("todo");
+        #NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($customer,$now) if $delete_mappings;
+        #foreach my $mapping (@$mappings_to_create) {
+        #    $customer->billing_mappings->create($mapping);
+        #}
+        NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+            contract => $customer,
+            mappings_to_create => $mappings_to_create,
+            now => $now,
+            delete_mappings => $delete_mappings,
+        );
         $customer = $self->customer_by_id($c, $customer->id, $now);
 
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,

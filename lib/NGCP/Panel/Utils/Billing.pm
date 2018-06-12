@@ -401,40 +401,13 @@ sub switch_prepaid {
     my %params = @_;
     my ($c,$profile_id,$old_prepaid,$new_prepaid,$contract_rs) = @params{qw/c profile_id old_prepaid new_prepaid contract_rs/};
 
-    my $schema = $c->model('DB');
-    # if prepaid flag changed, update all subscribers for customers
-    # who currently have the billing profile active
-    my $rs = $schema->resultset('billing_mappings')->search({
-        billing_profile_id => $profile_id,
-    });
-
-    if($old_prepaid && !$new_prepaid ||
-       !$old_prepaid && $new_prepaid) {
-
-        #this will taking too long, prohibit it:
-        #die("changing the prepaid flag is not allowed");
-
-        foreach my $mapping ($rs->all) {
-            my $contract = $mapping->contract;
-            next unless($contract->contact->reseller_id); # skip non-customers
-            my $chosen_contract = $contract_rs->find({id => $contract->id});
-            next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $mapping->id ); # is not current mapping
-            foreach my $sub($contract->voip_subscribers->all) {
-                my $prov_sub = $sub->provisioning_voip_subscriber;
-                next unless($sub->provisioning_voip_subscriber);
-                NGCP::Panel::Utils::Preferences::set_provisoning_voip_subscriber_first_int_attr_value(c => $c,
-                    prov_subscriber => $prov_sub,
-                    value => ($new_prepaid ? 1 : 0),
-                    attribute => 'prepaid'
-                );
-            }
-        }
-    }
+    return;
 
 }
 
 sub get_contract_count_stmt {
-    return "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`billing_profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
+    #die("todo");
+    return "select count(distinct c.id) from `billing`.`tmp_transformed` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
 }
 sub get_package_count_stmt {
     return "select count(distinct pp.id) from `billing`.`package_profile_sets` pps join `billing`.`profile_packages` pp on pp.id = pps.package_id where pps.`profile_id` = `me`.`id`"; # and pp.status != 'terminated'";
