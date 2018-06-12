@@ -118,11 +118,11 @@ sub set_config {
                 AllowedRole => $allowed_roles_by_methods->{$_},
                 Args => ( $params->{interface_type} eq 'item' ? 1 : 0 ),
                 Does => [
-                    'ACL', 
-                    ( $params->{interface_type} eq 'item' ? () : ('CheckTrailingSlash') ), 
+                    'ACL',
+                    ( $params->{interface_type} eq 'item' ? () : ('CheckTrailingSlash') ),
                     'RequireSSL',
-                    ( ref $params_all_methods->{DoesAdd} eq 'ARRAY' ? @$params_all_methods->{DoesAdd} : () ), 
-                    ( ref $params_method->{DoesAdd} eq 'ARRAY' ? @$params_method->{DoesAdd} : () ), 
+                    ( ref $params_all_methods->{DoesAdd} eq 'ARRAY' ? @$params_all_methods->{DoesAdd} : () ),
+                    ( ref $params_method->{DoesAdd} eq 'ARRAY' ? @$params_method->{DoesAdd} : () ),
                 ],
                 Method => $_,
                 Path => $self->dispatch_path($params->{resource_name}),
@@ -137,7 +137,7 @@ sub set_config {
                 AllowedRole => $allowed_roles_by_methods->{'Journal'},
                 Does => [qw(ACL RequireSSL)],
             }) }
-        : 
+        :
             () ),
         %{$params_action_add},
     };
@@ -192,7 +192,7 @@ sub get {
                 && ($header_accept ne 'application/json')
                 && ($header_accept ne '*/*')
             )
-            || ( $action_config->{GET}->{ReturnContentType} 
+            || ( $action_config->{GET}->{ReturnContentType}
                 && $action_config->{GET}->{ReturnContentType} ne 'application/json'
             )
         ) {
@@ -224,7 +224,7 @@ sub patch {
 
         my ($form, $process_extras);
         ($form) = $self->get_form($c, 'edit');
-        
+
         my $method_config =  $self->get_config('action')->{PATCH};
         my $patch_ops = ref $method_config eq 'HASH' && defined $method_config->{ops} ? $method_config->{ops} : [qw/replace copy/];
         my $json = $self->get_valid_patch_data(
@@ -245,6 +245,7 @@ sub patch {
         last unless $resource;
 
         ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+        $c->log->debug("?????");
         last unless $item;
 
         $self->complete_transaction($c);
@@ -329,8 +330,8 @@ sub options {
     my $patch_allowed = grep { $_ eq 'PATCH' } @{ $allowed_methods };
     $c->response->headers(HTTP::Headers->new(
         Allow => join(', ', @{ $allowed_methods }),
-        $patch_allowed 
-        ? ( 
+        $patch_allowed
+        ? (
         Accept_Patch => 'application/json-patch+json',
         ) : (),
     ));
