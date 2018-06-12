@@ -102,13 +102,13 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
 
     my $now = $c->stash->{now};
     my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $contract_first, now => $now, );
-    if (! defined ($billing_mapping->product) || (
-        $billing_mapping->product->handle ne 'VOIP_RESELLER' &&
-        $billing_mapping->product->handle ne 'SIP_PEERING' &&
-        $billing_mapping->product->handle ne 'PSTN_PEERING')) {
-
-    }
-    my $billing_mappings_ordered = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered($contract_first->billing_mappings,$now,$billing_mapping->id);
+    #if (! defined ($billing_mapping->product) || (
+    #    $billing_mapping->product->handle ne 'VOIP_RESELLER' &&
+    #    $billing_mapping->product->handle ne 'SIP_PEERING' &&
+    #    $billing_mapping->product->handle ne 'PSTN_PEERING')) {
+    #
+    #}
+    my $billing_mappings_ordered = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered($contract_first->billing_mappings,$now,$billing_mapping);
     my $future_billing_mappings = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered(NGCP::Panel::Utils::BillingMappings::future_billing_mappings($contract_first->billing_mappings,$now));
 
     $c->stash(contract => $contract_first);
@@ -198,11 +198,17 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 my $old_package = $contract->profile_package;
 
                 $contract->update($form->values);
-                NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($contract,$now) if $delete_mappings;
-                foreach my $mapping (@$mappings_to_create) {
-                    $contract->billing_mappings->create($mapping);
-                }
-                #$contract = $c->stash->{contract_terminated_rs}->first;
+                NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                    contract => $contract,
+                    mappings_to_create => $mappings_to_create,
+                    now => $now,
+                    delete_mappings => $delete_mappings,
+                );
+                #NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($contract,$now) if $delete_mappings;
+                #foreach my $mapping (@$mappings_to_create) {
+                #    $contract->billing_mappings->create($mapping);
+                #}
+                ##$contract = $c->stash->{contract_terminated_rs}->first;
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
@@ -388,13 +394,19 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                     });
 
                 my $contract = $schema->resultset('contracts')->create($form->values);
-                foreach my $mapping (@$mappings_to_create) {
-                    $contract->billing_mappings->create($mapping);
-                }
-                #$contract = $c->stash->{contract_select_rs}
-                #    ->search({
-                #        'me.id' => $contract->id,
-                #    },undef)->first;
+                #die("todo");
+                #foreach my $mapping (@$mappings_to_create) {
+                #    $contract->billing_mappings->create($mapping);
+                #}
+                NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                    contract => $contract,
+                    mappings_to_create => $mappings_to_create,
+                    #now => $now,
+                );
+                ##$contract = $c->stash->{contract_select_rs}
+                ##    ->search({
+                ##        'me.id' => $contract->id,
+                ##    },undef)->first;
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,
@@ -537,13 +549,19 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                     });
 
                 my $contract = $schema->resultset('contracts')->create($form->values);
-                foreach my $mapping (@$mappings_to_create) {
-                    $contract->billing_mappings->create($mapping);
-                }
-                #$contract = $c->stash->{contract_select_rs}
-                #    ->search({
-                #        'me.id' => $contract->id,
-                #    },undef)->first;
+                #die("todo");
+                #foreach my $mapping (@$mappings_to_create) {
+                #    $contract->billing_mappings->create($mapping);
+                #}
+                NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                    contract => $contract,
+                    mappings_to_create => $mappings_to_create,
+                    #now => $now,
+                );
+                ##$contract = $c->stash->{contract_select_rs}
+                ##    ->search({
+                ##        'me.id' => $contract->id,
+                ##    },undef)->first;
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,
