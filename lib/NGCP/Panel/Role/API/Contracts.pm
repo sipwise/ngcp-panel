@@ -41,11 +41,11 @@ sub hal_from_contract {
     my ($self, $c, $contract, $form, $now) = @_;
 
     my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
-    my $billing_profile_id = $billing_mapping->billing_profile_id;
+    my $billing_profile_id = $billing_mapping->billing_profile->id;
     my $future_billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($contract);
     my $billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_mappings($contract);
 
-    #we leave this here to keep the former behaviour: contract balances are also created upon GET api/contracts/4711
+    #contract balances are created with GET api/contracts/4711
     NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $contract,
             now => $now);
@@ -55,7 +55,7 @@ sub hal_from_contract {
     my @profile_links = ();
     my @network_links = ();
     foreach my $mapping ($contract->billing_mappings->all) {
-        push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile_id)));
+        push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile->id)));
         if ($mapping->network_id) {
             push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingnetworks', href => sprintf("/api/billingnetworks/%d", $mapping->network_id)));
         }
@@ -89,7 +89,7 @@ sub hal_from_contract {
         run => 0,
     );
 
-    $resource{type} = $billing_mapping->product->class;
+    $resource{type} = $contract->product->class;
     $resource{billing_profiles} = $future_billing_profiles;
     $resource{all_billing_profiles} = $billing_profiles;
 
@@ -112,7 +112,7 @@ sub update_contract {
     my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
     my $billing_profile = $billing_mapping->billing_profile;
 
-    $old_resource->{billing_mapping_id} = $billing_mapping->id;
+    $old_resource->{billing_mapping} = $billing_mapping;
 
     my $old_package = $contract->profile_package;
 
@@ -125,8 +125,6 @@ sub update_contract {
         form => $form,
         resource => $resource,
     );
-
-    #my $now = NGCP::Panel::Utils::DateTime::current_local;
 
     my $mappings_to_create = [];
     my $delete_mappings = 0;
@@ -164,10 +162,12 @@ sub update_contract {
 
     try {
         $contract->update($resource);
-        NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($contract,$now) if $delete_mappings;
-        foreach my $mapping (@$mappings_to_create) {
-            $contract->billing_mappings->create($mapping);
-        }
+        NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+            contract => $contract,
+            mappings_to_create => $mappings_to_create,
+            now => $now,
+            delete_mappings => $delete_mappings,
+        );
         $contract = $self->contract_by_id($c, $contract->id,1,$now);
 
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
@@ -195,7 +195,6 @@ sub update_contract {
                 contract => $contract,
             );
         }
-
         # TODO: what about changed product, do we allow it?
     } catch($e) {
         $c->log->error("Failed to update contract id '".$contract->id."': $e");

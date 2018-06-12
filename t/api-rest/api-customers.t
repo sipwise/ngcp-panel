@@ -295,7 +295,7 @@ my @allcustomers = ();
     ok(exists $customer->{max_subscribers}, "check existence of max_subscribers");
     ok(!exists $customer->{product_id}, "check absence of product_id");
     ok(exists $customer->{all_billing_profiles}, "check existence of all_billing_profiles");
-    is_deeply($customer->{all_billing_profiles},[ { profile_id => $billing_profile_id, start => undef, stop => undef, network_id => undef} ],"check all_billing_profiles deeply");
+    is_deeply($customer->{all_billing_profiles},[ { profile_id => $billing_profile_id, start => undef, stop => undef, network_id => undef, effective_start_time => '1970-01-01 01:00:00', } ],"check all_billing_profiles deeply");
 
     # PUT same result again
     my $old_customer = { %$customer };
@@ -537,7 +537,7 @@ my @allcustomers = ();
     is($customer->{billing_profile_id}, $second_billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(exists $customer->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
     ok(exists $customer->{all_billing_profiles}, "multi-bill-prof: check existence of all_billing_profiles");
-    is_deeply($customer->{all_billing_profiles},$data->{billing_profiles},"multi-bill-prof: check billing mappings deeply");
+    is_deeply([ map { delete $_->{effective_start_time}; $_; } @{$customer->{all_billing_profiles}} ],$data->{billing_profiles},"multi-bill-prof: check billing mappings deeply");
 
 
     $req = HTTP::Request->new('PATCH', $customeruri);
@@ -650,7 +650,7 @@ my @allcustomers = ();
     is($patched_customer->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(exists $customer->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
     #ok(exists $customer->{all_billing_profiles}, "multi-bill-prof: check existence of all_billing_profiles");
-    is_deeply($patched_customer->{billing_profiles},\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
+    is_deeply([ map { delete $_->{effective_start_time}; $_; } @{$patched_customer->{billing_profiles}} ],\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
 
     $req = HTTP::Request->new('PUT', $customeruri);
     $req->header('Prefer' => "return=representation");
@@ -670,7 +670,7 @@ my @allcustomers = ();
     is($updated_customer->{billing_profile_id}, $billing_profile_id,"multi-bill-prof: check if billing_profile_id is correct");
     ok(exists $updated_customer->{billing_profiles}, "multi-bill-prof: check existence of billing_profiles");
     #ok(exists $updated_customer->{all_billing_profiles}, "multi-bill-prof: check existence of all_billing_profiles");
-    is_deeply($updated_customer->{billing_profiles},\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
+    is_deeply([ map { delete $_->{effective_start_time}; $_; } @{$updated_customer->{billing_profiles}} ],\@expected_mappings,"multi-bill-prof: check patched billing mappings deeply");
 
     #$req = HTTP::Request->new('DELETE', $billingnetwork_uri);
     #$res = $ua->request($req);

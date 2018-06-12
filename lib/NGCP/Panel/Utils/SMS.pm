@@ -9,6 +9,7 @@ use Module::Load::Conditional qw/can_load/;
 
 use NGCP::Panel::Utils::Utf8;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::BillingMappings qw();
 
 sub get_coding {
     my $text = shift;
@@ -214,6 +215,7 @@ sub init_prepaid_billing {
         $prepaid_lib = $prepaid_pref_rs->first->value;
     }
 
+    # todo: get prepaid flag from actual profile and use prepaid pref to override it, or designate the prepaid pref for sms only.
     $prepaid_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => 'prepaid',
         prov_subscriber => $prov_subscriber,

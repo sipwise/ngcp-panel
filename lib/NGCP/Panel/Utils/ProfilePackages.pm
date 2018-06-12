@@ -169,15 +169,12 @@ sub resize_actual_contract_balance {
             }
         }
         if (_ENABLE_UNDERRUN_PROFILES && defined $underrun_profile_threshold && ($actual_balance->cash_balance + $topup_amount) < $underrun_profile_threshold) {
-            #my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
             $c->log->debug('contract ' . $contract->id . ' cash balance is ' . ($actual_balance->cash_balance + $topup_amount) . ' and drops below underrun profile threshold ' . $underrun_profile_threshold) if $c;
             if (add_profile_mappings(c => $c,
                     contract => $contract,
                     package => $new_package,
-                    #bm_actual => $bm_actual,
                     stime => $now,
-                    profiles => 'underrun_profiles',
-                    now => $now) > 0) {
+                    profiles => 'underrun_profiles') > 0) {
                 $update->{underrun_profiles} = $now;
             }
         }
@@ -318,10 +315,8 @@ PREPARE_BALANCE_CATCHUP:
             if (add_profile_mappings(c=> $c,
                     contract => $contract,
                     package => $old_package,
-                    #bm_actual => $bm_actual,
                     stime => $start_of_next_interval,
-                    profiles => 'underrun_profiles',
-                    now => $now) > 0) {
+                    profiles => 'underrun_profiles') > 0) {
                 $underrun_profiles_ts = $now;
                 goto PREPARE_BALANCE_CATCHUP;
             }
@@ -380,10 +375,8 @@ PREPARE_BALANCE_CATCHUP:
                 if (add_profile_mappings(c=> $c,
                         contract => $contract,
                         package => $old_package,
-                        #bm_actual => $bm_actual,
                         stime => $now,
-                        profiles => 'underrun_profiles',
-                        now => $now) > 0) {
+                        profiles => 'underrun_profiles') > 0) {
                     $update->{underrun_profiles} = $now;
                 }
             }
@@ -484,14 +477,11 @@ sub topup_contract_balance {
     if ($package) { #always apply (old or new) topup profiles
         $topup_amount -= $package->service_charge;
 
-        #my $bm_actual = get_actual_billing_mapping(c => $c, contract => $contract, now => $now);
         $profiles_added = add_profile_mappings(c => $c,
             contract => $contract,
             package => $package,
-            #bm_actual => $bm_actual,
             stime => $now,
-            profiles => 'topup_profiles',
-            now => $now);
+            profiles => 'topup_profiles');
     }
     $log_vals->{amount} = $topup_amount if $log_vals;
 
@@ -652,12 +642,9 @@ PREPARE_BALANCE_INITIAL:
         if (add_profile_mappings(c => $c,
                 contract => $contract,
                 package => $package,
-                bm_actual => $bm_actual,
                 stime => $now,
-                profiles => 'underrun_profiles',
-                now => $now) > 0) { #starting from now, not $stime, see prepare_billing_mappings
+                profiles => 'underrun_profiles') > 0) { #starting from now, not $stime, see prepare_billing_mappings
             $underrun_profiles_ts = $now;
-            #$bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
             goto PREPARE_BALANCE_INITIAL;
         }
     }
@@ -724,10 +711,6 @@ sub _get_balance_values {
         if ((_CARRY_OVER_MODE eq $carry_over_mode
              || (_CARRY_OVER_TIMELY_MODE eq $carry_over_mode && $last_balance->timely_topup_count > 0)
             ) && (!defined $notopup_expiration || $stime < $notopup_expiration)) {
-            #if (!defined $last_profile) {
-            #    my $bm_last = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $last_balance->start); #end); !?
-            #    $last_profile = $bm_last->billing_mappings->first->billing_profile;
-            #}
             my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
             $ratio = 1.0;
             if (NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->start) <= $contract_create && NGCP::Panel::Utils::DateTime::set_local_tz($last_balance->end) >= $contract_create) { #$last_balance->end is never +inf here
@@ -738,7 +721,6 @@ sub _get_balance_values {
             if ($last_balance->cash_balance_interval < $old_free_cash) {
                 $cash_balance += $last_balance->cash_balance_interval - $old_free_cash;
             }
-            #$ratio * $last_profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME
         } else {
             $c->log->debug('discarding contract ' . $contract->id . " cash balance (mode '$carry_over_mode'" . (defined $notopup_expiration ? ', notopup expiration ' . NGCP::Panel::Utils::DateTime::to_string($notopup_expiration) : '') . ')') if $c;
         }
@@ -1055,14 +1037,11 @@ sub _underrun_update_balance {
     }
     if (_ENABLE_UNDERRUN_PROFILES && defined $underrun_profile_threshold && $balance->cash_balance >= $underrun_profile_threshold && $new_cash_balance < $underrun_profile_threshold) {
         $c->log->debug('contract ' . $contract->id . ' cash balance was set from ' . $balance->cash_balance . ' to ' . $new_cash_balance . ' and is now below underrun profile threshold ' . $underrun_profile_threshold);
-        #my $bm_actual = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $now);
         if (add_profile_mappings(c => $c,
                 contract => $contract,
                 package => $package,
-                #bm_actual => $bm_actual,
                 stime => $now,
-                profiles => 'underrun_profiles',
-                now => $now) > 0) {
+                profiles => 'underrun_profiles') > 0) {
             $update->{underrun_profiles} = $now;
         }
     }
@@ -1077,36 +1056,24 @@ sub _underrun_update_balance {
 
 sub add_profile_mappings {
     my %params = @_;
-    my ($c,$contract,$bm_actual,$package,$stime,$profiles,$now) = @params{qw/c contract bm_actual package stime profiles now/};
+    my ($c,$contract,$package,$stime,$profile) = @params{qw/c contract package stime profiles/};
     my @profiles;
     if ($contract->status ne 'terminated' && (scalar (@profiles = $package->$profiles->all)) > 0) {
-        $bm_actual //= NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c,
-            contract => $contract,
-            now => $now);
-        my $product_id = $bm_actual->product->id;
-        #my $old_prepaid = $bm_actual->billing_mappings->first->billing_profile->prepaid;
         my @mappings_to_create = ();
         foreach my $mapping (@profiles) {
             push(@mappings_to_create,{ #assume not terminated,
                 billing_profile_id => $mapping->profile_id,
                 network_id => $mapping->network_id,
-                product_id => $product_id,
+                #product_id => $product_id,
                 start_date => $stime,
                 end_date => undef,
             });
         }
-        foreach my $mapping (@mappings_to_create) {
-            $contract->billing_mappings->create($mapping);
-        }
-        $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c,
+        NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
             contract => $contract,
-            now => $now);
-        NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
-            #old_prepaid => $old_prepaid,
-            #new_prepaid => $bm_actual->billing_mappings->first->billing_profile->prepaid,
-            prepaid => $bm_actual->billing_profile->prepaid,
-            contract => $contract,
+            mappings_to_create => \@mappings_to_create,
         );
+        # prepaid flag is not updated any more.
         return scalar @profiles;
     }
     return 0;
@@ -1121,11 +1088,6 @@ sub lock_contracts {
     my %contract_id_map = ();
     my $rs_result = undef;
     if (defined $rs and defined $contract_id_field) {
-        #$rs = $rs->search_rs({},{
-        #        columns => [ $contract_id_field ],
-        #        distinct => 1
-        #    }
-        #);
         $rs_result = [ $rs->all ];
         foreach my $item (@$rs_result) {
             $contract_id_map{$item->$contract_id_field} = 1;
