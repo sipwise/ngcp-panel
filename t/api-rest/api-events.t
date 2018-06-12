@@ -465,7 +465,7 @@ my %customer_map = ();
           pilot_primary_alias_username_after => $cc.$ac.$sn,
     );
     _check_event_history("start_profile when creating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"%profile",[
-        { %pilot_event,
+        { %pilot_event,  ## no critic (ProhibitCommaSeparatedStatements)
 
           type => "start_profile",
           old_status => '',
@@ -510,7 +510,7 @@ my %customer_map = ();
 
     );
     _check_event_history("start_profile when creating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
-        { %subscriber_event,
+        { %subscriber_event,  ## no critic (ProhibitCommaSeparatedStatements)
 
           type => "start_profile",
           old_status => '',
@@ -921,7 +921,7 @@ sub _update_subscriber {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
-        %$subscriber,
+        %$subscriber,  ## no critic (ProhibitCommaSeparatedStatements)
         @further_opts,
     }));
     $res = $ua->request($req);

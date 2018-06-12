@@ -345,7 +345,7 @@ sub _update_contract {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
-        %$contract,
+        %$contract,  ## no critic (ProhibitCommaSeparatedStatements)
         @further_opts,
     }));
     $res = $ua->request($req);

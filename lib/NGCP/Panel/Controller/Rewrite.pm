@@ -167,7 +167,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 my $new_set = $c->stash->{sets_rs}->create({
-                    %{ $form->values },
+                    %{ $form->values },  ## no critic (ProhibitCommaSeparatedStatements)
                     reseller_id => $c->stash->{set_result}->reseller_id,
                 });
                 my @old_rules = $c->stash->{set_result}->voip_rewrite_rules->all;
