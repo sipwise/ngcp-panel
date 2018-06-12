@@ -16,7 +16,7 @@ my $json = JSON->new();
 $json->allow_blessed(1);
 $json->convert_blessed(1);
 
-my $is_local_env = 0;
+my $is_local_env = 1;
 my $mysql_sqlstrict = 1; #https://bugtracker.sipwise.com/view.php?id=12565
 my $enable_journal_tests = 1;
 

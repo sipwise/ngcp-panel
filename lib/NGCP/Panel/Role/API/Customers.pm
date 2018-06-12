@@ -43,7 +43,6 @@ sub hal_from_customer {
     }
 
     my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
-    #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile_id = $billing_mapping->billing_profile->id;
     my $future_billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($customer);
     my $billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_mappings($customer);
@@ -57,7 +56,7 @@ sub hal_from_customer {
     my @profile_links = ();
     my @network_links = ();
     foreach my $mapping ($customer->billing_mappings->all) {
-        push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile_id)));
+        push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile->id)));
         if ($mapping->network_id) {
             push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingnetworks', href => sprintf("/api/billingnetworks/%d", $mapping->network_id)));
         }
@@ -106,7 +105,7 @@ sub hal_from_customer {
         $resource{$field} =  defined $resource{$field} ? NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::from_string($resource{$field})) : undef ;
     }
     # return the virtual "type" instead of the actual product id
-    $resource{type} = $billing_mapping->product->class;
+    $resource{type} = $customer->product->class; #$billing_mapping->product->class;
     $resource{billing_profiles} = $future_billing_profiles;
     $resource{all_billing_profiles} = $billing_profiles;
 
@@ -132,13 +131,12 @@ sub update_customer {
     }
 
     my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
-    #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile = $billing_mapping->billing_profile;
 
     my $old_package = $customer->profile_package;
 
     $old_resource->{prepaid} = $billing_profile->prepaid;
-    $old_resource->{billing_mapping_id} = $billing_mapping->id;
+    $old_resource->{billing_mapping} = $billing_mapping;
 
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
@@ -149,9 +147,6 @@ sub update_customer {
         form => $form,
         resource => $resource,
     );
-    #$resource->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
-
-    #my $now = NGCP::Panel::Utils::DateTime::current_local;
 
     my $mappings_to_create = [];
     my $delete_mappings = 0;
@@ -213,10 +208,12 @@ sub update_customer {
 
     try {
         $customer->update($resource);
-        NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($customer,$now) if $delete_mappings;
-        foreach my $mapping (@$mappings_to_create) {
-            $customer->billing_mappings->create($mapping);
-        }
+        NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+            contract => $customer,
+            mappings_to_create => $mappings_to_create,
+            now => $now,
+            delete_mappings => $delete_mappings,
+        );
         $customer = $self->customer_by_id($c, $customer->id, $now);
 
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
@@ -232,7 +229,6 @@ sub update_customer {
             );
 
         $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
-        #$billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
         $billing_profile = $billing_mapping->billing_profile;
 
         if(($customer->external_id // '') ne $old_ext_id) {
@@ -247,6 +243,11 @@ sub update_customer {
             }
         }
 
+        NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
+            prepaid => $billing_profile->prepaid,
+            contract => $customer,
+        );
+
         if($old_resource->{status} ne $resource->{status}) {
             if($customer->id == 1) {
                 $self->error($c, HTTP_FORBIDDEN, "Cannot set customer status to '".$resource->{status}."' for customer id '1'");
@@ -257,14 +258,6 @@ sub update_customer {
                 contract => $customer,
             );
         }
-
-        NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
-            #old_prepaid => $old_resource->{prepaid},
-            #new_prepaid => $billing_profile->prepaid,
-            prepaid => $billing_profile->prepaid,
-            contract => $customer,
-        );
-
         # TODO: what about changed product, do we allow it?
     } catch($e) {
         $c->log->error("Failed to update customer contract id '".$customer->id."': $e");
