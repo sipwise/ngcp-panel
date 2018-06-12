@@ -2313,7 +2313,7 @@ sub _test_item_journal_link {
     if (_is_journal_resource_enabled($resource)) {
         ok(exists $item->{_links}, "check existence of _links");
         ok($item->{_links}->{'ngcp:journal'}, "check existence of ngcp:journal link");
-        my $href = ref $item->{_links}->{'ngcp:journal'} eq 'ARRAY' 
+        my $href = ref $item->{_links}->{'ngcp:journal'} eq 'ARRAY'
             ? $item->{_links}->{'ngcp:journal'}->[0]->{href}
             : $item->{_links}->{'ngcp:journal'}->{href};
         ok($href eq '/api/'.$resource . '/' . $item_id . '/journal/', "check if ngcp:journal link equals '/api/$resource/$item_id/journal/'");
@@ -2519,4 +2519,3 @@ sub _get_request_test_message {
 }
 
 # vim: set tabstop=4 expandtab:
-
