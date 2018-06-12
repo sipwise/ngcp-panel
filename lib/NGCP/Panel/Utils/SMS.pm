@@ -9,6 +9,7 @@ use Module::Load::Conditional qw/can_load/;
 
 use NGCP::Panel::Utils::Utf8;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::BillingMappings qw();
 
 sub get_coding {
     my $text = shift;
@@ -214,14 +215,21 @@ sub init_prepaid_billing {
         $prepaid_lib = $prepaid_pref_rs->first->value;
     }
 
+    $is_prepaid = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(
+        c => $c, contract => $prov_subscriber->contract,
+    )->billing_profile->prepaid;
+    XXX
+    # allow overriding by the pref:
     $prepaid_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => 'prepaid',
         prov_subscriber => $prov_subscriber,
     );
-    if($prepaid_pref_rs && $prepaid_pref_rs->first && $prepaid_pref_rs->first->value) {
-        $is_prepaid = 1;
-    } else {
-        $is_prepaid = 0;
+    if($prepaid_pref_rs && $prepaid_pref_rs->first) {
+        if ($prepaid_pref_rs->first->value) {
+            $is_prepaid = 1;
+        } else {
+            $is_prepaid = 0;
+        }
     }
 
     # currently only inew rating supported, let others pass

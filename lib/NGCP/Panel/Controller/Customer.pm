@@ -224,26 +224,17 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                         my ($err,@fields) = @_;
                         die( [$err, "showdetails"] );
                     });
-                #delete $form->values->{product_id};
 
                 my $contract = $schema->resultset('contracts')->create($form->values);
-                foreach my $mapping (@$mappings_to_create) {
-                    $contract->billing_mappings->create($mapping);
-                }
-                #$contract = $c->stash->{contract_select_rs}
-                #    ->search({
-                #        'me.id' => $contract->id,
-                #    },undef)->first;
+                NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                    contract => $contract,
+                    mappings_to_create => $mappings_to_create,
+                );
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                     contract => $contract,
-                    #bm_actual => $contract->billing_mappings->find($contract->get_column('bmid')),
                 );
-                #NGCP::Panel::Utils::Contract::create_contract_balance(
-                #    c => $c,
-                #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
-                #    contract => $contract,
-                #);
+
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
@@ -319,7 +310,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     my $now = $c->stash->{now};
     my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $contract_first, now => $now, );
-    my $billing_mappings_ordered = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered($contract_first->billing_mappings,$now,$billing_mapping->id);
+    my $billing_mappings_ordered = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered($contract_first->billing_mappings,$now,$billing_mapping);
     my $future_billing_mappings = NGCP::Panel::Utils::BillingMappings::billing_mappings_ordered(NGCP::Panel::Utils::BillingMappings::future_billing_mappings($contract_first->billing_mappings,$now));
 
     my $balance;
@@ -562,11 +553,12 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 my $old_package = $contract->profile_package;
 
                 $contract->update($form->values);
-                NGCP::Panel::Utils::BillingMappings::remove_future_billing_mappings($contract,$now) if $delete_mappings;
-                foreach my $mapping (@$mappings_to_create) {
-                    $contract->billing_mappings->create($mapping);
-                }
-                #$contract = $c->stash->{contract_terminated_rs}->first;
+                NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                    contract => $contract,
+                    mappings_to_create => $mappings_to_create,
+                    now => $now,
+                    delete_mappings => $delete_mappings,
+                );
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
@@ -606,8 +598,6 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 }
 
                 NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
-                    #old_prepaid => $old_prepaid,
-                    #new_prepaid => $billing_profile->prepaid,
                     prepaid => $billing_profile->prepaid,
                     contract => $contract,
                 );
@@ -838,6 +828,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 }
                 if($c->stash->{billing_mapping}->billing_profile->prepaid) {
                     $preferences->{prepaid} = 1;
+                    XXX
                 }
                 my @events_to_create = ();
                 my $event_context = { events_to_create => \@events_to_create };
@@ -2012,7 +2003,7 @@ sub pbx_device_preferences_list :Chained('pbx_device_base') :PathPart('preferenc
                     { 'like' => 'vnd_'.lc($devmod->vendor).'%' },
                     {'-not_like' => 'vnd_%' },
                 ],
-            #relation type is defined by preference flag dev_pref, 
+            #relation type is defined by preference flag dev_pref,
             #so here we select only linked to the current model, or not linked to any model at all
             '-or' => [
                     'voip_preference_relations.autoprov_device_id' => $devmod->id,
@@ -2072,7 +2063,7 @@ sub pbx_device_preferences_edit :Chained('pbx_device_preferences_base') :PathPar
                     { 'like' => 'vnd_'.lc($devmod->vendor).'%' },
                     {'-not_like' => 'vnd_%' },
                 ],
-            #relation type is defined by preference flag dev_pref, 
+            #relation type is defined by preference flag dev_pref,
             #so here we select only linked to the current model, or not linked to any model at all
             '-or' => [
                     'voip_preference_relations.autoprov_device_id' => $devmod->id,

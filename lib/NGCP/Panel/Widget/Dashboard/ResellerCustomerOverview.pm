@@ -28,6 +28,7 @@ sub _prepare_customers_count {
             join => [ 'contact', { 'billing_mappings' => 'product' } ],
         }),
     );
+    XXX
 }
 
 sub _prepare_subscribers_count {

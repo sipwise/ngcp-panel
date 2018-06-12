@@ -56,6 +56,7 @@ sub _prepare_peering_sum {
                 })->as_query,
         })->get_column('cash_balance_interval'),
     );
+    XXX
 }
 
 sub _prepare_reseller_sum {
@@ -78,6 +79,7 @@ sub _prepare_reseller_sum {
                 })->as_query,
         })->get_column('cash_balance_interval'),
     );
+    XXX
 }
 
 sub _prepare_customer_sum {
@@ -100,6 +102,7 @@ sub _prepare_customer_sum {
                 })->as_query,
         })->get_column('cash_balance_interval'),
     );
+    XXX
 }
 
 sub profiles_count {

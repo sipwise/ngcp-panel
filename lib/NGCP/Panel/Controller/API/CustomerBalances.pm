@@ -94,6 +94,7 @@ sub query_params {
                 },
                 second => sub {
                     {
+                        XXX
                         join => { billing_mappings_actual => { billing_mappings => 'billing_profile' } },
                     };
                 },

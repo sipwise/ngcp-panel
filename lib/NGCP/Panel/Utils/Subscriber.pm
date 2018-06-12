@@ -185,23 +185,16 @@ sub get_provisoning_voip_subscriber_lock_level {
 
 sub switch_prepaid {
     my %params = @_;
-
-    NGCP::Panel::Utils::Preferences::set_provisoning_voip_subscriber_first_int_attr_value(%params,
-        value => ($params{prepaid} ? 1 : 0),
-        attribute => 'prepaid'
-        );
+XXX
+    return;
 
 }
 
 sub switch_prepaid_contract {
     my %params = @_;
     my $contract = $params{contract};
-
-    for my $subscriber ($contract->voip_subscribers->search_rs({ 'me.status' => { '!=' => 'terminated' } })->all) {
-        switch_prepaid(%params,
-            prov_subscriber => $subscriber->provisioning_voip_subscriber,
-        ) if ($subscriber->provisioning_voip_subscriber);
-    }
+XXX
+    return;
 
 }
 
@@ -909,7 +902,7 @@ sub update_subscriber_numbers {
         }
 
         if ( (defined $old_cc && defined $old_sn)
-                && $billing_subs->contract->billing_mappings->first->product->class eq "pbxaccount"
+                && $billing_subs->contract->product->class eq "pbxaccount"
                 && $prov_subs->is_pbx_pilot ) {
             my $customer_subscribers_rs = $billing_subs->contract->voip_subscribers;
             my $my_cc = $primary_number->{cc};
