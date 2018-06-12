@@ -279,9 +279,15 @@ sub POST :Allow {
         }
 
         try {
-            foreach my $mapping (@$mappings_to_create) {
-                $customer->billing_mappings->create($mapping);
-            }
+            NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                contract => $customer,
+                mappings_to_create => $mappings_to_create,
+                #now => $now,
+            );
+            #die("todo");
+            #foreach my $mapping (@$mappings_to_create) {
+            #    $customer->billing_mappings->create($mapping);
+            #}
             $customer = $self->customer_by_id($c, $customer->id,$now);
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                 contract => $customer,

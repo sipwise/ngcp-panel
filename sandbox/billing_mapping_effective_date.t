@@ -25,6 +25,20 @@ unless ($@) {
         on_connect_do       => "SET NAMES utf8mb4",
         quote_char          => "`",
     });
+    ok($schema->source("contracts")->add_relationship(
+        "billing_mappings_actual_old",
+        "NGCP::Schema::Result::billing_mappings_actual",
+        { "foreign.contract_id" => "self.id" },
+        { cascade_copy => 0, cascade_delete => 0 },
+        "multi",
+    ),"legacy billing_mappings_actual relationship registered");
+    #ok($schema->source("contracts")->add_relationship(
+    #    "billing_mappings_old",
+    #    "NGCP::Schema::Result::billing_mappings",
+    #    { "foreign.contract_id" => "self.id" },
+    #    { cascade_copy => 0, cascade_delete => 0 },
+    #    "multi",
+    #),"legacy billing_mappings relationship registered");
 }
 # ... or a separate csv file otherwise:
 my $filename = 'api_balanceintervals_test_reference.csv';
@@ -123,15 +137,20 @@ test_contracts(sub {
     # 5. test it with actual billing mapping impl:
     test_events("perl impl - ",$contract,sub {
         my $now = shift;
-        my $bm_actual_id;
+        my $bm_actual;
         foreach my $row (@effective_start_list) {
             next unless $row->{"last"};
             last if $row->{effective_start_date} > $now;
-            $bm_actual_id = $row->{billing_mapping_id};
+            $bm_actual = { %$row };
+            delete $bm_actual->{last};
+            delete $bm_actual->{billing_mapping_id};
+            delete $bm_actual->{effective_start_date};
+            $bm_actual->{billing_profile_id} = delete $bm_actual->{profile_id};
         }
-        return $bm_actual_id;
+        return $bm_actual;
     },\@effective_start_list);
-    push(@perl_records,@effective_start_list);
+    push(@perl_records,[ map { delete $_->{billing_mapping_id}; $_; }
+            sort { ($a->{effective_start_date} <=> $b->{effective_start_date}) || ($a->{billing_mapping_id} <=> $b->{billing_mapping_id}) } @effective_start_list ]);
 
 });
 
@@ -141,23 +160,57 @@ if ($schema) {
         my ($storage, $dbh, @args) = @_;
         $dbh->do('use billing');
         $dbh->do(<<EOS1
-create temporary table tmp_transformed (
-  contract_id int(11) unsigned,
-  billing_mapping_id int(11) unsigned,
-  last tinyint(3),
+create temporary table tmp_contracts_billing_profile_network (
+  id int(11) unsigned not null auto_increment,
+  contract_id int(11) unsigned not null,
+  billing_profile_id int(11) unsigned not null,
+  billing_network_id int(11) unsigned default null,
   start_date datetime,
   end_date datetime,
-  effective_start_date decimal(13,3),
-  profile_id int(11) unsigned,
-  network_id int(11) unsigned,
-  key tmp_cid_esd_last_idx (contract_id,effective_start_date,last)
-);
+  base tinyint(3) not null default 0,
+  primary key (id),
+  unique key cbpn_natural_idx (contract_id, billing_profile_id, billing_network_id, start_date, end_date, base)
+) engine=InnoDB default charset=utf8;
 EOS1
         );
-        $dbh->do('drop procedure if exists transform_billing_mappings');
-        #$dbh->do('delimiter ;;');
         $dbh->do(<<EOS2
-create procedure transform_billing_mappings() begin
+create temporary table tmp_contracts_billing_profile_network_schedule (
+  id int(11) unsigned not null auto_increment,
+  profile_network_id int(11) unsigned not null,
+  effective_start_time decimal(13,3) not null,
+  primary key (id),
+  key cbpns_pnid_est_idx (profile_network_id,effective_start_time)
+) engine=InnoDB default charset=utf8;
+EOS2
+        );
+        $dbh->do(<<EOS3
+create or replace procedure tmp_insert_billing_profile_network_schedule(
+#  _profile_network_id int(11) unsigned,
+  _contract_id int(11) unsigned,
+  _last tinyint(3),
+  _start_date datetime,
+  _end_date datetime,
+  _effective_start_date decimal(13,3),
+  _profile_id int(11) unsigned,
+  _network_id int(11) unsigned
+) begin
+
+  declare _profile_network_id int(11) unsigned;
+
+  set _profile_network_id = (select id from tmp_contracts_billing_profile_network where contract_id = _contract_id and billing_profile_id = _profile_id and billing_network_id <=> _network_id and start_date <=> _start_date and end_date <=> _end_date and base = _last);
+
+  if _profile_network_id is null then
+    insert into tmp_contracts_billing_profile_network values(null,_contract_id,_profile_id,_network_id,_start_date,_end_date,_last);
+    set _profile_network_id = last_insert_id();
+  end if;
+  insert into tmp_contracts_billing_profile_network_schedule values(null,_profile_network_id,_effective_start_date);
+
+end;;
+EOS3
+        );
+        #$dbh->do('delimiter ;;');
+        $dbh->do(<<EOS4
+create or replace procedure tmp_transform_billing_mappings() begin
 
   declare _contracts_done, _events_done, _mappings_done, _is_end boolean default false;
   declare _contract_id, _bm_id, _default_bm_id, _profile_id, _network_id int(11) unsigned;
@@ -232,7 +285,8 @@ create procedure transform_billing_mappings() begin
 
               #INSERT......
               #select _contract_id,_effective_start_time,_profile_id, _network_id;
-              insert into tmp_transformed values(_contract_id,_bm_id,if(_bm_id = _default_bm_id,1,0),_start_date,_end_date,_effective_start_time,_profile_id,_network_id);
+              #insert into tmp_transformed values(_contract_id,_bm_id,if(_bm_id = _default_bm_id,1,0),_start_date,_end_date,_effective_start_time,_profile_id,_network_id);
+              call tmp_insert_billing_profile_network_schedule(_contract_id,if(_bm_id = _default_bm_id,1,0),_start_date,_end_date,_effective_start_time,_profile_id,_network_id);
 
               #set _effective_start_time = _effective_start_time + 0.001;
             end loop mappings_loop2;
@@ -246,54 +300,147 @@ create procedure transform_billing_mappings() begin
   end loop contracts_loop;
   close contracts_cur;
 end;;
-EOS2
+EOS4
         );
         #$dbh->do('delimiter ;');
         my $t1 = time();
-        $dbh->do('call transform_billing_mappings()');
+        $dbh->do('call tmp_transform_billing_mappings()');
         diag("time to transform all billing_mappings: ".sprintf("%.3f secs",time()-$t1));
-        $dbh->do('drop procedure transform_billing_mappings');
+        $dbh->do('drop procedure tmp_transform_billing_mappings');
+        #   $dbh->do("create temporary table tmp_contracts_billing_profile_network_schedule_copy like tmp_contracts_billing_profile_network_schedule");
+        #    $dbh->do("insert into tmp_contracts_billing_profile_network_schedule_copy select * from tmp_contracts_billing_profile_network_schedule");
+        #    $dbh->do("create temporary table tmp_contracts_billing_profile_network_copy like tmp_contracts_billing_profile_network");
+        #    $dbh->do("insert into tmp_contracts_billing_profile_network_copy select * from tmp_contracts_billing_profile_network");
+        $dbh->do(<<EOS5
+create or replace function tmp_get_profile_network(
+  _contract_id int(11),
+  _epoch decimal(13,3)
+) returns int(11)
+reads sql data
+begin
 
+  declare _effective_start_date decimal(13,3);
+  declare _cbpn_id int(11);
+
+  if _contract_id is null or _epoch is null then
+    return null;
+  end if;
+
+  set _effective_start_date = (select max(cbpns.effective_start_time) from tmp_contracts_billing_profile_network_schedule cbpns join
+    tmp_contracts_billing_profile_network cbpn on cbpn.id = cbpns.profile_network_id
+    where cbpn.contract_id = _contract_id and cbpns.effective_start_time <= _epoch and cbpn.base = 1);
+
+  if _effective_start_date is null then
+    set _cbpn_id = (select min(id) from tmp_contracts_billing_profile_network cbpn
+      where cbpn.contract_id = _contract_id and cbpn.base = 1);
+  else
+    set _cbpn_id = (select cbpn.id from tmp_contracts_billing_profile_network_schedule cbpns join
+      tmp_contracts_billing_profile_network cbpn on cbpn.id = cbpns.profile_network_id
+      where cbpn.contract_id = _contract_id and cbpns.effective_start_time = _effective_start_date and cbpn.base = 1);
+  end if;
+
+  return _cbpn_id;
+
+end;;
+EOS5
+        );
     },);
 
-    goto SKIP1;
+    #goto SKIP1;
     test_contracts(sub {
         my $contract = shift;
         $schema->storage->dbh_do(sub {
             my ($storage, $dbh, @args) = @_;
             #my $sth = $dbh->prepare("select from_unixtime(tr.effective_start_date) as effective_start_date_epoch,tr.* from tmp_transformed tr where tr.contract_id = ? order by tr.effective_start_date asc");
-            my $sth = $dbh->prepare("select * from tmp_transformed tr where tr.contract_id = ? order by tr.effective_start_date asc");
+            my $sth = $dbh->prepare(<<EOS5
+select
+  tcbpn.id as cbpn_id,
+  tcbpn.contract_id as contract_id,
+  tcbpn.base as last,
+  tcbpn.start_date as start_date,
+  tcbpn.end_date as end_date,
+  tcbpns.effective_start_time as effective_start_date,
+  tcbpn.billing_profile_id as billing_profile_id,
+  tcbpn.billing_network_id as network_id
+from
+     tmp_contracts_billing_profile_network_schedule tcbpns
+join tmp_contracts_billing_profile_network tcbpn on tcbpns.profile_network_id = tcbpn.id
+where
+  tcbpn.contract_id = ?
+#order by
+#  tcbpns.effective_start_time asc, tcbpns.profile_network_id asc
+EOS5
+            );
             $sth->execute($contract->{contract_id});
-            my $mappings = $sth->fetchall_arrayref({});
+            my $mappings = $sth->fetchall_hashref("cbpn_id");
+            $sth->execute($contract->{contract_id});
+            my $all_mappings = $sth->fetchall_arrayref({});
             $sth->finish();
 
             test_events("sql impl - ",$contract,sub {
-                my $now = shift;
+                my ($now,$mappings) = @_;
 
-                my $sth = $dbh->prepare("select max(effective_start_date) from tmp_transformed where contract_id = ? and effective_start_date <= ? and last = 1");
+
+                my $sth = $dbh->prepare("select tmp_get_profile_network(?,?)");
                 $sth->execute($contract->{contract_id},$now);
-                my ($effective_start_date) = $sth->fetchrow_array();
-                $sth = $dbh->prepare("select billing_mapping_id from tmp_transformed where contract_id = ? and effective_start_date = ? and last = 1");
-                $sth->execute($contract->{contract_id},$effective_start_date);
-                my ($bm_actual_id) = $sth->fetchrow_array();
+                my ($cbpn_id) = $sth->fetchrow_array();
                 $sth->finish();
 
-                unless (defined $bm_actual_id) {
-                    $sth = $dbh->prepare("select min(billing_mapping_id) from tmp_transformed where contract_id = ? and last = 1");
-                    $sth->execute($contract->{contract_id});
-                    ($bm_actual_id) = $sth->fetchrow_array();
-                    $sth->finish();
-                }
-                return $bm_actual_id;
+                #$sth = $dbh->prepare("select grp from tmp_contracts_billing_profile_network where id = ?");
+                #$sth->execute($cbpn_id);
+                #my ($bm_actual_id) = $sth->fetchrow_array();
+                #$sth->finish();
+
+                my %got = %{$mappings->{$cbpn_id}};
+                delete $got{cbpn_id};
+                delete $got{effective_start_date};
+                delete $got{last};
+
+                return \%got;
             },$mappings);
-            push(@sql_records,@$mappings);
+            push(@sql_records,[ map { delete $_->{cbpn_id}; $_->{profile_id} = delete $_->{billing_profile_id}; $_; }
+                sort { ($a->{effective_start_date} <=> $b->{effective_start_date}) ||
+                    ($a->{cbpn_id} <=> $b->{cbpn_id}) } @$all_mappings ]);
+
+            $sth = $dbh->prepare(<<EOS6
+select
+  contract_id,
+  start_date,
+  end_date,
+  billing_profile_id as billing_profile_id,
+  billing_network_id as network_id
+from
+     tmp_contracts_billing_profile_network tcbpn
+join tmp_contracts_billing_profile_network_schedule tcbpns on tcbpns.profile_network_id = tcbpn.id
+where
+  tcbpn.contract_id = ?
+and floor(tcbpns.effective_start_time) = tcbpns.effective_start_time
+order by tcbpns.effective_start_time asc, tcbpns.profile_network_id asc
+
+EOS6
+            );
+            #$sth = $dbh->prepare("select billing_mapping_id as id,contract_id,start_date,end_date,profile_id as billing_profile_id,network_id from tmp_transformed where contract_id = ? group by billing_mapping_id order by billing_mapping_id asc");
+            $sth->execute($contract->{contract_id});
+            my $got_bm = $sth->fetchall_arrayref({});
+            $sth->finish();
+
+            $sth = $dbh->prepare("select contract_id,start_date,end_date,billing_profile_id,network_id from billing_mappings where contract_id = ? order by start_date asc, id asc");
+            $sth->execute($contract->{contract_id});
+            my $expected_bm = $sth->fetchall_arrayref({});
+            $sth->finish();
+
+            is_deeply($got_bm,$expected_bm,"fetching all contract id $contract->{contract_id} mappings deeply");
+
+            #$dbh->do('call append_billing_mappings(?,now(),?)',undef,$contract->{contract_id},
+            #    "2018-07-01 00:00:00,2018-07-01 01:00:00",1,undef,0);
+            #diag("time to transform all billing_mappings: ".sprintf("%.3f secs",time()-$t1));
 
         },);
 
     });
 
     {
-        is_deeply(\@perl_records,\@sql_records,"compare generated perl and sql effective start date records deeply");
+        is_deeply(\@sql_records,\@perl_records,"compare generated perl and sql effective start date records deeply");
     }
 
 SKIP1:
@@ -305,34 +452,51 @@ SKIP1:
         my $billing_mappings_actual_new;
         $schema->storage->dbh_do(sub {
             my ($storage, $dbh, @args) = @_;
-            $dbh->do("create temporary table tmp_transformed_copy like tmp_transformed");
-            $dbh->do("insert into tmp_transformed_copy select * from tmp_transformed");
-            my $sth = $dbh->prepare(<<EOS3
-select t2.contract_id,t2.billing_mapping_id from
-(select
-contract_id,
-max(effective_start_date) as effective_start_date
-from tmp_transformed
-where effective_start_date <= ?
-and last = 1
-group by contract_id) as t1
-join tmp_transformed_copy t2 on t2.contract_id = t1.contract_id and t2.effective_start_date = t1.effective_start_date and t2.last = 1
-EOS3
+            $dbh->do("create temporary table tmp_contracts_billing_profile_network_schedule_copy like tmp_contracts_billing_profile_network_schedule");
+            $dbh->do("insert into tmp_contracts_billing_profile_network_schedule_copy select * from tmp_contracts_billing_profile_network_schedule");
+            $dbh->do("create temporary table tmp_contracts_billing_profile_network_copy like tmp_contracts_billing_profile_network");
+            $dbh->do("insert into tmp_contracts_billing_profile_network_copy select * from tmp_contracts_billing_profile_network");
+            my $now_epoch = $now->epoch;
+            my $sth = $dbh->prepare(<<EOS7
+select
+  est.contract_id as contract_id,
+  cbpn.start_date,
+  cbpn.end_date,
+  cbpn.billing_profile_id as billing_profile_id,
+  cbpn.billing_network_id as network_id
+from
+     tmp_contracts_billing_profile_network_schedule cbpns
+join tmp_contracts_billing_profile_network cbpn on cbpns.profile_network_id = cbpn.id and cbpn.base = 1
+join (select
+  cbpn.contract_id as contract_id,
+  max(cbpns.effective_start_time) as effective_start_time
+from tmp_contracts_billing_profile_network_schedule_copy cbpns
+join tmp_contracts_billing_profile_network_copy cbpn on cbpns.profile_network_id = cbpn.id
+where cbpns.effective_start_time <= $now_epoch and cbpn.base = 1
+group by cbpn.contract_id) est on est.contract_id = cbpn.contract_id and cbpns.effective_start_time = est.effective_start_time;
+EOS7
             );
+            #my $sth = $dbh->prepare("select * from tmp_v_actual_billing_mappings");
             $t1 = time();
-            $sth->execute($now->epoch); #,$contract->{contract_id});
+            $sth->execute(); #$now->epoch); #,$contract->{contract_id});
             #my $t2 = Time::Hires::time();
-            $billing_mappings_actual_new = $sth->fetchall_arrayref();
+            $billing_mappings_actual_new = $sth->fetchall_arrayref({});
             $sth->finish();
             diag("new query (".(scalar @$billing_mappings_actual_new)." mappings): ".sprintf("%.3f secs",time()-$t1));
         });
 
         my $dtf = $schema->storage->datetime_parser;
         $t1 = time();
-        my @billing_mappings_actual_old = map { my %res = $_->get_inflated_columns; [ @res{qw(contract_id actual_bm_id)} ]; } $schema->resultset('billing_mappings_actual')->search_rs(undef,{
+        my @billing_mappings_actual_old = $schema->resultset('billing_mappings_actual')->search_rs(undef,{
             bind    => [ ( $dtf->format_datetime($now) ) x 2, ( undef ) x 2 ],
         })->all;
         diag("old query (".(scalar @$billing_mappings_actual_new)." mappings): ".sprintf("%.3f secs",time()-$t1));
+        @billing_mappings_actual_old = map { my %res = $schema->resultset('billing_mappings')->find($_->actual_bm_id)->get_inflated_columns;
+            delete $res{id};
+            delete $res{product_id};
+            $res{start_date} = dt_to_string($res{start_date}) if $res{start_date};
+            $res{end_date} = dt_to_string($res{end_date}) if $res{end_date};
+            \%res; } @billing_mappings_actual_old;
         is_deeply($billing_mappings_actual_new,\@billing_mappings_actual_old,"compare actual_billing_mapping table deeply");
 
     }
@@ -362,13 +526,23 @@ sub test_events {
         my $dt = dt_from_string($_);
         my $i = -1;
         foreach my $dt (dt_from_string($_)->subtract(seconds => 1),dt_from_string($_),dt_from_string($_)->add(seconds => 1)) {
-            unless (is(&$get_actual_billing_mapping($dt->epoch),get_actual_billing_mapping($schema,$contract->{contract_id},$dt),
-            $label."contract $contract->{contract_id} billing mapping id at t".($i<0?$i:"+$i")." = $dt")) {
-                foreach my $row (@$mappings) {
-                    print join("\t",(map { "$_=".((not defined $row->{$_}) ? "\t" : $row->{$_}); } sort keys %$row)) . "\n";
-                       #print $mapping[0]."\t".$mapping[1]."\t".$mapping[2]."\t".$mapping->{end_date}."\t".$mapping->{profile_id}."\t".$mapping->{network_id}."\n";
-                }
-            }
+            my $got = &$get_actual_billing_mapping($dt->epoch,$mappings);
+            my $bm_id = get_actual_billing_mapping_old($schema,$contract->{contract_id},$dt);
+            my %expected = $schema->resultset('billing_mappings')->find($bm_id)->get_inflated_columns;
+            delete $expected{id};
+            delete $expected{product_id};
+            $expected{start_date} = dt_to_string($expected{start_date}) if $expected{start_date};
+            $expected{end_date} = dt_to_string($expected{end_date}) if $expected{end_date};
+
+            is_deeply($got,\%expected,$label."compare contract $contract->{contract_id} billing mapping id at t".($i<0?$i:"+$i")." = $dt");
+
+            #unless (is(&$get_actual_billing_mapping($dt->epoch),get_actual_billing_mapping_old($schema,$contract->{contract_id},$dt),
+            #$label."contract $contract->{contract_id} billing mapping id at t".($i<0?$i:"+$i")." = $dt")) {
+            #    foreach my $row (@$mappings) {
+            #        print join("\t",(map { "$_=".((not defined $row->{$_}) ? "\t" : $row->{$_}); } sort keys %$row)) . "\n";
+            #           #print $mapping[0]."\t".$mapping[1]."\t".$mapping[2]."\t".$mapping->{end_date}."\t".$mapping->{profile_id}."\t".$mapping->{network_id}."\n";
+            #    }
+            #}
             $i++;
         }
     }
@@ -389,8 +563,8 @@ sub test_contracts {
             rows => 100,
         })->all) {
             foreach my $contract (@page) {
-                my $bm_actual_id = get_actual_billing_mapping($schema,$contract->id,$now);
-
+                my $bm_actual_id = get_actual_billing_mapping_old($schema,$contract->id,$now);
+                next unless $bm_actual_id;
                 &$code({
                     now => $now->epoch,
                     contract_id => $contract->id,
@@ -406,7 +580,9 @@ sub test_contracts {
                         $mapping{network_name} = ($_->network ? $_->network->name : '');
                         $mapping{product_class} = $_->product->class;
                         \%mapping;
-                    } $contract->billing_mappings->all ],
+                    } $schema->resultset('billing_mappings')->search_rs({
+                        contract_id => $contract->id,
+                    })->all ],
                 });
             }
             $page++;
@@ -495,17 +671,19 @@ sub test_contracts {
 
 }
 
-sub get_actual_billing_mapping {
+sub get_actual_billing_mapping_old {
     my ($schema, $contract_id, $now) = @_;
     my $dtf = $schema->storage->datetime_parser;
-    return $schema->resultset('contracts')->search_rs({
+    my $contract = $schema->resultset('contracts')->search_rs({
                     id => $contract_id,
                 },{
                     bind    => [ ( $dtf->format_datetime($now) ) x 2, ( $contract_id ) x 2 ],
-                    'join'  => 'billing_mappings_actual',
-                    '+select' => [ 'billing_mappings_actual.actual_bm_id' ],
+                    'join'  => 'billing_mappings_actual_old',
+                    '+select' => [ 'billing_mappings_actual_old.actual_bm_id' ],
                     '+as' => [ 'billing_mapping_id' ],
-                })->first->get_column("billing_mapping_id");
+                })->first;
+    return $contract->get_column("billing_mapping_id") if $contract;
+    return undef;
 
 }
 
