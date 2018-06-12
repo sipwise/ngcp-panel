@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "5ad0253b_de56f405",
+        "filename": "lib/NGCP/Panel/Utils/Device.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-12T15:27:49Z",
+      "side": 1,
+      "message": "yes",
+      "parentUuid": "5ad0253b_9e13dc5c",
+      "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad0253b_5e1d4465",
         "filename": "lib/NGCP/Panel/Utils/Generic.pm",
         "patchSetId": 2
@@ -64,6 +82,24 @@
       "writtenOn": "2018-06-12T15:19:22Z",
       "side": 1,
       "message": "curious, is there a differnece?",
+      "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_9e419c3c",
+        "filename": "lib/NGCP/Panel/Utils/InvoiceTemplate.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-12T15:27:49Z",
+      "side": 1,
+      "message": "yes, see documentation of InputOutput::RequireEncodingWithUTF8Layer",
+      "parentUuid": "5ad0253b_1e26acba",
       "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -115,6 +151,24 @@
       "writtenOn": "2018-06-12T15:23:54Z",
       "side": 1,
       "message": "ok presuming the logic does not depend on having stuff changed in place (apart from returning stuff)",
+      "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_3e48485b",
+        "filename": "t/api-rest/api-all.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-12T15:27:49Z",
+      "side": 1,
+      "message": "good point, I hope so (this is what this rule tries to prevent (because the sideeffects are quite hard to catch otherwise)",
+      "parentUuid": "5ad0253b_1e4d8c72",
       "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
