@@ -39,67 +39,55 @@ sub _prepare_profiles_count {
 sub _prepare_peering_sum {
     my ($self, $c) = @_;
 
-    # how to catchup contract balances of all contracts here?
-    # well, we don't care for a stats view ...
+    # ok also for contracts without recent balance records:
 
     my ($stime,$etime) = $self->_get_interval();
     $c->stash(
         peering_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            -exists => $c->model('DB')->resultset('billing_mappings')->search({
-                    contract_id => \'= me.contract_id',
-                    'product.class' => 'sippeering',
-                },{
-                    alias => 'myinner',
-                    join => 'product',
-                })->as_query,
+            'product.class' => { -in => [ 'sippeering', 'pstnpeering' ] },
+        },{
+            join => { contract => 'product', },
         })->get_column('cash_balance_interval'),
     );
+
 }
 
 sub _prepare_reseller_sum {
     my ($self, $c) = @_;
 
-    # how to catchup contract balances of all contracts here?
-    # well, we don't care for a stats view ...
+    # ok also for contracts without recent balance records:
 
     my ($stime,$etime) = $self->_get_interval();
     $c->stash(
         reseller_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            -exists => $c->model('DB')->resultset('billing_mappings')->search({
-                    contract_id => \'= me.contract_id',
-                    'product.class' => 'reseller',
-                },{
-                    alias => 'myinner',
-                    join => 'product',
-                })->as_query,
+            'product.class' => 'reseller',
+        },{
+            join => { contract => 'product', },
         })->get_column('cash_balance_interval'),
     );
+
 }
 
 sub _prepare_customer_sum {
     my ($self, $c) = @_;
 
-    # how to catchup contract balances of all contracts here?
-    # well, we don't care for a stats view ...
+    # ok also for contracts without recent balance records:
 
     my ($stime,$etime) = $self->_get_interval();
     $c->stash(
         customer_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            -exists => $c->model('DB')->resultset('billing_mappings')->search({
-                    contract_id => \'= me.contract_id',
-                    'product.class' => 'sipaccount',
-                },{
-                    alias => 'myinner',
-                    join => 'product',
-                })->as_query,
+            'product.class' => { -in => [ 'sipaccount', 'pbxaccount' ] },
+        },{
+            join => { contract => 'product', },
         })->get_column('cash_balance_interval'),
     );
+
 }
 
 sub profiles_count {

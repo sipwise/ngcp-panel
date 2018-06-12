@@ -175,7 +175,6 @@ sub process_edit :Private {
                     profile_id => $c->stash->{profile_result}->id,
                     old_prepaid => $old_prepaid,
                     new_prepaid => $c->stash->{profile_result}->prepaid,
-                    contract_rs => NGCP::Panel::Utils::Contract::get_contract_rs(schema => $schema), #ok
                 );
 
             });

@@ -460,9 +460,6 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             name => 'Default reseller' . sprintf('%04d', rand 10000),
             status => 'active',
         },
-        #billing_mappings => {
-        #    start_date => $now,
-        #},
         admins => {
 			saltedpass => $saltedpass,
             is_active => 1,
@@ -498,9 +495,10 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
                     my ($err) = @_;
                     die( [$err, "showdetails"] );
             });
-            foreach my $mapping (@$mappings_to_create) {
-                $r{contracts}->billing_mappings->create($mapping);
-            }
+            NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                contract => $r{contracts},
+                mappings_to_create => $mappings_to_create,
+            );
             $r{contracts} = NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB'))->find($r{contracts}->id);
             $r{billing_mappings} = $r{contracts}->billing_mappings;
 
@@ -510,13 +508,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             });
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                 contract => $r{contracts},
-                #bm_actual => $r{billing_mappings}->find($r{contracts}->get_column('bmid')),
             );
-            #NGCP::Panel::Utils::Contract::create_contract_balance(
-            #    c => $c,
-            #    profile => $r{billing_mappings}->find($r{contracts}->get_column('bmid'))->billing_profile, #$r{billing_mappings}->billing_profile,
-            #    contract => $r{contracts},
-            #);
         });
     } catch($e) {
         NGCP::Panel::Utils::Message::error(

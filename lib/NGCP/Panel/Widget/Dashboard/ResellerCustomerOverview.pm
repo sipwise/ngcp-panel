@@ -18,16 +18,16 @@ sub filter {
 
 sub _prepare_customers_count {
     my ($self, $c) = @_;
-
     $c->stash(
         customers => $c->model('DB')->resultset('contracts')->search({
             'me.status' => { '!=' => 'terminated' },
             'contact.reseller_id' => $c->user->reseller_id,
             'product.class' => { 'not in' => [ 'reseller', 'sippeering', 'pstnpeering' ] },
         },{
-            join => [ 'contact', { 'billing_mappings' => 'product' } ],
+            join => [ 'contact', 'product' ],
         }),
     );
+
 }
 
 sub _prepare_subscribers_count {

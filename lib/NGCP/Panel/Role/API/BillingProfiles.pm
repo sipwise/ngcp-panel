@@ -163,11 +163,10 @@ sub update_profile {
             $profile->billing_peaktime_specials->create($special_peaktime);
         }
         NGCP::Panel::Utils::Billing::switch_prepaid(c => $c,
-                        profile_id => $profile->id,
-                        old_prepaid => $old_prepaid,
-                        new_prepaid => $profile->prepaid,
-                        contract_rs => NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB')), #ok
-                    );
+            profile_id => $profile->id,
+            old_prepaid => $old_prepaid,
+            new_prepaid => $profile->prepaid,
+        );
     } catch($e) {
         $c->log->error("Failed to update billing profile '".$profile->id."': $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");

@@ -196,19 +196,15 @@ sub POST :Allow {
         }
 
         try {
-            foreach my $mapping (@$mappings_to_create) {
-                $contract->billing_mappings->create($mapping);
-            }
+            NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                contract => $contract,
+                mappings_to_create => $mappings_to_create,
+            );
+
             $contract = $self->contract_by_id($c, $contract->id,1,$now);
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                 contract => $contract,
-                #bm_actual => $contract->billing_mappings->find($contract->get_column('bmid')),
             );
-            #NGCP::Panel::Utils::Contract::create_contract_balance(
-            #    c => $c,
-            #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
-            #    contract => $contract,
-            #);
         } catch($e) {
             $c->log->error("failed to create contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contract.");
