@@ -190,7 +190,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         { name => "shared", search => 1, title => $c->loc("Shared") },
     ]);
 
-    if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
+    if($contract->product->class eq "pbxaccount") {
         $c->stash->{pbx_groups} = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_rs(
             c => $c,
             schema => $c->model('DB'),
@@ -2661,7 +2661,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     my $form; my $pbx_ext; my $is_admin; my $subadmin_pbx;
     my $base_number;
 
-    if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
+    if($subscriber->contract->product->class eq "pbxaccount") {
         $c->stash(customer_id => $subscriber->contract->id);
         if($subscriber->provisioning_voip_subscriber->is_pbx_pilot) {
             if($c->user->roles eq 'subscriberadmin') {
