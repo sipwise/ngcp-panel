@@ -50,6 +50,23 @@
       "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_1e26acba",
+        "filename": "lib/NGCP/Panel/Utils/InvoiceTemplate.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-12T15:19:22Z",
+      "side": 1,
+      "message": "curious, is there a differnece?",
+      "revId": "73e5be60fac997aa5177dcc15d9e1c1eda16829e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
