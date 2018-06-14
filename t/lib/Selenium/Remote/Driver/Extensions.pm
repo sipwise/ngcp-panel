@@ -6,6 +6,9 @@ use Test::More import => [qw(diag ok is)];
 use MooseX::Method::Signatures;
 extends 'Selenium::Remote::Driver';
 
+## no critic (RequireEndWithOne)
+# false positive (probably due to parsing Method Signatures)
+
 sub BUILD {
     my $self = shift;
 
