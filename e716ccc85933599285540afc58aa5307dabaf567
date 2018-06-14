@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_b7e11b01",
+        "filename": "t/api-rest/api-journals.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-14T16:44:30Z",
+      "side": 1,
+      "message": "rkrenn: could you test-run this? I am not sure, this has no side-effect",
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
