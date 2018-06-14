@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::CallListSuppression::Suppression;
+package NGCP::Panel::Form::CallListSuppression::SuppressionAPI;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';

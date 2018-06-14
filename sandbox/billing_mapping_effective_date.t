@@ -10,11 +10,9 @@ use Tie::IxHash;
 # try using the db directly ...
 my $schema = undef;
 
-eval <<'EVALLINE' ;
-    use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
-    use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
-    use NGCP::Schema;
-EVALLINE
+eval 'use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";';
+eval 'use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";';
+eval 'use NGCP::Schema;';
 
 print $@;
 unless ($@) {

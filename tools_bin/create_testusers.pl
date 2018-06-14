@@ -79,7 +79,7 @@ say "   sip-password=$password";
 say "   number-cc=$number_cc";
 say "   number-ac=$number_ac";
 print "Proceed <YES|no>: ";
-my $confirm = <STDIN>;
+my $confirm = <STDIN>;  ## no critic (ProhibitExplicitStdin)
 chomp $confirm;
 if($confirm eq "" || lc($confirm) eq "yes") {
     say "Proceeding as requested.";

@@ -1,5 +1,8 @@
+package NGCP::Panel::Utils::DialogicImg;
+
 use strict;
 use warnings;
+
 {
     package My::Serializer::Custom;
     use Moo;
@@ -41,8 +44,6 @@ use warnings;
             return $res;
     };
 }
-
-package NGCP::Panel::Utils::DialogicImg;
 
 use Moo;
 use Digest::MD5 qw/md5_hex/;

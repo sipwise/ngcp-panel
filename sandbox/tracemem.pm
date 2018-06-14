@@ -1,5 +1,5 @@
 
-## no critic (RequireUseWarnings, RequireUseStrict)
+## no critic (RequireUseWarnings, RequireUseStrict, RequireExplicitPackage)
 our $old = 0;
 BEGIN {
     unshift @INC, sub {
