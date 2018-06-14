@@ -60,10 +60,15 @@ my @opt_spec = (
                 }
             }else{#takes value
                 if($opt_spec->{$key} =~/i\@$/){
-#                    $val ="1,5,10..13,4";
-                    $val=~s/-/../g;
+                    # $val = "1,5,10-13,4";
                     my @vals;
-                    eval "\@vals = ($val);";
+                    for my $range (split /,/, $val) {
+                        if ( my ($start, $end) = ($range =~ m/([0-9]+)-([0-9]+)/) ) {
+                           push @vals, ($start .. $end);
+                        } else {
+                            push @vals, $range;
+                        }
+                    }
                     $res = " --$key=".join(" --$key=", @vals);
                 }else{
                     $res = " --$key=$val ";
