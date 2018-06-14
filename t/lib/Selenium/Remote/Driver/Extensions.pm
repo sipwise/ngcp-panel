@@ -66,4 +66,7 @@ sub browser_name_in {
     return scalar grep {/^$browser_name$/} @names;
 }
 
+## no critic (RequireEndWithOne)
+# false positive (probably due to parsing Method Signatures)
+
 1;
