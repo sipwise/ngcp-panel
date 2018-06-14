@@ -63,7 +63,7 @@ my @opt_spec = (
 #                    $val ="1,5,10..13,4";
                     $val=~s/-/../g;
                     my @vals;
-                    eval "\@vals = ($val);";
+                    eval "\@vals = ($val);";  ## no critic (ProhibitStringyEval)
                     $res = " --$key=".join(" --$key=", @vals);
                 }else{
                     $res = " --$key=$val ";
