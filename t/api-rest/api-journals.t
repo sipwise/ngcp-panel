@@ -1,4 +1,6 @@
-#use Sipwise::Base;
+use warnings;
+use strict;
+
 use Net::Domain qw(hostfqdn);
 use JSON -support_by_pp, -no_export;
 use Test::More;
