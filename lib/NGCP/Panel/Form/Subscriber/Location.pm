@@ -34,6 +34,16 @@ has_field 'q' => (
     },
 );
 
+has_field 'socket' => (
+    type => 'Text',
+    label => 'Socket',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Points to the LB interface from which the incoming calls to this registration should be sent out.']
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
