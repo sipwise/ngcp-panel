@@ -58,6 +58,17 @@ has_field 'nat' => (
         title => ['The registered contact is detected as behind NAT.']
     },
 );
+
+has_field 'socket' => (
+    type => 'Text',
+    label => 'Socket',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Points to the LB interface from which the incoming calls to this registration should be sent out.']
+    },
+);
+
 sub validate_q {
     my ($self,$field) = @_;
     if(($field->value < -1) || ($field->value > 1)){
@@ -66,6 +77,8 @@ sub validate_q {
     }
     return 1;
 }
+
+
 =pod
 sub validate {
     my $self = shift;
