@@ -41,10 +41,10 @@ EOF
 }
 
 sub create_location {
-    my ($c, $prov_subscriber, $contact, $q, $expires, $flags, $cflags) = @_;
-
+    my ($c, $prov_subscriber, $params) = @_;
+    my($contact, $q, $expires, $flags, $cflags) = @$params{qw/contact q expires flags cflags/};
     my $aor = get_aor($c, $prov_subscriber);
-    my $path = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
+    my $path = compose_location_path($c, $prov_subscriber, $params);#compose path from path or socket from params
     if ($expires) {
         $expires = NGCP::Panel::Utils::DateTime::from_string($expires)->epoch;
         $expires //= 0;
@@ -106,6 +106,37 @@ sub get_aor{
     my ($c, $prov_subscriber) = @_;
     return $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
 }
+
+sub compose_location_path {
+    my ($c, $params) = @_;
+#path: <sip:lb@127.0.0.1;lr;received=sip:10.15.17.50:32997;socket=sip:10.15.17.198:5060>
+#The "path" uri points to the sip_int on the LB node to which this subscriber belongs.
+#The "received" parameter uri is equal to the contact provided in the registrations.
+#The "socket" points to the LB interface from which the incoming calls to this registration should be sent out.
+    my $socket = $params->{socket};
+    my $path_default = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
+    if (!$socket) {
+        #user selected default outbound option
+        return $path_default;
+    }
+    my $lb_clusters = $c->config->{cluster_sets};
+    my $subscriber_lb_ptr_preference_rs = NGCP::Panel::Utils::Preferences::get_nested_preference_rs(
+        $c, 
+        'lbrtp_set', 
+        $prov_subscriber, 
+        { 
+            type => 'usr', 
+            'order' => [qw/prof dom/]
+        },
+    );
+    my $subscriber_lb_ptr = $subscriber_lb_ptr_preference_rs->first->value;
+    if (!$subscriber_lb_ptr) {
+        $subscriber_lb_ptr = $lb_clusters->{$lb_clusters->{default}};
+    }
+    my $path = '<'.$subscriber_lb_ptr.';received=sip:'.$params->{contact}.';socket=sip:'.$socket.'>';
+    return $path;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:

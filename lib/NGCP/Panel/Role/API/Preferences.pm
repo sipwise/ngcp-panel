@@ -404,59 +404,26 @@ sub _item_rs {
 
 sub get_preference_rs {
     my ($self, $c, $type, $elem, $attr) = @_;
-
-    my $rs;
-    if($type eq "domains") {
-        $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-            c => $c,
-            attribute => $attr,
-            prov_domain => $elem,
-        );
-    } elsif($type eq "profiles") {
-        $rs = NGCP::Panel::Utils::Preferences::get_prof_preference_rs(
-            c => $c,
-            attribute => $attr,
-            profile => $elem,
-        );
-    } elsif($type eq "subscribers") {
-        $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c,
-            attribute => $attr,
-            prov_subscriber => $elem,
-            ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") ? (subscriberadmin => 1) : (),
-        );
-    } elsif($type eq "peerings") {
-        $rs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-            c => $c,
-            attribute => $attr,
-            peer_host => $elem,
-        );
-    } elsif($type eq "pbxdevicemodels") {
-        $rs = NGCP::Panel::Utils::Preferences::get_dev_preference_rs(
-            c => $c,
-            attribute => $attr,
-            device => $elem,
-        );
-    } elsif($type eq "pbxdeviceprofiles") {
-        $rs = NGCP::Panel::Utils::Preferences::get_devprof_preference_rs(
-            c => $c,
-            attribute => $attr,
-            profile => $elem,
-        );
-    } elsif($type eq "pbxdevices") {
-        $rs = NGCP::Panel::Utils::Preferences::get_fielddev_preference_rs(
-            c => $c,
-            attribute => $attr,
-            device => $elem,
-        );
-    } elsif($type eq "contracts") {
-        $rs = NGCP::Panel::Utils::Preferences::get_contract_preference_rs(
-            c => $c,
-            attribute => $attr,
-            contract => $elem,
-            location_id => $c->request->param('location_id') || undef,
-        );
-    }
+    my $params => {
+        location_id     => $c->request->param('location_id') || undef,
+        subscriberadmin => ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") ? 1 : 0,
+    };
+    my $container_api_to_pref_sign = {
+        'domains'           => 'dom',
+        'profiles'          => 'prof',
+        'subscribers'       => 'usr',
+        'peerings'          => 'peer',
+        'pbxdevicemodels'   => 'dev',
+        'pbxdeviceprofiles' => 'devprof',
+        'pbxdevices'        => 'fielddev',
+        'contracts'         => 'contract',
+    };
+    my $rs = NGCP::Panel::Utils::Preferences::get_preference_rs(
+        $c,
+        $container_api_to_pref_sign->{$type},
+        $elem,
+        $attr,
+    );
     return $rs;
 }
 
