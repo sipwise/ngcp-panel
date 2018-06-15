@@ -957,6 +957,122 @@ sub get_preferences_rs {
     return $pref_rs;
 }
 
+sub get_preference_rs {
+    my ($c, $type, $elem, $attr, $params) = @_;
+
+    my $location_id     = $params->{location_id} // undef;
+    my $subscriberadmin = $params->{subscriberadmin} // ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") ? 1 : 0;
+
+    my $rs;
+    if($type eq "dom") {
+        $rs = get_dom_preference_rs(
+            c => $c,
+            attribute => $attr,
+            prov_domain => $elem,
+        );
+    } elsif($type eq "prof") {
+        $rs = get_prof_preference_rs(
+            c => $c,
+            attribute => $attr,
+            profile => $elem,
+        );
+    } elsif($type eq "usr") {
+        $rs = get_usr_preference_rs(
+            c => $c,
+            attribute => $attr,
+            prov_subscriber => $elem,
+            $subscriberadmin ? (subscriberadmin => 1) : (),
+        );
+    } elsif($type eq "peer") {
+        $rs = get_peer_preference_rs(
+            c => $c,
+            attribute => $attr,
+            peer_host => $elem,
+        );
+    } elsif($type eq "dev") {
+        $rs = get_dev_preference_rs(
+            c => $c,
+            attribute => $attr,
+            device => $elem,
+        );
+    } elsif($type eq "devprof") {
+        $rs = get_devprof_preference_rs(
+            c => $c,
+            attribute => $attr,
+            profile => $elem,
+        );
+    } elsif($type eq "fielddev") {
+        $rs = get_fielddev_preference_rs(
+            c => $c,
+            attribute => $attr,
+            device => $elem,
+        );
+    } elsif($type eq "contract") {
+        $rs = get_contract_preference_rs(
+            c => $c,
+            attribute => $attr,
+            contract => $elem,
+            location_id => $location_id,
+        );
+    }
+    return $rs;
+}
+
+sub get_nested_preference_rs{
+    my ($c, $attr, $elem, $params) = @_;
+
+    my $type_order_default = {
+        'usr' => [qw/usr prof dom/],
+    };
+    my $elem_sub_type_id = {
+        usr => {
+            prof => $elem->voip_subscriber_profile,
+            dom => $elem->domain,
+        }
+    };
+    my $preference = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->find({ attribute => $attr });
+
+    my $type_meta = $params->{type} // 'usr';
+    my $type_order = $params->{order} // $type_order_default->{$type_meta};
+    my $provisioning_subscriber = $params->{provisioning_subscriber};
+
+
+    my $attribute_value_rs;
+    my $preference_desc = $preference->first->get_columns;
+    foreach my $preference_type ( grep {$preference_desc->{$_.'_pref'} } @{$type_order} ) {
+        my ($preference_elem_id, $preference_elem);
+        if ($preference_type eq $type_meta){
+            $preference_elem = $elem;
+         } else {
+            $preference_elem = $elem_sub_type_id->{$type_meta}->{$preference_type};
+        }
+        if ($preference_elem) {
+            $preference_elem_id = $preference_elem->id;
+        }
+        if ($preference_elem_id) {
+            #$attribute_value_rs = get_preferences_rs(
+            #    c => $c,
+            #    type => $preference_type,
+            #    attribute => $attr,
+            #    id => $preference_elem_id,
+            #);
+            $attribute_value_rs = get_preference_rs(
+                $c,
+                $preference_type,
+                $preference_elem,
+                $attr,
+                { exists $params->{subscriberadmin} ? (subscriberadmin => $params->{subscriberadmin} ) : () },
+            );
+            if ($attribute_value_rs->first) {
+                return $attribute_value_rs;
+            }
+        }
+    }
+    return $attribute_value_rs;
+}
+
 sub get_usr_preference_rs {
     my %params = @_;
 
