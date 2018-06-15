@@ -61,7 +61,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::RegisteredAPI", $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::LocationEntryAPI", $c);
 }
 
 sub hal_from_item {
@@ -110,6 +110,12 @@ sub resource_from_item {
     return unless($sub);
     $resource->{subscriber_id} = int($sub->id);
     $resource->{nat} = $resource->{cflags} & 64;
+    if ($resource->{path}) {
+        (my ($socket)) = $resource->{path} =~/;socket=([^>]+)>/;
+        if ($socket) {
+            $resource->{socket} = $socket;
+        }
+    }
 
     return $resource;
 }
@@ -196,18 +202,15 @@ sub update_item {
     if ($item && ref $item && !$create) {
         $self->delete_item($c, $item);
     }
-    my $cflags = 0;
-    $cflags |= 64 if($form->values->{nat});
-
+    my $values = $form->values;
+    $values->{flags} = 0;
+    $values->{cflags} = 0;
+    $values->{cflags} |= 64 if($values->{nat});
+    
     NGCP::Panel::Utils::Kamailio::create_location($c,
         $sub->provisioning_voip_subscriber,
-        $form->values->{contact},
-        $form->values->{q},
-        $form->values->{expires},
-        0, # flags
-        $cflags
+        $values
     );
-
     NGCP::Panel::Utils::Kamailio::flush($c);
 
     return $item;
