@@ -2,6 +2,97 @@
   "comments": [
     {
       "key": {
+        "uuid": "5ad0253b_d22a652c",
+        "filename": "sandbox/billing_mapping_effective_date.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-15T14:59:16Z",
+      "side": 1,
+      "message": "If you rewrite these as just eval \"use ...\"; then it will not complain about. It\u0027s one of the exceptions, check «perlcritic --doc ProhibitStringyEval».\n\nIf we do not have the allow_includes enabled, then we should.",
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_52c53559",
+        "filename": "share/tools/generate_invoices.pl",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-15T14:59:16Z",
+      "side": 1,
+      "message": "No need for the eval IMO. Something like this might do?\n\nmy @range \u003d split /-/, $val;\nmy @vals \u003d ($range[0]..$range[1]);",
+      "range": {
+        "startLine": 63,
+        "startChar": 18,
+        "endLine": 66,
+        "endChar": 80
+      },
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_b295a941",
+        "filename": "t/02pod.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-15T14:59:16Z",
+      "side": 1,
+      "message": "This one can also be made to work out-of-the-box with:\n\neval \u0027use Test::Pod\u0027;\n\nplan ... if $@ or not Test::Pod-\u003eVERSION(1.14);",
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_729f1160",
+        "filename": "t/03podcoverage.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-15T14:59:16Z",
+      "side": 1,
+      "message": "Same as the previous one.",
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_529c1569",
+        "filename": "t/03podcoverage.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-15T14:59:16Z",
+      "side": 1,
+      "message": "Ditto.",
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad0253b_b7e11b01",
         "filename": "t/api-rest/api-journals.t",
         "patchSetId": 2
@@ -13,6 +104,23 @@
       "writtenOn": "2018-06-14T16:44:30Z",
       "side": 1,
       "message": "rkrenn: could you test-run this? I am not sure, this has no side-effect",
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_32887922",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-15T14:59:16Z",
+      "side": 1,
+      "message": "Probably better to move this to the end next to the 1; so that it is obvious it is a FPOS.",
       "revId": "e716ccc85933599285540afc58aa5307dabaf567",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
