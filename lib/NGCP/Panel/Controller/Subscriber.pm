@@ -3936,10 +3936,13 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
     );
     if($posted && $form->validated) {
         try {
+            my $values = $form->values;
+            $values->{flags} = 0;
+            $values->{cflags} = 0;
+            $values->{cflags} |= 64 if($values->{nat});
             NGCP::Panel::Utils::Kamailio::create_location($c,
                 $c->stash->{subscriber}->provisioning_voip_subscriber,
-                $form->field('contact')->value,
-                $form->field('q')->value
+                $values
             );
             NGCP::Panel::Utils::Message::info(
                 c    => $c,

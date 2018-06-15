@@ -196,18 +196,15 @@ sub update_item {
     if ($item && ref $item && !$create) {
         $self->delete_item($c, $item);
     }
-    my $cflags = 0;
-    $cflags |= 64 if($form->values->{nat});
-
+    my $values = $form->values;
+    $values->{flags} = 0;
+    $values->{cflags} = 0;
+    $values->{cflags} |= 64 if($values->{nat});
+    
     NGCP::Panel::Utils::Kamailio::create_location($c,
         $sub->provisioning_voip_subscriber,
-        $form->values->{contact},
-        $form->values->{q},
-        $form->values->{expires},
-        0, # flags
-        $cflags
+        $values
     );
-
     NGCP::Panel::Utils::Kamailio::flush($c);
 
     return $item;
