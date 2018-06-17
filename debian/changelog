@@ -1,3 +1,12 @@
+ngcp-panel (6.2.1.6+0~mr6.2.1.6) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [68f4120] TT#37457 Update yealink provisioning server domain
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 17 Jun 2018 16:10:01 +0200
+
 ngcp-panel (6.2.1.5+0~mr6.2.1.5) unstable; urgency=medium
 
   [ Rene Krenn ]
