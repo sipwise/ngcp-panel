@@ -1,3 +1,13 @@
+ngcp-panel (5.5.5.2+0~mr5.5.5.2) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [fb415b9] TT#37457 Update yealink provisioning server domain
+  * [6fc305f] TT#32011 Fix connect to Panasonic RPS
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 17 Jun 2018 15:59:14 +0200
+
 ngcp-panel (5.5.5.1+0~mr5.5.5.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
