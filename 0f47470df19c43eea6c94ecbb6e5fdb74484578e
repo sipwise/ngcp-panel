@@ -46,6 +46,29 @@
       "revId": "0f47470df19c43eea6c94ecbb6e5fdb74484578e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_8886fab7",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 12
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-18T15:03:19Z",
+      "side": 0,
+      "message": "ok but what about this $item-\u003ecall_id ?",
+      "range": {
+        "startLine": 111,
+        "startChar": 64,
+        "endLine": 111,
+        "endChar": 80
+      },
+      "revId": "0f47470df19c43eea6c94ecbb6e5fdb74484578e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
