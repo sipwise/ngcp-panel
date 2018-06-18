@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_2db6d8dc",
+        "filename": "lib/NGCP/Panel/Form/BillingProfile/Reseller.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-18T11:11:22Z",
+      "side": 1,
+      "message": "Enable Advice of Charge support for the billing profile",
+      "range": {
+        "startLine": 53,
+        "startChar": 63,
+        "endLine": 53,
+        "endChar": 80
+      },
+      "revId": "bd24e4feba73d5d2263116e732f815e39945a941",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
