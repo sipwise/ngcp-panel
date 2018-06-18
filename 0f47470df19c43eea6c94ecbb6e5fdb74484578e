@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_2d601835",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 12
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-18T12:35:12Z",
+      "side": 0,
+      "message": "why should this method be removed ?\n\nthe current logic works as following:\n\n1. full collection GET returns json-hal list of calls\n2. item collection GET requires a call-id and returns a binary data .pcap\n\nor the implementation repeats the one in Role/Entities ?",
+      "range": {
+        "startLine": 93,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 16
+      },
+      "revId": "0f47470df19c43eea6c94ecbb6e5fdb74484578e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
