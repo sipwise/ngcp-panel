@@ -22,6 +22,30 @@
       "revId": "0f47470df19c43eea6c94ecbb6e5fdb74484578e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_4800e2aa",
+        "filename": "lib/NGCP/Panel/Controller/API/SIPCaptures.pm",
+        "patchSetId": 12
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-06-18T14:25:56Z",
+      "side": 0,
+      "message": "Yes, the GET is almost standard here, the only difference is input (tz) checking. It can be moved to input validation.",
+      "parentUuid": "5ad0253b_2d601835",
+      "range": {
+        "startLine": 93,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 16
+      },
+      "revId": "0f47470df19c43eea6c94ecbb6e5fdb74484578e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
