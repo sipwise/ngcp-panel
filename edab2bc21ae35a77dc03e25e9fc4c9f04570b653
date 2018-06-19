@@ -39,6 +39,24 @@
       "revId": "edab2bc21ae35a77dc03e25e9fc4c9f04570b653",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_a36f9891",
+        "filename": "t/api-rest/api-journals.t",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-19T15:21:53Z",
+      "side": 1,
+      "message": "for the meantime yes. this is written by rkrenn and somewhere it complains. the main goal for now is to make this repository clean from jenkins \"tap tests\" point of view so from here on improvements can be made. I can go over this with rkrenn when we have time",
+      "parentUuid": "5ad0253b_435e84ea",
+      "revId": "edab2bc21ae35a77dc03e25e9fc4c9f04570b653",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
