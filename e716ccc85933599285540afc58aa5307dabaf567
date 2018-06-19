@@ -160,6 +160,24 @@
       "revId": "e716ccc85933599285540afc58aa5307dabaf567",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_03bbedc5",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-19T12:58:08Z",
+      "side": 1,
+      "message": "doesn\u0027t work, because it exits with this error at the first \"method ...\"",
+      "parentUuid": "5ad0253b_32887922",
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
