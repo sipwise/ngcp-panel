@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5ad0253b_03940d35",
+        "filename": "sandbox/billing_mapping_effective_date.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2018-06-19T12:42:06Z",
+      "side": 1,
+      "message": "Nope, block eval does not work because the use gets processed at compile-time, so acts as if within a BEGIN block. This really needs a set of stringy evals. And we should just enable allow_includes for perlcritic globally.",
+      "parentUuid": "5ad0253b_83793d32",
+      "revId": "e716ccc85933599285540afc58aa5307dabaf567",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad0253b_52c53559",
         "filename": "share/tools/generate_invoices.pl",
         "patchSetId": 2
