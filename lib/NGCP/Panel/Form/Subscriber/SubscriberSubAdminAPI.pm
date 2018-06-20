@@ -143,6 +143,15 @@ has_field 'customer_id' => (
     },
 );
 
+has_field 'profile' => (
+    type => '+NGCP::Panel::Field::SubscriberProfile',
+    label => 'Subscriber Profile',
+    validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The profile defining the actual feature set for this subscriber.'],
+    },
+);
 
 has_field 'display_name' => (
     type => 'Text',
