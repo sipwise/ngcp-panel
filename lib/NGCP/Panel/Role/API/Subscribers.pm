@@ -327,6 +327,8 @@ sub prepare_resource {
         }
         $resource->{customer_id} = $pilot->account_id;
         $resource->{status} = 'active';
+        #deny to create subscriberadmin, the same as in the web ui
+        $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     }
     $resource->{e164} = delete $resource->{primary_number};
     $resource->{status} //= 'active';
