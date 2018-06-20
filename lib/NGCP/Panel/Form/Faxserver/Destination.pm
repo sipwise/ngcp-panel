@@ -28,7 +28,7 @@ has_field 'destination.id' => (
 );
 
 has_field 'destination.destination' => (
-    type => 'Email',
+    type => 'Text',
     label => 'Destination Email',
     required => 1,
     wrapper_class => [qw/hfh-rep-field/],
