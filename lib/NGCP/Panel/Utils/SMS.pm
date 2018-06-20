@@ -60,6 +60,7 @@ sub send_sms {
         );
     my $uri = URI->new($fullpath);
     $uri->query_form(
+            charset => "UTF-8",
             smsc => $smsc_peer,
             coding => $coding,
             user => "$user",
