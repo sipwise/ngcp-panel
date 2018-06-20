@@ -106,7 +106,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 my $smsc_peer = $smsc_peer_rs->first->value;
             }
 
-            my $created_item = NGCP::Utils::SMS::add_journal_record({
+            my $created_item = NGCP::Panel::Utils::SMS::add_journal_record(
                 c => $c,
                 prov_subscriber => $prov_dbalias->subscriber,
                 direction => "in",
@@ -117,7 +117,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 pcc_token => $pcc_token,
                 coding => $coding,
                 smsc_peer => $smsc_peer,
-            });
+            );
 
             # check for cfs
             {
@@ -199,7 +199,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 $c->log->info(">>>> forward sms to $dst");
 
                 my $pcc_status = $pcc_enabled ? "pending" : "none";
-                my $fwd_item = NGCP::Utils::SMS::add_journal_record({
+                my $fwd_item = NGCP::Panel::Utils::SMS::add_journal_record(
                     c => $c,
                     prov_subscriber => $prov_dbalias->subscriber,
                     direction => "forward",
@@ -210,7 +210,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                     pcc_token => $pcc_token,
                     coding => $coding,
                     smsc_peer => $smsc_peer,
-                });
+                );
 
                 if($pcc_enabled && $pcc_url) {
                     try {

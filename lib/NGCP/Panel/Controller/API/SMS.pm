@@ -180,7 +180,7 @@ sub create_item {
     #    }
     #}
 
-    my $item = NGCP::Utils::SMS::add_journal_record({
+    my $item = NGCP::Panel::Utils::SMS::add_journal_record(
         c => $c,
         prov_subscriber => $subscriber,
         direction => 'out',
@@ -191,7 +191,7 @@ sub create_item {
         status => $session->{status} // '',
         reason => $session->{reason} // '',
         smsc_peer => $smsc_peer,
-    });
+    );
 
     return $item;
 }
