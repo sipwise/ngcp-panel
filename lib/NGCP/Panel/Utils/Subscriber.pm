@@ -18,6 +18,7 @@ use NGCP::Panel::Utils::Generic;
 use NGCP::Panel::Utils::RedisLocationResultSet;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
+use HTTP::Status qw(:constants);
 use IPC::System::Simple qw/capturex/;
 use File::Slurp qw/read_file/;
 use Redis;
@@ -229,38 +230,10 @@ sub create_subscriber {
         }
     }
 
-    my ($profile_set, $profile);
-    #as we don't allow to change customer (l. 624), so we shouldn't allow profile_set that belongs to other reseller
-    my $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $profile_set_rs = $profile_set_rs->search({
-            reseller_id => $c->user->reseller_id,
-        });
-    }  elsif($c->user->roles eq "subscriberadmin") {
-        $profile_set_rs = $profile_set_rs->search({
-            reseller_id => $c->user->contract->contact->reseller_id,
-        });
-    }
-    if ($params->{profile_set}{id}) {
-        $profile_set = $profile_set_rs->find($params->{profile_set}{id});
-        unless($profile_set) {
-            die("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
-        }
-    }
-
-    if($params->{profile}{id}) {
-        $profile = $profile_set_rs->search_related_rs('voip_subscriber_profiles')->find({
-            id => $params->{profile}{id},
-        });
-        if (!$profile) {
-            die("invalid subscriber profile id '".$params->{profile}{id}."' detected");
-        }
-    }
-    if($profile_set && !$profile) {
-        $profile = $profile_set->voip_subscriber_profiles->find({
-            set_default => 1,
-        });
+    my($error,$profile_set,$profile) = check_profile_set_and_profile($c, $params);
+    if ($error) {
+        $params{error}->{extended} = $error if ref $params{error} eq 'HASH';
+        die($error->{error});
     }
 
     $params->{timezone} = $params->{timezone}->{name} if 'HASH' eq ref $params->{timezone};
@@ -481,6 +454,135 @@ sub create_subscriber {
 
         return $billing_subscriber;
     });
+}
+
+sub check_profile_set_and_profile {
+    my ($c, $resource, $subscriber) = @_;
+    
+    my ($profile_set, $profile, $profile_set_rs);
+    my $schema = $c->model('DB');
+
+    my $prov_subscriber;
+    if ($subscriber) { #edit
+        $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        #as we don't allow to change customer (l. 624), so we shouldn't allow profile_set that belongs to other reseller
+        #this restriction also is related to admin, so we don't allow to make data uncoordinated
+        $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets')->search({
+            'me.reseller_id' => $subscriber->contract->contact->reseller_id,
+        });
+    } else {
+        $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets');
+    }
+    if($c->user->roles eq "admin") {
+        #we allow to admins (both superadmin and reseller admin roles)
+        #to pick any profile_set, even not linked to pilot. 
+        #it may lead to situation when subscriberadmin will not see profile options, as profile ajax call is based on pilot profile_set setting
+    } elsif($c->user->roles eq "reseller") {
+        $profile_set_rs = $profile_set_rs->search({
+            'me.reseller_id' => $c->user->reseller_id,
+        });
+    }  elsif($c->user->roles eq "subscriberadmin") {
+        if ($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->profile_set_id) {
+            #$c->user->voip_subscriber->provisioning_voip_subscriber->profile_set_id
+            #this is new condition, as now we allow subscriberadmin to edit subscribers using API
+            #(and previousely we allowed to add)
+            #and subscriberadmin should operate in boundaries of his own profile_set
+            $profile_set_rs = $profile_set_rs->search({
+                'me.id' => $c->stash->{pilot}->provisioning_voip_subscriber->profile_set_id
+            });
+        } else {
+            #subscriberadmin is not supposed to add a pilot,
+            #pilot will be created first by force, if not exists (at least in web ui)
+            #but this situation still is possible if pilot doesn't have profile_set setting
+            #we will check at least reseller
+            $profile_set_rs = $profile_set_rs->search({
+                'me.reseller_id' => $c->user->contract->contact->reseller_id
+            });
+        }
+    }
+    if ($resource->{profile_set}{id}) {
+        $profile_set = $profile_set_rs->find($resource->{profile_set}{id});
+        unless($profile_set) {
+            return {
+                error         => "invalid subscriber profile set id '" . $resource->{profile_set}{id} . "'",
+                description   => "Invalid profile_set_id parameter",
+                response_code => HTTP_UNPROCESSABLE_ENTITY,
+            };
+        }
+    } elsif (!exists $resource->{profile_set}{id} #we are in subscriberadmin web UI
+        && $c->user->roles eq "subscriberadmin"
+        && $prov_subscriber #edit
+    ) {
+        #this is for subscriberadmin web ui to edit subscriber. 
+        #Edit subscriber form for subscriberadmin doesn't contain profile_set control
+        # => subscriberadmin can't manage profile_set via web ui
+        #here we will provide profile_set so below we can check profile id
+        #Note 1: We ignore here checking of belongings to logged in subscriberadmin
+        #for backward compatibility (if profile_set was set somewhen before - we will not do something special with it)
+        #Note 2: Here we may go to conflict between current pilot profile_set 
+        #and current subscriber profile_set. 
+        #If subscriberadmin picked one of pilot.profile_set.profile, that is shown in the form 
+        # => we will fail in this absolutely correct value.
+        #role, add or edit,  pbx or not, what is pilot profile-set
+        
+        $profile_set = $prov_subscriber->voip_subscriber_profile_set;
+        if (!$profile_set && $c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set) {
+            $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
+        }
+    } elsif (!exists $resource->{profile_set}{id} 
+        && $c->user->roles eq "subscriberadmin") {
+        #this part is for subscriber creation by subscriberadmin through API
+        #this form doesn't suppose profile_set field.
+        if ($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set) {
+            $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
+        }
+    }
+
+    if($profile_set && $resource->{profile}{id}) {
+        $profile = $profile_set->voip_subscriber_profiles->find({
+            id => $resource->{profile}{id},
+        });
+    }
+    if($profile_set && !$profile) {
+        $profile = $profile_set->voip_subscriber_profiles->find({
+            set_default => 1,
+        });
+    }
+    if ($resource->{profile}{id}) {
+        if (!$profile || ($resource->{profile}{id} && $resource->{profile}{id} != $profile->id)) {
+            return {
+                error         => "invalid subscriber profile id '" . $resource->{profile}{id} . "'",
+                description   => "Invalid profile_id parameter",
+                response_code => HTTP_UNPROCESSABLE_ENTITY,
+            };
+        }
+    }
+
+    # if the profile changed, clear any preferences which are not in the new profile
+    #in create use case we don't have prov_subscriber
+    if($prov_subscriber && $prov_subscriber->voip_subscriber_profile) {
+        my %old_profile_attributes = map { $_ => 1 }
+            $prov_subscriber->voip_subscriber_profile
+            ->profile_attributes->get_column('attribute_id')->all;
+        if($profile) {
+            foreach my $attr_id($profile->profile_attributes->get_column('attribute_id')->all) {
+                delete $old_profile_attributes{$attr_id};
+            }
+        }
+        if(keys %old_profile_attributes) {
+            my $cfs = $schema->resultset('voip_preferences')->search({
+                id => { -in => [ keys %old_profile_attributes ] },
+                attribute => { -in => [qw/cfu cfb cft cfna cfs cfr/] },
+            });
+            $prov_subscriber->voip_usr_preferences->search({
+                attribute_id => { -in => [ keys %old_profile_attributes ] },
+            })->delete;
+            $prov_subscriber->voip_cf_mappings->search({
+                type => { -in => [ map { $_->attribute } $cfs->all ] },
+            })->delete;
+        }
+    }
+    return 0, $profile_set, $profile;
 }
 
 sub update_preferences {

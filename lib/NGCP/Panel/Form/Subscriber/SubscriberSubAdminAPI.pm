@@ -143,6 +143,15 @@ has_field 'customer_id' => (
     },
 );
 
+has_field 'profile' => (
+    type => '+NGCP::Panel::Field::SubscriberProfile',
+    label => 'Subscriber Profile',
+    validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The profile defining the actual feature set for this subscriber.'],
+    },
+);
 
 has_field 'display_name' => (
     type => 'Text',
@@ -155,18 +164,18 @@ has_field 'display_name' => (
 );
 
 has_field 'alias_numbers' => (
-    type => '+NGCP::Panel::Field::AliasNumber',
-    setup_for_js => 1,
+    type => 'Repeatable',
     do_wrapper => 1,
     do_label => 0,
-    tags => {
-        controls_div => 1,
-    },
     wrapper_class => [qw/hfh-rep/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Additional E.164 numbers (each containing a cc, ac and sn attribute) mapped to this subscriber for inbound calls.'],
     },
+);
+
+has_field 'alias_numbers.contains' => (
+    type => '+NGCP::Panel::Field::E164',
 );
 
 has_field 'is_pbx_pilot' => (
