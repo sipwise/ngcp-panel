@@ -479,6 +479,15 @@ sub process_data{
     #incorrect place, leave it for the next timeframe to work on it
     #$self->load_db($data);
 }
+
+sub apply_data {
+    my($self, $alternative_data) = @_;
+    foreach my $collection (keys %$alternative_data) {
+        my @keys = keys %{$alternative_data->{$collection}};
+        @{$self->{data}->{$collection}->{data}}{@keys} = @{$alternative_data->{$collection}}{@keys};
+    }
+}
+
 sub load_db{
     my($self,$data,$collections_slice) = @_;
     $data //= $self->data;
