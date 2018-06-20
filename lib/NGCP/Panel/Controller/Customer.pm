@@ -530,7 +530,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
             my $schema = $c->model('DB');
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
-                foreach(qw/contact billing_profile profile_package product subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
+                foreach(qw/contact billing_profile profile_package subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
