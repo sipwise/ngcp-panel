@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_2cbff5d1",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1000006
+      },
+      "writtenOn": "2018-06-21T14:41:04Z",
+      "side": 1,
+      "message": "AFAIR the logic of boolean preference is such that if it\u0027s enabled, there is a row with value 1, else no row is created at all.\nSo maybe we should keep here in that case the value from the billing mapping? Else we\u0027d loose it in my opinion, but maybe I\u0027ve missed something.",
+      "range": {
+        "startLine": 230,
+        "startChar": 12,
+        "endLine": 230,
+        "endChar": 28
+      },
+      "revId": "d9e56ff605cd51e03311308659a0a8ee0711a199",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
