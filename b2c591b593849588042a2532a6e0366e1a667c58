@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_c9d193fd",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-21T07:51:33Z",
+      "side": 1,
+      "message": "andreas, pls check this part:\n\nthe \"prepaid\" subscriber flag still exists, to support a manual override of what\u0027s scheduled from the billing profiles.\n\nthis prevents breaking i-new (which so far is the only one using (prepaid) sms)",
+      "range": {
+        "startLine": 221,
+        "startChar": 4,
+        "endLine": 221,
+        "endChar": 35
+      },
+      "revId": "b2c591b593849588042a2532a6e0366e1a667c58",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
