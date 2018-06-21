@@ -546,7 +546,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                         my ($err,@fields) = @_;
                         die( [$err, "showdetails"] );
                     });
-                #delete $form->values->{product_id};
+                delete $form->values->{product_id};
 
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
                 my $old_ext_id = $contract->external_id // '';
