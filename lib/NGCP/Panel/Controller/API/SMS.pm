@@ -127,6 +127,9 @@ sub create_item {
             callee => $resource->{callee}
         );
         unless ($session && $session->{status} eq 'ok') {
+            NGCP::Panel::Utils::SMS::cancel_prepaid_billing(c => $c,
+                session => $session
+            );
             die($session->{reason} //
                 "Internal server error when preparing sms billing");
         }
