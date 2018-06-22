@@ -78,7 +78,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
             my $pcc_timeout = $c->config->{pcc}->{timeout};
             my $pcc_enabled = 0;
             my ($pcc_uuid, $pcc_token);
-            my $smsc_peer = '';
+            my $smsc_peer = 'default';
             UUID::generate($pcc_uuid);
             UUID::unparse($pcc_uuid, $pcc_token);
             my $fwd_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -103,7 +103,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 prov_domain => $prov_dbalias->domain,
             );
             if ($smsc_peer_rs && $smsc_peer_rs->first && $smsc_peer_rs->first->value) {
-                my $smsc_peer = $smsc_peer_rs->first->value;
+                $smsc_peer = $smsc_peer_rs->first->value;
             }
 
             my $created_item = NGCP::Panel::Utils::SMS::add_journal_record(
@@ -113,10 +113,12 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                 caller => $from,
                 callee => $to,
                 text => $text,
-                pcc_status => "none",
+                pcc_status => "pending",
                 pcc_token => $pcc_token,
                 coding => $coding,
                 smsc_peer => $smsc_peer,
+                reason => "accepted",
+                status => "received",
             );
 
             # check for cfs
@@ -210,6 +212,8 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                     pcc_token => $pcc_token,
                     coding => $coding,
                     smsc_peer => $smsc_peer,
+                    reason => "forwarded",
+                    status => $pcc_status,
                 );
 
                 if($pcc_enabled && $pcc_url) {
