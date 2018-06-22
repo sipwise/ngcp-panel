@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_8c2f29a1",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-22T10:57:33Z",
+      "side": 0,
+      "message": "not too cosmetic? :-)",
+      "range": {
+        "startLine": 141,
+        "startChar": 12,
+        "endLine": 141,
+        "endChar": 14
+      },
+      "revId": "10c3d4cc0e5735c2ee8841e04f18be5de22db82b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
