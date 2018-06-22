@@ -117,7 +117,7 @@ sub create_item {
     }
     my $test_mode = $c->request->params->{test_mode} // '';
     my $session;
-    my $smsc_peer = '';
+    my $smsc_peer = 'default';
     try {
         my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
         $session = NGCP::Panel::Utils::SMS::init_prepaid_billing(c => $c,
@@ -138,7 +138,7 @@ sub create_item {
             prov_domain => $subscriber->domain,
         );
         if ($smsc_peer_rs && $smsc_peer_rs->first && $smsc_peer_rs->first->value) {
-            my $smsc_peer = $smsc_peer_rs->first->value;
+            $smsc_peer = $smsc_peer_rs->first->value;
         }
 
         if ( 'dont_send_sms' ne $test_mode ) {
