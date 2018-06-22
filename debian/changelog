@@ -1,3 +1,16 @@
+ngcp-panel (6.3.1.5+0~mr6.3.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b1a8dc9] TT#38400 fix customer contract editing
+
+  [ Kirill Solomko ]
+  * [61ae94e] TT#39165 sms_jorunal adjustments
+  * [7b91bca] TT#39168 SMS: prepaid_billing fix error session closing
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 22 Jun 2018 17:40:44 +0200
+
 ngcp-panel (6.3.1.4+0~mr6.3.1.4) unstable; urgency=medium
 
   [ Kirill Solomko ]
