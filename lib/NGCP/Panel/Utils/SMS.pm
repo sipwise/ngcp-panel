@@ -303,13 +303,9 @@ sub perform_prepaid_billing {
     my (%args) = @_;
     my $c = $args{c};
     my $session = $args{session} // return;
-    my ($amqr, $rpc, $status, $reason, $parts) =
-        @{$session}{qw(amqr_h rpc status reason parts)};
-
-    return unless $session;
-    return unless $amqr;
-
-    $reason //= 'unknown';
+    my $amqr    = $args{amqr_h} // return;
+    my ($rpc, $status, $reason, $parts) =
+        @{$session}{qw(rpc status reason parts)};
 
     if ($status eq 'ok' && $rpc == $#{$parts}+1) {
         foreach my $sess (@{$parts}) {
@@ -318,13 +314,28 @@ sub perform_prepaid_billing {
         }
         NGCP::Rating::Inew::SmsSession::destroy($amqr);
     } else {
-        foreach my $sess (@{$parts}) {
-            NGCP::Rating::Inew::SmsSession::session_set_cancel_reason($sess, $reason);
-            NGCP::Rating::Inew::SmsSession::session_sms_discard($sess);
-            NGCP::Rating::Inew::SmsSession::session_destroy($sess);
-        }
-        NGCP::Rating::Inew::SmsSession::destroy($amqr);
+        cancel_prepaid_billing(%args);
     }
+    return;
+}
+
+sub cancel_prepaid_billing {
+    my (%args) = @_;
+    my $c = $args{c};
+    my $session = $args{session} // return;
+    my $amqr    = $args{amqr_h} // return;
+    my ($rpc, $status, $reason, $parts) =
+        @{$session}{qw(rpc status reason parts)};
+
+    $reason //= 'unknown';
+
+    foreach my $sess (@{$parts}) {
+        NGCP::Rating::Inew::SmsSession::session_set_cancel_reason($sess, $reason);
+        NGCP::Rating::Inew::SmsSession::session_sms_discard($sess);
+        NGCP::Rating::Inew::SmsSession::session_destroy($sess);
+    }
+    NGCP::Rating::Inew::SmsSession::destroy($amqr);
+
     return;
 }
 
