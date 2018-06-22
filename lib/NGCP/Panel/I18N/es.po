@@ -448,6 +448,10 @@ msgstr "Administrador actualizado con éxito"
 msgid "Administrators"
 msgstr "Administradores"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Advice of charge type"
+msgstr ""
+
 #: share/templates/subscriber/master.tt
 msgid "Alias Numbers"
 msgstr "Alias Numbers"
@@ -944,6 +948,16 @@ msgstr ""
 #, fuzzy
 msgid "CLI of CloudPBX Pilot Subscriber"
 msgstr "CLI del usuario principal de la Cloud PBX"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CLIP no screening"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"CLIP no screening, when enabled the UPN in From is not checked by "
+"allowed_clis"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "CLIR"
@@ -1847,6 +1861,10 @@ msgstr ""
 msgid ""
 "Define an action to be executed if User-Provided Number doesn't match the "
 "'allowed_clis' list"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Define the way \"advice of charge\" message will be sent."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5177,6 +5195,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Override clir"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "P-Asserted-Identity CLIR"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "P-Asserted-Identity is anonymized if enabled"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
