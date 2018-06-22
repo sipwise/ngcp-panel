@@ -118,6 +118,7 @@ sub create_item {
     my $test_mode = $c->request->params->{test_mode} // '';
     my $session;
     my $smsc_peer = 'default';
+    my $pp_billing_performed = 0;
     try {
         my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
         $session = NGCP::Panel::Utils::SMS::init_prepaid_billing(c => $c,
@@ -157,14 +158,23 @@ sub create_item {
             );
 
         }
+
         NGCP::Panel::Utils::SMS::perform_prepaid_billing(c => $c,
             session => $session
         );
+        $pp_billing_performed = 1;
+
         if ($session->{status} eq 'failed') {
             die $session->{reason}."\n";
         }
+
     } catch($e) {
         $c->log->error($e);
+        unless ($pp_billing_performed) {
+            NGCP::Panel::Utils::SMS::cancel_prepaid_billing(c => $c,
+                session => $session
+            );
+        }
         if ($session && $session->{reason} eq 'insufficient credit') {
             $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send the sms");
         } else {
