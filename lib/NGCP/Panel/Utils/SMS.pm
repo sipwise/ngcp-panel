@@ -355,6 +355,8 @@ sub add_journal_record {
         $cli = defined $pref_rs_cli->first ? $pref_rs_cli->first->value : '';
     }
 
+    $args{cli} = $cli;
+
     return $c->model('DB')->resultset('sms_journal')->create(\%args);
 }
 
