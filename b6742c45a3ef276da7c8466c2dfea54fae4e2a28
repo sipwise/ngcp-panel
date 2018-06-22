@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_77e7fa40",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-22T13:49:38Z",
+      "side": 1,
+      "message": "my $billing_done \u003d 0;",
+      "revId": "b6742c45a3ef276da7c8466c2dfea54fae4e2a28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_b7c47292",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-22T13:49:38Z",
+      "side": 1,
+      "message": "would move that to lower part, to also cover other cases when aborted",
+      "range": {
+        "startLine": 130,
+        "startChar": 12,
+        "endLine": 132,
+        "endChar": 14
+      },
+      "revId": "b6742c45a3ef276da7c8466c2dfea54fae4e2a28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_57e4fe39",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-22T13:49:38Z",
+      "side": 1,
+      "message": "$billing_done \u003d 1;",
+      "revId": "b6742c45a3ef276da7c8466c2dfea54fae4e2a28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_f7c9caad",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-22T13:49:38Z",
+      "side": 1,
+      "message": "unless ($billing_done) {\n  eval {\n\n    NGCP::Panel::Utils::SMS::cancel_prepaid_billing(c \u003d\u003e $c,\n      session \u003d\u003e $session\n   );\n  };\n}",
+      "revId": "b6742c45a3ef276da7c8466c2dfea54fae4e2a28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_d7ceceb3",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-22T13:49:38Z",
+      "side": 1,
+      "message": "unless ($billing_done) {\n  eval {\n\n    NGCP::Panel::Utils::SMS::cancel_prepaid_billing(c \u003d\u003e $c,\n      session \u003d\u003e $session\n   );\n  };\n}",
+      "revId": "b6742c45a3ef276da7c8466c2dfea54fae4e2a28",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
