@@ -16,6 +16,24 @@
       "revId": "50f0cbe8f63c8d378cca4b59f09f5714fa04a3cb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_97f616d6",
+        "filename": "lib/NGCP/Panel/Controller/API/SMS.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-22T14:24:14Z",
+      "side": 1,
+      "message": "from the libinewrate code it does not change the reason nor status when a session is cancelled",
+      "parentUuid": "5ad0253b_57699e8a",
+      "revId": "50f0cbe8f63c8d378cca4b59f09f5714fa04a3cb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
