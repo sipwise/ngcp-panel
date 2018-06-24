@@ -1587,17 +1587,21 @@ sub apply_rewrite {
         $replace = qq{"$replace"};
 
         my $found;
+        $c->log->debug(">>>>>>>>>>> apply matches");
         #print ">>>>>>>>>>> apply matches\n";
         foreach my $m(@{ $match }) {
+            $c->log->debug(">>>>>>>>>>>     m=$m, r=$replace;");
             #print ">>>>>>>>>>>     m=$m, r=$replace\n";
             if($callee =~ s/$m/$replace/eeg) {
                 # we only process one match
+                $c->log->debug(">>>>>>>>>>> match found, callee=$callee;");
                 #print ">>>>>>>>>>> match found, callee=$callee\n";
                 $found = 1;
                 last;
             }
         }
         last if $found;
+        $c->log->debug(">>>>>>>>>>> done, match=$match, replace=$replace, callee is $callee;");
         #print ">>>>>>>>>>> done, match=$match, replace=$replace, callee is $callee\n";
     }
 
