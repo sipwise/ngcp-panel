@@ -5,7 +5,6 @@ use warnings;
 use DateTime::TimeZone::OffsetOnly;
 use File::Find::Rule;
 use File::Slurp qw(read_file);
-use List::MoreUtils qw(apply);
 use POSIX;
 use Time::Local;
 
@@ -22,7 +21,7 @@ sub get_host_list {
                     ->mindepth( 1 )
                     ->maxdepth( 1 )
                     ->in('/var/lib/collectd/rrd');
-    @hosts = sort {$a cmp $b} apply { s|.*/|| } @hosts;
+    @hosts = sort {$a cmp $b} map { s|.*/||r } @hosts;
     return \@hosts;
 }
 
@@ -34,7 +33,7 @@ sub get_host_subdirs {
                     ->mindepth( 1 )
                     ->maxdepth( 1 )
                     ->in('/var/lib/collectd/rrd/' . $host);
-    @dirs = sort {$a cmp $b} apply { s|.*/|| } @dirs;
+    @dirs = sort {$a cmp $b} map { s|.*/||r } @dirs;
     return \@dirs;
 }
 
@@ -45,7 +44,7 @@ sub get_rrd_files {
                     ->mindepth( 1 )
                     ->maxdepth( 1 )
                     ->in('/var/lib/collectd/rrd/' . $host . '/' . $folder);
-    @rrds = sort {$a cmp $b} apply { s|.*/|| } @rrds;
+    @rrds = sort {$a cmp $b} map { s|.*/||r } @rrds;
     return \@rrds;
 }
 

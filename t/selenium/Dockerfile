@@ -39,7 +39,7 @@ RUN apt-get --assume-yes -f install
 # this is a workaround until upstream released v1.21:
 RUN wget https://deb.sipwise.com/files/libselenium-remote-driver-perl_1.20-0.1-git-16.orig.tar.xz
 RUN tar xvf libselenium-remote-driver-perl_1.20-0.1-git-16.orig.tar.xz
-RUN apt-get --assume-yes -f install libarchive-zip-perl libfile-which-perl libhttp-message-perl libio-string-perl libjson-perl liblist-moreutils-perl libmoo-perl libnamespace-clean-perl libsub-install-perl libtest-longstring-perl libtest-time-perl libtry-tiny-perl libwww-perl libxml-simple-perl
+RUN apt-get --assume-yes -f install libarchive-zip-perl libfile-which-perl libhttp-message-perl libio-string-perl libjson-perl libmoo-perl libnamespace-clean-perl libsub-install-perl libtest-longstring-perl libtest-time-perl libtry-tiny-perl libwww-perl libxml-simple-perl
 RUN wget https://deb.sipwise.com/files/geckodriver-v0.18.0-linux64.tar.gz
 RUN tar xvf geckodriver-v0.18.0-linux64.tar.gz
 RUN ln -s /home/selenium/geckodriver /usr/bin/geckodriver
