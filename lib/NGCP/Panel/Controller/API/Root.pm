@@ -158,7 +158,7 @@ sub GET : Allow {
         my $sorting_cols = [];
         my ($explicit_order_cols, $explicit_order_cols_params);
         if ($full_mod->can('order_by_cols')) {
-            ($explicit_order_cols,$explicit_order_cols_params) = $full_mod->order_by_cols();
+            ($explicit_order_cols,$explicit_order_cols_params) = $full_mod->order_by_cols($c);
             $sorting_cols = [ sort keys %$explicit_order_cols ];
             $explicit_order_cols_params //= {};
         }

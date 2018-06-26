@@ -59,10 +59,19 @@ sub query_params {
 }
 
 sub order_by_cols {
-    return {
+    my ($self, $c) = @_;
+    my $cols = {
         'timestamp' => 'me.timestamp',
         'type' => 'me.type',
     };
+    my $params = $c->request->params;
+    if (defined $c->request->params->{type}) {
+        #fax_journal and othre type tables does not have 'timestamp' field ('time' instead in fax_journal). 
+        #So in unwrapped query (e.g. when we ask fax_journal by querying type=fax), we need to refer to timestamp - alias of the "time" field, without table alias prefix "me."
+        $cols->{type} = 'type';
+        $cols->{type} = 'timestamp';
+    }
+    return $cols;
 }
 
 1;
