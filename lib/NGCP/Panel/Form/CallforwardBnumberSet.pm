@@ -59,8 +59,7 @@ has_field 'bnumbers.number' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Matches the B-Number (original number dialled by the caller) in E164 format. ' .
-            'Shell patterns like 431* or 49123~[1-5~]67 are possible. ' .
-            'Use &quot;anonymous&quot; to match suppressed numbers.'],
+            'Shell patterns like 431* or 49123~[1-5~]67 are possible.'],
     },
 );
 
