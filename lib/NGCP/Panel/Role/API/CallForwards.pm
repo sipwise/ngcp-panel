@@ -181,7 +181,7 @@ sub update_item {
         my $mapping_count = $mapping->count;
         my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, prov_subscriber => $prov_subs, attribute => $type);
-        my ($dset, $tset, $sset);
+        my ($dset, $tset, $sset, $bset);
         if ($mapping_count == 0) {
             next unless (defined $resource->{$type});
             $mapping = $c->model('DB')->resultset('voip_cf_mappings')->create({
@@ -197,6 +197,7 @@ sub update_item {
             $dset = $mapping->destination_set;
             $tset = $mapping->time_set;
             $sset = $mapping->source_set;
+            $bset = $mapping->bnumber_set;
         }
 
         try {
@@ -258,6 +259,21 @@ sub update_item {
                     $mapping->update({source_set_id => $sset->id});
                 }
             }
+            if ($bset) {
+                if ((defined $resource->{$type}{bnumbers}) && @{ $resource->{$type}{bnumbers}}) {
+                    $bset->voip_cf_bnumbers->delete; #empty bset
+                } else {
+                    $mapping_count && $mapping->update({bnumber_set_id => undef});
+                    if ($bset->name =~ m/^quickset_/) {
+                        $bset->delete; # delete bset
+                    }
+                }
+            } else {
+                if ((defined $resource->{$type}{bnumbers}) && @{ $resource->{$type}{bnumbers}}) {
+                    $bset = $mapping->create_related('bnumber_set', {'name' => "quickset_$type", subscriber_id => $prov_subscriber_id,} );
+                    $mapping->update({bnumber_set_id => $bset->id});
+                }
+            }
             for my $d (@{ $resource->{$type}{destinations} }) {
                 delete $d->{destination_set_id};
                 delete $d->{simple_destination};
@@ -279,6 +295,18 @@ sub update_item {
             for my $s (@{ $resource->{$type}{sources} }) {
                 delete $s->{source_set_id};
                 $sset->voip_cf_sources->update_or_create($s);
+            }
+            for my $b (@{ $resource->{$type}{bnumbers} }) {
+                delete $b->{bnumber_set_id};
+                $bset->voip_cf_bnumbers->update_or_create($b);
+            }
+            if (@{ $resource->{$type}{sources} } > 0 &&
+                $sset->mode ne $resource->{$type}{sources_mode}) {
+                $sset->update({mode => $resource->{$type}{sources_mode}});
+            }
+            if (@{ $resource->{$type}{bnumbers} } > 0 &&
+                $bset->mode ne $resource->{$type}{bnumbers_mode}) {
+                $bset->update({mode => $resource->{$type}{bnumbers_mode}});
             }
 
             $dset->discard_changes if $dset; # update destinations
@@ -322,11 +350,13 @@ sub update_item {
 
 sub _contents_from_cfm {
     my ($self, $c, $cfm_item, $sub) = @_;
-    my (@times, @destinations, @sources);
+    my (@times, @destinations, @sources, @bnumbers);
     my $timeset_item = $cfm_item->time_set;
     my $dset_item = $cfm_item->destination_set;
     my $sourceset_item = $cfm_item->source_set;
     my $sourceset_mode = $sourceset_item ? $sourceset_item->mode : 'whitelist';
+    my $bnumberset_item = $cfm_item->bnumber_set;
+    my $bnumberset_mode = $bnumberset_item ? $bnumberset_item->mode : 'whitelist';
     for my $time ($timeset_item ? $timeset_item->voip_cf_periods->all : () ) {
         push @times, {$time->get_inflated_columns};
         delete @{$times[-1]}{'time_set_id', 'id'};
@@ -348,8 +378,13 @@ sub _contents_from_cfm {
         push @sources, {$source->get_inflated_columns};
         delete @{$sources[-1]}{'source_set_id', 'id'};
     }
+    for my $bnumber ($bnumberset_item ? $bnumberset_item->voip_cf_bnumbers->all : () ) {
+        push @bnumbers, {$bnumber->get_inflated_columns};
+        delete @{$bnumbers[-1]}{'bnumber_set_id', 'id'};
+    }
     return {times => \@times, destinations => \@destinations,
-            sources => \@sources, sources_mode => $sourceset_mode};
+            sources => \@sources, sources_mode => $sourceset_mode,
+            bnumbers => \@bnumbers, bnumbers_mode => $bnumberset_mode};
 }
 
 1;

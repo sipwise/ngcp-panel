@@ -411,7 +411,7 @@ sub get_field_poperties :Private{
             $name = 'country';
         } elsif($field->type =~ /LnpCarrier$/) {
             $name = 'carrier_id';
-        } elsif($field->type !~ /Regex|EmailList|Identifier|PosInteger|Interval|Select|DateTime|URI|IPAddress|DatePicker|ProfileNetwork/) { # ...?
+        } elsif($field->type !~ /Regex|EmailList|Identifier|PosInteger|Interval|Select|DateTime|URI|IPAddress|DatePicker|ProfileNetwork|CFSimpleAPICompound/) { # ...?
             $name .= '_id';
         }
     }
