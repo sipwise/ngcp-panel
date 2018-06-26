@@ -696,7 +696,7 @@ sub paginate_order_collection_rs {
     if ($order_by) {
         my $explicit_order_col_spec;
         if ($self->can('order_by_cols')) {
-            my($explicit_order_cols,$explicit_order_cols_params) = $self->order_by_cols();
+            my($explicit_order_cols,$explicit_order_cols_params) = $self->order_by_cols($c);
             $explicit_order_col_spec = $explicit_order_cols->{$order_by};
             $explicit_order_cols_params //= {};
             if ( exists $explicit_order_cols_params->{$order_by}->{join} ) {
