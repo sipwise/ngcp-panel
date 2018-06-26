@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_1d8d8531",
+        "filename": "lib/NGCP/Panel/Field/CFSimpleAPICompound.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-26T15:21:35Z",
+      "side": 1,
+      "message": "todo, but unrelated to this issue: times should be described in more detail. also destinations.priority and destinations.simple_destination are not reflected here in the Form",
+      "revId": "b80318db558f60ba13d2ee1f6abd818aa50b24c1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
