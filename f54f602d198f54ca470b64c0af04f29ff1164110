@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5ad0253b_7d4b595a",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 3942,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-26T12:36:28Z",
+      "side": 1,
+      "message": "but is this related to this thing with wrapping the location with the port sip? maybe better separate commit otherwise",
+      "parentUuid": "5ad0253b_3d2601bb",
+      "revId": "f54f602d198f54ca470b64c0af04f29ff1164110",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad0253b_d23ffcd4",
         "filename": "lib/NGCP/Panel/Form/Subscriber/Registered.pm",
         "patchSetId": 9
@@ -88,6 +106,97 @@
         "endLine": 110,
         "endChar": 25
       },
+      "revId": "f54f602d198f54ca470b64c0af04f29ff1164110",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_1d522514",
+        "filename": "lib/NGCP/Panel/Utils/Kamailio.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-26T12:36:28Z",
+      "side": 1,
+      "message": "here you have it.. curious: is it the only appearance so far?",
+      "range": {
+        "startLine": 125,
+        "startChar": 75,
+        "endLine": 125,
+        "endChar": 99
+      },
+      "revId": "f54f602d198f54ca470b64c0af04f29ff1164110",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_9d3755e3",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 1021,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-26T12:36:28Z",
+      "side": 1,
+      "message": "ok this sub is supposed to retrieve a parent pref value, if any. so get_parent_preference_rs might be more appropirate name?\n\nright now it seems somewhat aligned to susbcriber related prefs.",
+      "revId": "f54f602d198f54ca470b64c0af04f29ff1164110",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_7d3479dd",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-26T12:36:28Z",
+      "side": 1,
+      "message": "ok, diamond resolution; maybe also add contract level in there? [qw/usr prof contract dom/]",
+      "revId": "f54f602d198f54ca470b64c0af04f29ff1164110",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_5d31bdeb",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-26T12:36:28Z",
+      "side": 1,
+      "message": "maybe only fetch whats needed by \"order\" (which can be passed also)",
+      "revId": "f54f602d198f54ca470b64c0af04f29ff1164110",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_3d4de172",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 1073,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-26T12:36:28Z",
+      "side": 1,
+      "message": "nice sub after all!",
       "revId": "f54f602d198f54ca470b64c0af04f29ff1164110",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
