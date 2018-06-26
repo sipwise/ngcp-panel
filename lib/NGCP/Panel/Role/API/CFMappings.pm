@@ -55,6 +55,13 @@ sub hal_from_item {
                     sourceset => undef,
                     sourceset_id => undef,
                 ),
+                $mapping->bnumber_set ? (
+                    bnumberset => $mapping->bnumber_set->name,
+                    bnumberset_id => $mapping->bnumber_set->id,
+                ) : (
+                    bnumberset => undef,
+                    bnumberset_id => undef,
+                ),
             };
     }
 
@@ -145,6 +152,7 @@ sub update_item {
     my $dsets_rs = $c->model('DB')->resultset('voip_cf_destination_sets');
     my $tsets_rs = $c->model('DB')->resultset('voip_cf_time_sets');
     my $ssets_rs = $c->model('DB')->resultset('voip_cf_source_sets');
+    my $bsets_rs = $c->model('DB')->resultset('voip_cf_bnumber_sets');
 
     for my $type ( qw/cfu cfb cft cfna cfs/) {
         if (ref $resource->{$type} ne "ARRAY") {
@@ -213,10 +221,30 @@ sub update_item {
                 return;
             }
 
+            my $bset; my $has_bset;
+            if (defined $mapping->{bnumberset_id}) {
+                $bset = $bsets_rs->find({
+                    subscriber_id => $p_subs_id,
+                    id => $mapping->{bnumberset_id},
+                });
+                $has_bset = 1;
+            } elsif (defined $mapping->{bnumberset}) {
+                $bset = $bsets_rs->find({
+                    subscriber_id => $p_subs_id,
+                    name => $mapping->{bnumberset},
+                });
+                $has_bset = 1;
+            }
+            if($has_bset && !$bset) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'bnumberset'. Could not be found.");
+                return;
+            }
+
             push @new_mappings, $mappings_rs->new_result({
                     destination_set_id => $dset->id,
                     time_set_id => $tset ? $tset->id : undef,
                     source_set_id => $sset ? $sset->id : undef,
+                    bnumber_set_id => $bset ? $bset->id : undef,
                     type => $type,
                 });
         }

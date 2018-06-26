@@ -58,6 +58,7 @@ $ua = Test::Collection->new()->ua();
         calls => 1,
         capabilities => 1,
         ccmapentries => 1,
+        cfbnumbersets => 1,
         cfdestinationsets => 1,
         cfmappings => 1,
         cfsourcesets => 1,
