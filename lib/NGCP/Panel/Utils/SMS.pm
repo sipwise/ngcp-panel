@@ -273,10 +273,15 @@ sub init_prepaid_billing {
                 $has_credit = 0;
         });
 
-        unless($sess) {
+        if (not defined $sess || $sess == -1) {
             $c->log->error("Failed to create sms rating session from $caller to $callee with session id $this_session_id");
             $session->{status} = 'failed';
             $session->{reason} = 'failed to create sms session';
+            last;
+        } elsif ($sess == 0) {
+            $c->log->error("Remote denied sms rating session from $caller to $callee with session id $this_session_id (subscriber=inactive)");
+            $session->{status} = 'failed';
+            $session->{reason} = 'remote denied sms session (subscriber=inactive)';
             last;
         }
 
