@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "5ad0253b_1d790594",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 3942,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-26T12:41:36Z",
+      "side": 1,
+      "message": "out of curiosity: it is defined here: https://gerrit.mgm.sipwise.com/gitweb?p\u003dtemplates.git;a\u003dblob;f\u003dkamailio/proxy/kamailio.cfg;hb\u003dHEAD#l187",
+      "parentUuid": "5ad0253b_3d2601bb",
+      "revId": "f54f602d198f54ca470b64c0af04f29ff1164110",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad0253b_d23ffcd4",
         "filename": "lib/NGCP/Panel/Form/Subscriber/Registered.pm",
         "patchSetId": 9
