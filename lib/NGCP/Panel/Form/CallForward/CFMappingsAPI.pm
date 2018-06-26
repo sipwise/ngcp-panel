@@ -106,6 +106,17 @@ has_field 'cfu.sourceset_id' => (
     do_label => 0,
 );
 
+has_field 'cfu.bnumberset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfu.bnumberset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfb.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -135,6 +146,17 @@ has_field 'cfb.sourceset' => (
 );
 
 has_field 'cfb.sourceset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfb.bnumberset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfb.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
 );
@@ -172,6 +194,17 @@ has_field 'cft.sourceset_id' => (
     do_label => 0,
 );
 
+has_field 'cft.bnumberset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cft.bnumberset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfna.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -205,6 +238,17 @@ has_field 'cfna.sourceset_id' => (
     do_label => 0,
 );
 
+has_field 'cfna.bnumberset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfna.bnumberset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfs.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -234,6 +278,17 @@ has_field 'cfs.sourceset' => (
 );
 
 has_field 'cfs.sourceset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfs.bnumberset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfs.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
 );
