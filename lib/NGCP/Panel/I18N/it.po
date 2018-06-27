@@ -389,6 +389,10 @@ msgid "Accept"
 msgstr "Accetta"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Accept Auto-Answer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Access Restrictions"
 msgstr "Restrizioni di Accesso"
 
@@ -4612,13 +4616,9 @@ msgstr "Limite"
 msgid ""
 "List of audio and video codecs to whitelist or blacklist. Valid codecs names "
 "are G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, "
-"DVI4, G729, AMR, opus, telephone-event, CelB, JPEG, H261, H263, H263-1998, "
-"MPV, MP2T, nv, vp8, vp9 and h264."
+"DVI4, G729, AMR, AMR-WB, opus, telephone-event, CelB, JPEG, H261, H263, "
+"H263-1998, MPV, MP2T, nv, vp8, vp9 and h264."
 msgstr ""
-"Lista dei codec audio e video consentiti o negati. Nomi codec validi sono "
-"G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, DVI4, "
-"G729, AMR, opus, telephone-event, CelB, JPEG, H261, H263, H263-1998, MPV, "
-"MP2T, nv, vp8, vp9 and h264."
 
 #: share/templates/sound/handles_list.tt
 msgid "Load Default Files"
@@ -5825,6 +5825,18 @@ msgstr "Profili"
 #: share/templates/subscriber/preferences.tt
 msgid "Protocol"
 msgstr "Protocollo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Provide Auto-Answer header to the called user if the UA provides this header "
+"or dials a Vertical Service Code"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Provide Auto-Answer header to this subscriber if requested by the remote "
+"user agent"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -7334,6 +7346,10 @@ msgstr "Configurazione casella vocale aggiornata con successo"
 msgid "Sunday"
 msgstr "Domenica"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Support Auto-Answer"
+msgstr ""
+
 #: share/templates/statistics/versions.tt
 msgid "Support Status"
 msgstr "Stato Supporto"
@@ -8456,6 +8472,17 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid ""
+#~ "List of audio and video codecs to whitelist or blacklist. Valid codecs "
+#~ "names are G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, "
+#~ "G728, DVI4, G729, AMR, opus, telephone-event, CelB, JPEG, H261, H263, "
+#~ "H263-1998, MPV, MP2T, nv, vp8, vp9 and h264."
+#~ msgstr ""
+#~ "Lista dei codec audio e video consentiti o negati. Nomi codec validi sono "
+#~ "G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, "
+#~ "DVI4, G729, AMR, opus, telephone-event, CelB, JPEG, H261, H263, "
+#~ "H263-1998, MPV, MP2T, nv, vp8, vp9 and h264."
 
 #~ msgid "Pre-call cost announcements"
 #~ msgstr "Costo annuncio di Pre-Chiamata"

@@ -332,6 +332,10 @@ msgid "Accept"
 msgstr "Aceptar"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Accept Auto-Answer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Access Restrictions"
 msgstr "Restricciones de Acceso"
 
@@ -4495,8 +4499,8 @@ msgstr "Limitar"
 msgid ""
 "List of audio and video codecs to whitelist or blacklist. Valid codecs names "
 "are G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, "
-"DVI4, G729, AMR, opus, telephone-event, CelB, JPEG, H261, H263, H263-1998, "
-"MPV, MP2T, nv, vp8, vp9 and h264."
+"DVI4, G729, AMR, AMR-WB, opus, telephone-event, CelB, JPEG, H261, H263, "
+"H263-1998, MPV, MP2T, nv, vp8, vp9 and h264."
 msgstr ""
 
 #: share/templates/sound/handles_list.tt
@@ -5678,6 +5682,18 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "Protocol"
 msgstr "Protocolo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Provide Auto-Answer header to the called user if the UA provides this header "
+"or dials a Vertical Service Code"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Provide Auto-Answer header to this subscriber if requested by the remote "
+"user agent"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -7174,6 +7190,10 @@ msgstr "Buzón modificado con éxito"
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "Sunday"
 msgstr "Domingo"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Support Auto-Answer"
+msgstr ""
 
 #: share/templates/statistics/versions.tt
 msgid "Support Status"
