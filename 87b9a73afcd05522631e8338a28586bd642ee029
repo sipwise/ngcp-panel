@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_38884f22",
+        "filename": "lib/NGCP/Panel/Controller/API/Conversations.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-28T11:45:26Z",
+      "side": 1,
+      "message": "as you explained, should be also checked for ambigous colnames when narrowed to types other than \"fax\".",
+      "revId": "87b9a73afcd05522631e8338a28586bd642ee029",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
