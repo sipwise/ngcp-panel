@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_ec72187c",
+        "filename": "lib/NGCP/Panel.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-29T12:57:50Z",
+      "side": 1,
+      "message": "maybe better put the regexp match at the end",
+      "range": {
+        "startLine": 268,
+        "startChar": 16,
+        "endLine": 268,
+        "endChar": 60
+      },
+      "revId": "6bedc1c3e60e6a0dd21d391f30e2236e8328b942",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
