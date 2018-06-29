@@ -428,6 +428,7 @@ sub _get_call_rs {
         }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT,@suppression_aliases);
         my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
             destination_user_id => $uuid,
+            source_user_id => { '!=' => $uuid }, 
         }),NGCP::Panel::Utils::CallList::SUPPRESS_IN,@suppression_aliases);
 
         $self->_apply_direction(params => $params,
