@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Subscriber::RegisteredAPI;
+package NGCP::Panel::Form::Subscriber::LocationEntryAPI;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Subscriber::LocationEntry';

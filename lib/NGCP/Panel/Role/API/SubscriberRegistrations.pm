@@ -61,7 +61,7 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::RegisteredAPI", $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::LocationEntryAPI", $c);
 }
 
 sub hal_from_item {
