@@ -16,6 +16,24 @@
       "revId": "d416d7be494ef5a60cfb4f10f39171a6f82ca502",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_8ce2849e",
+        "filename": "share/templates/subscriber/preferences.tt",
+        "patchSetId": 5
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-29T15:23:09Z",
+      "side": 1,
+      "message": "I added the \"New\" to make it a bit clearer.\n\nI will rename the column \"To\" to \"To (B-Numbers)\"",
+      "parentUuid": "5ad0253b_cc107c51",
+      "revId": "d416d7be494ef5a60cfb4f10f39171a6f82ca502",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
