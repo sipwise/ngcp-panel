@@ -189,14 +189,14 @@ sub get {
         my $action_config = $self->get_config('action');
 
         if( ( defined $header_accept
-                && ($header_accept ne 'application/json')
-                && ($header_accept ne '*/*')
+                && ($header_accept !~ m!\bapplication/json\b|\b\*/\*\b!) # application/json OR */*
             )
             || ( $action_config->{GET}->{ReturnContentType}
                 && $action_config->{GET}->{ReturnContentType} ne 'application/json'
             )
         ) {
             $self->return_requested_type($c,$id,$item);
+            # in case this method is not defined, we should return a reasonable error explaining the Accept Header
             return;
         }
 
