@@ -353,7 +353,11 @@ sub _get_call_rs {
     my %params = @_;
     my ($c,$uuid,$contract_id,$provider_id,$params) = @params{qw/c uuid contract_id provider_id params/};
 
-    my $rs = $c->model('DB')->resultset('cdr');
+    my $rs = $c->model('DB')->resultset('cdr')->search_rs({
+        -not => [
+            { 'destination_domain_in' => 'vsc.local' },
+        ],
+    });
 
     $rs = $self->_apply_timestamp_from_to(rs => $rs,params => $params,col => 'me.start_time');
 
