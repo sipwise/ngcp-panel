@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_ac9300fa",
+        "filename": "lib/NGCP/Panel/Controller/API/CFBNumberSetsItem.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-06-29T15:55:32Z",
+      "side": 1,
+      "message": "rkrenn, ipeshinskaya: how do I correctly call this journal method in the Entities approach? or is it called automatically?",
+      "revId": "5e62ef67705e7bb4e691af3ae41712153c331fb5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
