@@ -260,9 +260,23 @@ __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
 # configure Data::HAL depending on our config
 {
     my $panel_config = get_panel_config;
-    if ($panel_config->{appearance}{api_embedded_forcearray}) {
+    if ($panel_config->{appearance}{api_embedded_forcearray} || $panel_config->{appearance}{api_links_forcearray}) {
         require Data::HAL;
-        $Data::HAL::__forcearray_underneath = {embedded => 1};
+        *{Data::HAL::forcearray_policy} = sub {
+            my ($self, $root, $property_type, $relation, $property) = @_;
+            my $embedded = $root->embedded ? $root->embedded->[0] : undef;
+            if ($embedded && $relation =~/^ngcp:[a-z0-9]+$/ 
+                && ( (   $property_type eq 'links' &&  $panel_config->{appearance}{api_links_forcearray} ) 
+                    || ( $property_type eq 'embedded' &&  $panel_config->{appearance}{api_embedded_forcearray})
+                )
+            ) {
+                return 1;
+            }
+            if (!$embedded && $relation =~/^ngcp:[a-z0-9]+$/ 
+                && ( ( $property_type eq 'links' &&  $panel_config->{appearance}{api_links_forcearray} ) ) ) {
+                return 1;
+            }
+        };
     }
 }
 
