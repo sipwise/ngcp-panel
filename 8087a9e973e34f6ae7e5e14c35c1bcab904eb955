@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_4cd58c41",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/Registered.pm",
+        "patchSetId": 16
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-29T12:29:13Z",
+      "side": 1,
+      "message": "can we rename it into LocationEntry ?",
+      "range": {
+        "startLine": 1,
+        "startChar": 39,
+        "endLine": 1,
+        "endChar": 50
+      },
+      "revId": "8087a9e973e34f6ae7e5e14c35c1bcab904eb955",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_2cca50a2",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/RegisteredAPI.pm",
+        "patchSetId": 16
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-29T12:29:13Z",
+      "side": 1,
+      "message": "LocationEntryAPI",
+      "range": {
+        "startLine": 1,
+        "startChar": 39,
+        "endLine": 1,
+        "endChar": 52
+      },
+      "revId": "8087a9e973e34f6ae7e5e14c35c1bcab904eb955",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_0ccf94b1",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/RegisteredAPI.pm",
+        "patchSetId": 16
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-29T12:29:13Z",
+      "side": 1,
+      "message": "LocationEntry",
+      "range": {
+        "startLine": 4,
+        "startChar": 40,
+        "endLine": 4,
+        "endChar": 50
+      },
+      "revId": "8087a9e973e34f6ae7e5e14c35c1bcab904eb955",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
