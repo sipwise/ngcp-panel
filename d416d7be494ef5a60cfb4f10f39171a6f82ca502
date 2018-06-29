@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_cc107c51",
+        "filename": "share/templates/subscriber/preferences.tt",
+        "patchSetId": 5
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-06-29T10:40:50Z",
+      "side": 1,
+      "message": "i know naming is painful (A,B,C \u003c-vs-\u003e source, destination, b-number) - i would however just suggest to align this here to what you call the stuff in the forms.",
+      "revId": "d416d7be494ef5a60cfb4f10f39171a6f82ca502",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
