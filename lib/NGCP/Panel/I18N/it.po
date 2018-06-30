@@ -744,6 +744,19 @@ msgstr "Disponibile"
 msgid "Away"
 msgstr "Assente"
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "B-Number Set"
+msgstr ""
+
+#. (maps.bset_name)
+#: share/templates/subscriber/preferences.tt
+msgid "B-Number Set \"%1\" Details"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "B-Number Sets"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "BLF Key"
 msgstr "Tasto BLF"
@@ -2964,6 +2977,10 @@ msgstr "Eliminazione dello slot IVR fallita"
 msgid "Failed to delete billing zone"
 msgstr "Eliminazione della zona di fatturazione fallita"
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete bnumber set"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
 msgid "Failed to delete call list suppression."
 msgstr ""
@@ -3308,6 +3325,10 @@ msgstr "Aggiornamento profilo di fatturazione fallito"
 #: lib/NGCP/Panel/Controller/Voucher.pm
 msgid "Failed to update billing voucher"
 msgstr "Aggiornamento voucher fallito"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to update bnumber set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
 msgid "Failed to update call list suppression"
@@ -5114,6 +5135,10 @@ msgstr "Network-Provided Display Name"
 
 #: share/templates/subscriber/preferences.tt
 msgid "New CLI"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "New Destinations"
 msgstr ""
 
 #: share/templates/widgets/subscriber_vm_overview.tt
@@ -7198,6 +7223,10 @@ msgid "Successfully deleted auto attendant slot"
 msgstr "Slot IVR eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted bnumber set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted ccmapping"
 msgstr "ccmapping eliminato con successo"
 
@@ -7273,6 +7302,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated auto attendant slots"
 msgstr "Slot IVR aggiornati con successo"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully updated bnumber set"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated ccmappings"
@@ -7721,6 +7754,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "To"
 msgstr "A"
+
+#: share/templates/subscriber/preferences.tt
+msgid "To (B-Numbers)"
+msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Tools"
@@ -8256,6 +8293,10 @@ msgstr "anonimo"
 #: share/templates/subscriber/preferences.tt
 msgid "any"
 msgstr "qualsiasi"
+
+#: share/templates/subscriber/preferences.tt
+msgid "any number"
+msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "billing profile default"
