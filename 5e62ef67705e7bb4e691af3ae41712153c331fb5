@@ -16,6 +16,24 @@
       "revId": "5e62ef67705e7bb4e691af3ae41712153c331fb5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_8f1716ed",
+        "filename": "lib/NGCP/Panel/Controller/API/CFBNumberSetsItem.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-06-30T01:17:27Z",
+      "side": 1,
+      "message": "Hello Gerhard,\n\nNow no one collection that call this method is under Entities really. So we can decide it if we want to make this call configurable, or we can call it everytime manually in the method update_item_model, that is supposed to keep model saving logic.",
+      "parentUuid": "5ad0253b_ac9300fa",
+      "revId": "5e62ef67705e7bb4e691af3ae41712153c331fb5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
