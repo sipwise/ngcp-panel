@@ -1,3 +1,44 @@
+ngcp-panel (6.2.2.1+0~mr6.2.2.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [21d9477] TT#36061 CallRouting: fix peer selection
+  * [46f30fa] TT#35714 use collection_nav_links in all API controllers
+  * [2e8d885] TT#35714 fix collection_nav_links object name
+
+  [ Rene Krenn ]
+  * [8c73de4] TT#33369 remove check for LI number in 3306 db (again)
+  * [2492ef2] TT#35662 move product_id to billing.contracts
+  * [066b4d9] Revert "TT#35662 move product_id to billing.contracts"
+  * [09c3c46] Revert "Revert "TT#35662 move product_id to billing.contracts""
+  * [70b163d] TT#37706 fix journal HEAD
+  * [6bca060] TT#38400 fix customer contract editing
+
+  [ Irina Peshinskaya ]
+  * [852d09c] TT#35607 Consider no_count query parameter and infinite next link
+  * [26438cd] TT#35607 Fix tests. Consider possible empty last page
+  * [92f2934] TT#35516 Apply simplest filter logic for subscribersregistrations
+  * [0440e0d] TT#35429 Allow both 0/1 an true/false as boolean input in /api/admins
+  * [6771d42] TT#35429 Fix using boolean json strings in /api/admins
+  * [0a7e733] TT#35702 Fix phonebooks tests
+  * [d1c4425] TT#36056 Clear close_target after inbound rules prioritisation
+  * [7e2e0ed] TT#36057 Workaround rsvg-convert multiple scaling using gs
+  * [25e7181] TT#37552 Fix formatting - add missed newline
+  * [aa50776] TT#37552 Fix formatting - remove duplicated commit call
+  * [eba0d6f] TT#37684 Fix broken journal rails
+  * [191d983] TT#37684 Fix broken journal rails - remove debug
+  * [1d661e8] TT#37951 Fix regression made in /api/admins
+  * [008d34d] TT#37457 Update yealink provisioning server domain
+
+  [ Andreas Granig ]
+  * [6940ca3] TT#36224 Fix showing loc entries when ignore realm
+
+  [ Andrew Pogrebennyk ]
+  * [3fb5ae2] TT#36224 Show loc entries in /api/subscriberregistrations when ignore realm
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 02 Jul 2018 12:24:13 +0200
+
 ngcp-panel (6.2.2.0+0~mr6.2.2.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
