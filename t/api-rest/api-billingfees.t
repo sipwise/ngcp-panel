@@ -98,10 +98,12 @@ $test_machine->check_bundle();
     ($res, $z_fee, $req) = $test_machine->check_item_get($test_machine->normalize_uri($res->header('Location')),"fetch profile fee with new implicit zone");
     ok(exists $z_fee->{billing_zone_id} && $z_fee->{billing_zone_id} > $test_machine->DATA_ITEM->{billing_zone_id}, "check if implicit zone returns a new zone id");
 
-    ($req,$res,$content) = $test_machine->request_delete($test_machine->normalize_uri($z_fee->{_links}->{'ngcp:billingzones'}->{href}));
+    my $href = ref $z_fee->{_links}->{'ngcp:billingzones'} eq 'ARRAY'
+        ? $z_fee->{_links}->{'ngcp:billingzones'}->[0]->{href}
+        : $z_fee->{_links}->{'ngcp:billingzones'}->{href};
+    ($req,$res,$content) = $test_machine->request_delete($test_machine->normalize_uri($href));
     is($res->code, 204, "delete new implicit zone");
-
-    ($res) = $test_machine->request_get($test_machine->normalize_uri($z_fee->{_links}->{'self'}->{href}));
+    ($res) = $test_machine->request_get($test_machine->normalize_uri($href));
     is($res->code, 404, "check if fee is deleted when zone is deleted");    
 }
 
