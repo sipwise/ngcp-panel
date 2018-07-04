@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_e068d9bc",
+        "filename": "lib/NGCP/Panel/Field/CFSimpleAPICompound.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-04T12:04:43Z",
+      "side": 1,
+      "message": "what is the difference to adding ie. times.hour etc. in CFSimpleAPI.pm?\n\n\ntrying to follow; your proposal is to get rid of the 29 appearances of the construct\n\nhas_field \u0027xyz\u0027 \u003d\u003e (\n    type \u003d\u003e \u0027Compound\u0027,\n\nwhat will be the advantage, also regarding the graphs for swagger? or is this required to enable the nested formhandler validation? (afair this happens in api code explicitly usually.)",
+      "revId": "a8309fb339e60cb7237a597c0dec19b40457c74e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
