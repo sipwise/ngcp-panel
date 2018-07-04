@@ -315,6 +315,15 @@ sub validate_fields {
                 }
             }
         }
+        if (defined $resource->{$k} &&
+                $fields->{$k}->$_isa('HTML::FormHandler::Field::Compound') &&
+                "HASH" eq ref $resource->{$k}) {
+            my @compound_subfields = $fields->{$k}->fields;
+            if (@compound_subfields) {
+                my %subfields = map { $_->name => $_ } @compound_subfields;
+                $self->validate_fields($c, $resource->{$k}, \%subfields, $run);
+            }
+        }
 
         # only do this for converting back from obj to hal
         # otherwise it breaks db fields with the \0 and \1 notation
