@@ -21,10 +21,42 @@ has_field 'destinations.announcement_id' => (
     type => 'PosInteger',
 );
 
+has_field 'destinations.simple_destination' => (
+    type => 'Text',
+);
+
+has_field 'destinations.priority' => (
+    type => 'Integer',
+);
+
 has_field 'times' => (
     type => 'Repeatable',
     do_wrapper => 1,
     do_label => 0,
+);
+
+has_field 'times.hour' => (
+    type => 'Text',
+);
+
+has_field 'times.mday' => (
+    type => 'Text',
+);
+
+has_field 'times.minute' => (
+    type => 'Text',
+);
+
+has_field 'times.month' => (
+    type => 'Text',
+);
+
+has_field 'times.wday' => (
+    type => 'Text',
+);
+
+has_field 'times.year' => (
+    type => 'Text',
 );
 
 has_field 'sources' => (
