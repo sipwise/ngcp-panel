@@ -46,6 +46,11 @@ has_field 'sources_mode' => (
     default => 'whitelist',
 );
 
+has_field 'sources_is_regex' => (
+    type => 'Boolean',
+    default => 0,
+);
+
 has_field 'bnumbers' => (
     type => 'Repeatable',
     do_wrapper => 1,
@@ -63,6 +68,11 @@ has_field 'bnumbers_mode' => (
         { value => 'blacklist', label => 'Blacklist' },
     ],
     default => 'whitelist',
+);
+
+has_field 'bnumbers_is_regex' => (
+    type => 'Boolean',
+    default => 0,
 );
 
 no Moose;

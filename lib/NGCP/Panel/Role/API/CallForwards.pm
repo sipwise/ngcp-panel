@@ -304,9 +304,17 @@ sub update_item {
                 $sset->mode ne $resource->{$type}{sources_mode}) {
                 $sset->update({mode => $resource->{$type}{sources_mode}});
             }
+            if (@{ $resource->{$type}{sources} } > 0 &&
+                $sset->is_regex ne $resource->{$type}{sources_is_regex}) {
+                $sset->update({is_regex => $resource->{$type}{sources_is_regex}});
+            }
             if (@{ $resource->{$type}{bnumbers} } > 0 &&
                 $bset->mode ne $resource->{$type}{bnumbers_mode}) {
                 $bset->update({mode => $resource->{$type}{bnumbers_mode}});
+            }
+            if (@{ $resource->{$type}{bnumbers} } > 0 &&
+                $bset->is_regex ne $resource->{$type}{bnumbers_is_regex}) {
+                $bset->update({is_regex => $resource->{$type}{bnumbers_is_regex}});
             }
 
             $dset->discard_changes if $dset; # update destinations
@@ -355,8 +363,10 @@ sub _contents_from_cfm {
     my $dset_item = $cfm_item->destination_set;
     my $sourceset_item = $cfm_item->source_set;
     my $sourceset_mode = $sourceset_item ? $sourceset_item->mode : 'whitelist';
+    my $sourceset_is_regex = $sourceset_item ? $sourceset_item->is_regex : 0;
     my $bnumberset_item = $cfm_item->bnumber_set;
     my $bnumberset_mode = $bnumberset_item ? $bnumberset_item->mode : 'whitelist';
+    my $bnumberset_is_regex = $bnumberset_item ? $bnumberset_item->is_regex : 0;
     for my $time ($timeset_item ? $timeset_item->voip_cf_periods->all : () ) {
         push @times, {$time->get_inflated_columns};
         delete @{$times[-1]}{'time_set_id', 'id'};
@@ -383,8 +393,8 @@ sub _contents_from_cfm {
         delete @{$bnumbers[-1]}{'bnumber_set_id', 'id'};
     }
     return {times => \@times, destinations => \@destinations,
-            sources => \@sources, sources_mode => $sourceset_mode,
-            bnumbers => \@bnumbers, bnumbers_mode => $bnumberset_mode};
+            sources => \@sources, sources_mode => $sourceset_mode, sources_is_regex => $sourceset_is_regex,
+            bnumbers => \@bnumbers, bnumbers_mode => $bnumberset_mode, bnumbers_is_regex => $bnumberset_is_regex};
 }
 
 1;

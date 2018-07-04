@@ -34,6 +34,18 @@ has_field 'mode' => (
     },
 );
 
+has_field 'is_regex' => (
+    type => 'Boolean',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A flag indicating, whether the numbers in this set are regular expressions. ' .
+            'If true, all bnumbers will be interepreted as perl compatible regular expressions and ' .
+            'matched against the B-Number of the calls. If false, shell pattern the whole numbers ' .
+            'are matched while shell patterns like 431* or 49123~[1-5~]67 are possible.'],
+    },
+);
+
 has_field 'bnumbers' => (
     type => 'Repeatable',
     setup_for_js => 1,
@@ -59,7 +71,8 @@ has_field 'bnumbers.number' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Matches the B-Number (original number dialled by the caller) in E164 format. ' .
-            'Shell patterns like 431* or 49123~[1-5~]67 are possible.'],
+                  'They are formatted either as regular expressions or shell patterns depending on the' .
+                  'value of the is_regex flag.'],
     },
 );
 
@@ -82,7 +95,7 @@ has_field 'bnumber_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(name mode bnumbers bnumber_add)],
+    render_list => [qw(name mode is_regex bnumbers bnumber_add)],
 );
 
 has_field 'save' => (

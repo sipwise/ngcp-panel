@@ -148,6 +148,7 @@ sub update_item {
         $item->update({
                 name => $resource->{name},
                 mode => $resource->{mode},
+                (defined $resource->{is_regex} ? (is_regex => $resource->{is_regex}) : ()),
                 subscriber_id => $subscriber->id,
             })->discard_changes;
         $item->voip_cf_sources->delete;

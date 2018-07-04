@@ -34,6 +34,20 @@ has_field 'mode' => (
     },
 );
 
+has_field 'is_regex' => (
+    type => 'Boolean',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A flag indicating, whether the numbers in this set are regular expressions. ' .
+            'If true, all sources will be interepreted as perl compatible regular expressions and ' .
+            'matched against the calling party number (in E164 format) of the calls. If false, the whole numbers ' .
+            'are plainly matched while shell patterns like 431* or 49123~[1-5~]67 are possible. ' .
+            'If true, capturing groups can be formed using parentheses and referenced in the ' .
+            'destinations via \\1, \\2,... .'],
+    },
+);
+
 has_field 'source' => (
     type => 'Repeatable',
     setup_for_js => 1,
@@ -58,7 +72,8 @@ has_field 'source.source' => (
     wrapper_class => [qw/hfh-rep-field/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['The calling party number in E164 format to match. Shell patterns like 431* or 49123~[1-5~]67 are possible. ' .
+        title => ['The calling party number in E164 format to match. Regular expressions ' .
+            'or shell patterns can be used depending on the is_regex flag. ' .
             'Use &quot;anonymous&quot; to match suppressed numbers.'],
     },
 );
@@ -82,7 +97,7 @@ has_field 'source_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(name mode source source_add)],
+    render_list => [qw(name mode is_regex source source_add)],
 );
 
 has_field 'save' => (

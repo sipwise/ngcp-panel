@@ -28,6 +28,18 @@ has_field 'mode' => (
     },
 );
 
+has_field 'is_regex' => (
+    type => 'Boolean',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A flag indicating, whether the numbers in this set are regular expressions. ' .
+            'If true, all sources will be interepreted as perl compatible regular expressions and ' .
+            'matched against the calling party number (in E164 format) of the calls. If false, the whole numbers ' .
+            'are plainly matched while shell patterns like 431* or 49123~[1-5~]67 are possible.'],
+    },
+);
+
 has_field 'sources' => (
     type => 'Repeatable',
     element_attr => {
@@ -36,7 +48,7 @@ has_field 'sources' => (
                   'which will be matched against the calling party number to determine ' .
                   'whether to apply the callforward or not. ' .
                   '"source" is the calling party number in E164 format to match. ' .
-                  'Shell patterns like 431* or 49123~[1-5~]67 are possible. ' .
+                  'Regular expressions or shell patterns can be used depending on the is_regex flag. ' .
                   'Use "anonymous" to match suppressed numbers.',
         ],
     },

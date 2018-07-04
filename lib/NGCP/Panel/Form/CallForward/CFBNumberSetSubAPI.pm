@@ -28,6 +28,20 @@ has_field 'mode' => (
     },
 );
 
+has_field 'is_regex' => (
+    type => 'Boolean',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A flag indicating, whether the numbers in this set are regular expressions. ' .
+            'If true, all bnumbers will be interepreted as perl compatible regular expressions and ' .
+            'matched against the B-Number of the calls. If false, shell pattern the whole numbers ' .
+            'are matched while shell patterns like 431* or 49123~[1-5~]67 are possible. ' .
+            'If true, capturing groups can be formed using parentheses and referenced in the ' .
+            'destinations via \\1, \\2,... .'],
+    },
+);
+
 has_field 'bnumbers' => (
     type => 'Repeatable',
     element_attr => {
@@ -36,7 +50,8 @@ has_field 'bnumbers' => (
                   'which will be matched against the called party number (callee) to determine ' .
                   'whether to apply the callforward or not. ' .
                   '"bnumber" is the callee\'s number in E164 format to match. ' .
-                  'Shell patterns like 431* or 49123~[1-5~]67 are possible.',
+                  'They are formatted either as regular expressions or shell patterns depending on the ' .
+                  'value of the is_regex flag.',
         ],
     },
 );

@@ -1635,6 +1635,7 @@ sub preferences_callforward_sourceset_create :Chained('base') :PathPart('prefere
                     my $set = $prov_subscriber->voip_cf_source_sets->create({
                         name => $form->field('name')->value,
                         mode => $form->field('mode')->value,
+                        is_regex => $form->field('is_regex')->value,
                     });
                     foreach my $src(@fields) {
                         my $s = $src->field('source')->value;
@@ -1710,6 +1711,7 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
     unless($posted) {
         $params->{name} = $set->name;
         $params->{mode} = $set->mode;
+        $params->{is_regex} = $set->is_regex;
         my @sources;
         for my $src($set->voip_cf_sources->all) {
             push @sources, {
@@ -1756,6 +1758,9 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
                 }
                 if($form->field('mode')->value ne $set->mode) {
                     $set->update({mode => $form->field('mode')->value});
+                }
+                if($form->field('is_regex')->value ne $set->is_regex) {
+                    $set->update({is_regex => $form->field('is_regex')->value});
                 }
                 $set->voip_cf_sources->delete_all;
 
@@ -1905,6 +1910,7 @@ sub preferences_callforward_bnumberset_create :Chained('base') :PathPart('prefer
                     my $set = $prov_subscriber->voip_cf_bnumber_sets->create({
                         name => $form->field('name')->value,
                         mode => $form->field('mode')->value,
+                        is_regex => $form->field('is_regex')->value,
                     });
                     foreach my $bnum_row(@fields) {
                         my $s = $bnum_row->field('number')->value;
@@ -1980,6 +1986,7 @@ sub preferences_callforward_bnumberset_edit :Chained('preferences_callforward_bn
     unless($posted) {
         $params->{name} = $set->name;
         $params->{mode} = $set->mode;
+        $params->{is_regex} = $set->is_regex;
         my @numbers;
         for my $bnum_rows($set->voip_cf_bnumbers->all) {
             push @numbers, {
@@ -2027,6 +2034,9 @@ sub preferences_callforward_bnumberset_edit :Chained('preferences_callforward_bn
                 }
                 if($form->field('mode')->value ne $set->mode) {
                     $set->update({mode => $form->field('mode')->value});
+                }
+                if($form->field('is_regex')->value ne $set->is_regex) {
+                    $set->update({is_regex => $form->field('is_regex')->value});
                 }
                 $set->voip_cf_bnumbers->delete_all;
 

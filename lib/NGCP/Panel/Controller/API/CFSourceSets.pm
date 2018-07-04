@@ -169,6 +169,7 @@ sub POST :Allow {
             $sset = $schema->resultset('voip_cf_source_sets')->create({
                     name => $resource->{name},
                     mode => $resource->{mode},
+                    is_regex => $resource->{is_regex} // 0,
                     subscriber_id => $subscriber->id,
                 });
             for my $s ( @{$resource->{sources}} ) {
