@@ -145,7 +145,7 @@ sub validate {
         if( my $value = $field->value ){
             #todo: 1.Should we allow only some particular separator? 
             #todo: 2.Lengths of the provisioning.voip_usr_preferences.value and kamailio.usr_preferences.value =128,all available values length is 141. We can't insert all codecs.
-            my $enum = { map { lc( $_ ) => 1 } qw/AMR AMR-WB CelB CN DVI4 G722 G723 G728 G729 GSM H261 H263 H263-1998 h264 
+            my $enum = { map { lc( $_ ) => 1 } qw/AMR AMR-WB CelB CLEARMODE CN DVI4 G722 G723 G728 G729 GSM H261 H263 H263-1998 h264 
                 JPEG L16 MP2T MPA MPV nv opus PCMA PCMU QCELP speex telephone-event vp8 vp9/ };
             my @codecs = split(/,/, $value);
             my %codecs_dup;
