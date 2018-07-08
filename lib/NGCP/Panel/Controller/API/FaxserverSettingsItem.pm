@@ -9,34 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Utils::ValidateJSON qw();
-use Clone qw/clone/;
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
-
-sub allowed_methods{
-    return [qw/GET OPTIONS HEAD PATCH PUT/];
-}
-
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::FaxserverSettings/;
-
-sub resource_name{
-    return 'faxserversettings';
-}
-
-sub dispatch_path{
-    return '/api/faxserversettings/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-faxserversettings';
-}
-
-sub journal_query_params {
-    my($self,$query_params) = @_;
-    return $self->get_journal_query_params($query_params);
-}
 
 __PACKAGE__->set_config({
     allowed_roles => {
@@ -44,6 +17,16 @@ __PACKAGE__->set_config({
         Journal => [qw/admin reseller subscriber subscriberadmin/],
     }
 });
+
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD PATCH PUT/];
+}
+
+sub journal_query_params {
+    my($self,$query_params) = @_;
+    return $self->get_journal_query_params($query_params);
+}
+
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
