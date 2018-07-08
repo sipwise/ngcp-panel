@@ -20,9 +20,7 @@ sub get_active_subscriber{
         });
     } elsif($c->user->roles eq "subscriberadmin") {
         $sub_rs = $sub_rs->search({
-            'contract.id' => $c->user->account_id,
-        },{
-            join => { 'contract' },
+            'me.contract_id' => $c->user->account_id,
         });
     } elsif($c->user->roles eq "subscriber") {
         $sub_rs = $sub_rs->search({

@@ -12,6 +12,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::API::Subscribers;
 
 sub get_form {
     my ($self, $c, $type) = @_;
@@ -96,8 +97,15 @@ sub _item_rs {
         }, {
             join => { 'contract' => 'contact' },
         });
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({
+            'me.contract_id' => $c->user->account_id,
+        });
+    } elsif($c->user->roles eq "subscriber") {
+        $item_rs = $item_rs->search_rs({
+            'me.uuid' => $c->user->uuid,
+        });
     }
-
     return $item_rs;
 }
 
@@ -110,6 +118,12 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
+    my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $item->id);
+    unless($billing_subscriber) {
+        $c->log->error("invalid subscriber id $item->id for fax send");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
+        return;
+    }
     delete $resource->{id};
     my $billing_subscriber_id = $item->id;
     my $prov_subs = $item->provisioning_voip_subscriber;
