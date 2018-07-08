@@ -141,6 +141,7 @@ my $cf_map = $test->resource(
         cft => [],
         cfna => [],
         cfs => [],
+        cfr => [],
         cft_ringtimeout => undef,
     }
 );
