@@ -295,6 +295,7 @@ my %customer_map = ();
         cfu => [{ destinationset => $destinationset_2->{name},
                  timeset => $timeset->{name}}],
         cfs => [],
+        cfr => [],
         });
 
     #1. update destination set:

@@ -156,7 +156,7 @@ sub update_item {
             expose_to_customer => 1,
         },
         {
-            attribute => { -in => [qw/cfu cft cfna cfb cfs/] },
+            attribute => { -in => [qw/cfu cft cfna cfb cfs cfr/] },
         },
         ],
     });
@@ -174,7 +174,7 @@ sub update_item {
     if(keys %old_attributes) {
         my $cfs = $c->model('DB')->resultset('voip_preferences')->search({
             id => { -in => [ keys %old_attributes ] },
-            attribute => { -in => [qw/cfu cfb cft cfna cfs/] },
+            attribute => { -in => [qw/cfu cfb cft cfna cfs cfr/] },
         });
         my @subs = $c->model('DB')->resultset('provisioning_voip_subscribers')
             ->search({

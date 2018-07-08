@@ -22,7 +22,8 @@ sub _get_cf_type_descriptions {
              cfb  => $c->loc("Call Forward Busy"),
              cft  => $c->loc("Call Forward Timeout"),
              cfna => $c->loc("Call Forward Unavailable"),
-             cfs => $c->loc("Call Forward SMS"), };
+             cfs => $c->loc("Call Forward SMS"),
+             cfr => $c->loc("Call Forward Rerouting"), };
 }
 
 sub cfs {
@@ -32,7 +33,7 @@ sub cfs {
     my $cfs = {};
     my $descriptions = $self->_get_cf_type_descriptions($c);
 
-    foreach my $type (qw/cfu cfna cft cfb cfs/) {
+    foreach my $type (qw/cfu cfna cft cfb cfs cfr/) {
         my $maps = $prov_subscriber->voip_cf_mappings
             ->search({ type => $type });
         my @mappings = ();

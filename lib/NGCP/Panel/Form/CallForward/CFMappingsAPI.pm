@@ -73,6 +73,19 @@ has_field 'cfs' => (
     },
 );
 
+has_field 'cfr' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Call Forward Rerouting, Number of Objects, each containing the keys ' .
+                  '"destinationset", "timeset" and "sourceset". The values must be the name of ' .
+                  'a corresponding set which belongs to the same subscriber.'],
+    },
+);
+
 has_field 'cfu.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -296,6 +309,50 @@ has_field 'cfs.bnumberset_id' => (
 has_field 'cft_ringtimeout' => (
     type => 'PosInteger',
     do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfr.destinationset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfr.destinationset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfr.timeset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfr.timeset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfr.sourceset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfr.sourceset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfr.bnumberset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfr.bnumberset_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 

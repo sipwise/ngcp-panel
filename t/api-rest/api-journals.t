@@ -886,6 +886,8 @@ sub test_callforwards {
                  times => $cftimeset->{times}},
         cfs => { destinations => $cfdestinationset->{destinations},
                  times => $cftimeset->{times}},
+        cfr => { destinations => $cfdestinationset->{destinations},
+                 times => $cftimeset->{times}},
         }));
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("PUT test callforwards"));
@@ -948,6 +950,8 @@ sub test_cfmapping {
         cfu => [{ destinationset => $cfdestinationset->{name},
                  timeset => $cftimeset->{name}}],
         cfs => [{ destinationset => $cfdestinationset->{name},
+                 timeset => $cftimeset->{name}}],
+        cfr => [{ destinationset => $cfdestinationset->{name},
                  timeset => $cftimeset->{name}}],
         }));
     $res = $ua->request($req);
