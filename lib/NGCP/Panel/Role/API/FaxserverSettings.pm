@@ -110,6 +110,12 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
+    my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $item->id);
+    unless($billing_subscriber) {
+        $c->log->error("invalid subscriber id $item->id for fax send");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
+        return;
+    }
     delete $resource->{id};
     my $billing_subscriber_id = $item->id;
     my $prov_subs = $item->provisioning_voip_subscriber;
