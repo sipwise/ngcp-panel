@@ -5,13 +5,16 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
+
+sub resource_name{
+    return 'faxserversettings';
+}
 
 sub get_form {
     my ($self, $c, $type) = @_;
