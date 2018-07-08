@@ -361,7 +361,7 @@ sub valid_media_type {
     my $type;
     if(ref $media_type eq "ARRAY") {
         $type = join ' or ', @{ $media_type };
-        return 1 if $ctype && grep { $ctype eq $_ } @{$media_type};
+        return 1 if $ctype && grep { index($ctype, $_) == 0 } @{$media_type};
     } else {
         $type = $media_type;
         return 1 if($ctype && index($ctype, $media_type) == 0);
