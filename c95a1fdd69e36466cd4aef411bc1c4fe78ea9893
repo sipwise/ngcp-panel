@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_96816f92",
+        "filename": "lib/NGCP/Panel/Controller/API/CallForwards.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000021
+      },
+      "writtenOn": "2018-07-09T09:43:55Z",
+      "side": 1,
+      "message": "missing comma",
+      "range": {
+        "startLine": 19,
+        "startChar": 66,
+        "endLine": 19,
+        "endChar": 73
+      },
+      "revId": "c95a1fdd69e36466cd4aef411bc1c4fe78ea9893",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_767ed3af",
+        "filename": "share/templates/subscriber/preferences.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1000021
+      },
+      "writtenOn": "2018-07-09T09:43:55Z",
+      "side": 1,
+      "message": "cfs and cfr are exchanged here",
+      "range": {
+        "startLine": 121,
+        "startChar": 35,
+        "endLine": 122,
+        "endChar": 91
+      },
+      "revId": "c95a1fdd69e36466cd4aef411bc1c4fe78ea9893",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
