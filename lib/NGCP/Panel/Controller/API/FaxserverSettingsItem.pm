@@ -16,6 +16,7 @@ __PACKAGE__->set_config({
         Default => [qw/admin reseller subscriber subscriberadmin/],
         Journal => [qw/admin reseller subscriber subscriberadmin/],
     }
+    PATCH => { ops => [qw/add replace remove copy/] },
 });
 
 sub allowed_methods{
@@ -25,29 +26,6 @@ sub allowed_methods{
 sub journal_query_params {
     my($self,$query_params) = @_;
     return $self->get_journal_query_params($query_params);
-}
-
-
-sub GET :Allow {
-    my ($self, $c, $id) = @_;
-    {
-        last unless $self->valid_id($c, $id);
-        my $subs = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, faxserversettings => $subs);
-
-        my $hal = $self->hal_from_item($c, $subs);
-
-        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-            (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r
-                =~ s/rel=self/rel="item self"/r;
-            } $hal->http_headers),
-        ), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
-        return;
-    }
-    return;
 }
 
 sub PATCH :Allow {
