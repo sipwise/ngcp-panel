@@ -8,6 +8,8 @@ use File::Find::Rule;
 use JSON qw();
 use HTTP::Status qw(:constants);
 
+my $collections_info_cache;
+my $collections_files_cache;
 
 sub check_resource_reseller_id {
     my($api, $c, $resource, $old_resource) = @_;
@@ -39,6 +41,10 @@ sub apply_resource_reseller_id {
 }
 
 sub get_collections {
+    if ($collections_info_cache) {
+        return @$collections_info_cache;
+    }
+    #get_collections_files in scalar context will return only first value from return array - \@files
     my @files = @{get_collections_files()};
     my(@collections, @packages, @modules);
     foreach my $mod(@files) {
@@ -51,10 +57,14 @@ sub get_collections {
         push @packages, $package;
         push @collections, $rel;
     }
-    return \@files, \@packages, \@collections, \@modules;
+    $collections_info_cache = [\@files, \@packages, \@collections, \@modules];
+    return @$collections_info_cache;
 }
 
 sub get_collections_files {
+    if ($collections_files_cache) {
+        return $collections_files_cache;
+    }
     my($library,$libpath) = @_;
     if(!$libpath){
         # figure out base path of our api modules
@@ -73,8 +83,20 @@ sub get_collections_files {
         ->not($rootrule)
         ->not($itemrule);
     my @colls = $rule->in($libpath);
+    $collections_files_cache = \@colls;
+    return $collections_files_cache;
+}
 
-    return \@colls;
+sub get_module_by_resource {
+    my($c, $resource_name, $is_item_resource) = @_;
+    if ($c->stash->{get_module_by_resource} && $c->stash->{get_module_by_resource}->{$resource_name} ) {
+        return $c->stash->{get_module_by_resource}->{$resource_name};
+    }
+    my($files,$modules,$collections) = get_collections();
+    my $package = (grep { /::$resource_name$/i } @$files)[0];
+    $is_item_resource and $package .= 'Item';
+    $c->stash->{get_module_by_resource}->{$resource_name} = $package;
+    return $package;
 }
 
 sub generate_swagger_datastructure {

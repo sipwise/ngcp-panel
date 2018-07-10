@@ -239,7 +239,7 @@ sub handle_api_journals_get {
             my $hal = hal_from_journal($controller,$c,$journal);
             $hal->_forcearray(1);
             push @embedded,$hal;
-            my $link = get_journal_relation_link($journal,$item_id,$journal->id);
+            my $link = get_journal_relation_link($journal,$c,$item_id,$journal->id);
             $link->_forcearray(1);
             push @links,$link;
         }
@@ -454,9 +454,9 @@ sub hal_from_journal {
                 name => 'ngcp',
                 templated => true,
             ),
-            get_journal_relation_link($journal,$journal->resource_id,undef,'collection'),
+            get_journal_relation_link($journal,$c,$journal->resource_id,undef,'collection'),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            get_journal_relation_link($journal,$journal->resource_id,$journal->id,'self'),
+            get_journal_relation_link($journal,$c,$journal->resource_id,$journal->id,'self'),
             Data::HAL::Link->new(relation => sprintf('ngcp:%s',$journal->resource_name),
                 href => sprintf('/api/%s/%d', $journal->resource_name, $journal->resource_id)),
         ],
@@ -477,32 +477,43 @@ sub hal_from_journal {
 }
 
 sub get_journal_relation_link {
-
-    my ($resource,$item_id,$id,$relation) = @_;
+    my ($resource, $c, $item_id, $id, $relation) = @_;
     my $resource_name = undef;
+    my $controller = undef;
     if (ref $resource eq 'HASH') {
         $resource_name = $resource->{resource_name};
     } elsif ((defined blessed($resource)) && $resource->can('resource_name')) { #both controllers and journal rows
         $resource_name = $resource->resource_name;
+        if ($resource->can('get_config')) {
+            $controller = $resource;
+        } 
     } elsif (!ref $resource) {
         $resource_name = $resource;
     }
     if (defined $resource_name) {
-        if (defined $id) {
-            return Data::HAL::Link->new(
+        my $allowed_roles = [];
+        if (!$controller) {
+            $controller = NGCP::Panel::Utils::API::get_module_by_resource($c, $resource_name, $item_id);
+        }
+        if ($controller->can('get_config')) {
+            my $action_name = $id ? 'handle_journalsitem_get' : 'handle_journals_get';
+            $allowed_roles = $controller->get_config('action')->{$action_name}->{AllowedRole};
+        }
+        if (grep { $_ eq $c->user->roles } @$allowed_roles) {
+            if (defined $id) {
+                return Data::HAL::Link->new(
                     relation => ($relation // API_JOURNAL_RELATION), #API_JOURNALITEM_RELATION),
                     href     => sprintf('/api/%s/%d/%s/%d', $resource_name, $item_id,API_JOURNAL_RESOURCE_NAME,$id),
                 );
-        } else {
-            return Data::HAL::Link->new(
+            } else {
+                return Data::HAL::Link->new(
                     relation => ($relation // API_JOURNAL_RELATION),
-                    href     => sprintf('/api/%s/%d/%s/', $resource_name, $item_id,API_JOURNAL_RESOURCE_NAME),
-                )
+                    href     => sprintf('/api/%s/%d/%s/', $resource_name, $item_id, API_JOURNAL_RESOURCE_NAME),
+                );
+            }
         }
     }
-    ## no critic (ProhibitExplicitReturnUndef)
-    return undef;
-
+    return ();
 }
 
 sub get_api_journal_op_config {
