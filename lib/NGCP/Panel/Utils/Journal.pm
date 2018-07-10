@@ -505,12 +505,12 @@ sub get_journal_relation_link {
 
 }
 
-sub get_api_journal_op_config {
+sub _get_api_journal_op_config {
     my ($config,$resource_name,$operation) = @_;
     return _get_journal_op_config($config->{api_journal},undef,$resource_name,$operation);
 }
 
-sub _get_api_journal_op_config {
+sub get_api_journal_op_config {
     return _get_journal_op_config($_[0]->config->{api_journal},@_);
 }
 
