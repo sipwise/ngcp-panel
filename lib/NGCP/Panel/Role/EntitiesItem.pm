@@ -248,12 +248,18 @@ sub patch {
         ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
+        my $hal = $self->get_journal_item_hal($c, $item, { form => $form });
+        last unless $self->add_journal_item_hal($c, { hal => $hal });
+
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'patch', $item, $old_resource, $resource, $form, $process_extras);
 
         $self->return_representation($c,
             'item' => $item,
             'form' => $form,
+            #hal may be empty if we don't need it for journal. 
+            #Then it will be taken from item and form
+            'hal'  => $hal,
             'preference' => $preference,
         );
     }
@@ -289,9 +295,15 @@ sub put {
         ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
+        my $hal = $self->get_journal_item_hal($c, $item, { form => $form });
+        last unless $self->add_journal_item_hal($c, { hal => $hal });
+
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
         $self->return_representation($c,
+            #hal may be empty if we don't need it for journal. 
+            #Then it will be taken from item and form
+            'hal'  => $hal,
             'item' => $item,
             'form' => $form,
             'preference' => $preference,
@@ -308,7 +320,11 @@ sub delete {  ## no critic (ProhibitBuiltinHomonyms)
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
 
-        $self->delete_item($c, $item );
+        my $hal = $self->get_journal_item_hal($c, $item);
+        #here we left space for information that checking failed and we decided not to delete item
+        if ($self->delete_item($c, $item)) {
+            $self->add_journal_item_hal($c, { hal => $hal });
+        }
 
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'delete', $item);
@@ -322,6 +338,7 @@ sub delete {  ## no critic (ProhibitBuiltinHomonyms)
 sub delete_item{
     my($self, $c, $item) = @_;
     $item->delete();
+    return 1;
 }
 
 sub options {
