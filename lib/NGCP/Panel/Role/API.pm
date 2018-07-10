@@ -1060,7 +1060,8 @@ sub hal_from_item {
     if(!$form){
         ($form) = $self->get_form($c);
     }
-    my $resource = $self->resource_from_item($c, $item, $form, $params);
+    my $resource = $params->{resource};
+    $resource //= $self->resource_from_item($c, $item, $form, $params);
     $resource = $self->process_hal_resource($c, $item, $resource, $form, $params);
     return unless $resource;
     my $links = $self->hal_links($c, $item, $resource, $form, $params) // [];
