@@ -201,7 +201,7 @@ sub hal_from_item {
                 Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?subscriber_id=%d", $item->id)),
                 Data::HAL::Link->new(relation => 'ngcp:subscriberregistrations', href => sprintf("/api/subscriberregistrations/?subscriber_id=%d", $item->id)),
                 #Data::HAL::Link->new(relation => 'ngcp:trustedsources', href => sprintf("/api/trustedsources/%d", $item->contract->id)),
-                $self->get_journal_relation_link($item->id),
+                $self->get_journal_relation_link($c, $item->id),
             )),
             # only available to admins/resellers/subscriberadmins
             (!$is_subadm ? () : (
