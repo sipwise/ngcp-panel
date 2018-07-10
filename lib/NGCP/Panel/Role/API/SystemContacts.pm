@@ -42,7 +42,7 @@ sub hal_from_contact {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $contact->id)),
-            $self->get_journal_relation_link($contact->id),
+            $self->get_journal_relation_link($c, $contact->id),
 
         ],
         relation => 'ngcp:'.$self->resource_name,
