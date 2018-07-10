@@ -256,7 +256,7 @@ sub post {
             resource_media_type => $method_config->{ResourceContentType},
         );
         last unless $resource;
-        my ($item,$data_processed_result);
+        my ($item,$data_processed_result,$hal);
         if (!$non_json_data || !$data) {
             delete $resource->{purge_existing};
             last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
@@ -272,6 +272,9 @@ sub post {
 
             $item = $self->create_item($c, $resource, $form, $process_extras);
             last unless $item || $self->get_config('no_item_created');
+
+            $hal = $self->get_journal_item_hal($c, $item, { form => $form });
+            last unless $self->add_journal_item_hal($c, { hal => $hal });
         } else {
             try {
                 #$processed_ok(array), $processed_failed(array), $info, $error
@@ -295,6 +298,7 @@ sub post {
         return if defined $c->stash->{api_error_message};
 
         $self->return_representation_post($c,
+            'hal'  => $hal,
             'item' => $item,
             'form' => $form
         );
