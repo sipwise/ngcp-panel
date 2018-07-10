@@ -76,7 +76,7 @@ sub hal_from_contract {
             @profile_links,
             @network_links,
             Data::HAL::Link->new(relation => 'ngcp:balanceintervals', href => sprintf("/api/balanceintervals/%d", $contract->id)),
-            $self->get_journal_relation_link($contract->id),
+            $self->get_journal_relation_link($c, $contract->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
