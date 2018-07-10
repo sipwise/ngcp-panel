@@ -119,7 +119,10 @@ sub handle_journalsitem_head {
 }
 
 sub get_journal_relation_link {
-    my $cfg = NGCP::Panel::Utils::Journal::get_journal_resource_config(NGCP::Panel->config,$_[0]->resource_name);
+    my ($self, $c, @args) = @_;
+    #just for conveniency - other parameters are (journal_id is optional):
+    #my ($journal, $id, $journal_id) = @_;
+    my $cfg = NGCP::Panel::Utils::Journal::get_journal_resource_config(NGCP::Panel->config, $self->resource_name);
     if ($cfg->{journal_resource_enabled}) {
         return NGCP::Panel::Utils::Journal::get_journal_relation_link(@_);
     }
