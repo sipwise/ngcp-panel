@@ -24,7 +24,7 @@ has_field 'mode' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The source set mode. A blacklist forwards everything except numbers in the list, a whitelist only forwards numbers in this list.']
+        title => ['Source set mode. If set to "blacklist" it enables forwarding for everything except numbers in the list, and "whitelist" only enables forwards for numbers defined in this list. This field is mandatory.']
     },
 );
 
