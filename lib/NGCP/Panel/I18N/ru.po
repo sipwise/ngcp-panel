@@ -1045,6 +1045,12 @@ msgstr "Создано перенаправление звонка"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
+msgid "Call Forward Rerouting"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
+#: share/templates/subscriber/preferences.tt
 msgid "Call Forward SMS"
 msgstr ""
 
@@ -1446,6 +1452,12 @@ msgstr "Контакты"
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Container"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Contains a list of SIP codes that are matched with the one received in reply "
+"from the subscriber in case of call failure in order to execute the CFR."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -4036,6 +4048,10 @@ msgid "Internal Call Forward Busy map #"
 msgstr "Внутренняя схема перенаправления звонков когда занят (CFB) #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal Call Forward Rerouting #"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Call Forward Timeout #"
 msgstr "Внутреннее перенаправление звонков когда не отвечает (CFT) #"
 
@@ -4522,6 +4538,10 @@ msgstr "Имя Списка"
 #: share/templates/customer/details.tt
 msgid "Limit"
 msgstr "Лимит"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "List of Rerouting Codes"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -6025,6 +6045,10 @@ msgstr ""
 msgid "Reported at"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rerouting Mode"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Contact.pm
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Device.pm
@@ -6765,6 +6789,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Specifies the operational mode of the Rerouting Call Forward. If set to "
+"Whitelist (default) the CFR is executed only for reply codes included in the "
+"'rerouting_codes' list, if set to Blacklist the CFR is executed except for "
+"reply codes included in the list."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Specifies the operational mode of the SIP User-Agent Filter List. If unset "
 "or set to a false value, it is a blacklist (accept all requests except from "
 "user-agents listed in the filter list), with a true value it is a whitelist "
@@ -7454,6 +7486,12 @@ msgid ""
 "table"
 msgstr ""
 "ID указывающий на запись для \"Call Forward Busy\" в таблице voip_cf_mappings"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The id pointing to the \"Call Forward Rerouting\" entry in the "
+"voip_cf_mappings table"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
