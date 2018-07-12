@@ -32,7 +32,7 @@ sub register_content {
             <param><value><string>$mac_param</string></value></param>
             <param><value><string><![CDATA[$uri_param]]></string></value></param>
         </params>
-    </methodCall>;
+    </methodCall>
 EOS_XML
     return $self->{register_content};
 }
