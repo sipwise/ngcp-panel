@@ -3,34 +3,22 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-
-use NGCP::Panel::Utils::ValidateJSON qw();
-use Clone qw/clone/;
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
-
-sub allowed_methods{
-    return [qw/GET OPTIONS HEAD PATCH PUT/];
-}
+use NGCP::Panel::Utils::API::Subscribers;
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::FaxserverSettings/;
 
-sub resource_name{
-    return 'faxserversettings';
-}
+__PACKAGE__->set_config({
+    allowed_roles => {
+        Default => [qw/admin reseller subscriber subscriberadmin/],
+        Journal => [qw/admin reseller subscriber subscriberadmin/],
+    },
+    PATCH => { ops => [qw/add replace remove copy/] },
+});
 
-sub dispatch_path{
-    return '/api/faxserversettings/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-faxserversettings';
+sub allowed_methods{
+    return [qw/GET OPTIONS HEAD PATCH PUT/];
 }
 
 sub journal_query_params {
@@ -38,129 +26,55 @@ sub journal_query_params {
     return $self->get_journal_query_params($query_params);
 }
 
-__PACKAGE__->set_config({
-    allowed_roles => {
-        Default => [qw/admin reseller subscriber subscriberadmin/],
-        Journal => [qw/admin reseller subscriber subscriberadmin/],
-    }
-});
-
-sub GET :Allow {
-    my ($self, $c, $id) = @_;
-    {
-        last unless $self->valid_id($c, $id);
-        my $subs = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, faxserversettings => $subs);
-
-        my $hal = $self->hal_from_item($c, $subs);
-
-        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-            (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r
-                =~ s/rel=self/rel="item self"/r;
-            } $hal->http_headers),
-        ), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
-        return;
-    }
-    return;
-}
-
-sub PATCH :Allow {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
-
-        my $json = $self->get_valid_patch_data(
-            c => $c,
-            id => $id,
-            media_type => 'application/json-patch+json',
-            ops => [qw/add replace remove copy/],
-        );
-        last unless $json;
-
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, faxserversettings => $item);
-        my $old_resource = $self->hal_from_item($c, $item)->resource;
-        $old_resource = clone($old_resource);
-        my $resource = $self->apply_patch($c, $old_resource, $json);
-        last unless $resource;
-
-        my $form = $self->get_form($c);
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
-        last unless $item;
-
-        my $hal = $self->hal_from_item($c, $item);
-        last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $item->id });
-        
-        $guard->commit; 
-
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            #my $hal = $self->hal_from_item($c, $item);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
-    }
-    return;
-}
-
-sub PUT :Allow {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
-
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, faxserversettings => $item);
-        my $resource = $self->get_valid_put_data(
-            c => $c,
-            id => $id,
-            media_type => 'application/json',
-        );
-        last unless $resource;
-        my $old_resource = undef;
-
-        my $form = $self->get_form($c);
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
-        last unless $item;
-        
-        my $hal = $self->hal_from_item($c, $item);
-        last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $item->id });
-
-        $guard->commit; 
-
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->body(q());
-        } else {
-            #my $hal = $self->hal_from_item($c, $item);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->body($response->content);
-        }
-    }
-    return;
-}
-
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
+
+
+sub update_item_model {
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $item->id);
+    unless($billing_subscriber) {
+        $c->log->error("invalid subscriber id $item->id for fax send");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
+        return;
+    }
+    delete $resource->{id};
+    my $prov_subs = $item->provisioning_voip_subscriber;
+    die "need provisioning_voip_subscriber" unless $prov_subs;
+    my $prov_subscriber_id = $prov_subs->id;
+    my $destinations_rs = $prov_subs->voip_fax_destinations;
+
+    if (! exists $resource->{destinations} ) {
+        $resource->{destinations} = [];
+    }
+    if (ref $resource->{destinations} ne "ARRAY") {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
+        return;
+    }
+
+    my %update_fields = %{ $resource };
+    delete $update_fields{destinations};
+
+    try {
+        $prov_subs->delete_related('voip_fax_preference');
+        $destinations_rs->delete;
+        $prov_subs->create_related('voip_fax_preference', \%update_fields);
+        $prov_subs->discard_changes; #reload
+
+        for my $dest (@{ $resource->{destinations} }) {
+            $destinations_rs->create($dest);
+        }
+    } catch($e) {
+        $c->log->error("Error Updating faxserversettings: $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "faxserversettings could not be updated.");
+        return;
+    };
+
+    return $item;
+}
+
 
 1;
 
