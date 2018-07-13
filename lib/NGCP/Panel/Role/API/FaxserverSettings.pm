@@ -5,7 +5,6 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -14,72 +13,14 @@ use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::API::Subscribers;
 
+sub resource_name{
+    return 'faxserversettings';
+}
+
 sub get_form {
     my ($self, $c, $type) = @_;
 
     return NGCP::Panel::Form::get("NGCP::Panel::Form::Faxserver::API", $c);
-}
-
-sub hal_from_item {
-    my ($self, $c, $item) = @_;
-    my $form;
-    my $rwr_form = $self->get_form($c);
-    my $type = 'faxserversettings';
-    
-    my $prov_subs = $item->provisioning_voip_subscriber;
-
-    die "no provisioning_voip_subscriber" unless $prov_subs;
-
-    my $fax_preference = $prov_subs->voip_fax_preference;
-    unless ($fax_preference) {
-        try {
-            $fax_preference = $prov_subs->create_related('voip_fax_preference', {});
-            $fax_preference->discard_changes; # reload
-        } catch($e) {
-            $c->log->error("Error creating empty fax_preference on get");
-        };
-    }
-
-    my %resource = (
-            $fax_preference ? $fax_preference->get_inflated_columns : (),
-            subscriber_id => $item->id,
-        );
-    delete $resource{id};
-    my @destinations;
-    for my $dest ($prov_subs->voip_fax_destinations->all) {
-        push @destinations, {$dest->get_inflated_columns};
-    }
-    $resource{destinations} = \@destinations;
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%s", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%s", $type, $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->id)),
-            $self->get_journal_relation_link($item->id),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-   
-
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-
-    $hal->resource(\%resource);
-    return $hal;
 }
 
 sub _item_rs {
@@ -109,14 +50,8 @@ sub _item_rs {
     return $item_rs;
 }
 
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-
-    return $self->item_rs($c)->search_rs({'me.id' => $id})->first;
-}
-
-sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+sub resource_from_item{
+    my($self, $c, $item) = @_;
 
     my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $item->id);
     unless($billing_subscriber) {
@@ -124,47 +59,37 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
         return;
     }
-    delete $resource->{id};
-    my $billing_subscriber_id = $item->id;
     my $prov_subs = $item->provisioning_voip_subscriber;
-    die "need provisioning_voip_subscriber" unless $prov_subs;
-    my $prov_subscriber_id = $prov_subs->id;
-    my $destinations_rs = $prov_subs->voip_fax_destinations;
+    die "no provisioning_voip_subscriber" unless $prov_subs;
 
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-        run => 1,
-    );
-
-    if (! exists $resource->{destinations} ) {
-        $resource->{destinations} = [];
-    }
-    if (ref $resource->{destinations} ne "ARRAY") {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
-        return;
+    my $fax_preference = $prov_subs->voip_fax_preference;
+    unless ($fax_preference) {
+        try {
+            $fax_preference = $prov_subs->create_related('voip_fax_preference', {});
+            $fax_preference->discard_changes; # reload
+        } catch($e) {
+            $c->log->error("Error creating empty fax_preference on get");
+        };
     }
 
-    my %update_fields = %{ $resource };
-    delete $update_fields{destinations};
+    my %resource = (
+            $fax_preference ? $fax_preference->get_inflated_columns : (),
+            subscriber_id => $item->id,
+        );
+    delete $resource{id};
+    my @destinations;
+    for my $dest ($prov_subs->voip_fax_destinations->all) {
+        push @destinations, {$dest->get_inflated_columns};
+    }
+    $resource{destinations} = \@destinations;
+    return \%resource;
+}
 
-    try {
-        $prov_subs->delete_related('voip_fax_preference');
-        $destinations_rs->delete;
-        $prov_subs->create_related('voip_fax_preference', \%update_fields);
-        $prov_subs->discard_changes; #reload
-
-        for my $dest (@{ $resource->{destinations} }) {
-            $destinations_rs->create($dest);
-        }
-    } catch($e) {
-        $c->log->error("Error Updating faxserversettings: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "faxserversettings could not be updated.");
-        return;
-    };
-
-    return $item;
+sub hal_links {
+    my($self, $c, $item, $resource, $form) = @_;
+    return [
+        Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->id)),
+    ];
 }
 
 1;
