@@ -122,7 +122,7 @@ sub _compose_location_path {
         return $path_default;
     }
     my $lb_clusters = $c->config->{cluster_sets};
-    my $subscriber_lb_ptr_preference_rs = NGCP::Panel::Utils::Preferences::get_parented_preference_rs(
+    my $subscriber_lb_ptr_preference_rs = NGCP::Panel::Utils::Preferences::get_chained_preference_rs(
         $c,
         'lbrtp_set',
         $prov_subscriber,
@@ -134,8 +134,9 @@ sub _compose_location_path {
     my ($subscriber_lb_ptr,$subscriber_lb);
     if ($subscriber_lb_ptr_preference_rs && $subscriber_lb_ptr_preference_rs->first) {
         $c->log->debug('_compose_location_path: lbrtp_set:'.$subscriber_lb_ptr_preference_rs->first->value);
-        $subscriber_lb_ptr = $subscriber_lb_ptr_preference_rs->first->value // $lb_clusters->{default};
+        $subscriber_lb_ptr = $subscriber_lb_ptr_preference_rs->first->value;
     }
+    $subscriber_lb_ptr //= $lb_clusters->{default};
     #TODO: is it ok to use default 'sip:lb@127.0.0.1:5060;lr' here?
     $subscriber_lb = $lb_clusters->{$subscriber_lb_ptr} // 'sip:lb@127.0.0.1:5060;lr';
     my $path = '<'.$subscriber_lb.';received=sip:'.$params->{contact}.';socket='.$socket.'>';
