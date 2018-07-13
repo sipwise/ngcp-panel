@@ -1018,7 +1018,7 @@ sub get_preference_rs {
     return $rs;
 }
 
-sub get_chained_preference_rs{
+sub get_chained_preference_rs {
     my ($c, $attr, $elem, $params) = @_;
 
     my $type_order_default = {

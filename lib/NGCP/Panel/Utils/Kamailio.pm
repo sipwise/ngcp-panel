@@ -122,7 +122,7 @@ sub _compose_location_path {
         return $path_default;
     }
     my $lb_clusters = $c->config->{cluster_sets};
-    my $subscriber_lb_ptr_preference_rs = NGCP::Panel::Utils::Preferences::get_parented_preference_rs(
+    my $subscriber_lb_ptr_preference_rs = NGCP::Panel::Utils::Preferences::get_chained_preference_rs(
         $c,
         'lbrtp_set',
         $prov_subscriber,
