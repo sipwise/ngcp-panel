@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3acd31a7_94d504bb",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-07-17T12:59:50Z",
+      "side": 1,
+      "message": "could be solved similar to stripping \"boundary\" above in \"get_content_type\". Probably cleaner approach and easier to understand",
+      "revId": "16553c69c6d5ba3aaf3756edeaae247b9b98dfa1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
