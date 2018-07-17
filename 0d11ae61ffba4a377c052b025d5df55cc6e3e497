@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3acd31a7_d4a5bcb5",
+        "filename": "lib/NGCP/Panel/Utils/API/Subscribers.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-17T10:42:44Z",
+      "side": 1,
+      "message": "whats the difference between existing\n\nNGCP::Panel::Utils::API::Subscriber\n\nand this \n\nNGCP::Panel::Utils::API::Subscribers\n\n?",
+      "range": {
+        "startLine": 1,
+        "startChar": 8,
+        "endLine": 1,
+        "endChar": 44
+      },
+      "revId": "0d11ae61ffba4a377c052b025d5df55cc6e3e497",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
