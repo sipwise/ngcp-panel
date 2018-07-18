@@ -16,6 +16,24 @@
       "revId": "ef907c83d16c4a4460bfb356aae527ff080846af",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3acd31a7_da93a54e",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 1100,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-18T20:04:12Z",
+      "side": 1,
+      "message": "I added this checking because met it in these files:\n\nngcp-panel/lib/NGCP/Panel/Role/API/CFBNumberSets.pm (1 hit)\n\tLine 38:             $adm ? $self-\u003eget_journal_relation_link($item-\u003eid) : (),\nngcp-panel/lib/NGCP/Panel/Role/API/CFDestinationSets.pm (1 hit)\n\tLine 65:             $adm ? $self-\u003eget_journal_relation_link($item-\u003eid) : (),\nngcp-panel/lib/NGCP/Panel/Role/API/CFMappings.pm (1 hit)\n\tLine 82:             $adm ? $self-\u003eget_journal_relation_link($item-\u003eid) : (),\nngcp-panel/lib/NGCP/Panel/Role/API/CFSourceSets.pm (1 hit)\n\tLine 57:             $adm ? $self-\u003eget_journal_relation_link($item-\u003eid) : (),\n\n\nIt is  really good idea to move it to the get_journal_relation_link, but then we will need to change get_journal_relation_link parameters, as now it takes only one - id, but we will need also $c. This is a little bit bigger changes and I would like to discuss Journal policy in that case.",
+      "parentUuid": "3acd31a7_37907295",
+      "revId": "ef907c83d16c4a4460bfb356aae527ff080846af",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
