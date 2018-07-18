@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3acd31a7_37907295",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 1100,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-18T06:47:54Z",
+      "side": 1,
+      "message": "wouldnt it make more sense to\n\n1. put this logic into get_journal_relation_link\n\n2. show the links to whatever roles are allowed to do GET /api/rail/123/journal ?",
+      "revId": "ef907c83d16c4a4460bfb356aae527ff080846af",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
