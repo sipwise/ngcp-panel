@@ -131,33 +131,6 @@ sub PUT :Allow {
     return;
 }
 
-=pod
-sub DELETE :Allow {
-    my ($self, $c, $id) = @_;
-
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, emailtemplate => $item);
-        foreach(qw/subscriber_email_template_id passreset_email_template_id invoice_email_template_id/){
-            $c->model('DB')->resultset('contracts')->search({
-                $_ => $item->id,
-            })->update({
-                $_ => undef,
-            });
-        }
-
-        $item->delete;
-
-        $guard->commit;
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
-    }
-    return;
-}
-=cut
-
 1;
 
 __END__
