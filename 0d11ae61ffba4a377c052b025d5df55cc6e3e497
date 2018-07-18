@@ -46,6 +46,30 @@
       "revId": "0d11ae61ffba4a377c052b025d5df55cc6e3e497",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3acd31a7_57f64ed8",
+        "filename": "lib/NGCP/Panel/Utils/API/Subscribers.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-18T08:53:26Z",
+      "side": 1,
+      "message": "Our Utils:: packages have less or more regular input parameters set and order of parameters, like:\n\nsub name {\n    my ($c, $mandatory_parameter, %set_of_optional_parameters) \u003d @_;\n\nAll API related utils are going to have following set and order:\n\nsub name {\n    my ($api, $c, $mandatory_parameter, %set_of_optional_parameters) \u003d @_;\n\nI thought that it would be convenient to have separated utils that are necessary only from API perspective.",
+      "parentUuid": "3acd31a7_d4649c4a",
+      "range": {
+        "startLine": 1,
+        "startChar": 8,
+        "endLine": 1,
+        "endChar": 44
+      },
+      "revId": "0d11ae61ffba4a377c052b025d5df55cc6e3e497",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
