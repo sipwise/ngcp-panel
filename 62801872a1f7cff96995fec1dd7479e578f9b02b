@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_53ac24ed",
+        "filename": "lib/NGCP/Panel/Role/EntitiesItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-21T15:09:12Z",
+      "side": 1,
+      "message": "Added in review https://gerrit.mgm.sipwise.com/#/c/22604/",
+      "range": {
+        "startLine": 199,
+        "startChar": 0,
+        "endLine": 199,
+        "endChar": 114
+      },
+      "revId": "62801872a1f7cff96995fec1dd7479e578f9b02b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
