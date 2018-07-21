@@ -15,18 +15,6 @@ sub resource_name{
     return 'rewriterules';
 }
 
-sub dispatch_path{
-    return '/api/rewriterules/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-rewriterules';
-}
-
-sub config_allowed_roles {
-    return [qw/admin reseller/];
-}
-
 sub _item_rs {
     my ($self, $c, $type) = @_;
     my $item_rs;
