@@ -15,18 +15,6 @@ sub resource_name{
     return 'invoices';
 }
 
-sub dispatch_path{
-    return '/api/invoices/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-invoices';
-}
-
-sub config_allowed_roles {
-    return [qw/admin reseller/];
-}
-
 sub _item_rs {
     my ($self, $c) = @_;
 

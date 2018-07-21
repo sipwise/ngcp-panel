@@ -26,14 +26,6 @@ sub resource_name{
     return 'conversations';
 }
 
-sub dispatch_path{
-    return '/api/conversations/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-conversations';
-}
-
 sub config_allowed_roles {
     return [qw/admin reseller subscriberadmin subscriber/];
 }
