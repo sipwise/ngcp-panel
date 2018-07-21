@@ -6,6 +6,7 @@ use Sipwise::Base;
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::VoicemailGreetings/;
 
 __PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
     POST => { 
         'ContentType' => ['multipart/form-data'],#,
         'Uploads'    => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
@@ -14,10 +15,6 @@ __PACKAGE__->set_config({
 
 sub allowed_methods{
     return [qw/OPTIONS HEAD GET POST/];
-}
-
-sub config_allowed_roles {
-    return [qw/admin reseller subscriberadmin subscriber/];
 }
 
 sub api_description {
