@@ -1469,10 +1469,14 @@ sub return_csv{
 sub return_requested_type {
     my ($self, $c, $id, $item) = @_;
     try{
+        if (!$self->can('get_item_binary_data')) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Method not implemented.");
+        }
         my($data_ref,$mime_type,$filename) = $self->get_item_binary_data($c, $id, $item);
         $filename  //= $self->item_name.''.$self->get_item_id($c, $item);
         $mime_type //= 'application/octet-stream' ;
 
+        #here we rely on the get_item_binary_data return. If data is empty, it means that get_item_binary_data cared about proper error already
         if(!$data_ref){
             return;
         }
