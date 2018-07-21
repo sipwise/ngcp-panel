@@ -491,7 +491,9 @@ sub allowed_methods_filtered {
 #   #where [qw/admin/] - is Journal roles spec
 #}
 #
-
+#all these variants can be passed to __PACKAGE__->set_config({
+#and it will have higher priority then Controller::API or Role::  methods
+#
 sub config_allowed_roles {
     return [qw/admin reseller/];
 }

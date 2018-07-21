@@ -6,11 +6,9 @@ use HTTP::Status qw(:constants);
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Conversations/;
 
-__PACKAGE__->set_config();
-
-sub config_allowed_roles {
-    return [qw/admin reseller subscriberadmin subscriber/];
-}
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
