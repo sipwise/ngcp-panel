@@ -7,7 +7,9 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Admins/;
 
 use HTTP::Status qw(:constants);
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller/],
+});
 
 sub api_description {
     return'Defines admins to log into the system via panel or api.';
