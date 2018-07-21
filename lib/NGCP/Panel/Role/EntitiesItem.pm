@@ -340,6 +340,11 @@ sub delete_item{
     return 1;
 }
 
+sub journal_query_params {
+    my($self,$query_params) = @_;
+    return $self->get_journal_query_params($query_params);
+}
+
 sub options {
     my ($self, $c, $id) = @_;
     my $allowed_methods = $self->allowed_methods_filtered($c);
