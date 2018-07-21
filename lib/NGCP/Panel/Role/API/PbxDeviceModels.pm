@@ -23,14 +23,7 @@ sub resource_name{
     return 'pbxdevicemodels';
 }
 
-sub dispatch_path{
-    return '/api/pbxdevicemodels/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicemodels';
-}
-
+#keep it here alltogether and don't place this allowed_roles in direct config call just to don't repeate it twice
 sub config_allowed_roles {
     return {
         'Default' => [qw/admin reseller subscriberadmin subscriber/],
