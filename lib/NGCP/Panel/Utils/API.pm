@@ -77,6 +77,13 @@ sub get_collections_files {
     return \@colls;
 }
 
+sub get_module_by_resource {
+    my($c, $resource_name) = @_;
+    if ($c->stash->{get_module_by_resource} && $c->stash->{get_module_by_resource}->{$resource_name} ) {
+        return $c->stash->{get_module_by_resource}->{$resource_name};
+    }
+}
+
 sub generate_swagger_datastructure {
     my ($collections, $user_role) = @_;
 
