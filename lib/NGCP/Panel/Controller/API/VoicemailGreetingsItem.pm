@@ -5,6 +5,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::VoicemailGreetings/;
 
 __PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
     PUT => { 
         'ContentType' => ['multipart/form-data'],#,
         'Uploads'    => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
@@ -13,10 +14,6 @@ __PACKAGE__->set_config({
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT DELETE/];
-}
-
-sub config_allowed_roles {
-    return [qw/admin reseller subscriberadmin subscriber/];
 }
 
 sub update_item_model{
