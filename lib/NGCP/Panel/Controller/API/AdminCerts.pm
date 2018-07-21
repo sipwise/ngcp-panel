@@ -6,11 +6,9 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::AdminCerts/;
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Admin;
 
-__PACKAGE__->set_config();
-
-sub config_allowed_roles {
-    return [qw/admin reseller/];
-}
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller/],
+});
 
 sub allowed_methods {
     return [qw/POST OPTIONS HEAD/];
