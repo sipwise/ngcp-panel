@@ -5,7 +5,6 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -34,8 +33,7 @@ sub hal_links{
     my($self, $c, $item, $resource, $form) = @_;
     my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
     return [
-            Data::HAL::Link->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $resource->{subscriber_id})),
-            $adm ? $self->get_journal_relation_link($c, $item->id) : (),
+        Data::HAL::Link->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $resource->{subscriber_id})),
     ];
 }
 
@@ -117,63 +115,12 @@ sub check_resource {
         return;
     }
 
-    return 1; # all good
-}
-
-sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
-
-    delete $resource->{id};
-    my $schema = $c->model('DB');
-
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-    );
-
-    return unless $self->check_resource($c, $item, $old_resource, $resource, $form);
-    # no checks, they are in check_resource, disadvantage: subscriber is searched twice
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
-    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-
-    try {
-        $item->update({
-                name => $resource->{name},
-                mode => $resource->{mode},
-                (defined $resource->{is_regex} ? (is_regex => $resource->{is_regex}) : ()),
-                subscriber_id => $subscriber->id,
-            })->discard_changes;
-        $item->voip_cf_bnumbers->delete;
-        for my $s ( @{$resource->{bnumbers}} ) {
-            $item->create_related("voip_cf_bnumbers", {
-                    bnumber => $s->{bnumber},
-                });
-        }
-        $item->discard_changes;
-        die unless $self->add_update_journal_item_hal($c,sub {
-            my ($self, $c) = @_;
-            return $self->hal_from_item($c, $item);
-        });
-    } catch($e) {
-        $c->log->error("failed to create cfbnumberset: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfbnumberset.");
-        return;
+    $c->stash->{checked} = {
+        billing_subscriber => $b_subscriber,
+        subscriber         => $subscriber,
     };
 
-    return $item;
-}
-
-sub post_process_commit {
-    my($self, $c, $action, $item) = @_;
-
-    if ($action eq 'delete') {
-        $self->add_delete_journal_item_hal($c,sub {
-            my $self = shift;
-            my ($c) = @_;
-            return $self->hal_from_item($c, $item); });
-    }
-    return;
+    return 1; # all good
 }
 
 1;
