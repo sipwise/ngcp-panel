@@ -3,12 +3,14 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CFBNumberSets/;
+
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+});
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
@@ -16,7 +18,7 @@ sub allowed_methods{
 
 sub api_description {
     return 'Defines a collection of CallForward B-Number Sets, including the bnumbers, which can be set '.
-        'to define CallForwards using <a href="#cfmappings">CFMappings</a>.',;
+        'to define CallForwards using <a href="#cfmappings">CFMappings</a>.';
 }
 
 sub query_params {
@@ -37,13 +39,7 @@ sub query_params {
         {
             param => 'name',
             description => 'Filter for items matching a B-Number Set name pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'string_eq',
         },
     ];
 }
@@ -56,38 +52,26 @@ sub documentation_sample {
     };
 }
 
-use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CFBNumberSets/;
-
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
-});
-
 sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
 
-    my $schema = $c->model('DB');
-    my $bset;
+    my $item;
 
     try {
-        # no checks, they are in check_resource
-        my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
-        my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+        my $schema = $c->model('DB');
+        my $subscriber = $c->stash->{checked}->{subscriber};
 
-        $bset = $schema->resultset('voip_cf_bnumber_sets')->create({
+        $item = $schema->resultset('voip_cf_bnumber_sets')->create({
                 name => $resource->{name},
                 mode => $resource->{mode},
                 is_regex => $resource->{is_regex} // 0,
                 subscriber_id => $subscriber->id,
             });
+
         for my $s ( @{$resource->{bnumbers}} ) {
-            $bset->create_related("voip_cf_bnumbers", {
+            $item->create_related("voip_cf_bnumbers", {
                 bnumber => $s->{bnumber},
             });
-        last unless $self->add_create_journal_item_hal($c,sub {
-            my $self = shift;
-            my ($c) = @_;
-            my $_bset = $self->item_by_id($c, $bset->id);
-            return $self->hal_from_item($c, $_bset); });
         }
     } catch($e) {
         $c->log->error("failed to create cfbnumberset: $e");
@@ -95,12 +79,8 @@ sub create_item {
         return;
     }
 
-    return $bset;
+    return $item;
 }
-
-# sub POST :Allow {
-
-# }
 
 1;
 
