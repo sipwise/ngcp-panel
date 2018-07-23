@@ -11,6 +11,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::API::Calllist qw();
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -75,10 +76,15 @@ sub hal_from_item {
 sub resource_from_item {
     my ($self, $c, $item, $form) = @_;
 
+    my $datetime_fmt = DateTime::Format::Strptime->new(
+        pattern => '%F %T',
+    );
+
     my %resource = ();
     $resource{id} = int($item->id);
     $resource{duration} = is_int($item->duration) ? int($item->duration) : 0;
-    $resource{time} = "" . $item->origtime;
+    $resource{time} = "" . NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,$item->origtime,
+        NGCP::Panel::Utils::API::Calllist::get_owner_data($self,$c, undef, undef, 1)});
     $resource{caller} = $item->callerid;
     $resource{subscriber_id} = int($item->mailboxuser->provisioning_voip_subscriber->voip_subscriber->id);
 
