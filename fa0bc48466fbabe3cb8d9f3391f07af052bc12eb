@@ -73,6 +73,64 @@
     },
     {
       "key": {
+        "uuid": "1aca2d91_d69f02b3",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-23T15:54:46Z",
+      "side": 1,
+      "message": "agree; but seems they insist on what was discussed and written down on 4th of december, they said.\n\nanyway, that\u0027s why a dedicated appearance mode \"calllist_use_owner_tz\" is considered, to be enabled for lgi only. hans-peter will also most likely come up with again different wishes for js-csc here, which we then can place here as default.",
+      "parentUuid": "1aca2d91_b61fe65a",
+      "range": {
+        "startLine": 290,
+        "startChar": 45,
+        "endLine": 290,
+        "endChar": 66
+      },
+      "revId": "fa0bc48466fbabe3cb8d9f3391f07af052bc12eb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_965bca2e",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-23T15:54:46Z",
+      "side": 1,
+      "message": "this resultset is the v_subscriber_timezone dbview",
+      "revId": "fa0bc48466fbabe3cb8d9f3391f07af052bc12eb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_76414e39",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-23T15:54:46Z",
+      "side": 1,
+      "message": "this resultset is the v_contract_timezone dbview",
+      "revId": "fa0bc48466fbabe3cb8d9f3391f07af052bc12eb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aca2d91_5309c430",
         "filename": "lib/NGCP/Panel/Utils/CallList.pm",
         "patchSetId": 1
@@ -84,6 +142,30 @@
       "writtenOn": "2018-07-23T15:28:40Z",
       "side": 1,
       "message": "v_subscriber_timezone ? this view is available in ngcp-schema and does the inheritance",
+      "range": {
+        "startLine": 292,
+        "startChar": 6,
+        "endLine": 300,
+        "endChar": 20
+      },
+      "revId": "fa0bc48466fbabe3cb8d9f3391f07af052bc12eb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_d6782292",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-23T15:54:46Z",
+      "side": 1,
+      "message": "yes both the v_subscriber_timezone and v_contracts_timezone are used above.",
+      "parentUuid": "1aca2d91_5309c430",
       "range": {
         "startLine": 292,
         "startChar": 6,
