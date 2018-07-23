@@ -29,6 +29,10 @@ sub query_params {
             description => 'Format start_time according to the optional time zone provided here, e.g. Europe/Berlin.',
         },
         {
+            param => 'use_owner_tz',
+            description => 'Format start_time according to the filtered customer\'s/subscribers\'s inherited time zone.',
+        },
+        {
             param => 'subscriber_id',
             description => 'Filter for calls for a specific subscriber. Either this or customer_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific subscriber in order to properly determine the direction of calls.',
             new_rs => sub {
@@ -284,10 +288,6 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     my $schema = $c->model('DB');
     {
-        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
-            return;
-        }
 
         my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
         last unless $owner;
