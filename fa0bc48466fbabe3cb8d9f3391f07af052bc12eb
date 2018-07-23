@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1aca2d91_b61fe65a",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-07-23T15:33:42Z",
+      "side": 1,
+      "message": "P.S. lets discuss this topic on our SU tomorrow at 1pm",
+      "parentUuid": "1aca2d91_f6255eae",
+      "range": {
+        "startLine": 290,
+        "startChar": 45,
+        "endLine": 290,
+        "endChar": 66
+      },
+      "revId": "fa0bc48466fbabe3cb8d9f3391f07af052bc12eb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aca2d91_5309c430",
         "filename": "lib/NGCP/Panel/Utils/CallList.pm",
         "patchSetId": 1
