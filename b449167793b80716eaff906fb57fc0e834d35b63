@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_7354c053",
+        "filename": "lib/NGCP/Panel/Utils/Journal.pm",
+        "patchSetId": 13
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-23T12:30:18Z",
+      "side": 1,
+      "message": "did you check if this is whats given by $self/$resource here?",
+      "revId": "b449167793b80716eaff906fb57fc0e834d35b63",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
