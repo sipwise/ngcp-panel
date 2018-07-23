@@ -12,6 +12,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use DateTime::TimeZone;
 use NGCP::Panel::Utils::CallList qw();
+use NGCP::Panel::Utils::API::Calllist qw();
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require NGCP::Panel::Role::HTTPMethods;
@@ -30,6 +31,10 @@ sub query_params {
         {
             param => 'tz',
             description => 'Format start_time according to the optional time zone provided here, e.g. Europe/Berlin.',
+        },
+        {
+            param => 'use_owner_tz',
+            description => 'Format start_time according to the filtered customer\'s/subscribers\'s inherited time zone.',
         },
         {
             param => 'subscriber_id',
@@ -307,12 +312,8 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     my $schema = $c->model('DB');
     {
-        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
-            return;
-        }
 
-        my $owner = $self->get_owner_data($c, $schema);
+        my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self,$c, $schema);
         last unless $owner;
         $c->stash(owner => $owner); # for query_param: direction
         my $items = $self->item_rs($c);

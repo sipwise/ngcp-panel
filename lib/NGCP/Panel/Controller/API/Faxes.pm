@@ -36,6 +36,14 @@ sub api_description {
 sub query_params {
     return [
         {
+            param => 'tz',
+            description => 'Format timestamp according to the optional time zone provided here, e.g. Europe/Berlin.',
+        },
+        {
+            param => 'use_owner_tz',
+            description => 'Format timestamp according to the filtered customer\'s/subscribers\'s inherited time zone.',
+        },
+        {
             param => 'subscriber_id',
             description => 'Filter for faxes belonging to a specific subscriber',
             query => {
@@ -50,7 +58,7 @@ sub query_params {
 
         {
             param => 'time_from',
-            description => 'Filter for faxes performed after or at the given time stamp.',
+            description => 'Filter for faxes performed after or at the given timestamp.',
             query => {
                 first => sub {
                     my $q = shift;
@@ -63,7 +71,7 @@ sub query_params {
 
         {
             param => 'time_to',
-            description => 'Filter for faxes performed before or at the given time stamp.',
+            description => 'Filter for faxes performed before or at the given timestamp.',
             query => {
                 first => sub {
                     my $q = shift;
@@ -72,8 +80,7 @@ sub query_params {
                 },
                 second => sub { },
             },
-        }, 
-
+        },
         {
             param => 'sid',
             description => 'Filter for a fax with the specific session id',

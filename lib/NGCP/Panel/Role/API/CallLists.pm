@@ -16,6 +16,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::CallList qw();
+use NGCP::Panel::Utils::API::Calllist qw();
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -109,14 +110,10 @@ sub resource_from_item {
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
     );
-    if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
-        # valid tz is checked in the controllers' GET already, but just in case
-        # it passes through via POST or something, then just ignore wrong tz
-        $item->start_time->set_time_zone($c->req->param('tz'));
-    }
+    my $start_time = NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,$item->start_time,$owner);
 
-    $resource->{start_time} = $datetime_fmt->format_datetime($item->start_time);
-    $resource->{start_time} .= '.'.$item->start_time->millisecond if $item->start_time->millisecond > 0.0;
+    $resource->{start_time} = $datetime_fmt->format_datetime($start_time);
+    $resource->{start_time} .= '.'.$start_time->millisecond if $start_time->millisecond > 0.0;
     return $resource;
 }
 
@@ -124,77 +121,6 @@ sub item_by_id {
     my ($self, $c, $id) = @_;
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
-}
-
-sub get_owner_data {
-    my ($self, $c, $schema) = @_;
-
-    my $ret;
-    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-        if($c->req->param('subscriber_id')) {
-            my $sub = $schema->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
-            unless($sub) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
-                return;
-            }
-            if($c->user->roles eq "reseller" && $sub->contract->contact->reseller_id != $c->user->reseller_id) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
-                return;
-            }
-            return {
-                subscriber => $sub,
-                customer => $sub->contract,
-            };
-        } elsif($c->req->param('customer_id')) {
-            my $cust = $schema->resultset('contracts')->find($c->req->param('customer_id'));
-            unless($cust && $cust->contact->reseller_id) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
-                return;
-            }
-            if($c->user->roles eq "reseller" && $cust->contact->reseller_id != $c->user->reseller_id) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
-                return;
-            }
-            return {
-                subscriber => undef,
-                customer => $cust,
-            };
-        } else {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory parameter 'subscriber_id' or 'customer_id' missing in request");
-            return;
-        }
-    } elsif($c->user->roles eq "subscriberadmin") {
-        if($c->req->param('subscriber_id')) {
-            my $sub = $schema->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
-            unless($sub) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
-                return;
-            }
-            if($sub->contract_id != $c->user->account_id) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
-                return;
-            }
-            return {
-                subscriber => $sub,
-                customer => $sub->contract,
-            };
-        } else {
-            my $cust = $schema->resultset('contracts')->find($c->user->account_id);
-            unless($cust && $cust->contact->reseller_id) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
-                return;
-            }
-            return {
-                subscriber => undef,
-                customer => $cust,
-            };
-        }
-    } else {
-        return {
-            subscriber => $c->user->voip_subscriber,
-            customer => $c->user->voip_subscriber->contract,
-        };
-    }
 }
 
 1;
