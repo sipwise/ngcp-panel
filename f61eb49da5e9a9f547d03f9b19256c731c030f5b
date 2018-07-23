@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_f35fb073",
+        "filename": "lib/NGCP/Panel/Form/Customer/PbxExtensionSubscriberEdit.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-07-23T12:24:31Z",
+      "side": 1,
+      "message": "that\u0027s nice :)",
+      "revId": "f61eb49da5e9a9f547d03f9b19256c731c030f5b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
