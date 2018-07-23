@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_5309c430",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-07-23T15:28:40Z",
+      "side": 1,
+      "message": "v_subscriber_timezone ? this view is available in ngcp-schema and does the inheritance",
+      "range": {
+        "startLine": 292,
+        "startChar": 6,
+        "endLine": 300,
+        "endChar": 20
+      },
+      "revId": "fa0bc48466fbabe3cb8d9f3391f07af052bc12eb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
