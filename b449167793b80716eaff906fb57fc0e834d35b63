@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1aca2d91_d3cb941d",
+        "filename": "lib/NGCP/Panel/Utils/Journal.pm",
+        "patchSetId": 13
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-07-23T12:32:56Z",
+      "side": 1,
+      "message": "maybe we should move $c before $resource as we usually use it as the first argument in most of our places where it is present",
+      "range": {
+        "startLine": 480,
+        "startChar": 19,
+        "endLine": 480,
+        "endChar": 21
+      },
+      "revId": "b449167793b80716eaff906fb57fc0e834d35b63",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aca2d91_7354c053",
         "filename": "lib/NGCP/Panel/Utils/Journal.pm",
         "patchSetId": 13
