@@ -286,6 +286,23 @@ sub process_cdr_item {
     $resource->{rating_status} = $item->rating_status;
 
     $resource->{start_time} = $item->start_time;
+    unless ($c->req->param('tz')) {
+        if ($c->req->param('use_owner_tz')) {
+            my $tz;
+            if ($sub) {
+                $tz = $c->model('DB')->resultset('voip_subscriber_timezone')->search_first({
+                    subscriber_id => $sub->id
+                })->first;
+            } elsif ($cust) {
+                $tz = $c->model('DB')->resultset('contract_timezone')->search_first({
+                    contract_id => $cust->id
+                })->first;
+            } else {
+
+            }
+            $resource->{start_time}->set_time_zone($tz->name) if $tz;
+        }
+    }
     $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$item->duration,3);
     $resource->{customer_cost} = $resource->{direction} eq "out" ?
         $item->source_customer_cost : $item->destination_customer_cost;

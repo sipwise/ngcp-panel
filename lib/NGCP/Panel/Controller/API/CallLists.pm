@@ -29,6 +29,10 @@ sub query_params {
             description => 'Format start_time according to the optional time zone provided here, e.g. Europe/Berlin.',
         },
         {
+            param => 'use_owner_tz',
+            description => 'Format start_time according to the customer\'s/subscribers\'s inherited time zone.',
+        },
+        {
             param => 'subscriber_id',
             description => 'Filter for calls for a specific subscriber. Either this or customer_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific subscriber in order to properly determine the direction of calls.',
             new_rs => sub {
