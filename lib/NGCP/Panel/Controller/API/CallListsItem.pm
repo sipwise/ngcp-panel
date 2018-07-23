@@ -57,17 +57,13 @@ sub auto :Private {
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
-        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
-            return;
-        }
 
         my $schema = $c->model('DB');
         last unless $self->valid_id($c, $id);
 
         my $owner = $self->get_owner_data($c, $schema);
         last unless $owner;
-        my $href_data = $owner->{subscriber} ? 
+        my $href_data = $owner->{subscriber} ?
             "subscriber_id=".$owner->{subscriber}->id :
             "customer_id=".$owner->{customer}->id;
 

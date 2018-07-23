@@ -16,6 +16,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::CallList qw();
+use NGCP::Panel::Utils::API::Calllist qw();
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -109,14 +110,10 @@ sub resource_from_item {
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
     );
-    if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
-        # valid tz is checked in the controllers' GET already, but just in case
-        # it passes through via POST or something, then just ignore wrong tz
-        $item->start_time->set_time_zone($c->req->param('tz'));
-    }
+    my $start_time = NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,$item->start_time,$owner);
 
-    $resource->{start_time} = $datetime_fmt->format_datetime($item->start_time);
-    $resource->{start_time} .= '.'.$item->start_time->millisecond if $item->start_time->millisecond > 0.0;
+    $resource->{start_time} = $datetime_fmt->format_datetime($start_time);
+    $resource->{start_time} .= '.'.$start_time->millisecond if $start_time->millisecond > 0.0;
     return $resource;
 }
 
