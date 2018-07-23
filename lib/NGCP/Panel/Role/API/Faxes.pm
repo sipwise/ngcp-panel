@@ -73,7 +73,10 @@ sub resource_from_item {
 
     my %resource = ();
     $resource{id} = int($item->id);
-    $resource{time} = $datetime_fmt->format_datetime($item->time);
+    $resource{time} = $datetime_fmt->format_datetime(
+        NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,$item->time,
+        NGCP::Panel::Utils::API::Calllist::get_owner_data($self,$c, undef, undef, 1)
+    ));
     $resource{subscriber_id} = int($subscriber->id);
     foreach(qw/direction caller callee reason status quality filename/){
         $resource{$_} = $item->$_;

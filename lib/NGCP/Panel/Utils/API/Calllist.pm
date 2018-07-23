@@ -6,13 +6,15 @@ use HTTP::Status qw(:constants);
 
 
 sub get_owner_data {
-    my ($self, $c, $schema, $source) = @_;
+    my ($self, $c, $schema, $source, $optional_for_admin_reseller) = @_;
 
     my $ret;
     $source //= $c->req->params;
     my $src_subscriber_id = $source->{subscriber_id};
     my $src_customer_id = $source->{customer_id};
-    
+
+    $schema //= $c->model('DB');
+
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
         if($src_subscriber_id) {
             my $sub = $schema->resultset('voip_subscribers')->find($src_subscriber_id);
@@ -42,7 +44,7 @@ sub get_owner_data {
                 subscriber => undef,
                 customer => $cust,
             };
-        } else {
+        } elsif (not $optional_for_admin_reseller) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory parameter 'subscriber_id' or 'customer_id' missing in request");
             return;
         }
@@ -82,6 +84,39 @@ sub get_owner_data {
         return;
     }
 }
+
+sub apply_owner_timezone {
+    my ($self,$c,$dt,$owner) = @_;
+    my $result = $dt->clone;
+    if($c->req->param('tz')) {
+        if (DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+            # valid tz is checked in the controllers' GET already, but just in case
+            # it passes through via POST or something, then just ignore wrong tz
+            $result->set_time_zone($c->req->param('tz'));
+        } else {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
+            return;
+        }
+    } elsif ($owner and $c->req->param('use_owner_tz')) {
+        my $tz;
+        my $sub = $owner->{subscriber};
+        my $cust = $owner->{customer};
+        if ($owner->{subscriber}) {
+            $tz = $c->model('DB')->resultset('voip_subscriber_timezone')->search_first({
+                subscriber_id => $owner->{subscriber}->id
+            })->first;
+        } elsif ($owner->{customer}) {
+            $tz = $c->model('DB')->resultset('contract_timezone')->search_first({
+                contract_id => $owner->{customer}->id
+            })->first;
+        } else {
+            # shouldnt go here.
+        }
+        $result->set_time_zone($tz->name) if $tz;
+    }
+    return $result;
+}
+
 1;
 
 =head1 NAME
