@@ -10,6 +10,7 @@ use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::Strptime qw();
 
 use NGCP::Panel::Utils::IntervalTree::Simple;
+use NGCP::Panel::Utils::BillingMappings qw();
 
 use constant _CHECK_PEAKTIME_WEEKDAY_OVERLAPS => 1;
 use constant _CHECK_PEAKTIME_SPECIALS_OVERLAPS => 1;
@@ -417,8 +418,7 @@ sub switch_prepaid {
         foreach my $mapping ($rs->all) {
             my $contract = $mapping->contract;
             next unless($contract->contact->reseller_id); # skip non-customers
-            my $chosen_contract = $contract_rs->find({id => $contract->id});
-            next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $mapping->id ); # is not current mapping
+            next unless NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $contract)->id == $mapping->id;
             foreach my $sub($contract->voip_subscribers->all) {
                 my $prov_sub = $sub->provisioning_voip_subscriber;
                 next unless($sub->provisioning_voip_subscriber);
