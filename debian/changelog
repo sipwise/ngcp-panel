@@ -1,3 +1,71 @@
+ngcp-panel (6.4.1.0+0~mr6.4.1.0) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [02e3e04] TT#32602 fix perlcritic error ValuesAndExpressions::ProhibitImplicitNewlines
+  * [6e8dd1a] TT#37221 fix perlcritic error Subroutines::ProhibitExplicitReturnUndef
+  * [20a2015] TT#37222 fix some perlcritic errors ValuesAndExpressions::ProhibitCommaSeparatedStatements
+  * [f916bdc] TT#37104 fix Subroutines::ProhibitBuiltinHomonyms perlcritic error
+  * [e5fccbf] TT#37105 fix perlcritic errors related to variables
+  * [78b75e7] TT#37105 fix if block with assignment
+  * [4feeb76] TT#38005 fix/resolve various perlcritic errors
+  * [0b39b6e] TT#37222 fix perlcritic errors ProhibitCommaSeparatedStatements
+  * [3d7f17b] TT#38005 clean/ignore remaining perlcritic issues
+  * [c550282] TT#37204 bnumber cf panel
+  * [a97cbba] TT#37205 bnumber cf in API: /api/callforwards
+  * [f5687b2] TT#37205 bnumber cf in API: complex /api/cf*
+  * [9210ac0] TT#37206 is_regexp flag for callforwardings
+
+  [ Kirill Solomko ]
+  * [8f28e18] TT#36005 add Storage model support, callflows use Storage model
+  * [6dc1e7c] TT#36007 add /api/sipcaptures
+  * [e97b407] TT#39007 SMS fix add_journal_record() calls, send_sms() fix charset
+  * [7198bc3] TT#39165 sms_jorunal adjustments
+  * [a60ae36] TT#39168 SMS: prepaid_billing fix error session closing
+  * [743dd4a] TT#39358 SMS/init_prepaid_billing() improve session_create logging
+  * [62a81f1] TT#40010 add new call forward type "cfr"
+  * [968da66] TT#39607 update CF source set mode API docref
+
+  [ Irina Peshinskaya ]
+  * [d918bd5] TT#36404 Fix translate form for preferences
+  * [0aa178e] TT#37552 Fix formatting - add missed newline
+  * [ffde9a6] TT#37552 Fix formatting - remove duplicated commit call
+  * [3a814a9] TT#37684 Fix broken journal rails
+  * [89fa3a1] TT#37684 Fix broken journal rails - remove debug
+  * [323d12b] TT#37325 Make lines not mandatory for /api/pbxdevices
+  * [b96431b] TT#37951 Fix regression made in /api/admins
+  * [239555f] TT#37457 Update yealink provisioning server domain
+  * [cc6cf3b] TT#37375 Allow additional "order by" columns specifications
+  * [8b8868c] TT#37458 Add billing profile aoc field
+  * [61915c7] TT#33113 Apply callee_in rewrite rules to fax csc number
+  * [17642b7] TT#39360 Adapt conversations order_by_cols to absent fax col
+  * [5a504e9] TT#37459 Implement outbound lb_set/path for permanent registrations
+  * [c72c74b] TT#37650 Force ngcp:collection entities to array
+  * [033eb85] TT#39583 Fix tests broken by links format changes
+  * [2431c0e] TT#36007 Remove /api/sipcaptures standard GET method
+  * [72e4751] TT#39605 Remove semicolon from RPS xml
+  * [8abd7ba] TT#37459 Fix chained preference method names
+  * [0d11ae6] TT#39949 Allow faxserversettings to subscriber roles
+  * [c219658] TT#41013 Separate edit and create form for extension subsctibers
+
+  [ Rene Krenn ]
+  * [b003c21] TT#37706 fix journal HEAD
+  * [fa967c4] TT#38150 fix and re-enable api-journals.t
+  * [2af0ccf] TT#38550 billing_zone_id filter param
+  * [39e4023] TT#38400 fix customer contract editing
+  * [11c1e04] TT#38767 prevent self-calls dupes in conversations
+  * [145167e] TT#38401 switch to new billing mappings tables
+
+  [ Sipwise Jenkins Builder ]
+  * [10c3d4c] TT#4166 I18N dump: snapshot 2018.06.22-04.00.27
+  * [627a2ef] TT#4166 I18N dump: snapshot 2018.06.27-03.46.40
+  * [941bd86] TT#4166 I18N dump: snapshot 2018.06.30-03.57.53
+  * [5b91831] TT#4166 I18N dump: snapshot 2018.07.11-04.02.50
+
+  [ Guillem Jover ]
+  * [bcab88a] TT#39401 Use List::Util in perl core instead of List::MoreUtils
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 Jul 2018 13:37:21 +0200
+
 ngcp-panel (6.4.0.0+0~mr6.4.0.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
