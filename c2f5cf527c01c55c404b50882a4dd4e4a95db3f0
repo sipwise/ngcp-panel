@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "1aca2d91_39f2a79b",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-25T17:23:41Z",
+      "side": 1,
+      "message": "sry, branch should be this, without any destroy:\n\n} elsif(not $has_credit) {\n            $c-\u003elog-\u003einfo(\"No credit for sms from $caller to $callee with session id $this_session_id\");\n            $session-\u003e{status} \u003d \u0027failed\u0027;\n            $session-\u003e{reason} \u003d \u0027insufficient credit\u0027;\n            last;\n        }",
+      "parentUuid": "1aca2d91_9902db6e",
+      "revId": "c2f5cf527c01c55c404b50882a4dd4e4a95db3f0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aca2d91_79f81f7d",
         "filename": "lib/NGCP/Panel/Utils/SMS.pm",
         "patchSetId": 2
