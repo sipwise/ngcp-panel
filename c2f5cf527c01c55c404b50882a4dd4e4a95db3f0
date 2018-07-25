@@ -34,6 +34,46 @@
       "revId": "c2f5cf527c01c55c404b50882a4dd4e4a95db3f0",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_9902db6e",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-25T17:22:12Z",
+      "side": 1,
+      "message": "ok if i understand correctly, the reported problem is because\ncurrently sub cancel_prepaid_billing will also always cancel() and discard() the part prior to destroying it. which libinew reports as an error, if the session creation gave $has_credit \u003d 0.\n\nwould then only add the brach at this point:\n\n} elsif (not $has_credit) {\n            $c-\u003elog-\u003einfo(\"No credit for sms from $caller to $callee with session id $this_session_id\");\n            $session-\u003e{status} \u003d \u0027failed\u0027;\n            $session-\u003e{reason} \u003d \u0027insufficient credit\u0027;\n            NGCP::Rating::Inew::SmsSession::session_destroy($sess);\n            last;\n        }\n\nthe advantage is that cancel_prepaid_billing  would then also explicitly abandon the first few parts of a multi-part multi-sms, for which credit was ok.",
+      "revId": "c2f5cf527c01c55c404b50882a4dd4e4a95db3f0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_79f81f7d",
+        "filename": "lib/NGCP/Panel/Utils/SMS.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-25T17:22:12Z",
+      "side": 1,
+      "message": "doin this rough teardown in any abort case might cause similar errors as well.\n\ni mean ideally, i would introduce something like\n\n$sess-\u003e{sess_status}",
+      "range": {
+        "startLine": 341,
+        "startChar": 8,
+        "endLine": 343,
+        "endChar": 63
+      },
+      "revId": "c2f5cf527c01c55c404b50882a4dd4e4a95db3f0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
