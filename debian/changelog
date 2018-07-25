@@ -1,3 +1,12 @@
+ngcp-panel (5.5.5.4+0~mr5.5.5.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [ff4f85e] TT#41022 calllist, faxes, vm: use owner's inherited tz
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Jul 2018 17:06:39 +0200
+
 ngcp-panel (5.5.5.3+0~mr5.5.5.3) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
