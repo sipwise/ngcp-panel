@@ -287,14 +287,15 @@ sub init_prepaid_billing {
             last;
         }
 
-        push @{$session->{parts}}, $sess;
-
         unless($has_credit) {
             $c->log->info("No credit for sms from $caller to $callee with session id $this_session_id");
             $session->{status} = 'failed';
             $session->{reason} = 'insufficient credit';
+            NGCP::Rating::Inew::SmsSession::session_destroy($sess);
             last;
         }
+
+        push @{$session->{parts}}, $sess;
 
         unless(NGCP::Rating::Inew::SmsSession::session_sms_reserve($sess)) {
             $c->log->error("Failed to reserve sms session from $caller to $callee with session id $this_session_id");
