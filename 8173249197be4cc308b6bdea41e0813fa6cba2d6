@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_1c1a396f",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 820,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-26T09:42:46Z",
+      "side": 0,
+      "message": "Also there are the same debug at lines 760. I left it here,   found this debug information pretty useful for web team issues investigations. But if these debugs make performance issues, of course they can be deleted.",
+      "range": {
+        "startLine": 819,
+        "startChar": 0,
+        "endLine": 820,
+        "endChar": 38
+      },
+      "revId": "8173249197be4cc308b6bdea41e0813fa6cba2d6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_fc253dae",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 822,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-26T09:42:46Z",
+      "side": 0,
+      "message": "For some records it was necessary, otherwise we had 500 error. But I don\u0027t remember now for what records.",
+      "range": {
+        "startLine": 822,
+        "startChar": 0,
+        "endLine": 822,
+        "endChar": 62
+      },
+      "revId": "8173249197be4cc308b6bdea41e0813fa6cba2d6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
