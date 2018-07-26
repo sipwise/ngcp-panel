@@ -70,6 +70,30 @@
       "revId": "924244b1338c9620b4b8cbedd53470f34cac8ea7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_bc1fc55a",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-07-26T09:48:04Z",
+      "side": 1,
+      "message": "we can do that, but thats how you ran into the issues commented in the controller\n\n        #fax_journal and othre type tables does not have \u0027timestamp\u0027 field (\u0027time\u0027 instead in fax_journal).\n        #So in unwrapped query (e.g. when we ask fax_journal by querying type\u003dfax), we need to refer to timestamp - alias of the \"time\" field, without table alias prefix \"me.\"\n\nthe goal was to support global sorting by time, if no type is specified. therefore the unions expose a uniform field representing epoch seconds (since the majority of involved tables use epoch).\n\nthe plan was there is a field named \"timestamp\" for any type, which one can use with \"?order_by\u003dtimestamp\". for filtering, the params were named \"from\" and \"to\".",
+      "parentUuid": "1aca2d91_39062721",
+      "range": {
+        "startLine": 826,
+        "startChar": 20,
+        "endLine": 826,
+        "endChar": 29
+      },
+      "revId": "924244b1338c9620b4b8cbedd53470f34cac8ea7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
