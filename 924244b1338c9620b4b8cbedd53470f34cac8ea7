@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_d935f3f7",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-26T09:09:07Z",
+      "side": 1,
+      "message": "I\u0027m not sure about this renaming. Want to test it first.",
+      "range": {
+        "startLine": 826,
+        "startChar": 20,
+        "endLine": 826,
+        "endChar": 29
+      },
+      "revId": "924244b1338c9620b4b8cbedd53470f34cac8ea7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
