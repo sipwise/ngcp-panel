@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1aca2d91_bc7b457b",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 822,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-26T10:40:21Z",
+      "side": 1,
+      "message": "I have now doubts about this. Conditional $item_mock_obj-\u003etimestamp makes me suspect that this value may be empty some how, and then we will have emptied start_time, I need to check start_time values in object processing methods for all types, second.",
+      "range": {
+        "startLine": 821,
+        "startChar": 0,
+        "endLine": 822,
+        "endChar": 36
+      },
+      "revId": "0574a4f90cd8faf8ec722f668710fe93d7d8109d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aca2d91_1c5fd90f",
         "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
         "patchSetId": 4
