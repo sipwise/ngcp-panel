@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1aca2d91_fce89d18",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 822,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-26T10:48:15Z",
+      "side": 1,
+      "message": "I think it should be ok. At least if there is something, it is too thin I get it now.",
+      "parentUuid": "1aca2d91_bc7b457b",
+      "range": {
+        "startLine": 821,
+        "startChar": 0,
+        "endLine": 822,
+        "endChar": 36
+      },
+      "revId": "0574a4f90cd8faf8ec722f668710fe93d7d8109d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aca2d91_1c5fd90f",
         "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
         "patchSetId": 4
