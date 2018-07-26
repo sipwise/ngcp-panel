@@ -94,6 +94,30 @@
       "revId": "924244b1338c9620b4b8cbedd53470f34cac8ea7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_3c4bb55b",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-26T10:23:40Z",
+      "side": 1,
+      "message": "the reason of the fax_journal issue was that we tried to order by \"me.timestamp\", where \"me\" as alias for the table, not for subquery. Please, look:\n\nMariaDB [(none)]\u003e select id as id_aliased from kamailio.fax_journal me order by id_aliased;\nEmpty set (0.00 sec)\n\nMariaDB [(none)]\u003e select id_aliased from  (select id as id_aliased from kamailio.fax_journal ) me order by me.id_aliased;\nEmpty set (0.00 sec)\n\nMariaDB [(none)]\u003e select id as id_aliased from kamailio.fax_journal me order by me.id_aliased;\nERROR 1054 (42S22): Unknown column \u0027me.id_aliased\u0027 in \u0027order clause\u0027\n\nSo, we do have now unified \"timestamp\" as field already, but it doesn\u0027t work until we wrap table into subquery or stop using table reference \"me\", trying to access unaliased field \"timestamp\" that is absent.",
+      "parentUuid": "1aca2d91_bc1fc55a",
+      "range": {
+        "startLine": 826,
+        "startChar": 20,
+        "endLine": 826,
+        "endChar": 29
+      },
+      "revId": "924244b1338c9620b4b8cbedd53470f34cac8ea7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
