@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_1c5fd90f",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 827,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-26T10:35:34Z",
+      "side": 1,
+      "message": "Maybe we will take it on top level - as far as I can see we have now owner for \u0027call\u0027 type. As we are going to process all rows through timezone now, all of  them will need owner, so we can move it on top and use for \u0027call\u0027 type too.",
+      "range": {
+        "startLine": 827,
+        "startChar": 81,
+        "endLine": 827,
+        "endChar": 108
+      },
+      "revId": "0574a4f90cd8faf8ec722f668710fe93d7d8109d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
