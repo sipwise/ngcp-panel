@@ -46,6 +46,30 @@
       "revId": "924244b1338c9620b4b8cbedd53470f34cac8ea7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_39062721",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-07-26T09:27:30Z",
+      "side": 1,
+      "message": "At the form we expose start_time. We don\u0027t use any other time related field.\nI would say \"tart_time\" is good name for the field, all of the convarsations can relate to it, and still we have other terms (like end_time) to show other information. I would leave it as start_time in form.",
+      "parentUuid": "1aca2d91_d91cd379",
+      "range": {
+        "startLine": 826,
+        "startChar": 20,
+        "endLine": 826,
+        "endChar": 29
+      },
+      "revId": "924244b1338c9620b4b8cbedd53470f34cac8ea7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
