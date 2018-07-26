@@ -245,7 +245,7 @@ sub get_mandatory_params {
     my $owner = $self->get_owner_cached($c);
     return unless $owner;
     my %mandatory_params = (
-        $owner->{subscriber} 
+        $owner->{subscriber}
         ? ( subscriber_id => $owner->{subscriber}->id )
         : ( customer_id => $owner->{customer}->id )
     );
@@ -428,7 +428,7 @@ sub _get_call_rs {
         }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT,@suppression_aliases);
         my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
             destination_user_id => $uuid,
-            source_user_id => { '!=' => $uuid }, 
+            source_user_id => { '!=' => $uuid },
         }),NGCP::Panel::Utils::CallList::SUPPRESS_IN,@suppression_aliases);
 
         $self->_apply_direction(params => $params,
@@ -563,7 +563,7 @@ sub _get_sms_rs {
         select => [
               { '' => \'"sms"', -as => 'type' },
               { '' => 'me.id', -as => 'id' },
-              { '' => 'me.time', -as => 'timestamp' },
+              { '' => \'unix_timestamp(me.time)', -as => 'timestamp' },
               _get_select_list(\%sms_fields),
             ],
         as => ['type','id','timestamp',_get_as_list(\%sms_fields),],
@@ -772,7 +772,7 @@ sub process_hal_resource {
             @{$resource}{qw/caller callee/} = @{$resource}{qw/own_cli other_cli/};
         } else {
             @{$resource}{qw/caller callee/} = @{$resource}{qw/other_cli own_cli/};
-        }        
+        }
         $resource->{type} = $item->{type};
         my $fee;
         if ($fee = $schema->resultset('billing_fees_history')->search_rs({
@@ -812,21 +812,19 @@ sub process_hal_resource {
         $resource->{call_id} = $item_mock_obj->call_id;
     }elsif('sms' eq $item->{type}){
         $resource = $item_accessors_hash;
-        $resource->{start_time} =  NGCP::Panel::Utils::DateTime::from_string($item_mock_obj->timestamp)->epoch;
+        #$resource->{start_time} =  NGCP::Panel::Utils::DateTime::from_string($item_mock_obj->timestamp)->epoch;
     }elsif('xmpp' eq $item->{type}){
         $resource = $item_accessors_hash;
     }
     $c->log->debug(Dumper('resource'));
     $c->log->debug(Dumper($resource));
-    if($item_mock_obj->timestamp){
-        $resource->{start_time} //= $item_mock_obj->timestamp;
+    $resource->{start_time} = undef;
+    if ($item_mock_obj->timestamp) {
         my $datetime_fmt = DateTime::Format::Strptime->new(
             pattern => '%F %T',
         );
-        my $timestamp = NGCP::Panel::Utils::DateTime::epoch_local($resource->{start_time});
-        #if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
-        #    $timestamp->set_time_zone($c->req->param('tz'));
-        #}
+        my $timestamp = NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,
+            NGCP::Panel::Utils::DateTime::epoch_local($item_mock_obj->timestamp),$self->get_owner_cached($c));
         $resource->{start_time} = $datetime_fmt->format_datetime($timestamp);
         $resource->{start_time} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
     }

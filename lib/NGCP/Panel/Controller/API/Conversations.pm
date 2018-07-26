@@ -23,6 +23,14 @@ sub api_description {
 sub query_params {
     return [
         {
+            param => 'tz',
+            description => 'Format timestamp according to the optional time zone provided here, e.g. Europe/Berlin.',
+        },
+        {
+            param => 'use_owner_tz',
+            description => 'Format timestamp according to the filtered customer\'s/subscribers\'s inherited time zone.',
+        },
+        {
             param => 'subscriber_id',
             description => 'Filter for conversation events of a specific subscriber. Either this or customer_id filter is mandatory if called by admin, reseller or subscriberadmin.',
         },
@@ -61,16 +69,10 @@ sub query_params {
 sub order_by_cols {
     my ($self, $c) = @_;
     my $cols = {
-        'timestamp' => 'me.timestamp',
-        'type' => 'me.type',
+        'start_time' => 'timestamp',
+        'timestamp' => 'timestamp',
+        'type' => 'type',
     };
-    my $params = $c->request->params;
-    if (defined $c->request->params->{type}) {
-        #fax_journal and othre type tables does not have 'timestamp' field ('time' instead in fax_journal). 
-        #So in unwrapped query (e.g. when we ask fax_journal by querying type=fax), we need to refer to timestamp - alias of the "time" field, without table alias prefix "me."
-        $cols->{type} = 'type';
-        $cols->{timestamp} = 'timestamp';
-    }
     return $cols;
 }
 
