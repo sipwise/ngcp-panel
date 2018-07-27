@@ -295,7 +295,8 @@ my @allcustomers = ();
     ok(exists $customer->{max_subscribers}, "check existence of max_subscribers");
     ok(!exists $customer->{product_id}, "check absence of product_id");
     ok(exists $customer->{all_billing_profiles}, "check existence of all_billing_profiles");
-    is_deeply($customer->{all_billing_profiles},[ { profile_id => $billing_profile_id, start => undef, stop => undef, network_id => undef, effective_start_time => '1970-01-01 00:00:00', } ],"check all_billing_profiles deeply");
+    delete $customer->{all_billing_profiles}->[0]->{effective_start_time};
+    is_deeply($customer->{all_billing_profiles},[ { profile_id => $billing_profile_id, start => undef, stop => undef, network_id => undef, } ],"check all_billing_profiles deeply");
 
     # PUT same result again
     my $old_customer = { %$customer };
