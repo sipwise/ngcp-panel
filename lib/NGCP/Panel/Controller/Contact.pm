@@ -40,15 +40,40 @@ sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) :Does(ACL) :
     ]);
 }
 
-sub timezone_ajax :Chained('/') :PathPart('contact/timezone_ajax') :Args(0) {
-    my ($self, $c) = @_;
-
-    my $tz_rs   = $c->model('DB')->resultset('timezones');
+sub timezone_ajax :Chained('/') :PathPart('contact/timezone_ajax') :Args() {
+    my ($self, $c, $parent_owner_type, $parent_owner_id) = @_;
+    $parent_owner_type //= '';
+    my $default_tz_data;
+    if ($parent_owner_type && $parent_owner_type ne 'reseller') {
+        my $parent_tz_rs;
+        if ($parent_owner_type eq 'contract') {
+            $parent_tz_rs   = $c->model('DB')->resultset('contract_timezone')->search_rs({
+                'contract_id' => $parent_owner_id 
+            },{
+                'columns' => [ { name   => \('concat("'.$c->loc('customer default').' (",name,")")')} ],
+            });
+        } elsif ($parent_owner_type eq 'reseller') {
+            $parent_tz_rs   = $c->model('DB')->resultset('reseller_timezone')->search_rs({
+                'reseller_id' => $parent_owner_id 
+            },{
+                'columns' => [ { name   => \('concat("'.$c->loc('reseller default').' (",name,")")')} ],
+            });
+        }
+        $default_tz_data = { $parent_tz_rs->first->get_inflated_columns };
+    } else {
+        $default_tz_data = { name => $c->loc('defaul (localtime)') };
+    }
+    my $tz_rs = $c->model('DB')->resultset('timezones')->search_rs(undef,
+        {
+            '+select' => [ qw/me.id/ ],
+            '+as' => [ qw/id/ ],
+        });
+    #$parent_tz_rs->union_all($tz_rs);
     my $tz_cols = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "name", search => 1, title => $c->loc('Timezone') },
     ]);
 
-    NGCP::Panel::Utils::Datatables::process($c, $tz_rs, $tz_cols);
+    NGCP::Panel::Utils::Datatables::process($c, $tz_rs, $tz_cols, undef, { topData => $default_tz_data } );
 
     $c->detach( $c->view("JSON") );
 }

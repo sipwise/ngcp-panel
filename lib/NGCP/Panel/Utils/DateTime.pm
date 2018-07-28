@@ -28,6 +28,15 @@ sub is_valid_timezone_name {
     }
 }
 
+sub strip_empty_timezone_name {
+    my ($c, $value) = @_;
+    my $default_names =  join ('|', map {'^'.$_} ($c->loc('customer default'),$c->loc('reseller default'),$c->loc('default')));
+    if ($value =~ /$default_names/i) {
+        return '';
+    }
+    return $value;
+}
+
 sub current_local {
     if ($is_fake_time) {
         return DateTime->from_epoch(epoch => Time::Warp::time,
