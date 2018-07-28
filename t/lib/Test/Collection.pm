@@ -217,6 +217,12 @@ has 'KEEP_CREATED' =>(
     default => 1,
 );
 
+has 'CHECK_LIST_LIMIT' =>(
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+);
+
 has 'DATA_LOADED' => (
     is => 'rw',
     isa => 'HashRef',
@@ -519,9 +525,9 @@ sub get_uri_collection{
 }
 
 sub get_uri_collection_paged{
-    my($self,$name) = @_;
+    my($self,$name, $page, $rows) = @_;
     my $uri = $self->get_uri_collection($name);
-    return $uri.($uri !~/\?/ ? '?':'&').'page='.($self->PAGE // '1').'&rows='.($self->ROWS // '1').($self->NO_COUNT ? '&no_count=1' : '');
+    return $uri.($uri !~/\?/ ? '?':'&').'page='.($page // $self->PAGE // '1').'&rows='.($rows // $self->ROWS // '1').($self->NO_COUNT ? '&no_count=1' : '');
 }
 
 sub get_uri_get{
@@ -991,7 +997,9 @@ sub check_list_collection{
     my $nexturi = $self->get_uri_collection_paged;
     my @href = ();
     my $test_info_prefix = "$self->{name}: check_list_collection: ";
+    my $page = 1;
     do {
+        $page++;
         #print "nexturi=$nexturi;\n";
         my ($res,$list_collection) = $self->check_item_get($nexturi);
         my $selfuri = $self->normalize_uri($list_collection->{_links}->{self}->{href});
@@ -1027,7 +1035,13 @@ sub check_list_collection{
         }
 
         if($list_collection->{_links}->{next}->{href}) {
-            $nexturi = $self->normalize_uri($list_collection->{_links}->{next}->{href});
+            if ( $self->NO_COUNT && !$self->CHECK_LIST_LIMIT) {
+                $nexturi = $self->normalize_uri($list_collection->{_links}->{next}->{href});
+            } else {
+                my $uri_page = $page + $list_collection->{total_count} / ($self->CHECK_LIST_LIMIT - 1 );
+                $uri_page > $list_collection->{total_count} and $uri_page = $list_collection->{total_count};
+                $nexturi = $self->get_uri_collection_paged(undef,  $uri_page);
+            }
         } else {
             $nexturi = undef;
         }
@@ -1059,13 +1073,18 @@ sub check_list_collection{
                 push @href, $item_c->{_links}->{self}->{href};
             }
         }
-    } while($nexturi);
+    } while($nexturi && (!$self->CHECK_LIST_LIMIT || $eslf->CHECK_LIST_LIMIT > $page));
     return \@href;
 }
 
 sub check_created_listed{
     my($self,$listed) = @_;
     my $created_items = clone($self->DATA_CREATED->{ALL});
+    if(!$created_items || ref $created_items ne 'ARRAY' || !scalar @$created_items
+        || $self->CHECK_LIST_LIMIT #we didn't load all collections into $listed, so we can't check if all created are really listed
+    ){
+        return;
+    } 
     $listed //= [];#to avoid error about not array reference
     $created_items //= [];
     foreach (@$listed){
