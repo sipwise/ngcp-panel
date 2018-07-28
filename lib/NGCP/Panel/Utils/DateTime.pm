@@ -28,6 +28,41 @@ sub is_valid_timezone_name {
     }
 }
 
+sub strip_empty_timezone_name {
+    my ($c, $value) = @_;
+    my $default_names =  join ('|', map {'^'.$_} ($c->loc('customer default'),$c->loc('reseller default'),$c->loc('default')));
+    if ($value =~ /$default_names/i) {
+        return '';
+    }
+    return $value;
+}
+
+sub get_default_timezone_name {
+    my($c, $parent_owner_type, $parent_owner_id) = @_;
+    $parent_owner_type //= '';
+    my  $default_tz_data;
+    if ($parent_owner_type && $parent_owner_type ne 'reseller') {
+        my $parent_tz_rs;
+        if ($parent_owner_type eq 'contract') {
+            $parent_tz_rs   = $c->model('DB')->resultset('contract_timezone')->search_rs({
+                'contract_id' => $parent_owner_id 
+            },{
+                'columns' => [ { name   => \('concat("'.$c->loc('customer default').' (",name,")")')} ],
+            });
+        } elsif ($parent_owner_type eq 'reseller') {
+            $parent_tz_rs   = $c->model('DB')->resultset('reseller_timezone')->search_rs({
+                'reseller_id' => $parent_owner_id 
+            },{
+                'columns' => [ { name   => \('concat("'.$c->loc('reseller default').' (",name,")")')} ],
+            });
+        }
+        $default_tz_data = { $parent_tz_rs->first->get_inflated_columns };
+    } else {
+        $default_tz_data = { name => $c->loc('defaul (localtime)') };
+    }
+    return  $default_tz_data;
+}
+
 sub current_local {
     if ($is_fake_time) {
         return DateTime->from_epoch(epoch => Time::Warp::time,
