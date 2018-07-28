@@ -17,18 +17,17 @@ has 'custom_renderers' => ( isa => 'HashRef', is => 'rw' );
 has 'no_ordering' => ( isa => 'Bool', is => 'rw' );
 has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );
 
+#didn't want to incude some complex role related logic here, 
+#as these DataTable fields also are used in API
+#To don't slow down API
+#traits  => ['Code']
+has 'adjust_datatable_vars' => ( isa => 'CodeRef', is => 'rw' );
+
 sub render_element {
     my ($self) = @_;
     my $output = '';
 
     (my $tablename = $self->html_name) =~ s!\.!!g;
-    if($self->ajax_src !~/dt_columns/){
-        my $i = 0;
-        my $dt_columns = [ map {{name=>$_,title=>$self->table_titles->[$i++],}} @{$self->table_fields} ];
-        my $decoder = URI::Encode->new;
-        $self->ajax_src( $self->ajax_src.($self->ajax_src!~/\?/?'?':'&').'dt_columns='.$decoder->encode(to_json($dt_columns)) );
-    }
-
     my $vars = {
         label => $self->label,
         field_name => $self->html_name,
@@ -44,7 +43,8 @@ sub render_element {
         language_file => $self->language_file,
         wrapper_class => ref $self->wrapper_class eq 'ARRAY' ? join (' ', @{$self->wrapper_class}) : $self->wrapper_class,
     };
-    
+    ref $self->adjust_datatable_vars eq 'CODE' and $self->adjust_datatable_vars->($self, $vars);
+
     my $t = new Template({ 
         ABSOLUTE => 1, 
         INCLUDE_PATH => [
