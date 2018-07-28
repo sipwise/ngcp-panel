@@ -251,6 +251,24 @@ sub process {
         }
     }
 
+    # show any arbitrary data rows on top, just like a union would do
+    # hash is expected or array of hashes expected
+    my $topData = $params->{topData};
+    if (defined $topData) {
+        my $topDataArray;
+        if (ref $topData eq 'HASH') {
+            $topDataArray = [$topData];
+        } else {
+            $topDataArray = $topData;
+        }
+        foreach my $topDataRow (@$topDataArray) {
+            unshift @{ $aaData }, _prune_row($user_tz, $cols, %$topDataRow);
+            if (defined $row_func) {
+                $aaData->[0] = {%{$aaData->[0]}, $row_func->($topDataRow)};
+            }
+        }
+    }
+
     if (keys %{ $aggregations }) {
         $c->stash(dt_custom_footer => $aggregations);
     }
