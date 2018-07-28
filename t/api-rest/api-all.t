@@ -166,6 +166,7 @@ sub init_config{#init config
         'profilepreferencedefs' => 1,
         'pbxdevicepreferencedefs' => 1,
         'pbxdeviceprofilepreferencedefs' => 1,
+        'pbxfielddevicepreferencedefs' => 1,
         'subscriberpreferences' => 1,
         'customerpreferences' => 1,
         'domainpreferences' => 1,
@@ -175,6 +176,7 @@ sub init_config{#init config
         'pbxdeviceprofilepreferences' => 1,
         #defs and preferences are tested in context of preferences
         'pbxdevicefirmwares' => 1, #too hard, fails with timeout on get
+        'sipcaptures' => 1, #too hard, it is ebout every packet
 
     #falis with: not ok 163 - ccmapentries: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='mappings', input='ARRAY(0x1a53f278)', errors='Mappings field is required')
         #'ccmapentries' => 1,
