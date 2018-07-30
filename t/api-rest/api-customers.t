@@ -335,6 +335,7 @@ my @allcustomers = ();
     my $new_customer = JSON::from_json($res->decoded_content);
     my $old_modify = delete $old_customer->{modify_timestamp};
     my $new_modify = delete $new_customer->{modify_timestamp};
+    delete $new_customer->{all_billing_profiles}[0]{effective_start_time};
     is_deeply($old_customer, $new_customer, "check put if unmodified put returns the same");
     $old_customer->{modify_timestamp} = $old_modify;
     $new_customer->{modify_timestamp} = $new_modify;
