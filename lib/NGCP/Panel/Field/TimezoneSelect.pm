@@ -73,7 +73,10 @@ sub inflate_timezone {  # inflate: clear default value and return empty string
     my ( $self, $value ) = @_;
 
     my $c = $self->form->ctx;
+    $c->log->debug("BBBBBBBBBBBBBBBBBBBBBBBBBBB");
+    $c->log->debug("inflate_timezone: $value; before");
     $value = NGCP::Panel::Utils::DateTime::strip_empty_timezone_name($c, $value);
+    $c->log->debug("inflate_timezone: $value; after");
     return $value;
 }
 no Moose;

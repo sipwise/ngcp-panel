@@ -2784,6 +2784,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         },
         back_uri => $c->req->uri,
     );
+                use Data::Dumper;
+                $c->log->debug('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.0');
+                $c->log->debug(Dumper($form->params->{timezone}));
 
     if($posted && $form->validated) {
         my $old_status = $subscriber->status;
@@ -2795,7 +2798,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         try {
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
-
+                use Data::Dumper;
+                $c->log->debug('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+                $c->log->debug(Dumper($form->params->{timezone}));
                 my $email = delete $form->params->{email} || undef;
                 my $timezone = delete $form->params->{timezone}{name} || undef;
                 if ($subscriber->contact) {
