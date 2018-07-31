@@ -40,15 +40,17 @@ sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) :Does(ACL) :
     ]);
 }
 
-sub timezone_ajax :Chained('/') :PathPart('contact/timezone_ajax') :Args(0) {
-    my ($self, $c) = @_;
+sub timezone_ajax :Chained('/') :PathPart('contact/timezone_ajax') :Args() {
+    my ($self, $c, $parent_owner_type, $parent_owner_id) = @_;
 
-    my $tz_rs   = $c->model('DB')->resultset('timezones');
+    my $default_tz_data = NGCP::Panel::Utils::DateTime::get_default_timezone_name($c, $parent_owner_type, $parent_owner_id);
+
+    my $tz_rs = $c->model('DB')->resultset('timezones');
     my $tz_cols = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "name", search => 1, title => $c->loc('Timezone') },
     ]);
 
-    NGCP::Panel::Utils::Datatables::process($c, $tz_rs, $tz_cols);
+    NGCP::Panel::Utils::Datatables::process($c, $tz_rs, $tz_cols, undef, { topData => $default_tz_data } );
 
     $c->detach( $c->view("JSON") );
 }
