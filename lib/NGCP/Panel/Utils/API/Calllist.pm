@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use HTTP::Status qw(:constants);
-
+use NGCP::Panel::Utils::DateTime qw();
 
 sub get_owner_data {
     my ($self, $c, $schema, $source, $optional_for_admin_reseller) = @_;
@@ -112,7 +112,7 @@ sub apply_owner_timezone {
         } else {
             # shouldnt go here.
         }
-        $result->set_time_zone($tz->name) if $tz;
+        $result->set_time_zone(NGCP::Panel::Utils::DateTime::normalize_db_tz_name($tz->name)) if $tz;
     }
     return $result;
 }
