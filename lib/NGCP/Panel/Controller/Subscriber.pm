@@ -2797,7 +2797,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $schema->txn_do(sub {
 
                 my $email = delete $form->params->{email} || undef;
-                my $timezone = delete $form->params->{timezone}{name} || undef;
+                my $timezone = delete $form->values->{timezone}{name} || undef;
                 if ($subscriber->contact) {
                     $subscriber->contact->update({
                         email => $email,
