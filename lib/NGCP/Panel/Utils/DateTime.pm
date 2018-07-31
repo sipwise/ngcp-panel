@@ -18,14 +18,71 @@ use Time::Warp qw();
 my $is_fake_time = 0;
 
 sub is_valid_timezone_name {
-    my ($tz,$all) = shift;
-    return 0 unless $tz;
+    my ($tz, $all, $c, $allow_empty) = @_;
+    if (!$tz && !$allow_empty) {
+        return 0;
+    }
+    if ($c) {
+        $tz = NGCP::Panel::Utils::DateTime::strip_empty_timezone_name($c, $tz);
+        #we allow empty value to switch to the parent default
+        if (!$tz) {
+            return $allow_empty ? 1 : 0;
+        }
+    }
     if ($all) {
         return DateTime::TimeZone->is_valid_name($tz);
     } else {
         return 0 unless exists $TIMEZONE_MAP->{$tz};
         return 1;
     }
+}
+
+sub strip_empty_timezone_name {
+    my ($c, $value) = @_;
+    my $default_names =  join ('|', map {'^'.$_} ($c->loc('customer default'),$c->loc('reseller default'),$c->loc('default')));
+    if ($value =~ /$default_names/i) {
+        return '';
+    }
+    return $value;
+}
+
+sub get_default_timezone_name {
+    my($c, $parent_owner_type, $parent_owner_id) = @_;
+    $parent_owner_type //= '';
+    my ($default_tz_data, $default_tz_data_rs);
+    my $parent_tz_rs;
+    my $noparentinfo = ($parent_owner_type eq 'noparentinfo');
+    if ($parent_owner_type && !$noparentinfo) {
+        if ($parent_owner_id) { 
+            if ($parent_owner_type eq 'contract') {
+                $parent_tz_rs   = $c->model('DB')->resultset('contract_timezone')->search_rs({
+                    'contract_id' => $parent_owner_id
+                },{
+                    'columns' => [ { name   => \('concat("'.$c->loc('customer default').' (",name,")")')} ],
+                });
+            } elsif ($parent_owner_type eq 'reseller') {
+                $parent_tz_rs   = $c->model('DB')->resultset('reseller_timezone')->search_rs({
+                    'reseller_id' => $parent_owner_id 
+                },{
+                    'columns' => [ { name   => \('concat("'.$c->loc('reseller default').' (",name,")")')} ],
+                });
+            }
+        } elsif ($parent_owner_type eq 'top') {
+            $default_tz_data = { name => $c->loc('default (localtime)') };
+        } else {
+            $default_tz_data = { name => $c->loc('default (parent/localtime)') };
+        }
+    } elsif ($noparentinfo) {
+        $default_tz_data = { name => $c->loc('default (parent/localtime)') };
+    }
+    if (!$default_tz_data) {
+        if ($parent_tz_rs) {
+            $default_tz_data = { $parent_tz_rs->first->get_inflated_columns };
+        } else {
+            $default_tz_data = { name => $c->loc('default (parent/localtime)') };
+        }
+    }
+    return  $default_tz_data;
 }
 
 sub normalize_db_tz_name {
