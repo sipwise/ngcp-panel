@@ -28,6 +28,16 @@ sub is_valid_timezone_name {
     }
 }
 
+sub normalize_db_tz_name {
+    my $z = shift;
+    if ($tz) {
+        if ($tz eq 'localtime') {
+            $tz = 'local';
+        } # else { ... additional cases
+    }
+    return $tz;
+}
+
 sub current_local {
     if ($is_fake_time) {
         return DateTime->from_epoch(epoch => Time::Warp::time,
