@@ -1,3 +1,12 @@
+ngcp-panel (5.5.5.5+0~mr5.5.5.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [4095e7f] TT#41402 normalize tzdata timezone names for perl DateTime
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 31 Jul 2018 14:21:43 +0200
+
 ngcp-panel (5.5.5.4+0~mr5.5.5.4) unstable; urgency=medium
 
   [ Rene Krenn ]
