@@ -19,11 +19,13 @@ my $is_fake_time = 0;
 
 sub is_valid_timezone_name {
     my ($tz, $all, $c, $allow_empty) = @_;
+    $c->log->debug("is_valid_timezone_name: tz:$tz; allow_empty: $allow_empty; c: ".($c ? 1:0));
     if (!$tz && !$allow_empty) {
         return 0;
     }
     if ($c) {
         $tz = NGCP::Panel::Utils::DateTime::strip_empty_timezone_name($c, $tz);
+        $c->log->debug("is_valid_timezone_name: tz:$tz;");
         #we allow empty value to switch to the parent default
         if (!$tz) {
             return $allow_empty ? 1 : 0;

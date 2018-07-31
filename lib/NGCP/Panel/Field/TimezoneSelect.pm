@@ -35,10 +35,13 @@ sub validate {
     }
     #is_valid_timezone_name($tz, $all, $c, $allow_empty)
     #unless(grep { /^\Q$value\E$/ } DateTime::TimeZone->all_names) {
+    $c->log->debug("validateimezone: 2");
     unless (NGCP::Panel::Utils::DateTime::is_valid_timezone_name($value, 0, $c, 1)) {
+        $c->log->debug("not valid timezone");
         $self->add_error(sprintf 'Invalid timezone name: %s', $value);
     }
-    return;
+    $c->log->debug("validateimezone: 3");
+    return 1;
 }
 
 sub adjust_datatable_vars {
