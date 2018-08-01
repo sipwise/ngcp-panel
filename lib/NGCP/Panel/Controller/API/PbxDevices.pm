@@ -35,25 +35,19 @@ sub query_params {
         {
             param => 'profile_id',
             description => 'Search for PBX devices with a specific autoprovisioning device profile',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { profile_id => $q };
-                },
-                second => sub {},
-            },
+            query_type => 'string_eq',
         },
         {
             param => 'identifier',
             description => 'Search for PBX devices matching an identifier/MAC pattern (wildcards possible)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { identifier => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'string_like',
+        },
+        {
+            param => 'station_name',
+            description => 'Search for PBX devices matching an station_name pattern (wildcards possible)',
+            query_type => 'string_like',
         }
+
     ];
 }
 
