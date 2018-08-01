@@ -16,6 +16,24 @@
       "revId": "211110d211bf4e02983d371ebb89fcc72d1e3219",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_adf791f4",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-08-01T08:26:09Z",
+      "side": 1,
+      "message": "Yes, sure. It is about naming default timezone in user interface, not about storing.\nTo show what default will be used, we need parent level. This method, based on information about what is parent level and id, return proper timezone name.",
+      "parentUuid": "1aca2d91_eded8926",
+      "revId": "211110d211bf4e02983d371ebb89fcc72d1e3219",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
