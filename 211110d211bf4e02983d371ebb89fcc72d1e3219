@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_eded8926",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-01T07:39:14Z",
+      "side": 1,
+      "message": "the approach should be to store NULL in the billing.contacts.timezone field, not the parent\u0027s level current tz.",
+      "revId": "211110d211bf4e02983d371ebb89fcc72d1e3219",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
