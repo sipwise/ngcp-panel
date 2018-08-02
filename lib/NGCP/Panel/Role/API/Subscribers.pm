@@ -288,18 +288,6 @@ sub get_customer {
     return $customer;
 }
 
-sub get_billing_profile {
-    my ($self, $c, $customer, $now) = @_;
-
-    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
-    if($billing_mapping) {
-        return $billing_mapping->billing_profile;
-    } else {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'customer_id', doesn't have a valid billing mapping.");
-        return;
-    }
-}
-
 sub prepare_resource {
     my ($self, $c, $schema, $resource, $item) = @_;
 
@@ -548,12 +536,6 @@ sub prepare_resource {
     }
     if(defined $customer->external_id) {
         $preferences->{ext_contract_id} = $customer->external_id;
-    }
-
-    my $billing_profile = $self->get_billing_profile($c, $customer);
-    return unless($billing_profile);
-    if($billing_profile->prepaid) {
-        $preferences->{prepaid} = 1;
     }
 
     my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({

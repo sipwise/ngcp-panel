@@ -155,7 +155,7 @@ sub prepare_billing_mappings {
     }
 
 #    my $product_id = undef; #any subsequent create will fail without product_id
-    my $prepaid = undef;
+    #my $prepaid = undef;
     my $billing_profile_id = undef;
     if (defined $old_resource) {
         # TODO: what about changed product, do we allow it?
@@ -170,7 +170,7 @@ sub prepare_billing_mappings {
         #    return 0 unless &{$err_code}("No billing mapping or contract defined");
         }
 #        $product_id = $billing_mapping->contract->product->id;
-        $prepaid = $billing_mapping->billing_profile->prepaid;
+        #$prepaid = $billing_mapping->billing_profile->prepaid;
         $billing_profile_id = $billing_mapping->billing_profile->id;
 #    } else {
 #        if (exists $resource->{type} || exists $c->stash->{type}) {
@@ -260,13 +260,13 @@ sub prepare_billing_mappings {
                 network_id_field => 'network_id',
                 );
             my ($profile,$network) = @$entities{qw/profile network/};
-            if (defined $prepaid) {
-                if ($profile->prepaid != $prepaid) {
-                    return 0 unless &{$err_code}("Future switching between prepaid and post-paid billing profiles is not supported (" . $profile->name . ").",$billing_profiles_field);
-                }
-            } else {
-                $prepaid = $profile->prepaid;
-            }
+            #if (defined $prepaid) {
+            #    if ($profile->prepaid != $prepaid) {
+            #        return 0 unless &{$err_code}("Future switching between prepaid and post-paid billing profiles is not supported (" . $profile->name . ").",$billing_profiles_field);
+            #    }
+            #} else {
+            #    $prepaid = $profile->prepaid;
+            #}
 
             # TODO: what about changed product, do we allow it?
             #my $product_class = delete $mapping->{type};
