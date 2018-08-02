@@ -1311,13 +1311,13 @@ sub prepare_package_profile_set {
             if (defined $reseller_id && defined $profile->reseller_id && $reseller_id != $profile->reseller_id) { #($profile->reseller_id // -1)) {
                 return 0 unless &{$err_code}("The reseller of the profile package doesn't match the reseller of the billing profile (" . $profile->name . ").",$field);
             }
-            if (defined $prepaid) {
-                if ($profile->prepaid != $prepaid) {
-                    return 0 unless &{$err_code}("Mixing prepaid and post-paid billing profiles is not supported (" . $profile->name . ").",$field);
-                }
-            } else {
-                $prepaid = $profile->prepaid;
-            }
+            #if (defined $prepaid) {
+            #    if ($profile->prepaid != $prepaid) {
+            #        return 0 unless &{$err_code}("Mixing prepaid and post-paid billing profiles is not supported (" . $profile->name . ").",$field);
+            #    }
+            #} else {
+            #    $prepaid = $profile->prepaid;
+            #}
 
             if (defined $interval_free_cash) {
                 if ($profile->interval_free_cash != $interval_free_cash) {

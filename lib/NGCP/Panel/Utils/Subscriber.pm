@@ -186,24 +186,10 @@ sub get_provisoning_voip_subscriber_lock_level {
 sub switch_prepaid {
     my %params = @_;
 
-    # todo: drop switching the prepaid flag.
-    NGCP::Panel::Utils::Preferences::set_provisoning_voip_subscriber_first_int_attr_value(%params,
-        value => ($params{prepaid} ? 1 : 0),
-        attribute => 'prepaid'
-        );
-
 }
 
 sub switch_prepaid_contract {
     my %params = @_;
-    my $contract = $params{contract};
-
-    # todo: drop switching the prepaid flag.
-    for my $subscriber ($contract->voip_subscribers->search_rs({ 'me.status' => { '!=' => 'terminated' } })->all) {
-        switch_prepaid(%params,
-            prov_subscriber => $subscriber->provisioning_voip_subscriber,
-        ) if ($subscriber->provisioning_voip_subscriber);
-    }
 
 }
 

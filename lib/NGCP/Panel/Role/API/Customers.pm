@@ -135,7 +135,7 @@ sub update_customer {
 
     my $old_package = $customer->profile_package;
 
-    $old_resource->{prepaid} = $billing_profile->prepaid;
+    #$old_resource->{prepaid} = $billing_profile->prepaid;
     $old_resource->{billing_mapping} = $billing_mapping;
 
     $form //= $self->get_form($c);
