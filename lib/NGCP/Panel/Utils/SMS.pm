@@ -207,27 +207,12 @@ sub init_prepaid_billing {
     };
 
     my ($prepaid_lib, $is_prepaid);
-    my $prepaid_pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-        c => $c, attribute => 'prepaid_library',
-        prov_domain => $prov_subscriber->domain,
-    );
-    if($prepaid_pref_rs && $prepaid_pref_rs->first) {
-        $prepaid_lib = $prepaid_pref_rs->first->value;
-    }
-
-    # todo: get prepaid flag from actual profile and use prepaid pref to override it, or designate the prepaid pref for sms only.
-    $prepaid_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'prepaid',
-        prov_subscriber => $prov_subscriber,
-    );
-    if($prepaid_pref_rs && $prepaid_pref_rs->first && $prepaid_pref_rs->first->value) {
-        $is_prepaid = 1;
-    } else {
-        $is_prepaid = 0;
-    }
+    my $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $prov_subscriber->contract, );
+    $prepaid_lib = $bm_actual->billing_profile->prepaid_library if $bm_actual;
+    $is_prepaid = ($bm_actual->billing_profile->prepaid ? 1 : 0) if $bm_actual;
 
     # currently only inew rating supported, let others pass
-    unless ($is_prepaid && $prepaid_lib eq "libinewrate") {
+    unless ($is_prepaid && $prepaid_lib && $prepaid_lib eq "libinewrate") {
         $session->{reason} = 'not prepaid/libinewrate';
         return $session;
     }
