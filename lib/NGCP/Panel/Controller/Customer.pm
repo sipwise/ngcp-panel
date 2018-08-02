@@ -826,10 +826,6 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 if(defined $form->values->{external_id}) {
                     $preferences->{ext_subscriber_id} = $form->values->{external_id};
                 }
-                if($c->stash->{billing_mapping}->billing_profile->prepaid) {
-                    # todo: drop setting the prepaid pref
-                    $preferences->{prepaid} = 1;
-                }
                 my @events_to_create = ();
                 my $event_context = { events_to_create => \@events_to_create };
 

@@ -27,6 +27,10 @@ sub check_profile_update_item {
         return 0 unless &{$err_code}("Billing profile is already terminated and cannot be changed.",'status');
     }
 
+    #if ($new_resource->{prepaid} && not $new_resource->{prepaid_library}) {
+    #    return 0 unless &{$err_code}("The prepaid rating library is mandatory for a prepaid profile.",'prepaid_library');
+    #}
+
     my $contract_cnt = $old_item->get_column('contract_cnt');
     #my $package_cnt = $old_item->get_column('package_cnt');
 
@@ -400,38 +404,6 @@ sub clone_billing_profile_tackles{
 sub switch_prepaid {
     my %params = @_;
     my ($c,$profile_id,$old_prepaid,$new_prepaid) = @params{qw/c profile_id old_prepaid new_prepaid/};
-    my $schema = $c->model('DB');
-
-    # todo: drop switching the prepaid flag.
-
-    # if prepaid flag changed, update all subscribers for customers
-    # who currently have the billing profile active
-    my $rs = $schema->resultset('actual_billing_profiles')->search({
-        billing_profile_id => $profile_id,
-        'contact.reseller_id' => { '-not' => undef },
-    },{
-        join => { contract => 'contact', },
-    });
-
-    if($old_prepaid && !$new_prepaid ||
-       !$old_prepaid && $new_prepaid) {
-
-        #this will taking too long, prohibit it:
-        #die("changing the prepaid flag is not allowed");
-
-        foreach my $mapping ($rs->all) {
-            my $contract = $mapping->contract;
-            foreach my $sub ($contract->voip_subscribers->all) {
-                my $prov_sub = $sub->provisioning_voip_subscriber;
-                next unless($sub->provisioning_voip_subscriber);
-                NGCP::Panel::Utils::Preferences::set_provisoning_voip_subscriber_first_int_attr_value(c => $c,
-                    prov_subscriber => $prov_sub,
-                    value => ($new_prepaid ? 1 : 0),
-                    attribute => 'prepaid'
-                );
-            }
-        }
-    }
 
 }
 
