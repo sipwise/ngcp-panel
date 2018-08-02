@@ -35,6 +35,10 @@ sub datetime_inflate {  # inflate: User entry -> DateTime -> Plaintext but conve
     }
 
     my $date = NGCP::Panel::Utils::DateTime::from_forminput_string($value, $tz);
+    unless ($date) {
+        $self->add_error('Could not parse DateTime input. Should be one of (Y-m-d H:M:S, Y-m-d H:M, Y-m-d).');
+        return;
+    }
     $date->set_time_zone('local');  # convert to local
 
     return $date->ymd('-') . ' ' . $date->hms(':');
