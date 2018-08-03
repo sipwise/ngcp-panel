@@ -136,7 +136,7 @@
         cents = String.new(cent);
         cents = cents.format("%.0f",cents);
         cents_format_string = "%0" _ money_signs _ "d";
-        cents = cents.format(cents_format_string);
+        cents = cents.format(cents_format_string).replace('^-', '');
         aux.val = full _ comma _ cents;
     END;
 
