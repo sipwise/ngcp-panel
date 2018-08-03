@@ -51,11 +51,16 @@ apply(
         {
             check => sub {
                 my ( $value, $field ) = @_;
-                my ($user, $domain) = split(/\@/, $value);
+                my $uri_reserved_chars = ';\/\?:&=\+\$\,';
+                my ($user, $domain) = split(/\@/, $value) ;
+                ## = ($value =~/([^:]+:)?(?:([^$uri_reserved_chars]+)\@)?([^$uri_reserved_chars]+)(?:[$uri_reserved_chars]([^$uri_reserved_chars]+))?/gi);
                 my $checked;
                 if ($user && $domain) {
-                    if ( $user =~ m/^(sip:)?[a-zA-Z0-9\+\-\.]*$/ &&
-                         $domain =~ m/^[^;\?:][^;\?]*$/ ) {
+                    my ($proto, $user_clean, $domain_clean, $rest);
+                    ($proto, $user_clean) = ($user =~/(sip[a-z]*:)?(?:([^$uri_reserved_chars]+))$/i);
+                    ($domain_clean, $rest) = split(/[$uri_reserved_chars]+/, $domain, 2);
+                    if ( $user_clean =~ m/^[^$uri_reserved_chars]+$/ && 
+                        $domain_clean =~ m/^[a-z0-9\+\-\.]+$/i ) {
                         $checked = $value;
                     }
                 }
