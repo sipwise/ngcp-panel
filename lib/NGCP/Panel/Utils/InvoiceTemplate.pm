@@ -201,7 +201,7 @@ sub process_child_nodes {
 }
 
 sub get_dummy_data {
-    return {
+    my $data = {
         rescontact => {
             gender => 'male',
             firstname => 'Resellerfirst',
@@ -290,7 +290,7 @@ sub get_dummy_data {
                 source_cli => '1234567890',
                 destination_user_in => "1".$_."1234567890",
                 start_time => time,
-                source_customer_cost => int(rand(100000)),
+                source_customer_cost => int( (rand()-1/2) * rand(1000000)),
                 duration => int(rand(7200)) + 10,
                 call_type => (qw/cfu cfb cft cfna cfs/)[int(rand 4)],
                 zone => "Zone $_",
@@ -312,6 +312,7 @@ sub get_dummy_data {
         },
     };
 
+    return $data;
 }
 
 1;
