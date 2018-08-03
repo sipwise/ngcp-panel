@@ -52,11 +52,28 @@ apply(
         {
             check => sub {
                 my ( $value, $field ) = @_;
+                #we will not follow to rfc absolutely, so we will not check headers and uri parameters
+                #but we will include all allowed characters to username
+                my $domain_chars  = '[:alnum:].+:-';# "+" here is from old code, I didn't remove it
+                my $unreserved_chars = '-_.!~*\'()';
+                # "#" is from dtmf-digit => local-phone-number => telephone-subscriber 
+                # "%" is from escaped 
+                # ":" we will not separate username and password
+                my $userinfo_unreserved_chars = '&=+$,;?/#%:';
+
                 my ($user, $domain) = split(/\@/, $value);
+                
+                #https://metacpan.org/pod/URI#PARSING-URIs-WITH-REGEXP
+                #my($scheme, $authority, $path, $query, $fragment) =
+                #$uri =~ m|(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?|;
+
                 my $checked;
                 if ($user && $domain) {
-                    if ( $user =~ m/^(sip:)?[a-zA-Z0-9\+\-\.]*$/ &&
-                         $domain =~ m/^[^;\?:][^;\?]*$/ ) {
+                    my ($proto, $user_clean, $domain_clean, $rest);
+                    ($proto, $user_clean) = ($user =~/(sip[s]?:)?(.+?)$/i);
+                    ($domain_clean, $rest) = split(/[^$domain_chars]+/, $domain, 2);
+                    if ( $user_clean =~ m/^[[:alnum:]\Q$unreserved_chars$userinfo_unreserved_chars\E]+$/ && 
+                        $domain_clean =~ m/^[$domain_chars]+$/i ) {
                         $checked = $value;
                     }
                 }
