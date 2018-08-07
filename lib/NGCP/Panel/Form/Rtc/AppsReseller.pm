@@ -18,12 +18,13 @@ has_field 'rtc_user_id' => (
         rel => ['tooltip'],
         title => ['ID in the backend RTC API (readonly).'],
     },
+    readonly => 1,
 );
 
 has_field 'apps' => (
     type => 'Repeatable',
     required => 0, #1,
-    setup_for_js => 1,
+    #setup_for_js => 1,
     do_wrapper => 1,
     do_label => 0,
     tags => { 
@@ -34,6 +35,8 @@ has_field 'apps' => (
         rel => ['tooltip'],
         title => ['An array of objects with keys "name", "domain", "secret" and "api_key" to create RTC apps for this reseller'],
     },
+    num_when_empty => 1,
+    add_extra => 1,
 );
 
 has_field 'apps.domain' => (
@@ -58,6 +61,7 @@ has_field 'apps.secret' => (
         rel => ['tooltip'],
         title => ['The secret (readonly).'],
     },
+    readonly => 1,
 );
 
 has_field 'apps.api_key' => (
@@ -66,6 +70,7 @@ has_field 'apps.api_key' => (
         rel => ['tooltip'],
         title => ['The API key (readonly).'],
     },
+    readonly => 1,
 );
 
 has_field 'save' => (

@@ -18,6 +18,7 @@ has_field 'rtc_user_id' => (
         rel => ['tooltip'],
         title => ['ID in the backend RTC API (readonly).'],
     },
+    readonly => 1,
 );
 
 has_field 'networks' => (

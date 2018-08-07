@@ -364,6 +364,8 @@ sub field_to_json : Private {
             return "Object";
         /\+NGCP::Panel::Field::DatePicker/ &&
             return "String";
+        /\+NGCP::Panel::Field::NumRangeAPI/ &&
+            return "String";
         # usually {xxx}{id}
         /\+NGCP::Panel::Field::/ &&
             return "Number";
@@ -396,6 +398,8 @@ sub get_field_poperties :Private{
         $field->type eq "Hidden" ||
         $field->type eq "Button" ||
         $field->type eq "Submit" ||
+        $field->type eq "AddElement" ||
+        $field->type eq "RmElement" ||
         0);
     my @types = ();
     push @types, 'null' unless ($field->required || $field->validate_when_empty);
@@ -411,7 +415,7 @@ sub get_field_poperties :Private{
             $name = 'country';
         } elsif($field->type =~ /LnpCarrier$/) {
             $name = 'carrier_id';
-        } elsif($field->type !~ /Regex|EmailList|Identifier|PosInteger|Interval|Select|DateTime|URI|IPAddress|DatePicker|ProfileNetwork|CFSimpleAPICompound/) { # ...?
+        } elsif($field->type !~ /Regex|EmailList|Identifier|PosInteger|Interval|Select|DateTime|URI|IPAddress|DatePicker|ProfileNetwork|CFSimpleAPICompound|NumRangeAPI|IntegerList/) { # ...?
             $name .= '_id';
         }
     }
@@ -430,14 +434,36 @@ sub get_field_poperties :Private{
     unless (defined $desc && length($desc) > 0) {
         $desc = 'to be described ...';
     }
+
+    my $subfields;
+    if ($field->has_fields && scalar ($field->fields)) {
+        my ($firstsub) = $field->fields;
+        if ($field->isa('HTML::FormHandler::Field::Repeatable') && $firstsub) {
+            ($subfields) = $self->get_collection_properties($firstsub, 1);
+        } elsif ($firstsub->type eq '+NGCP::Panel::Field::DataTable' && $name =~ /_id$/) {
+            # don't render subfields (only DataTable Field with Button)
+        } elsif ($firstsub->type eq '+NGCP::Panel::Field::DataTable' && $name =~ /^(country|timezone)$/) {
+            # also don't render subfields of country and timezone (they have no _id ending)
+        } elsif ($field->type eq 'String' && $name =~ /^(domain)$/) {
+            # another special case, special syntax of domain in subscribers
+        } else {
+            ($subfields) = $self->get_collection_properties($field, 1);
+        }
+    }
+
     return { name => $name, description => $desc, types => \@types, type_original => $field->type,
-        readonly => $field->readonly, ($enum ? (enum => $enum) : ()) };
+        readonly => $field->readonly,
+        ($enum ? (enum => $enum) : ()),
+        ($subfields ? (subfields => $subfields) : ()),
+    };
 }
 
 sub get_collection_properties {
-    my ($self, $form) = @_;
+    my ($self, $form, $is_nested) = @_;
 
-    my $renderlist = $form->form->blocks->{fields}->{render_list};
+    my $renderlist = $form->form && !$is_nested
+        ? $form->form->blocks->{fields}->{render_list}
+        : undef;
     my %renderlist = defined $renderlist ? map { $_ => 1 } @{$renderlist} : ();
 
     my @props = ();
@@ -458,6 +484,7 @@ sub get_collection_properties {
         }
     }
     @props = sort{$a->{name} cmp $b->{name}} @props;
+
     return (\@props,\@uploads);
 }
 
