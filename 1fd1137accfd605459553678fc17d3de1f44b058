@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fae47921_529314a4",
+        "filename": "lib/NGCP/Panel/Utils/Journal.pm",
+        "patchSetId": 23
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-09T09:21:58Z",
+      "side": 1,
+      "message": "perhaps $c should be the first argument to align with 90%+ of other places how we use it",
+      "range": {
+        "startLine": 242,
+        "startChar": 50,
+        "endLine": 242,
+        "endChar": 60
+      },
+      "revId": "1fd1137accfd605459553678fc17d3de1f44b058",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_32909095",
+        "filename": "lib/NGCP/Panel/Utils/Journal.pm",
+        "patchSetId": 23
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-09T09:21:58Z",
+      "side": 1,
+      "message": "perhaps $c should be the first argument to align with 90%+ of other places how we use it",
+      "range": {
+        "startLine": 480,
+        "startChar": 18,
+        "endLine": 480,
+        "endChar": 22
+      },
+      "revId": "1fd1137accfd605459553678fc17d3de1f44b058",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
