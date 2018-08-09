@@ -189,7 +189,8 @@ sub get {
         my $action_config = $self->get_config('action');
 
         if( ( defined $header_accept
-                && ($header_accept !~ m!\bapplication/json\b|\b\*/\*\b!) # application/json OR */*
+                && ($header_accept !~ m!\bapplication/json\b!)
+                && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) # application/json OR */*
             )
             || ( $action_config->{GET}->{ReturnContentType}
                 && $action_config->{GET}->{ReturnContentType} ne 'application/json'
