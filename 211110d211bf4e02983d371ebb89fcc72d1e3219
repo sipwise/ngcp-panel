@@ -52,6 +52,24 @@
       "revId": "211110d211bf4e02983d371ebb89fcc72d1e3219",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_b2f24005",
+        "filename": "lib/NGCP/Panel/Utils/DateTime.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-09T09:25:12Z",
+      "side": 1,
+      "message": "agree with Rene, \"parent\" however can be also omitted, just get_timezone_name() is enough as parent/etc. is in the logic and therefore, implicit.",
+      "parentUuid": "1aca2d91_edd46948",
+      "revId": "211110d211bf4e02983d371ebb89fcc72d1e3219",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
