@@ -15,6 +15,7 @@
 
 <div class="ngcp-separator"></div>
 
+
 <div class="accordion" id="security_data">
 
     <div class="accordion-group">
@@ -22,6 +23,50 @@
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#security_data" href="#collapse_ips">[% c.loc('Banned IPs') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_ips">
+            <div class="accordion-inner">
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/security/ip_list_refresh') %]">
+                        <i class="icon-star"></i> [% c.loc('Refresh banned IPs data') %]
+                    </a>
+
+[%
+    helper.name = c.loc('Banned IPs');
+    helper.identifier = 'banned_ips';
+    helper.length_change = 1;
+    helper.dt_columns = bannedips_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/security/ip_list');
+
+    helper.dt_buttons = [
+        { name = c.loc('Unban'), uri = "/security/ip/'+encodeURI(full.ip)+'/unban", class = 'btn-small btn-primary', icon = 'icon-removet' },
+    ];
+    PROCESS 'helpers/datatables.tt';
+%]
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="accordion" id="security_data">
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#security_data" href="#collapse_ips_old">[% c.loc('Banned IPs') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_ips_old">
             <div class="accordion-inner">
 
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">

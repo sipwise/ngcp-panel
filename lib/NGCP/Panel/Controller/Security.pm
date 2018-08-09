@@ -10,6 +10,9 @@ use NGCP::Panel::Utils::Security;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
 
+my $IP_LIST;
+my $USER_LIST;
+
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
@@ -21,7 +24,7 @@ sub root :PathPart('/') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 }
 
-sub security_index :Chained('/') :PathPart('security') :Args(0) {
+sub security_index :Chained('/') :PathPart('security') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     my $ips = NGCP::Panel::Utils::Security::list_banned_ips($c);
@@ -32,6 +35,31 @@ sub security_index :Chained('/') :PathPart('security') :Args(0) {
         banned_ips => $ips,
         banned_users => $users,
     );
+}
+
+sub security :Chained('security_index') :PathPart('') :Args(0) {
+}
+
+sub ip_index :Chained('security_index') :PathPart('ip') :CaptureArgs(0) {
+}
+
+sub ip_list :Chained('ip_index') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+    my $ips = $IP_LIST // NGCP::Panel::Utils::Security::list_banned_ips($c);
+
+    my $cols = [
+        { name => "ip", search => 1, title => $c->loc("IP") },
+    ];
+    $c->stash->{bannedips_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $cols);
+
+    NGCP::Panel::Utils::Datatables::process_static_data($c, $ips, $c->stash->{bannedips_dt_columns});
+    $c->detach($c->view('JSON'));
+    return;
+}
+
+sub ip_list_refresh :Chained('security_index') :PathPart('refresh') :Args(0) {
+    my ($self, $c) = @_;
+    $IP_LIST = NGCP::Panel::Utils::Security::list_banned_ips($c);
 }
 
 sub ip_base :Chained('/') :PathPart('security/ip') :CaptureArgs(1) {
