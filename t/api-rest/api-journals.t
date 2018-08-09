@@ -4,6 +4,7 @@ use Net::Domain qw(hostfqdn);
 use JSON -support_by_pp, -no_export;
 use Test::More;
 use Storable qw();
+use URI::Encode qw(uri_encode);
 
 use LWP::Debug;
 
@@ -19,6 +20,8 @@ $json->convert_blessed(1);
 my $is_local_env = 0;
 my $mysql_sqlstrict = 1; #https://bugtracker.sipwise.com/view.php?id=12565
 my $enable_journal_tests = 1;
+
+my $test_start_datetime = DateTime->now;
 
 use Config::General;
 my $catalyst_config;
@@ -2397,7 +2400,7 @@ sub _test_journal_collection {
     my ($resource,$item_id,$journals) = @_;
     if (_is_journal_resource_enabled($resource)) {
         my $total_count = (defined $journals ? (scalar keys %$journals) : undef);
-        my $nexturi = $uri.'/api/'.$resource . '/' . $item_id . '/journal/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1);
+        my $nexturi = $uri.'/api/'.$resource . '/' . $item_id . '/journal/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1) . "&from=".uri_encode($test_start_datetime);
         do {
             $res = $ua->get($nexturi);
             is($res->code, 200, _get_request_test_message("fetch journal collection page"));
