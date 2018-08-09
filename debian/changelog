@@ -1,3 +1,16 @@
+ngcp-panel (6.4.2.0+0~mr6.4.2.0) unstable; urgency=medium
+
+  [ Richard Fuchs ]
+  * [acb4c76] TT#39328 don't cancel inew reservation request after INSUFF FUNDS
+
+  [ Rene Krenn ]
+  * [7a8daa0] TT#38401 remove effective_start_time check in .t
+  * [e6f4664] TT#38401 remove 2nd effective_start_time check in .t
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Aug 2018 12:22:18 +0200
+
 ngcp-panel (6.4.1.0+0~mr6.4.1.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
