@@ -56,8 +56,8 @@ sub get {
         last unless $item;
         my $header_accept = $c->request->header('Accept');
         if(defined $header_accept 
-            && ($header_accept ne 'application/json') 
-            && ($header_accept ne '*/*')
+                && ($header_accept !~ m!\bapplication/json\b!)
+                && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) # application/json OR */*
         ) {
             $self->return_requested_type($c,$id,$item);
             return;
