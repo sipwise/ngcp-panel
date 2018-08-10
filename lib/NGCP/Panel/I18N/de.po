@@ -1973,6 +1973,10 @@ msgstr "Installierte Geräte"
 msgid "Deployed Devices"
 msgstr "Installierte Geräte"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Deprecated, no longer used by the system."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/NCOS.pm
 #: lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
@@ -7536,7 +7540,8 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"The prepaid billing interface for customer with prepaid billing profile."
+"The prepaid billing interface for customer with prepaid billing profile. "
+"Deprecated, no longer used by the system."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
