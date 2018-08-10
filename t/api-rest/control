@@ -22,4 +22,5 @@ Build-Depends: libboolean-perl,
                libtext-table-perl,
                libtime-warp-perl,
                libtrycatch-perl,
-               libuuid-perl
+               libuuid-perl,
+               liburi-encode-perl
