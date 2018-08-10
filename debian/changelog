@@ -1,3 +1,12 @@
+ngcp-panel (6.4.1.4+0~mr6.4.1.4) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [d8a7865] TT#42565 Fix 2930237: bump Dockerfile version to trigger docker rebuild
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Aug 2018 15:33:50 +0200
+
 ngcp-panel (6.4.1.3+0~mr6.4.1.3) unstable; urgency=medium
 
   [ Rene Krenn ]
