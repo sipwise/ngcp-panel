@@ -1653,6 +1653,10 @@ msgstr ""
 msgid "Deployed Devices"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Deprecated, no longer used by the system."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/PeeringOverview.pm lib/NGCP/Panel/Controller/Rewrite.pm lib/NGCP/Panel/Controller/SubscriberProfile.pm lib/NGCP/Panel/Controller/SubscriberProfile.pm lib/NGCP/Panel/Utils/Sounds.pm share/templates/rewrite/rules_list.tt
 msgid "Description"
 msgstr ""
@@ -6671,7 +6675,7 @@ msgid "The network-provided display name used for XMPP contacts and optionally S
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The prepaid billing interface for customer with prepaid billing profile."
+msgid "The prepaid billing interface for customer with prepaid billing profile. Deprecated, no longer used by the system."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

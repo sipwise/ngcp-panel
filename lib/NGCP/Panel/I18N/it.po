@@ -2047,6 +2047,10 @@ msgstr "Dispositivo Installato"
 msgid "Deployed Devices"
 msgstr "Dispositivi Installati"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Deprecated, no longer used by the system."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/NCOS.pm
 #: lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
@@ -7702,10 +7706,9 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"The prepaid billing interface for customer with prepaid billing profile."
+"The prepaid billing interface for customer with prepaid billing profile. "
+"Deprecated, no longer used by the system."
 msgstr ""
-"L´interfaccia di fatturazione prepagata per il cliente con profilo di "
-"fatturazione prepagato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The serial timeout for hunting in PBX hunt groups."
@@ -8551,6 +8554,12 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid ""
+#~ "The prepaid billing interface for customer with prepaid billing profile."
+#~ msgstr ""
+#~ "L´interfaccia di fatturazione prepagata per il cliente con profilo di "
+#~ "fatturazione prepagato."
 
 #~ msgid ""
 #~ "List of audio and video codecs to whitelist or blacklist. Valid codecs "
