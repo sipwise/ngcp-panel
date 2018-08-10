@@ -1,3 +1,12 @@
+ngcp-panel (6.4.1.3+0~mr6.4.1.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b089adc] TT#42565 add URI::Encode dependency for api-journals.t
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Aug 2018 12:04:47 +0200
+
 ngcp-panel (6.4.1.2+0~mr6.4.1.2) unstable; urgency=medium
 
   [ Kirill Solomko ]
