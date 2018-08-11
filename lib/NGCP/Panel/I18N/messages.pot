@@ -7282,6 +7282,10 @@ msgstr ""
 msgid "connecting..."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DateTime.pm
+msgid "customer default"
+msgstr ""
+
 #: share/templates/helpers/datatables.tt
 msgid "dataTables.default.js"
 msgstr ""
@@ -7292,6 +7296,18 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "days"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "default"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "default (localtime)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DateTime.pm
+msgid "default (parent/localtime)"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -7416,6 +7432,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Form/Peering/InboundRule.pm
 msgid "reject reason must be filled if reject code is filled"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DateTime.pm
+msgid "reseller default"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm

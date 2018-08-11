@@ -8376,6 +8376,10 @@ msgstr "connesso - registrazione in corso..."
 msgid "connecting..."
 msgstr "connessione in corso..."
 
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "customer default"
+msgstr ""
+
 #: share/templates/helpers/datatables.tt
 msgid "dataTables.default.js"
 msgstr "dataTables.it.js"
@@ -8386,6 +8390,18 @@ msgstr "giorno"
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "days"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "default"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "default (localtime)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "default (parent/localtime)"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -8516,6 +8532,10 @@ msgid "reject reason must be filled if reject code is filled"
 msgstr ""
 "il motivo del rifiuto deve essere compilato se il codice di rifiuto è "
 "compilato"
+
+#: lib/NGCP/Panel/Utils/DateTime.pm
+msgid "reseller default"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "second"
