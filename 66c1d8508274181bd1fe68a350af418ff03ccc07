@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fae47921_fb2543ae",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-13T12:18:46Z",
+      "side": 1,
+      "message": "hm so it does not support filtering. but from what you described, that would be most nicely though for that requesting customer?",
+      "revId": "66c1d8508274181bd1fe68a350af418ff03ccc07",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
