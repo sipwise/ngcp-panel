@@ -1150,8 +1150,8 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         return;
     }
 
-    $id =~ s/\.cfg$//;
-    $id =~ s/\.ini$//;
+    $id =~ s/\.(cfg|ini|xml)$//;
+    $id =~ s/^config\.//;
 
     $id =~ s/^([^\=]+)\=0$/$1/;
     $id = lc $id;
