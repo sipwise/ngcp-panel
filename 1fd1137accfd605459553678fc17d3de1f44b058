@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "fae47921_fbb543d0",
+        "filename": "lib/NGCP/Panel/Utils/API.pm",
+        "patchSetId": 23
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-08-13T16:13:18Z",
+      "side": 1,
+      "message": "great feature, but unrelated to actual change. in general, could keep commits atomic",
+      "revId": "1fd1137accfd605459553678fc17d3de1f44b058",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fae47921_529314a4",
         "filename": "lib/NGCP/Panel/Utils/Journal.pm",
         "patchSetId": 23
