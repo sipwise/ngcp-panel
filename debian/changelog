@@ -1,3 +1,12 @@
+ngcp-panel (6.4.1.5+0~mr6.4.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [0c5f66e] TT#42565 api-journals.t: use test start time TZ
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Aug 2018 18:04:02 +0200
+
 ngcp-panel (6.4.1.4+0~mr6.4.1.4) unstable; urgency=medium
 
   [ Alexander Lutay ]
