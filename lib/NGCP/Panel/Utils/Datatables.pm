@@ -251,9 +251,21 @@ sub process {
         }
     }
 
+    if (keys %{ $aggregations }) {
+        $c->stash(dt_custom_footer => $aggregations);
+    }
+
+    add_arbitrary_data($c, $aaData, $params->{topData}, $cols, $row_func, $params);
+
+    expose_data($c, $aaData, $totalRecords, $displayRecords);
+
+}
+
+sub add_arbitrary_data {
+    my ($c, $aaData, $topData, $cols, $row_func, $params) = @_;
     # show any arbitrary data rows on top, just like a union would do
     # hash is expected or array of hashes expected
-    my $topData = $params->{topData};
+    my $user_tz = $params->{user_tz} // $c->session->{user_tz};
     if (defined $topData) {
         my $topDataArray;
         if (ref $topData eq 'HASH') {
@@ -268,26 +280,40 @@ sub process {
             }
         }
     }
+}
 
-    if (keys %{ $aggregations }) {
-        $c->stash(dt_custom_footer => $aggregations);
-    }
+sub expose_data {
+    my($c, $aaData, $totalRecords, $displayRecords) = @_;
     $c->stash(
         aaData               => $aaData,
         iTotalRecords        => $totalRecords,
         iTotalDisplayRecords => $displayRecords,
         sEcho                => int($c->request->params->{sEcho} // 1),
     );
+}
 
+sub process_static_data {
+    my ($c, $data, $cols, $row_func, $params) = @_;
+    $params //= {};
+
+    foreach my $field (qw/total_row_func/) {
+        #todo: error here about unsupported functionality
+    }
+
+    my $aaData = [];
+    add_arbitrary_data($c, $aaData, $data, $cols, $row_func, $params);
+    my $totalRecords = scalar @$aaData;
+    my $displayRecords = $totalRecords;
+    expose_data($c, $aaData, $totalRecords, $displayRecords);
 }
 
 sub set_columns {
     my ($c, $cols) = @_;
 
-    for my $c(@{ $cols }) {
-        next if defined $c->{accessor};
-        $c->{accessor} = $c->{name};
-        $c->{accessor} =~ s/\./_/g;
+    for my $col(@{ $cols }) {
+        next if defined $col->{accessor};
+        $col->{accessor} = $col->{name};
+        $col->{accessor} =~ s/\./_/g;
     }
     return $cols;
 }

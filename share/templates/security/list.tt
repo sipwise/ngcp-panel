@@ -15,6 +15,7 @@
 
 <div class="ngcp-separator"></div>
 
+
 <div class="accordion" id="security_data">
 
     <div class="accordion-group">
@@ -23,31 +24,25 @@
         </div>
         <div class="accordion-body collapse" id="collapse_ips">
             <div class="accordion-inner">
+                    <a class="btn btn-large btn-primary" href="javascript:var table=$('#banned_ips_table').dataTable().api().ajax.reload();">
+                        <i class="icon-star"></i> [% c.loc('Refresh banned IPs data') %]
+                    </a>
 
-                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
-                    <thead>
-                        <tr>
-                            <th>[% c.loc('IP') %]</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    [% FOR ip IN banned_ips -%]
-                        [% enc_ip = ip.ip | uri -%]
-                        <tr class="sw_action_row">
-                            <td>[% ip.ip %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions pull-right">
-                                    <a class="btn btn-small btn-primary" 
-                                        href="[% c.uri_for_action("/security/ip_unban", [enc_ip]) %]">
-                                        <i class="icon-remove"></i> [% c.loc('Unban') %]
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    [% END -%]
-                    </tbody>
-                </table>
+[%
+    helper.name = c.loc('Banned IPs');
+    helper.identifier = 'banned_ips';
+    helper.length_change = 1;
+    helper.dt_columns = bannedips_dt_columns;
+    helper.data_static = 1;
+    helper.ajax_uri = c.uri_for_action('/security/ip_list');
+
+    helper.dt_buttons = [
+        { name = c.loc('Unban'), uri = "/security/ip/'+encodeURI(full.ip)+'/unban", class = 'btn-small btn-primary', icon = 'icon-removet' },
+    ];
+    PROCESS 'helpers/datatables.tt';
+%]
+
+
             </div>
         </div>
     </div>
@@ -58,35 +53,24 @@
         </div>
         <div class="accordion-body collapse" id="collapse_users">
             <div class="accordion-inner">
+                    <a class="btn btn-large btn-primary" href="javascript:var table=$('#banned_users_table').dataTable().api().ajax.reload();">
+                        <i class="icon-star"></i> [% c.loc('Refresh banned users data') %]
+                    </a>
 
-                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
-                    <thead>
-                        <tr>
-                            <th>[% c.loc('User') %]</th>
-                            <th>[% c.loc('Fail Count') %]</th>
-                            <th>[% c.loc('Last Attempt') %]</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    [% FOR user IN banned_users -%]
-                        [% enc_user = user.username | uri -%]
-                        <tr class="sw_action_row">
-                            <td>[% user.username %]</td>
-                            <td>[% user.auth_count %]</td>
-                            <td>[% user.last_auth %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions pull-right">
-                                    <a class="btn btn-small btn-primary" 
-                                        href="[% c.uri_for_action("/security/user_unban", [enc_user]) %]">
-                                        <i class="icon-remove"></i> [% c.loc('Unban') %]
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    [% END -%]
-                    </tbody>
-                </table>
+[%
+    helper.name = c.loc('Banned Users');
+    helper.identifier = 'banned_users';
+    helper.length_change = 1;
+    helper.dt_columns = bannedusers_dt_columns;
+    helper.data_static = 1;
+    helper.ajax_uri = c.uri_for_action('/security/user_list');
+
+    helper.dt_buttons = [
+        { name = c.loc('Unban'), uri = "/security/user/'+encodeURI(full.username)+'/unban", class = 'btn-small btn-primary', icon = 'icon-removet' },
+    ];
+    PROCESS 'helpers/datatables.tt';
+%]
+
             </div>
         </div>
     </div>

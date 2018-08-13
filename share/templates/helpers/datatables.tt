@@ -44,7 +44,6 @@ $(document).ready(function() {
         .dataTable( {
         "sDom": "<'row-fluid ngcp_dt_top_elements'lf<r>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
         "bProcessing": true,
-        "bServerSide": true,
         "bPaginate": [% helper.paginate || 'true' %],
         "bFilter": [% helper.filter || 'true' %],
         "bStateSave": true,
@@ -60,18 +59,9 @@ $(document).ready(function() {
         "bSort": [% IF helper.no_sort %] false [% ELSE %] true [% END %],
         "bInfo": true,
         "iDisplayLength": 5,
-        'iShowPages': 5,
+        "iShowPages": 5,
         "sAjaxSource": "[% helper.ajax_uri %]",
         "searchDelay": 800,
-        "fnServerParams": function ( aoData ) {
-            var params = localStorage.getItem("ngcp_dt.[%helper.id_from_name%]_table.paramsJSON");
-            if(params){
-                var paramsParsed = JSON.parse(params);
-                for(var key in paramsParsed){
-                    aoData.push( {"name":key,"value":paramsParsed[key]} );
-                }
-            }
-        },
         [% IF helper.column_sort -%]
             "aaSorting": [
             [%
@@ -152,7 +142,9 @@ $(document).ready(function() {
                 "sClass": "ngcp-actions-column"
             }
         ],
-       "fnServerData": function ( sSource, aoData, fnCallback, oSettings ) {
+        [%IF !helper.data_static %]
+        "bServerSide": true,
+        "fnServerData": function ( sSource, aoData, fnCallback, oSettings ) {
             oSettings.jqXHR = $.ajax( {
                 "dataType": 'json',
                 "url": sSource,
@@ -165,6 +157,18 @@ $(document).ready(function() {
                }
             } );
         },
+        "fnServerParams": function ( aoData ) {
+            var params = localStorage.getItem("ngcp_dt.[%helper.id_from_name%]_table.paramsJSON");
+            if(params){
+                var paramsParsed = JSON.parse(params);
+                for(var key in paramsParsed){
+                    aoData.push( {"name":key,"value":paramsParsed[key]} );
+                }
+            }
+        },
+        [%ELSE%]
+        "bServerSide": false,
+        [%END%]
         [% IF helper.show_footer -%]
         "fnFooterCallback": function( nFoot, aData, iStart, iEnd, aiDisplay ) {
             if ([% helper.id_from_name %]_tmp_footer) {
