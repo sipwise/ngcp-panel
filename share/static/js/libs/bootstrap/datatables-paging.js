@@ -9,6 +9,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
         'iShowPages': 5
     },
     'fnClickHandler': function(e) {
+		//alert('fnClickHandler');
         var fnCallbackDraw = e.data.fnCallbackDraw,
             oSettings = e.data.oSettings,
             sPage = e.data.sPage;
@@ -24,6 +25,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
     },
     // fnInit is called once for each instance of pager
     'fnInit': function(oSettings, nPager, fnCallbackDraw) {
+		//alert('fnInit');
         var oClasses = oSettings.oClasses,
             oLang = oSettings.oLanguage.oPaginate,
             that = this;
@@ -52,6 +54,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
     },
     // fnUpdate is only called once while table is rendered
     'fnUpdate': function(oSettings, fnCallbackDraw) {
+		//alert('fnUpdate');
         var oClasses = oSettings.oClasses,
             that = this;
  
@@ -60,9 +63,17 @@ $.fn.dataTableExt.oPagination.bootstrap = {
         // Update stateful properties
         this.fnUpdateState(oSettings);
 
-	var totalPages = Math.ceil(oSettings._iRecordsDisplay / oSettings._iDisplayLength);
- 
-        if (oSettings._iCurrentPage === 1) {
+        //var totalPages = Math.ceil(oSettings._iRecordsDisplay / oSettings._iDisplayLength);
+        var totalPages = Math.ceil(oSettings.fnRecordsTotal() / oSettings._iDisplayLength),
+          filteredPages = Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength),
+          iCurrentPage = oSettings._iCurrentPage;
+        if (totalPages > filteredPages) {
+            totalPages = filteredPages;
+        }
+        if (iCurrentPage > filteredPages && filteredPages > 0) {
+            iCurrentPage = filteredPages;
+        }
+        if (iCurrentPage === 1) {
             $('.paging_first', tableWrapper).attr('disabled', true);
             $('.paging_prev', tableWrapper).attr('disabled', true);
         } else {
@@ -70,7 +81,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
             $('.paging_prev', tableWrapper).removeAttr('disabled');
         }
  
-        if (totalPages === 0 || oSettings._iCurrentPage === totalPages) {
+        if (totalPages === 0 || iCurrentPage === totalPages) {
             $('.paging_next', tableWrapper).attr('disabled', true);
             $('.paging_last', tableWrapper).attr('disabled', true);
         } else {
@@ -80,7 +91,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
  
         var i, oNumber, oNumbers = $('.paging_num', tableWrapper);
 
-	var lastPage = totalPages < oSettings._iLastPage ? totalPages : oSettings._iLastPage;
+        var lastPage = totalPages < oSettings._iLastPage ? totalPages : oSettings._iLastPage;
  
         // Erase
         oNumbers.html('');
@@ -110,11 +121,20 @@ $.fn.dataTableExt.oPagination.bootstrap = {
     // fnUpdateState used to be part of fnUpdate
     // The reason for moving is so we can access current state info before fnUpdate is called
     'fnUpdateState': function(oSettings) {
+		//alert('fnUpdateState');
+		//max   = settings.fnRecordsTotal(),
+		//total = settings.fnRecordsDisplay(),
         var iCurrentPage = Math.ceil((oSettings._iDisplayStart + 1) / oSettings._iDisplayLength),
             iTotalPages = Math.ceil(oSettings.fnRecordsTotal() / oSettings._iDisplayLength),
+            filteredPages = Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength),
             iFirstPage = iCurrentPage - oSettings._iShowPagesHalf,
             iLastPage = iCurrentPage + oSettings._iShowPagesHalf;
- 
+        if (iTotalPages > filteredPages) {
+            iTotalPages = filteredPages;
+        }
+        if (iCurrentPage > filteredPages && filteredPages > 0) {
+            iCurrentPage = filteredPages;
+        }
         if (iTotalPages < oSettings._iShowPages) {
             iFirstPage = 1;
             iLastPage = iTotalPages;
