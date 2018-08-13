@@ -60,9 +60,17 @@ $.fn.dataTableExt.oPagination.bootstrap = {
         // Update stateful properties
         this.fnUpdateState(oSettings);
 
-	var totalPages = Math.ceil(oSettings._iRecordsDisplay / oSettings._iDisplayLength);
- 
-        if (oSettings._iCurrentPage === 1) {
+        //var totalPages = Math.ceil(oSettings._iRecordsDisplay / oSettings._iDisplayLength);
+        var totalPages = Math.ceil(oSettings.fnRecordsTotal() / oSettings._iDisplayLength),
+          filteredPages = Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength),
+          iCurrentPage = oSettings._iCurrentPage;
+        if (totalPages > filteredPages) {
+            totalPages = filteredPages;
+        }
+        if (iCurrentPage > filteredPages && filteredPages > 0) {
+            iCurrentPage = filteredPages;
+        }
+        if (iCurrentPage === 1) {
             $('.paging_first', tableWrapper).attr('disabled', true);
             $('.paging_prev', tableWrapper).attr('disabled', true);
         } else {
@@ -70,7 +78,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
             $('.paging_prev', tableWrapper).removeAttr('disabled');
         }
  
-        if (totalPages === 0 || oSettings._iCurrentPage === totalPages) {
+        if (totalPages === 0 || iCurrentPage === totalPages) {
             $('.paging_next', tableWrapper).attr('disabled', true);
             $('.paging_last', tableWrapper).attr('disabled', true);
         } else {
@@ -80,7 +88,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
  
         var i, oNumber, oNumbers = $('.paging_num', tableWrapper);
 
-	var lastPage = totalPages < oSettings._iLastPage ? totalPages : oSettings._iLastPage;
+        var lastPage = totalPages < oSettings._iLastPage ? totalPages : oSettings._iLastPage;
  
         // Erase
         oNumbers.html('');
@@ -112,9 +120,15 @@ $.fn.dataTableExt.oPagination.bootstrap = {
     'fnUpdateState': function(oSettings) {
         var iCurrentPage = Math.ceil((oSettings._iDisplayStart + 1) / oSettings._iDisplayLength),
             iTotalPages = Math.ceil(oSettings.fnRecordsTotal() / oSettings._iDisplayLength),
+            filteredPages = Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength),
             iFirstPage = iCurrentPage - oSettings._iShowPagesHalf,
             iLastPage = iCurrentPage + oSettings._iShowPagesHalf;
- 
+        if (iTotalPages > filteredPages) {
+            iTotalPages = filteredPages;
+        }
+        if (iCurrentPage > filteredPages && filteredPages > 0) {
+            iCurrentPage = filteredPages;
+        }
         if (iTotalPages < oSettings._iShowPages) {
             iFirstPage = 1;
             iLastPage = iTotalPages;

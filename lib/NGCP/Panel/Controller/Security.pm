@@ -21,17 +21,42 @@ sub root :PathPart('/') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 }
 
-sub security_index :Chained('/') :PathPart('security') :Args(0) {
+sub base :Chained('/') :PathPart('security') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    my $ips = NGCP::Panel::Utils::Security::list_banned_ips($c);
-    my $users = NGCP::Panel::Utils::Security::list_banned_users($c);
+    $c->stash->{bannedips_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "ip", search => 1, title => $c->loc("IP") },
+    ]);
 
+    $c->stash->{bannedusers_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "username", search => 1, title => $c->loc("User") },
+        { name => "auth_count", title => $c->loc("Fail Count") },
+        { name => "last_auth", search => 1, title => $c->loc("Last Attemp") },
+    ]);
     $c->stash(
         template => 'security/list.tt',
-        banned_ips => $ips,
-        banned_users => $users,
     );
+}
+
+sub security :Chained('base') :PathPart('') :Args(0) {
+}
+
+sub ip_list :Chained('base') :PathPart('ip') :Args(0) {
+    my ($self, $c) = @_;
+    my $ips = NGCP::Panel::Utils::Security::list_banned_ips($c);
+
+    NGCP::Panel::Utils::Datatables::process_static_data($c, $ips, $c->stash->{bannedips_dt_columns});
+    $c->detach($c->view('JSON'));
+    return;
+}
+
+sub user_list :Chained('base') :PathPart('user') :Args(0) {
+    my ($self, $c) = @_;
+    my $users = NGCP::Panel::Utils::Security::list_banned_users($c);
+
+    NGCP::Panel::Utils::Datatables::process_static_data($c, $users, $c->stash->{bannedusers_dt_columns});
+    $c->detach($c->view('JSON'));
+    return;
 }
 
 sub ip_base :Chained('/') :PathPart('security/ip') :CaptureArgs(1) {
