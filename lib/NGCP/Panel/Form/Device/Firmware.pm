@@ -23,6 +23,12 @@ has_field 'version' => (
     label => 'Version',
 );
 
+has_field 'tag' => (
+    type => 'Text',
+    required => 0,
+    label => 'Firmware Tag',
+);
+
 has_field 'data' => (
     type => 'Upload',
     required => 1,
@@ -40,7 +46,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/device version data/],
+    render_list => [qw/device version tag data/],
 );
 
 has_block 'actions' => (
