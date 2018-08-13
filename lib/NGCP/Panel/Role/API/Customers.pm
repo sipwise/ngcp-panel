@@ -26,6 +26,16 @@ sub _item_rs {
         include_terminated => 1,
         now => $now,
     );
+    if (defined (my $external_id = $c->req->params->{external_id})) {
+        my $rs = $c->model('DB')->resultset('contracts')->search_rs({
+            'me.external_id' => $external_id,
+        }, undef);
+        my @contract_ids = map { $_->id; } $rs->all;
+        push(@contract-ids, -1);
+        $item_rs = $item_rs->search_rs({
+            'me.id' => { -in => \@contract_ids },
+        },undef);
+    }
     return $item_rs;
 }
 
