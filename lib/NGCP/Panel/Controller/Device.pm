@@ -56,7 +56,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'model', search => 1, title => $c->loc('Model') },        
     ]);
 
-    my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search_rs(undef,{'columns' => [qw/id device_id version filename/],
+    my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search_rs(undef,{'columns' => [qw/id device_id version filename tag/],
 	});
     $reseller_id and $devfw_rs = $devfw_rs->search({
         'device.reseller_id' => $reseller_id,
@@ -70,6 +70,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'device.model', search => 1, title => $c->loc('Device Model') },
         { name => 'filename', search => 1, title => $c->loc('Firmware File') },
         { name => 'version', search => 1, title => $c->loc('Version') },
+        { name => 'tag', search => 1, title => $c->loc('Firmware Tag') },
     ]);
 
     my $devconf_rs = $c->model('DB')->resultset('autoprov_configs')->search_rs(undef,{'columns' => [qw/id device_id version content_type/],
@@ -1150,8 +1151,8 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         return;
     }
 
-    $id =~ s/\.cfg$//;
-    $id =~ s/\.ini$//;
+    $id =~ s/\.(cfg|ini|xml)$//;
+    $id =~ s/^config\.//;
 
     $id =~ s/^([^\=]+)\=0$/$1/;
     $id = lc $id;
@@ -1944,7 +1945,7 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
 }
 
 sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathPart('latest') :Args {
-    my ($self, $c, $tmp) = @_;
+    my ($self, $c, $tag) = @_;
 
     my $rs = $c->stash->{fw_rs}->search({
         device_id => $c->stash->{dev}->profile->config->device->id,
@@ -1952,6 +1953,11 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
     }, {
         order_by => { -desc => 'version' },
     });
+    if(defined $tag && length $tag > 0) {
+        $rs = $rs->search({
+            tag => $tag,
+        });
+    }
     if(defined $c->req->params->{q}) {
         $rs = $rs->search({
             version => { 'like' => $c->req->params->{q} . '%' },
