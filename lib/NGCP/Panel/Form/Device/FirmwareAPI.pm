@@ -41,10 +41,20 @@ has_field 'filename' => (
     },
 );
 
+has_field 'tag' => (
+    type => 'Text',
+    required => 0,
+    label => 'Tag',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A custom tag for this firmware.']
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/device_id version filename/],
+    render_list => [qw/device_id version filename tag/],
 );
 
 1;
