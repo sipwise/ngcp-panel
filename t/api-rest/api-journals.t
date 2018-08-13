@@ -5,6 +5,8 @@ use JSON -support_by_pp, -no_export;
 use Test::More;
 use Storable qw();
 use URI::Encode qw(uri_encode);
+use DateTime qw();
+use DateTime::TimeZone qw();
 
 use LWP::Debug;
 
@@ -21,7 +23,9 @@ my $is_local_env = 0;
 my $mysql_sqlstrict = 1; #https://bugtracker.sipwise.com/view.php?id=12565
 my $enable_journal_tests = 1;
 
-my $test_start_datetime = DateTime->now;
+my $test_start_datetime = DateTime->now(
+    time_zone => DateTime::TimeZone->new(name => 'local')
+);
 
 use Config::General;
 my $catalyst_config;
