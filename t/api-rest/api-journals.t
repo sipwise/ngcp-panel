@@ -4,9 +4,6 @@ use Net::Domain qw(hostfqdn);
 use JSON -support_by_pp, -no_export;
 use Test::More;
 use Storable qw();
-use URI::Encode qw(uri_encode);
-use DateTime qw();
-use DateTime::TimeZone qw();
 
 use LWP::Debug;
 
@@ -23,9 +20,7 @@ my $is_local_env = 0;
 my $mysql_sqlstrict = 1; #https://bugtracker.sipwise.com/view.php?id=12565
 my $enable_journal_tests = 1;
 
-my $test_start_datetime = DateTime->now(
-    time_zone => DateTime::TimeZone->new(name => 'local')
-);
+my $test_start_datetime;
 
 use Config::General;
 my $catalyst_config;
@@ -2344,6 +2339,10 @@ sub _test_journal_top_journalitem {
             ok($journal->{operation} eq $op, "check expected journal operation");
             ok(exists $journal->{username}, "check existence of username");
             ok(exists $journal->{timestamp}, "check existence of timestamp");
+            unless ($test_start_datetime) {
+                $test_start_datetime = $journal->{timestamp};
+                diag($test_start_datetime);
+            }
             ok(exists $journal->{content}, "check existence of content");
 
             ok(exists $journal->{_links}, "check existence of _links");
@@ -2404,7 +2403,7 @@ sub _test_journal_collection {
     my ($resource,$item_id,$journals) = @_;
     if (_is_journal_resource_enabled($resource)) {
         my $total_count = (defined $journals ? (scalar keys %$journals) : undef);
-        my $nexturi = $uri.'/api/'.$resource . '/' . $item_id . '/journal/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1) . "&from=".uri_encode($test_start_datetime);
+        my $nexturi = $uri.'/api/'.$resource . '/' . $item_id . '/journal/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1) . "&from=".$test_start_datetime;
         do {
             $res = $ua->get($nexturi);
             is($res->code, 200, _get_request_test_message("fetch journal collection page"));
