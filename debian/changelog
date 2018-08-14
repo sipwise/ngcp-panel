@@ -1,3 +1,12 @@
+ngcp-panel (6.4.1.6+0~mr6.4.1.6) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [d47bef4] TT#42565 api-journals.t: derive/fix test start time
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Aug 2018 19:55:59 +0200
+
 ngcp-panel (6.4.1.5+0~mr6.4.1.5) unstable; urgency=medium
 
   [ Rene Krenn ]
