@@ -349,13 +349,12 @@ sub prepare_resource {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid alias_number parameter, must be an array.');
             return;
         }
-        $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
         foreach my $alias_number (@{$resource->{alias_numbers}}){
-            if( ref $alias_number->{e164} ne "HASH"){
+            if( ref $alias_number ne "HASH"){
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid alias_number parameter, must be an array of the hashes.');
                 return;
             } else {
-                delete $alias_number->{e164}->{number_id};
+                delete $alias_number->{number_id};
             }
         }
     }
@@ -366,6 +365,9 @@ sub prepare_resource {
         resource => $resource,
         form => $form,
     );
+
+    # this format is expected by NGCP::Panel::Utils::Subscriber::create_subscriber
+    $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
 
     unless($domain) {
         $domain = $c->model('DB')->resultset('domains')->search({'me.id' => $resource->{domain_id}});
