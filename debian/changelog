@@ -1,3 +1,16 @@
+ngcp-panel (1.14.4.8+0~mr4.5.4.8) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [a0553b6] TT#17642 docker: follow policy to include NGCP repository
+  * [054c505] TT#17502 docker: fix relative path from new context
+
+  [ Rene Krenn ]
+  * [dff4e6c] TT#42776 contract_id lookup for /customers/?external_id=123
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Aug 2018 13:49:01 +0200
+
 ngcp-panel (1.14.4.7+0~mr4.5.4.7) unstable; urgency=medium
 
   [ Rene Krenn ]
