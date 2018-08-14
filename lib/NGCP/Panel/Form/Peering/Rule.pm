@@ -64,6 +64,15 @@ has_field 'stopper' => (
     },
 );
 
+has_field 'time_set' => (
+    type => '+NGCP::Panel::Field::TimeSet',
+    #validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['By specifying a TimeSet the periods during which this rule is active can be restricted.']
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -74,7 +83,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/callee_prefix callee_pattern caller_pattern description enabled stopper/],
+    render_list => [qw/callee_prefix callee_pattern caller_pattern time_set description enabled stopper/],
 );
 
 has_block 'actions' => (
