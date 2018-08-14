@@ -95,6 +95,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'description', search => 1, title => $c->loc('Description') },
         { name => 'enabled', search => 0, title => $c->loc('Enabled') },
         { name => 'stopper', search => 0, title => $c->loc('Stopper') },
+        { name => 'time_set.name', search => 0, title => $c->loc('Time Set') },
     ]);
     $c->stash->{inbound_rules_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'priority', search => 0, title => $c->loc('Priority') },
@@ -563,6 +564,24 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
     return;
 }
 
+######## tmp until we have a TimeSet controller
+sub tmp_timesets_ajax :Chained('group_list') :PathPart('timesetsajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash->{time_set_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'reseller_id', search => 1, title => $c->loc('Reseller #') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+    ]);
+
+    my $resultset = $c->model('DB')->resultset('voip_time_sets');
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{time_set_dt_columns});
+    $c->detach( $c->view("JSON") );
+    return;
+}
+
+########
+
 sub rules_list :Chained('base') :PathPart('rules') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
@@ -600,6 +619,8 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             $form->values->{callee_prefix} //= '';
+            $form->values->{time_set_id} = $form->values->{time_set}{id} // undef;
+            delete $form->values->{time_set};
             $c->stash->{group_result}->voip_peer_rules->create($form->values);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
@@ -660,6 +681,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::RuleEditAdmin", $c);
     $c->stash->{rule}{group}{id} = delete $c->stash->{rule}{group_id};
+    $c->stash->{rule}{time_set}{id} = delete $c->stash->{rule}{time_set_id};
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -673,6 +695,8 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
+            $form->values->{time_set_id} = $form->values->{time_set}{id} // undef;
+            delete $form->values->{time_set};
             $form->values->{callee_prefix} //= '';
             $form->values->{group_id} = $form->values->{group}{id};
             $c->stash->{rule_result}->update($form->values);

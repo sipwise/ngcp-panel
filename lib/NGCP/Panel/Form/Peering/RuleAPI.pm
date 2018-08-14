@@ -12,10 +12,18 @@ has_field 'group_id' => (
     },
 );
 
+has_field 'time_set_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['By specifying a TimeSet the periods during which this rule is active can be restricted.']
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group_id callee_prefix callee_pattern caller_pattern description enabled stopper/],
+    render_list => [qw/group_id callee_prefix callee_pattern caller_pattern description enabled stopper time_set_id/],
 );
 
 1;
