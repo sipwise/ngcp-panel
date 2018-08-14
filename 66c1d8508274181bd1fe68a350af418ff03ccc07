@@ -16,6 +16,24 @@
       "revId": "66c1d8508274181bd1fe68a350af418ff03ccc07",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_06ff8a02",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-08-14T11:44:43Z",
+      "side": 1,
+      "message": "Hello Rene. \n\nFiltering is supported inside the datatables on static data and works well, the same as ordering and paging.\n\nWe use \"total_row_func\" pretty rare for some specific aggregations, and it will not work for now.\n\nBest regards,\nIrina",
+      "parentUuid": "fae47921_fb2543ae",
+      "revId": "66c1d8508274181bd1fe68a350af418ff03ccc07",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
