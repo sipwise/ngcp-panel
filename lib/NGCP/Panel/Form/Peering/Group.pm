@@ -32,6 +32,15 @@ has_field 'priority' => (
     range_end => '9',
 );
 
+has_field 'time_set' => (
+    type => '+NGCP::Panel::Field::TimeSet',
+    #validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['By specifying a TimeSet the periods during which this group is active can be restricted.']
+    },
+);
+
 has_field 'description' => (
     type => 'Text',
     #not mandatory at the moment
@@ -47,7 +56,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id contract name priority description/],
+    render_list => [qw/id contract name priority time_set description/],
 );
 
 has_block 'actions' => (
@@ -64,6 +73,7 @@ sub custom_get_values {
         priority => $fif->{priority},
         description => $fif->{description},
         peering_contract_id => $fif->{'contract.id'},
+        time_set_id => $fif->{'time_set.id'},
     };
     return $hashvalues;
 }
