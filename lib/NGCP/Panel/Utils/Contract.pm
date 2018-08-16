@@ -15,13 +15,25 @@ sub recursively_lock_contract {
     my $contract = $params{contract};
     my $schema = $params{schema} // $c->model('DB');
     my $status = $contract->status;
-    if($status eq 'terminated') {
-        $contract->autoprov_field_devices->delete_all;
+
+    # check all child contracts in case of reseller
+    my $resellers = $schema->resultset('resellers')->search({
+        contract_id => $contract->id,
+    });
+
+    for my $reseller ($resellers->all) {
+        for my $admin ($reseller->admins->all) {
+            if ($admin->id == $c->user->id) {
+                die "Cannot delete the currently used account";
+            }
+        }
     }
 
     # first, change all voip subscribers, in case there are any
     # we don't need to set to active, or any other level, already terminated subscribers
-    for my $subscriber($contract->voip_subscribers->search_rs({ 'me.status' => { '!=' => 'terminated' } })->all) {
+    for my $subscriber ($contract->voip_subscribers->search_rs({
+                        'me.status' => { '!=' => 'terminated' }
+                        })->all) {
         $subscriber->update({ status => $status });
         if($status eq 'terminated') {
             NGCP::Panel::Utils::Subscriber::terminate(
@@ -42,15 +54,51 @@ sub recursively_lock_contract {
         }
     }
 
-    # then, check all child contracts in case of reseller
-    my $resellers = $schema->resultset('resellers')->search({
-        contract_id => $contract->id,
-    });
-    for my $reseller($resellers->all) {
+    # remove contract associated pbx devices
+    $contract->autoprov_field_devices->delete_all;
 
-        if($status eq 'terminated') {
+    for my $reseller ($resellers->all) {
+
+        # fetch sub-contracts of this contract
+        my $customers = $c->model('DB')->resultset('contracts')->search({
+                'contact.reseller_id' => $reseller->id,
+            }, {
+                join => 'contact',
+            });
+        my $data = { status => $status };
+        if ($status eq 'terminated') {
+            $data->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local
+        }
+        for my $customer ($customers->all) {
+            $customer->update($data);
+            for my $subscriber ($customer->voip_subscribers->all) {
+                if ($status eq $subscriber->status) {
+                    next;
+                }
+                $subscriber->update({ status => $status });
+                if ($status eq 'terminated') {
+                    NGCP::Panel::Utils::Subscriber::terminate(
+                        c => $c, subscriber => $subscriber,
+                    );
+                } elsif ($status eq 'locked') {
+                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                        c => $c,
+                        prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                        level => 4,
+                    ) if ($subscriber->provisioning_voip_subscriber);
+                } elsif ($status eq 'active') {
+                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                        c => $c,
+                        prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                        level => 0,
+                    ) if($subscriber->provisioning_voip_subscriber);
+                }
+            }
+        }
+
+        if ($status eq 'terminated') {
             # remove domains in case of reseller termination
-            for my $domain($reseller->domain_resellers->all) {
+            for my $domain ($reseller->domain_resellers->all) {
                 my $prov_domain = $domain->domain->provisioning_voip_domain;
                 if ($prov_domain) {
                     $prov_domain->voip_dbaliases->delete;
@@ -64,43 +112,7 @@ sub recursively_lock_contract {
 
             # remove admin logins in case of reseller termination
             for my $admin($reseller->admins->all) {
-                if($admin->id == $c->user->id) {
-                    die "Cannot delete the currently used account";
-                }
                 $admin->delete;
-            }
-        }
-
-        # fetch sub-contracts of this contract
-        my $customers = $c->model('DB')->resultset('contracts')->search({
-                'contact.reseller_id' => $reseller->id,
-            }, {
-                join => 'contact',
-            });
-        my $data = { status => $status };
-        $data->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local
-            if($status eq 'terminated');
-        for my $customer($customers->all) {
-            $customer->update($data);
-            for my $subscriber($customer->voip_subscribers->all) {
-                $subscriber->update({ status => $status });
-                if($status eq 'terminated') {
-                    NGCP::Panel::Utils::Subscriber::terminate(
-                        c => $c, subscriber => $subscriber,
-                    );
-                } elsif($status eq 'locked') {
-                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
-                        c => $c,
-                        prov_subscriber => $subscriber->provisioning_voip_subscriber,
-                        level => 4,
-                    ) if($subscriber->provisioning_voip_subscriber);
-                } elsif($status eq 'active') {
-                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
-                        c => $c,
-                        prov_subscriber => $subscriber->provisioning_voip_subscriber,
-                        level => 0,
-                    ) if($subscriber->provisioning_voip_subscriber);
-                }
             }
         }
     }
