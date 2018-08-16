@@ -530,6 +530,7 @@ sub get_item_hal{
     }
     return $resitem;
 }
+
 sub get_hal_from_collection{
     my($self,$list_collection,$name,$number) = @_;
     $number //= 0;
@@ -621,6 +622,7 @@ sub get_collection_hal{
     }
     return $rescollection;
 }
+
 sub get_created_first{
     my($self) = @_;
     return $self->DATA_CREATED->{FIRST} ? $self->DATA_CREATED->{ALL}->{$self->DATA_CREATED->{FIRST}} : undef;
