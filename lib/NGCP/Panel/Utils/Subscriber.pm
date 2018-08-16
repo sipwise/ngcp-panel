@@ -228,7 +228,7 @@ sub create_subscriber {
             $profile_set_rs = $profile_set_rs->search({
                 reseller_id => $c->user->reseller_id,
             });
-        }
+        }#subadmin
         $profile_set = $profile_set_rs->find($params->{profile_set}{id});
         unless($profile_set) {
             die("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
@@ -464,6 +464,7 @@ sub create_subscriber {
         return $billing_subscriber;
     });
 }
+
 sub update_preferences {
     my (%params) = @_;
     my $c = $params{c};
@@ -718,6 +719,7 @@ sub manage_pbx_groups{
         }
    }
 }
+
 sub get_pbx_group_member_name{
     my %params = @_;
     my $c               = $params{c};

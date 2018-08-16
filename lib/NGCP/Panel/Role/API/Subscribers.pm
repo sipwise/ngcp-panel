@@ -590,7 +590,7 @@ sub prepare_resource {
 sub update_item {
     my ($self, $c, $schema, $item, $full_resource, $resource, $form) = @_;
 
-    return unless $self->check_write_access($c);
+    return unless $self->check_write_access($c, $item);
 
     my $subscriber = $item;
     my $customer = $full_resource->{customer};
@@ -651,7 +651,7 @@ sub update_item {
             $profile_set_rs = $profile_set_rs->search({
                 reseller_id => $c->user->reseller_id,
             });
-        }
+        }#subadmin check
 
         $profile_set = $profile_set_rs->find($resource->{profile_set}{id});
         unless($profile_set) {
@@ -808,7 +808,7 @@ sub update_item {
 }
 
 sub check_write_access {
-    my($self, $c) = @_;
+    my($self, $c, $item) = @_;
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
     } elsif($c->user->roles eq "subscriber"
         || (
@@ -835,8 +835,13 @@ sub check_write_access {
 sub subscriberadmin_write_access {
     my($self,$c) = @_;
     if ($c->user->roles eq "subscriberadmin"
-        && $c->config->{privileges}->{subscriberadmin}->{subscribers}
-        && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/ ) {
+        && (
+                ( $c->config->{privileges}->{subscriberadmin}->{subscribers}
+                    && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/ 
+                )
+            || 
+                $c->config->{features}->{cloudpbx}
+        ) ) {
         return 1;
     }
     return 0;
