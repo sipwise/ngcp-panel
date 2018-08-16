@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "fae47921_e130f0a0",
+        "filename": "lib/NGCP/Panel/Utils/Events.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-16T12:43:44Z",
+      "side": 1,
+      "message": "because regular subscriber and contract termination preserves billing.voip_subscribers entry (setting it to \u0027terminated\u0027), and it is removed because the domain is removed and we have \n  CONSTRAINT `v_s_domainid_ref` FOREIGN KEY (`domain_id`) REFERENCES `domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,",
+      "parentUuid": "fae47921_a1454818",
+      "revId": "78601a306e69f8ac2cc7e3c76ea5e9e603702bf1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fae47921_41557cc4",
         "filename": "lib/NGCP/Panel/Utils/Events.pm",
         "patchSetId": 1
