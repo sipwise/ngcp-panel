@@ -732,6 +732,7 @@ sub create_get_id{
 sub create{
     my($self, $collection_name, $parents_in, $params)  = @_;
     $parents_in //= {};
+    $params //= {};
     if($parents_in->{$collection_name}){
         if($self->data->{$collection_name}->{default}){
             $self->data->{$collection_name}->{process_cycled} = {'parents'=>$parents_in};
@@ -743,6 +744,12 @@ sub create{
     $self->process($collection_name, $parents_in);
     #create itself
     my $data = clone($self->data->{$collection_name}->{data});
+    if ( ref $params eq 'HASH' && ref $params->{data} eq 'HASH' && ref $params->{data}->{$collection_name} eq 'HASH' ) {
+        $data = { %{$data}, %{$params->{data}->{$collection_name}} };
+    }
+    if ( ref $params eq 'HASH' && ref $params->{data_cb} eq 'HASH' && ref $params->{data_cb}->{$collection_name} eq 'CODE') {
+        $data = $params->{data_cb}->{$collection_name}->($self, $collection_name, $data, $params);
+    }
     #$self->test_machine->ssl_cert;
     my $test_machine = clone $self->test_machine;
     $test_machine->set(
