@@ -669,12 +669,17 @@ sub get_aliases_snapshot {
         my $subscriber = $params{subscriber} // $schema->resultset('voip_subscribers')->find({
             id => $params{subscriber_id},
         });
-        my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
-        foreach my $alias (_get_aliases_sorted_rs($prov_subscriber)->all) {
-            push(@aliases,{ $alias->get_inflated_columns });
+        unless ($subscriber) {
+            goto done;
         }
-        $primary_alias = _get_primary_alias($prov_subscriber);
-        $primary_alias = { $primary_alias->get_inflated_columns } if $primary_alias;
+        my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        if ($prov_subscriber) {
+            foreach my $alias (_get_aliases_sorted_rs($prov_subscriber)->all) {
+                push(@aliases,{ $alias->get_inflated_columns });
+            }
+            $primary_alias = _get_primary_alias($prov_subscriber);
+            $primary_alias = { $primary_alias->get_inflated_columns } if $primary_alias;
+        }
         my $pilot_subscriber = _get_pilot_subscriber(
             c => $c,
             schema => $schema,
@@ -690,6 +695,7 @@ sub get_aliases_snapshot {
             $pilot_primary_alias = { $pilot_primary_alias->get_inflated_columns } if $pilot_primary_alias;
         }
     }
+done:
     return { old_aliases => \@aliases, old_pilot_aliases => \@pilot_aliases,
         old_primary_alias => $primary_alias, old_pilot_primary_alias => $pilot_primary_alias };
 }

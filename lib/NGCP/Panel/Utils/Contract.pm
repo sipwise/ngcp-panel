@@ -83,6 +83,9 @@ sub recursively_lock_contract {
         for my $customer($customers->all) {
             $customer->update($data);
             for my $subscriber($customer->voip_subscribers->all) {
+                if ($status eq $subscriber->status) {
+                    next;
+                }
                 $subscriber->update({ status => $status });
                 if($status eq 'terminated') {
                     NGCP::Panel::Utils::Subscriber::terminate(
