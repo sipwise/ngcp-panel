@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fae47921_61cbe073",
+        "filename": "lib/NGCP/Panel/Controller/API/TimeSets.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-08-16T13:38:24Z",
+      "side": 1,
+      "message": "Maybe it worth to put it somewhere on top of the file",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 3
+      },
+      "revId": "57b78c605fc88de7cb0573f39897920a549bea54",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
