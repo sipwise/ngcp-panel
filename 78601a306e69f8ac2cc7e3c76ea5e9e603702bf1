@@ -16,6 +16,47 @@
       "revId": "78601a306e69f8ac2cc7e3c76ea5e9e603702bf1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_6148802e",
+        "filename": "lib/NGCP/Panel/Utils/Events.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-16T12:18:43Z",
+      "side": 1,
+      "message": "$subscriber - does work correctly, I just added the check for convenience as there is no reason to continue if $subscriber is not found ...",
+      "parentUuid": "fae47921_a1454818",
+      "revId": "78601a306e69f8ac2cc7e3c76ea5e9e603702bf1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_41557cc4",
+        "filename": "lib/NGCP/Panel/Utils/Events.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-16T12:18:43Z",
+      "side": 1,
+      "message": "this actually what was missing as in a situation get_aliases_snapshot() is called on a terminated subscriber this place most likely ends up with the error.",
+      "range": {
+        "startLine": 676,
+        "startChar": 8,
+        "endLine": 676,
+        "endChar": 28
+      },
+      "revId": "78601a306e69f8ac2cc7e3c76ea5e9e603702bf1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
