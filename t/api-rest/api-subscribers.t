@@ -23,8 +23,8 @@ $fake_data->set_data_from_script({
         'data' => {
             administrative       => 0,
             customer_id          => sub { return shift->get_id('customers',@_); },
-            primary_number       => { ac => 1, cc=> 1, sn => 1 },
-            alias_numbers        => [ { ac => 11, cc=> 11, sn => 11 } ],
+            primary_number       => { ac => 12, cc=> 12, sn => 12 },
+            alias_numbers        => [ { ac => 112, cc=> 112, sn => 112 } ],
             username             => 'api_test_username',
             password             => 'api_test_password',
             webusername          => 'api_test_webusername',
@@ -118,14 +118,14 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
     $test_machine->check_create_correct( 1, sub{
         $_[0]->{username} .= time().'_'.$_[1]->{i} ;
     } );
-    $test_machine->check_bundle();
+    #$test_machine->check_bundle();
     $test_machine->check_get2put(undef,{},$put2get_check_params);
     $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $pilot and $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
 }
 #-------  MT#15441
-{
+if(0){
     diag("15441");
     my $intentional_cli = '111'.time();
     my $intentional_primary_number = {
@@ -204,7 +204,7 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
 }
 
 if($remote_config->{config}->{features}->{cloudpbx}){
-    {#18601
+    if(0){#18601
         diag("18601: config->features->cloudpbx: ".$remote_config->{config}->{features}->{cloudpbx}.";\n");
         my $groups = $test_machine->check_create_correct( 3, sub{
             my $num = $_[1]->{i};
@@ -332,7 +332,22 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->runas('admin');
     }
     {#TT#34021
-        diag("34021: check subscriberadmin PUT and PATCH. Possible only for pbx subscriberadmin. Access priveleges:".$remote_config->{config}->{acl}->{subscriberadmin}->{subscribers} .";\n");
+        my ($res,$content,$req);
+        diag("34021: check subscriberadmin PUT and PATCH. Possible only for pbx subscriberadmin. Access priveleges:".Dumper($remote_config->{config}->{acl}).";\n");
+
+        $test_machine->runas('admin');
+
+        my $resellers = $test_machine->get_collection_hal('resellers','/api/resellers/');
+        my $wrong_reseller;
+        foreach my $reseller (@{$resellers->{collection}}) {
+            if ($reseller->{content}->{id} ne $fake_data->data->{customers}->{reseller_id}) {
+                $wrong_reseller = $reseller;
+                last;
+            }
+        }
+        my $wrong_profile_sets = $fake_data->create( 'subscriberprofilesets', undef, { data => { 'subscriberprofilesets' => { reseller_id => $wrong_reseller->{content}->{id}}}} );
+        my $wrong_profiles = $fake_data->create( 'subscriberprofiles', undef, { data => { 'subscriberprofiles' => { profile_set_id => $wrong_profile_sets->[0]->{content}->{id}, name => 'api_test_wrong_reseller_'.time() }}} );
+
         my $data = clone $test_machine->DATA_ITEM;
         $data->{administrative} = 1;
         my $pbxsubscriberadmin = $test_machine->check_create_correct(1, sub {
@@ -347,6 +362,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
             delete $_[0]->{alias_numbers};
         } )->[0];
+
         $test_machine->set_subscriber_credentials($pbxsubscriberadmin->{content});
         $test_machine->runas('subscriber');
         my $subscriber = $test_machine->check_create_correct(1, sub {
@@ -360,11 +376,33 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{is_pbx_pilot} = 0;
             delete $_[0]->{alias_numbers};
         } )->[0];
-        if ($remote_config->{config}->{privileges}->{subscriberadmin}->{subscribers} =~/write/) {
+        #if ($remote_config->{config}->{privileges}->{subscriberadmin}->{subscribers} =~/write/) {
+        if ($remote_config->{config}->{features}->{cloudpbx}) {
             $test_machine->check_get2put($subscriber,{},$put2get_check_params);
-            my($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched 34021' } ], $subscriber->{location} );
+
+            ($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched 34021' } ], $subscriber->{location} );
             $test_machine->http_code_msg(200, "Check display_name patch for subscriberadmin", $res, $content);
-        }else{
+            my $pilot_34021 = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$subscriber->{content}->{customer_id}.'&'.'is_pbx_pilot=1');
+            #print Dumper [$wrong_reseller->{content},$wrong_profile_sets->[0]->{content},$wrong_profiles->[0]->{content}];
+            #print Dumper [$subscriber->{content}];
+            #subscriberadmin is not supposed to changed profile and profile_set. Subscriberadmin even don't contain these fields.
+
+            ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_set_id', value => $wrong_profile_sets->[0]->{content}->{id} } ], $subscriber->{location} );
+            $test_machine->http_code_msg(422, "Check profile_set_id patch for subscriberadmin", $res, $content);
+            ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_id', value => $wrong_profiles->[0]->{content}->{id} } ], $subscriber->{location} );
+            $test_machine->http_code_msg(422, "Check profile_id patch for subscriberadmin", $res, $content);
+
+            ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/alias_numbers', value => [{'cc' => '111','ac' => '222','sn' => '444'.time(),}] } ], $subscriber->{location} );
+            $test_machine->http_code_msg(200, "Check patch alias_numbers not belonging to the pilot for subscriberadmin", $res, $content);
+
+            $test_machine->runas('admin');
+
+            #($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_set_id', value => $wrong_profile_sets->[0]->{content}->{id} } ], $subscriber->{location} );
+            #$test_machine->http_code_msg(422, "Check profile_set_id patch for administrator", $res, $content);
+            #($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_id', value => $wrong_profiles->[0]->{content}->{id} } ], $subscriber->{location} );
+            #$test_machine->http_code_msg(422, "Check profile_id patch for administrator", $res, $content);
+
+        } else {
             my($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched 34021' } ], $subscriber->{location} );
             $test_machine->http_code_msg(403, "Check display_name patch for subscriberadmin", $res, $content, "Read-only resource for authenticated role");
         }
