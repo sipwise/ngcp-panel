@@ -530,6 +530,7 @@ sub get_item_hal{
     }
     return $resitem;
 }
+
 sub get_hal_from_collection{
     my($self,$list_collection,$name,$number) = @_;
     $number //= 0;
@@ -621,6 +622,7 @@ sub get_collection_hal{
     }
     return $rescollection;
 }
+
 sub get_created_first{
     my($self) = @_;
     return $self->DATA_CREATED->{FIRST} ? $self->DATA_CREATED->{ALL}->{$self->DATA_CREATED->{FIRST}} : undef;
@@ -751,6 +753,9 @@ sub request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
     my $req = $self->get_request_put( $content, $self->normalize_uri($uri) );
+    diag("request_put: uri: ".$req->uri.";");
+    diag("request_put: content: ".$req->content.";");
+    diag("request_put: content_type: ".$req->header('Content-Type').";");
     my $res = $self->request($req);
     if($res){
         my $rescontent = $self->get_response_content($res);
@@ -763,6 +768,9 @@ sub request_patch{
     $uri ||= $self->get_uri_current;
     #patch is always a json
     $req ||= $self->get_request_patch( $self->normalize_uri($uri), $content);
+    diag("request_patch: uri: ".$req->uri.";");
+    diag("request_patch: content: ".$req->content.";");
+    diag("request_patch: content_type: ".$req->header('Content-Type').";");
     my $res = $self->request($req);
     if($res){
         my $rescontent = $self->get_response_content($res);
