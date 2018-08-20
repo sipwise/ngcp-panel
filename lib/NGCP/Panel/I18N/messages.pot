@@ -586,11 +586,11 @@ msgstr ""
 msgid "Balance will be discarded, if no tup-up happens until:"
 msgstr ""
 
-#: share/templates/security/list.tt
+#: share/templates/security/list.tt share/templates/security/list.tt
 msgid "Banned IPs"
 msgstr ""
 
-#: share/templates/security/list.tt
+#: share/templates/security/list.tt share/templates/security/list.tt
 msgid "Banned Users"
 msgstr ""
 
@@ -2219,7 +2219,7 @@ msgstr ""
 msgid "FW version"
 msgstr ""
 
-#: share/templates/security/list.tt
+#: lib/NGCP/Panel/Controller/Security.pm
 msgid "Fail Count"
 msgstr ""
 
@@ -3132,6 +3132,10 @@ msgstr ""
 msgid "Firmware File"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Firmware Tag"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 msgid "First Name"
 msgstr ""
@@ -3352,7 +3356,7 @@ msgstr ""
 msgid "IMS Subscriber/Domain"
 msgstr ""
 
-#: share/templates/security/list.tt
+#: lib/NGCP/Panel/Controller/Security.pm
 msgid "IP"
 msgstr ""
 
@@ -4028,8 +4032,8 @@ msgstr ""
 msgid "Language for voicemail and app server"
 msgstr ""
 
-#: share/templates/security/list.tt
-msgid "Last Attempt"
+#: lib/NGCP/Panel/Controller/Security.pm
+msgid "Last Attemp"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
@@ -5249,6 +5253,14 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "Recurrence"
+msgstr ""
+
+#: share/templates/security/list.tt
+msgid "Refresh banned IPs data"
+msgstr ""
+
+#: share/templates/security/list.tt
+msgid "Refresh banned users data"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm share/templates/widgets/subscriber_reg_overview.tt
@@ -6983,7 +6995,7 @@ msgstr ""
 msgid "Used By Subscriber #"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/security/list.tt
+#: lib/NGCP/Panel/Controller/Security.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "User"
 msgstr ""
 

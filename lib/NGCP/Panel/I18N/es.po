@@ -2606,7 +2606,7 @@ msgstr ""
 msgid "FW version"
 msgstr ""
 
-#: share/templates/security/list.tt
+#: lib/NGCP/Panel/Controller/Security.pm
 msgid "Fail Count"
 msgstr "Cuenta de fallos"
 
@@ -3529,6 +3529,10 @@ msgstr "Encontrar suscriptor por el UUID"
 msgid "Firmware File"
 msgstr "Archivo de Firmware"
 
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Firmware Tag"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 msgid "First Name"
 msgstr "Nombre"
@@ -3773,7 +3777,7 @@ msgstr ""
 msgid "IMS Subscriber/Domain"
 msgstr ""
 
-#: share/templates/security/list.tt
+#: lib/NGCP/Panel/Controller/Security.pm
 msgid "IP"
 msgstr "IP"
 
@@ -4500,9 +4504,9 @@ msgstr "Idioma"
 msgid "Language for voicemail and app server"
 msgstr ""
 
-#: share/templates/security/list.tt
-msgid "Last Attempt"
-msgstr "Último intento"
+#: lib/NGCP/Panel/Controller/Security.pm
+msgid "Last Attemp"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Last Name"
@@ -5814,6 +5818,14 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "Recurrence"
 msgstr "Recurrencia"
+
+#: share/templates/security/list.tt
+msgid "Refresh banned IPs data"
+msgstr ""
+
+#: share/templates/security/list.tt
+msgid "Refresh banned users data"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: share/templates/widgets/subscriber_reg_overview.tt
@@ -7873,7 +7885,8 @@ msgstr ""
 msgid "Used By Subscriber #"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/security/list.tt
+#: lib/NGCP/Panel/Controller/Security.pm
+#: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "User"
 msgstr "Usuario"
 
@@ -8390,6 +8403,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Last Attempt"
+#~ msgstr "Último intento"
 
 #, fuzzy
 #~ msgid "Cash"
