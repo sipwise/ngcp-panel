@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fae47921_4c81338f",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-20T14:10:33Z",
+      "side": 1,
+      "message": "I would not rely on that, because Customer can be \"SIP Account\", so I would rather rely on the state if customer of such subscriber is of the  \"CloudPBX\" product.",
+      "range": {
+        "startLine": 843,
+        "startChar": 16,
+        "endLine": 843,
+        "endChar": 50
+      },
+      "revId": "cadf05f8e525fc3882e4db42202b283e57ad8a6c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
