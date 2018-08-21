@@ -2,6 +2,46 @@
   "comments": [
     {
       "key": {
+        "uuid": "fae47921_c70bbc7c",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-21T12:19:55Z",
+      "side": 1,
+      "message": "this..",
+      "range": {
+        "startLine": 51,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 9
+      },
+      "revId": "3c8ebe640c6378990bbbd64dea1e16d643d86e2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_a710b8a9",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-21T12:19:55Z",
+      "side": 1,
+      "message": ".. here maybe.",
+      "revId": "3c8ebe640c6378990bbbd64dea1e16d643d86e2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fae47921_67f53082",
         "filename": "lib/NGCP/Panel/Utils/Events.pm",
         "patchSetId": 3
@@ -31,6 +71,24 @@
       "side": 1,
       "message": "the usual \"goto\" construction :) \nincreasing ident or repeating return { old_aliases .... } is even less pretty",
       "parentUuid": "fae47921_67f53082",
+      "revId": "3c8ebe640c6378990bbbd64dea1e16d643d86e2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_e716c0a6",
+        "filename": "lib/NGCP/Panel/Utils/Events.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-21T12:19:55Z",
+      "side": 1,
+      "message": "yes, nevermind. still curious if moving the block in recursively_lock_contract downwards helps",
+      "parentUuid": "fae47921_47490cd0",
       "revId": "3c8ebe640c6378990bbbd64dea1e16d643d86e2e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
