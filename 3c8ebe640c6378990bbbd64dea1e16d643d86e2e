@@ -16,6 +16,24 @@
       "revId": "3c8ebe640c6378990bbbd64dea1e16d643d86e2e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_47490cd0",
+        "filename": "lib/NGCP/Panel/Utils/Events.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-21T12:16:42Z",
+      "side": 1,
+      "message": "the usual \"goto\" construction :) \nincreasing ident or repeating return { old_aliases .... } is even less pretty",
+      "parentUuid": "fae47921_67f53082",
+      "revId": "3c8ebe640c6378990bbbd64dea1e16d643d86e2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
