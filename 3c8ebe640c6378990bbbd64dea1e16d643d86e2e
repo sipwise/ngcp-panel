@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "fae47921_6723f006",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-21T12:20:38Z",
+      "side": 1,
+      "message": "yes.",
+      "parentUuid": "fae47921_a710b8a9",
+      "revId": "3c8ebe640c6378990bbbd64dea1e16d643d86e2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fae47921_67f53082",
         "filename": "lib/NGCP/Panel/Utils/Events.pm",
         "patchSetId": 3
