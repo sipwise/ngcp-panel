@@ -16,6 +16,24 @@
       "revId": "f567a73331144719ec6b003a3da2d6f6fa7a9b50",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fae47921_27ef28b2",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 52
+      },
+      "lineNbr": 1581,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-08-21T12:07:58Z",
+      "side": 1,
+      "message": "I think it would be more informative as it is now, we will know exactly when we didn\u0027t get into conditional block.",
+      "parentUuid": "fae47921_c7fdfc6f",
+      "revId": "f567a73331144719ec6b003a3da2d6f6fa7a9b50",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
