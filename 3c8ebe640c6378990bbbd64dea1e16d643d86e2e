@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fae47921_67f53082",
+        "filename": "lib/NGCP/Panel/Utils/Events.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-21T11:51:48Z",
+      "side": 1,
+      "message": "not too pretty",
+      "revId": "3c8ebe640c6378990bbbd64dea1e16d643d86e2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
