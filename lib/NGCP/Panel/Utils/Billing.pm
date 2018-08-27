@@ -188,6 +188,39 @@ sub prepare_peaktime_specials {
     return 1;
 }
 
+sub validate_billing_fee {
+    my ($values,$error_code,$value_code) = @_;
+    $value_code //= sub {
+        my $field = shift;
+        return $values->{$field};
+    };
+
+    my $match_mode = $values->{match_mode};
+    if (defined $match_mode
+        and ('regex_longest_pattern' eq $match_mode
+        or 'regex_longest_match' eq $match_mode)) {
+        foreach my $field (qw(source destination)) {
+            my $pattern = &$value_code($field);
+            if (defined $pattern and length($pattern) > 0) {
+                eval {
+                    qr/$pattern/;
+                };
+                if ($@) {
+                    return 0 unless &$error_code($field,'no valid regexp',$@);
+                }
+            }
+        }
+    }
+
+    foreach my $field (qw(onpeak_init_interval onpeak_follow_interval offpeak_init_interval offpeak_follow_interval)) {
+        if(int(&$value_code($field)) < 1) {
+            return 0 unless &$error_code($field,'must be greater than 0');
+        }
+    }
+
+    return 1;
+}
+
 sub process_billing_fees{
     my(%params) = @_;
     my ($c,$data,$profile,$schema) = @params{qw/c data profile schema/};
@@ -211,10 +244,6 @@ sub process_billing_fees{
             next;
         }
         @fields = $csv->fields();
-        unless (scalar @fields == scalar @cols) {
-            push @fails, $linenum;
-            next;
-        }
         my $row = {};
         @{$row}{@cols} = @fields;
         unless($row->{zone}){
@@ -232,6 +261,17 @@ sub process_billing_fees{
         $row->{billing_zone_id} = $zones{$k};
         delete $row->{zone};
         delete $row->{zone_detail};
+        $row->{match_mode} = 'regex_longest_pattern' unless $row->{match_mode};
+        unless (validate_billing_fee($row,
+            sub {
+                my ($field,$error,$error_detail) = @_;
+                return 0;
+            },
+            undef,
+            )) {
+            push @fails, $linenum;
+            next;
+        }
         push @fees, $row;
     }
 
