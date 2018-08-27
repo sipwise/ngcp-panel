@@ -11,22 +11,38 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
+has_field 'match_mode' => (
+    type => 'Select',
+    options => [
+        { value => 'regex_longest_pattern', label => 'Regular expression - longest pattern (legacy)' },
+        { value => 'regex_longest_match', label => 'Regular expression - longest match' },
+        { value => 'prefix', label => 'Prefix string' },
+        { value => 'exact_destination', label => 'Exact string (destination)' },
+    ],
+    default => 'regex_longest_pattern',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The mode how the the fee\'s source/destination has to match a call\'s source/destination.']
+    },
+);
+
 has_field 'source' => (
-    type => '+NGCP::Panel::Field::Regexp',
+    type => 'Text',
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A PCRE regular expression to match the calling number (e.g. ^.+$).']
+        title => ['A string (eg. 431001), string prefix (eg. 43) or PCRE regular expression (eg. ^.+$) to match the calling number or sip uri.']
     },
 );
 
 has_field 'destination' => (
-    type => '+NGCP::Panel::Field::Regexp',
+    type => 'Text',
     maxlength => 255,
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A PCRE regular expression to match the called number (e.g. ^431.+$).']
+        title => ['A string (eg. 431001), string prefix (eg. 43) or PCRE regular expression (eg. ^.+$) to match the called number or sip uri.']
     },
 );
 
@@ -60,7 +76,7 @@ has_field 'onpeak_init_rate' => (
     precision => 14,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of the first interval in cents per second (e.g. 0.90).']
+        title => ['The cost per second of the first interval during onpeak hours (e.g. 0.90 cent).']
     },
     default => 0,
 );
@@ -69,7 +85,7 @@ has_field 'onpeak_init_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of the first interval in seconds (e.g. 60).']
+        title => ['The length of the first interval during onpeak hours in seconds (e.g. 60).']
     },
     default => 60,
     required => 1,
@@ -82,7 +98,7 @@ has_field 'onpeak_follow_rate' => (
     precision => 14,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of each following interval in cents per second (e.g. 0.90).']
+        title => ['The cost per second of each following interval during onpeak hours in cents (e.g. 0.90 cents).']
     },
     default => 0,
 );
@@ -91,7 +107,7 @@ has_field 'onpeak_follow_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of each following interval in seconds (e.g. 30).']
+        title => ['The length of each following interval during onpeak hours in seconds (e.g. 30).']
     },
     default => 60,
     required => 1,
@@ -104,7 +120,7 @@ has_field 'offpeak_init_rate' => (
     precision => 14,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of the first interval in cents per second (e.g. 0.90).']
+        title => ['The cost per second of the first interval during offpeak hours in cents (e.g. 0.70 cents).']
     },
     default => 0,
 );
@@ -113,7 +129,7 @@ has_field 'offpeak_init_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of the first interval in seconds (e.g. 60).']
+        title => ['The length of the first interval during offpeak hours in seconds (e.g. 60).']
     },
     default => 60,
     required => 1,
@@ -126,7 +142,7 @@ has_field 'offpeak_follow_rate' => (
     precision => 14,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of each following interval in cents per second (e.g. 0.90).']
+        title => ['The cost per second of each following interval during offpeak hours in cents (e.g. 0.70 cents).']
     },
     default => 0,
 );
@@ -135,7 +151,7 @@ has_field 'offpeak_follow_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of each following interval in seconds (e.g. 30).']
+        title => ['The length of each following interval during offpeak hours in seconds (e.g. 30).']
     },
     default => 60,
     required => 1,
@@ -161,7 +177,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/billing_zone source destination direction
+    render_list => [qw/billing_zone match_mode source destination direction
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
         offpeak_follow_rate offpeak_follow_interval use_free_time
