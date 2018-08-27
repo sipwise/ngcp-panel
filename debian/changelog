@@ -1,3 +1,28 @@
+ngcp-panel (5.5.7.0+0~mr5.5.7.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [a584dab] TT#37457 Update yealink provisioning server domain
+  * [724d3f0] TT#32011 Fix connect to Panasonic RPS
+  * [aee7d68] TT#41013 Separate edit and create form for extension subsctibers
+  * [b6dcdac] TT#29751 Remove minus from cents in negative costs
+  * [8e99345] TT#40953 Allow all not reserved chars for sip URI
+
+  [ Kirill Solomko ]
+  * [c4ed417] TT#23771 fix /api/subscriberregistration logic
+  * [e4b8bb2] TT#30500 subscriberregitrations: increase flush timeout
+  * [d5fb451] TT#30500 Fix /api/subscriberregistrations POST method
+
+  [ Gerhard Jungwirth ]
+  * [ec16e85] TT#32963 join location and subscriber properly
+
+  [ Rene Krenn ]
+  * [6d9e90e] TT#41022 calllist, faxes, vm: use owner's inherited tz
+  * [b0ae39f] TT#41402 normalize tzdata timezone names for perl DateTime
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Aug 2018 19:28:20 +0200
+
 ngcp-panel (5.5.6.0+0~mr5.5.6.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
