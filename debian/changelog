@@ -1,3 +1,31 @@
+ngcp-panel (6.3.2.1+0~mr6.3.2.1) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [be9b743] TT#37951 Fix regression made in /api/admins
+  * [89ce5d2] TT#37457 Update yealink provisioning server domain
+  * [8a44ff9] TT#37375 Allow additional "order by" columns specifications
+  * [20e46d7] TT#39360 Adapt conversations order_by_cols to absent fax col
+  * [f3c49e1] TT#39583 Fix tests broken by links format changes
+  * [6102c97] TT#41013 Separate edit and create form for extension subsctibers
+  * [55319b9] TT#29751 Remove minus from cents in negative costs
+  * [95585c2] TT#40953 Allow all not reserved chars for sip URI
+
+  [ Kirill Solomko ]
+  * [95a0056] TT#39007 SMS fix add_journal_record() calls, send_sms() fix charset
+  * [d4928ff] TT#39165 sms_jorunal adjustments
+  * [270c188] TT#39168 SMS: prepaid_billing fix error session closing
+
+  [ Rene Krenn ]
+  * [bd26f8c] TT#38400 fix customer contract editing
+  * [8fd0fca] TT#38763 fix switching a profile's prepaid flag
+
+  [ Richard Fuchs ]
+  * [d9204e1] TT#39328 don't cancel inew reservation request after INSUFF FUNDS
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Aug 2018 16:11:49 +0200
+
 ngcp-panel (6.3.2.0+0~mr6.3.2.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
