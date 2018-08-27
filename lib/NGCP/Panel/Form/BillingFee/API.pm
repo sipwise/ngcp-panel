@@ -25,7 +25,7 @@ has_field 'purge_existing' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/purge_existing billing_zone billing_profile_id source destination direction
+    render_list => [qw/purge_existing billing_zone billing_profile_id match_mode source destination direction
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
         offpeak_follow_rate offpeak_follow_interval use_free_time
