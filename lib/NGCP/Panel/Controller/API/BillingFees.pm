@@ -189,7 +189,7 @@ sub POST :Allow {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'.");
                 last;
             }
-
+            $resource->{match_mode} = 'regex_longest_pattern' unless $resource->{match_mode};
             last unless $self->validate_form(
                 c => $c,
                 resource => $resource,

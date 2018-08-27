@@ -333,11 +333,20 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 
 sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
     my ($self, $c) = @_;
+
     $c->stash->{fee_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'source', search => 1, title => $c->loc('Source Pattern') },
         { name => 'destination', search => 1, title => $c->loc('Destination Pattern') },
-        { name => 'direction', search => 1, title => $c->loc('Match Direction') },
+        { name => 'match_mode', search => 0, title => $c->loc('Match Mode'),
+          custom_renderer => 'function ( data, type, full ) {'.
+            'if(full.match_mode == "regex_longest_pattern"){return "' . $c->loc('Regular expression - longest pattern') . '";}'.
+            'else if(full.match_mode == "regex_longest_match"){return "' . $c->loc('Regular expression - longest match') . '";}'.
+            'else if(full.match_mode == "prefix"){return "' . $c->loc('Prefix string') . '";}'.
+            'else if(full.match_mode == "exact_destination"){return "' . $c->loc('Exact string (destination)') . '";}'.
+          '}',
+         },
+        { name => 'direction', search => 1, title => $c->loc('Direction') },
         { name => 'billing_zone.detail', search => 1, title => $c->loc('Billing Zone') },
     ]);
     $c->stash(template => 'billing/fees.tt');
@@ -410,6 +419,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
     );
     if($form->validated) {
         $form->values->{source} ||= '.';
+        $form->values->{match_mode} ||= 'regex_longest_pattern';
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
             NGCP::Panel::Utils::Billing::insert_unique_billing_fees(
@@ -529,6 +539,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         $form->values->{source} ||= '.';
+        $form->values->{match_mode} ||= 'regex_longest_pattern';
         $form->values->{billing_zone_id} = $form->values->{billing_zone}{id};
         delete $form->values->{billing_zone};
         $c->stash->{'fee_result'}

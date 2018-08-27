@@ -96,7 +96,7 @@ sub update_fee {
     }
     $form //= $self->get_form($c);
 
-
+    $resource->{match_mode} = 'regex_longest_pattern' unless $resource->{match_mode};
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -136,7 +136,7 @@ sub get_billing_zone{
     my($self,$c,$profile,$resource) = @_;
 
     if( (!defined $profile) && defined $resource->{billing_profile_id} ){
-        $profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});    
+        $profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
     }
     if(!defined $profile){
         $c->log->debug("in get_billing_zone: no profile;");
@@ -144,7 +144,7 @@ sub get_billing_zone{
     }
 
     my $zone;
-    
+
     # in case of implicit zone declaration (name/detail instead of id),
     # find or create the zone
     if( (!defined $resource->{billing_zone_id}) &&

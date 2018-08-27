@@ -5,28 +5,45 @@ extends 'HTML::FormHandler';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Field::BillingZone;
+use NGCP::Panel::Utils::Billing qw();
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
+has_field 'match_mode' => (
+    type => 'Select',
+    options => [
+        { value => 'regex_longest_pattern', label => 'Regular expression - longest pattern' },
+        { value => 'regex_longest_match', label => 'Regular expression - longest match' },
+        { value => 'prefix', label => 'Prefix string' },
+        { value => 'exact_destination', label => 'Exact string (destination)' },
+    ],
+    default => 'regex_longest_pattern',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The mode how the the fee\'s source/destination has to match a call\'s source/destination.']
+    },
+);
+
 has_field 'source' => (
-    type => '+NGCP::Panel::Field::Regexp',
+    type => 'Text',
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A PCRE regular expression to match the calling number (e.g. ^.+$).']
+        title => ['A string (eg. 431001), string prefix (eg. 43) or PCRE regular expression (eg. ^.+$) to match the calling number or sip uri.']
     },
 );
 
 has_field 'destination' => (
-    type => '+NGCP::Panel::Field::Regexp',
+    type => 'Text',
     maxlength => 255,
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A PCRE regular expression to match the called number (e.g. ^431.+$).']
+        title => ['A string (eg. 431001), string prefix (eg. 43) or PCRE regular expression (eg. ^.+$) to match the called number or sip uri.']
     },
 );
 
@@ -60,7 +77,7 @@ has_field 'onpeak_init_rate' => (
     precision => 14,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of the first interval in cents per second (e.g. 0.90).']
+        title => ['The cost per second of the first interval during onpeak hours (e.g. 0.90 cent).']
     },
     default => 0,
 );
@@ -69,11 +86,10 @@ has_field 'onpeak_init_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of the first interval in seconds (e.g. 60).']
+        title => ['The length of the first interval during onpeak hours in seconds (e.g. 60).']
     },
     default => 60,
     required => 1,
-    validate_method => \&validate_interval,
 );
 
 has_field 'onpeak_follow_rate' => (
@@ -82,7 +98,7 @@ has_field 'onpeak_follow_rate' => (
     precision => 14,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of each following interval in cents per second (e.g. 0.90).']
+        title => ['The cost per second of each following interval during onpeak hours in cents (e.g. 0.90 cents).']
     },
     default => 0,
 );
@@ -91,11 +107,10 @@ has_field 'onpeak_follow_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of each following interval in seconds (e.g. 30).']
+        title => ['The length of each following interval during onpeak hours in seconds (e.g. 30).']
     },
     default => 60,
     required => 1,
-    validate_method => \&validate_interval,
 );
 
 has_field 'offpeak_init_rate' => (
@@ -104,7 +119,7 @@ has_field 'offpeak_init_rate' => (
     precision => 14,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of the first interval in cents per second (e.g. 0.90).']
+        title => ['The cost per second of the first interval during offpeak hours in cents (e.g. 0.70 cents).']
     },
     default => 0,
 );
@@ -113,11 +128,10 @@ has_field 'offpeak_init_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of the first interval in seconds (e.g. 60).']
+        title => ['The length of the first interval during offpeak hours in seconds (e.g. 60).']
     },
     default => 60,
     required => 1,
-    validate_method => \&validate_interval,
 );
 
 has_field 'offpeak_follow_rate' => (
@@ -126,7 +140,7 @@ has_field 'offpeak_follow_rate' => (
     precision => 14,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of each following interval in cents per second (e.g. 0.90).']
+        title => ['The cost per second of each following interval during offpeak hours in cents (e.g. 0.70 cents).']
     },
     default => 0,
 );
@@ -135,11 +149,10 @@ has_field 'offpeak_follow_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of each following interval in seconds (e.g. 30).']
+        title => ['The length of each following interval during offpeak hours in seconds (e.g. 30).']
     },
     default => 60,
     required => 1,
-    validate_method => \&validate_interval,
 );
 
 has_field 'use_free_time' => (
@@ -161,7 +174,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/billing_zone source destination direction
+    render_list => [qw/billing_zone match_mode source destination direction
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
         offpeak_follow_rate offpeak_follow_interval use_free_time
@@ -174,12 +187,25 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
-sub validate_interval {
-    my ($self, $field) = @_;
+sub validate {
 
-    if(int($field->value) < 1) {
-        $field->add_error("Invalid interval, must be bigger than 0");
-    }
+    my ($self) = @_;
+    my $c = $self->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Billing::validate_billing_fee(
+        $self->values,
+        sub {
+            my ($field,$error,$error_detail) = @_;
+            $self->field($field)->add_error($self->field($field)->label . ' ' . $error);
+            return 1;
+        },
+        sub {
+            my ($field) = @_;
+            return $self->field($field)->value;
+        },
+    )
+
 }
 
 1;
