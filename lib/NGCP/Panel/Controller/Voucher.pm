@@ -28,7 +28,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 
 sub voucher_list :Chained('/') :PathPart('voucher') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
-    
+
     my $voucher_rs = $c->model('DB')->resultset('vouchers'); #->search_rs(undef, {
             #'join' => { 'customer' => 'contact'},
             #'+select' => [
@@ -73,25 +73,25 @@ sub _process_dt_voucher_rows :Private {
 
 sub ajax :Chained('voucher_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $resultset = $c->stash->{voucher_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{voucher_dt_columns}, sub {
         my $row = shift;
         return _process_dt_voucher_rows($c,$row);
     });
-    
+
     $c->detach( $c->view("JSON") );
 }
 
 sub ajax_package_filter :Chained('voucher_list') :PathPart('ajax/package') :Args(1) {
     my ($self, $c, $package_id) = @_;
-    
+
     my $resultset = $c->stash->{voucher_rs}->search_rs({ package_id => $package_id },undef);
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{voucher_dt_columns}, sub {
         my $row = shift;
         return _process_dt_voucher_rows($c,$row);
     });
-    
+
     $c->detach( $c->view("JSON") );
 }
 
@@ -188,7 +188,7 @@ sub edit :Chained('base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             if($c->user->is_superuser) {
-                $form->values->{reseller_id} = $form->values->{reseller}{id};   
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
@@ -267,7 +267,7 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             if($c->user->is_superuser) {
-                $form->values->{reseller_id} = $form->values->{reseller}{id};   
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
@@ -275,7 +275,7 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
             $form->values->{customer_id} = $form->values->{customer}{id};
             delete $form->values->{customer};
             $form->values->{package_id} = $form->values->{package}{id};
-            delete $form->values->{package};            
+            delete $form->values->{package};
             $form->values->{created_at} = NGCP::Panel::Utils::DateTime::current_local;
             if($form->values->{valid_until} =~ /^\d{4}\-\d{2}\-\d{2}$/) {
                 $form->values->{valid_until} = NGCP::Panel::Utils::DateTime::from_string($form->values->{valid_until})
@@ -286,7 +286,7 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
             $c->session->{created_objects}->{voucher} = { id => $voucher->id };
             delete $c->session->{created_objects}->{reseller};
             delete $c->session->{created_objects}->{customer};
-            delete $c->session->{created_objects}->{profile_package};            
+            delete $c->session->{created_objects}->{profile_package};
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Billing voucher successfully created'),
@@ -310,12 +310,12 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
 
     $c->detach('/denied_page')
         unless($c->user->billing_data);
-    
+
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Voucher::Upload", $c);
     my $upload = $c->req->upload('upload_vouchers');
     my $posted = $c->req->method eq 'POST';
     my @params = (
-        upload_fees => $posted ? $upload : undef,
+        upload_vouchers => $posted ? $upload : undef,
         );
     $form->process(
         posted => $posted,
