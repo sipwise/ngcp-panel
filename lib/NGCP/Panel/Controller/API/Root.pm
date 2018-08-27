@@ -197,7 +197,7 @@ sub GET : Allow {
 
         $c->stash->{collections}->{$rel} = {
             name => $mod,
-            entity_name => $mod =~ s/s$//r,
+            entity_name => $mod =~ s/ies$/y/r =~ s/s$//r,
             description => $full_mod->api_description,
             fields => $form_fields,
             uploads => $form_fields_upload,

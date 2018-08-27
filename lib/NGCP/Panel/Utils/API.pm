@@ -382,55 +382,9 @@ sub generate_swagger_datastructure {
 
         # ---------------------------------------------
 
-        my $e = {
-            type => "object",
-            properties => {},
-            required => [],
-        };
-
         # possible values for types: null, (select options), Number, Boolean, Array, Object, String
-        for my $f (@{ $col->{fields} }) {
-            my $p = {};
-            if ($f->{type_original} eq "Select" ||
-                ($f->{type_original} =~ m/\+NGCP::Panel::Field::.*Select$/ && $f->{enum})) {
-                $p->{type} = "string";
-                $p->{enum} = [ map {$_->{value}} @{ $f->{enum} // [] } ];
-            } elsif ($f->{type_original} eq 'IntRange') {
-                $p->{type} = "number";
-                $p->{enum} = [ map {$_->{value}} @{ $f->{enum} // [] } ];
-            } elsif ($f->{type_original} eq "Boolean") {
-                $p->{type} = "boolean";
-            } elsif (grep {m/^Number$/} @{$f->{types}}) {
-                $p->{type} = "number";
-            } elsif ($f->{type_original} eq '+NGCP::Panel::Field::EmailList' ||
-                     $f->{type_original} eq 'Email') {
-                $p->{type} = "string";
-                $p->{format} = "email"; # not the same as emaillist but that's nit-picky
-            } elsif ($f->{type_original} eq '+NGCP::Panel::Field::DateTime') {
-                $p->{type} = "string";
-                $p->{format} = "date-time"; # actually a slightly different format
-            } elsif ($f->{type_original} eq "Text" || grep {m/^String$/} @{$f->{types}}) {
-                $p->{type} = "string";
-            } elsif ($f->{type_original} eq "Repeatable" || grep {m/^Array$/} @{$f->{types}}) {
-                $p->{type} = "array";
-                $p->{items}{type} = "object"; # content of array basically unspecified
-            } else {
-                $p->{type} = "object"; # object or uncategorizable
-            }
+        my $e = _fields_to_swagger_schema($col->{fields});
 
-            $p->{description} = $f->{description};
-            if (grep {m/^null$/} @{ $f->{types} // [] }) {
-                push @{ $e->{required} }, $f->{name};
-            }
-
-            $e->{properties}{$f->{name}} = $p;
-        }
-        unless (@{ $e->{required} }) {
-            delete $e->{required}; # empty required is not allowed
-        }
-        unless (keys %{ $e->{properties} }) {
-            delete $e->{properties}; # try delete empty properties (then it's a valid Free Form Object)
-        }
 
         $schemas{$entity} = $e;
     }
@@ -456,6 +410,68 @@ sub generate_swagger_datastructure {
     };
 
     return $result;
+}
+
+# this is recursive to parse subfields
+sub _fields_to_swagger_schema {
+    my ($fields) = @_;
+
+    my $e = {
+        type => "object",
+        properties => {},
+        required => [],
+    };
+
+    for my $f (@{ $fields }) {
+        my $p = {};
+        if ($f->{type_original} eq "Select" ||
+            ($f->{type_original} =~ m/\+NGCP::Panel::Field::.*Select$/ && $f->{enum})) {
+            $p->{type} = "string";
+            $p->{enum} = [ map {$_->{value}} @{ $f->{enum} // [] } ];
+        } elsif ($f->{type_original} eq 'IntRange') {
+            $p->{type} = "number";
+            $p->{enum} = [ map {$_->{value}} @{ $f->{enum} // [] } ];
+        } elsif ($f->{type_original} eq "Boolean") {
+            $p->{type} = "boolean";
+        } elsif (grep {m/^Number$/} @{$f->{types}}) {
+            $p->{type} = "number";
+        } elsif ($f->{type_original} eq '+NGCP::Panel::Field::EmailList' ||
+                 $f->{type_original} eq 'Email') {
+            $p->{type} = "string";
+            $p->{format} = "email"; # not the same as emaillist but that's nit-picky
+        } elsif ($f->{type_original} eq '+NGCP::Panel::Field::DateTime') {
+            $p->{type} = "string";
+            $p->{format} = "date-time"; # actually a slightly different format
+        } elsif ($f->{type_original} eq "Text" || grep {m/^String$/} @{$f->{types}}) {
+            $p->{type} = "string";
+        } elsif ($f->{type_original} eq "Repeatable" || grep {m/^Array$/} @{$f->{types}}) {
+            $p->{type} = "array";
+            if ($f->{subfields}) {
+                $p->{items} = _fields_to_swagger_schema($f->{subfields});
+            } else {
+                $p->{items}{type} = "object"; # content of array basically unspecified
+            }
+        } elsif ($f->{subfields}) { # object with subfields
+            $p = _fields_to_swagger_schema($f->{subfields});
+        } else {
+            $p->{type} = "object"; # object or uncategorizable
+        }
+
+        $p->{description} = $f->{description};
+        if (grep {m/^null$/} @{ $f->{types} // [] }) {
+            push @{ $e->{required} }, $f->{name};
+        }
+
+        $e->{properties}{$f->{name}} = $p;
+    }
+    unless (@{ $e->{required} }) {
+        delete $e->{required}; # empty required is not allowed
+    }
+    unless (keys %{ $e->{properties} }) {
+        delete $e->{properties}; # try delete empty properties (then it's a valid Free Form Object)
+    }
+
+    return $e;
 }
 
 1;
