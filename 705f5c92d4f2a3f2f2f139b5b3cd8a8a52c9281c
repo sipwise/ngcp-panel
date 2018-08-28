@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baee8101_f6031875",
+        "filename": "lib/NGCP/Panel/Utils/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-28T09:23:10Z",
+      "side": 1,
+      "message": "yu have a hint where to find this in the formhandler doc?",
+      "range": {
+        "startLine": 454,
+        "startChar": 22,
+        "endLine": 454,
+        "endChar": 31
+      },
+      "revId": "705f5c92d4f2a3f2f2f139b5b3cd8a8a52c9281c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
