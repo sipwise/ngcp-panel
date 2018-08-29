@@ -7,6 +7,7 @@ use Sipwise::Base;
 use File::Find::Rule;
 use JSON qw();
 use HTTP::Status qw(:constants);
+use Clone qw/clone/;
 
 my $collections_info_cache;
 my $collections_files_cache;
@@ -42,7 +43,8 @@ sub apply_resource_reseller_id {
 
 sub get_collections {
     if ($collections_info_cache) {
-        return @$collections_info_cache;
+        my $collections_info_cache_cloned = clone $collections_info_cache;
+        return @$collections_info_cache_cloned;
     }
     #get_collections_files in scalar context will return only first value from return array - \@files
     my @files = @{get_collections_files()};
@@ -63,7 +65,7 @@ sub get_collections {
 
 sub get_collections_files {
     if ($collections_files_cache) {
-        return $collections_files_cache;
+        return clone $collections_files_cache;
     }
     my($library,$libpath) = @_;
     if(!$libpath){
