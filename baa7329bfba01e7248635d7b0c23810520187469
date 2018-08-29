@@ -16,6 +16,24 @@
       "revId": "baa7329bfba01e7248635d7b0c23810520187469",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_6fce3185",
+        "filename": "lib/NGCP/Panel/Utils/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-08-29T11:58:05Z",
+      "side": 1,
+      "message": "Ideally, it is list of lists of strings",
+      "parentUuid": "9af37de9_0fee85ec",
+      "revId": "baa7329bfba01e7248635d7b0c23810520187469",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
