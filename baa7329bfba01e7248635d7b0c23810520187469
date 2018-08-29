@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_0fee85ec",
+        "filename": "lib/NGCP/Panel/Utils/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-29T11:45:46Z",
+      "side": 1,
+      "message": "hope it does not have lwp instance or other stuff in it?",
+      "revId": "baa7329bfba01e7248635d7b0c23810520187469",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
