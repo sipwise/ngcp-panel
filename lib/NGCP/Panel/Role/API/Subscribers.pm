@@ -201,7 +201,7 @@ sub hal_from_item {
                 Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?subscriber_id=%d", $item->id)),
                 Data::HAL::Link->new(relation => 'ngcp:subscriberregistrations', href => sprintf("/api/subscriberregistrations/?subscriber_id=%d", $item->id)),
                 #Data::HAL::Link->new(relation => 'ngcp:trustedsources', href => sprintf("/api/trustedsources/%d", $item->contract->id)),
-                $self->get_journal_relation_link($c, $item->id),
+                $self->get_journal_relation_link($item->id),
             )),
             # only available to admins/resellers/subscriberadmins
             (!$is_subadm ? () : (
@@ -634,7 +634,7 @@ sub update_item {
     try {
         NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
             c => $c,
-            prov_subscriber => $prov_subscriber,
+            prov_subscriber => $subscriber->provisioning_voip_subscriber,
             level => $resource->{lock} || 0,
         );
     } catch($e) {
@@ -644,38 +644,27 @@ sub update_item {
     };
 
     my ($profile_set, $profile);
-    #as we don't allow to change customer (l. 624), so we shouldn't allow profile_set that belongs to other reseller
-    my $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets')->search({
-        reseller_id => $subscriber->contract->contact->reseller_id,
-    });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $profile_set_rs = $profile_set_rs->search({
-            reseller_id => $c->user->reseller_id,
-        });
-    }  elsif($c->user->roles eq "subscriberadmin") {
-        $profile_set_rs = $profile_set_rs->search({
-            reseller_id => $c->user->contract->contact->reseller_id,
-        });
-    }
     if ($resource->{profile_set}{id}) {
+        my $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets');
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
+            $profile_set_rs = $profile_set_rs->search({
+                reseller_id => $c->user->reseller_id,
+            });
+        }#subadmin check
+
         $profile_set = $profile_set_rs->find($resource->{profile_set}{id});
         unless($profile_set) {
             $c->log->error("invalid subscriber profile set id '" . $resource->{profile_set}{id} . "'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid profile_set_id parameter");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_set_id parameter");
             return;
         }
     }
 
-    if($resource->{profile}{id}) {
-        $profile = $profile_set_rs->search_related_rs('voip_subscriber_profiles')->find({
+    if($profile_set && $resource->{profile}{id}) {
+        $profile = $profile_set->voip_subscriber_profiles->find({
             id => $resource->{profile}{id},
         });
-        if (!$profile) {
-            $c->log->error("invalid subscriber profile id '" . $resource->{profile}{id} . "'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid profile_id parameter");
-            return;
-        }
     }
     if($profile_set && !$profile) {
         $profile = $profile_set->voip_subscriber_profiles->find({

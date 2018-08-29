@@ -221,39 +221,30 @@ sub create_subscriber {
     }
 
     my ($profile_set, $profile);
-    #as we don't allow to change customer (l. 624), so we shouldn't allow profile_set that belongs to other reseller
-    my $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $profile_set_rs = $profile_set_rs->search({
-            reseller_id => $c->user->reseller_id,
-        });
-    }  elsif($c->user->roles eq "subscriberadmin") {
-        $profile_set_rs = $profile_set_rs->search({
-            reseller_id => $c->user->contract->contact->reseller_id,
-        });
-    }
-    if ($params->{profile_set}{id}) {
+    if($params->{profile_set}{id}) {
+        my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
+            $profile_set_rs = $profile_set_rs->search({
+                reseller_id => $c->user->reseller_id,
+            });
+        }#subadmin
         $profile_set = $profile_set_rs->find($params->{profile_set}{id});
         unless($profile_set) {
             die("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
         }
-    }
-
-    if($params->{profile}{id}) {
-        $profile = $profile_set_rs->search_related_rs('voip_subscriber_profiles')->find({
-            id => $params->{profile}{id},
-        });
-        if (!$profile) {
-            die("invalid subscriber profile id '".$params->{profile}{id}."' detected");
+        if($params->{profile}{id}) {
+            $profile = $profile_set->voip_subscriber_profiles->find({
+                id => $params->{profile}{id},
+            });
+        }
+        # TODO: use profile from user input if given
+        unless($profile) {
+            $profile = $profile_set->voip_subscriber_profiles->find({
+                set_default => 1,
+            });
         }
     }
-    if($profile_set && !$profile) {
-        $profile = $profile_set->voip_subscriber_profiles->find({
-            set_default => 1,
-        });
-    }
-
     $params->{timezone} = $params->{timezone}->{name} if 'HASH' eq ref $params->{timezone};
     if ($params->{timezone} && !NGCP::Panel::Utils::DateTime::is_valid_timezone_name($params->{timezone})) {
         die("invalid timezone name '$params->{timezone}' detected");

@@ -1073,7 +1073,6 @@ sub hal_from_item {
     $resource //= $self->resource_from_item($c, $item, $form, $params);
     $resource = $self->process_hal_resource($c, $item, $resource, $form, $params);
     return unless $resource;
-    my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
     my $links = $self->hal_links($c, $item, $resource, $form, $params) // [];
     my $hal = Data::HAL->new(
         links => [
@@ -1107,7 +1106,7 @@ sub hal_from_item {
                 ), $item, $resource, $params)
             ),
             @$links,
-            $adm ? $self->get_journal_relation_link($c, $self->get_item_id($c, $item)) : (),
+            $self->get_journal_relation_link($self->get_item_id($c, $item)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

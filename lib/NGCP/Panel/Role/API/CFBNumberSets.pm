@@ -35,7 +35,7 @@ sub hal_links{
     my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
     return [
             Data::HAL::Link->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $resource->{subscriber_id})),
-            $adm ? $self->get_journal_relation_link($c, $item->id) : (),
+            $adm ? $self->get_journal_relation_link($item->id) : (),
     ];
 }
 
