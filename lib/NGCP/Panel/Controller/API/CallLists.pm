@@ -205,6 +205,31 @@ sub query_params {
             },
         },
         {
+            param => 'init_ge',
+            description => 'Filter for calls initiated greater or equal the specified time stamp.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                    { 'me.init_time' => { '>=' => $dt->epoch } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'init_le',
+            description => 'Filter for calls initiated lower or equal the specified time stamp.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    $q .= ' 23:59:59' if($q =~ /^\d{4}\-\d{2}\-\d{2}$/);
+                    my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                    { init_time => { '<=' => $dt->epoch } };
+                },
+                second => sub {},
+            },
+        },
+        {
             param => 'call_id',
             description => 'Filter for a particular call_id and sort by call leg depth.',
             query => {

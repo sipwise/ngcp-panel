@@ -78,14 +78,19 @@ sub resource_from_item {
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',
     );
+
     if($c->req->param('tz') && DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
         # valid tz is checked in the controllers' GET already, but just in case
         # it passes through via POST or something, then just ignore wrong tz
         $item->start_time->set_time_zone($c->req->param('tz'));
+        $item->init_time->set_time_zone($c->req->param('tz'));
     }
 
     $resource->{start_time} = $datetime_fmt->format_datetime($item->start_time);
     $resource->{start_time} .= '.'.$item->start_time->millisecond if $item->start_time->millisecond > 0.0;
+    $resource->{init_time} = $datetime_fmt->format_datetime($item->init_time);
+    $resource->{init_time} .= '.'.$item->init_time->millisecond if $item->init_time->millisecond > 0.0;
+
     return $resource;
 }
 

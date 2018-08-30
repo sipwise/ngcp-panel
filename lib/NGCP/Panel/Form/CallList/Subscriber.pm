@@ -97,6 +97,15 @@ has_field 'type' => (
     },
 );
 
+has_field 'init_time' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The timestamp of the call initiation.']
+    },
+);
+
 has_field 'start_time' => (
     type => 'Text',
     required => 1,
