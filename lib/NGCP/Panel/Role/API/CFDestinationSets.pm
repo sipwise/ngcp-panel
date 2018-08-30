@@ -48,7 +48,6 @@ sub hal_from_item {
 
     my $b_subs_id = $item->subscriber->voip_subscriber->id;
     $resource{subscriber_id} = $b_subs_id;
-    my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
 
     my $hal = Data::HAL->new(
         links => [
@@ -62,7 +61,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             Data::HAL::Link->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
-            $adm ? $self->get_journal_relation_link($c, $item->id) : (),
+            $self->get_journal_relation_link($c, $item->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
