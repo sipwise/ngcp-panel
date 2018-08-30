@@ -2141,6 +2141,7 @@ msgstr ""
 msgid "Dialogic successfully flashed."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Direction"
@@ -2543,6 +2544,10 @@ msgstr "Fecha de finalización"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid ""
 "Error while sending fax (have the fax settings been configured properly?)"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm
+msgid "Exact string (destination)"
 msgstr ""
 
 #: share/layout/body.tt
@@ -4690,8 +4695,8 @@ msgid "Master Data"
 msgstr "Datos Principales"
 
 #: lib/NGCP/Panel/Controller/Billing.pm
-msgid "Match Direction"
-msgstr "Coincidir dirección"
+msgid "Match Mode"
+msgstr ""
 
 #: share/templates/rewrite/rules_list.tt
 msgid "Match Pattern"
@@ -5633,6 +5638,10 @@ msgstr "Preferencias"
 msgid "Prefix"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm
+msgid "Prefix string"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/Billing.pm share/templates/customer/details.tt
 msgid "Prepaid"
 msgstr "Prepago"
@@ -5843,6 +5852,14 @@ msgstr "Dispositivos registrados"
 #: share/templates/subscriber/reglist.tt
 msgid "Registered Devices for %1@%2"
 msgstr "Dispositivos registrados para %1@%2"
+
+#: lib/NGCP/Panel/Controller/Billing.pm
+msgid "Regular expression - longest match"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm
+msgid "Regular expression - longest pattern"
+msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "Reject"
@@ -8403,6 +8420,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Match Direction"
+#~ msgstr "Coincidir dirección"
 
 #~ msgid "Last Attempt"
 #~ msgstr "Último intento"
