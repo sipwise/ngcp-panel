@@ -280,6 +280,7 @@ sub process_cdr_item {
     $resource->{status} = $item->call_status;
     $resource->{rating_status} = $item->rating_status;
 
+    $resource->{init_time} = $item->init_time;
     $resource->{start_time} = $item->start_time;
     $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$item->duration,3);
     $resource->{customer_cost} = $resource->{direction} eq "out" ?
