@@ -62,6 +62,7 @@ $call_fields{destination_domain} = 'me.destination_domain';
 
 $call_fields{call_type} = 'me.call_type';
 $call_fields{call_status} = 'me.call_status';
+$call_fields{init_time} = 'me.init_time';
 $call_fields{start_time} = 'me.start_time';
 $call_fields{duration} = 'me.duration';
 
@@ -757,8 +758,8 @@ sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
     my $schema = $c->model('DB');
     # todo: mashal specific fields, per conversation event type ...
-    $c->log->debug(Dumper('item'));
-    $c->log->debug(Dumper($item));
+    #$c->log->debug(Dumper('item'));
+    #$c->log->debug(Dumper($item));
     my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $item);
     if('call' eq $item->{type}){
         my $owner = $self->get_owner_cached($c);
@@ -816,8 +817,8 @@ sub process_hal_resource {
     }elsif('xmpp' eq $item->{type}){
         $resource = $item_accessors_hash;
     }
-    $c->log->debug(Dumper('resource'));
-    $c->log->debug(Dumper($resource));
+    #$c->log->debug(Dumper('resource'));
+    #$c->log->debug(Dumper($resource));
     if($item_mock_obj->timestamp){
         $resource->{start_time} //= $item_mock_obj->timestamp;
         my $datetime_fmt = DateTime::Format::Strptime->new(
