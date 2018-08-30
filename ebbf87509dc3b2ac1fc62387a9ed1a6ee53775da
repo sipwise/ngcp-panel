@@ -16,6 +16,24 @@
       "revId": "ebbf87509dc3b2ac1fc62387a9ed1a6ee53775da",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_3249aed1",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-08-30T18:23:49Z",
+      "side": 1,
+      "message": "indeed, adjusted.",
+      "parentUuid": "9af37de9_92397a44",
+      "revId": "ebbf87509dc3b2ac1fc62387a9ed1a6ee53775da",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
