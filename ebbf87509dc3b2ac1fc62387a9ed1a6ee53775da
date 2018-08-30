@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_92397a44",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-08-30T18:01:14Z",
+      "side": 1,
+      "message": "iirc we need to also add it in conversation\u0027s cdr mock objects, otherwise this method will fail there with an error.",
+      "revId": "ebbf87509dc3b2ac1fc62387a9ed1a6ee53775da",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
