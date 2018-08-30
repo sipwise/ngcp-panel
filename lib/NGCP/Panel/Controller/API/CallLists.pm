@@ -238,19 +238,14 @@ sub query_params {
         },
         {
             param => 'call_id',
-            description => 'Filter for a particular call_id and sort by call leg depth.',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    {
-                        call_id => { like => $q.'%' },
-                    };
-                },
-                second => sub {
-                    {
-                        order_by => \"length(call_id) ASC, start_time ASC",
-                    };
-                },
+            description => 'Filter for a particular call_id prefix and sort by call leg depth.',
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                return $rs->search_rs({
+                    call_id => { like => $q.'%' },
+                },{
+                    order_by => { '-asc' => [ \'length(call_id)', 'start_time', ], },
+                });
             },
         },
         {
