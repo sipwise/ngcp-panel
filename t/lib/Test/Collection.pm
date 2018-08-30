@@ -1495,13 +1495,27 @@ sub check_patch2get{
     delete $get_in->{ignore_fields} if ref $get_in eq 'HASH';
     delete $patch_in->{ignore_fields} if ref $patch_in eq 'HASH';
 
-    $patch_out->{content_in} = ref $patch_in eq 'HASH' && $patch_in->{content} 
-        ? $patch_in->{content} 
-        : ref $patch_in eq 'ARRAY'
-            ? $patch_in 
-            : []
-        ;
+    my $patch_exclude_fields = $params->{patch_exclude_fields} // {};
+    if (ref $patch_exclude_fields eq 'ARRAY') {
+        $patch_exclude_fields = {map {$_ => 1} @$patch_exclude_fields};
+    }
+
     (undef, $patch_out->{content_before}) = $self->check_item_get( $patch_uri );
+
+    my @patches;
+    while (my ($path, $value) = each %{$patch_out->{content_before}} ) {
+        if ($path ne 'id' && $path ne '_links' && !exists $patch_exclude_fields->{$path}) {
+            push @patches, {'op' => 'replace', 'path' => '/'.$path, 'value' => $value};
+        }
+    }
+
+    $patch_out->{content_in} = ref $patch_in eq 'HASH' && $patch_in->{content} 
+        ? $patch_in->{content}
+        : ref $patch_in eq 'ARRAY'
+            ? $patch_in
+            : [@patches]
+        ;
+
     $patch_out->{content_patched} = Test::ApplyPatch::apply_patch(clone($patch_out->{content_before}),$patch_out->{content_in});
     @{$patch_out}{qw/response content request/} = $self->request_patch( $patch_out->{content_in}, $patch_uri );
     $self->http_code_msg(200, "check_patch2get: check patch successful",$patch_out->{response}, $patch_out->{content});
