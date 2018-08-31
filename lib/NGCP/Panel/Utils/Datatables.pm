@@ -17,6 +17,8 @@ sub process {
     my $aaData = [];
     my $totalRecords = 0;
     my $displayRecords = 0;
+    my $totalRecordCountClipped = 0;
+    my $displayRecordCountClipped = 0;
     my $aggregate_cols = [];
     my $aggregations = {};
 
@@ -56,16 +58,16 @@ sub process {
     #all joins already implemented, and filters aren't applied. But count we will take only if there are search and no other aggregations
     my $totalRecords_rs = $rs;
     #= $use_rs_cb ? 0 : $rs->count;
-    
+
     ### Search processing section
-    
+
     # generic searching
     my @searchColumns = ();
     my %conjunctSearchColumns = ();
     #processing single search input - group1 from groups to be joined by 'AND'
     my $searchString = $c->request->params->{sSearch} // "";
     if($searchString && ! $use_rs_cb) {
-    #for search string from one search input we need to check all columns which contain the 'search' spec (now: qw/search search_lower_column search_upper_column/). so, for example user entered into search input ip address - we don't know that it is ip address, so we check that name like search OR id like search OR search is between network_lower_value and network upper value 
+    #for search string from one search input we need to check all columns which contain the 'search' spec (now: qw/search search_lower_column search_upper_column/). so, for example user entered into search input ip address - we don't know that it is ip address, so we check that name like search OR id like search OR search is between network_lower_value and network upper value
         foreach my $col(@{ $cols }) {
             my ($name,$search_value,$op,$convert);
             # avoid amigious column names if we have the same column in different joined tables
@@ -171,21 +173,23 @@ sub process {
         $aggregations = {%{$aggregations}, $total_row_func->($aggregations) };
     }
 
-    if(!$use_rs_cb){
-        if(@searchColumns){
-            $totalRecords = $totalRecords_rs->count;
-            if(!@$aggregate_cols){
-                $displayRecords = $rs->count;
+    if (!$use_rs_cb) {
+        if (@searchColumns) {
+            ($totalRecords, $totalRecordCountClipped) = get_count_safe($c,$totalRecords_rs,$params);
+            if (!@$aggregate_cols) {
+                ($displayRecords, $displayRecordCountClipped) = get_count_safe($c,$rs,$params);
             }
-        }else{
-            if(@$aggregate_cols){
+        } else {
+            if (@$aggregate_cols) {
                 $totalRecords = $displayRecords;
-            }elsif(!@$aggregate_cols){
-                $totalRecords = $displayRecords = $totalRecords_rs->count;
+            } elsif (!@$aggregate_cols) {
+                ($totalRecords, $totalRecordCountClipped) = get_count_safe($c,$totalRecords_rs,$params);
+                $displayRecords = $totalRecords;
+                $displayRecordCountClipped = $totalRecordCountClipped;
             }
         }
     }
-    
+
     # show specific row on top (e.g. if we come back from a newly created entry)
     my $topId = $c->request->params->{iIdOnTop};
     if(defined $topId) {
@@ -257,8 +261,35 @@ sub process {
 
     add_arbitrary_data($c, $aaData, $params->{topData}, $cols, $row_func, $params);
 
-    expose_data($c, $aaData, $totalRecords, $displayRecords);
+    expose_data($c, $aaData, $totalRecords, $totalRecordCountClipped, $displayRecords, $displayRecordCountClipped);
 
+}
+
+sub get_count_safe {
+    my ($c,$rs,$params) = @_;
+    my $count_limit = $params->{count_limit};
+    #$count_limit = 12;
+    if ($c and defined $count_limit and $count_limit > 0) {
+        my ($count_clipped) = $c->model('DB')->storage->dbh_do(sub {
+            my ($storage, $dbh, $stmt, @bind_vals) = @_;
+            @bind_vals = map { $_->[1]; } @bind_vals;
+            $c->log->debug("bind: " . join(",",@bind_vals));
+            return $dbh->selectrow_array("select count(1) from ($stmt) as query_clipped",undef,@bind_vals);
+        },@{${$rs->search_rs(undef,{
+            page => 1,
+            rows => $count_limit + 1,
+            #below is required if fields with identical name are selected by $rs:
+            'select' => (defined $params->{count_projection_column} ? $params->{count_projection_column} : "id"),
+        })->as_query}});
+        if ($count_clipped > $count_limit) {
+            $c->log->debug("result count clipped");
+            return ($count_limit,1);
+        } else {
+            return ($count_clipped,0);
+        }
+    } else {
+        return ($rs->count,0);
+    }
 }
 
 sub add_arbitrary_data {
@@ -283,11 +314,13 @@ sub add_arbitrary_data {
 }
 
 sub expose_data {
-    my($c, $aaData, $totalRecords, $displayRecords) = @_;
+    my($c, $aaData, $totalRecords, $totalRecordCountClipped, $displayRecords, $displayRecordCountClipped) = @_;
     $c->stash(
         aaData               => $aaData,
         iTotalRecords        => $totalRecords,
         iTotalDisplayRecords => $displayRecords,
+        iTotalRecordCountClipped        => ($totalRecordCountClipped ? \1 : \0),
+        iTotalDisplayRecordCountClipped => ($displayRecordCountClipped ? \1 : \0),
         sEcho                => int($c->request->params->{sEcho} // 1),
     );
 }
@@ -304,7 +337,7 @@ sub process_static_data {
     add_arbitrary_data($c, $aaData, $data, $cols, $row_func, $params);
     my $totalRecords = scalar @$aaData;
     my $displayRecords = $totalRecords;
-    expose_data($c, $aaData, $totalRecords, $displayRecords);
+    expose_data($c, $aaData, $totalRecords, 0, $displayRecords, 0);
 }
 
 sub set_columns {

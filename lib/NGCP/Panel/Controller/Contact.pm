@@ -372,6 +372,8 @@ sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) :Doe
     $c->stash(aaData               => \@aaData,
               iTotalRecords        => $count,
               iTotalDisplayRecords => $count,
+              iTotalRecordCountClipped        => \0,
+              iTotalDisplayRecordCountClipped => \0,
               sEcho                => int($c->request->params->{sEcho} // 1),
     );
 
