@@ -91,7 +91,7 @@ __PACKAGE__->config(
     'View::JSON' => {
         #Set the stash keys to be exposed to a JSON response
         #(sEcho iTotalRecords iTotalDisplayRecords aaData) for datatables
-        expose_stash    => [ qw(sEcho iTotalRecords iTotalDisplayRecords aaData dt_custom_footer widget_data timeline_data) ],
+        expose_stash    => [ qw(sEcho iTotalRecords iTotalDisplayRecords iTotalRecordCountClipped iTotalDisplayRecordCountClipped aaData dt_custom_footer widget_data timeline_data) ],
     },
     'View::TT' => {
         INCLUDE_PATH => [
@@ -266,13 +266,13 @@ __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
             my ($self, $root, $property_type, $relation, $property) = @_;
             my $embedded = $root->embedded ? $root->embedded->[0] : undef;
             if ($embedded
-                && ( (   $property_type eq 'links' &&  $panel_config->{appearance}{api_links_forcearray} ) 
+                && ( (   $property_type eq 'links' &&  $panel_config->{appearance}{api_links_forcearray} )
                     || ( $property_type eq 'embedded' &&  $panel_config->{appearance}{api_embedded_forcearray}) )
                 && $relation =~/^ngcp:[a-z0-9]+$/
             ) {
                 return 1;
             }
-            if (!$embedded 
+            if (!$embedded
                 && ( ( $property_type eq 'links' &&  $panel_config->{appearance}{api_links_forcearray} ) )
                 && $relation =~/^ngcp:[a-z0-9]+$/
             ) {

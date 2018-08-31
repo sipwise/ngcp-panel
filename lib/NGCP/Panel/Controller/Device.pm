@@ -46,14 +46,14 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
                 }
             ],
     });
-    
+
     $reseller_id and $devmod_rs = $devmod_rs->search({ reseller_id => $reseller_id });
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'type', search => 1, title => $c->loc('Type') },
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
         { name => 'vendor', search => 1, title => $c->loc('Vendor') },
-        { name => 'model', search => 1, title => $c->loc('Model') },        
+        { name => 'model', search => 1, title => $c->loc('Model') },
     ]);
 
     my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search_rs(undef,{'columns' => [qw/id device_id version filename tag/],
@@ -154,7 +154,7 @@ sub devmod_ajax :Chained('base') :PathPart('model/ajax') :Args(0) :Does(ACL) :AC
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns},
         sub {
             my ($result) = @_;
-            my %data = ( 
+            my %data = (
                 mac_image_exists => $result->get_column('mac_image_exists'),
                 front_image_exists => $result->get_column('front_image_exists'),
             );
@@ -173,7 +173,7 @@ sub extensionmodel_ajax :Chained('base') :PathPart('extensionmodel/ajax') :Args(
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns},
         sub {
             my ($result) = @_;
-            my %data = ( 
+            my %data = (
                 mac_image_exists => $result->get_column('mac_image_exists'),
                 front_image_exists => $result->get_column('front_image_exists'),
             );
@@ -663,7 +663,7 @@ sub devfw_download :Chained('devfw_base') :PathPart('download') :Args(0) {
     $c->response->content_type('application/octet-stream');
     $c->response->body(
         NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
-            c => $c, 
+            c => $c,
             fw_id => $fw->id
     ));
 }
@@ -952,6 +952,8 @@ sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Args(0)
         aaData               => $data,
         iTotalRecords        => 1,
         iTotalDisplayRecords => 1,
+        iTotalRecordCountClipped        => \0,
+        iTotalDisplayRecordCountClipped => \0,
         sEcho                => int($c->request->params->{sEcho} // 1),
     );
 
@@ -1020,6 +1022,8 @@ sub get_annotated_info :Private {
         aaData               => $data,
         iTotalRecords        => 1,
         iTotalDisplayRecords => 1,
+        iTotalRecordCountClipped        => \0,
+        iTotalDisplayRecordCountClipped => \0, 
         sEcho                => int($c->request->params->{sEcho} // 1),
     );
 
@@ -1194,7 +1198,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             $c->response->status(403);
             return;
         }
-    } 
+    }
 
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id
@@ -1364,16 +1368,16 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 '+select' => [\'replace(attribute.attribute,"__","")' ],
                 '+as' => ['attribute_normalized'],
         });
-        $preferences_device_dynamic->{$type} = get_inflated_columns_all($pref_rs_dynamic, 
-            'hash' => 'attribute_normalized', 
-            'column' => 'value' 
+        $preferences_device_dynamic->{$type} = get_inflated_columns_all($pref_rs_dynamic,
+            'hash' => 'attribute_normalized',
+            'column' => 'value'
         );
         my $pref_rs_static = $pref_rs->search_rs({
             'attribute.dynamic' => 0,
         });
-        $preferences_device->{$type} = get_inflated_columns_all($pref_rs_static, 
-            'hash' => 'attribute', 
-            'column' => 'value' 
+        $preferences_device->{$type} = get_inflated_columns_all($pref_rs_static,
+            'hash' => 'attribute',
+            'column' => 'value'
         );
     }
     my %preferences_device = (
@@ -1888,7 +1892,7 @@ sub dev_field_firmware_download :Chained('dev_field_firmware_base') :PathPart('v
     $c->response->content_type('application/octet-stream');
     $c->response->body(
         NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
-            c => $c, 
+            c => $c,
             fw_id => $fw->id
     ));
 }
@@ -1939,7 +1943,7 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
     $c->response->content_type('application/octet-stream');
     $c->response->body(
         NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
-            c => $c, 
+            c => $c,
             fw_id => $fw->id
     ));
 }
@@ -1976,7 +1980,7 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
     $c->response->content_type('application/octet-stream');
     $c->response->body(
         NGCP::Panel::Utils::DeviceFirmware::get_firmware_data(
-            c => $c, 
+            c => $c,
             fw_id => $fw->id
     ));
 }
@@ -1995,7 +1999,7 @@ sub devices_preferences_list :Chained('devmod_base') :PathPart('preferences') :C
     NGCP::Panel::Utils::Preferences::load_preference_list(
         c => $c,
         pref_values => $pref_values,
-        #we don't need fielddev_pref flag, because it always will be just more narrow than dev_pref. 
+        #we don't need fielddev_pref flag, because it always will be just more narrow than dev_pref.
         dev_pref => 1,
         search_conditions => [{
             'attribute' =>
@@ -2003,7 +2007,7 @@ sub devices_preferences_list :Chained('devmod_base') :PathPart('preferences') :C
                     { 'like' => 'vnd_'.lc($c->stash->{devmod}->vendor).'%' },
                     {'-not_like' => 'vnd_%' },
                 ],
-            #relation type is defined by preference flag dev_pref, 
+            #relation type is defined by preference flag dev_pref,
             #so here we select only linked to the current model, or not linked to any model at all
             '-or' => [
                     'voip_preference_relations.autoprov_device_id' => $c->stash->{devmod}->id,
@@ -2069,7 +2073,7 @@ sub devices_preferences_create :Chained('devices_preferences_list') :PathPart('c
                 $resource->{autoprov_device_id}  = $c->stash->{devmod}->id;
 
                 my $preference = NGCP::Panel::Utils::Preferences::create_dynamic_preference(
-                    $c, $resource, 
+                    $c, $resource,
                     group_name => 'CPBX Device Administration',
                 );
 

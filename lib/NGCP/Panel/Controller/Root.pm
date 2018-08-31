@@ -386,6 +386,8 @@ sub emptyajax :Chained('/') :PathPart('emptyajax') :Args(0) {
         aaData => [],
         iTotalDisplayRecords => 0,
         iTotalRecords => 0,
+        iTotalRecordCountClipped        => \0,
+        iTotalDisplayRecordCountClipped => \0,
         sEcho => $c->request->params->{sEcho} // 1,
     );
     $c->detach( $c->view("JSON") );
