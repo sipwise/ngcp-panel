@@ -28,7 +28,7 @@
         <script src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
         <script src="/js/libs/jquery.ui.touch-punch.min.js"></script>
         <script src="/js/libs/bootstrap/bootstrap.min.js"></script>
-        <script src="/js/libs/jquery.dataTables.min.js"></script>
+        <script src="/js/libs/jquery.dataTables.js"></script>
         <script src="/js/libs/bootstrap/datatables-paging.js"></script>
 
         <script type="text/javascript" src="/js/plugins/msgbox/jquery.msgbox.js"></script>
