@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_f59430e9",
+        "filename": "share/layout/html.tt",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-08-31T22:35:49Z",
+      "side": 0,
+      "message": "Is it here intentionally?",
+      "range": {
+        "startLine": 31,
+        "startChar": 8,
+        "endLine": 31,
+        "endChar": 65
+      },
+      "revId": "ecfe7f5a1782da4f7f271e53fea5923093204f4b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
