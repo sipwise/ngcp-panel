@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_55ff7c34",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-08-31T22:32:47Z",
+      "side": 1,
+      "message": "Could some data be useful in this debug? for example - \n\"result count clipped: $count_clipped; count_limit: $count_limit;\". Maybe something else? I think if we print out debug - let say all possible useful info.",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 51
+      },
+      "revId": "4764a50eb43acaa4b2cccd16dfa47e3d6d1e5515",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
