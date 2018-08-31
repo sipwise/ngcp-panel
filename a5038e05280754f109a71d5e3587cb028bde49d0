@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_b51fc85a",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2018-08-31T11:03:40Z",
+      "side": 1,
+      "message": "You deleted a lot of trailing spaces and introduced one :-)))",
+      "revId": "a5038e05280754f109a71d5e3587cb028bde49d0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
