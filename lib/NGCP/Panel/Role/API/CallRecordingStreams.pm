@@ -122,7 +122,7 @@ sub resource_from_item {
         }
         $resource{start_time} = $datetime_fmt->format_datetime($item->start_timestamp);
         # no need to show millisec precision here, I guess...
-        #$resource{start_time} .= '.'.$item->start_timestamp->millisecond
+        #$resource{start_time} .= '.'.sprintf("%03d",$item->start_timestamp->millisecond)
         #    if $item->start_timestamp->millisecond > 0.0;
     } else {
         $resource{start_time} = undef;
@@ -132,7 +132,7 @@ sub resource_from_item {
             $item->end_timestamp->set_time_zone($tz);
         }
         $resource{end_time} = $datetime_fmt->format_datetime($item->end_timestamp);
-        #$resource{end_time} .= '.'.$item->end_timestamp->millisecond
+        #$resource{end_time} .= '.'.sprintf("%03d",$item->end_timestamp->millisecond)
         #    if $item->end_timestamp->millisecond > 0.0;
     } else {
         $resource{end_time} = undef;
