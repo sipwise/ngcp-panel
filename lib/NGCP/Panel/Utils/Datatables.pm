@@ -331,7 +331,7 @@ sub _prune_row {
                 $v->set_time_zone($user_tz);  # desired time zone
             }
             $row{$k} = $v->ymd('-') . ' ' . $v->hms(':');
-            $row{$k} .= '.'.$v->millisecond if $v->millisecond > 0.0;
+            $row{$k} .= '.'.sprintf("%03d",$v->millisecond) if $v->millisecond > 0.0;
         }
     }
     return { %row };

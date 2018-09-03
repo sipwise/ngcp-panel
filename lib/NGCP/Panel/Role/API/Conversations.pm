@@ -827,7 +827,7 @@ sub process_hal_resource {
         my $timestamp = NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,
             NGCP::Panel::Utils::DateTime::epoch_local($item_mock_obj->timestamp),$self->get_owner_cached($c));
         $resource->{start_time} = $datetime_fmt->format_datetime($timestamp);
-        $resource->{start_time} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
+        $resource->{start_time} .= '.' . sprintf("%03d",$timestamp->millisecond) if $timestamp->millisecond > 0.0;
     }
     return $resource;
 }

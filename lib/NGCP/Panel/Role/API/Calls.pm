@@ -120,10 +120,10 @@ sub resource_from_item {
     }
 
     $resource->{start_time} = $datetime_fmt->format_datetime($item->start_time);
-    $resource->{start_time} .= '.'.$item->start_time->millisecond if $item->start_time->millisecond > 0.0;
+    $resource->{start_time} .= '.'.sprintf("%03d",$item->start_time->millisecond) if $item->start_time->millisecond > 0.0;
 
     $resource->{init_time} = $datetime_fmt->format_datetime($item->init_time);
-    $resource->{init_time} .= '.'.$item->init_time->millisecond if $item->init_time->millisecond > 0.0;
+    $resource->{init_time} .= '.'.sprintf("%03d",$item->init_time->millisecond) if $item->init_time->millisecond > 0.0;
 
     return $resource;
 }

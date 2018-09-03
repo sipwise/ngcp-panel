@@ -315,7 +315,7 @@ sub to_string {
     my ($dt) = @_;
     return unless defined ($dt);
     my $s = $dt->ymd('-') . ' ' . $dt->hms(':');
-    $s .= '.'.$dt->millisecond if $dt->millisecond > 0.0;
+    $s .= '.'.sprintf("%03d",$dt->millisecond) if $dt->millisecond > 0.0;
     return $s;
 }
 

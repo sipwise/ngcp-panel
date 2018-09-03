@@ -94,7 +94,7 @@ sub resource_from_item {
         }
         $resource{timestamp} = $datetime_fmt->format_datetime($item->timestamp);
         if ($item->timestamp->millisecond > 0.0) {
-            $resource{timestamp} .= '.'.$item->timestamp->millisecond;
+            $resource{timestamp} .= '.'.sprintf("%03d",$item->timestamp->millisecond);
         }
     }
 
