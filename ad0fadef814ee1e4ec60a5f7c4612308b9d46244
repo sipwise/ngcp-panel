@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_98f759f5",
+        "filename": "lib/NGCP/Panel/Role/API/CallRecordingStreams.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-03T22:47:52Z",
+      "side": 1,
+      "message": "Maybe it would have sense to create some method for this in NGCP::Panel::Utils::DateTime, like\n\nformat_ms{\nmy($date) \u003d @_;\nreturn sprintf(\"%03d\", $date-\u003emilliseconds) if $date;\n}\n\n$resource{start_time} .\u003d NGCP::Panel::Utils::DateTime::format_ms($item-\u003estart_timestamp);\n\n?",
+      "range": {
+        "startLine": 125,
+        "startChar": 38,
+        "endLine": 125,
+        "endChar": 89
+      },
+      "revId": "ad0fadef814ee1e4ec60a5f7c4612308b9d46244",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
