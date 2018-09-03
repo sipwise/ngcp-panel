@@ -650,7 +650,7 @@ sub process_hal_resource {
     #    $timestamp->set_time_zone($c->req->param('tz'));
     #}
     $resource->{timestamp} = $datetime_fmt->format_datetime($timestamp);
-    $resource->{timestamp} .= '.' . $timestamp->millisecond if $timestamp->millisecond > 0.0;
+    $resource->{timestamp} .= '.' . sprintf("%03d",$timestamp->millisecond) if $timestamp->millisecond > 0.0;
 
     # todo: mashal specific fields, per conversation event type ...
 
