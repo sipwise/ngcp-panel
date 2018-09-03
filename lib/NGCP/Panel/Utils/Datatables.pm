@@ -285,7 +285,7 @@ sub _prune_row {
         }
         if(blessed($v) && $v->isa('DateTime')) {
             $row{$k} = $v->ymd('-') . ' ' . $v->hms(':');
-            $row{$k} .= '.'.$v->millisecond if $v->millisecond > 0.0;
+            $row{$k} .= '.'.sprintf("%03d",$v->millisecond) if $v->millisecond > 0.0;
         }
     }
     return { %row };

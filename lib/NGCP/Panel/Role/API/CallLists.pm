@@ -113,11 +113,11 @@ sub resource_from_item {
 
     my $start_time = NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,$item->start_time,$owner);
     $resource->{start_time} = $datetime_fmt->format_datetime($start_time);
-    $resource->{start_time} .= '.'.$start_time->millisecond if $start_time->millisecond > 0.0;
+    $resource->{start_time} .= '.'.sprintf("%03d",$start_time->millisecond) if $start_time->millisecond > 0.0;
 
     my $init_time = NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,$item->init_time,$owner);
     $resource->{init_time} = $datetime_fmt->format_datetime($init_time);
-    $resource->{init_time} .= '.'.$init_time->millisecond if $init_time->millisecond > 0.0;
+    $resource->{init_time} .= '.'.sprintf("%03d",$init_time->millisecond) if $init_time->millisecond > 0.0;
     return $resource;
 }
 
