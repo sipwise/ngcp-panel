@@ -1,3 +1,12 @@
+ngcp-panel (5.5.6.2+0~mr5.5.6.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b22407f] TT#43755 fix miliseconds presentation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 04 Sep 2018 13:40:11 +0200
+
 ngcp-panel (5.5.6.1+0~mr5.5.6.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
