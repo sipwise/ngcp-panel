@@ -24,11 +24,13 @@ use Storable;
 use Carp qw(cluck longmess shortmess);
 use IO::Uncompress::Unzip;
 use File::Temp qw();
+use Digest::SHA qw/sha1_hex/;
 
 Moose::Exporter->setup_import_methods(
     as_is     => [ 'is_int' ],
 );
 my $tmpfilename : shared;
+my $requests_time : shared;
 
 has 'ssl_cert' => (
     is => 'ro',
@@ -729,7 +731,12 @@ sub request{
     }
     if(!$self->DEBUG_ONLY){
         $self->init_ssl_cert($self->ua, $self->runas_role);
+        my $request_time = time;
+        my $sha_data = Dumper($request->method,$request->uri,$request->content,$request->headers);
+        my $sha = sha1_hex( $sha_data);
         my $res = $self->ua->request($req);
+        $request_time = time() - $time;
+        $requests_time->{$sha} = { response => $res, time => $request_time };
         diag(sprintf($self->name_prefix."request:%s: %s", $req->method, $req->uri));
         #draft of the debug mode
         if(1 && $self->DEBUG){
