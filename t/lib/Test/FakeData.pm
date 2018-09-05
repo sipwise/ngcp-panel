@@ -359,6 +359,14 @@ sub build_data{
             },
             'query' => ['external_id'],
             'no_delete_available' => 1,
+            #'flavour' => {
+            #    'another_one' => {
+            #        'data' => {
+            #            'external_id' => 'pbx_account_2',
+            #            'type'        => 'pbxaccount',
+            #        }
+            #    }
+            #},
         },
         'customer_sipaccount' => {
             'data' => {
