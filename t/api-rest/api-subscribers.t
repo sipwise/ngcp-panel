@@ -78,7 +78,7 @@ $fake_data->set_data_from_script({
 
 my $fake_data_processed = $fake_data->process('subscribers');
 my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$fake_data_processed->{customer_id}.'&'.'is_pbx_pilot=1');
-if((exists $pilot->{total_count} && $pilot->{total_count}) || $pilot->{content}->{total_count} > 0){
+if((exists $pilot->{total_count} && $pilot->{total_count}) || (exists $pilot->{content}->{total_count} && $pilot->{content}->{total_count} > 0) ){
     $fake_data_processed->{is_pbx_pilot} = 0;
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
@@ -419,6 +419,130 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $test_machine->http_code_msg(403, "Check display_name patch for subscriberadmin", $res, $content, "Read-only resource for authenticated role");
         }
     }
+    {#TT#43350
+        diag("TT#43350 Test subscriberadmin access");
+        diag("#------------------------ create subscribers of other customer of other reseller\n");
+        my $test_machine_other_reseller = Test::Collection->new(
+            name => 'subscribers',
+            QUIET_DELETION => 1,
+        );
+        my $fake_data_other_reseller = Test::FakeData->new(
+            keep_db_data => 1,
+            test_machine => $test_machine_other_reseller,
+        );
+        $fake_data_other_reseller->load_collection_data('subscribers');
+        $fake_data_other_reseller->apply_data({
+            'customers' => {
+                'external_id' => 'other_reseller',
+                'type'        => 'pbxaccount',
+            },
+            'customercontacts' => {
+                'email' => 'other_reseller@email.com',
+            },
+            'contracts' => {
+                'external_id' => 'other_reseller',
+            },
+            'resellers' => {
+                'name' => 'other_reseller',
+            },
+            'subscribers' => {
+                'is_pbx_pilot' => 0,
+                'is_pbx_group' => 0,
+                'webpassword'  => 'api_test_webpassword',
+            },
+            'subscriberprofilesets' => {
+                'name' => 'other_reseller_subscriberprofileset',
+            },
+            'subscriberprofiles' => {
+                'name' => 'other_reseller_subscriberprofile',
+            },
+        });
+        my($subscribers_other_reseller, $subscriberadmin_other_reseller) 
+            = create_subs_and_subadmin($fake_data_other_reseller, $test_machine_other_reseller);
+
+        diag("#------------------------ create subscriber of other customer\n");
+        my $test_machine_other_customer = Test::Collection->new(
+            name => 'subscribers',
+            QUIET_DELETION => 1,
+        );
+        my $fake_data_other_customer = Test::FakeData->new(
+            keep_db_data => 1,
+            test_machine => $test_machine_other_customer,
+        );
+        $fake_data_other_customer->load_collection_data('subscribers');
+        $fake_data_other_customer->apply_data({
+            'customers' => {
+                'external_id' => 'other_customer',
+                'type'        => 'pbxaccount',
+            },
+            'customercontacts' => {
+                'email' => 'other_customer@email.com',
+            },
+            'contracts' => {
+                'external_id' => 'other_customer',
+            },
+            'subscribers' => {
+                'is_pbx_pilot' => 0,
+                'is_pbx_group' => 0,
+                'webpassword'  => 'api_test_webpassword',
+            },
+            'subscriberprofilesets' => {
+                'name' => 'other_customer_subscriberprofileset',
+            },
+            'subscriberprofiles' => {
+                'name' => 'other_customer_subscriberprofile',
+            },
+        });
+        my($subscribers_other_customer, $subscriberadmin_other_customer) 
+            = create_subs_and_subadmin($fake_data_other_customer, $test_machine_other_customer);
+
+        diag("#------------------------ create usual subscriber of default test customer and reseller\n");
+        my $fake_data_processed_old = $test_machine->DATA_ITEM_STORE;
+        $fake_data->apply_data({
+            'subscribers' => {
+                'is_pbx_pilot' => 0,
+                'is_pbx_group' => 0,
+                'webpassword'  => 'api_test_webpassword',
+            },
+        });
+        $fake_data_processed = $fake_data->process('subscribers');
+        $test_machine->DATA_ITEM($fake_data_processed);
+        print Dumper $test_machine->DATA_ITEM;
+        my($subscribers, $subscriberadmin) 
+            = create_subs_and_subadmin($fake_data, $test_machine);
+        
+        $test_machine->set_subscriber_credentials($subscriberadmin->{content});
+        $test_machine->runas('subscriber');
+        diag("\n\n\nSUBSCRIBERADMIN ".$subscriberadmin->{content}->{id}.":");
+
+        diag("#------------------------ subscriberadmin: attempt to create subscriber using other customer-reseller:\n");
+        my($res,$content) = $test_machine->check_item_post(sub {
+            my $num = $_[1]->{i};
+            my $uniq = Test::FakeData::seq;
+            $_[0]->{webusername} = '43350_'.$uniq;
+            $_[0]->{username} = '43350_'.$uniq;
+            $_[0]->{pbx_extension} = '43350'.$uniq;
+            $_[0]->{primary_number}->{ac} = '43350'.$uniq;
+        }, $subscriber_other_reseller->{content});
+        $test_machine->http_code_msg(422, "subscriberadmin: create subscriber of other customer:",$res,$content,
+            "");
+        print Dumper $res;
+        ($res,$content) = $test_machine->request_get($subscriber_other_reseller->{location});
+        print Dumper $res;
+        $test_machine->http_code_msg(422, "subscriberadmin: view subscriber of other customer:",$res,$content,
+            "");
+
+        #$test_machine_other->set_subscriber_credentials($subscriber_other->{content});
+        #$test_machine_other->runas('subscriber');
+        #diag("\n\n\nSUBSCRIBER ".$subscriber_other->{content}->{id}.":");
+
+        $test_machine->DATA_ITEM($fake_data_processed_old);
+
+        $test_machine->clear_test_data_all();
+        #if we failed with create checking (we s)
+        #$test_machine->check_item_delete();
+
+    }
 }
 
 #TT#21818 variant 2 - pbx feature off, subscriberadmin is read-only. No subscriber exists
@@ -464,6 +588,8 @@ $test_machine->runas('admin');
     ($res,$content) = $test_machine->request_post( $data);
     $test_machine->http_code_msg(422, "Alias numbers should be the hashs", $res, $content);
 }
+
+$test_machine->init_ssl_cert();
 $fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 $fake_data->clear_test_data_all();
@@ -600,6 +726,52 @@ sub test_password_validation {
             $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
         }
     }
+}
+
+sub create_subs_and_subadmin {
+    my ($fake_data_l, $test_machine_l, $prefix) = @_;
+
+    $prefix //= '';
+
+    my $fake_data_l_processed = $fake_data_l->process('subscribers');
+    #print Dumper ['create_subs_and_subadmin','fake_data_l_processed',$fake_data_l_processed];
+    $test_machine_l->DATA_ITEM($fake_data_l_processed);
+    $test_machine_l->DATA_ITEM_STORE($fake_data_l_processed);
+
+    my $pilot_l = $test_machine_l->get_item_hal('subscribers','/api/subscribers/?customer_id='.$fake_data_l_processed->{customer_id}.'&'.'is_pbx_pilot=1');
+    if((exists $pilot_l->{total_count} && $pilot_l->{total_count}) || (exists $pilot_l->{content}->{total_count} && $pilot_l->{content}->{total_count} > 0)){
+        #remove existing pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
+        $test_machine_l->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot_l->{location} );
+    }else{
+        undef $pilot_l;
+    }
+
+    my $subscribers = $test_machine_l->check_create_correct(3, sub {
+        my $num = $_[1]->{i};
+        my $uniq = Test::FakeData::seq;
+        $_[0]->{webusername} = '43350_'.$uniq.'_'.$prefix;
+        $_[0]->{username} = '43350_'.$uniq.'_'.$prefix ;
+        $_[0]->{pbx_extension} = '43350'.$uniq;
+        $_[0]->{primary_number}->{ac} = '43350'.$uniq;
+        $_[0]->{is_pbx_pilot} = ($pilot_l || $num > 1 )? 0 : 1;
+        $_[0]->{administrative} = 0;
+        delete $_[0]->{alias_numbers};
+    });
+
+    #$fake_data_l->get_id('resellers',@_);
+        diag("#------------------------ create subscriberadmin\n");
+    my $subscriberadmin = $test_machine_l->check_create_correct(1, sub {
+        my $num = $_[1]->{i};
+        my $uniq = Test::FakeData::seq;
+        $_[0]->{webusername} = '43350_'.$uniq.'_'.$prefix.'_adm';
+        $_[0]->{username} = '43350_'.$uniq.'_'.$prefix.'_adm';
+        $_[0]->{pbx_extension} = '43350'.$uniq;
+        $_[0]->{primary_number}->{ac} = '43350'.$uniq;
+        $_[0]->{administrative} = 1;
+        delete $_[0]->{alias_numbers};
+    })->[0];
+        diag("#------------------------ /create subscriberadmin\n");
+    return $subscribers, $subscriberadmin;
 }
 
 sub number_as_string{
