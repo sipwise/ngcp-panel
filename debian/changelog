@@ -1,3 +1,12 @@
+ngcp-panel (5.5.6.3+0~mr5.5.6.3) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [b2eec10] TT#43561 /api/calllists add init_time field
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 06 Sep 2018 14:46:36 +0200
+
 ngcp-panel (5.5.6.2+0~mr5.5.6.2) unstable; urgency=medium
 
   [ Rene Krenn ]
