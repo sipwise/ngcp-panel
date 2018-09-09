@@ -517,14 +517,28 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         diag("\n\n\nSUBSCRIBERADMIN ".$subscriberadmins->[0]->{content}->{id}.":");
 
         diag("#------------------------ subscriberadmin: attempt to create subscriber using other customer-reseller:\n");
+<<<<<<< HEAD
+        my($res,$content) = $test_machine->check_item_post(sub {
+=======
         my($res,$content,$sub_create_attempt);
         $sub_create_attempt = $test_machine->check_create_correct(1,sub {
+>>>>>>> 4e37de4a8... profiles and  testing
             my $num = $_[1]->{i};
             my $uniq = Test::FakeData::seq;
             $_[0]->{webusername} = '43350_'.$uniq;
             $_[0]->{username} = '43350_'.$uniq;
             $_[0]->{pbx_extension} = '43350'.$uniq;
             $_[0]->{primary_number}->{ac} = '43350'.$uniq;
+<<<<<<< HEAD
+        }, $subscriber_other_reseller->{content});
+        $test_machine->http_code_msg(422, "subscriberadmin: create subscriber of other customer:",$res,$content,
+            "");
+        print Dumper $res;
+        ($res,$content) = $test_machine->request_get($subscriber_other_reseller->{location});
+        print Dumper $res;
+        $test_machine->http_code_msg(422, "subscriberadmin: view subscriber of other customer:",$res,$content,
+            "");
+=======
             $_[0]->{is_pbx_pilot} = 0;
             $_[0]->{administrative} = 1;
             delete $_[0]->{alias_numbers};
@@ -620,6 +634,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $test_machine->http_code_msg(404, "subscriberadmin: patch subscriber of other customer:",$res,$content,
                 "Entity 'subscriber' not found");
         }
+>>>>>>> 4e37de4a8... profiles and  testing
 
         #$test_machine_other->set_subscriber_credentials($subscriber_other->{content});
         #$test_machine_other->runas('subscriber');
