@@ -4,6 +4,8 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 use NGCP::Panel::Utils::Form qw();
 
+#e164 administrative timezone profile_set are absent in web ui
+
 has_field 'contract' => (
     type => '+NGCP::Panel::Field::CustomerContract',
     label => 'Customer',
@@ -102,6 +104,7 @@ has_field 'administrative' => (
     type => 'Boolean',
     label => 'Administrative',
     required => 0,
+    readonly => 1,
     element_attr => {
         rel => ['tooltip'],
         title => ['Whether the subscriber can configure other subscribers within his Customer account.']

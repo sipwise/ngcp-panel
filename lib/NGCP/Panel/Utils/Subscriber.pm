@@ -219,6 +219,15 @@ sub create_subscriber {
         $c->log->warn("invalid license status: $status");
         # die("invalid license status: $status");
     }
+    if ($c->user->roles eq "reseller") {
+        if ($contract->contact->reseller_id ne $c->user->reseller_id) {
+            die("invalid contract id '".$contract->id."'");
+        }
+    } elsif ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {#while we don't allow to create subscribers to subscriber role, of course
+        if ($contract->id ne $c->user->account_id) {
+            die("invalid contract id '".$contract->id."'");
+        }
+    }
 
     my ($profile_set, $profile);
     #as we don't allow to change customer (l. 624), so we shouldn't allow profile_set that belongs to other reseller
