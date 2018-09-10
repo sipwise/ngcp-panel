@@ -211,7 +211,7 @@ sub check_reload {
 
     return ($sip, $xmpp);
 }
-
+use Data::Dumper;
 sub validate_form {
     my ($self, %params) = @_;
 
@@ -221,6 +221,8 @@ sub validate_form {
     my $run = $params{run} // 1;
     my $form_params = $params{form_params} // {};
 
+    $c->log->debug("IN validate_form 1 -----------------------------------");
+    $c->log->debug(Dumper($resource->{alias_numbers}));
     my $exceptions = [
         grep {m/_id$/} map {"".$_->name} $form->fields
     ];
@@ -242,11 +244,19 @@ sub validate_form {
     foreach($form->fields){
         $fields{$_->name} = $_;
     }
+    $c->log->debug("IN validate_form 2 -----------------------------------");
+    $c->log->debug(Dumper($resource->{alias_numbers}));
     $self->validate_fields($c, $resource, \%fields, $run);
+    $c->log->debug("IN validate_form 3 -----------------------------------");
+    $c->log->debug(Dumper($resource->{alias_numbers}));
 
     if($run) {
         # check keys/vals
+    $c->log->debug("IN validate_form 4 -----------------------------------");
+    $c->log->debug(Dumper($resource->{alias_numbers}));
         $form->process(params => $resource, posted => 1, %{$form_params} );
+    $c->log->debug("IN validate_form 5 -----------------------------------");
+    $c->log->debug(Dumper($resource->{alias_numbers}));
         unless($form->validated) {
             my $e = join '; ', map {
                 my $in = (defined $_->input && ref $_->input eq 'HASH' && exists $_->input->{id}) ? $_->input->{id} : ($_->input // '');
@@ -262,6 +272,8 @@ sub validate_form {
     }
 
     # move {xxx}{id} back into {xxx_id} for DB
+    $c->log->debug("IN validate_form 6 -----------------------------------");
+    $c->log->debug(Dumper($resource->{alias_numbers}));
     foreach my $key(@normalized) {
         next unless(exists $resource->{$key});
         $resource->{$key . '_id'} = defined($resource->{$key}{id}) ?
@@ -269,6 +281,8 @@ sub validate_form {
             $resource->{$key}{id};
         delete $resource->{$key};
     }
+    $c->log->debug("IN validate_form 7 -----------------------------------");
+    $c->log->debug(Dumper($resource->{alias_numbers}));
 
     return 1;
 }
@@ -304,25 +318,43 @@ sub validate_fields {
                $fields->{$k}->$_isa('HTML::FormHandler::Field::Float')) &&
                (is_int($resource->{$k}) || is_decimal($resource->{$k})));
 
+    $c->log->debug("IN validate_fields 1 -----------------------------------");
+    $c->log->debug(Dumper([$k, $resource->{alias_numbers}]));
         if (defined $resource->{$k} &&
                 $fields->{$k}->$_isa('HTML::FormHandler::Field::Repeatable') &&
                 "ARRAY" eq ref $resource->{$k}) {
             my ($subfield_instance) = $fields->{$k}->fields;
+    $c->log->debug("IN validate_fields 2 -----------------------------------");
+    $c->log->debug(Dumper([$k, $resource->{alias_numbers}]));
             if ($subfield_instance) {
                 my %subfields = map { $_->name => $_ } $subfield_instance->fields;
                 for my $elem (@{ $resource->{$k} }) {
+    $c->log->debug("IN validate_fields 2.5 -----------------------------------");
+    $c->log->debug(Dumper([$k, [keys %subfields], $resource->{alias_numbers}]));
+    use irka;
+    irka::loglong([$k, $elem, [keys %subfields], $resource->{alias_numbers}]) if $k eq 'alias_numbers';
                     $self->validate_fields($c, $elem, \%subfields, $run);
                 }
             }
+    $c->log->debug("IN validate_fields 3 -----------------------------------");
+    $c->log->debug(Dumper([$k, $resource->{alias_numbers}]));
         }
+    $c->log->debug("IN validate_fields 4 -----------------------------------");
+    $c->log->debug(Dumper([$k, $resource->{alias_numbers}]));
         if (defined $resource->{$k} &&
                 $fields->{$k}->$_isa('HTML::FormHandler::Field::Compound') &&
                 "HASH" eq ref $resource->{$k}) {
             my @compound_subfields = $fields->{$k}->fields;
+    $c->log->debug("IN validate_fields 5 -----------------------------------");
+    $c->log->debug(Dumper([$k, $resource->{alias_numbers}]));
             if (@compound_subfields) {
+    $c->log->debug("IN validate_fields 6 -----------------------------------");
+    $c->log->debug(Dumper($resource->{alias_numbers}));
                 my %subfields = map { $_->name => $_ } @compound_subfields;
                 $self->validate_fields($c, $resource->{$k}, \%subfields, $run);
             }
+    $c->log->debug("IN validate_fields 7 -----------------------------------");
+    $c->log->debug(Dumper([$k, $resource->{alias_numbers}]));
         }
 
         # only do this for converting back from obj to hal
@@ -333,6 +365,8 @@ sub validate_fields {
                    $fields->{$k}->$_isa('HTML::FormHandler::Field::Boolean'));
         }
     }
+    $c->log->debug("IN validate_fields 8 -----------------------------------");
+    $c->log->debug(Dumper([join(",",keys %{ $resource }), $resource->{alias_numbers}]));
 
     return 1;
 }
