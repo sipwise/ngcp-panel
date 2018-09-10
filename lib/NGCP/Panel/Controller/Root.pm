@@ -26,7 +26,11 @@ __PACKAGE__->config(namespace => '');
 
 sub auto :Private {
     my($self, $c) = @_;
-
+    NGCP::Panel::Utils::Message::info(
+        c    => $c,
+        type => 'api_request',
+        log  => $c->request->params,
+    );
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");
         if($c->request->params->{lang} eq "en") {

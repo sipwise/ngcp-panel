@@ -329,7 +329,7 @@ sub GET :Allow {
     }
     return;
 }
-
+use Data::Dumper;
 sub POST :Allow {
     my ($self, $c) = @_;
 
@@ -349,6 +349,8 @@ sub POST :Allow {
         my $subscriber;
         my $customer = $r->{customer};
         my $alias_numbers = $r->{alias_numbers};
+            $c->log->debug("IN POST 1 ------------------------------");
+            $c->log->debug(Dumper($alias_numbers));
         my $preferences = $r->{preferences};
         my $groups = $r->{groups};
         my $groupmembers = $r->{groupmembers};
@@ -381,6 +383,10 @@ sub POST :Allow {
             } else {
                 NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
             }
+            use irka;
+            irka::loglong($alias_numbers);
+            $c->log->debug("IN POST 9 ------------------------------");
+            $c->log->debug(Dumper($alias_numbers));
             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                 c              => $c,
                 schema         => $schema,
