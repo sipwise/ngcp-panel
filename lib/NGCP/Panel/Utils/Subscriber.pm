@@ -1059,6 +1059,12 @@ sub update_subscriber_numbers {
                 $number = $old_number;
                 $old_cli = $old_number->cc . ($old_number->ac // '') . $old_number->sn;
             } else {
+                use irka;
+                irka::loglong($alias);
+                use Data::Dumper;
+                $c->log->debug(Dumper($alias));
+                use Carp qw/longmess/;
+                $c->log->debug(longmess());
                 $number = $schema->resultset('voip_numbers')->create({
                     cc            => $alias->{e164}->{cc},
                     ac            => $alias->{e164}->{ac} // '',
