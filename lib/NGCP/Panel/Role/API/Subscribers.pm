@@ -374,7 +374,7 @@ sub prepare_resource {
             $c->log->debug(Dumper($resource->{alias_numbers}));
 
     # this format is expected by NGCP::Panel::Utils::Subscriber::create_subscriber
-    $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
+    $resource->{alias_numbers} = [ map {! exists $_->{e164} ? { e164 => $_ } : $_ } @{ $resource->{alias_numbers} // [] } ];
 
     unless($domain) {
         $domain = $c->model('DB')->resultset('domains')->search({'me.id' => $resource->{domain_id}});
