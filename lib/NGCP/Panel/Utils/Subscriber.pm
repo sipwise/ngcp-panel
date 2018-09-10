@@ -502,6 +502,15 @@ sub check_profile_set_and_profile {
     }
     if ($resource->{profile_set}{id}) {
         $profile_set = $profile_set_rs->find($resource->{profile_set}{id});
+    use Data::Dumper;
+    $c->log->debug(Dumper([
+        "1. before profile_set checking"
+        ,"profile input:".($resource->{profile}{id}?$resource->{profile}{id}:"undefined").";"
+        ,"profile_set input:".($resource->{profile_set}{id}?$resource->{profile_set}{id}:"undefined").";"
+        ,"profile_set found:".($profile_set?$profile_set->id:"undefined").";"
+        ,"pilot profile_set:".(($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set)?$c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set->id:"undefined").";"
+        ,"previouse profile_set:".($prov_subscriber && $prov_subscriber->voip_subscriber_profile_set?$prov_subscriber->voip_subscriber_profile_set->id:"undefined").";"
+    ]));
         unless($profile_set) {
             return {
                 error         => "invalid subscriber profile set id '" . $resource->{profile_set}{id} . "'",
@@ -537,17 +546,50 @@ sub check_profile_set_and_profile {
             $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
         }
     }
+    use Data::Dumper;
+    $c->log->debug(Dumper([
+        "1.5. before profile checking"
+        ,"profile input:".($resource->{profile}{id}?$resource->{profile}{id}:"undefined").";"
+        ,"profile found:".($profile?$profile->id:"undefined").";"
+        ,"profile_set input:".($resource->{profile_set}{id}?$resource->{profile_set}{id}:"undefined").";"
+        ,"profile_set found:".($profile_set?$profile_set->id:"undefined").";"
+        ,"pilot profile_set:".(($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set)?$c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set->id:"undefined").";"
+        ,"previouse profile_set:".($prov_subscriber && $prov_subscriber->voip_subscriber_profile_set?$prov_subscriber->voip_subscriber_profile_set->id:"undefined").";"
+    ]));
 
     if($profile_set && $resource->{profile}{id}) {
         $profile = $profile_set->voip_subscriber_profiles->find({
             id => $resource->{profile}{id},
         });
     }
+    use Data::Dumper;
+    $c->log->debug(Dumper([
+        "1.7. before profile checking"
+        ,"profile input:".($resource->{profile}{id}?$resource->{profile}{id}:"undefined").";"
+        ,"profile found:".($profile?$profile->id:"undefined").";"
+        ,"profile_set input:".($resource->{profile_set}{id}?$resource->{profile_set}{id}:"undefined").";"
+        ,"profile_set found:".($profile_set?$profile_set->id:"undefined").";"
+        ,"pilot profile_set:".(($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set)?$c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set->id:"undefined").";"
+        ,"previouse profile_set:".($prov_subscriber && $prov_subscriber->voip_subscriber_profile_set?$prov_subscriber->voip_subscriber_profile_set->id:"undefined").";"
+    ]));
+
     if($profile_set && !$profile) {
         $profile = $profile_set->voip_subscriber_profiles->find({
             set_default => 1,
         });
     }
+    use Data::Dumper;
+    $c->log->debug(Dumper([
+        "2. before profile checking"
+        ,"profile package:".$profile
+        ,"profile input:".($resource->{profile}{id}?$resource->{profile}{id}:"undefined").";"
+        ,"profile found:".($profile?$profile->id:"undefined").";"
+        ,"profile_set of profile found:".($profile?$profile->set_id:"undefined").";"
+        ,"profile_set input:".($resource->{profile_set}{id}?$resource->{profile_set}{id}:"undefined").";"
+        ,"profile_set found:".($profile_set?$profile_set->id:"undefined").";"
+        ,"pilot profile_set:".(($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set)?$c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set->id:"undefined").";"
+        ,"previouse profile_set:".($prov_subscriber && $prov_subscriber->voip_subscriber_profile_set?$prov_subscriber->voip_subscriber_profile_set->id:"undefined").";"
+    ]));
     if ($resource->{profile}{id}) {
         if (!$profile || ($resource->{profile}{id} && $resource->{profile}{id} != $profile->id)) {
             return {
@@ -1080,6 +1122,12 @@ sub update_subscriber_numbers {
                 $number = $old_number;
                 $old_cli = $old_number->cc . ($old_number->ac // '') . $old_number->sn;
             } else {
+                use irka;
+                irka::loglong($alias);
+                use Data::Dumper;
+                $c->log->debug(Dumper($alias));
+                use Carp qw/longmess/;
+                $c->log->debug(longmess());
                 $number = $schema->resultset('voip_numbers')->create({
                     cc            => $alias->{e164}->{cc},
                     ac            => $alias->{e164}->{ac} // '',
