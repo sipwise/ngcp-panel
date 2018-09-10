@@ -187,6 +187,7 @@ has_block 'fields' => (
     class => [qw/modal-body/],
     #render_list => [qw/display_name webusername webpassword username password status external_id profile_set timezone profile/ ],
     render_list => [qw/e164 display_name email webusername webpassword username password administrative lock status timezone profile_set profile/ ],
+    #group_select alias_select pbx_extension display_name email webusername webpassword username password lock status profile
 );
 
 has_block 'actions' => (

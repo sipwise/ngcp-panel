@@ -17,6 +17,7 @@ use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime;
+use Data::Dumper;
 
 sub resource_name{
     return 'subscribers';
@@ -361,12 +362,16 @@ sub prepare_resource {
         }
     }
 
+            $c->log->debug("IN PREPARE_RESOURCE 0.9 ------------------------------");
+            $c->log->debug(Dumper($resource->{alias_numbers}));
     my ($form) = $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
         resource => $resource,
         form => $form,
     );
+            $c->log->debug("IN PREPARE_RESOURCE 1 ------------------------------");
+            $c->log->debug(Dumper($resource->{alias_numbers}));
 
     # this format is expected by NGCP::Panel::Utils::Subscriber::create_subscriber
     $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
@@ -542,7 +547,6 @@ sub prepare_resource {
     if(defined $customer->external_id) {
         $preferences->{ext_contract_id} = $customer->external_id;
     }
-
     my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
         username => $resource->{username},
         domain_id => $resource->{domain_id},
