@@ -2696,7 +2696,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin", $c);
             } else {
                 $is_admin = 1;
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit", $c);
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriber", $c);
+                $form->field('username')->inactive(1);
             }
             $pbx_ext = 1;
         }
