@@ -363,6 +363,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 foreach(qw/contact billing_profile/){
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
@@ -503,6 +504,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 foreach(qw/contact billing_profile/){
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
