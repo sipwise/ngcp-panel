@@ -131,6 +131,7 @@ sub GET :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $schema = $c->model('DB');
