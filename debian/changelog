@@ -1,3 +1,12 @@
+ngcp-panel (1.14.10.1+0~mr4.5.10.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [027a4be] TT#42776 contract_id lookup for /customers/?external_id=123
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 12 Sep 2018 14:38:18 +0200
+
 ngcp-panel (1.14.10.0+0~mr4.5.10.0) unstable; urgency=medium
 
   * New release.
