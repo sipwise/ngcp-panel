@@ -729,7 +729,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             if($c->user->roles eq "subscriberadmin") {
                 $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin", $c);
             } else {
-                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriber", $c);
+                #1 means here that we will recreate form. For edit we disabled password field
+                #Here we will get newly created form with all original fields
+                $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriber", $c, 1);
             }
             NGCP::Panel::Utils::Subscriber::prepare_alias_select(
                 c => $c,
