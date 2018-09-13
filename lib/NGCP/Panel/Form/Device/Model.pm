@@ -457,7 +457,7 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
-sub field_list {
+sub update_fields {
     my ($self) = @_;
 
     my $c = $self->ctx;

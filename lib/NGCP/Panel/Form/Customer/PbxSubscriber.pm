@@ -196,7 +196,7 @@ has_block 'actions' => (
 );
 
 
-sub field_list {
+sub update_fields {
     my ($self) = @_;
 
     my $c = $self->ctx;
