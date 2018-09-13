@@ -20,7 +20,8 @@ has_block 'fields' => (
     render_list => [qw/group_select alias_select pbx_extension display_name email webusername webpassword username password lock status profile/ ],
 );
 
-sub field_list {
+sub update_fields {
+#IMPORTANT! redefined sub update_fields with no super call disable call of the update_field_list and defaults methods
     my $self = shift;
     my $c = $self->ctx;
     return unless $c;

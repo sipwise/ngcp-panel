@@ -21,7 +21,8 @@ has_block 'fields' => (
     render_list => [qw/pbx_extension pbx_hunt_policy pbx_hunt_timeout alias_select/],
 );
 
-sub field_list {
+sub update_fields {
+#IMPORTANT! redefined sub update_fields with no super call disable call of the update_field_list and defaults methods
     my ($self) = @_;
 
     my $c = $self->ctx;
