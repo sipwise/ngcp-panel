@@ -2351,9 +2351,10 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
     my $form; my $pbx_ext; my $is_admin; my $subadmin_pbx;
+    my $is_pbx_customer = $c->stash->{billing_mapping}->product->class eq "pbxaccount";
     my $base_number;
 
-    if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
+    if($is_pbx_customer) {
         $c->stash(customer_id => $subscriber->contract->id);
         if($subscriber->provisioning_voip_subscriber->is_pbx_pilot) {
             if($c->user->roles eq 'subscriberadmin') {
@@ -2380,7 +2381,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         if($c->user->roles eq 'subscriberadmin') {
             $subadmin_pbx = 1;
             $c->stash(customer_id => $subscriber->contract->id);
-            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup", $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Customer::SubscriberEditSubadmin", $c);
         } else {
             $form = NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberEdit", $c);
             $is_admin = 1;
@@ -2649,7 +2650,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
                         exists $form->params->{e164} ? (primary_number => $form->params->{e164}) : (),
-                        $subadmin_pbx && $prov_subscriber->admin ? () : (alias_numbers  => $form->values->{alias_number}),
+                        $is_pbx_customer && $subadmin_pbx && $prov_subscriber->admin
+                            ? ()
+                            : (alias_numbers  => $form->values->{alias_number}),
                     );
 
                     # update the primary number and the cloud_pbx_base_cli pref for all other subscribers
