@@ -5,10 +5,6 @@ extends 'HTML::FormHandler';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
-use NGCP::Panel::Field::Domain;
-use NGCP::Panel::Field::CustomerContract;
-use NGCP::Panel::Field::Reseller;
-use NGCP::Panel::Field::PosInteger;
 use NGCP::Panel::Utils::Form;
 
 with 'NGCP::Panel::Render::RepeatableJs';
