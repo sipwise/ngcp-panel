@@ -8,6 +8,37 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use List::Util qw/first/;
 use Scalar::Util qw/blessed/;
 
+sub _resolve_joins {
+
+    my ($rs, $cols, $aggregate_cols) = @_;
+    for my $col(@{ $cols }) {
+        if ($col->{show_total}) {
+            push(@$aggregate_cols, $col) if defined $aggregate_cols;
+        }
+        my @parts = split /\./, $col->{name};
+        if($col->{literal_sql}) {
+            $rs = $rs->search_rs(undef, {
+                $col->{join} ? ( join => $col->{join} ) : (),
+                $col->{no_column} ? () : (
+                    '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor}  },
+                    '+as' => [ $col->{accessor} ],
+                )
+            });
+        } elsif( @parts > 1 ) {
+            my $join = $parts[$#parts-1];
+            foreach my $table(reverse @parts[0..($#parts-2)]){
+                $join = { $table => $join };
+            }
+            $rs = $rs->search_rs(undef, {
+                join => $join,
+                '+select' => [ $parts[($#parts-1)].'.'.$parts[$#parts] ],
+                '+as' => [ $col->{accessor} ],
+            });
+        }
+    }
+
+}
+
 sub process {
     my ($c, $rs, $cols, $row_func, $params) = @_;
 
@@ -28,33 +59,7 @@ sub process {
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
     set_columns($c, $cols);
-    unless ($use_rs_cb) {
-        for my $col(@{ $cols }) {
-            if ($col->{show_total}) {
-                push @$aggregate_cols, $col;
-            }
-            my @parts = split /\./, $col->{name};
-            if($col->{literal_sql}) {
-                $rs = $rs->search_rs(undef, {
-                    $col->{join} ? ( join => $col->{join} ) : (),
-                    $col->{no_column} ? () : (
-                        '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor}  },
-                        '+as' => [ $col->{accessor} ],
-                    )
-                });
-            } elsif( @parts > 1 ) {
-                my $join = $parts[$#parts-1];
-                foreach my $table(reverse @parts[0..($#parts-2)]){
-                    $join = { $table => $join };
-                }
-                $rs = $rs->search_rs(undef, {
-                    join => $join,
-                    '+select' => [ $parts[($#parts-1)].'.'.$parts[$#parts] ],
-                    '+as' => [ $col->{accessor} ],
-                });
-            }
-        }
-    }
+    _resolve_joins($rs,$cols,$aggregate_cols) if (!$use_rs_cb);
     #all joins already implemented, and filters aren't applied. But count we will take only if there are search and no other aggregations
     my $totalRecords_rs = $rs;
     #= $use_rs_cb ? 0 : $rs->count;
@@ -145,6 +150,8 @@ sub process {
     }
     ### /Search processing section
 
+    ($displayRecords, $displayRecordCountClipped, my $is_set_operations) = get_count_safe($c,$rs,$params) if(!$use_rs_cb);
+    $aggregate_cols = [] if $displayRecordCountClipped;
     if(@$aggregate_cols){
         my(@select, @as);
         if(!$use_rs_cb){
@@ -163,6 +170,7 @@ sub process {
         if(my $row = $aggregate_rs->first){
             if(!$use_rs_cb){
                 $displayRecords = $row->get_column('count');
+                $displayRecordCountClipped = 0;
             }
             foreach my $col (@$aggregate_cols){
                 $aggregations->{$col->{accessor}} = $row->get_column($col->{accessor});
@@ -176,17 +184,20 @@ sub process {
     if (!$use_rs_cb) {
         if (@searchColumns) {
             ($totalRecords, $totalRecordCountClipped) = get_count_safe($c,$totalRecords_rs,$params);
-            if (!@$aggregate_cols) {
-                ($displayRecords, $displayRecordCountClipped) = get_count_safe($c,$rs,$params);
-            }
+            #if (!@$aggregate_cols) {
+            #    ($displayRecords, $displayRecordCountClipped) = get_count_safe($c,$rs,$params);
+            #}
         } else {
-            if (@$aggregate_cols) {
-                $totalRecords = $displayRecords;
-            } elsif (!@$aggregate_cols) {
-                ($totalRecords, $totalRecordCountClipped) = get_count_safe($c,$totalRecords_rs,$params);
-                $displayRecords = $totalRecords;
-                $displayRecordCountClipped = $totalRecordCountClipped;
-            }
+            $totalRecords = $displayRecords;
+            $totalRecordCountClipped = $displayRecordCountClipped;
+            #if (@$aggregate_cols) {
+            #    $totalRecords = $displayRecords;
+            #    $totalRecordCountClipped = $displayRecordCountClipped;
+            #} else {
+            #    ($totalRecords, $totalRecordCountClipped) = get_count_safe($c,$totalRecords_rs,$params);
+            #    $displayRecords = $totalRecords;
+            #    $displayRecordCountClipped = $totalRecordCountClipped;
+            #}
         }
     }
 
@@ -242,9 +253,32 @@ sub process {
     } else {
         if(defined $pageStart && defined $pageSize && $pageSize > 0) {
             $rs = $rs->search(undef, {
-                offset => $pageStart,
-                rows => $pageSize,
-            });
+                    offset => $pageStart,
+                    rows => $pageSize,
+                });
+            if ($is_set_operations and $displayRecordCountClipped) {
+                my ($stmt, @bind_vals) = @{${$rs->as_query}};
+                ($is_set_operations,$stmt) = _limit_set_queries($stmt,sub {
+                    my $part_stmt = shift;
+                    return $part_stmt . ' limit ' . $params->{count_limit};
+                });
+                @bind_vals = map { $_->[1]; } @bind_vals;
+                #https://metacpan.org/source/FREW/DBIx-Class-Helpers-2.033004/lib/DBIx/Class/Helper/ResultSet/SetOperations.pm
+                my $attr = $rs->_resolved_attrs;
+                $rs = $rs->result_source->resultset->search(undef, {
+                   alias => $rs->current_source_alias,
+                   from => [{
+                      $rs->current_source_alias => \[ $stmt, @bind_vals ],
+                      -alias                      => $rs->current_source_alias,
+                      -source_handle              => $rs->result_source->handle,
+                   }],
+                   columns => $attr->{as},
+                   #select => $attr->{select},
+                   #as => $attr->{as},
+                   result_class => $rs->result_class,
+                });
+                _resolve_joins($rs,$cols);
+            }
         }
     }
 
@@ -265,14 +299,117 @@ sub process {
 
 }
 
+sub _limit_set_queries {
+    my ($stmt,$sub) = @_;
+    return (undef,$stmt) unless $sub;
+    #simple lexer for parsing sql stmts with a single level of set operations.
+    #caveat: set operator names must not appear in colnames, table names, literals etc.
+    my $set_operation_re = "union\\s+distinct|union\\s+all|union|intersect|except";
+    my @frags = split(/\s($set_operation_re)\s/i,$stmt, -1);
+    return (0,$stmt) unless (scalar @frags) > 1;
+    my @frags_rebuilt = ();
+
+    my ($preamble,$postamble) = (undef,undef);
+    foreach my $frag (@frags) {
+        if ($frag =~ /$set_operation_re/i) {
+            push(@frags_rebuilt,$&);
+        } else {
+            my $set_stmt = $frag;
+            $set_stmt =~ s/\s+$//g;
+            $set_stmt =~ s/^\s+//g;
+            my $last = (((scalar @frags) - (scalar @frags_rebuilt)) == 1 ? 1 : 0);
+            my $first = ((scalar @frags_rebuilt) == 0 ? 1 : 0);
+            my $quoted = 0;
+            my $depth = 0;
+            my ($left_parenthesis_count,$right_parenthesis_count) = (0,0);
+            my $rebuilt = '';
+            my $balanced;
+            if ($last) {
+                for (my $i = 0; $i < length($set_stmt); $i++) {
+                    my $char = substr($set_stmt, $i, 1);
+                    my $escape = substr($set_stmt, $i, 2);
+                    if ($escape eq '\\\\' or $escape eq '\\"' or $escape eq "\\'") {
+                        $rebuilt .= $escape;
+                        $i++;
+                    } else {
+                        $rebuilt .= $char;
+                        if ($char eq "'" or $char eq '"') {
+                            $quoted = ($quoted ? 0 : 1);
+                        } elsif (not $quoted and $char eq ')') {
+                            $depth--;
+                            $right_parenthesis_count++;
+                        } elsif (not $quoted and $char eq '(') {
+                            $depth++;
+                            $left_parenthesis_count++;
+                        }
+                    }
+                    if ($left_parenthesis_count == $right_parenthesis_count and $depth == 0) {
+                        $balanced = $rebuilt;
+                    }
+                }
+                $postamble = substr($set_stmt,length($balanced));
+            } else {
+                for (my $i = length($set_stmt) - 1; $i >= 0; $i--) {
+                    my $char = substr($set_stmt, $i, 1);
+                    my $escape = substr($set_stmt, $i - 1, 2);
+                    if ($escape eq '\\\\' or $escape eq '\\"' or $escape eq "\\'") {
+                        $rebuilt = $escape . $rebuilt;
+                        $i--;
+                    } else {
+                        $rebuilt = $char . $rebuilt;
+                        if ($char eq "'" or $char eq '"') {
+                            $quoted = ($quoted ? 0 : 1);
+                        } elsif (not $quoted and $char eq ')') {
+                            $depth--;
+                            $right_parenthesis_count++;
+                        } elsif (not $quoted and $char eq '(') {
+                            $depth++;
+                            $left_parenthesis_count++;
+                        }
+                    }
+                    if ($left_parenthesis_count == $right_parenthesis_count and $depth == 0) {
+                        $balanced = $rebuilt;
+                        last if ($first and 'select' eq lc(substr($balanced,0,6)));
+                    }
+                }
+                if ($first) {
+                    $preamble = substr($set_stmt,0, length($set_stmt) - length($balanced));
+                }
+            }
+            #normalize outer parentheses for easier handling in $sub:
+            while ($balanced =~ /^\s*\(\s*/g and $balanced =~ /\s*\)\s*$/g) {
+                $balanced =~ s/^\s*\(\s*//g;
+                $balanced =~ s/\s*\)\s*$//g;
+            }
+            $balanced = &$sub($balanced);
+            push(@frags_rebuilt,'(' . $balanced . ')');
+        }
+    }
+    unshift(@frags_rebuilt,$preamble) if $preamble;
+    push(@frags_rebuilt,$postamble) if $postamble;
+
+    #my $i=0;
+    #print(join("\n",map { $i++;$i.'. '.$_; } @frags_rebuilt));
+    return (1,join(' ',@frags_rebuilt));
+
+}
+
 sub get_count_safe {
     my ($c,$rs,$params) = @_;
     my $count_limit = $params->{count_limit};
     #$count_limit = 12;
+    use Data::Dumper;
+    $c->log->debug("count_limit: $count_limit " . Dumper($params));
+    my $is_set_operations;
     if ($c and defined $count_limit and $count_limit > 0) {
         my ($count_clipped) = $c->model('DB')->storage->dbh_do(sub {
             my ($storage, $dbh, $stmt, @bind_vals) = @_;
+            ($is_set_operations,$stmt) = _limit_set_queries($stmt,sub {
+                my $part_stmt = shift;
+                return $part_stmt . ' limit ' . $count_limit;
+            });
             @bind_vals = map { $_->[1]; } @bind_vals;
+            $c->log->debug("stmt: " . $stmt);
             $c->log->debug("bind: " . join(",",@bind_vals));
             return $dbh->selectrow_array("select count(1) from ($stmt) as query_clipped",undef,@bind_vals);
         },@{${$rs->search_rs(undef,{
@@ -283,12 +420,13 @@ sub get_count_safe {
         })->as_query}});
         if ($count_clipped > $count_limit) {
             $c->log->debug("result count clipped");
-            return ($count_limit,1);
+            return ($count_limit,1,$is_set_operations);
         } else {
-            return ($count_clipped,0);
+            $c->log->debug("result count not clipped");
+            return ($count_clipped,0,$is_set_operations);
         }
     } else {
-        return ($rs->count,0);
+        return ($rs->count,0,$is_set_operations);
     }
 }
 
