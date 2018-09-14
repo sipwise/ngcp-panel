@@ -7,10 +7,10 @@ extends 'HTML::FormHandler::Field::Compound';
 
 has_field 'cc' => (
     type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        class => ['ngcp_e164_cc'], 
-        rel => ['tooltip'], 
-        title => ['Country Code, e.g. 1 for US or 43 for Austria'] 
+    element_attr => {
+        class => ['ngcp_e164_cc'],
+        rel => ['tooltip'],
+        title => ['Country Code, e.g. 1 for US or 43 for Austria']
     },
     do_label => 0,
     do_wrapper => 0,
@@ -19,10 +19,10 @@ has_field 'cc' => (
 
 has_field 'ac' => (
     type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        class => ['ngcp_e164_ac'], 
-        rel => ['tooltip'], 
-        title => ['Area Code, e.g. 212 for NYC or 1 for Vienna'] 
+    element_attr => {
+        class => ['ngcp_e164_ac'],
+        rel => ['tooltip'],
+        title => ['Area Code, e.g. 212 for NYC or 1 for Vienna']
     },
     do_label => 0,
     do_wrapper => 0,
@@ -31,10 +31,10 @@ has_field 'ac' => (
 
 has_field 'sn' => (
     type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        class => ['ngcp_e164_sn'], 
-        rel => ['tooltip'], 
-        title => ['Subscriber Number, e.g. 12345678'] 
+    element_attr => {
+        class => ['ngcp_e164_sn'],
+        rel => ['tooltip'],
+        title => ['Subscriber Number, e.g. 12345678']
     },
     do_label => 0,
     do_wrapper => 0,
@@ -50,7 +50,7 @@ sub validate {
     my $sn = $self->field('sn')->value;
 
     my @sub_fields = (qw/cc ac sn/);
-    my %sub_errors = 
+    my %sub_errors =
         map { $_ => 1 }
             map { ($self->field($_) && $self->field($_)->result ) ? @{$self->field($_)->errors} : () } 
                 @sub_fields;
