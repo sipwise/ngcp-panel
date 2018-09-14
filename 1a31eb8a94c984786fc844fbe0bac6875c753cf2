@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_6169988b",
+        "filename": "lib/NGCP/Panel/Form/Customer/SubscriberEditSubadmin.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-14T08:17:48Z",
+      "side": 1,
+      "message": "this is unconditional - can we just don\u0027t list them in the fields?",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 41
+      },
+      "revId": "1a31eb8a94c984786fc844fbe0bac6875c753cf2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
