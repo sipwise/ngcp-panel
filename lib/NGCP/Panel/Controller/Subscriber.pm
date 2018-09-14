@@ -2619,22 +2619,23 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
         $c->stash->{callid} = decode_base64url($c->stash->{callid_enc});
     }
     my $call_cols = [
-        { name => "id", title => $c->loc('#')  },
-        { name => "direction", search => 1, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")' },
-        { name => "source_user", search => 1, title => $c->loc('Caller') },
-        { name => "destination_user", search => 1, title => $c->loc('Callee') },
+        # NO SEARCH FOR UNINDEXED COLUMNS !!!
+        { name => "id", title => $c->loc('#'), convert_code => sub { return shift . "%"; }, },
+        { name => "direction", search => 0, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")', },
+        { name => "source_user", search => 1, title => $c->loc('Caller'), convert_code => sub { return shift . "%"; }, },
+        { name => "destination_user", search => 1, title => $c->loc('Callee'), convert_code => sub { return shift . "%"; }, },
         { name => "clir", search => 0, title => $c->loc('CLIR') },
-        { name => "source_customer_billing_zones_history.detail", search => 1, title => $c->loc('Billing zone') },
-        { name => "call_status", search => 1, title => $c->loc('Status') },
+        { name => "source_customer_billing_zones_history.detail", search => 0, title => $c->loc('Billing zone'), }, #convert_code => sub { return shift . "%"; }, },
+        { name => "call_status", search => 0, title => $c->loc('Status') },
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
-        { name => "duration", search => 1, title => $c->loc('Duration'), show_total => 'sum' },
+        { name => "duration", search => 0, title => $c->loc('Duration'), show_total => 'sum' },
         { name => "cdr_mos_data.mos_average", search => 0, title => $c->loc('MOS avg') },
         { name => "cdr_mos_data.mos_average_packetloss", search => 0, title => $c->loc('MOS packetloss') },
         { name => "cdr_mos_data.mos_average_jitter", search => 0, title => $c->loc('MOS jitter') },
         { name => "cdr_mos_data.mos_average_roundtrip", search => 0, title => $c->loc('MOS roundtrip')  },
     ];
     push @{ $call_cols }, (
-        { name => "call_id", search => 1, title => $c->loc('Call-ID') },
+        { name => "call_id", search => 1, title => $c->loc('Call-ID'), convert_code => sub { return shift . "%"; }, },
     ) if($c->user->roles eq "admin" || $c->user->roles eq "reseller");
 
     my $vat_factor = $c->config->{appearance}{cdr_apply_vat} && $c->stash->{subscriber}->contract->add_vat
@@ -2643,7 +2644,7 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
     $c->log->debug("using vat_factor '$vat_factor'");
 
     push @{ $call_cols }, (
-        { name => "total_customer_cost", search => 1, title => $c->loc('Cost'), show_total => 'sum',
+        { name => "total_customer_cost", search => 0, title => $c->loc('Cost'), show_total => 'sum',
             literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", source_customer_cost, destination_customer_cost)'.$vat_factor },
     ) ;
     $c->stash->{calls_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $call_cols);
@@ -3852,7 +3853,9 @@ sub _process_calls_rows {
             $data{clir} = $resource->{clir};
             $data{duration} = (defined $result->duration ? sprintf("%.2f s", $result->duration) : "");
             $data{duration} = (defined $result->duration ? NGCP::Panel::Utils::DateTime::sec_to_hms($c,$result->duration,3) : "");
+            eval {
             $data{total_customer_cost} = (defined $result->get_column('total_customer_cost') ? sprintf("%.2f", $result->get_column('total_customer_cost') / 100.0) : "");
+            };
             $data{call_id_url} = encode_base64url($resource->{call_id});
             return %data;
         },
@@ -3880,6 +3883,9 @@ sub ajax_calls :Chained('calllist_master') :PathPart('list/ajax') :Args(0) {
         source_user_id => { '!=' => $c->stash->{subscriber}->uuid },
         ($callid ? (call_id => $callid) : ()),
     }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
+
+    $out_rs = NGCP::Panel::Utils::Datatables::apply_dt_joins_filters($c, $out_rs, $c->stash->{calls_dt_columns});
+    $in_rs = NGCP::Panel::Utils::Datatables::apply_dt_joins_filters($c, $in_rs, $c->stash->{calls_dt_columns});
     my $rs = $out_rs->union_all($in_rs);
 
     _process_calls_rows($c,$rs);
