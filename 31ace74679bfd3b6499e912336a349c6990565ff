@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_cace1983",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 2626,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-09-18T10:58:45Z",
+      "side": 1,
+      "message": "search by users should be possible with \u0027%12345%\u0027 otherwise it provides with a huge impact and a limiting factor for existing customers.",
+      "range": {
+        "startLine": 2625,
+        "startChar": 19,
+        "endLine": 2626,
+        "endChar": 38
+      },
+      "revId": "31ace74679bfd3b6499e912336a349c6990565ff",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_aacbd571",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 2638,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-09-18T10:58:45Z",
+      "side": 1,
+      "message": "same for callids I think",
+      "range": {
+        "startLine": 2638,
+        "startChar": 19,
+        "endLine": 2638,
+        "endChar": 70
+      },
+      "revId": "31ace74679bfd3b6499e912336a349c6990565ff",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
