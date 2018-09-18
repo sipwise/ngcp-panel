@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_8a77f101",
+        "filename": "share/templates/api/swaggerui.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-09-18T13:36:23Z",
+      "side": 1,
+      "message": ":D",
+      "range": {
+        "startLine": 14,
+        "startChar": 23,
+        "endLine": 14,
+        "endChar": 50
+      },
+      "revId": "b2e570005b7bb8ee31d2fa63ab3887df025cc3b8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
