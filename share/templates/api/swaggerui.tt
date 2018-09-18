@@ -10,6 +10,19 @@
         <!-- link rel="stylesheet" type="text/css" href="/static/js/swaggerui/swagger-own.css" -->
     </head>
 <body>
+
+[% UNLESS c.req.params.iamverysureallowdestructive %]
+<style>
+/* disable the try it out buttons */
+.opblock-post   button.btn.try-out__btn,
+.opblock-put    button.btn.try-out__btn,
+.opblock-patch  button.btn.try-out__btn,
+.opblock-delete button.btn.try-out__btn {
+     display: none;
+}
+</style>
+[% END %]
+
 [%
     chapters = [
         { level = 2,    id = 'intro',         title = 'Introduction',                                   },

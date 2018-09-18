@@ -67,11 +67,6 @@
      font-size: 12px;
 }
 
-/* disable the try it out buttons
-button.btn.try-out__btn {
-     display: none;
-}
-*/
 
 /* own additions: remove servers view */
  .swagger-ui .global-server-container {
