@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <title>Sipwise NGCP HTTP API documentation</title>
+        <title>Sipwise NGCP HTTP API documentation (version 1)</title>
         <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"></link>
         <link rel="stylesheet" href="/css/font-opensans.css"></link>
         <link rel="stylesheet" href="/css/font-awesome.css"></link>
@@ -59,8 +59,9 @@
     END;
     chapters.push({ level = 2,    id = 'definitions',   title = 'Definitions' });
 -%]
-    <h1>Sipwise NGCP HTTP API Documentation</h1>
+    <h1>Sipwise NGCP HTTP API Documentation (version 1)</h1>
     <div class="content">
+    See the <a href="/api/">new API documentation (version 2; Swagger) here</a>.
     <div class="chapter">
     <h2 class="nocount">Table of Contents</h2>
     <nav>
