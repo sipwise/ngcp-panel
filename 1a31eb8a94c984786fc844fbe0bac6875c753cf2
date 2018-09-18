@@ -22,6 +22,30 @@
       "revId": "1a31eb8a94c984786fc844fbe0bac6875c753cf2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_8a4b7159",
+        "filename": "lib/NGCP/Panel/Form/Customer/SubscriberEditSubadmin.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2018-09-18T07:50:34Z",
+      "side": 1,
+      "message": "As far as I know, the problem is, when they are required, that the validation fails. But I can try again.",
+      "parentUuid": "9af37de9_6169988b",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 41
+      },
+      "revId": "1a31eb8a94c984786fc844fbe0bac6875c753cf2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
