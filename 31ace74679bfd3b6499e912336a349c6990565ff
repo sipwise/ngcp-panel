@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_8a76d13c",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 7
+      },
+      "lineNbr": 2626,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-18T11:33:10Z",
+      "side": 1,
+      "message": "And I would use more configuration parameter here, instead of direct code. This code with high probability will be the same for all columns with this type of optimization. Keeping it wrapped in datatables will give us more control in future. convert_code in the same time is really good for really unique cases.",
+      "range": {
+        "startLine": 2626,
+        "startChar": 79,
+        "endLine": 2626,
+        "endChar": 122
+      },
+      "revId": "31ace74679bfd3b6499e912336a349c6990565ff",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_aacbd571",
         "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
         "patchSetId": 7
