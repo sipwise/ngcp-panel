@@ -54,7 +54,18 @@ sub auto :Private {
 sub GET : Allow {
     my ($self, $c) = @_;
 
-    if ($c->req->params->{swaggerui}) {
+    my $response_type;
+    if ($c->req->params->{swagger}) {
+        $response_type = 'swagger';
+    } elsif ($c->req->header('Accept') && $c->req->header('Accept') eq 'application/json') {
+        $response_type = 'plain_json';
+    } elsif ($c->req->params->{oldapidoc}) {
+        $response_type = 'oldapidoc';
+    } else {
+        $response_type = 'swaggerui';
+    }
+
+    if ($response_type eq 'swaggerui') {
         $c->detach('swaggerui');
     }
 
@@ -224,7 +235,7 @@ sub GET : Allow {
         $c->stash(is_admin_api => 1);
     }
 
-    if($c->req->header('Accept') && $c->req->header('Accept') eq 'application/json') {
+    if ($response_type eq 'plain_json') {
         my $body = {};
         foreach my $rel(sort keys %{ $c->stash->{collections} }) {
             my $r = $c->stash->{collections}->{$rel};
@@ -242,9 +253,9 @@ sub GET : Allow {
             Content_Language => 'en',
             Content_Type => 'application/json',
         ));
-    } elsif ($c->req->params->{swagger}) {
+    } elsif ($response_type eq 'swagger') {
         $c->detach('swagger');
-    } else {
+    } elsif ($response_type eq 'oldapidoc') {
         $c->stash(template => 'api/root.tt');
         $c->forward($c->view);
         $c->response->headers(HTTP::Headers->new(
@@ -252,6 +263,8 @@ sub GET : Allow {
             Content_Type => 'application/xhtml+xml',
             #$self->collections_link_headers,
         ));
+    } else {
+        die 'This should never happen.';
     }
 
     return;
