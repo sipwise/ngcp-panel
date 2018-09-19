@@ -6,7 +6,7 @@ extends 'HTML::FormHandler::Field::Compound';
 #has 'label' => ( default => 'E164 Number');
 
 has_field 'cc' => (
-    type => '+NGCP::Panel::Field::PosInteger',
+    type => 'Text',
     element_attr => { 
         class => ['ngcp_e164_cc'], 
         rel => ['tooltip'], 
@@ -17,7 +17,7 @@ has_field 'cc' => (
 );
 
 has_field 'ac' => (
-    type => '+NGCP::Panel::Field::PosInteger',
+    type => 'Text',
     element_attr => { 
         class => ['ngcp_e164_ac'], 
         rel => ['tooltip'], 
@@ -28,7 +28,7 @@ has_field 'ac' => (
 );
 
 has_field 'snbase' => (
-    type => '+NGCP::Panel::Field::PosInteger',
+    type => 'Text',
     element_attr => { 
         class => ['ngcp_e164_snbase'], 
         rel => ['tooltip'], 
