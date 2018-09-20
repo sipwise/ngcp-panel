@@ -46,6 +46,30 @@
       "revId": "49e9e49b7463f97bc961bc45c159e0289bfe0ede",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_4a6344b2",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-09-20T18:57:47Z",
+      "side": 1,
+      "message": "my bad, sorry for that! I completely overlooked the next line!",
+      "parentUuid": "9af37de9_8a524cdc",
+      "range": {
+        "startLine": 226,
+        "startChar": 13,
+        "endLine": 226,
+        "endChar": 49
+      },
+      "revId": "49e9e49b7463f97bc961bc45c159e0289bfe0ede",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
