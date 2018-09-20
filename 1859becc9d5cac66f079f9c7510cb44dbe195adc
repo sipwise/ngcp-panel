@@ -1,0 +1,186 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_f66c240a",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 2837,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "in other places we did that with error callback, which would then contain a die() here. no need to duplicate calling NGCP::Panel::Utils::Message::error in here then.",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_f63ae4e6",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "the return value differs from those of other brahches -\u003e thats why error callback is nicer imho.",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_d63fe0d4",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "isnt it auto-vivified by the first if?",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_f611c45e",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "if i understand correctly, you adjust the profile id instead of throwing a \"profile not allowed\" error. effectively means put2get\u0027s tests could fail?",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_96095834",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "cannot determine allowed profile set",
+      "range": {
+        "startLine": 552,
+        "startChar": 30,
+        "endLine": 552,
+        "endChar": 65
+      },
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_0a0e5c34",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "imho the error case would look more transparent if you make a straight 4branch-if?\n\nif (§profile_set and $profile) {\n#ok\n} elsif ($profile_set and not $profile) {\n\n} elsif (not $profile_set and $profile) {\n\n} else {\n\n}",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_ea3af8cc",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "but seems you remove obsolete pref values also if the profile is not changed?",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_6a2608bc",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "can this have dupes?",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_2a20009b",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "where is this used?",
+      "range": {
+        "startLine": 589,
+        "startChar": 15,
+        "endLine": 589,
+        "endChar": 19
+      },
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_aa34f0dd",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 1,
+      "message": "i presume you want to permently remove cfu, cfb, .. from %old_attibutes, not make sure they are not deleted.",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}

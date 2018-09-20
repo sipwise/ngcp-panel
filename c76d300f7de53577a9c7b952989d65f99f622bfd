@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_d67120e2",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-20T15:48:42Z",
+      "side": 0,
+      "message": "is this still used somewhere after replacing it here?",
+      "revId": "c76d300f7de53577a9c7b952989d65f99f622bfd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
