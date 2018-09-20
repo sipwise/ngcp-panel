@@ -1,3 +1,12 @@
+ngcp-panel (6.4.1.8+0~mr6.4.1.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [602434f] TT#44095 set isolation level when creating contracts
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 20 Sep 2018 10:14:11 +0200
+
 ngcp-panel (6.4.1.7+0~mr6.4.1.7) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
