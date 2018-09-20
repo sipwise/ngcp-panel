@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_0a5d3ce9",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 2837,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-20T20:26:17Z",
+      "side": 1,
+      "message": "Hello Rene, \n\nI think that detailed error information, returned from the library method will allow us to unify error processing later without additional layer of the code in callbacks.\n\nYou see, ideally, all controllers, both API and WEB shouldn\u0027t contain business logic, it should be separated . Now role of the business logic keeper play Utils packages. In the same time, level of the business logic shouldn\u0027t be responsible for errors handling. Of course, callbacks allow to keep errors handling on Controllers level, but in the same time set of callbacks will piece of work to maake some global changes, if we will need some.\n\nReally, I believe that correct approach would be to have one universal method to raise error for both WEB UI and API, so it could be called from Utils packages too. But as far as we don\u0027t have this method now, I see detailed info return as the most universal, maintainable and lightweight solution.",
+      "parentUuid": "9af37de9_f66c240a",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_f63ae4e6",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5

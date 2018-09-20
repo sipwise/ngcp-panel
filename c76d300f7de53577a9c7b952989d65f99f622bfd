@@ -16,6 +16,24 @@
       "revId": "c76d300f7de53577a9c7b952989d65f99f622bfd",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_8a692c8e",
+        "filename": "lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-20T20:26:17Z",
+      "side": 0,
+      "message": "yes, in the \n\nngcp-panel/lib/NGCP/Panel/Form/Customer/PbxGroupEdit.pm\nngcp-panel/lib/NGCP/Panel/Form/Customer/PbxSubscriberEdit.pm\nngcp-panel/lib/NGCP/Panel/Form/SubscriberEdit.pm",
+      "parentUuid": "9af37de9_d67120e2",
+      "revId": "c76d300f7de53577a9c7b952989d65f99f622bfd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
