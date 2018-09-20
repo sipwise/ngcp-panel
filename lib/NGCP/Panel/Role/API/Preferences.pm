@@ -832,22 +832,22 @@ sub update_item {
                     $pref_rs->delete;
                     foreach my $v(@{ $resource->{$pref} }) {
                         return unless $self->check_pref_value($c, $meta, $v, $pref_type);
-						if(JSON::is_bool($v)){
-							$v =  $v ? 1 : 0 ;
-						}
+                        if(JSON::is_bool($v)){
+                            $v =  $v ? 1 : 0 ;
+                        }
                         $pref_rs->create({ value => $v });
                     }
                 } elsif($pref_rs->first) {
                     return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
                     if(JSON::is_bool($resource->{$pref})){
-						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
-					}
+                        $resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
+                    }
                     $pref_rs->first->update({ value => $resource->{$pref} });
                 } else {
                     return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
                     if(JSON::is_bool($resource->{$pref})){
-						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
-					}
+                        $resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
+                    }
                     $pref_rs->create({ value => $resource->{$pref} });
                 }
             } # SWITCH
