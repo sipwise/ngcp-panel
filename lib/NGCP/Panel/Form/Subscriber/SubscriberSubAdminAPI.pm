@@ -155,18 +155,18 @@ has_field 'display_name' => (
 );
 
 has_field 'alias_numbers' => (
-    type => '+NGCP::Panel::Field::AliasNumber',
-    setup_for_js => 1,
+    type => 'Repeatable',
     do_wrapper => 1,
     do_label => 0,
-    tags => {
-        controls_div => 1,
-    },
     wrapper_class => [qw/hfh-rep/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Additional E.164 numbers (each containing a cc, ac and sn attribute) mapped to this subscriber for inbound calls.'],
     },
+);
+
+has_field 'alias_numbers.contains' => (
+    type => '+NGCP::Panel::Field::E164',
 );
 
 has_field 'is_pbx_pilot' => (
