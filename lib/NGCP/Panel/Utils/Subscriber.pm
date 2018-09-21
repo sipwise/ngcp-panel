@@ -518,11 +518,11 @@ sub check_profile_set_and_profile {
         # => subscriberadmin can't manage profile_set via web ui and API
         #here we will provide profile_set so below we can check profile id
         #please note, that we don't allow to subscriberadmin unset profile_set_id and profile_set at all, . Later we will take default profile for profile_set
-            if ($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set) {
-                $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
-            } elsif ($prov_subscriber && $resource->{profile}{id}) { #edit
+            if ($prov_subscriber && $resource->{profile}{id}) { #edit, preserve current profile_set
                 #not pbx account or pilot doesn't have any profile set
                 $profile_set = $prov_subscriber->voip_subscriber_profile_set;
+            } elsif ($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set) {
+                $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
             }
         }
     }
