@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_4a0a24d4",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-21T10:30:54Z",
+      "side": 1,
+      "message": "No, this is special case for the web ui. I needed some time too to understand why we did have this comparison.\n\nThis is special case of subscriberadmin forms, that doesn\u0027t have profile_set_id field at all, so we need to get available for the subscriberadmin profile_set to check against it profile_id from request.",
+      "parentUuid": "9af37de9_d63fe0d4",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_f611c45e",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -118,6 +136,24 @@
       "writtenOn": "2018-09-20T15:48:42Z",
       "side": 1,
       "message": "if i understand correctly, you adjust the profile id instead of throwing a \"profile not allowed\" error. effectively means put2get\u0027s tests could fail?",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_ea0c3844",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-21T10:30:54Z",
+      "side": 1,
+      "message": "this is special processing of web administrator form.\nDue to non-dynamic profile field, that keeps values from pilot, e.g. in NGCP::Panel::Form::Customer::PbxExtensionSubscriber\n\nmy $set_id \u003d $c-\u003estash-\u003e{subscriber}-\u003eprovisioning_voip_subscriber-\u003eprofile_set_id;\n...\n\n$profile-\u003efield(\u0027id\u0027)-\u003eajax_src( $c-\u003euri_for_action(\u0027/subscriberprofile/profile_ajax\u0027, [$set_id])-\u003eas_string\n\n\nSo, if we didn\u0027t find profile for provided_id it also can mean (for administrative accounts only) that user just edited pilot subscriber and changed profile_set id and thus  couldn\u0027t select proper profile from profile_set",
+      "parentUuid": "9af37de9_f611c45e",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -181,6 +217,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_2a9fe004",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-21T10:30:54Z",
+      "side": 1,
+      "message": "You see, \n1.we select all attributes connected to old profile into %old_profile_attributes\n2.We remove all attributes that are still actual in new profile\n3.Additionally we prepare separately id\u0027s of cf related attributes that aren\u0027t actual in new profile _for deletion_ \n4.We delete all preferences values not related to new profile\n5.Additionally we delete data from cf_mappings, related to deleted attributes",
+      "parentUuid": "9af37de9_ea3af8cc",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_6a2608bc",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -192,6 +246,24 @@
       "writtenOn": "2018-09-20T15:48:42Z",
       "side": 1,
       "message": "can this have dupes?",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_ea89d8cb",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-21T10:30:54Z",
+      "side": 1,
+      "message": "no, according to:\nshow create table voip_subscriber_profile_attributes;\n\n\u003d\u003e\nUNIQUE KEY `prof_attr_idx` (`profile_id`,`attribute_id`),",
+      "parentUuid": "9af37de9_6a2608bc",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -221,6 +293,30 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_aa03d0b7",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-21T10:30:54Z",
+      "side": 1,
+      "message": "In line 597 as source for the map",
+      "parentUuid": "9af37de9_2a20009b",
+      "range": {
+        "startLine": 589,
+        "startChar": 15,
+        "endLine": 589,
+        "endChar": 19
+      },
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_aa34f0dd",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -232,6 +328,24 @@
       "writtenOn": "2018-09-20T15:48:42Z",
       "side": 1,
       "message": "i presume you want to permently remove cfu, cfb, .. from %old_attibutes, not make sure they are not deleted.",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_6abcc86c",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-21T10:30:54Z",
+      "side": 1,
+      "message": "cfu is used to remove from voip_cf_mappings data related to removed attributes",
+      "parentUuid": "9af37de9_aa34f0dd",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
