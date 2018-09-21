@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_aa9f505e",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 2837,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-21T08:03:11Z",
+      "side": 1,
+      "message": "the original point here is that, at least form me, start placing NGCP::Panel::Utils::Message::error\u0027s inside the txn_do is a clear no-go.",
+      "parentUuid": "9af37de9_4aa6a4c2",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_f63ae4e6",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
