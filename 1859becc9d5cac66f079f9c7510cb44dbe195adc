@@ -125,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_4d523e15",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-21T11:00:16Z",
+      "side": 1,
+      "message": "the first if branch is:\n\nif ($resource-\u003e{profile_set}{id}) {\n\nafter that, both \n\n- exists $resource-\u003e{profile_set}\n- exists $resource-\u003e{profile_set}-\u003e{id}\n\nwill be true.\n\nthis means it can never go into\n\n} elsif (!exists $resource-\u003e{profile_set}{id}) {",
+      "parentUuid": "9af37de9_4a0a24d4",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_f611c45e",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -154,6 +172,24 @@
       "side": 1,
       "message": "this is special processing of web administrator form.\nDue to non-dynamic profile field, that keeps values from pilot, e.g. in NGCP::Panel::Form::Customer::PbxExtensionSubscriber\n\nmy $set_id \u003d $c-\u003estash-\u003e{subscriber}-\u003eprovisioning_voip_subscriber-\u003eprofile_set_id;\n...\n\n$profile-\u003efield(\u0027id\u0027)-\u003eajax_src( $c-\u003euri_for_action(\u0027/subscriberprofile/profile_ajax\u0027, [$set_id])-\u003eas_string\n\n\nSo, if we didn\u0027t find profile for provided_id it also can mean (for administrative accounts only) that user just edited pilot subscriber and changed profile_set id and thus  couldn\u0027t select proper profile from profile_set",
       "parentUuid": "9af37de9_f611c45e",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_6d4d0272",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-21T11:00:16Z",
+      "side": 1,
+      "message": "but then wouldnt it be better to put this defaulting to the form validation method? seems to be not relevenat for api",
+      "parentUuid": "9af37de9_ea0c3844",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -235,6 +271,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_ed13325b",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-21T11:00:16Z",
+      "side": 1,
+      "message": "ok, so if profiles stay the same, %old_profile_atributes is empty, ok. may still skip this whole logic for performance reasons, if profile_id\u0027s are the same?",
+      "parentUuid": "9af37de9_2a9fe004",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_6a2608bc",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -264,6 +318,24 @@
       "side": 1,
       "message": "no, according to:\nshow create table voip_subscriber_profile_attributes;\n\n\u003d\u003e\nUNIQUE KEY `prof_attr_idx` (`profile_id`,`attribute_id`),",
       "parentUuid": "9af37de9_6a2608bc",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_ad1d2a68",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-21T11:00:16Z",
+      "side": 1,
+      "message": "ack ok, you need it for you intersect impl below.",
+      "parentUuid": "9af37de9_ea89d8cb",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -317,6 +389,30 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_8d1a666d",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-21T11:00:16Z",
+      "side": 1,
+      "message": "ah, overlooked it.",
+      "parentUuid": "9af37de9_aa03d0b7",
+      "range": {
+        "startLine": 589,
+        "startChar": 15,
+        "endLine": 589,
+        "endChar": 19
+      },
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_aa34f0dd",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -346,6 +442,23 @@
       "side": 1,
       "message": "cfu is used to remove from voip_cf_mappings data related to removed attributes",
       "parentUuid": "9af37de9_aa34f0dd",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_ad340ade",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-21T11:00:16Z",
+      "side": 1,
+      "message": "$cfs gives you cfu/cfb/cft/etc. attributes that are not used in the new profile any longer. here the real call forwards get removed. ok makes sense (but is that really desired?)\n\nyou would then also need to check for other stuff to drop , ie. aig\u0027s fax settings etc..",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
