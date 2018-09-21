@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_4aa6a4c2",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 2837,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-21T07:56:25Z",
+      "side": 1,
+      "message": "i understand the intention, but this approach just lacks flexibility.\n\n- what about more than one error, ie. when i want to use it in a from\u0027s validate?\n- the information in your error object is tied our way of bailing out in catalyst. (ie. respoonse code)\n- you need to iterate error objects if you ie. need to mark field\u0027s in a form\u0027s validate, see eg. Form/BillingNetworks/Reseller.pm\n- the caller has no control wether it wants to continue after the first errror (to ie. find more)\n- the error object doesnt contain info about the originating field\n- you cant\u0027t configure what errors you want to skip in certain situations\n- you have no possibility to provide your own error message string pattern\netc.",
+      "parentUuid": "9af37de9_0a5d3ce9",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_f63ae4e6",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
