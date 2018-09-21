@@ -554,6 +554,13 @@ sub check_profile_set_and_profile {
             response_code => HTTP_UNPROCESSABLE_ENTITY,
         };
     }
+    use Data::Dumper;
+    $c->log->debug(Dumper([
+        "profile_set input: ".($resource->{profile_set}{id}?$resource->{profile_set}{id}:"ubdefined"),
+        "profile_set found: ".($profile_set?$profile_set->id:"ubdefined"),
+        "profile input: ".($resource->{profile}{id}?$resource->{profile}{id}:"ubdefined"),
+        "profile found: ".($profile?$profile->id:"ubdefined"),
+    ]));
     if (!$profile && (
         $profile_set 
         || ( $c->user->roles eq "subscriberadmin"
