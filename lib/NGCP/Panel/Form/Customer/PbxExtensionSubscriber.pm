@@ -26,7 +26,7 @@ has_block 'fields' => (
     render_list => [qw/domain group_select alias_select pbx_extension display_name email webusername webpassword username password administrative lock status external_id timezone profile_set profile/ ],
 );
 
-override 'field_list' => sub {
+override 'update_fields' => sub {
     my $self = shift;
     my $c = $self->ctx;
     return unless $c;
