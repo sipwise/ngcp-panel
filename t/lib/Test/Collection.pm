@@ -1294,12 +1294,13 @@ sub process_data{
 }
 
 sub check_item_post{
-    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my($self, $data_cb, $data_in, $data_cb_data, $uri) = @_;
     my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
     #print Dumper $data;
-    my ($res,$rescontent,$req) = $self->request_post($data);#,$uri,$req
+    my ($res,$rescontent,$req) = $self->request_post($data, $uri);#,$uri,$req
     return wantarray ? ($res,$rescontent,$req,$data) : $res;
-};
+}
+
 sub check_item_delete{
     my($self, $uri, $msg) = @_;
     my $name = $self->name // '';
@@ -1307,7 +1308,8 @@ sub check_item_delete{
     my ($req,$res,$content) = $self->request_delete($uri);#,$uri,$req
     $self->http_code_msg(204, "$name: check delete item $uri",$res,$content);
     return ($req,$res,$content);
-};
+}
+
 sub check_create_correct{
     my($self, $number, $uniquizer_cb, $data_in) = @_;
     if(!$self->KEEP_CREATED){

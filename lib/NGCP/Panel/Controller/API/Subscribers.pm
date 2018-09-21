@@ -353,6 +353,7 @@ sub POST :Allow {
         my $groups = $r->{groups};
         my $groupmembers = $r->{groupmembers};
         $resource = $r->{resource};
+        my $error_info = { extended => {} };
 
         try {
             my ($uuid_bin, $uuid_string);
@@ -362,13 +363,14 @@ sub POST :Allow {
             my @events_to_create = ();
             my $event_context = { events_to_create => \@events_to_create };
             $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
-                c => $c,
-                schema => $schema,
-                contract => $r->{customer},
-                params => $resource,
-                preferences => $preferences,
+                c             => $c,
+                schema        => $schema,
+                contract      => $r->{customer},
+                params        => $resource,
+                preferences   => $preferences,
                 admin_default => 0,
                 event_context => $event_context,
+                error         => $error_info,
             );
             if($resource->{status} eq 'locked') {
                 NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
@@ -405,9 +407,15 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '$1' already exists.");
             last;
         } catch($e) {
-            $c->log->error("failed to create subscriber: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber: $e");
-            last;
+            if (ref $error_info->{extended} eq 'HASH' && $error_info->{extended}->{response_code}) {
+                $c->log->error($error_info->{extended}->{error}); # TODO: user, message, trace, ...
+                $self->error($c, $error_info->{extended}->{response_code}, $error_info->{extended}->{description});
+                last;
+            } else {
+                $c->log->error("failed to create subscriber: $e"); # TODO: user, message, trace, ...
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber: $e");
+                last;
+            }
         }
 
         last unless $self->add_create_journal_item_hal($c,sub {

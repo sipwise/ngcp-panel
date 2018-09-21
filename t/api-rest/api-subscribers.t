@@ -8,6 +8,7 @@ use Data::Dumper;
 use Clone qw/clone/;
 use feature 'state';
 #use NGCP::Panel::Utils::Subscriber;
+use Data::Compare qw//;
 
 my $test_machine = Test::Collection->new(
     name => 'subscribers',
@@ -78,7 +79,7 @@ $fake_data->set_data_from_script({
 
 my $fake_data_processed = $fake_data->process('subscribers');
 my $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$fake_data_processed->{customer_id}.'&'.'is_pbx_pilot=1');
-if((exists $pilot->{total_count} && $pilot->{total_count}) || $pilot->{content}->{total_count} > 0){
+if((exists $pilot->{total_count} && $pilot->{total_count}) || (exists $pilot->{content}->{total_count} && $pilot->{content}->{total_count} > 0) ){
     $fake_data_processed->{is_pbx_pilot} = 0;
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
@@ -419,6 +420,316 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $test_machine->http_code_msg(403, "Check display_name patch for subscriberadmin", $res, $content, "Read-only resource for authenticated role");
         }
     }
+    {#TT#43350
+        diag("TT#43350 Test subscriberadmin access");
+        diag("#------------------------ create subscribers of other customer of other reseller\n");
+        my $test_machine_other_reseller = Test::Collection->new(
+            name => 'subscribers',
+            QUIET_DELETION => 1,
+        );
+        my $fake_data_other_reseller = Test::FakeData->new(
+            keep_db_data => 1,
+            test_machine => $test_machine_other_reseller,
+        );
+        $fake_data_other_reseller->load_collection_data('subscribers');
+        $fake_data_other_reseller->apply_data({
+            'customers' => {
+                'external_id' => 'other_reseller',
+                'type'        => 'pbxaccount',
+            },
+            'customercontacts' => {
+                'email' => 'other_reseller@email.com',
+            },
+            'contracts' => {
+                'external_id' => 'other_reseller',
+            },
+            'resellers' => {
+                'name' => 'other_reseller',
+            },
+            'subscribers' => {
+                'is_pbx_pilot' => 0,
+                'is_pbx_group' => 0,
+                'webpassword'  => 'api_test_webpassword',
+            },
+            'subscriberprofilesets' => {
+                'name' => 'other_reseller_subscriberprofileset',
+            },
+            'subscriberprofiles' => {
+                'name' => 'other_reseller_subscriberprofile',
+            },
+        });
+        my($subscribers_other_reseller, $subscriberadmins_other_reseller) 
+            = create_subs_and_subadmin($fake_data_other_reseller, $test_machine_other_reseller);
+
+        diag("#------------------------ create subscriber of other customer\n");
+        my $test_machine_other_customer = Test::Collection->new(
+            name => 'subscribers',
+            QUIET_DELETION => 1,
+        );
+        my $fake_data_other_customer = Test::FakeData->new(
+            keep_db_data => 1,
+            test_machine => $test_machine_other_customer,
+        );
+        $fake_data_other_customer->load_collection_data('subscribers');
+        $fake_data_other_customer->apply_data({
+            'customers' => {
+                'external_id' => 'other_customer',
+                'type'        => 'pbxaccount',
+            },
+            'customercontacts' => {
+                'email' => 'other_customer@email.com',
+            },
+            'contracts' => {
+                'external_id' => 'other_customer',
+            },
+            'subscribers' => {
+                'is_pbx_pilot' => 0,
+                'is_pbx_group' => 0,
+                'webpassword'  => 'api_test_webpassword',
+            },
+            'subscriberprofilesets' => {
+                'name' => 'other_customer_subscriberprofileset',
+            },
+            'subscriberprofiles' => {
+                'name' => 'other_customer_subscriberprofile',
+            },
+        });
+        my($subscribers_other_customer, $subscriberadmins_other_customer) 
+            = create_subs_and_subadmin($fake_data_other_customer, $test_machine_other_customer);
+
+        diag("#------------------------ create usual subscriber of default test customer and reseller\n");
+        my $fake_data_processed_old = $test_machine->DATA_ITEM_STORE;
+        $fake_data->apply_data({
+            'subscribers' => {
+                'is_pbx_pilot' => 0,
+                'is_pbx_group' => 0,
+                'webpassword'  => 'api_test_webpassword',
+            },
+        });
+        $fake_data_processed = $fake_data->process('subscribers');
+        $test_machine->DATA_ITEM($fake_data_processed);
+        #print Dumper $test_machine->DATA_ITEM;
+        my($subscribers, $subscriberadmins) 
+            = create_subs_and_subadmin($fake_data, $test_machine);
+        
+        $test_machine->set_subscriber_credentials($subscriberadmins->[0]->{content});
+        $test_machine->runas('subscriber');
+        diag("\n\n\nSUBSCRIBERADMIN ".$subscriberadmins->[0]->{content}->{id}.":");
+
+        diag("#------------------------ subscriberadmin: attempt to create subscriber using other customer-reseller:\n");
+        my($res,$content,$sub_create_attempt);
+        $sub_create_attempt = $test_machine->check_create_correct(1,sub {
+            my $num = $_[1]->{i};
+            my $uniq = Test::FakeData::seq;
+            $_[0]->{webusername} = '43350_'.$uniq;
+            $_[0]->{username} = '43350_'.$uniq;
+            $_[0]->{pbx_extension} = '43350'.$uniq;
+            $_[0]->{primary_number}->{ac} = '43350'.$uniq;
+            $_[0]->{is_pbx_pilot} = 0;
+            $_[0]->{administrative} = 1;
+            #delete $_[0]->{profile_id};
+            delete $_[0]->{alias_numbers};
+            $_[0]->{profile_id} = $subscribers->[0]->{content}->{profile_id};
+        }, $subscribers_other_reseller->[0]->{content})->[0];
+
+        #print Dumper [
+        #    $sub_create_attempt->{content}, 
+        #    $subscribers_other_reseller->[0]->{content}->{customer_id}, 
+        #    $subscriberadmins->[0]->{content}->{customer_id}];
+        #print Dumper [$sub_create_attempt->{content}, $sub_create_attempt->{content_post}];
+
+        ok(($sub_create_attempt->{content}->{customer_id} != $subscribers_other_reseller->[0]->{content}->{customer_id}) 
+            && ($sub_create_attempt->{content}->{customer_id} == $subscriberadmins->[0]->{content}->{customer_id})
+            && ($sub_create_attempt->{content_post}->{customer_id} == $subscribers_other_reseller->[0]->{content}->{customer_id}),
+            "check that subscriberadminadmin customer_id ".$subscriberadmins->[0]->{content}->{customer_id}
+            ." was applied instead of ".$sub_create_attempt->{content_post}->{customer_id});
+
+        ok( ($sub_create_attempt->{content}->{administrative} == 0)
+            && ($sub_create_attempt->{content_post}->{administrative} == 1),
+            "check that subscriberadminadmin can't create subscriberadmin: "
+            .$sub_create_attempt->{content_post}->{administrative}
+            ."=>".$sub_create_attempt->{content}->{administrative}.";");
+
+        #here we have unexpected error: 
+        #Sep  9 22:37:02 sp1 ngcp-panel: DEBUG: username:43350_8_; resource.domain_id:101;item.domain_id:535;
+        #Sep  9 22:37:02 sp1 ngcp-panel: ERROR: error 422 - Subscriber with this username does not exist in the domain.
+        diag("#-------------------------- 1. Check customer_id management ----------");
+        my ($content_get,$content_put, $content_patch);
+        $test_machine->request_patch( [ { 
+                op     => 'replace', 
+                path   => '/customer_id', 
+                value  => $subscribers_other_customer->[0]->{content}->{customer_id} 
+            } ], $subscribers->[0]->{location});
+        (undef,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
+        ok($content_get->{customer_id} == $fake_data->get_id('customers') 
+            && $content_get->{customer_id} != $subscribers_other_customer->[0]->{content}->{customer_id}, 
+            "check that subscribersadmin can't apply foreign customer_id to own subscribers: "
+            .$subscribers_other_customer->[0]->{content}->{customer_id}."=>".$content_get->{customer_id});
+
+        $content_get->{customer_id} = $subscribers_other_customer->[0]->{content}->{customer_id};
+
+        $test_machine->request_put( $content_get, $subscribers->[0]->{location});
+        (undef,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
+        ok($content_get->{customer_id} == $fake_data->get_id('customers') 
+            && $content_get->{customer_id} != $subscribers_other_customer->[0]->{content}->{customer_id}, 
+            "check that subscribersadmin can't apply foreign customer_id to own subscribers: "
+            .$subscribers_other_customer->[0]->{content}->{customer_id}."=>".$content_get->{customer_id});
+
+        diag("#-------------------------- 2. Check NUMBER management ----------");
+        diag("#-------------------------- 2. 1. NUMBER: use other customer's primary number for create  ----------");
+
+        ($res,$sub_create_attempt) = $test_machine->check_item_post(sub {
+            my $num = $_[1]->{i};
+            my $uniq = Test::FakeData::seq;
+            $_[0]->{webusername} = '43350_'.$uniq;
+            $_[0]->{username} = '43350_'.$uniq;
+            $_[0]->{pbx_extension} = '43350'.$uniq;
+            $_[0]->{primary_number}->{ac} = '43350'.$uniq;
+            my $foreign_number = clone $subscribers_other_customer->[0]->{content}->{primary_number};
+            delete $foreign_number->{number_id};
+            delete $_[0]->{profile_id};
+            $_[0]->{alias_numbers} = [$foreign_number];
+            #print Dumper $_[0]->{alias_numbers};
+        }, $subscribers_other_reseller->[0]->{content});
+        $test_machine->http_code_msg(422, "Check subscriberadmin create subscriber using foreign primary_number", $res, $sub_create_attempt);
+        #print Dumper $res;
+
+        diag("#-------------------------- 2. 2. NUMBER: use other customer's primary number for edit (PUT)  ----------");
+
+        $content_put = clone $content_get;
+        $content_put->{alias_numbers} = [clone $subscribers_other_customer->[0]->{content}->{primary_number}];
+        delete $content_put->{_links};
+        delete $content_put->{alias_numbers}->[0]->{number_id};
+        #print Dumper $content_put;
+        ($res,$content_put) = $test_machine->request_put( $content_put, $subscribers->[0]->{location});
+        $test_machine->http_code_msg(422, "check that subscribersadmin can't manage others customers numbers", $res, $content_put);
+        (undef,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
+        delete $content_get->{alias_numbers}->[0]->{number_id};
+        delete $subscribers_other_customer->[0]->{content}->{primary_number}->{number_id};
+        # 0 if different, 1 if equal
+        ok(!Data::Compare::Compare($content_get->{alias_numbers}->[0], $subscribers_other_customer->[0]->{content}->{primary_number}), 
+            "check that subscribersadmin can't manage others customers numbers. Other subscriber primary_number:\n"
+            .Dumper($subscribers_other_customer->[0]->{content}->{primary_number})."\n=>\n".Dumper($content_get->{alias_numbers}->[0])
+            );
+        diag("#--------------------------3. Check PROFILE management ");
+        diag("#--------------------------3. 1. PROFILE: Check attempt to apply other cutsomer's profile_id ------------ ");
+        $content_put = clone $subscribers->[0]->{content};
+        delete $content_put->{_links};
+        $content_put->{profile_id} = $subscribers_other_customer->[0]->{content}->{profile_id};
+        ($res, $content_put) = $test_machine->request_put( $content_put, $subscribers->[0]->{location});
+        $test_machine->http_code_msg(422, "check that subscribersadmin can't manage others customers profile_id", $res, $content_put);
+        ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
+        $content_get->{profile_id} //= '';
+        ok($content_get->{profile_id} != $subscribers_other_customer->[0]->{content}->{profile_id}, 
+            "check that subscribersadmin can't apply others customers profile_id. "
+            .$subscribers_other_customer->[0]->{content}->{profile_id}." => ".$content_get->{profile_id});
+
+        diag("#--------------------------3. 2. PROFILE: Check attempt to apply other profile_set profile_id ------------ ");
+
+        my $test_machine_other_profile_set = Test::Collection->new(
+            name => 'subscriberprofiles',
+            QUIET_DELETION => 1,
+        );
+        my $fake_data_other_profile_set = Test::FakeData->new(
+            keep_db_data => 1,
+            test_machine => $test_machine_other_profile_set,
+        );
+        $fake_data_other_profile_set->load_collection_data('subscriberprofiles');
+        $fake_data_other_profile_set->apply_data({
+            'subscriberprofilesets' => {
+                'name' => 'other_subscriberprofileset'.Test::FakeData::seq,
+            },
+            'subscriberprofiles' => {
+                'name' => 'other_subscriberprofile'.Test::FakeData::seq,
+            },
+        });
+        my $fake_data_other_profile_set_processed = $fake_data_other_profile_set->process('subscriberprofiles');
+        #print Dumper ['create_subs_and_subadmin','fake_data_l_processed',$fake_data_l_processed];
+        $test_machine_other_profile_set->DATA_ITEM($fake_data_other_profile_set_processed);
+        $test_machine_other_profile_set->DATA_ITEM_STORE($fake_data_other_profile_set_processed);
+        #just note - test_machine_other_profile_set is logged in as administrator, so we can create profileset and profile
+        my $subscriberprofile_other_profile_set = $test_machine_other_profile_set->check_create_correct(1)->[0];
+
+        $content_put = clone $subscribers->[0]->{content};
+        delete $content_put->{_links};
+        $content_put->{profile_id} = $subscriberprofile_other_profile_set->{content}->{id};
+        $content_put->{display_name} = 'test_other_profileset_profile';
+        ($res, $content_put) = $test_machine->request_put( $content_put, $subscribers->[0]->{location});
+        $test_machine->http_code_msg(422, "check that subscribersadmin can't assign other profileset profile_id", $res, $content_put);
+        ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
+        $content_get->{profile_id} //= '';
+        ok($content_get->{profile_id} != $subscriberprofile_other_profile_set->{content}->{id}, 
+            "check that subscribersadmin can't apply other profileset profile_id. "
+            .$subscriberprofile_other_profile_set->{content}->{id}." => ".$content_get->{profile_id});
+
+        diag("#--------------------------3. 3. PROFILE: Check attempt to apply correct profile_id ------------ ");
+
+        my $test_machine_other_profile = Test::Collection->new(
+            name => 'subscriberprofiles',
+            QUIET_DELETION => 1,
+        );
+        my $fake_data_other_profile = Test::FakeData->new(
+            keep_db_data => 1,
+            test_machine => $test_machine_other_profile,
+        );
+        $fake_data_other_profile->load_collection_data('subscriberprofiles');
+        $fake_data_other_profile->apply_data({
+            'subscriberprofiles' => {
+                'name' => 'other_subscriberprofile'.Test::FakeData::seq,
+            },
+        });
+        my $fake_data_other_profile_processed = $fake_data_other_profile->process('subscriberprofiles');
+        #print Dumper ['create_subs_and_subadmin','fake_data_l_processed',$fake_data_l_processed];
+        $test_machine_other_profile->DATA_ITEM($fake_data_other_profile_processed);
+        $test_machine_other_profile->DATA_ITEM_STORE($fake_data_other_profile_processed);
+        #just note - test_machine_other_profile is logged in as administrator, so we can create profileset and profile
+        my $subscriberprofile_other = $test_machine_other_profile->check_create_correct(1)->[0];
+
+        $content_put = clone $subscribers->[0]->{content};
+        delete $content_put->{_links};
+        $content_put->{profile_id} = $subscriberprofile_other->{content}->{id};
+        $content_put->{display_name} = 'test_other_profileset_profile';
+        ($res, $content_put) = $test_machine->request_put( $content_put, $subscribers->[0]->{location});
+        $test_machine->http_code_msg(200, "check that subscribersadmin can assign other profile from correct profile_set", $res, $content_put);
+        ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
+        $content_get->{profile_id} //= '';
+        ok($content_get->{profile_id} eq $subscriberprofile_other->{content}->{id}, 
+            "check that subscribersadmin can't apply other profileset profile_id. "
+            .$subscriberprofile_other->{content}->{id}." => ".$content_get->{profile_id});
+
+
+        diag("#--------------------------4. MISC: Check that subscriberadmin can manage something ------------ ");
+        ($res,$content_patch) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched_43350' } ], $subscribers->[0]->{location});
+        $test_machine->http_code_msg(200, "check that subscribersadmin can manage available fields", $res, $content_patch);
+        ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
+        ok($content_get->{display_name} eq 'patched_43350', 
+            "check that subscribersadmin can manage display_name");
+
+        diag("#-------------------------- 5. ACCESS other's customer subscribers ----------");
+        foreach my $restricted_subscriber ($subscribers_other_reseller, $subscribers_other_customer) {
+            my $location = $restricted_subscriber->[0]->{location};
+            ($res,$content) = $test_machine->request_get($location);
+            $test_machine->http_code_msg(404, "subscriberadmin: view subscriber of other customer:",$res,$content,
+                "Entity 'subscriber' not found");
+            ($res,$content) = $test_machine->request_put($sub_create_attempt->{content}, $location);
+            $test_machine->http_code_msg(404, "subscriberadmin: put subscriber of other customer:",$res,$content,
+                "Entity 'subscriber' not found");
+            ($res,$content) = $test_machine->request_patch( [ { op => 'replace', path => '/display_name', value => 'patched 433050' } ], $location);
+            $test_machine->http_code_msg(404, "subscriberadmin: patch subscriber of other customer:",$res,$content,
+                "Entity 'subscriber' not found");
+        }
+
+        #$test_machine_other->set_subscriber_credentials($subscriber_other->{content});
+        #$test_machine_other->runas('subscriber');
+        #diag("\n\n\nSUBSCRIBER ".$subscriber_other->{content}->{id}.":");
+
+        $test_machine->DATA_ITEM($fake_data_processed_old);
+
+        $test_machine->clear_test_data_all();
+        #if we failed with create checking (we s)
+        #$test_machine->check_item_delete();
+
+    }
 }
 
 #TT#21818 variant 2 - pbx feature off, subscriberadmin is read-only. No subscriber exists
@@ -464,6 +775,8 @@ $test_machine->runas('admin');
     ($res,$content) = $test_machine->request_post( $data);
     $test_machine->http_code_msg(422, "Alias numbers should be the hashs", $res, $content);
 }
+
+$test_machine->init_ssl_cert();
 $fake_data->clear_test_data_all();
 $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 $fake_data->clear_test_data_all();
@@ -600,6 +913,69 @@ sub test_password_validation {
             $test_machine->http_code_msg(422, $message_start." is too weak", $res, $content, 1);
         }
     }
+}
+
+sub create_subs_and_subadmin {
+    my ($fake_data_l, $test_machine_l, $prefix, $no_pilot) = @_;
+
+    $prefix //= '';
+
+    my $fake_data_l_processed = $fake_data_l->process('subscribers');
+    #print Dumper ['create_subs_and_subadmin','fake_data_l_processed',$fake_data_l_processed];
+    $test_machine_l->DATA_ITEM($fake_data_l_processed);
+    $test_machine_l->DATA_ITEM_STORE($fake_data_l_processed);
+
+    my $pilot_l = $test_machine_l->get_item_hal('subscribers','/api/subscribers/?customer_id='.$fake_data_l_processed->{customer_id}.'&'.'is_pbx_pilot=1');
+    if((exists $pilot_l->{total_count} && $pilot_l->{total_count}) || (exists $pilot_l->{content}->{total_count} && $pilot_l->{content}->{total_count} > 0)){
+        #remove existing pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
+        my($res, $mod_pilot) = $test_machine_l->request_patch([ 
+                { op => 'replace', path => '/alias_numbers', value => [] },
+                #to don't intersect with manual testing on the web
+                { op => 'replace', path => '/profile_set_id', value => $fake_data_l->get_id('subscriberprofilesets') },
+                { op => 'replace', path => '/profile_id', value => undef },#we will take default profile for profile_set
+                #we can't change domain
+                #and we can create subscriber in domain out of reseller
+                #{ op => 'replace', path => '/domain_id', value => $fake_data_l->get_id('domains') },
+            ],
+            $pilot_l->{location} );
+            #print Dumper $pilot_l->{content};
+    }else{
+        undef $pilot_l;
+    }
+
+    my $subscribers = $test_machine_l->check_create_correct(3, sub {
+        my $num = $_[1]->{i};
+        my $uniq = Test::FakeData::seq;
+        $_[0]->{webusername} = '43350_'.$uniq.'_'.$prefix;
+        $_[0]->{username} = '43350_'.$uniq.'_'.$prefix ;
+        $_[0]->{pbx_extension} = '43350'.$uniq;
+        $_[0]->{primary_number}->{ac} = '43350'.$uniq;
+        $_[0]->{is_pbx_pilot} = ($pilot_l || $num > 1 )? 0 : 1;
+        $_[0]->{administrative} = 0;
+        $_[0]->{alias_numbers} = [{
+            ac => '43350'.$uniq,
+            cc => $uniq,
+            sn => '43350'.$uniq,
+        }];
+        #$_[0]->{domain} = $pilot_l->{domain};
+        $pilot_l and $_[0]->{domain_id} = $pilot_l->{content}->{domain_id};
+    });
+
+    #$fake_data_l->get_id('resellers',@_);
+    diag("#------------------------ create subscriberadmin\n");
+    my $subscriberadmins = $test_machine_l->check_create_correct(1, sub {
+        my $num = $_[1]->{i};
+        my $uniq = Test::FakeData::seq;
+        $_[0]->{webusername} = '43350_'.$uniq.'_'.$prefix.'_adm';
+        $_[0]->{username} = '43350_'.$uniq.'_'.$prefix.'_adm';
+        $_[0]->{pbx_extension} = '43350'.$uniq;
+        $_[0]->{primary_number}->{ac} = '43350'.$uniq;
+        $_[0]->{administrative} = 1;
+        $_[0]->{is_pbx_pilot} = 0;
+        delete $_[0]->{alias_numbers};
+    });
+        diag("#------------------------ /create subscriberadmin\n");
+    return $subscribers, $subscriberadmins;
 }
 
 sub number_as_string{

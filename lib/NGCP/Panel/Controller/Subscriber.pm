@@ -2834,42 +2834,16 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     }
                 );
 
-                my $old_profile = $prov_subscriber->profile_id;
-                my ($profile_set, $profile);
-                if($form->values->{profile_set}{id}) {
-                    my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
-                    if($c->user->roles eq "admin") {
-                    } elsif($c->user->roles eq "reseller") {
-                        $profile_set_rs = $profile_set_rs->search({
-                            reseller_id => $c->user->reseller_id,
-                        });
-                    }
-
-                    $profile_set = $profile_set_rs->find($form->values->{profile_set}{id});
-                    unless($profile_set) {
-                        NGCP::Panel::Utils::Message::error(
-                            c => $c,
-                            error => 'invalid subscriber profile set id ' . $form->values->{profile_set}{id},
-                            desc  => $c->loc('Invalid subscriber profile set id'),
-                        );
-                        return;
-                    }
-                    delete $form->values->{profile_set};
-                } elsif(exists $form->params->{profile_set}{id}) {
-                    # if the param has been passed and is empty, clear it (by doing nothing)
-                } else {
-                    $profile_set = $prov_subscriber->voip_subscriber_profile_set;
-                }
-
-                if($profile_set && $form->values->{profile}{id}) {
-                    $profile = $profile_set->voip_subscriber_profiles->find({
-                        id => $form->values->{profile}{id},
-                    });
-                }
-                if($profile_set && !$profile) {
-                    $profile = $profile_set->voip_subscriber_profiles->find({
-                        set_default => 1,
-                    });
+                #$old_profile_id is necessary for events
+                my $old_profile_id = $prov_subscriber->profile_id;
+                my($error,$profile_set,$profile) = NGCP::Panel::Utils::Subscriber::check_profile_set_and_profile($c, $form->values, $subscriber);
+                if ($error) {
+                    NGCP::Panel::Utils::Message::error(
+                        c => $c,
+                        error => $error->{error},
+                        desc  => $error->{description}
+                    );
+                    return;
                 }
                 if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
                     $prov_params->{profile_set_id} = $profile_set ? $profile_set->id : undef;
@@ -2879,30 +2853,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     # keep it at old value (e.g. if he unset it)
                     if($prov_subscriber->voip_subscriber_profile_set && $profile) {
                         $prov_params->{profile_id} = $profile->id;
-                    }
-                }
-
-                # if the profile changed, clear any preferences which are not in the new profile
-                if($prov_subscriber->voip_subscriber_profile) {
-                    my %old_profile_attributes = map { $_ => 1 }
-                        $prov_subscriber->voip_subscriber_profile
-                        ->profile_attributes->get_column('attribute_id')->all;
-                    if($profile) {
-                        foreach my $attr_id($profile->profile_attributes->get_column('attribute_id')->all) {
-                            delete $old_profile_attributes{$attr_id};
-                        }
-                    }
-                    if(keys %old_profile_attributes) {
-                        my $cfs = $c->model('DB')->resultset('voip_preferences')->search({
-                            id => { -in => [ keys %old_profile_attributes ] },
-                            attribute => { -in => [qw/cfu cfb cft cfna cfs cfr/] },
-                        });
-                        $prov_subscriber->voip_usr_preferences->search({
-                            attribute_id => { -in => [ keys %old_profile_attributes ] },
-                        })->delete;
-                        $prov_subscriber->voip_cf_mappings->search({
-                            type => { -in => [ map { $_->attribute } $cfs->all ] },
-                        })->delete;
                     }
                 }
 
@@ -3064,7 +3014,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
                 NGCP::Panel::Utils::Events::insert_profile_events(
                     c => $c, schema => $schema, subscriber_id => $subscriber->id,
-                    old => $old_profile, new => $prov_subscriber->profile_id,
+                    old => $old_profile_id, new => $prov_subscriber->profile_id,
                     %$aliases_before,
                 );
 
