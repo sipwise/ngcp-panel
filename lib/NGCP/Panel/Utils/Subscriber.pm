@@ -501,6 +501,14 @@ sub check_profile_set_and_profile {
             });
         }
     }
+    use Data::Dumper;
+    $c->log->debug(Dumper([
+        "pilot:".($c->stash->{pilot} ? $c->stash->{pilot}->id:"undefined"),
+        "pilot profile_set:".($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set ? $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set->id:"undefined"),
+        "!exists profile_set.id:".((!exists $resource->{profile_set}{id}) ? "true":"false"),
+        "c->user->roles eq subscriberadmin:".(($c->user->roles eq "subscriberadmin") ? "true":"false"),
+    
+    ]));
     if (defined $resource->{profile_set}{id} && $resource->{profile_set}{id}) {
         $profile_set = $profile_set_rs->find($resource->{profile_set}{id});
         unless($profile_set) {
@@ -519,6 +527,10 @@ sub check_profile_set_and_profile {
         #here we will provide profile_set so below we can check profile id
         #please note, that we don't allow to subscriberadmin unset profile_set_id and profile_set at all, . Later we will take default profile for profile_set
             if ($prov_subscriber && $resource->{profile}{id}) { #edit, preserve current profile_set
+    $c->log->debug(Dumper([
+        "GOT_HERE",
+    
+    ]));
                 #not pbx account or pilot doesn't have any profile set
                 $profile_set = $prov_subscriber->voip_subscriber_profile_set;
             } elsif ($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set) {
