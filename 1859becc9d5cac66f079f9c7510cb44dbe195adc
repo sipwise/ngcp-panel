@@ -215,6 +215,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_40cc4535",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-23T18:24:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9af37de9_e0269915",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_f611c45e",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
