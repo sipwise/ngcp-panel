@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_00119dac",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-23T13:59:39Z",
+      "side": 1,
+      "message": "error callback are more flexible, the logic to process the error info you are referring is to be put in the callback.\n\nthe idea of subs having consistent return types  is a coding style that conforms to other languages, where this is forced when specifying the method signature.\n\nso this method is fine for you since you created it -\u003e others would need to walk through it and see when it returns what.",
+      "parentUuid": "9af37de9_cd106e51",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_d63fe0d4",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -173,6 +191,24 @@
       "side": 1,
       "message": "I was under the same impression through the years, but seems like it is not correct now:\n\nroot@sp1:~# perl -e \u0027use Data::Dumper; my $a\u003d{\"b\"\u003d\u003e{ \"c\" \u003d\u003e \"d\" }}; if($a-\u003e{c}{k}){}elsif(!exists $a-\u003e{c}{k} ) {print \"! exists;\\n\";} \u0027\n\ngives me output :\n\n\n! exists;",
       "parentUuid": "9af37de9_4d523e15",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_e0269915",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-23T13:59:39Z",
+      "side": 1,
+      "message": "the if checks in fact creates structures, see\n\nuse strict;\n\nmy $x \u003d {z\u003d\u003e1};\n\nif (defined $x-\u003e{y}-\u003e{id}){\n\n} elsif (exists $x-\u003e{y}) {\nprint \"the if vivified something\";\n}\n\nso at least an empty hash for the -\u003e{profile} key is created, which is bad.\n\ni again suggest to rewrite this part, so there is no of such recurring doubts what it does.\n\ni guess it\u0027s preferable to have check methods that do not change the data structures they inspect.",
+      "parentUuid": "9af37de9_6012a9b6",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -308,6 +344,24 @@
       "side": 1,
       "message": "you see, here we have really nested branches, so flattered it would look as:\n\nif ($profile_set \u0026\u0026 !$profile \u0026\u0026 $resource-\u003e{profile}{id}){\n} elsif ($profile_set \u0026\u0026 !$profile \u0026\u0026 !$resource-\u003e{profile}{id}) {\n}\n\nthat is look a little bit unclear, as for me",
       "parentUuid": "9af37de9_0a0e5c34",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_c0239504",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-23T13:59:39Z",
+      "side": 1,
+      "message": "was moreover pointing to this block\u0027s\n\n  if ($profile_set \u0026\u0026 !$profile) {\n\nand the previous block\u0027s\n\n  if ($profile_set) {\n\nno chance to bring that into structure?",
+      "parentUuid": "9af37de9_8d3146ef",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
