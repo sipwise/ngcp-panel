@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_80e22d9e",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-23T19:04:41Z",
+      "side": 1,
+      "message": "thinking about flexibility, I can\u0027t imagine anything that can do callback and can\u0027t do \"caller\" code with returned error information.\nAbout necessity to know what are return values, it is still the same with callbacks, that also should know what they can receive as parameter (error). This knowledge of error structure just moved in code between from return values to call parameters. \nAnd in callbacks I see disadvantage that it would be weired to keep set of predefined callbacks, if we will see that all error callbacks are just the same or can be categorized to few types and predefined.\nBut if we will have error detailed info agreement, we still will be free to implement some common solution for error handling.",
+      "parentUuid": "9af37de9_00119dac",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_d63fe0d4",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
