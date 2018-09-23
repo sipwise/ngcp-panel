@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_cd106e51",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-23T12:55:14Z",
+      "side": 1,
+      "message": "They differ intentionally. \nYou see, during unified profile,profile_set input processing we can meet different errors, and this is why return detailed error information and handover controller to caller is OK. \nCallbacks, that we discuss in Controller/Subscriber, as they can keep only the same behavior for all wrong cases would be less flexible way to react on different error. With returned error information caller is still free to perform any actions on error.",
+      "parentUuid": "9af37de9_f63ae4e6",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_d63fe0d4",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -137,6 +155,24 @@
       "side": 1,
       "message": "the first if branch is:\n\nif ($resource-\u003e{profile_set}{id}) {\n\nafter that, both \n\n- exists $resource-\u003e{profile_set}\n- exists $resource-\u003e{profile_set}-\u003e{id}\n\nwill be true.\n\nthis means it can never go into\n\n} elsif (!exists $resource-\u003e{profile_set}{id}) {",
       "parentUuid": "9af37de9_4a0a24d4",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_6012a9b6",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-23T12:55:14Z",
+      "side": 1,
+      "message": "I was under the same impression through the years, but seems like it is not correct now:\n\nroot@sp1:~# perl -e \u0027use Data::Dumper; my $a\u003d{\"b\"\u003d\u003e{ \"c\" \u003d\u003e \"d\" }}; if($a-\u003e{c}{k}){}elsif(!exists $a-\u003e{c}{k} ) {print \"! exists;\\n\";} \u0027\n\ngives me output :\n\n\n! exists;",
+      "parentUuid": "9af37de9_4d523e15",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -219,6 +255,30 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_4017a5a3",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-23T12:55:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9af37de9_96095834",
+      "range": {
+        "startLine": 552,
+        "startChar": 30,
+        "endLine": 552,
+        "endChar": 65
+      },
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_0a0e5c34",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
@@ -230,6 +290,24 @@
       "writtenOn": "2018-09-20T15:48:42Z",
       "side": 1,
       "message": "imho the error case would look more transparent if you make a straight 4branch-if?\n\nif (§profile_set and $profile) {\n#ok\n} elsif ($profile_set and not $profile) {\n\n} elsif (not $profile_set and $profile) {\n\n} else {\n\n}",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_8d3146ef",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-23T12:55:14Z",
+      "side": 1,
+      "message": "you see, here we have really nested branches, so flattered it would look as:\n\nif ($profile_set \u0026\u0026 !$profile \u0026\u0026 $resource-\u003e{profile}{id}){\n} elsif ($profile_set \u0026\u0026 !$profile \u0026\u0026 !$resource-\u003e{profile}{id}) {\n}\n\nthat is look a little bit unclear, as for me",
+      "parentUuid": "9af37de9_0a0e5c34",
       "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
