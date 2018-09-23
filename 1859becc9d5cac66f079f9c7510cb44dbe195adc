@@ -386,6 +386,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_c0d835f2",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-09-23T18:38:22Z",
+      "side": 1,
+      "message": "in the top condition we will try to define $profile just after comparison, so bottom condition check also result of the behavior on the top. Errors for the cases on top and bottom also are different. I see current implementation as the most clear, it keeps not too deep structure, less or more clear logic.",
+      "parentUuid": "9af37de9_c0239504",
+      "revId": "1859becc9d5cac66f079f9c7510cb44dbe195adc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_ea3af8cc",
         "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
         "patchSetId": 5
