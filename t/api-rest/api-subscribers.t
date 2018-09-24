@@ -8,7 +8,7 @@ use Data::Dumper;
 use Clone qw/clone/;
 use feature 'state';
 #use NGCP::Panel::Utils::Subscriber;
-#use Data::Compare qw//;
+use Data::Compare qw//;
 
 my $test_machine = Test::Collection->new(
     name => 'subscribers',
@@ -623,10 +623,10 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         delete $content_get->{alias_numbers}->[0]->{number_id};
         delete $subscribers_other_customer->[0]->{content}->{primary_number}->{number_id};
         # 0 if different, 1 if equal
-        #k(!Data::Compare::Compare($content_get->{alias_numbers}->[0], $subscribers_other_customer->[0]->{content}->{primary_number}), 
-        #   "check that subscribersadmin can't manage others customers numbers. Other subscriber primary_number:\n"
-        #   .Dumper($subscribers_other_customer->[0]->{content}->{primary_number})."\n=>\n".Dumper($content_get->{alias_numbers}->[0])
-        #   );
+        ok(!Data::Compare::Compare($content_get->{alias_numbers}->[0], $subscribers_other_customer->[0]->{content}->{primary_number}), 
+            "check that subscribersadmin can't manage others customers numbers. Other subscriber primary_number:\n"
+            .Dumper($subscribers_other_customer->[0]->{content}->{primary_number})."\n=>\n".Dumper($content_get->{alias_numbers}->[0])
+            );
         diag("#--------------------------3. Check PROFILE management ");
         diag("#--------------------------3. 1. PROFILE: Check attempt to apply other cutsomer's profile_id ------------ ");
         $content_put = clone $subscribers->[0]->{content};
