@@ -4342,10 +4342,6 @@ msgstr "Обнаружен некорректный id абонента"
 msgid "Invalid subscriber profile id detected"
 msgstr "Обнаружен некорректный id профиля абонента"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Invalid subscriber profile set id"
-msgstr "Обнаружен некорректный id набора профиля абонента"
-
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Invalid subscriber profile set id detected"
 msgstr "Обнаружен некорректный id набора профиля абонента"
@@ -8421,6 +8417,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "да"
+
+#~ msgid "Invalid subscriber profile set id"
+#~ msgstr "Обнаружен некорректный id набора профиля абонента"
 
 #~ msgid "Match Direction"
 #~ msgstr "Соответствовать направлению"

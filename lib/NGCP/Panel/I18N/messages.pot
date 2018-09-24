@@ -3866,10 +3866,6 @@ msgstr ""
 msgid "Invalid subscriber profile id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Invalid subscriber profile set id"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Invalid subscriber profile set id detected"
 msgstr ""

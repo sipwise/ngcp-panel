@@ -4452,10 +4452,6 @@ msgstr "Id abbonato non valido!"
 msgid "Invalid subscriber profile id detected"
 msgstr "Id profilo abbonato non valido!"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Invalid subscriber profile set id"
-msgstr "Id set profili abbonato non valido!"
-
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Invalid subscriber profile set id detected"
 msgstr "Id set profili abbonato non valido!"
@@ -8604,6 +8600,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Invalid subscriber profile set id"
+#~ msgstr "Id set profili abbonato non valido!"
 
 #~ msgid "Match Direction"
 #~ msgstr "Direzione Match"
