@@ -4337,10 +4337,6 @@ msgstr "Ungültige Subscriber ID"
 msgid "Invalid subscriber profile id detected"
 msgstr "Ungültige Subscriberprofil ID"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
-msgid "Invalid subscriber profile set id"
-msgstr "Ungültige Subscriber-Profil-Set ID"
-
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 msgid "Invalid subscriber profile set id detected"
 msgstr "Ungültige Subscriber-Profil-Set ID"
@@ -8418,6 +8414,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Invalid subscriber profile set id"
+#~ msgstr "Ungültige Subscriber-Profil-Set ID"
 
 #~ msgid "Match Direction"
 #~ msgstr "Vergleichts-Richtung"
