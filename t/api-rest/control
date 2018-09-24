@@ -1,5 +1,6 @@
 Source: ngcp-panel-tests-rest-api
 Build-Depends: libboolean-perl,
+               libdata-compare-perl,
                libdata-hal-perl,
                libdata-validate-ip-perl,
                libdatetime-format-iso8601-perl,
