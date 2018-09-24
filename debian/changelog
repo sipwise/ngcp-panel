@@ -1,3 +1,86 @@
+ngcp-panel (6.5.1.0+0~mr6.5.1.0) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [b712de8] TT#40540 fix Accept Header treatment
+  * [26435ac] TT#38811 fix validate_fields to include Subfields of Compound
+  * [8f8553f] TT#40540 fix accept header recognition for */*
+  * [f860a3d] TT#38811 API documentation show nested fields
+  * [d7cb06c] TT#38811 fix changed subscriber form
+  * [d02a441] TT#43268 swagger/OpenAPI document nested fields
+  * [41fa667] TT#32555 swaggerui layout
+  * [bfafe38] TT#44116 make swaggerui default and enable destruction protection
+
+  [ Irina Peshinskaya ]
+  * [212f4f8] TT#40544 Fix format a little
+  * [effa8fe] TT#40544 Remove unnecessary comment
+  * [870056a] TT#40518 Adapt valid_media_type to charset info
+  * [19529cb] TT#40540 Show error about absent binary data method
+  * [1f75abe] TT#41630 Add station_name filter to PbxDevices
+  * [10f57f1] TT#40509 Add "default" option to timezone select
+  * [ce84749] TT#29751 Remove minus from cents in negative costs
+  * [c21aa55] TT#41620 Use static banned data in datatables
+  * [a3e9fce] TT#40953 Allow all not reserved chars for sip URI
+  * [3e95f54] TT#40511 Check subscriberadmin edit only own customer subscriber
+  * [f567a73] TT#33113 Debug apply rewrite rule to the log
+  * [ffd1b48] TT#40503 Add journal actions to entities FW
+  * [47ebd02] TT#28457 Remove inherited code from faxserversettings
+  * [9ed0657] TT#40503 Show journal links to allowed roles only
+  * [846656c] TT#42860 Test subscribers profile and profile set management
+  * [cf0a6a3] TT#42860 Add proper reseller checking to subscribers API
+  * [baa7329] TT#40503 Clone cached referenced data before return
+  * [3d2e58f] TT#40503 Additional clone of cached files and collections lists
+  * [49e9e49] TT#44077 Disable subscriberadmin creation for subadmin in API
+  * [200ffa1] TT#44275 Fix fields adjustment in cached forms
+  * [c76d300] TT#40503 Remove explicit role checking for journal links
+  * [9db48b4] TT#44522 Fix alias_number as Repeatable form validation
+  * [b1e4733] TT#43351 Check subscriberadmin access to profile and profile_set
+  * [cfa7cb4] TT#43351 Keep high priority of current profile_set for subadmin
+  * [ab68499] TT#43351 Fix tests
+
+  [ Rene Krenn ]
+  * [8173249] TT#41022 calllist, faxes, vm: use owner's inherited tz
+  * [0574a4f] TT#40507 tz and use_owner_tz query params for /api/conversations
+  * [4ff4ab3] TT#38401 remove effective_start_time check in .t
+  * [3303cfd] TT#38401 remove 2nd effective_start_time check in .t
+  * [1a7aca8] TT#41402 normalize tzdata timezone names for perl DateTime
+  * [7d045b9] TT#42260 remove prepaid and prepaid_library pref usage
+  * [2930237] TT#42565 add URI::Encode dependency for api-journals.t
+  * [f2e533c] TT#42565 api-journals.t: use test start time TZ
+  * [3ddfd48] TT#42565 api-journals.t: derive/fix test start time
+  * [2b7a1a3] TT#41553 TT#41554 billing fee match_mode
+  * [b6c4129] TT#43555 fix sql error from /callists/?call_id=456
+  * [ad0fade] TT#43755 fix miliseconds presentation
+  * [29a8ca6] TT#43654 datatable rowcount clipping
+  * [7b5c9d9] TT#44095 set isolation level when creating contracts
+  * [f5117d3] TT#44451 change e164 elements from PosInteger to Text
+  * [42730fb] TT#44404 datatables refactoring for large tables
+
+  [ Richard Fuchs ]
+  * [cccf6ea] TT#39328 don't cancel inew reservation request after INSUFF FUNDS
+
+  [ Kirill Solomko ]
+  * [abbd681] TT#42565 api-journals.t: use test start time
+  * [650369c] TT#42753 reseller termination adjustments
+  * [ecfe7f5] TT#43561 /api/calllists add init_time field
+
+  [ Sipwise Jenkins Builder ]
+  * [11feb09] TT#4166 I18N dump: snapshot 2018.08.10-04.01.28
+  * [fab6dce] TT#4166 I18N dump: snapshot 2018.08.11-03.56.21
+  * [aa72a0b] TT#4166 I18N dump: snapshot 2018.08.20-17.27.47
+  * [57f0c53] TT#4166 I18N dump: snapshot 2018.08.30-05.49.12
+  * [6b07e91] TT#4166 I18N dump: snapshot 2018.09.24-04.26.22
+
+  [ Alexander Lutay ]
+  * [89eebb2] TT#42565 Fix 2930237: bump Dockerfile version to trigger docker rebuild
+
+  [ Jozef Kenyeres ]
+  * [e18be37] TT#39354 CLEARMODE codec added to codecs_list
+
+  [ Andreas Granig ]
+  * [b846044] TT#42767 Remove ALE dev config prefix and suffix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Sep 2018 18:56:20 +0200
+
 ngcp-panel (6.5.0.0+0~mr6.5.0.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
