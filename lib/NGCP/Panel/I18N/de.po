@@ -6090,6 +6090,10 @@ msgstr ""
 msgid "Reseller"
 msgstr "Reseller"
 
+#: lib/NGCP/Panel/Controller/Peering.pm
+msgid "Reseller #"
+msgstr ""
+
 #: share/templates/reseller/details.tt
 msgid "Reseller Base Information"
 msgstr "Reseller Basis-Information"
@@ -7612,7 +7616,7 @@ msgstr "Donnerstag"
 msgid "Time"
 msgstr "Zeit"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Time Set"
 msgstr "Zeit-Set"
 
