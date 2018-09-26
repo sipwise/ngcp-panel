@@ -16,8 +16,9 @@ has 'table_titles' => ( isa => 'ArrayRef', is => 'rw' );
 has 'custom_renderers' => ( isa => 'HashRef', is => 'rw' );
 has 'no_ordering' => ( isa => 'Bool', is => 'rw' );
 has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );
+has 'search_tooltip' => (isa => 'Str', is => 'rw', default => 'Filter for column values matching the pattern string, e.g. 12*45. The * (wildcard) is implicitly prepended and appended.' );
 
-#didn't want to incude some complex role related logic here, 
+#didn't want to incude some complex role related logic here,
 #as these DataTable fields also are used in API
 #To don't slow down API
 #traits  => ['Code']
@@ -41,12 +42,13 @@ sub render_element {
         no_ordering => $self->no_ordering,
         errors => $self->errors,
         language_file => $self->language_file,
+        search_tooltip => $self->search_tooltip,
         wrapper_class => ref $self->wrapper_class eq 'ARRAY' ? join (' ', @{$self->wrapper_class}) : $self->wrapper_class,
     };
     ref $self->adjust_datatable_vars eq 'CODE' and $self->adjust_datatable_vars->($self, $vars);
 
-    my $t = new Template({ 
-        ABSOLUTE => 1, 
+    my $t = new Template({
+        ABSOLUTE => 1,
         INCLUDE_PATH => [
             '/usr/share/ngcp-panel/templates',
             'share/templates',
