@@ -1,9 +1,9 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-    
+
     $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
-    
+
         if($(this).attr("checked") == "checked") {
             $(this).parents("tr").siblings().find("td input[type='checkbox']").attr("checked", false);
             $("#[% hidden_id %]").val( $(this).parents("tr")
@@ -11,7 +11,7 @@ $(document).ready(function() {
         } else {
             $("#[% hidden_id %]").val("");
         }
-    
+
     });
 
     $('#[% table_id %]')
@@ -30,12 +30,12 @@ $(document).ready(function() {
             "sUrl": "/js/i18n/[% language_file %]"
         },
         "sAjaxSource": "[% ajax_src %]",
-        
+
         "aoColumns": [
                         [% FOREACH f IN table_fields -%]
                             [%index = loop.count - 1%]
                             [%IF table_titles.${index} %]
-                        { 
+                        {
                            "mData": "[% f.replace('\.','_') %]",
                            "mRender": function ( data, type, full ) {
                                 if(data == null)
@@ -68,8 +68,16 @@ $(document).ready(function() {
         "fnServerParams": function ( aoData ) {
             aoData.push( {"name":"iIdOnTop","value":"[% value %]"} );
         },
+        "initComplete": function(settings, json) {
+            //alert( 'DataTables has finished its initialisation.' );
+            $( "#[% table_id %]_filter input" ).tooltip({
+                //  classes: {
+                //    "ui-tooltip": "highlight"
+                //  },
+                content: "Awesome title!", title: "blah"
+            });
+        }
     } );
-
 } );
 </script>
 

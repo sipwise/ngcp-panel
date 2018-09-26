@@ -239,6 +239,15 @@ $(document).ready(function() {
             nRow.className = "sw_action_row";
             return nRow;
         },
+        "initComplete": function(settings, json) {
+            //alert( 'DataTables has finished its initialisation.' );
+            $( "#[% helper.id_from_name %]_table_filter input" ).tooltip({
+                //  classes: {
+                //    "ui-tooltip": "highlight"
+                //  },
+                content: "Awesome title!", title: "blah"
+            });
+        }
     } );
 
 } );
