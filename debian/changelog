@@ -1,3 +1,12 @@
+ngcp-panel (5.5.6.4+0~mr5.5.6.4) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [a6c34a1] TT#44168 create additional form for subadmin non-pbx subscriber edit
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 27 Sep 2018 12:42:05 +0200
+
 ngcp-panel (5.5.6.3+0~mr5.5.6.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
