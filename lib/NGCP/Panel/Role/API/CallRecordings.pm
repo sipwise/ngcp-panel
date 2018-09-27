@@ -11,6 +11,32 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Subscriber;
 
+sub item_name {
+    return 'callrecording';
+}
+
+sub resource_name {
+    return 'callrecordings';
+}
+
+sub get_form {
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::CallRecording::Recording", $c);
+}
+
+#Todo: maybe put it into Entities as common checking for all collections?
+sub validate_request {
+    my($self, $c) = @_;
+    my $method = uc($c->request->method);
+    if ($method eq 'GET') {
+        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
+            return;
+        }
+    }
+    return 1;
+}
+
 sub _item_rs {
     my ($self, $c) = @_;
 
@@ -68,13 +94,8 @@ sub _item_rs {
     return $item_rs;
 }
 
-sub get_form {
-    my ($self, $c) = @_;
-    return NGCP::Panel::Form::get("NGCP::Panel::Form::CallRecording::Recording", $c);
-}
-
-sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
+sub hal_links {
+    my($self, $c, $item, $resource, $form) = @_;
 
     my $res_rs = $item->recording_metakeys->search({
         key => 'uuid'
@@ -83,26 +104,10 @@ sub hal_from_item {
         uuid => { -in => $res_rs->get_column('value')->as_query }
     })->get_column('id')->all;
 
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            (map { Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $_)) } @sub_ids),
-            Data::HAL::Link->new(relation => 'ngcp:callrecordingstreams', href => sprintf("/api/callrecordingstreams/?recording_id=%d", $item->id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    my $resource = $self->resource_from_item($c, $item, $form);
-    $hal->resource($resource);
-    return $hal;
+    return [
+        (map { Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $_)) } @sub_ids),
+        Data::HAL::Link->new(relation => 'ngcp:callrecordingstreams', href => sprintf("/api/callrecordingstreams/?recording_id=%d", $item->id)),
+    ];
 }
 
 sub resource_from_item {
@@ -143,12 +148,6 @@ sub resource_from_item {
     }
 
     return \%resource;
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
 }
 
 1;
