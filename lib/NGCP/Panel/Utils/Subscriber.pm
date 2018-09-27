@@ -1888,6 +1888,19 @@ sub get_voicemail_content_type {
     return;
 }
 
+sub delete_callrecording {
+    my %params = @_;
+    my($recording) = @params{qw/recording/};
+
+    foreach my $stream($recording->recording_streams->all) {
+        #if we met some error deleting file - we will fail and transaction will be rollbacked 
+        unlink($stream->full_filename);
+    }
+    $recording->recording_streams->delete;
+    $recording->recording_metakeys->delete;
+    $recording->delete;
+}
+
 1;
 
 =head1 NAME
