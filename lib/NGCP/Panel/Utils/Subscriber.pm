@@ -1829,6 +1829,19 @@ sub get_subscriber_pbx_status{
     }
     return 0;
 }
+sub delete_callrecording {
+    my %params = @_;
+    my($recording) = @params{qw/recording/};
+
+    foreach my $stream($recording->recording_streams->all) {
+        #if we met some error deleting file - we will fail and transaction will be rollbacked 
+        unlink($stream->full_filename);
+    }
+    $recording->recording_streams->delete;
+    $recording->recording_metakeys->delete;
+    $recording->delete;
+}
+
 1;
 
 =head1 NAME
