@@ -11,6 +11,27 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Subscriber;
 
+sub item_name {
+    return 'callrecording';
+}
+
+sub resource_name {
+    return 'callrecordings';
+}
+
+#Todo: maybe put it into Entities as common checking for all collections?
+sub validate_request {
+    my($self, $c) = @_;
+    my $method = uc($c->request->method);
+    if ($method eq 'GET') {
+        if($c->req->param('tz') && !DateTime::TimeZone->is_valid_name($c->req->param('tz'))) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Query parameter 'tz' value is not a valid time zone");
+            return;
+        }
+    }
+    return 1;
+}
+
 sub _item_rs {
     my ($self, $c) = @_;
 
