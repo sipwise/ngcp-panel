@@ -4118,10 +4118,12 @@ sub delete_recording :Chained('recording') :PathPart('delete') :Args(0) {
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     try {
-        $c->stash->{recording}->delete;
+        my $recording = $c->stash->{recording};
+        my $data = { $recording->get_inflated_columns };
+        NGCP::Panel::Utils::Subscriber::delete_callrecording( c => $c, recording => $recording );
         NGCP::Panel::Utils::Message::info(
             c    => $c,
-            data => { $c->stash->{recording}->get_inflated_columns },
+            data => $data,
             desc => $c->loc('Successfully deleted recording'),
         );
     } catch($e) {
