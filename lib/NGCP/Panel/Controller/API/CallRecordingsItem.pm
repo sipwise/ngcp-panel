@@ -29,6 +29,7 @@ sub dispatch_path{
 sub relation{
     return 'http://purl.org/sipwise/ngcp-api/#rel-callrecordings';
 }
+use NGCP::Panel::Utils::Subscriber;
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
@@ -65,12 +66,7 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, callrecording => $item);
 
         try {
-            foreach my $stream($item->recording_streams->all) {
-                unlink($stream->full_filename);
-            }
-            $item->recording_streams->delete;
-            $item->recording_metakeys->delete;
-            $item->delete;
+            NGCP::Panel::Utils::Subscriber::delete_callrecording($c, $item);
         } catch($e) {
             $c->log->error("Failed to delete recording: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete recording.");
@@ -78,7 +74,6 @@ sub DELETE :Allow {
         }
 
 
-        $item->delete;
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
