@@ -1476,13 +1476,41 @@ sub return_csv{
     }
 }
 
+sub check_return_type {
+    my ($self, $c, $requested_type, $allowed_types) = @_;
+    if (!$allowed_types) {
+        my $action_config = $self->get_config('action');
+        $allowed_types = $action_config->{GET}->{ReturnContentType};
+    }
+    #while not strict requirement to the config
+    my $result = 1;
+    if ($allowed_types) {
+        if ( (!ref $allowed_types && $requested_type ne 'binary' && $requested_type ne $allowed_types) 
+            ||
+            ( ref $allowed_types eq 'ARRAY'
+                && !grep {$_ eq $requested_type} @$allowed_types
+            ) 
+        ) {
+            $result = 0;
+        }
+    }
+    if (!$result) {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Requested unknown type '$requested_type', supported types: ".((ref $allowed_types eq 'ARRAY')? join (',', @$allowed_types) :  $allowed_types )."." );
+    }
+    return $result;
+}
+
 sub return_requested_type {
-    my ($self, $c, $id, $item) = @_;
+    my ($self, $c, $id, $item, $return_type) = @_;
     try{
+        if($return_type eq 'text/csv') {
+            $self->return_csv($c);
+            return;
+        }
         if (!$self->can('get_item_binary_data')) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Method not implemented.");
         }
-        my($data_ref,$mime_type,$filename) = $self->get_item_binary_data($c, $id, $item);
+        my($data_ref,$mime_type,$filename) = $self->get_item_binary_data($c, $id, $item, $return_type);
         $filename  //= $self->item_name.''.$self->get_item_id($c, $item);
         $mime_type //= 'application/octet-stream' ;
 

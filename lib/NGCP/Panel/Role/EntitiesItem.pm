@@ -187,16 +187,27 @@ sub get {
         last unless $item;
         my $header_accept = $c->request->header('Accept');
         my $action_config = $self->get_config('action');
-
+        my $config_allowed_types = $action_config->{GET}->{ReturnContentType};
+        my $apllication_json = 'application/json';
+        #TODO: to method
         if( ( defined $header_accept
                 && ($header_accept !~ m!\bapplication/json\b!)
                 && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) # application/json OR */*
             )
-            || ( $action_config->{GET}->{ReturnContentType}
-                && $action_config->{GET}->{ReturnContentType} ne 'application/json'
+            || ( $config_allowed_types
+                && $config_allowed_types ne $apllication_json
+                && !(
+                    ref $config_allowed_types eq 'ARRAY' 
+                    && grep { $_ eq  $apllication_json } @{ $config_allowed_types } 
+                )
             )
         ) {
-            $self->return_requested_type($c,$id,$item);
+            my $return_type = $header_accept;
+            if (!$return_type && !ref $config_allowed_types) {
+                 $return_type = $config_allowed_types;
+            }
+            return unless $self->check_return_type($c, $return_type, $config_allowed_types);
+            $self->return_requested_type($c, $id, $item, $return_type);
             # in case this method is not defined, we should return a reasonable error explaining the Accept Header
             return;
         }
