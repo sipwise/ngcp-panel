@@ -12,7 +12,7 @@ has_field 'reseller' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller name from_email subject body/],
+    render_list => [qw/reseller name from_email subject body attachment_name/],
 );
 
 1;
