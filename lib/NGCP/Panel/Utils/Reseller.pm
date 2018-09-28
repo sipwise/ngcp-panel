@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use Sipwise::Base;
+use NGCP::Panel::Utils::DateTime;
 
 sub create_email_templates{
     my %params = @_;
@@ -152,8 +153,10 @@ sub _handle_reseller_status_change {
         $reseller->emergency_containers->search_related_rs('emergency_mappings')->delete_all;
         $reseller->emergency_containers->delete_all;
         $reseller->voip_intercepts->delete_all;
+        $reseller->time_sets->delete_all;
     }
 }
+
 
 1;
 
