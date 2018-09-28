@@ -52,6 +52,14 @@ This is an automatically generated message. Do not reply.
 EOS_DEFAULT_TEXT
 );
 
+has_field 'attachment_name' => (
+    type => 'Text',
+    label => 'Attachment Name',
+    required => 0,
+    maxlength => 255,
+    default => "",
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -62,7 +70,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name from_email subject body/],
+    render_list => [qw/name from_email subject body attachment_name/],
 );
 
 has_block 'actions' => (
