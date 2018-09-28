@@ -252,6 +252,13 @@ sub from_string {
     return $ts;
 }
 
+sub from_mysql_to_js{
+    my $s = shift;
+    $s =~ s/^(\d{4}\-\d{2}\-\d{2})T(\d.+)$/$1 $2/;
+    return $s;
+  
+}
+
 sub from_rfc1123_string {
 
     my $s = shift;

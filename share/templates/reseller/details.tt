@@ -439,6 +439,43 @@
             </div>
         </div>
     </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_timeset">[% c.loc('Time sets') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_timeset">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Time sets');
+    helper.identifier = "TimeSets";
+    helper.dt_columns = timeset_dt_columns;
+    helper.messages = messages;
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/reseller/timeset_ajax', [c.req.captures.0] );
+    helper.tmpuri = c.uri_for(reseller.first.id, 'timeset');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-tertiary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri =  helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Time Set'), uri = c.uri_for_action('/reseller/timeset_create', [c.req.captures.0]), class = 'btn-small btn-primary', icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+
+
+            </div>
+        </div>
+    </div>
+
     [% END -%]
 
 </div>
