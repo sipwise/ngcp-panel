@@ -152,9 +152,43 @@ sub _handle_reseller_status_change {
         $reseller->emergency_containers->search_related_rs('emergency_mappings')->delete_all;
         $reseller->emergency_containers->delete_all;
         $reseller->voip_intercepts->delete_all;
+        $reseller->time_sets->delete_all;
     }
 }
 
+sub update_timesets {
+    my %params = @_;
+    my($c, $timeset, $resource, $form) = @params{qw/c timeset resource form/};
+
+    $timeset->update({
+            name => $resource->{name},
+            reseller_id => $resource->{reseller_id},
+        })->discard_changes;
+    $timeset->time_periods->delete;
+    for my $t ( @{ $form->values->{times} } ) { # not taking @{$resource->{times}}, to benefit from formhandler inflation
+        $timeset->create_related("time_periods", {
+                %{ $t },
+            });
+    }
+}
+
+sub create_timesets {
+    my %params = @_;
+    my($c, $resource) = @params{qw/c resource/};
+
+    my $schema = $c->model('DB');
+
+    my $timeset = $schema->resultset('voip_time_sets')->create({
+        name => $resource->{name},
+        reseller_id => $resource->{reseller_id},
+    });
+    for my $t ( @{$resource->{times}} ) {
+        $timeset->create_related("time_periods", {
+            %{ $t },
+        });
+    }
+    return $timeset;
+}
 1;
 
 =head1 NAME
