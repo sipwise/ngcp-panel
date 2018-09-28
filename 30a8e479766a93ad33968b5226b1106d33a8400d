@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_4eca2fa3",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 2032,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-09-28T14:04:30Z",
+      "side": 1,
+      "message": "-w would make more sense imho.\n\nbut not sure if this is helpful. if the filepath is not mounted, it will be silent here but delete th db records below.",
+      "range": {
+        "startLine": 2032,
+        "startChar": 8,
+        "endLine": 2032,
+        "endChar": 33
+      },
+      "revId": "30a8e479766a93ad33968b5226b1106d33a8400d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
