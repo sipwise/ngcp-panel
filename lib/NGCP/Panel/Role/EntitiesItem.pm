@@ -196,7 +196,8 @@ sub get {
                 && $action_config->{GET}->{ReturnContentType} ne 'application/json'
             )
         ) {
-            $self->return_requested_type($c,$id,$item);
+            my $return_type = $header_accept // $action_config->{GET}->{ReturnContentType};
+            $self->return_requested_type($c, $id, $item, $return_type);
             # in case this method is not defined, we should return a reasonable error explaining the Accept Header
             return;
         }
