@@ -8,7 +8,7 @@ use parent 'NGCP::Panel::Role::API';
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Subscriber;
-
+use NGCP::Panel::Utils::Reseller;
 use NGCP::Panel::Form;
 
 sub resource_name {
@@ -17,15 +17,14 @@ sub resource_name {
 
 sub get_form {
     my ($self, $c) = @_;
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::IcalTimeSet", $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Reseller::IcalTimeSetAPI", $c);
 }
 
 sub hal_links{
     my($self, $c, $item, $resource, $form) = @_;
     my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
     return [
-            Data::HAL::Link->new(relation => "ngcp:resellers", href => sprintf("/api/resellers/%d", $resource->{reseller_id})),
-            $adm ? $self->get_journal_relation_link($item->id) : (),
+        Data::HAL::Link->new(relation => "ngcp:resellers", href => sprintf("/api/resellers/%d", $resource->{reseller_id})),
     ];
 }
 
@@ -115,16 +114,12 @@ sub update_item_model {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     try {
-        $item->update({
-                name => $resource->{name},
-                reseller_id => $resource->{reseller_id},
-            })->discard_changes;
-        $item->time_periods->delete;
-        for my $t ( @{ $form->values->{times} } ) { # not taking @{$resource->{times}}, to benefit from formhandler inflation
-            $item->create_related("time_periods", {
-                    %{ $t },
-                });
-        }
+        NGCP::Panel::Utils::Reseller::update_timesets( 
+            c => $c,
+            timeset  => $item,
+            resource => $resource,
+            form     => $form
+        );
         $item->discard_changes;
     } catch($e) {
         $c->log->error("failed to update timeset: $e");
