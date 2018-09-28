@@ -252,6 +252,13 @@ sub from_string {
     return $ts;
 }
 
+sub from_mysql_to_js{
+    my $s = shift;
+    $s =~ s/^(\d{4}\-\d{2}\-\d{2})T(\d.+)$/$1 $2/;
+    return $s;
+  
+}
+
 sub from_rfc1123_string {
 
     my $s = shift;
@@ -266,22 +273,16 @@ sub from_rfc1123_string {
 # it returns a DateTime object in floating (meaning local) timezone or the specified timezone
 sub from_forminput_string {
     my($string, $tz) = @_;
-    my $parser1 = DateTime::Format::Strptime->new(
-        pattern => '%Y-%m-%d %H:%M:%S', $tz ? (time_zone => $tz) : (),
-    );
-    my $parser2 = DateTime::Format::Strptime->new(
-        pattern => '%Y-%m-%d %H:%M', $tz ? (time_zone => $tz) : (),
-    );
-    my $parser3 = DateTime::Format::Strptime->new(
-        pattern => '%Y-%m-%d', $tz ? (time_zone => $tz) : (),
-    );
     $string =~ s/^\s*(.*)\s*$/$1/; # remove whitespace around
-    my $dt = $parser1->parse_datetime($string);
-    unless ($dt) {
-        $dt = $parser2->parse_datetime($string);
-    }
-    unless ($dt) {
-        $dt = $parser3->parse_datetime($string);
+    $string =~ s/T/ /; # replace T from API input
+    my ($dt);
+    foreach my $pattern ('%Y-%m-%d %H:%M:%S','%Y-%m-%d %H:%M','%Y-%m-%d') {
+        my $parser = DateTime::Format::Strptime->new(
+            pattern => $pattern,
+            $tz ? (time_zone => $tz) : (),
+        );
+        $dt = $parser->parse_datetime($string);
+        last if $dt;
     }
     return $dt;
 }
