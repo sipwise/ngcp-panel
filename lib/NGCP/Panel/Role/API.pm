@@ -1477,12 +1477,16 @@ sub return_csv{
 }
 
 sub return_requested_type {
-    my ($self, $c, $id, $item) = @_;
+    my ($self, $c, $id, $item, $return_type) = @_;
     try{
+        if($return_type eq 'text/csv') {
+            $self->return_csv($c);
+            return;
+        }
         if (!$self->can('get_item_binary_data')) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Method not implemented.");
         }
-        my($data_ref,$mime_type,$filename) = $self->get_item_binary_data($c, $id, $item);
+        my($data_ref,$mime_type,$filename) = $self->get_item_binary_data($c, $id, $item, $return_type);
         $filename  //= $self->item_name.''.$self->get_item_id($c, $item);
         $mime_type //= 'application/octet-stream' ;
 
