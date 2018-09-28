@@ -158,7 +158,18 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         return;
     }
     $c->detach('/denied_page')
-    	if($c->user->roles eq "reseller" && $c->user->reseller_id != $reseller_id);
+        if($c->user->roles eq "reseller" && $c->user->reseller_id != $reseller_id);
+
+    my $reseller = $c->stash->{resellers}->search_rs({ id => $reseller_id });
+    unless($reseller->first) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'Reseller not found',
+            desc  => $c->loc('Reseller not found'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
+    }
+    $c->stash(reseller => $reseller);
 
     $c->stash->{contact_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
@@ -205,7 +216,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         { name => "name", "search" => 1, "title" => $c->loc("Name") },
         #{ name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
         #{ name => "v_count_used", "search" => 0, "title" => $c->loc("Used") },
-	NGCP::Panel::Utils::Billing::get_datatable_cols($c),
+        NGCP::Panel::Utils::Billing::get_datatable_cols($c),
     ]);
 
     $c->stash->{network_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -228,17 +239,13 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         { name => "number", search => 1, title => $c->loc("Number") },
     ]);
 
-    $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
-    unless($c->stash->{reseller}->first) {
-        NGCP::Panel::Utils::Message::error(
-            c     => $c,
-            log   => 'Reseller not found',
-            desc  => $c->loc('Reseller not found'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
-    }
-    $c->stash->{branding} = $c->stash->{reseller}->first->branding;
-    $c->stash->{phonebook} = $c->stash->{reseller}->first->phonebook;
+    $c->stash->{timeset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "name", search => 1, title => $c->loc("Name") },
+    ]);
+    $c->stash->{timesets_rs} = $reseller->first->time_sets;
+    $c->stash->{branding} = $reseller->first->branding;
+    $c->stash->{phonebook} = $reseller->first->phonebook;
 }
 
 sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
@@ -436,10 +443,10 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
     my ($self, $c) = @_;
     $c->detach('/denied_page') unless $c->request->method eq 'POST';
     $c->detach('/denied_page')
-    	if($c->user->read_only);
+        if($c->user->read_only);
 
-	my $default_pass = 'defaultresellerpassword';
-	my $saltedpass = NGCP::Panel::Utils::Admin::generate_salted_hash($default_pass);
+    my $default_pass = 'defaultresellerpassword';
+    my $saltedpass = NGCP::Panel::Utils::Admin::generate_salted_hash($default_pass);
 
     my $billing = $c->model('DB');
     my $now = NGCP::Panel::Utils::DateTime::current_local;
@@ -461,7 +468,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             status => 'active',
         },
         admins => {
-			saltedpass => $saltedpass,
+            saltedpass => $saltedpass,
             is_active => 1,
             show_passwords => 1,
             call_data => 1,
@@ -853,6 +860,165 @@ sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') 
     return;
 }
 
+sub timeset_ajax :Chained('base') :PathPart('reseller/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    NGCP::Panel::Utils::Datatables::process($c,
+        @{$c->stash}{qw(timesets_rs timeset_dt_columns)});
+    $c->detach( $c->view("JSON") );
+}
+
+sub timeset_create :Chained('base') :PathPart('timeset/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Reseller::IcalTimeSet", $c);
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $resource = $form->values;
+            $resource->{reseller_id} = $reseller->id;
+            $c->model('DB')->schema->txn_do( sub {
+                NGCP::Panel::Utils::Reseller::create_timesets(
+                    c => $c,
+                    resource => $resource,
+                );
+            });
+
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc => $c->loc('Timeset entry successfully created'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create timeset entry.'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action("/reseller/details", [$reseller->id]),
+        create_flag => 1,
+        form => $form
+    );
+}
+
+sub timeset_base :Chained('base') :PathPart('timeset') :CaptureArgs(1) {
+    my ($self, $c, $timeset_id) = @_;
+
+    unless($timeset_id && is_int($timeset_id)) {
+        $timeset_id //= '';
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            data => { id => $timeset_id },
+            desc => $c->loc('Invalid timeset id detected'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    my $rs = $c->stash->{reseller}->first->time_sets->find($timeset_id);
+    unless(defined($rs)) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            desc => $c->loc('Timeset entry does not exist'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    $c->stash(
+        timeset => {$rs->get_inflated_columns},
+        timeset_rs => $rs
+    );
+}
+
+sub timeset_edit :Chained('timeset_base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Reseller::IcalTimeSet", $c);
+    my $params = NGCP::Panel::Utils::Reseller::get_timeset(c => $c, timeset => $c->stash->{timeset_rs});;
+    $params = merge($params, $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                NGCP::Panel::Utils::Reseller::update_timesets(
+                    c => $c,
+                    timeset => $c->stash->{'timeset_rs'},
+                    resource => $form->values,
+                    form => $form
+                );
+            });
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc  => $c->loc('Timeset entry successfully updated'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update timeset entry'),
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
+
+    }
+
+    $c->stash(
+        close_target => $c->uri_for_action("/reseller/details", [$reseller->id]),
+        edit_flag => 1,
+        form => $form
+    );
+}
+
+sub timeset_delete :Chained('timeset_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $timeset = $c->stash->{timeset};
+
+    try {
+        $timeset->delete;
+        NGCP::Panel::Utils::Message::info(
+            c => $c,
+            data => $c->stash->{timeset},
+            desc => $c->loc('Timeset entry successfully deleted'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            data  => $c->stash->{timeset},
+            desc  => $c->loc('Failed to delete timeset entry'),
+        );
+    };
+
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
+}
 
 1;
 

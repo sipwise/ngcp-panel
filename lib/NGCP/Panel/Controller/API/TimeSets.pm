@@ -5,7 +5,11 @@ use Sipwise::Base;
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::TimeSets/;
 
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::Reseller;
 
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller/],
+});
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
@@ -31,10 +35,6 @@ sub query_params {
     ];
 }
 
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller/],
-});
-
 sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
 
@@ -43,15 +43,7 @@ sub create_item {
 
     try {
         # # no checks, they are in check_resource
-        $tset = $schema->resultset('voip_time_sets')->create({
-                name => $resource->{name},
-                reseller_id => $resource->{reseller_id},
-            });
-        for my $t ( @{$resource->{times}} ) {
-            $tset->create_related("time_periods", {
-                %{ $t },
-            });
-        }
+        $tset = NGCP::Panel::Utils::Reseller::create_timesets( c => $c, resource => $resource );
     } catch($e) {
         $c->log->error("failed to create timeset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create timeset.");

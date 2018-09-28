@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::IcalTimeSet;
+package NGCP::Panel::Form::Reseller::IcalTimeSetAPI;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
