@@ -2275,6 +2275,10 @@ msgstr ""
 msgid "Do Not Disturb"
 msgstr "Non Disturbare"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Do not increase outgoing call counter on CF"
+msgstr ""
+
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Documentation"
@@ -3609,6 +3613,18 @@ msgstr "Files"
 msgid "Filter Mode for SIP User-Agent Filter List"
 msgstr ""
 
+#: share/templates/helpers/datatables.tt
+msgid ""
+"Filter for column values matching the pattern string, e.g. 12*45. The * "
+"(wildcard) is implicitly prepended and appended."
+msgstr ""
+
+#: share/templates/helpers/datatables.tt
+msgid ""
+"Filter for column values matching the string, e.g. 12345. A leading * "
+"(wildcard) can result in long response times."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Find Subscriber by UUID"
 msgstr "Trova Abbonato tramite UUID"
@@ -3946,6 +3962,12 @@ msgid "If enabled allows LNP queries for local subscribers."
 msgstr ""
 "Se abilitato permette la ricerca nel DB dei numeri portati anche per "
 "abbonati locali."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"If enabled, Call Forwarding does not count as an outgoing call towards "
+"concurrent_max limit of subscriber that is doing the forward"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
