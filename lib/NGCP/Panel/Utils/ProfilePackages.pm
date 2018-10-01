@@ -903,7 +903,7 @@ sub _add_second {
 
 sub _get_notopup_expiration {
     my %params = @_;
-    my($contract,$start_mode,$notopup_discard_intervals,$interval_unit,$last_balance)= @params{qw/contract $start_mode notopup_discard_intervals interval_unit last_balance/};
+    my($contract,$start_mode,$notopup_discard_intervals,$interval_unit,$last_balance)= @params{qw/contract start_mode notopup_discard_intervals interval_unit last_balance/};
     my $notopup_expiration = undef;
     if ($notopup_discard_intervals) {
         #take the start of the latest interval where a topup occurred,

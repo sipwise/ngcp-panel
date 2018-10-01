@@ -200,10 +200,15 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    return \['exists ( select subscriber_id, group_concat(concat(cc,ac,sn)) as aliases from billing.voip_numbers voip_subscriber_aliases_csv where voip_subscriber_aliases_csv.`subscriber_id` = `me`.`id` group by subscriber_id having aliases like ?)', [ {} => '%'.$q.'%'] ];
+                    {
+                        'voip_dbaliases.username' => { like => '%'.$q.'%' },
+                    };
                 },
                 second => sub {
-                    return { };
+                    {
+                        join => { 'provisioning_voip_subscriber' => 'voip_dbaliases' },
+                        distinct => 1,
+                    };
                 },
             },
         },
@@ -264,9 +269,9 @@ sub query_params {
 }
 
 sub order_by_cols {
-    return 
-        { create_timestamp => 'provisioning_voip_subscriber.create_timestamp' }, 
-        { 
+    return
+        { create_timestamp => 'provisioning_voip_subscriber.create_timestamp' },
+        {
             columns_are_additional => 1,
             create_timestamp => {
                 join => 'provisioning_voip_subscriber',
