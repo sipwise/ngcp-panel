@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_f4c77243",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2018-10-01T15:03:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9af37de9_34873a11",
+      "revId": "999f30df24594a40b824cb58a543bd90f9e6de57",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_b49c4a6a",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-10-01T14:53:42Z",
       "side": 1,
       "message": "s/supercede/supersede/ (yeah, i\u0027m aware of https://www.merriam-webster.com/dictionary/supercede now :p)",
+      "revId": "999f30df24594a40b824cb58a543bd90f9e6de57",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_d4c46e41",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2018-10-01T15:03:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9af37de9_b49c4a6a",
       "revId": "999f30df24594a40b824cb58a543bd90f9e6de57",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
