@@ -47,8 +47,8 @@ if [ "$SKIP_CSR" = "true" ] ; then
        -out "${CRT_FILE}"          \
        -nodes -batch
 else
-  /usr/bin/openssl genrsa -out "${KEY_FILE}" 4096 \
-    -config "${OPENSSL_CONFIG}" -batch
+  OPENSSL_CONF="${OPENSSL_CONFIG}" /usr/bin/openssl genrsa \
+    -out "${KEY_FILE}" 4096
   /usr/bin/openssl req -new -out "${CSR_FILE}" \
     -key "${KEY_FILE}" -config "${OPENSSL_CONFIG}" -batch
   /usr/bin/openssl x509 -days "${DAYS}" -req -in "${CSR_FILE}" \
