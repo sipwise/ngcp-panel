@@ -70,20 +70,7 @@ sub _item_rs {
 
         $rtcengine &= ($c->user->voip_subscriber->contract->contact->reseller->rtc_user // 0);
 
-        my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(
-            c => $c,
-            contract_id => $c->user->account_id,
-        );
-        $customer_rs = $customer_rs->search({
-            '-or' => [
-                'product.class' => 'sipaccount',
-                'product.class' => 'pbxaccount',
-            ],
-        },{
-            '+select' => [ 'product.class' ],
-            '+as' => [ 'product_class' ],
-        });
-		my $customer = $customer_rs->first;
+		my $customer = $c->user->contract;
 
         my $cpbx = ($customer->product->class eq 'pbxaccount') ? 1 : 0;
         $cloudpbx &= $cpbx;
