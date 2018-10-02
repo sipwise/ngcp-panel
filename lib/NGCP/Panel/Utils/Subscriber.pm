@@ -2029,8 +2029,9 @@ sub delete_callrecording {
     my($recording) = @params{qw/recording/};
 
     foreach my $stream($recording->recording_streams->all) {
+        #we will not check other facts beside file existance
         #if we met some error deleting file - we will fail and transaction will be rollbacked 
-        unlink($stream->full_filename);
+        -e and unlink($stream->full_filename);
     }
     $recording->recording_streams->delete;
     $recording->recording_metakeys->delete;
