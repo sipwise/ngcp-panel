@@ -90,7 +90,7 @@ sub validate {
     #Todo: to some utils?
     if ($c->user->roles eq 'admin') {
         if ($self->field('reseller')) {
-            $reseller_id = $self->field('reseller')->value;
+            $reseller_id = $self->field('reseller')->field('id')->value;
         }
     } else {
         $reseller_id = $c->user->reseller_id
