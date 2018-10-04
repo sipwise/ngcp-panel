@@ -62,6 +62,10 @@ sub query_params {
             param => 'to',
             description => 'Filter for conversation events starting lower or equal the specified time stamp.',
         },
+        {
+            param => 'fax_number_rewrite_mode',
+            description => "Force the fax numbers normalization logic to use (available: 'default', 'extended').",
+        },
 
     ];
 }
