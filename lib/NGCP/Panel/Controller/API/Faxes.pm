@@ -82,6 +82,10 @@ sub query_params {
             description => 'Filter for a fax with the specific session id',
             query_type => 'string_eq',
         },
+        {
+            param => 'number_rewrite_mode',
+            description => "Force the number normalization logic (available: 'default', 'extended').",
+        },
     ];
 }
 
