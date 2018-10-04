@@ -52,7 +52,7 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    { status => $q };
+                    { 'me.status' => $q };
                 },
                 second => sub {},
             },
