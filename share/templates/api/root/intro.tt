@@ -146,7 +146,7 @@ The server rejects a client request with the following response codes:
 The server sends the following error codes in case of internal issues:
 
 <ul>
-  <li><b>500 Server Internal Error</b>: The 500 code is sent in response to a request which caused an unrecoverable error while processing the request. This is usually caused by database errors when modifying data, and they should never happen. If a 500 is encountered, please open a support ticket with Sipwise, providing the data you passed to the server (URL, headers, body), and the error message provided in <em>/var/log/ngcp/oss.log</em> of the server.</li>
+  <li><b>500 Server Internal Error</b>: The 500 code is sent in response to a request which caused an unrecoverable error while processing the request. This is usually caused by database errors when modifying data, and they should never happen. If a 500 is encountered, please open a support ticket with Sipwise, providing the data you passed to the server (URL, headers, body), and the error messages provided in <em>/var/log/ngcp/panel*.log</em> of the server.</li>
 </ul>
 
 
