@@ -179,6 +179,65 @@ sub process_fax_journal_item {
                      callee => $result->callee };
     my $dir      = $result->direction;
     my $prov_sub = $subscriber->provisioning_voip_subscriber;
+    my $src_sub  = $result->caller_subscriber // undef;
+    my $dst_sub  = $result->callee_subscriber // undef;
+    my $prov_src_sub = $src_sub
+                            ? $src_sub->provisioning_voip_subscriber
+                            : $subscriber;
+    my $prov_dst_sub = $dst_sub
+                            ? $dst_sub->provisioning_voip_subscriber
+                            : $subscriber;
+    my $src_rewrite = 1;
+    my $dst_rewrite = 1;
+    if ($src_sub && $dst_sub && $src_sub->contract_id == $dst_sub->contract_id) {
+        if ($prov_src_sub && $prov_src_sub->pbx_extension) {
+            $resource->{caller} = $prov_src_sub->pbx_extension;
+            $src_rewrite = 0;
+        }
+        if ($prov_dst_sub && $prov_dst_sub->pbx_extension) {
+            $resource->{callee} = $prov_dst_sub->pbx_extension;
+            $dst_rewrite = 0;
+        }
+    } else {
+        if ($prov_sub->pbx_extension) {
+            if ($dir eq 'out') {
+                $resource->{caller} = $prov_sub->pbx_extension;
+                $src_rewrite = 0;
+            } else {
+                $resource->{callee} = $prov_sub->pbx_extension;
+                $dst_rewrite = 0;
+            }
+        }
+    }
+    if ($src_rewrite) {
+        if (my $rt_caller = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                                c => $c,
+                                number => $resource->{caller},
+                                subscriber => $src_sub // $subscriber,
+                                direction => 'caller_out'
+                            )) {
+            $resource->{caller} = $rt_caller;
+        }
+    }
+    if ($dst_rewrite) {
+        if (my $rt_callee = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                                c => $c,
+                                number => $resource->{callee},
+                                subscriber => $dst_sub // $subscriber,
+                                direction => 'caller_out'
+                            )) {
+            $resource->{callee} = $rt_callee;
+        }
+    }
+    return $resource;
+}
+
+sub process_extended_fax_journal_item {
+    my ($c, $result, $subscriber) = @_;
+    my $resource = { caller => $result->caller,
+                     callee => $result->callee };
+    my $dir      = $result->direction;
+    my $prov_sub = $subscriber->provisioning_voip_subscriber;
     my $src_sub  = $result->caller_subscriber // undef; #undef, if not local, or if caller is username
     #try finding it:
     unless ($src_sub) {

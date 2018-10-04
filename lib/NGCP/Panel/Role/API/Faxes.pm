@@ -84,7 +84,13 @@ sub resource_from_item {
     foreach(qw/duration pages signal_rate/){
         $resource{$_} = is_int($item->$_) ? $item->$_ : 0;
     }
-    my $data = NGCP::Panel::Utils::Fax::process_fax_journal_item($c, $item, $subscriber);
+    my $number_rewrite_mode = $c->request->query_params->{number_rewrite_mode} //
+                              $c->config->{faxserver}->{number_rewrite_mode};
+    my $data = $number_rewrite_mode eq 'extended'
+               ? NGCP::Panel::Utils::Fax::process_extended_fax_journal_item(
+                    $c, $item, $subscriber)
+               : NGCP::Panel::Utils::Fax::process_fax_journal_item(
+                    $c, $item, $subscriber);
     map { $resource{$_} = $data->{$_} } qw(caller callee);
     return \%resource;
 }
