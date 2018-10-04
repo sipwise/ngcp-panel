@@ -291,9 +291,11 @@ sub webfax_ajax :Chained('base') :PathPart('webfax/ajax') :Args(0) {
         sub {
             my ($result) = @_;
             my $resource =
-                NGCP::Panel::Utils::Fax::process_fax_journal_item(
-                    $c, $result, $subscriber
-                );
+                $c->config->{faxserver}->{number_rewrite_mode} eq 'extended'
+                ? NGCP::Panel::Utils::Fax::process_extended_fax_journal_item(
+                    $c, $result, $subscriber)
+                : NGCP::Panel::Utils::Fax::process_fax_journal_item(
+                    $c, $result, $subscriber);
             return %$resource;
         }
     );
