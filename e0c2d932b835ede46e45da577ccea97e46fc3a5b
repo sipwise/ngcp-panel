@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9af37de9_b4aa0518",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-10-05T10:46:46Z",
+      "side": 1,
+      "message": "ok for UI part the configyml setting is needed",
+      "revId": "e0c2d932b835ede46e45da577ccea97e46fc3a5b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9af37de9_34b6158b",
+        "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 795,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-10-05T10:46:46Z",
+      "side": 1,
+      "message": "maybe shorter to place that inside NGCP::Panel::Utils::Fax::process_.._fax_journal_item\n\nok forget, the query param names are different",
+      "revId": "e0c2d932b835ede46e45da577ccea97e46fc3a5b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
