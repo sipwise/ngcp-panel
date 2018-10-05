@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9af37de9_5704fb13",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-10-05T11:00:24Z",
+      "side": 1,
+      "message": "if it is not defined, then the ngcp_panel conf is not up to date (read: broken).\nthe faxserver section is static there so it must be present anyways, and then even if number_rewrite_mode does not exist it will not explicitly create it.\nimho we do not need the \"defined\" check here.",
+      "parentUuid": "9af37de9_d42229b9",
+      "revId": "e0c2d932b835ede46e45da577ccea97e46fc3a5b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af37de9_34b6158b",
         "filename": "lib/NGCP/Panel/Role/API/Conversations.pm",
         "patchSetId": 3
