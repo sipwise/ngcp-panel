@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ad8896b_91ba9e6d",
+        "filename": "lib/NGCP/Panel/Controller/EmailTemplate.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-10-08T15:41:41Z",
+      "side": 1,
+      "message": "The Form template has:     default \u003d\u003e \"\",",
+      "range": {
+        "startLine": 188,
+        "startChar": 12,
+        "endLine": 188,
+        "endChar": 45
+      },
+      "revId": "f58f416f1fd135c3eb5ee8c0f30dda4328998016",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
