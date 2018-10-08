@@ -713,7 +713,7 @@ sub paginate_order_collection_rs {
                 });
             }
         }
-        if ($explicit_order_col_spec or $item_rs->result_source->has_column($order_by)) {
+        if ($explicit_order_col_spec || $item_rs->result_source->has_column($order_by)) {
             my $col = $explicit_order_col_spec || $item_rs->current_source_alias . '.' . $order_by;
             if (lc($direction) eq 'desc') {
                 $item_rs = $item_rs->search(undef, {
