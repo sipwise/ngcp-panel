@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ad8896b_71261218",
+        "filename": "share/templates/emailtemplate/list.tt",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-10-08T15:39:46Z",
+      "side": 1,
+      "message": "that is not how it is supposed to be, not how it was discussed and not how it is described in the task description.\n\nthe request was to have a \"Copy from a Template\" button.\n\n(quoted from the task: - is there a button \"Copy from a Template\" in the Email Template UI part, next to \"Create Email Template\" ? )\n\nThe whole purpose of it is that you can always copy a template from one of the default ones (reseller_id \u003d NULL). One of the reasons is if you on the UI delete a reseller template (or a reseller is created without reseller copied templates) there is no way to recreate it.\n\nI would highly suggest you to either read carefully the requirements or ask if something is even a little unclear to you, I am there to help you anytime for a reason...\n\nP.S. Deployed the PPA, getting \"Oops, Not found\" when pressing the \"Copy\" button.",
+      "range": {
+        "startLine": 44,
+        "startChar": 34,
+        "endLine": 45,
+        "endChar": 26
+      },
+      "revId": "6fbd5eabe7b2c6c66082f1c191f80939e98ef711",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
