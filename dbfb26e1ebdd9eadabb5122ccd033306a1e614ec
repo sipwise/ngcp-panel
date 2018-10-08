@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ad8896b_513c362f",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSource.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-10-08T14:45:40Z",
+      "side": 1,
+      "message": "what is the point of the double return here ?",
+      "range": {
+        "startLine": 32,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 42
+      },
+      "revId": "dbfb26e1ebdd9eadabb5122ccd033306a1e614ec",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
