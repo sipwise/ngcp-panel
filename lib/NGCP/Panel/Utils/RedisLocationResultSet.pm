@@ -107,15 +107,26 @@ sub search {
         $new_rs->_query_done(1);
     }
     $new_rs->_filter($filter);
-
-    if ($opt->{order_by}->{'-desc'}) {
-        my $f = $opt->{order_by}->{'-desc'};
-        $f =~ s/^me\.//;
-        $new_rs->_rows([sort { $b->$f cmp $a->$f } @{ $new_rs->_rows }]);
-    } elsif ($opt->{order_by}->{'-asc'} || ref $opt->{order_by} eq "") {
-        my $f = $opt->{order_by}->{'-asc'} // $opt->{order_by};
-        $f =~ s/^me\.//;
-        $new_rs->_rows([sort { $a->$f cmp $b->$f } @{ $new_rs->_rows }]);
+    if ($opt->{order_by}) {
+        my $sort_field;
+        my $sort_order = '';
+        if (!ref $opt->{order_by}) {
+            $sort_field = $opt->{order_by};
+        } elsif (ref $opt->{order_by} eq "HASH") {
+            if ($opt->{order_by}->{'-desc'}) {
+                $sort_field = $opt->{order_by}->{'-desc'};
+                $sort_order = 'desc';
+            } elsif ($opt->{order_by}->{'-asc'}) {
+                $sort_field = $opt->{order_by}->{'-desc'};
+            }
+        }
+        my $source_alias = $self->current_source_alias();
+        $sort_field =~ s/^$source_alias\.//;
+        if ($sort_order eq 'desc') {
+            $new_rs->_rows([sort { $b->$sort_field cmp $a->$sort_field } @{ $new_rs->_rows }]);
+        } else {
+            $new_rs->_rows([sort { $a->$sort_field cmp $b->$sort_field } @{ $new_rs->_rows }]);
+        }
     }
 
     $opt->{rows} //= -1;
@@ -157,7 +168,8 @@ sub _filter {
         foreach my $colname (keys %{ $filter }) {
             my $condition = $filter->{$colname};
             my $searchname = $colname;
-            $colname =~ s/^me\.//;
+            my $source_alias = $self->current_source_alias();
+            $colname =~ s/^$source_alias\.//;
             next if ($colname =~ /\./); # we don't support joined table columns
             $filter_applied = 1;
             if (ref $condition eq "") {
@@ -215,6 +227,11 @@ sub result_class {
 
 sub result_source {
     NGCP::Panel::Utils::RedisLocationResultSource->new;
+}
+
+sub current_source_alias {
+    my ($self) = @_;
+    return 'me';
 }
 
 1;
