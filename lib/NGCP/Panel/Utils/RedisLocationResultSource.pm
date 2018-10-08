@@ -27,4 +27,11 @@ sub columns {
     
 }
 
+sub has_column {
+    my ($self, $column) = @_;
+    return 1;
+    return exists $self->_data->{$column};
+}
+
+
 1;
