@@ -1,4 +1,31 @@
 [% site_config.title = c.loc('Email Templates') -%]
+
+<div class="ngcp-separator"></div>
+<div class="row">
+    <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+    [% UNLESS c.user.read_only -%]
+    <span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for('/emailtemplate/create') %]"><i class="icon-star"></i> [% c.loc('Create Email Template') %]</a>
+    </span>
+    [% END -%]
+</div>
+[% back_created = 1 -%]
+
+<div class="ngcp-separator"></div>
+<select onChange="changeEmailTemplatelist(this.value);" id="email_template_table_external_filter">
+<option value="[% c.uri_for_action('/emailtemplate/tmpl_ajax') -%]" >Show all templates</option>
+<option value="[% c.uri_for_action('/emailtemplate/tmpl_ajax_default') -%]" [%IF email_template_external_filter == 'default'%]selected[%END%] >Show default templates</option>
+</select>
+<script>
+function changeEmailTemplatelist(uri) {
+    $('#email_template_table').dataTable().fnSettings().sAjaxSource = uri;
+    $('#email_template_table').dataTable().api().ajax.reload();
+}
+</script>
+<div class="ngcp-separator"></div>
+
 [%
     helper.name = c.loc('Email Template');
     helper.identifier = 'email_template';
@@ -14,14 +41,21 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = c.loc('Edit'), uri = "/emailtemplate/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Delete'), uri = "/emailtemplate/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        ];
-        helper.top_buttons = [
-            { name = c.loc('Create Email Template'), uri = c.uri_for('/emailtemplate/create'), icon = 'icon-star' },
+            { name = c.loc('Edit'), uri = "/emailtemplate/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit', condition = '!full.undeletable' },
+            { name = c.loc('Copy'), uri = "/emailtemplate/copy/'+full.id+'", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/emailtemplate/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash', condition = '!full.undeletable' },
+
         ];
     END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
+[%IF email_template_external_filter == 'default'%]
+<script>
+$( document ).ready(function() {
+changeEmailTemplatelist($('#email_template_table_external_filter').val());
+});
+</script>
+[%END%]
+
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
