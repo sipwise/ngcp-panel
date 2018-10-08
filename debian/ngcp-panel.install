@@ -1,4 +1,4 @@
-debian/ngcp-panel.tmpfiles.d.conf	usr/lib/tmpfiles.d/ngcp-panel.conf
+debian/ngcp-panel.conf usr/lib/tmpfiles.d/
 lib/NGCP/Panel/I18N/*	usr/share/perl5/NGCP/Panel/I18N
 logging.conf		etc/ngcp-panel/
 ngcp_panel.conf		etc/ngcp-panel/
