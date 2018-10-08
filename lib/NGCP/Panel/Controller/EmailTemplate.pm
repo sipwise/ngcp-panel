@@ -38,6 +38,8 @@ sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) {
         { name => 'subject', search => 1, title => $c->loc('Subject') },
     ]);
 
+    $c->stash->{email_template_external_filter} = $c->session->{email_template_external_filter};
+
     $c->stash(template => 'emailtemplate/list.tt');
 }
 
@@ -56,12 +58,25 @@ sub tmpl_ajax :Chained('tmpl_list') :PathPart('ajax') :Args(0) {
 
 sub tmpl_ajax_reseller :Chained('tmpl_list') :PathPart('ajax') :Args(1) {
     my ($self, $c, $reseller_id) = @_;
-
-    my $rs = $c->stash->{tmpl_rs}->search({
-        reseller_id => $reseller_id,
-    });
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{template_dt_columns});
-
+    if (!$reseller_id) {
+        my $rs = $c->stash->{tmpl_rs}->search({
+            'me.reseller_id' => undef,
+        });
+        my $dt_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
+            { name => 'id', search => 1, title => $c->loc('#') },
+            { name => 'name', search => 1, title => $c->loc('Name') },
+            { name => 'from_email', search => 1, title => $c->loc('From') },
+            { name => 'subject', search => 1, title => $c->loc('Subject') },
+        ]);
+        NGCP::Panel::Utils::Datatables::process($c, $rs, $dt_columns);
+        $c->session->{email_template_external_filter} = 'default';
+    } else {
+        my $rs = $c->stash->{tmpl_rs}->search({
+            'me.reseller_id' => $reseller_id,
+        });
+        NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{template_dt_columns});
+        $c->session->{email_template_external_filter} = 'all';
+    }
     $c->detach( $c->view("JSON") );
 }
 
@@ -90,35 +105,9 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
         },
         back_uri => $c->req->uri,
     );
-    if($posted && $form->validated) {
-        try {
-            if($c->user->roles eq "admin") {
-                $form->values->{reseller_id} = $form->values->{reseller}{id};
-            } elsif($c->user->roles eq "reseller") {
-                $form->values->{reseller_id} = $c->user->reseller_id;
-            }
-            delete $form->values->{reseller};
-
-            my $schema = $c->model('DB');
-            $schema->txn_do(sub {
-                my $tmpl = $c->stash->{tmpl_rs}->create($form->values);
-            });
-
-            delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message::info(
-                c    => $c,
-                desc => $c->loc('Email template successfully created'),
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c     => $c,
-                error => $e,
-                desc  => $c->loc('Failed to create email template'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emailtemplate'));
+    if($posted) {
+        $self->create_email_template($c, $form);
     }
-
     $c->stash(
         form => $form,
         create_flag => 1,
@@ -243,6 +232,73 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
     );
 }
 
+sub tmpl_copy :Chained('tmpl_base') :PathPart('copy') {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = { $c->stash->{tmpl}->get_inflated_columns };
+    $params->{reseller}{id} = delete $params->{reseller_id};
+    $params = merge($params, $c->session->{created_objects});
+    if($c->user->roles eq "admin") {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmailTemplate::Admin", $c);
+    } elsif($c->user->roles eq "reseller") {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmailTemplate::Reseller", $c);
+    } 
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+    if($posted) {
+        $self->create_email_template($c, $form);
+    }
+
+    $c->stash(
+        form => $form,
+        create_flag => 1,
+    );
+}
+
+sub create_email_template :Private {
+    my ($self, $c, $form) = @_;
+    if($form->validated) {
+        try {
+            if($c->user->roles eq "admin") {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
+            } elsif($c->user->roles eq "reseller") {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            }
+            delete $form->values->{reseller};
+
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $tmpl = $c->stash->{tmpl_rs}->create($form->values);
+            });
+
+            delete $c->session->{created_objects}->{reseller};
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Email template successfully created'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create email template'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emailtemplate'));
+    }
+}
 
 sub send_test :Chained('tmpl_list') :PathPart('test') :Args(0) {
     my ($self, $c) = @_;
