@@ -18,7 +18,7 @@ has_field 'name' => (
 );
 
 has_field 'from_email' => (
-    type => 'Email',
+    type => 'Text',
     label => 'From Email Address',
     required => 1,
 );
