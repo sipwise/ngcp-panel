@@ -185,6 +185,8 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
                 # don't allow to change reseller id
             }
             delete $form->values->{reseller};
+            $form->values->{attachment_name} //= '';
+
             $c->model('DB')->txn_do(sub {
                 $c->stash->{tmpl}->update($form->values);
 
@@ -250,6 +252,7 @@ sub prepare_email_template_edit :Private {
     );
     return $posted, $form, $params;
 }
+
 sub create_email_template :Private {
     my ($self, $c, $form) = @_;
     if($form->validated) {
@@ -260,6 +263,8 @@ sub create_email_template :Private {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
             delete $form->values->{reseller};
+
+            $form->values->{attachment_name} //= '';
 
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
