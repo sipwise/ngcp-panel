@@ -186,6 +186,8 @@ sub tmpl_delete :Chained('tmpl_base') :PathPart('delete') {
 
 sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
     my ($self, $c) = @_;
+            $form->values->{attachment_name} //= '';
+
 
     my $posted = ($c->request->method eq 'POST');
     my $form;
@@ -211,6 +213,7 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+
         try {
             if($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
@@ -218,9 +221,12 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
                 # don't allow to change reseller id
             }
             delete $form->values->{reseller};
-            $c->model('DB')->txn_do(sub {
-                $c->stash->{tmpl}->update($form->values);
 
+            $form->values->{attachment_name} //= '';
+
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $tmpl = $c->stash->{tmpl_rs}->create($form->values);
             });
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
