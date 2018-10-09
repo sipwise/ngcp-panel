@@ -22,6 +22,30 @@
       "revId": "dbfb26e1ebdd9eadabb5122ccd033306a1e614ec",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ad8896b_f79432e9",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSource.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-09T19:50:11Z",
+      "side": 1,
+      "message": "I removed second. It was attempt to return something eal, but data was empty here when caller asked.",
+      "parentUuid": "7ad8896b_513c362f",
+      "range": {
+        "startLine": 32,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 42
+      },
+      "revId": "dbfb26e1ebdd9eadabb5122ccd033306a1e614ec",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
