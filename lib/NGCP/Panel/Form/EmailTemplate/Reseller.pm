@@ -79,6 +79,33 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
+sub validate {
+    my ($self, $field) = @_;
+    my $c = $self->ctx;
+    return unless $c;
+    my $schema = $c->model('DB');
+
+    my $name = $self->field('name')->value;
+    my $reseller_id;
+    #Todo: to some utils?
+    if ($c->user->roles eq 'admin') {
+        if ($self->field('reseller')) {
+            $reseller_id = $self->field('reseller')->value;
+        }
+    } else {
+        $reseller_id = $c->user->reseller_id
+    }
+    #/todo
+    my $existing_item = $schema->resultset('email_templates')->find({
+        name => $name,
+        reseller_id => $reseller_id,
+    });
+    my $current_item = $c->stash->{tmpl};
+    if ($existing_item && (!$current_item || $existing_item->id != $current_item->id)) {
+        $self->field('name')->add_error($c->loc('This name already exists'));
+    }
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
