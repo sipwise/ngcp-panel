@@ -22,6 +22,30 @@
       "revId": "f58f416f1fd135c3eb5ee8c0f30dda4328998016",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ad8896b_34587856",
+        "filename": "lib/NGCP/Panel/Controller/EmailTemplate.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-09T12:29:04Z",
+      "side": 1,
+      "message": "This default is for form showing, but not for data from forms retrieval",
+      "parentUuid": "7ad8896b_91ba9e6d",
+      "range": {
+        "startLine": 188,
+        "startChar": 12,
+        "endLine": 188,
+        "endChar": 45
+      },
+      "revId": "f58f416f1fd135c3eb5ee8c0f30dda4328998016",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
