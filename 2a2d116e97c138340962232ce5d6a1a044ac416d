@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ad8896b_f7bb1274",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-10-09T19:56:25Z",
+      "side": 1,
+      "message": "ok supporting this is the fix?",
+      "revId": "2a2d116e97c138340962232ce5d6a1a044ac416d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ad8896b_3793dafc",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-10-09T19:56:25Z",
+      "side": 1,
+      "message": "$new_rs-\u003e_rows([sort { ($a-\u003e$sort_field cmp $b-\u003e$sort_field) * (sort_order eq \u0027desc\u0027 -1 : 1) } @{ $new_rs-\u003e_rows }]);",
+      "range": {
+        "startLine": 125,
+        "startChar": 8,
+        "endLine": 129,
+        "endChar": 9
+      },
+      "revId": "2a2d116e97c138340962232ce5d6a1a044ac416d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
