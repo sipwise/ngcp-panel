@@ -138,8 +138,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm lib/NGCP/Panel/Utils/Sounds.pm
-#: lib/NGCP/Panel/Utils/Voucher.pm share/templates/customer/details.tt
+#: lib/NGCP/Panel/Controller/TimeSet.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
+#: lib/NGCP/Panel/Utils/Sounds.pm lib/NGCP/Panel/Utils/Voucher.pm
+#: share/templates/customer/details.tt
 #: share/templates/subscriber/preferences.tt
 msgid "#"
 msgstr "#"
@@ -768,7 +769,7 @@ msgstr "Tasto BLF"
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
 #: share/templates/device/list.tt share/templates/device/preferences.tt
 #: share/templates/device/profilepreferences.tt
-#: share/templates/domain/preferences.tt
+#: share/templates/domain/preferences.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
 #: share/templates/lnp/list.tt share/templates/package/details.tt
@@ -1604,6 +1605,10 @@ msgstr "Contratti"
 msgid "Controls whether to enable/disable NAT pings for a given domain/user"
 msgstr ""
 
+#: share/templates/emailtemplate/list.tt
+msgid "Copy"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Cost"
 msgstr "Costo"
@@ -1806,6 +1811,14 @@ msgstr "Crea Profilo per Abbonato"
 #: share/templates/subprofile/set_list.tt
 msgid "Create Subscriber Profile Set"
 msgstr "Crea Gruppo Profilo per Abbonato"
+
+#: share/templates/reseller/details.tt
+msgid "Create Time Set"
+msgstr ""
+
+#: share/templates/timeset/list.tt
+msgid "Create Time Set Entry"
+msgstr ""
 
 #: share/templates/calllistsuppression/list.tt
 msgid "Create call list suppression"
@@ -2031,7 +2044,8 @@ msgstr ""
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
 #: share/templates/subscriber/recording.tt
-#: share/templates/subscriber/voicemail.tt share/templates/voucher/list.tt
+#: share/templates/subscriber/voicemail.tt share/templates/timeset/list.tt
+#: share/templates/voucher/list.tt
 msgid "Delete"
 msgstr "Elimina"
 
@@ -2391,7 +2405,8 @@ msgstr ""
 #: share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt
 #: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
-#: share/templates/subscriber/preferences.tt share/templates/voucher/list.tt
+#: share/templates/subscriber/preferences.tt share/templates/timeset/list.tt
+#: share/templates/voucher/list.tt
 msgid "Edit"
 msgstr "Modifica"
 
@@ -2950,6 +2965,14 @@ msgstr "Creazione del profilo abbonato fallita"
 msgid "Failed to create subscriber profile set"
 msgstr "Creazione del set di profilo abbonato fallita"
 
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to create timeset entry"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm
+msgid "Failed to create timeset entry."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to create trusted source"
 msgstr "Creazione della sorgente sicura fallita"
@@ -3148,6 +3171,10 @@ msgstr "Eliminazione set profilo abbonato fallita"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete time set"
 msgstr "Eliminazione set di orari fallita"
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to delete timeset entry"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete trusted source."
@@ -3529,6 +3556,10 @@ msgstr "Aggiornamento abbonato fallito, CloudPBX deve avere un numero primario"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update time set"
 msgstr "Aggiornamento set orari fallito"
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to update timeset entry"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update trusted source"
@@ -4478,6 +4509,14 @@ msgstr "Id profilo abbonato non valido!"
 msgid "Invalid subscriber profile set id detected"
 msgstr "Id set profili abbonato non valido!"
 
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Invalid timeset entry id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm
+msgid "Invalid timeset id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Invalid username/password"
 msgstr "Username/password non validi!"
@@ -5153,8 +5192,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
-#: lib/NGCP/Panel/Utils/Sounds.pm share/templates/customer/details.tt
-#: share/templates/helpers/pref_table.tt share/templates/sound/handles_list.tt
+#: lib/NGCP/Panel/Controller/TimeSet.pm lib/NGCP/Panel/Utils/Sounds.pm
+#: share/templates/customer/details.tt share/templates/helpers/pref_table.tt
+#: share/templates/sound/handles_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Name"
 msgstr "Nome"
@@ -6247,8 +6287,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Phonebook.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
-#: lib/NGCP/Panel/Utils/Sounds.pm lib/NGCP/Panel/Utils/Voucher.pm
-#: share/templates/customer/details.tt share/templates/reseller/details.tt
+#: lib/NGCP/Panel/Controller/TimeSet.pm lib/NGCP/Panel/Utils/Sounds.pm
+#: lib/NGCP/Panel/Utils/Voucher.pm share/templates/customer/details.tt
+#: share/templates/reseller/details.tt
 #: share/templates/widgets/admin_reseller_overview.tt
 msgid "Reseller"
 msgstr "Rivenditore"
@@ -7795,6 +7836,10 @@ msgstr ""
 msgid "The timerange you wanted to delete does not exist"
 msgstr "Il range temporale che vuoi eliminare non esiste"
 
+#: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
+msgid "This name already exists"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "This weekday does not exist"
 msgstr "Questo giorno della settimana non esiste."
@@ -7809,12 +7854,18 @@ msgid "Time"
 msgstr "Orario"
 
 #: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Subscriber.pm
+#: share/templates/timeset/list.tt
 msgid "Time Set"
 msgstr "Set Temporale"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+#: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Time Sets"
 msgstr "Set Temporali"
+
+#: share/templates/reseller/details.tt
+msgid "Time sets"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Timerange has been successfully created"
@@ -7832,6 +7883,22 @@ msgstr "Impostazioni temporali"
 #: share/templates/subscriber/preferences.tt
 msgid "Timeset \"%1\" Details"
 msgstr "Impostazioni temporali \"%1\" Dettagli"
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Timeset entry does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Timeset entry successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Timeset entry successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Timeset entry successfully updated"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Callflow.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -8015,6 +8082,10 @@ msgstr "Profili/Reti di Fatturazione Underrun"
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Underrun Profiles"
 msgstr "Profili Underrun"
+
+#: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
+msgid "Unknow reseller"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm
 msgid "Unknown error"

@@ -116,8 +116,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
-#: lib/NGCP/Panel/Utils/ProfilePackages.pm lib/NGCP/Panel/Utils/Sounds.pm
-#: lib/NGCP/Panel/Utils/Voucher.pm share/templates/customer/details.tt
+#: lib/NGCP/Panel/Controller/TimeSet.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
+#: lib/NGCP/Panel/Utils/Sounds.pm lib/NGCP/Panel/Utils/Voucher.pm
+#: share/templates/customer/details.tt
 #: share/templates/subscriber/preferences.tt
 msgid "#"
 msgstr "#"
@@ -702,7 +703,7 @@ msgstr "Botón BLF"
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
 #: share/templates/device/list.tt share/templates/device/preferences.tt
 #: share/templates/device/profilepreferences.tt
-#: share/templates/domain/preferences.tt
+#: share/templates/domain/preferences.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
 #: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
 #: share/templates/lnp/list.tt share/templates/package/details.tt
@@ -1533,6 +1534,10 @@ msgstr "Contratos"
 msgid "Controls whether to enable/disable NAT pings for a given domain/user"
 msgstr ""
 
+#: share/templates/emailtemplate/list.tt
+msgid "Copy"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Cost"
 msgstr ""
@@ -1736,6 +1741,14 @@ msgstr ""
 
 #: share/templates/subprofile/set_list.tt
 msgid "Create Subscriber Profile Set"
+msgstr ""
+
+#: share/templates/reseller/details.tt
+msgid "Create Time Set"
+msgstr ""
+
+#: share/templates/timeset/list.tt
+msgid "Create Time Set Entry"
 msgstr ""
 
 #: share/templates/calllistsuppression/list.tt
@@ -1951,7 +1964,8 @@ msgstr ""
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
 #: share/templates/subscriber/recording.tt
-#: share/templates/subscriber/voicemail.tt share/templates/voucher/list.tt
+#: share/templates/subscriber/voicemail.tt share/templates/timeset/list.tt
+#: share/templates/voucher/list.tt
 msgid "Delete"
 msgstr "Borrar"
 
@@ -2309,7 +2323,8 @@ msgstr ""
 #: share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt
 #: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
-#: share/templates/subscriber/preferences.tt share/templates/voucher/list.tt
+#: share/templates/subscriber/preferences.tt share/templates/timeset/list.tt
+#: share/templates/voucher/list.tt
 msgid "Edit"
 msgstr "Editar"
 
@@ -2865,6 +2880,14 @@ msgstr ""
 msgid "Failed to create subscriber profile set"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to create timeset entry"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm
+msgid "Failed to create timeset entry."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to create trusted source"
 msgstr ""
@@ -3062,6 +3085,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete time set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to delete timeset entry"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -3444,6 +3471,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update time set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to update timeset entry"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -4361,6 +4392,14 @@ msgstr ""
 msgid "Invalid subscriber profile set id detected"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Invalid timeset entry id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm
+msgid "Invalid timeset id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Invalid username/password"
 msgstr "Nombre o contraseña inválidos"
@@ -5014,8 +5053,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
-#: lib/NGCP/Panel/Utils/Sounds.pm share/templates/customer/details.tt
-#: share/templates/helpers/pref_table.tt share/templates/sound/handles_list.tt
+#: lib/NGCP/Panel/Controller/TimeSet.pm lib/NGCP/Panel/Utils/Sounds.pm
+#: share/templates/customer/details.tt share/templates/helpers/pref_table.tt
+#: share/templates/sound/handles_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Name"
 msgstr "Nombre"
@@ -6101,8 +6141,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Phonebook.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
-#: lib/NGCP/Panel/Utils/Sounds.pm lib/NGCP/Panel/Utils/Voucher.pm
-#: share/templates/customer/details.tt share/templates/reseller/details.tt
+#: lib/NGCP/Panel/Controller/TimeSet.pm lib/NGCP/Panel/Utils/Sounds.pm
+#: lib/NGCP/Panel/Utils/Voucher.pm share/templates/customer/details.tt
+#: share/templates/reseller/details.tt
 #: share/templates/widgets/admin_reseller_overview.tt
 #, fuzzy
 msgid "Reseller"
@@ -7624,6 +7665,10 @@ msgstr ""
 msgid "The timerange you wanted to delete does not exist"
 msgstr ""
 
+#: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
+msgid "This name already exists"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "This weekday does not exist"
 msgstr ""
@@ -7638,12 +7683,18 @@ msgid "Time"
 msgstr "Tiempo"
 
 #: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Subscriber.pm
+#: share/templates/timeset/list.tt
 msgid "Time Set"
 msgstr "Grupo de Tiempos"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+#: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Time Sets"
 msgstr "Grupos de Tiempos"
+
+#: share/templates/reseller/details.tt
+msgid "Time sets"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Timerange has been successfully created"
@@ -7661,6 +7712,22 @@ msgstr "Grupo de Tiempos"
 #: share/templates/subscriber/preferences.tt
 msgid "Timeset \"%1\" Details"
 msgstr "Detalles del Grupo de Tiempos \"%1\""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Timeset entry does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Timeset entry successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Timeset entry successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Timeset entry successfully updated"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Callflow.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -7843,6 +7910,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Underrun Profiles"
+msgstr ""
+
+#: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
+msgid "Unknow reseller"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm
