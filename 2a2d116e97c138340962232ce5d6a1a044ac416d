@@ -98,6 +98,24 @@
       "revId": "2a2d116e97c138340962232ce5d6a1a044ac416d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ad8896b_42ad8287",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSource.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-10T10:14:00Z",
+      "side": 1,
+      "message": "As for me such dummy implementations will keep eyes on functionality, that should be implemented. And it allow to keep \"client\" code more simple.",
+      "parentUuid": "7ad8896b_f762f215",
+      "revId": "2a2d116e97c138340962232ce5d6a1a044ac416d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
