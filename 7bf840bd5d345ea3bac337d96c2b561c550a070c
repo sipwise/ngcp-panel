@@ -46,6 +46,30 @@
       "revId": "7bf840bd5d345ea3bac337d96c2b561c550a070c",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ad8896b_3de73b42",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 2035,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-10T23:59:25Z",
+      "side": 1,
+      "message": ";-) I didn\u0027t like \"is absent\" here, and checked both variants with the grammar checking online tool, that looks reliable, although I can\u0027t judge:\nhttps://www.languagetool.org\n\nIt said both variants are ok. Of course, it still may be wrong.",
+      "parentUuid": "7ad8896b_82db6aed",
+      "range": {
+        "startLine": 2035,
+        "startChar": 65,
+        "endLine": 2035,
+        "endChar": 75
+      },
+      "revId": "7bf840bd5d345ea3bac337d96c2b561c550a070c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
