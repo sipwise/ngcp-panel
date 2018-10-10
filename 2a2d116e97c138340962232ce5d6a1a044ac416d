@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7ad8896b_4276a23f",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-10T10:02:08Z",
+      "side": 1,
+      "message": "No, we tried to support it in line 116 of old code, but, obviously, order of checking is incorrect.\n\nReally there were some fixes \n- has_column not implemented \n- current_source_alias wasn\u0027t implemented\n- incorrect order of checking here",
+      "parentUuid": "7ad8896b_f7bb1274",
+      "revId": "2a2d116e97c138340962232ce5d6a1a044ac416d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7ad8896b_3793dafc",
         "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
         "patchSetId": 5
@@ -30,6 +48,30 @@
       "writtenOn": "2018-10-09T19:56:25Z",
       "side": 1,
       "message": "$new_rs-\u003e_rows([sort { ($a-\u003e$sort_field cmp $b-\u003e$sort_field) * (sort_order eq \u0027desc\u0027 -1 : 1) } @{ $new_rs-\u003e_rows }]);",
+      "range": {
+        "startLine": 125,
+        "startChar": 8,
+        "endLine": 129,
+        "endChar": 9
+      },
+      "revId": "2a2d116e97c138340962232ce5d6a1a044ac416d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ad8896b_e2934e4e",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-10T10:02:08Z",
+      "side": 1,
+      "message": "Nice trick, will remember\n\nAlthough I\u0027m not on micro optimization side, but with this  small code duplication we avoid some additional operations for every array member, so let it be?",
+      "parentUuid": "7ad8896b_3793dafc",
       "range": {
         "startLine": 125,
         "startChar": 8,
