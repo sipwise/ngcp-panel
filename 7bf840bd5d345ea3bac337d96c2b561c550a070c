@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ad8896b_82db6aed",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 2035,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-10-10T14:07:06Z",
+      "side": 1,
+      "message": "\" is absent\"",
+      "range": {
+        "startLine": 2035,
+        "startChar": 65,
+        "endLine": 2035,
+        "endChar": 75
+      },
+      "revId": "7bf840bd5d345ea3bac337d96c2b561c550a070c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
