@@ -489,6 +489,8 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
                 %{ $defaults{resellers} },  ## no critic (ProhibitCommaSeparatedStatements)
                 contract_id => $r{contracts}->id,
             });
+            NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $r{resellers} );
+            #TODO: do we need also to call NGCP::Panel::Utils::Rtc::modify_reseller_rtc ???
             my $mappings_to_create = [];
             my $resource = { $r{contracts}->get_inflated_columns };
             $resource->{billing_profile_id} = 1;
