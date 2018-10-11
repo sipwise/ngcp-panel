@@ -6782,7 +6782,7 @@ msgstr ""
 msgid "The timerange you wanted to delete does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
+#: lib/NGCP/Panel/Form/EmailTemplate/Reseller.pm lib/NGCP/Panel/Form/TimeSet/Reseller.pm
 msgid "This name already exists"
 msgstr ""
 
