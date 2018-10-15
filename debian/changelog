@@ -1,3 +1,27 @@
+ngcp-panel (6.5.1.1+0~mr6.5.1.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [cd413af] TT#44638 call history: search for source_cli, destination_user_in
+  * [77b691a] TT#44605 datatables search field tooltip
+  * [4148ba9] TT#44960 /subscribers/?alias=123 w/o group_concat()
+  * [c093114] TT#44963 fix getting contract in /api/capabilities
+  * [752175e] TT#45308 fix /customerbalances/?status= column alias
+
+  [ Gerhard Jungwirth ]
+  * [2a23941] TT#41627 new /api/timesets in iCal format
+  * [3ee5d37] TT#41629 time sets to peering
+
+  [ Kirill Solomko ]
+  * [c619231] TT#33108 add email templates attachment_name field
+
+  [ Michael Prokop ]
+  * [cb43567] TT#45479 Ensure /run/fastcgi is owned by www-data + install file in usr/lib/tmpfiles.d/
+    Thanks to Manuel Montecelo for the suggestion to use systemd's tmpfiles.d approach
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Oct 2018 21:18:28 +0200
+
 ngcp-panel (6.5.1.0+0~mr6.5.1.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
