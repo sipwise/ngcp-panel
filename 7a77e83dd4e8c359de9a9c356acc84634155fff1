@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad58531_4d6a591c",
+        "filename": "lib/NGCP/Panel/Controller/API/VoicemailGreetingsItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-10-16T10:58:33Z",
+      "side": 1,
+      "message": ";",
+      "revId": "7a77e83dd4e8c359de9a9c356acc84634155fff1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
