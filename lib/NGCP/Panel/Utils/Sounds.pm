@@ -49,12 +49,12 @@ sub transcode_file {
 sub transcode_data {
     my ($data, $source_codec, $target_codec) = @_;
     my ($fh, $filename) = tempfile;
-    print $fh $data;
+    print $fh (ref $data ? $$data : $data);
     close $fh;
     my $out = transcode_file($filename, $source_codec, $target_codec);
     unlink $filename; 
 
-    return $out;
+    return \$out;
 }
 
 sub stash_soundset_list {
@@ -91,6 +91,18 @@ sub stash_soundset_list {
 
     $c->stash(sets_rs => $sets_rs);
 
+    return;
+}
+
+sub get_sound_content_type_extension {
+    my($c, $content_type) = @_;
+
+    SWITCH: for ($content_type) {
+        /^audio\/x-wav$/ && return "wav";
+        /^audio\/mpeg$/ && return "mp3";
+        /^audio\/ogg$/ && return "ogg";
+        return;
+    }
     return;
 }
 

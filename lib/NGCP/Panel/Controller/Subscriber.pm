@@ -3999,11 +3999,11 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
 
     my $file = $c->stash->{voicemail};
     my $recording = $file->recording;
-    my $data;
+    my $data_ref;
 
     try {
-        $data= NGCP::Panel::Utils::Sounds::transcode_data(
-            $recording, 'WAV', 'WAV');
+        $data_ref = NGCP::Panel::Utils::Sounds::transcode_data(
+            \$recording, 'WAV', 'WAV');
     } catch ($e) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
@@ -4019,7 +4019,7 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
     my $filename = NGCP::Panel::Utils::Subscriber::get_voicemail_filename($c,$file);
     $c->response->header('Content-Disposition' => 'attachment; filename="'.$filename.'"');
     $c->response->content_type('audio/x-wav');
-    $c->response->body($data);
+    $c->response->body($$data_ref);
 }
 
 sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
