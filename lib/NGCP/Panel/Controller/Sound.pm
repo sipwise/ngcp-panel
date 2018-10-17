@@ -683,12 +683,12 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     my $file = $c->stash->{file_result};
     my $filename = $file->filename;
     $filename =~ s/\.\w+$/.wav/;
-    my $data;
+    my $data_ref;
 
     if($file->codec ne 'WAV') {
         try {
-            $data = NGCP::Panel::Utils::Sounds::transcode_data(
-                $file->data, $file->codec, 'WAV');
+            $data_ref = NGCP::Panel::Utils::Sounds::transcode_data(
+                \$file->data, $file->codec, 'WAV');
         } catch($e) {
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
@@ -698,12 +698,12 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
             NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
         }
     } else {
-        $data = $file->data;
+        $data_ref = \$file->data;
     }
 
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename . '"');
     $c->response->content_type('audio/x-wav');
-    $c->response->body($data);
+    $c->response->body($$data_ref);
     return;
 }
 

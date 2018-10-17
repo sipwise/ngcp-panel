@@ -49,12 +49,12 @@ sub transcode_file {
 sub transcode_data {
     my ($data, $source_codec, $target_codec) = @_;
     my ($fh, $filename) = tempfile;
-    print $fh $data;
+    print $fh (ref $data ? $$data : $data);
     close $fh;
     my $out = transcode_file($filename, $source_codec, $target_codec);
     unlink $filename; 
 
-    return $out;
+    return \$out;
 }
 
 sub stash_soundset_list {
