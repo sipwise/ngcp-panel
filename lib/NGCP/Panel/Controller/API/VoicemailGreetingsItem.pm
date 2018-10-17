@@ -1,7 +1,12 @@
 package NGCP::Panel::Controller::API::VoicemailGreetingsItem;
 
-use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
+
+use Sipwise::Base;
+
+use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::Sounds;
+
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::VoicemailGreetings/;
 
 __PACKAGE__->set_config({
@@ -9,14 +14,15 @@ __PACKAGE__->set_config({
         'ContentType' => ['multipart/form-data'],#,
         'Uploads'    => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
     },
+    GET => {
+        #'application/json' is default, if no accept header was recieved.
+        'ReturnContentType' => ['application/json', 'audio/x-wav', 'audio/mpeg', 'audio/ogg'],#,
+    },
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
 });
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT DELETE/];
-}
-
-sub config_allowed_roles {
-    return [qw/admin reseller subscriberadmin subscriber/];
 }
 
 sub update_item_model{
@@ -37,10 +43,18 @@ sub update_item_model{
 }
 
 sub get_item_binary_data{
-    my($self, $c, $id, $item) = @_;
+    my($self, $c, $id, $item, $return_type) = @_;
     #caller waits for: $data_ref,$mime_type,$filename
     #while we will not strictly check Accepted header, if item can return only one type of the binary data
-    return \$item->recording, 'audio/x-wav', 'voicemail_'. NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_type( dir => $item->dir ).'_'.$item->get_column('subscriber_id').'.wav',
+    my $extension = NGCP::Panel::Utils::Sounds::get_sound_content_type_extension($c, $return_type);
+    my $data_ref;
+    if ($extension ne 'wav') {
+        $data_ref = NGCP::Panel::Utils::Sounds::transcode_data(\$item->recording, 'WAV', uc($extension));
+    } else {
+        $data_ref = \$item->recording;
+    }
+    my $filename = 'voicemail_'. NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_type( dir => $item->dir ).'_'.$item->get_column('subscriber_id').'.'.$extension;
+    return $data_ref, $return_type, $filename;
 }
 
 1;

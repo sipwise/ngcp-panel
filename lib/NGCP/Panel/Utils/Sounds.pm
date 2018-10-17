@@ -94,6 +94,18 @@ sub stash_soundset_list {
     return;
 }
 
+sub get_sound_content_type_extension {
+    my($c, $content_type) = @_;
+
+    SWITCH: for ($content_type) {
+        /^audio\/x-wav$/ && return "wav";
+        /^audio\/mpeg$/ && return "mp3";
+        /^audio\/ogg$/ && return "ogg";
+        return;
+    }
+    return;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
