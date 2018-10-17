@@ -51,7 +51,7 @@ sub GET :Allow {
         my $filename = $sr->{get_voicemail_filename}($c,$item,$format);
         $c->response->header ('Content-Disposition' => 'attachment; filename="'.$filename.'"');
         $c->response->content_type($sr->{get_voicemail_content_type}($c,$format));
-        $c->response->body($ss->{transcode_data}($item->recording,'WAV',uc($format)));
+        $c->response->body(${$ss->{transcode_data}(\$item->recording, 'WAV', uc($format))});
         return;
     }
     return;
