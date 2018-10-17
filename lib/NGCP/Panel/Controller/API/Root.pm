@@ -211,9 +211,18 @@ sub GET : Allow {
             }
         }
 
+
+        my $entity_name = $mod;
+        if($entity_name eq 'Faxes') {
+            $entity_name = 'Fax';
+        } else {
+            $entity_name =~ s/ies$/y/;
+            $entity_name =~ s/s$//;
+        }
+
         $c->stash->{collections}->{$rel} = {
             name => $mod,
-            entity_name => $mod =~ s/ies$/y/r =~ s/s$//r,
+            entity_name => $entity_name,
             description => $full_mod->api_description,
             fields => $form_fields,
             uploads => $form_fields_upload,
