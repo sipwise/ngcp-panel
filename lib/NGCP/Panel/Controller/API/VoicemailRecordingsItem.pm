@@ -9,31 +9,20 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Sounds;
-require Catalyst::ActionRole::ACL;
-require NGCP::Panel::Role::HTTPMethods;
-require Catalyst::ActionRole::RequireSSL;
+
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::VoicemailRecordings/;
+
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
 }
 
-use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::VoicemailRecordings/;
-
 sub resource_name{
     return 'voicemailrecordings';
 }
-
-sub dispatch_path{
-    return '/api/voicemailrecordings/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-voicemailrecordings';
-}
-
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
-});
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
@@ -54,13 +43,6 @@ sub GET :Allow {
         $c->response->body(${$ss->{transcode_data}(\$item->recording, 'WAV', uc($format))});
         return;
     }
-    return;
-}
-
-sub end : Private {
-    my ($self, $c) = @_;
-
-    #$self->log_response($c);
     return;
 }
 
