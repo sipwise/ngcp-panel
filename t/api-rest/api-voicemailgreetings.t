@@ -9,6 +9,8 @@ use Data::Dumper;
 use File::Basename;
 use File::Slurp qw/read_file write_file/;
 use File::Temp;
+use Clone qw/clone/;
+
 
 #init test_machine
 my $fake_data = Test::FakeData->new;
@@ -36,6 +38,11 @@ $test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPT
 $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT DELETE)};
 
 
+my $uploaded_path = $test_machine->DATA_ITEM_STORE->{greetingfile}->[0];
+my $dir = File::Temp->newdir(undef, CLEANUP => 0);
+my $tempdir = $dir->dirname;
+
+
 #$test_machine->form_data_item( sub {$_[0]->{json}->{dir} = $dir;} );
 $test_machine->form_data_item();
 
@@ -49,25 +56,23 @@ is($greeting->{content}->{dir}, $test_machine->DATA_ITEM->{json}->{dir}, "Check 
 
 $res = $test_machine->request_get('/api/voicemailgreetings/?subscriber_id='.$greeting->{content}->{subscriber_id}.'&type='.$greeting->{content}->{dir});
 $test_machine->http_code_msg(200, "check subscriber_id and type filters", $res);
+my ($expected_downloaded_name,$downloaded_path,$soxi_output);
 
-$res = $test_machine->request_get($greeting->{location}, undef, {
-    'Accept' => 'audio/x-wav',
-});
-$test_machine->http_code_msg(200, "check download voicemail greeting", $res);
+{
+    $res = $test_machine->request_get($greeting->{location}, undef, {
+        'Accept' => 'audio/x-wav',
+    });
+    $test_machine->http_code_msg(200, "check download voicemail greeting", $res);
 
+    $expected_downloaded_name = "voicemail_".$greeting->{content}->{dir}."_".$greeting->{content}->{subscriber_id}.".wav";
+    is($res->filename, $expected_downloaded_name ,"Check downloaded file name: $expected_downloaded_name .");
+    ok(length($res->content)>0,"Check length of the downloaded file > 0 :".length($res->content));
 
-my $expected_downloaded_name = "voicemail_".$greeting->{content}->{dir}."_".$greeting->{content}->{subscriber_id}.".wav";
-is($res->filename, $expected_downloaded_name ,"Check downloaded file name: $expected_downloaded_name .");
-ok(length($res->content)>0,"Check length of the downloaded file > 0 :".length($res->content));
-
-my $uploaded_path = $test_machine->DATA_ITEM_STORE->{greetingfile}->[0];
-
-my $dir = File::Temp->newdir(undef, CLEANUP => 0);
-my $tempdir = $dir->dirname;
-my $downloaded_path = $tempdir.'/'.$expected_downloaded_name;
-write_file( $downloaded_path , {binmode => ':raw'}, $res->content);
-my $soxi_output = `soxi -e $downloaded_path`;
-$soxi_output=~s/\n//g;
+    $downloaded_path = $tempdir.'/'.$expected_downloaded_name;
+    write_file( $downloaded_path , {binmode => ':raw'}, $res->content);
+    $soxi_output = `soxi -e $downloaded_path`;
+    $soxi_output=~s/\n//g;
+}
 
 if(ok($soxi_output =~/GSM/, "Check that we converted wav to GSM encoding:".$soxi_output)){
     my $soxi_output_original = `soxi -e $uploaded_path`;
@@ -79,6 +84,7 @@ if(ok($soxi_output =~/GSM/, "Check that we converted wav to GSM encoding:".$soxi
             'json' => JSON::to_json($test_machine->DATA_ITEM->{json}),
             greetingfile => [ $downloaded_path ],
         ] );
+        my $put_content = clone $content;
         $test_machine->http_code_msg(200, "check download voicemail greeting after put", $res, $content);
         ok(is_int($content->{id}),"Check id presence after editing.");
         ok(is_int($content->{subscriber_id}),"Check subscriber_id presence after editing.");
@@ -93,6 +99,8 @@ if(ok($soxi_output =~/GSM/, "Check that we converted wav to GSM encoding:".$soxi
         });
         $test_machine->http_code_msg(200, "check download voicemail greeting after put", $res);
         is(length($res_download->content), length($uploaded_content),"Check length of the downloaded file: ".length($uploaded_content)."<=>".length($res_download->content));
+        #we put some values, so let refresh greeting
+        $greeting->{content} = $put_content;
     }
 }
 {
@@ -104,6 +112,29 @@ if(ok($soxi_output =~/GSM/, "Check that we converted wav to GSM encoding:".$soxi
     } );
     $test_machine->http_code_msg(422, "check response code on put empty file", $res_put_empty, $content_put_empty);
 }
+my $audio_types = {
+    'wav' => 'audio/x-wav',
+    'mp3' => 'audio/mpeg',
+    'ogg' => 'audio/ogg',
+};
+foreach my $extension (keys %$audio_types) {
+#'audio/x-wav', 'audio/mpeg', 'audio/ogg']
+    $res = $test_machine->request_get($greeting->{location}, undef, {
+        #'Accept' => 'audio/x-wav',
+        'Accept' => $audio_types->{$extension},
+    });
+    $test_machine->http_code_msg(200, "check download voicemail greeting", $res);
+
+    $expected_downloaded_name = "voicemail_".$greeting->{content}->{dir}."_".$greeting->{content}->{subscriber_id}.".".$extension;
+    is($res->filename, $expected_downloaded_name ,"Check downloaded file name: $expected_downloaded_name .");
+    ok(length($res->content)>0,"Check length of the downloaded file > 0 :".length($res->content));
+
+    $downloaded_path = $tempdir.'/'.$expected_downloaded_name;
+    write_file( $downloaded_path , {binmode => ':raw'}, $res->content);
+    $soxi_output = `soxi -e $downloaded_path`;
+    $soxi_output=~s/\n//g;
+}
+
 $test_machine->check_bundle();
 $test_machine->check_item_delete($greeting->{location});
 
