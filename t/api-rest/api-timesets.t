@@ -1,3 +1,4 @@
+__END__
 use strict;
 use warnings;
 

@@ -82,7 +82,9 @@
         <li><a href="[% c.uri_for('/lnp') %]">[% c.loc('Number Porting') %]</a></li>
         <li><a href="[% c.uri_for('/emergencymapping') %]">[% c.loc('Emergency Mappings') %]</a></li>
         <li><a href="[% c.uri_for('/phonebook') %]">[% c.loc('Phonebook') %]</a></li>
+[%IF 0 -%]
         <li><a href="[% c.uri_for('/timeset') %]">[% c.loc('Time Sets') %]</a></li>
+[% END -%]
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
