@@ -1460,7 +1460,6 @@ sub return_representation_post{
     }
 }
 
-
 sub return_csv{
     my($self,$c) = @_;
     try{
@@ -1499,6 +1498,34 @@ sub check_return_type {
     }
     return $result;
 }
+
+sub mime_type_from_query_params {
+    my ($self, $c) = @_;
+    if ($self->can('query_params')) {
+        my @mime_type_parameter = grep {$_->{type} eq 'mime_type'} @{$self->query_params};
+        if (scalar @mime_type_parameter) {
+            my $query_params = $c->req->query_params;
+            my $query_mime_type_param = $mime_type_parameter[0];
+            my $mime_type_value = $query_params->{$query_mime_type_param};
+            if ($mime_type_value) {
+                $c->log->debug("mime-type requested as parameter '$query_mime_type_param' with value '".($mime_type_value ? $mime_type_value : "undefined")."' and recognized as '".($mime_type ? $mime_type : "undefined")."'");
+                return $mime_type;
+            }
+        }
+    }
+    return;
+}
+
+sub supported_mime_types_extensions {
+    my ($self) = @_;
+    my $action_config = $self->get_config('action');
+    $allowed_types = $action_config->{GET}->{ReturnContentType};
+    if ($allowed_types && ref $allowed_types eq 'ARRAY') {
+        return map {$types->extension($_)} grep {$_ ne 'application/json'} @$allowed_types;
+    }
+    return [];
+}
+
 
 sub return_requested_type {
     my ($self, $c, $id, $item, $return_type) = @_;

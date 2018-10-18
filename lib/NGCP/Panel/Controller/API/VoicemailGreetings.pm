@@ -68,6 +68,12 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param       => 'format',
+            #todo: supported types string can be collected from configured mime-types in ReturnContentType
+            description => 'Output format of the voicemail greeting file, supported: mp3, ogg, wav',
+            type        => 'mime_type',
+        },
     ];
 };
 

@@ -7,12 +7,18 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj);
-%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true)],
-                 all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj)]);
+@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type);
+%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type)],
+    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type)]);
 
 use Hash::Merge;
 use Data::Compare qw//;
+
+my $MIME_TYPES = {
+    'audio/x-wav' => ['wav'],
+    'audio/mpeg'  => ['mp3'], 
+    'audio/ogg'   => ['ogg'],
+};
 
 sub is_int {
     my $val = shift;
@@ -39,6 +45,7 @@ sub merge {
     my ($a, $b) = @_;
     return Hash::Merge::merge($a, $b);
 }
+
 sub is_true {
     my ($v) = @_;
     my $val;
@@ -139,6 +146,14 @@ sub hash2obj {
         } if '' eq ref $accessors->{$accessor};
     }
     return $obj;
+}
+
+sub mime_type_to_extension {
+    my ($mime_type) = @_;
+}
+
+sub extension_to_mime_type {
+    my ($extension) = @_;
 }
 
 1;

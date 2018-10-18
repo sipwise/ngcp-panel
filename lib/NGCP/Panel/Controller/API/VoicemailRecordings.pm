@@ -24,8 +24,9 @@ sub api_description {
 sub query_params {
     return [
         {
-            param => 'format',
+            param       => 'format',
             description => 'Output format of the voicemail recording, supported: mp3, ogg, wav',
+            type        => 'mime_type',   
         },
     ];
 }

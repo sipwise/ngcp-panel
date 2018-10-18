@@ -185,7 +185,9 @@ sub get {
     {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
+
         my $header_accept = $c->request->header('Accept');
+        my $mime_type_from_query_params = $self->mime_type_from_query_params;
         my $action_config = $self->get_config('action');
         my $config_allowed_types = $action_config->{GET}->{ReturnContentType};
         my $apllication_json = 'application/json';
@@ -194,15 +196,21 @@ sub get {
                 && ($header_accept !~ m!\bapplication/json\b!)
                 && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) # application/json OR */*
             )
+            || defined $mime_type_from_query_params
+            #no header Accept passed, check configured return type
             || ( $config_allowed_types
-                && $config_allowed_types ne $apllication_json
-                && !(
-                    ref $config_allowed_types eq 'ARRAY' 
-                    && grep { $_ eq  $apllication_json } @{ $config_allowed_types } 
+                && (
+                    ( ( !ref $config_allowed_types) 
+                        && $config_allowed_types ne $apllication_json)
+                    || ( ref $config_allowed_types eq 'ARRAY' 
+                         && !grep { $_ eq  $apllication_json } @{ $config_allowed_types } )
+                    || ( ref $config_allowed_types eq 'ARRAY' 
+                         && !grep { $_ eq  $apllication_json } @{ $config_allowed_types } )
                 )
             )
+            
         ) {
-            my $return_type = $header_accept;
+            my $return_type = $header_accept // $mime_type_from_query_params;
             if (!$return_type && !ref $config_allowed_types) {
                  $return_type = $config_allowed_types;
             }
