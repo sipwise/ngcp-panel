@@ -1,4 +1,6 @@
 package NGCP::Panel::Controller::API::TimeSets;
+1;
+__END__
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
