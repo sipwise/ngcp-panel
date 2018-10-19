@@ -1062,6 +1062,16 @@ sub get_collection_config {
     }
 }
 
+sub get_collection_obj {
+    my ($self) = shift;
+    my $collection_obj_name = $self;
+    $collection_obj_name =~s/=HASH.*$//;
+    if ('item' eq $self->get_config('interface_type')) {
+         $collection_obj_name =~ s/Item$//;
+    }
+    return $collection_obj_name;
+}
+
 #---------------- default methods
 
 sub hal_from_item {
@@ -1460,7 +1470,6 @@ sub return_representation_post{
     }
 }
 
-
 sub return_csv{
     my($self,$c) = @_;
     try{
@@ -1499,6 +1508,33 @@ sub check_return_type {
     }
     return $result;
 }
+
+sub mime_type_from_query_params {
+    my ($self, $c) = @_;
+    my @mime_type_parameter = grep {defined $_->{type} && $_->{type} eq 'mime_type'} @{$self->get_collection_obj->query_params};
+    if (scalar @mime_type_parameter) {
+        my $query_params = $c->req->query_params;
+        my $query_mime_type_param = $mime_type_parameter[0]->{param};
+        my $mime_type_extension = $query_params->{$query_mime_type_param};
+        if ($mime_type_extension) {
+            my $mime_type = extension_to_mime_type($mime_type_extension);
+            $c->log->debug("mime_type_from_query_params: requested parameter '$query_mime_type_param' with value '".($mime_type_extension ? $mime_type_extension : "undefined")."' and recognized as '".($mime_type ? $mime_type : "undefined")."'");
+            return $mime_type;
+        }
+    }
+    return;
+}
+
+sub supported_mime_types_extensions {
+    my ($self) = @_;
+    my $action_config = $self->get_item_config('action');
+    my $allowed_types = $action_config->{GET}->{ReturnContentType};
+    if ($allowed_types && ref $allowed_types eq 'ARRAY') {
+        return [map {mime_type_to_extension($_)} grep {$_ ne 'application/json'} @$allowed_types];
+    }
+    return [];
+}
+
 
 sub return_requested_type {
     my ($self, $c, $id, $item, $return_type) = @_;
