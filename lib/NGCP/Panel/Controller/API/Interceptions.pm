@@ -179,25 +179,17 @@ sub POST :Allow {
             form => $form,
         );
 
-        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
-            \[ 'concat(cc,ac,sn) = ?', [ {} => $resource->{number} ]]
-        );
-        unless($num_rs->first) {
-            $c->log->error("invalid number '$$resource{number}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist");
-            last;
-        }
-	# use the long way, since with ossbss provisioning, the reseller_id
-	# is not set in this case
-        $resource->{reseller_id} = $num_rs->first->subscriber->contract->contact->reseller_id;
+        my ($sub, $reseller, $voip_number) = NGCP::Panel::Utils::Interception::subresnum_from_number($c, $resource->{number}, sub {
+            my ($msg,$field,$response) = @_;
+            $c->log->error($msg);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $response);
+            return 0;
+        });
+        last unless($sub && $reseller);
 
-        my $sub = $num_rs->first->subscriber;
-        unless($sub) {
-            $c->log->error("invalid number '$$resource{number}', not assigned to any subscriber");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
-            last;
-        }
-        $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$num_rs->first,$sub->username);
+        $resource->{reseller_id} = $reseller->id;
+
+        $resource->{sip_username} = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$voip_number,$sub->username);
         $resource->{sip_domain} = $sub->domain->domain;
 
         if($resource->{x3_required} && (!defined $resource->{x3_host} || !defined $resource->{x3_port})) {
@@ -229,8 +221,8 @@ sub POST :Allow {
                 liid => $resource->{liid},
                 uuid => $resource->{uuid},
                 number => $resource->{number},
-                sip_username => NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$num_rs->first,$sub->username),
-                sip_domain => $sub->domain->domain,
+                sip_username => $resource->{sip_username},
+                sip_domain => $resource->{sip_domain},
                 delivery_host => $resource->{x2_host},
                 delivery_port => $resource->{x2_port},
                 delivery_user => $resource->{x2_user},
