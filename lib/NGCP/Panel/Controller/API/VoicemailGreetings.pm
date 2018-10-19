@@ -25,6 +25,7 @@ sub api_description {
 };
 
 sub query_params {
+    my ($self) = @_;
     return [
         {
             param => 'subscriber_id',
@@ -67,6 +68,11 @@ sub query_params {
                 },
                 second => sub {},
             },
+        },
+        {
+            param       => 'format',
+            description => 'Output format of the voicemail greeting file, supported: '.join(', ',@{$self->supported_mime_types_extensions}),
+            type        => 'mime_type',
         },
     ];
 };
