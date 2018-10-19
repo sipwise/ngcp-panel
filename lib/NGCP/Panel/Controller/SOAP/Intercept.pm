@@ -32,6 +32,7 @@ use Sipwise::Base;
 use NGCP::Panel::Form;
 use Data::Structure::Util qw/unbless/;
 use NGCP::Panel::Utils::SOAP qw/typed/;
+use NGCP::Panel::Utils::Interception qw();
 use UUID;
 use Moose;
 use NGCP::Panel::Utils::Admin;
@@ -119,30 +120,33 @@ sub create_interception {
     $self->_auth($auth);
     $self->_validate(NGCP::Panel::Form::get("NGCP::Panel::Form::Intercept::Create", $c), $params);
 
-    my $i;
-    my $num;
+    my ($sub, $reseller, $voip_number, $sip_username, $sip_domain);
     try {
-        $num = $c->model('DB')->resultset('voip_dbaliases')->find({
-            username => $params->{number}
+        ($sub, $reseller, $voip_number) = NGCP::Panel::Utils::Interception::subresnum_from_number($c, $params->{number}, sub {
+            my ($msg,$field,$response) = @_;
+            die SOAP::Fault
+                ->faultcode('Client.Voip.NoSuchSubscriber')
+                ->faultstring($msg);
+            return 0;
         });
+        $sip_username = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$voip_number,$sub->username);
+        $sip_domain = $sub->domain->domain;
     } catch($e) {
+        die $e if 'SOAP::Fault' eq ref $e;
         die SOAP::Fault
             ->faultcode('Server.Internal')
             ->faultstring($e);
     }
-    unless($num) {
-        die SOAP::Fault
-            ->faultcode('Client.Voip.NoSuchSubscriber')
-            ->faultstring("number '$$params{number}' is not assigned to any subscriber");
-    }
+
     my ($uuid_bin, $uuid_string);
     UUID::generate($uuid_bin);
     UUID::unparse($uuid_bin, $uuid_string);
     my $guard = $c->model('DB')->txn_scope_guard;
+    my $i;
     {
         try {
-            $i = $self->c->model('DB')->resultset('voip_intercept')->create({
-                reseller_id => $num->subscriber->voip_subscriber->contract->contact->reseller_id,
+            $i = $self->c->model('InterceptDB')->resultset('voip_intercept')->create({
+                reseller_id => $reseller->id,
                 LIID => $params->{LIID},
                 number => $params->{number},
                 cc_required => $params->{cc_required},
@@ -152,8 +156,8 @@ sub create_interception {
                 delivery_pass => $params->{iri_delivery}->{pass},
                 deleted => 0,
                 uuid => $uuid_string,
-                sip_username => $num->subscriber->username,
-                sip_domain => $num->domain->domain,
+                sip_username => $sip_username,
+                sip_domain => $sip_domain,
                 create_timestamp => \['NOW()'],
                 $params->{cc_required} ? (cc_delivery_host => $params->{cc_delivery}->{host}) : (),
                 $params->{cc_required} ? (cc_delivery_port => $params->{cc_delivery}->{port}) : (),
@@ -164,8 +168,8 @@ sub create_interception {
                 liid => $i->LIID,
                 uuid => $i->uuid,
                 number => $i->number,
-                sip_username => $num->subscriber->username,
-                sip_domain => $num->domain->domain,
+                sip_username => $sip_username,
+                sip_domain => $sip_domain,
                 delivery_host => $i->delivery_host,
                 delivery_port => $i->delivery_port,
                 delivery_user => $i->delivery_user,
@@ -221,6 +225,7 @@ sub update_interception {
             $i->cc_delivery_port($params->{data}->{cc_delivery}->{port});
         }
         $i->cc_required($params->{data}->{cc_required});
+        # not applying changed number/domain?
 
         try {
             $i->update();
