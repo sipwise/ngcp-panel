@@ -129,7 +129,12 @@ sub update_item {
         resource => $resource,
     );
 
-    my ($sub, $reseller, $voip_number) = $self->subresnum_from_number($c, $resource->{number});
+    my ($sub, $reseller, $voip_number) = NGCP::Panel::Utils::Interception::subresnum_from_number($c, $resource->{number}, sub {
+        my ($msg,$field,$response) = @_;
+		$c->log->error($msg);
+		$self->error($c, HTTP_UNPROCESSABLE_ENTITY, $response);
+        return 0;
+    });
     return unless($sub && $reseller);
 
     $resource->{reseller_id} = $reseller->id;
@@ -178,38 +183,6 @@ sub update_item {
     }
 
     return $item;
-}
-
-sub subresnum_from_number {
-    my ($self, $c, $number) = @_;
-    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
-        \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
-    );
-    unless($num_rs->first) {
-        $c->log->error("invalid number '$number'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number does not exist");
-        return;
-    }
-    my $sub = $num_rs->first->subscriber;
-    unless($sub) {
-        $c->log->error("invalid number '$number', not assigned to any subscriber");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
-        return;
-    }
-
-    my $res = $num_rs->first->reseller;
-    unless($res) {
-	# with ossbss provisioning, reseller is not set on number,
-	# so take the long way here
-	$res = $sub->contract->contact->reseller;
-    	unless($res) {
-		$c->log->error("invalid number '$number', not assigned to any reseller");
-		$self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number is not active");
-		return;
-	}
-    }
-
-    return ($sub, $res, $num_rs->first);
 }
 
 1;
