@@ -39,8 +39,9 @@ __PACKAGE__->set_config({
 sub query_params {
     return [
         {
-            param => 'format',
+            param       => 'format',
             description => 'Output format of the voicemail recording, supported: mp3, ogg, wav',
+            type        => 'mime_type',   
         },
     ];
 }

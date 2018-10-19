@@ -119,13 +119,14 @@ my $audio_types = {
 };
 foreach my $extension (keys %$audio_types) {
 #'audio/x-wav', 'audio/mpeg', 'audio/ogg']
+    $expected_downloaded_name = "voicemail_".$greeting->{content}->{dir}."_".$greeting->{content}->{subscriber_id}.".".$extension;
+
     $res = $test_machine->request_get($greeting->{location}, undef, {
         #'Accept' => 'audio/x-wav',
         'Accept' => $audio_types->{$extension},
     });
     $test_machine->http_code_msg(200, "check download voicemail greeting", $res);
 
-    $expected_downloaded_name = "voicemail_".$greeting->{content}->{dir}."_".$greeting->{content}->{subscriber_id}.".".$extension;
     is($res->filename, $expected_downloaded_name ,"Check downloaded file name: $expected_downloaded_name .");
     ok(length($res->content)>0,"Check length of the downloaded file > 0 :".length($res->content));
 
@@ -133,6 +134,22 @@ foreach my $extension (keys %$audio_types) {
     write_file( $downloaded_path , {binmode => ':raw'}, $res->content);
     $soxi_output = `soxi -e $downloaded_path`;
     $soxi_output=~s/\n//g;
+    diag("header extension = $extension");
+    diag($soxi_output);
+
+
+    $res = $test_machine->request_get($greeting->{location}.'?format='.$extension);
+    $test_machine->http_code_msg(200, "check download voicemail greeting", $res);
+
+    is($res->filename, $expected_downloaded_name ,"Check downloaded file name: $expected_downloaded_name .");
+    ok(length($res->content)>0,"Check length of the downloaded file > 0 :".length($res->content));
+
+    $downloaded_path = $tempdir.'/'.$expected_downloaded_name;
+    write_file( $downloaded_path , {binmode => ':raw'}, $res->content);
+    $soxi_output = `soxi -e $downloaded_path`;
+    $soxi_output=~s/\n//g;
+    diag("parameter extension = $extension");
+    diag($soxi_output);
 }
 
 $test_machine->check_bundle();
