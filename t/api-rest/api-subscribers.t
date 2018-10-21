@@ -66,9 +66,9 @@ $fake_data->set_data_from_script({
             return $test_machine->check_create_correct(1, sub{
                 my $time = time;
                 $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
-                $_[0]->{pbx_extension} = $time.$num;
-                $_[0]->{webusername} .= $time.$num;
-                $_[0]->{username} .= $time.$num;
+                $_[0]->{pbx_extension} = $time.$num.Test::FakeData::seq;
+                $_[0]->{webusername} .= $time.$num.Test::FakeData::seq;
+                $_[0]->{username} .= $time.$num.Test::FakeData::seq;
                 delete $_[0]->{alias_numbers};
                 $_[0]->{primary_number}->{sn} = $time.$num;
             }, $self->data->{$collection_name}->{data} );
@@ -100,7 +100,7 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
         my $num = $_[1]->{i};
         $_[0]->{username} .= time().'_20369_'.$num ;
         $_[0]->{webusername} .= time().'_'.$num;
-        $_[0]->{pbx_extension} .= '20369'.$num;
+        $_[0]->{pbx_extension} .= '20369'.$num.Test::FakeData::seq;
         $_[0]->{primary_number}->{ac} .= $num;
         $_[0]->{is_pbx_group} = 0;
         $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
@@ -119,7 +119,8 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
 # create new subscribers from DATA_ITEM. Item is not created in the fake_data->process.
     $test_machine->check_create_correct( 1, sub{
         $_[0]->{username} .= time().'_'.$_[1]->{i} ;
-    } );
+        $_[0]->{pbx_extension} .= Test::FakeData::seq;
+     } );
     $test_machine->check_bundle();
     $test_machine->check_get2put(undef,{},$put2get_check_params);
     $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
@@ -142,7 +143,7 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
             my $num = $_[1]->{i};
             $_[0]->{username} .= time().'_15441' ;
             $_[0]->{webusername} .= time().'_15441';
-            $_[0]->{pbx_extension} .= '15441';
+            $_[0]->{pbx_extension} .= '15441'.Test::FakeData::seq;
             $_[0]->{primary_number}->{ac} .= $num;
             $_[0]->{customer_id} = $fake_data->get_id('customer_sipaccount');
         }
@@ -222,7 +223,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             my $num = 3 + $_[1]->{i};
             $_[0]->{username} .= time().'_18601_'.$num ;
             $_[0]->{webusername} .= time().'_'.$num;
-            $_[0]->{pbx_extension} .= '18601'.$num;
+            $_[0]->{pbx_extension} .= '18601'.$num.Test::FakeData::seq;
             $_[0]->{primary_number}->{ac} .= $num;
             $_[0]->{is_pbx_pilot} = 0;
             $_[0]->{is_pbx_group} = 0;
@@ -289,7 +290,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{webusername} .= time().'_28510';
             $_[0]->{webpassword} = 'api_test_webpassword';
             $_[0]->{username} .= time().'_28510' ;
-            $_[0]->{pbx_extension} .= '28510';
+            $_[0]->{pbx_extension} .= '28510'.Test::FakeData::seq;
             $_[0]->{primary_number}->{ac} .= '28510';
             $_[0]->{is_pbx_group} = 0;
             $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
@@ -301,10 +302,12 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{webusername} .= time().'_28510_1';
             $_[0]->{webpassword} = 'api_test_webpassword';
             $_[0]->{username} .= time().'_28510_1' ;
-            $_[0]->{pbx_extension} .= '285101';
+            $_[0]->{pbx_extension} .= '285101'.Test::FakeData::seq;
             $_[0]->{primary_number}->{ac} .= '28510';
             $_[0]->{is_pbx_group} = 1;
             $_[0]->{is_pbx_pilot} = 0;
+            delete $_[0]->{profile_id};
+            delete $_[0]->{profile_set_id};
             delete $_[0]->{alias_numbers};
         } )->[0];
         if (check_password_validation_config()) {
@@ -315,9 +318,11 @@ if($remote_config->{config}->{features}->{cloudpbx}){
                 $_[0]->{webpassword} = 'api_test_WEBpassword';
                 $_[0]->{username}    = 'api_test_'.time().'_21818' ;
                 $_[0]->{password}    = 'api_test_PWD'.time().'_21818' ;
-                $_[0]->{pbx_extension} = '21818';
+                $_[0]->{pbx_extension} = '21818'.Test::FakeData::seq;
                 $_[0]->{primary_number}->{ac} = '21818';
                 $_[0]->{is_pbx_group} = 0;
+                delete $_[0]->{profile_id};
+                delete $_[0]->{profile_set_id};
                 #sometimes we have pbx customer with disabled pbx feature in test data.
                 $_[0]->{is_pbx_pilot} = 0;
                 delete $_[0]->{alias_numbers};
@@ -358,7 +363,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{webusername} .= time().'_34021';
             $_[0]->{webpassword} = 'api_test_webpassword';
             $_[0]->{username} .= time().'_34021' ;
-            $_[0]->{pbx_extension} .= '34021';
+            $_[0]->{pbx_extension} .= '34021'.Test::FakeData::seq;
             $_[0]->{primary_number}->{ac} .= '34021';
             $_[0]->{is_pbx_group} = 0;
             $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
@@ -372,10 +377,12 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{webusername} .= time().'_34021_1';
             $_[0]->{webpassword} = 'api_test_webpassword';
             $_[0]->{username} .= time().'_34021_1' ;
-            $_[0]->{pbx_extension} .= '340211';
+            $_[0]->{pbx_extension} .= '340211'.Test::FakeData::seq;
             $_[0]->{primary_number}->{ac} .= '34021';
             $_[0]->{is_pbx_group} = 0;
             $_[0]->{is_pbx_pilot} = 0;
+            delete $_[0]->{profile_id};
+            delete $_[0]->{profile_set_id};
             delete $_[0]->{alias_numbers};
         } )->[0];
         #if ($remote_config->{config}->{privileges}->{subscriberadmin}->{subscribers} =~/write/) {
@@ -385,6 +392,13 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             ($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched 34021' } ], $subscriber->{location} );
             $test_machine->http_code_msg(200, "Check display_name patch for subscriberadmin", $res, $content);
             my $pilot_34021 = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$subscriber->{content}->{customer_id}.'&'.'is_pbx_pilot=1');
+            my($res, $mod_34021_pilot) = $test_machine->request_patch([ 
+                #to don't intersect with manual testing on the web
+                { op => 'replace', path => '/profile_set_id', value => $fake_data->get_id('subscriberprofilesets') },
+                { op => 'replace', path => '/profile_id', value => undef },#we will take default profile for profile_set
+            ],
+            $pilot_34021->{location} );
+
             #print Dumper [$wrong_reseller->{content},$wrong_profile_sets->[0]->{content},$wrong_profiles->[0]->{content}];
             #print Dumper [$subscriber->{content}];
             #subscriberadmin is not supposed to changed profile and profile_set. Subscriberadmin even don't contain these fields.
@@ -411,9 +425,9 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_id', value => $wrong_profiles->[0]->{content}->{id} } ], $subscriber->{location} );
             $test_machine->http_code_msg(422, "Check profile_id patch for administrator", $res, $content);
 
-            $test_machine->check_patch2get( [ { op => 'replace', path => '/profile_id', value => $test_machine->DATA_ITEM->{profile_id} } ], $subscriber->{location}, $put2get_check_params );
+            $test_machine->check_patch2get( [ { op => 'replace', path => '/profile_id', value => $mod_34021_pilot->{content}->{profile_id} } ], $subscriber->{location}, $put2get_check_params );
 
-            $test_machine->check_patch2get( [ { op => 'replace', path => '/profile_set_id', value => $test_machine->DATA_ITEM->{profile_set_id} } ], $subscriber->{location}, $put2get_check_params );
+            $test_machine->check_patch2get( [ { op => 'replace', path => '/profile_set_id', value => $mod_34021_pilot->{content}->{profile_set_id} } ], $subscriber->{location}, $put2get_check_params );
 
         } else {
             my($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched 34021' } ], $subscriber->{location} );
@@ -527,9 +541,11 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{primary_number}->{ac} = '43350'.$uniq;
             $_[0]->{is_pbx_pilot} = 0;
             $_[0]->{administrative} = 1;
-            #delete $_[0]->{profile_id};
+            delete $_[0]->{profile_id};
+            delete $_[0]->{profile_set_id};
             delete $_[0]->{alias_numbers};
-            $_[0]->{profile_id} = $subscribers->[0]->{content}->{profile_id};
+            #$_[0]->{profile_id} = $subscribers->[0]->{content}->{profile_id};
+            #print Dumper $_[0];
         }, $subscribers_other_reseller->[0]->{content})->[0];
 
         #print Dumper [
@@ -743,7 +759,7 @@ if (!$remote_config->{config}->{features}->{cloudpbx}) {
         $_[0]->{webpassword} = 'api_test_WEBpassword';
         $_[0]->{username}    = 'api_test_'.time().'_21818' ;
         $_[0]->{password}    = 'api_test_PWD_21818' ;
-        $_[0]->{pbx_extension} = '21818';
+        $_[0]->{pbx_extension} = '21818'.Test::FakeData::seq;
         $_[0]->{primary_number}->{ac} = '21818';
         $_[0]->{is_pbx_group} = 0;
         #sometimes we have pbx customer with disabled pbx feature in test data.
@@ -939,6 +955,7 @@ sub create_subs_and_subadmin {
             ],
             $pilot_l->{location} );
             #print Dumper $pilot_l->{content};
+            #print Dumper $res;
     }else{
         undef $pilot_l;
     }
