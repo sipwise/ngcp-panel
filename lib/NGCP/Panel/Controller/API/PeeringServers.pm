@@ -157,7 +157,8 @@ sub POST :Allow {
             form => $form,
         );
         my $dup_item = $c->model('DB')->resultset('voip_peer_hosts')->find({
-            name => $resource->{name},
+            name     => $resource->{name},
+            group_id => $resource->{group_id},
         });
         if($dup_item) {
             $c->log->error("peering server with name '$$resource{name}' already exists"); # TODO: user, message, trace, ...
