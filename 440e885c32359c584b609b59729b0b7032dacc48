@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad58531_270046aa",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-10-22T13:13:54Z",
+      "side": 1,
+      "message": "my $entity_name \u003d $mod;\n        if($entity_name ne \u0027Faxes\u0027) {\n            $entity_name \u003d \u0027Fax\u0027;\n        #} elsif ($entity_name ne ..) {\n\n        } else {\n            $entity_name \u003d~ s/ies$/y/;\n            $entity_name \u003d~ s/s$//r;\n        }",
+      "revId": "440e885c32359c584b609b59729b0b7032dacc48",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
