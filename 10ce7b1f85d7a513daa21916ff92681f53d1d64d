@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad58531_07dd4a14",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 2032,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-10-22T13:54:05Z",
+      "side": 1,
+      "message": "the transaction fails and a rollback applied (there is no such word as \"rollbacked\" tho, it\u0027s rolled back) :)\nbut anyways it\u0027s just a comment, you can leave it like this",
+      "range": {
+        "startLine": 2032,
+        "startChar": 46,
+        "endLine": 2032,
+        "endChar": 94
+      },
+      "revId": "10ce7b1f85d7a513daa21916ff92681f53d1d64d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
