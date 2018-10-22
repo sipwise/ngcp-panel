@@ -16,6 +16,24 @@
       "revId": "440e885c32359c584b609b59729b0b7032dacc48",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad58531_e7a59eb5",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-10-22T13:43:24Z",
+      "side": 1,
+      "message": "you mean $entity_name eq \u0027Faxes\u0027 \n\nbut agree with Rene here, it\u0027s more readable and expandable with taking the raw $mod value and manipulating with it.",
+      "parentUuid": "5ad58531_270046aa",
+      "revId": "440e885c32359c584b609b59729b0b7032dacc48",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
