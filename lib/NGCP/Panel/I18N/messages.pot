@@ -743,11 +743,19 @@ msgid "Billing zone successfully deleted"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block List for UPN-based call blocking"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block List for inbound calls"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block List for outbound calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block Mode for UPN-based call blocking"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -760,6 +768,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block anonymous inbound calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block incoming anonymous calls from this user"
 msgstr ""
 
 #: share/templates/reseller/details.tt
@@ -1230,6 +1242,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., \"user\" of SIP URI \"user@example.com\") that are (not) allowed to call the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Contains wildcarded User-Provided Numbers that are (not) allowed to be used by the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
 msgstr ""
 
 #: share/templates/contract/list.tt share/templates/package/details.tt share/templates/reseller/details.tt
@@ -3462,6 +3478,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, any vertical service codes, e.g. *99*1234, are rejected by the system to disable the possibility of provisioning features via phones ."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, incoming anonyous calls from this user will be dropped"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6153,6 +6173,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the operational mode of the SIP User-Agent Filter List. If unset or set to a false value, it is a blacklist (accept all requests except from user-agents listed in the filter list), with a true value it is a whitelist (reject all requests except from user-agents listed in the filter list)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specifies the operational mode of the User-Provided Number (UPN) based call blocking. If unset or set to a false value, it is a blacklist (accept all calls except from UPNs listed in the block list), with a true value it is a whitelist (reject all calls except from UPNs listed in the block list)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
