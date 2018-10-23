@@ -16,6 +16,24 @@
       "revId": "a0980a4aae2384af7c0e07081317139aeed23f43",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad58531_4276a03f",
+        "filename": "lib/NGCP/Panel/Controller/API/VoicemailGreetings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-23T08:05:16Z",
+      "side": 1,
+      "message": "I added this type info to existing parameter in VoicemailRecordings to use it for auto taking and checking mime-type.",
+      "parentUuid": "5ad58531_87f93acb",
+      "revId": "a0980a4aae2384af7c0e07081317139aeed23f43",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
