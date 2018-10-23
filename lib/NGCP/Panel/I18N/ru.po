@@ -932,12 +932,20 @@ msgid "Billing zone successfully deleted"
 msgstr "Тарифная зона успешно удалена"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block List for UPN-based call blocking"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block List for inbound calls"
 msgstr "Список запрещенных CLI для входящих звонков"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block List for outbound calls"
 msgstr "Список запрещенных номеров для исходящих звонков"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block Mode for UPN-based call blocking"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block Mode for inbound calls"
@@ -950,6 +958,10 @@ msgstr "Режим блокировки исходящих звонков"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block anonymous inbound calls"
 msgstr "Блокировать анонимные входящие звонки"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block incoming anonymous calls from this user"
+msgstr ""
 
 #: share/templates/reseller/details.tt
 msgid "Branding"
@@ -1496,6 +1508,14 @@ msgstr ""
 "\"user\" из SIP URI \"user@example.com\") которым (не) разрешено звонить "
 "данному абоненту. Поддерживаются \"*\", \"?\" и \"[x-y]\", где \"x\" и \"y\" "
 "соответствуют числам от 0 до 9, аналогично шаблону в Unix консоли."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Contains wildcarded User-Provided Numbers that are (not) allowed to be used "
+"by the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" "
+"representing numbers from 0 to 9 may be used as wildcards like in shell "
+"patterns."
+msgstr ""
 
 #: share/templates/contract/list.tt share/templates/package/details.tt
 #: share/templates/reseller/details.tt
@@ -3912,6 +3932,10 @@ msgstr ""
 msgid ""
 "If enabled, any vertical service codes, e.g. *99*1234, are rejected by the "
 "system to disable the possibility of provisioning features via phones ."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, incoming anonyous calls from this user will be dropped"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6897,6 +6921,14 @@ msgid ""
 "or set to a false value, it is a blacklist (accept all requests except from "
 "user-agents listed in the filter list), with a true value it is a whitelist "
 "(reject all requests except from user-agents listed in the filter list)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Specifies the operational mode of the User-Provided Number (UPN) based call "
+"blocking. If unset or set to a false value, it is a blacklist (accept all "
+"calls except from UPNs listed in the block list), with a true value it is a "
+"whitelist (reject all calls except from UPNs listed in the block list)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

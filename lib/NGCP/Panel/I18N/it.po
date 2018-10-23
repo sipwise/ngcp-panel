@@ -988,12 +988,20 @@ msgid "Billing zone successfully deleted"
 msgstr "Zona di fatturazione eliminata con successo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block List for UPN-based call blocking"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block List for inbound calls"
 msgstr "Lista di blocco per chiamate in ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block List for outbound calls"
 msgstr "Lista di blocco per chiamate in uscita"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block Mode for UPN-based call blocking"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block Mode for inbound calls"
@@ -1006,6 +1014,10 @@ msgstr "Modalità di blocco per chiamate in uscita"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block anonymous inbound calls"
 msgstr "Blocco delle chiamate anonime in ingresso"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Block incoming anonymous calls from this user"
+msgstr ""
 
 #: share/templates/reseller/details.tt
 msgid "Branding"
@@ -1556,6 +1568,14 @@ msgstr ""
 "\"user\" per URI SIP \"user@example.com\") che (non) sono abilitati a "
 "chiamare l´abbonato. \"*\", \"?\" e \"[x-y]\" con \"x\" e \"y\" che "
 "reppresentano numeri da 0 a 9 possono essere usati come caratteri jolly"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Contains wildcarded User-Provided Numbers that are (not) allowed to be used "
+"by the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" "
+"representing numbers from 0 to 9 may be used as wildcards like in shell "
+"patterns."
+msgstr ""
 
 #: share/templates/contract/list.tt share/templates/package/details.tt
 #: share/templates/reseller/details.tt
@@ -4018,6 +4038,10 @@ msgid ""
 msgstr ""
 "Se abilitato, qualsiasi codice di servizio (es. *99*1234) verrà rifiutato "
 "dal sistema. "
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, incoming anonyous calls from this user will be dropped"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, npdi parameter will be added if there is a LNP query."
@@ -7046,6 +7070,14 @@ msgid ""
 "or set to a false value, it is a blacklist (accept all requests except from "
 "user-agents listed in the filter list), with a true value it is a whitelist "
 "(reject all requests except from user-agents listed in the filter list)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Specifies the operational mode of the User-Provided Number (UPN) based call "
+"blocking. If unset or set to a false value, it is a blacklist (accept all "
+"calls except from UPNs listed in the block list), with a true value it is a "
+"whitelist (reject all calls except from UPNs listed in the block list)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
