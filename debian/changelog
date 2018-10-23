@@ -1,3 +1,30 @@
+ngcp-panel (6.4.3.0+0~mr6.4.3.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [6862bea] TT#42565 api-journals.t: use test start time
+  * [3f5438e] TT#43561 /api/calllists add init_time field
+
+  [ Rene Krenn ]
+  * [47d687d] TT#42565 add URI::Encode dependency for api-journals.t
+  * [e23f90f] TT#42565 api-journals.t: use test start time TZ
+  * [cb10978] TT#42565 api-journals.t: derive/fix test start time
+  * [c773b27] TT#44095 set isolation level when creating contracts
+
+  [ Alexander Lutay ]
+  * [28d5930] TT#42565 Fix 2930237: bump Dockerfile version to trigger docker rebuild
+
+  [ Irina Peshinskaya ]
+  * [0620648] TT#29751 Remove minus from cents in negative costs
+  * [64d8524] TT#40953 Allow all not reserved chars for sip URI
+
+  [ Michael Prokop ]
+  * [e078fff] TT#45479 Ensure /run/fastcgi is owned by www-data + install file in usr/lib/tmpfiles.d/
+    Thanks to Manuel Montecelo for the suggestion to use systemd's tmpfiles.d approach
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 23 Oct 2018 14:17:02 +0200
+
 ngcp-panel (6.4.2.0+0~mr6.4.2.0) unstable; urgency=medium
 
   [ Richard Fuchs ]
