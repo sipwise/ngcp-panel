@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "5ad58531_ef51f00f",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1066,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-24T16:19:07Z",
+      "side": 1,
+      "message": "So, we need to get access to the query_params of the collection package",
+      "parentUuid": "5ad58531_cc08822b",
+      "revId": "2f9b27c855d9f11988f0fea2d15454392d0601f2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad58531_07054ac1",
         "filename": "lib/NGCP/Panel/Utils/Generic.pm",
         "patchSetId": 1
