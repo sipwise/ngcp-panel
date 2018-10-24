@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5ad58531_0cffaa02",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-24T09:45:20Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "5ad58531_2769668c",
+      "revId": "2f9b27c855d9f11988f0fea2d15454392d0601f2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad58531_e7091edf",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-10-22T13:02:34Z",
       "side": 1,
       "message": "where is i used?",
+      "revId": "2f9b27c855d9f11988f0fea2d15454392d0601f2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad58531_cc08822b",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1066,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-24T09:45:20Z",
+      "side": 1,
+      "message": "query_params is collection package item, but we need to check it also in Item package",
+      "parentUuid": "5ad58531_e7091edf",
       "revId": "2f9b27c855d9f11988f0fea2d15454392d0601f2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
