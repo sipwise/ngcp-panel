@@ -86,6 +86,24 @@
       "revId": "2f9b27c855d9f11988f0fea2d15454392d0601f2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad58531_4f3484dd",
+        "filename": "lib/NGCP/Panel/Utils/Generic.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-10-24T16:17:28Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "5ad58531_07054ac1",
+      "revId": "2f9b27c855d9f11988f0fea2d15454392d0601f2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
