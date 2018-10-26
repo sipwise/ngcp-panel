@@ -1,3 +1,19 @@
+ngcp-panel (6.5.1.2+0~mr6.5.1.2) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [519a745] TT#45960 Disable timesets for 6.5
+  * [16d4458] TT#44635 Fix order for subscriberregistrations api
+  * [570c53d] TT#45458 Rename Faxe to Fax in swagger api doc
+  * [4a39571] TT#44806 Fix product info in subscribers preferences template
+  * [0025a5f] TT#46201 Use proper profile_id/profile_set_id in unrelated tests
+  * [044c16a] TT#44907 Create "default values" reseller with default emails
+  * [491db2a] TT#45468 Adjust from_email to possible Template::Toolkit
+  * [d01649b] TT#45476 Allow empty attachment_name in email_templates
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 26 Oct 2018 03:54:57 +0200
+
 ngcp-panel (6.5.1.1+0~mr6.5.1.1) unstable; urgency=medium
 
   [ Rene Krenn ]
