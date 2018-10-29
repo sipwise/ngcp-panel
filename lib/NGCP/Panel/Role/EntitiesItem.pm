@@ -186,29 +186,40 @@ sub get {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
 
-        my $header_accept = $c->request->header('Accept');
-        my $mime_type_from_query_params = $self->mime_type_from_query_params($c);
         my $action_config = $self->get_config('action');
         my $config_allowed_types = $action_config->{GET}->{ReturnContentType};
         my $apllication_json = 'application/json';
-        #TODO: to method
+
+        my $header_accept = $c->request->header('Accept');
+
+        my $mime_type_from_accept_header;
         if( ( defined $header_accept
-                && ($header_accept !~ m!\bapplication/json\b!)
-                && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) # application/json OR */*
-            )
+        #apllication/json is default,  so we will not consider it in the Accept header
+        #*/* allows us everything, so we will first try query parameter or default configured default mime-type
+        #while we will not implement more complex logic, when application/json is not default
+            && ($header_accept !~ m!\bapplication/json\b!)
+            && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) # application/json OR */*
+        )) {
+            $mime_type_from_accept_header = $header_accept;
+        }
+        my $mime_type_from_query_params = $self->mime_type_from_query_params($c);
+
+        #TODO: to method
+        if( defined $mime_type_from_accept_header
             || defined $mime_type_from_query_params
             #no header Accept passed, check configured return type
             || ( $config_allowed_types
                 && (
-                    ( ( !ref $config_allowed_types) 
+                    ( ( !ref $config_allowed_types)
                         && $config_allowed_types ne $apllication_json)
-                    || ( ref $config_allowed_types eq 'ARRAY' 
+                    || ( ref $config_allowed_types eq 'ARRAY'
                          && !grep { $_ eq  $apllication_json } @{ $config_allowed_types } )
                 )
             )
-            
+
         ) {
-            my $return_type = $header_accept // $mime_type_from_query_params;
+            my $return_type = $mime_type_from_accept_header // $mime_type_from_query_params;
+
             if ($return_type) {
                 return unless $self->check_return_type($c, $return_type, $config_allowed_types);
             } elsif (!ref $config_allowed_types) {
@@ -275,7 +286,7 @@ sub patch {
         $self->return_representation($c,
             'item' => $item,
             'form' => $form,
-            #hal may be empty if we don't need it for journal. 
+            #hal may be empty if we don't need it for journal.
             #Then it will be taken from item and form
             'hal'  => $hal,
             'preference' => $preference,
@@ -319,7 +330,7 @@ sub put {
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
         $self->return_representation($c,
-            #hal may be empty if we don't need it for journal. 
+            #hal may be empty if we don't need it for journal.
             #Then it will be taken from item and form
             'hal'  => $hal,
             'item' => $item,

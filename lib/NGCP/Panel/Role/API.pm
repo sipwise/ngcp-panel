@@ -1494,10 +1494,10 @@ sub check_return_type {
     #while not strict requirement to the config
     my $result = 1;
     if ($allowed_types) {
-        if ( (!ref $allowed_types && $requested_type ne 'binary' && $requested_type ne $allowed_types) 
+        if ( (!ref $allowed_types && $requested_type ne 'binary' && index($requested_type, $allowed_types) < 0) 
             ||
             ( ref $allowed_types eq 'ARRAY'
-                && !grep {$_ eq $requested_type} @$allowed_types
+                && !grep {index($requested_type, $_) > -1} @$allowed_types
             ) 
         ) {
             $result = 0;
