@@ -208,7 +208,7 @@ sub get {
             )
             
         ) {
-            my $return_type = $header_accept // $mime_type_from_query_params;
+            my $return_type = $mime_type_from_query_params // $header_accept;
             if ($return_type) {
                 return unless $self->check_return_type($c, $return_type, $config_allowed_types);
             } elsif (!ref $config_allowed_types) {
