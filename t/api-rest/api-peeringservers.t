@@ -29,7 +29,7 @@ $fake_data->set_data_from_script({
             via_lb    => '',
             enabled   => '1',
         },
-        query => ['group_id','name'],
+        query => ['name'],
     },
 });
 
