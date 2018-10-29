@@ -138,7 +138,10 @@ foreach my $extension (keys %$audio_types) {
     diag($soxi_output);
 
 
-    $res = $test_machine->request_get($greeting->{location}.'?format='.$extension);
+        $res = $test_machine->request_get($greeting->{location}.'?format='.$extension, undef, {
+            'Accept' => 'application/json, text/plain, */*',
+        }    
+    );
     $test_machine->http_code_msg(200, "check download voicemail greeting", $res);
 
     is($res->filename, $expected_downloaded_name ,"Check downloaded file name: $expected_downloaded_name .");
