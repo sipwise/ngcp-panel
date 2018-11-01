@@ -109,11 +109,10 @@ sub get_aor{
 
 sub _compose_location_path {
     my ($c, $prov_subscriber, $params) = @_;
-#path: <sip:lb@127.0.0.1;lr;received=sip:10.15.17.50:32997;socket=sip:10.15.17.198:5060>
+#path: <sip:lb@127.0.0.1;lr;socket=sip:10.15.17.198:5060>
 #The "path" uri points to the sip_int on the LB node to which this subscriber belongs.
-#The "received" parameter uri is equal to the contact provided in the registrations.
 #The "socket" points to the LB interface from which the incoming calls to this registration should be sent out.
-#See detailed description of the implemented logic in the workfron tasks 37459, 14589 
+#See detailed description of the implemented logic in the workfron tasks 37459, 14589
     my $socket = $params->{socket};
     my $path_default = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
     if (!$socket) {
@@ -139,7 +138,7 @@ sub _compose_location_path {
     $subscriber_lb_ptr //= $lb_clusters->{default};
     #TODO: is it ok to use default 'sip:lb@127.0.0.1:5060;lr' here?
     $subscriber_lb = $lb_clusters->{$subscriber_lb_ptr} // 'sip:lb@127.0.0.1:5060;lr';
-    my $path = '<'.$subscriber_lb.';received=sip:'.$params->{contact}.';socket='.$socket.'>';
+    my $path = '<'.$subscriber_lb.';socket='.$socket.'>';
     $c->log->debug('_compose_location_path: path:'.$path);
     return $path;
 }
