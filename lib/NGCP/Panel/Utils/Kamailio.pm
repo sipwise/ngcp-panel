@@ -139,7 +139,7 @@ sub _compose_location_path {
     $subscriber_lb_ptr //= $lb_clusters->{default};
     #TODO: is it ok to use default 'sip:lb@127.0.0.1:5060;lr' here?
     $subscriber_lb = $lb_clusters->{$subscriber_lb_ptr} // 'sip:lb@127.0.0.1:5060;lr';
-    my $path = '<'.$subscriber_lb.';received=sip:'.$params->{contact}.';socket='.$socket.'>';
+    my $path = '<'.$subscriber_lb.';received='.$params->{contact}.';socket='.$socket.'>';
     $c->log->debug('_compose_location_path: path:'.$path);
     return $path;
 }
