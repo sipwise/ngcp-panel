@@ -15,7 +15,7 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has_field 'greetingfile' => (
     type => 'Upload',
     required => 1,
-    label => 'Voicemail greeting file',
+    label => 'Voicemail greeting file. Must be a audio file in the "wav" format with "gsm" encoding. Content-type should be "audio/x-wav" or "application/octet-stream" in a "multipart/form-data" request',
     max_size => '67108864', # 64MB
 );
 
