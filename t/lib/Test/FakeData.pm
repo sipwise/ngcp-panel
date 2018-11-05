@@ -203,6 +203,9 @@ sub build_data{
                 subscriber_id => sub { return shift->get_id('subscribers',@_); },
             },
         },
+        'balanceintervals' => {
+            'patch_exclude_fields' => [qw/ratio/],
+        },
         'billingnetworks' => {
             'data' => {
                 name        => "api_test billingnetworks",
@@ -336,6 +339,7 @@ sub build_data{
             },
             'default' => 'contracts',
             'query' => ['external_id'],
+            'patch_exclude_fields' => ['all_billing_profiles'],
             'no_delete_available' => 1,
         },
         'resellers' => {
@@ -359,6 +363,7 @@ sub build_data{
             },
             'query' => ['external_id'],
             'no_delete_available' => 1,
+            'patch_exclude_fields' => ['all_billing_profiles'],
         },
         'customer_sipaccount' => {
             'data' => {
