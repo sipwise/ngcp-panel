@@ -45,6 +45,8 @@ my @apis = qw/subscriber domain peeringserver customer profile pbxdevice pbxfiel
 foreach my $api (@apis){
     my $preferences_old;
     my $preferences_put;
+    my $preferences_patch;
+    my $res;
     my $index = $api.'_id';
     my ($preferences) = {'uri' => '/api/'.$api.'preferences/'.$test_machine->DATA_ITEM->{$index}};
     (undef, $preferences_old) = $test_machine->check_item_get($preferences->{uri});
@@ -86,7 +88,11 @@ foreach my $api (@apis){
         }
         if($value && 'no_process' ne $value){
             if($preference->{max_occur} > 0 ){
-                $preferences->{content}->{$preference_name} = 1 < $preference->{max_occur} ? [$value] : $value ;
+                if ($preference->{max_occur} eq '1') {
+                    $preferences->{content}->{$preference_name} = $value;
+                } else {
+                    $preferences->{content}->{$preference_name} = [$value];
+                }
             }
         }else{
             #print "Undefined value for preference: $api:$preference_name;\n";
@@ -96,9 +102,35 @@ foreach my $api (@apis){
     #(undef, $preferences_put->{content}) = $test_machine->request_put($preferences->{content},$preferences->{uri});
     #we don't check read_only flag when update preferences?
     (undef, $preferences_put->{content}) = $test_machine->check_put2get({data_in=>$preferences->{content},uri=>$preferences->{uri}},undef, { skip_compare => 1 });
-    (undef, $preferences_put->{content}) = $test_machine->request_put($preferences_old,$preferences->{uri});
+    (undef, $preferences_patch->{content}) = $test_machine->check_patch2get({location => $preferences->{uri}} );
+   (undef, $preferences_put->{content}) = $test_machine->request_put($preferences_old,$preferences->{uri});
 }
 
+    if ($api eq 'subscriber') {
+        diag("test extended patch");
+        my $preferences_new;
+        my $addmulti_value = ['111','222','333'];
+        my $preferences_patch_op = [
+            {'op' => 'addmulti', 'path' => '/allowed_clis/-', value => ['111','222','333'] },
+        ];
+        ($res, $preferences_put->{content}) = $test_machine->request_patch($preferences_patch_op,$preferences->{uri});
+        $test_machine->http_code_msg(200, "check extended patch result", $res, $preferences_put->{content});
+        (undef, $preferences_new->{content}) = $test_machine->check_item_get($preferences->{uri});
+        is_deeply([@{$preferences_new->{content}->{allowed_clis}}[-3..-1]], $addmulti_value, "check patched allowed_clis");
+
+        $preferences_patch_op = [
+            {'op' => 'remove', 'path' => '/allowed_clis/a1', value => '222' },
+        ];
+        ($res, $preferences_put->{content}) = $test_machine->request_patch($preferences_patch_op,$preferences->{uri});
+        $test_machine->http_code_msg(200, "check extended patch result", $res, $preferences_put->{content});
+        (undef, $preferences_new->{content}) = $test_machine->check_item_get($preferences->{uri});
+        is_deeply([@{$preferences_new->{content}->{allowed_clis}}[-2..-1]], ['111','333'], "check patched allowed_clis");
+    }
+
+    
+    (undef, $preferences_put->{content}) = $test_machine->request_put($preferences_old,$preferences->{uri});
+    $test_machine->http_code_msg(200, "check return old values", $res, $preferences_put->{content});
+}
 $test_machine->clear_test_data_all();
 undef $fake_data;
 undef $test_machine;
