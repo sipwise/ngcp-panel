@@ -576,8 +576,9 @@ sub require_valid_patch {
     my $valid_ops = {
         'replace' => { 'path' => 1, 'value' => 1 },
         'copy' => { 'from' => 1, 'path' => 1 },
-        'remove' => { 'path' => 1 },
+        'remove' => { 'path' => 1, 'value' => 0 },# 0 means optional
         'add' => { 'path' => 1, 'value' => 1 },
+        'addmulti' => { 'path' => 1, 'value' => 1 },
         'test' => { 'path' => 1, 'value' => 1 },
         'move' => { 'from' => 1, 'path' => 1 },
     };
@@ -614,6 +615,12 @@ sub require_valid_patch {
                 return;
             }
             delete $tmpops->{$op}->{$k};
+        }
+        #remove optional op parameters, so only mandatory will stay
+        foreach my $k(keys %{ $tmpops->{$op} }) {
+            if (!$tmpops->{$op}->{$k}) {
+                delete $tmpops->{$op}->{$k};
+            }
         }
         if(keys %{ $tmpops->{$op} }) {
             $self->error($c, HTTP_BAD_REQUEST, "Missing PATCH keys ". (join(', ', map { "'".$_."'" } keys %{ $tmpops->{$op} }) ) . " for op '$op'");
@@ -775,10 +782,72 @@ sub collection_nav_links {
     return @links;
 }
 
+sub process_patch_description {
+    my ($self, $c, $entity, $patch) = @_;
+    my $op_iterator = -1;
+    for my $op (@{ $patch }) {
+        $op_iterator++;
+        if ($op->{op} eq 'addmulti') {
+            delete $patch->[$op_iterator];
+            if ($op->{path} !~/\/\-$/) {
+                die "invalid path '".$op->{path}."' for 'addmulti' operation. Must end with '-'."
+            }
+            $op->{path} =~s/\/\-$//;
+            my $value_current = JSON::Pointer->get($entity, $op->{path});
+            if (!$value_current) {
+                push @$patch, {"op" => "add", "path" => $op->{path}, "value" => $op->{value}};
+            } else {
+                push @$patch, map {{"op" => "add", "path" => $op->{path}.'/-', "value" => $_}} ref $op->{value} eq 'ARRAY' ? @{$op->{value}} : ($op->{value});
+            }
+        } elsif ($op->{op} eq 'remove' && $op->{value}) {
+            delete $patch->[$op_iterator];
+            #we need prefix here ("a" - amount) to don't mix amount we want to remove and addressing of some array element
+            $op->{path} =~s/\/a(\d+)$//;
+            my $remove_limit = $1 // 0;
+            my $values_to_remove;
+            if (ref $op->{value} eq 'ARRAY') {
+                $remove_limit = 0;
+                $values_to_remove = $op->{value};
+            } else {
+                $values_to_remove = [$op->{value}];
+            }
+            my $value_current = JSON::Pointer->get($entity, $op->{path});
+            VALUES_TO_REMOVE: foreach my $value_to_remove (@$values_to_remove) {
+                my $remove_iterator = 0;
+                my $remove_limit_done = 0;
+                #we are not able to request full array removal with exact value
+                if (ref $value_current eq 'ARRAY') {
+                    for (my $i=0; $i < @$value_current; $i++) {
+                        # 0 if different, 1 if equal
+                        if (compare($value_current->[$i], $value_to_remove)) {
+                            splice @$value_current, $i, 1;
+                            $i--;
+                            $remove_iterator++;
+                            if ($remove_limit && $remove_iterator >= $remove_limit) {
+                                $remove_limit_done = 1;
+                                last;
+                            }
+                        }
+                    }
+                    push @$patch, {"op" => "replace", "path" => $op->{path}, "value" => $value_current };
+                    if ($remove_limit_done) {
+                        last;
+                    }
+                } else {
+                    if (compare($value_current, $value_to_remove)) {
+                        push @$patch, {"op" => "remove", "path" => $op->{path} };
+                    }
+                }
+            }
+        }
+    }
+}
+
 sub apply_patch {
     my ($self, $c, $entity, $json, $optional_field_code_ref) = @_;
     my $patch = JSON::decode_json($json);
     try {
+        $self->process_patch_description($c, Storable::dclone($entity), $patch);
         for my $op (@{ $patch }) {
             my $coderef = JSON::Pointer->can($op->{op});
             die "invalid op '".$op->{op}."' despite schema validation" unless $coderef;
@@ -1494,11 +1563,11 @@ sub check_return_type {
     #while not strict requirement to the config
     my $result = 1;
     if ($allowed_types) {
-        if ( (!ref $allowed_types && $requested_type ne 'binary' && index($requested_type, $allowed_types) < 0) 
+        if ( (!ref $allowed_types && $requested_type ne 'binary' && index($requested_type, $allowed_types) < 0)
             ||
             ( ref $allowed_types eq 'ARRAY'
                 && !grep {index($requested_type, $_) > -1} @$allowed_types
-            ) 
+            )
         ) {
             $result = 0;
         }
