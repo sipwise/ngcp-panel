@@ -14,15 +14,15 @@ my($opt,$report,$api_config,$api_info,$config,$test_machine,$fake_data) =
     ({},{},{},{} );
 
 $opt = {
-    'collections'      => {'sms' => 1,},
+    'collections'      => {'billingzones' => 1,},
     'collections'      => {},
     'ignore_existence' => 1,
     'test_groups'      => { 
-        get2put => 1, 
-        #get2patch => 1, 
-        post =>1, 
-        get =>1, 
-        bundle =>1 
+        get2put   => 1, 
+        patch2get => 1, 
+        post      => 1, 
+        get       => 1, 
+        bundle    => 1,
     },#post,get2put,get2patch,bundle
     #'test_groups'      => { post => 1 },#post,get2put,get2patch,bundle
 };
@@ -31,6 +31,7 @@ $test_machine = Test::Collection->new(
     name                   => '',
     ALLOW_EMPTY_COLLECTION => 1,
     QUIET_DELETION         => 0,
+    CHECK_LIST_LIMIT       => 3,
     runas_role             => 'admin',
 );
 $fake_data = Test::FakeData->new;
@@ -47,11 +48,11 @@ run();
 
 $test_machine->clear_test_data_all();
 undef $fake_data;
+
+$test_machine->print_statistic;
 undef $test_machine;
-
-done_testing;
-
 print Dumper $report;
+done_testing;
 
 
 #------------------------ subs -----------------------
@@ -105,12 +106,36 @@ sub run{
                 if(!$test_machine->IS_EMPTY_COLLECTION){
                     if($test_machine->{methods}->{item}->{allowed}->{PUT}){
                         my $ignore_fields_parameter = $fake_data->{data}->{$collection}->{update_change_fields};
-                        $ignore_fields_parameter and $ignore_fields_parameter = { ignore_fields => $ignore_fields_parameter }; 
+                        my $params = {
+                            $ignore_fields_parameter ? (ignore_fields => $ignore_fields_parameter): (),
+                        };
                         $test_machine->check_get2put( {
                                 data_cb => $fake_data->{data}->{$collection}->{data_callbacks}->{get2put},
                             }, { 
                                 uri => $item->{location} ,
-                            }, $ignore_fields_parameter );
+                            }, $params );
+                    }
+                }
+            }
+        }
+        if($opt->{test_groups}->{patch2get}){
+            print "collection: $collection: patch2get;\n";
+            #$test_machine->DATA_ITEM_STORE($fake_data->process($collection));
+            if($test_machine->{methods}->{collection}->{allowed}->{GET}){
+                my $item = $test_machine->get_item_hal( undef, undef, 1);#reload
+                if(!$test_machine->IS_EMPTY_COLLECTION){
+                    if($test_machine->{methods}->{item}->{allowed}->{PATCH}){
+                        my $ignore_fields_parameter = $fake_data->{data}->{$collection}->{update_change_fields};
+                        my $patch_exclude_fields = $fake_data->{data}->{$collection}->{patch_exclude_fields};
+                        my $params = {
+                            $ignore_fields_parameter ? (ignore_fields => $ignore_fields_parameter): (),
+                            $patch_exclude_fields ? (patch_exclude_fields => $patch_exclude_fields): (),
+                        };
+                        $test_machine->check_patch2get( {
+                                data_cb => $fake_data->{data}->{$collection}->{data_callbacks}->{patch2get},
+                            }, { 
+                                uri => $item->{location} ,
+                            }, $params );
                     }
                 }
             }
@@ -166,6 +191,7 @@ sub init_config{#init config
         'profilepreferencedefs' => 1,
         'pbxdevicepreferencedefs' => 1,
         'pbxdeviceprofilepreferencedefs' => 1,
+        'pbxfielddevicepreferencedefs' => 1,
         'subscriberpreferences' => 1,
         'customerpreferences' => 1,
         'domainpreferences' => 1,
@@ -175,6 +201,7 @@ sub init_config{#init config
         'pbxdeviceprofilepreferences' => 1,
         #defs and preferences are tested in context of preferences
         'pbxdevicefirmwares' => 1, #too hard, fails with timeout on get
+        'sipcaptures' => 1, #too hard, it is ebout every packet
 
     #falis with: not ok 163 - ccmapentries: check_get2put: check put successful (Unprocessable Entity: Validation failed. field='mappings', input='ARRAY(0x1a53f278)', errors='Mappings field is required')
         #'ccmapentries' => 1,
