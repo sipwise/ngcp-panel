@@ -29,6 +29,8 @@ Moose::Exporter->setup_import_methods(
     as_is     => [ 'is_int' ],
 );
 my $tmpfilename : shared;
+my $requests_time = [];
+my $failed_http_tests = [];
 
 has 'ssl_cert' => (
     is => 'ro',
@@ -215,6 +217,20 @@ has 'KEEP_CREATED' =>(
     default => 1,
 );
 
+has 'EXPECTED_AMOUNT_CREATED' =>(
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+);
+
+#amount of the collection requests to check listing implementation and output parameters as page, first, last pages uris and rows
+#So, it is supposed, that we will perform CHECK_LIST_LIMIT requests to collection in check_list_collection method, or, max CHECK_LIST_LIMIT + 1
+has 'CHECK_LIST_LIMIT' =>(
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+);
+
 has 'DATA_LOADED' => (
     is => 'rw',
     isa => 'HashRef',
@@ -248,6 +264,12 @@ has 'NO_COUNT' =>(
     is => 'rw',
     isa => 'Str',
     default => '',
+);
+
+has 'NO_TEST_NO_COUNT' =>(
+    is => 'rw',
+    isa => 'Str',
+    default => '0',
 );
 
 has 'URI_CUSTOM_STORE' =>(
@@ -510,16 +532,23 @@ sub restore_uri_custom{
     $self->URI_CUSTOM_STORE(undef);
 }
 
+sub add_query_params{
+    my($self, $query_params_add) = @_;
+    my $query_params_old = $self->QUERY_PARAMS;
+    $self->QUERY_PARAMS( $self->QUERY_PARAMS.( $self->QUERY_PARAMS ? '&' : '').$query_params_add);
+    return $query_params_old;
+}
+
 sub get_uri_collection{
     my($self,$name) = @_;
     $name //= $self->name;
-    return $self->normalize_uri("/api/".$name.($name ? "/" : "").($self->QUERY_PARAMS ? "?".$self->QUERY_PARAMS : ""));
+    return $self->normalize_uri("/api/".$name.($name ? "/" : "").($self->QUERY_PARAMS ? ( $self->QUERY_PARAMS !~/^\?/ ? "?" : "").$self->QUERY_PARAMS : ""));
 }
 
 sub get_uri_collection_paged{
-    my($self,$name) = @_;
+    my($self,$name, $page, $rows) = @_;
     my $uri = $self->get_uri_collection($name);
-    return $uri.($uri !~/\?/ ? '?':'&').'page='.($self->PAGE // '1').'&rows='.($self->ROWS // '1').($self->NO_COUNT ? '&no_count=1' : '');
+    return $uri.($uri !~/\?/ ? '?':'&').'page='.($page // $self->PAGE // '1').'&rows='.($rows // $self->ROWS // '1').($self->NO_COUNT ? '&no_count=1' : '');
 }
 
 sub get_uri_get{
@@ -547,7 +576,7 @@ sub get_item_hal{
     my($self, $name, $uri, $reload, $number) = @_;
     $name ||= $self->name;
     my $resitem ;
-    #print Dumper ["get_item_hal",$name,$self->DATA_LOADED->{$name}];
+    #print Dumper ["get_item_hal","name",$name,"uri",$uri,$self->DATA_LOADED->{$name}];
     if(!$uri && !$reload){
         if(( $name eq $self->name ) && $self->DATA_CREATED->{FIRST}){
             $resitem = $self->get_created_first;
@@ -559,10 +588,10 @@ sub get_item_hal{
     if(!$resitem){
         my ($reshal, $location,$total_count,$reshal_collection);
         $uri //= $self->get_uri_collection_paged($name);
-        #print "uri=$uri;";
+        #print Dumper "get_item_hal: uri=$uri;";
         my($res,$list_collection,$req) = $self->check_item_get($self->normalize_uri($uri));
         ($reshal,$location,$total_count,$reshal_collection) = $self->get_hal_from_collection($list_collection,$name,$number);
-        #print Dumper [$location,$total_count,$reshal,$reshal_collection];
+        #print Dumper ["get_item_hal",$location,$total_count,$reshal,$reshal_collection];
         if($total_count || ('HASH' eq ref $reshal->{content} && $reshal->{content}->{total_count})){
             $self->IS_EMPTY_COLLECTION(0);
             $resitem = {
@@ -619,7 +648,7 @@ sub get_hal_from_collection{
 }
 
 sub get_collection_hal{
-    my($self,$name, $uri, $reload, $page, $rows) = @_;
+    my($self, $name, $uri, $reload, $page, $rows) = @_;
     my (@reshals, $location,$total_count,$reshal_collection,$rescollection,$firstitem,$res,$list_collection,$req);
 
     $name ||= $self->name;
@@ -681,9 +710,9 @@ sub get_created_first{
 }
 
 sub get_uri_current{
-    my($self) = @_;
+    my($self, $name) = @_;
     $self->URI_CUSTOM and return $self->URI_CUSTOM;
-    return $self->get_uri_item;
+    return $self->get_uri_item($name);
 }
 
 sub encode_content{
@@ -729,7 +758,10 @@ sub request{
     }
     if(!$self->DEBUG_ONLY){
         $self->init_ssl_cert($self->ua, $self->runas_role);
+        my $request_time = time;
         my $res = $self->ua->request($req);
+        $request_time = time() - $request_time;
+        push @$requests_time, { response => $res, time => $request_time };
         diag(sprintf($self->name_prefix."request:%s: %s", $req->method, $req->uri));
         #draft of the debug mode
         if(1 && $self->DEBUG){
@@ -984,6 +1016,19 @@ sub check_list_collection{
     my $nexturi = $self->get_uri_collection_paged;
     my @href = ();
     my $test_info_prefix = "$self->{name}: check_list_collection: ";
+    my $page = 1;
+    my $next_page;
+    my $rows_old = $self->ROWS;
+    if ($self->NO_COUNT && $self->CHECK_LIST_LIMIT) {
+        $self->NO_COUNT(0);
+        diag("get total_count before no_count check;ROWS=".$self->ROWS);
+        my $collection_info = $self->get_collection_hal($self->name, undef, 1, 1, 1);
+        diag("got total_count for no_count check: ".(defined $collection_info->{total_count} ? $collection_info->{total_count} : "undef").";");
+        $self->NO_COUNT(1);
+        my $rows_candidate = int($collection_info->{total_count} / ( $self->CHECK_LIST_LIMIT ));
+        $rows_candidate = $rows_candidate ? $rows_candidate : 1;
+        $self->ROWS($rows_candidate);
+    }
     do {
         #print "nexturi=$nexturi;\n";
         my ($res,$list_collection) = $self->check_item_get($nexturi);
@@ -1020,7 +1065,22 @@ sub check_list_collection{
         }
 
         if($list_collection->{_links}->{next}->{href}) {
-            $nexturi = $self->normalize_uri($list_collection->{_links}->{next}->{href});
+            if ( !$self->CHECK_LIST_LIMIT ) {
+                $nexturi = $self->normalize_uri($list_collection->{_links}->{next}->{href});
+            } else {
+                if ($self->NO_COUNT) {
+                    #we have no total_count
+                    $next_page = $page + 1;
+                } else {
+                    my $rows_increment = int($list_collection->{total_count} / ( $self->CHECK_LIST_LIMIT * ($self->ROWS ? $self->ROWS  : 1 ) ));
+                    $rows_increment = $rows_increment ? $rows_increment : 1;
+                    $next_page = $page + $rows_increment;
+                    if ($next_page > $list_collection->{total_count} ) {
+                        $next_page = $list_collection->{total_count};
+                    }
+                }
+                $nexturi = $self->get_uri_collection_paged(undef,  $next_page);
+            }
         } else {
             $nexturi = undef;
         }
@@ -1052,13 +1112,61 @@ sub check_list_collection{
                 push @href, $item_c->{_links}->{self}->{href};
             }
         }
+        $page = $next_page;
     } while($nexturi);
+    $self->ROWS($rows_old);
     return \@href;
+}
+
+sub check_get2order_by{
+    my($self, $name, $uri, $params) = @_;
+
+    $uri //= $self->get_uri_item($name);
+    diag($self->name.": check_get2order_by:");
+
+    $name //= $self->name;
+    $params //= {};
+    $params->{ignore_fields} //= [];
+    my $ignore_fields = { map { $_ => 1 } $params->{ignore_fields}};
+    my $item = {};
+    my $response;
+    (undef,$item->{content}) = $self->check_item_get($uri);
+    if (ref $item->{content} ne 'HASH') {
+        diag($self->name.": check_get2order_by: not hash reference:");
+        diag(Dumper($item->{content}));
+        #we will not check if empty collection is allowed here. If necessary, we will take other place for this
+        return;
+    }
+
+    while (my ($path, $value) = each %{$item->{content}} ) {
+        if ($path ne '_links' && $path ne 'total_count' &&  !exists $ignore_fields->{$path}) {
+            my $query_params_old = $self->QUERY_PARAMS;
+            foreach my $order_by_query_params ('order_by='.$path, 'order_by='.$path.'&order_by_direction=desc', 'order_by='.$path.'&order_by_direction=asc') {
+                $self->add_query_params($order_by_query_params);
+                $uri = $self->get_uri_collection_paged($name);
+                $self->get_collection_hal( $name, $uri, 1 );
+                $self->QUERY_PARAMS($query_params_old);
+            }
+        }
+    }
 }
 
 sub check_created_listed{
     my($self,$listed) = @_;
     my $created_items = clone($self->DATA_CREATED->{ALL});
+    if(!$created_items || ref $created_items ne 'ARRAY' || !scalar @$created_items) {
+        return;
+    }
+    ok($self->EXPECTED_AMOUNT_CREATED == scalar(keys %{$created_items}), "$self->{name}: check amount of created items");
+    if( $self->CHECK_LIST_LIMIT ) {
+        #we didn't load all collections into $listed, as we requested just limited pages, 
+        #so we can't check if all created are really listed
+        #let's try to get them just as latest items from the collection
+        my $query_params_old = $self->add_query_params('order_by=id&order_by_direction=desc');
+        my $uri = $self->get_uri_collection_paged($self->name, 1, $self->EXPECTED_AMOUNT_CREATED);
+        my $collection_hals = $self->get_collection_hal($self->name,$uri);
+        $listed = [map {$_->{location}} @{$collection_hals->{collection}}];
+    }
     $listed //= [];#to avoid error about not array reference
     $created_items //= [];
     foreach (@$listed){
@@ -1248,6 +1356,7 @@ sub check_patch_bundle{
     $self->check_patch_path_wrong;
 }
 
+
 sub check_bundle{
     my($self) = @_;
     $self->check_options_collection();
@@ -1256,9 +1365,15 @@ sub check_bundle{
     if($self->methods->{collection}->{allowed}->{GET}){
         $listed = $self->check_list_collection();
         $self->check_created_listed($listed);
-        $self->NO_COUNT('1');
-        $self->check_list_collection();
-        $self->NO_COUNT('');
+        if (!$self->NO_TEST_NO_COUNT) {
+            $self->NO_COUNT('1');
+            $self->check_list_collection();
+            $self->NO_COUNT('');
+        }
+        $self->check_get2order_by();
+        #TODO: the same for allowed query params. All query_params that have
+        #the same field in the item can be tested. Also if some simple map can be applied - let it be applied
+        #all untested query_params should be shown in statistic
     }
     # test model item
     if(@$listed && !$self->NO_ITEM_MODULE){
@@ -1275,9 +1390,9 @@ sub check_bundle{
 }
 
 sub check_item_get{
-    my($self, $uri, $msg) = @_;
+    my($self, $uri, $msg, $name) = @_;
     $msg //= '';
-    $uri ||= $self->get_uri_current;
+    $uri ||= $self->get_uri_current($name);
     $uri = $self->normalize_uri($uri);
     my ($res, $content, $req) = $self->request_get($uri);
     $self->http_code_msg(200, $msg.($msg?": ":"")."fetch uri: $uri", $res);
@@ -1305,6 +1420,9 @@ sub check_item_delete{
     my($self, $uri, $msg) = @_;
     my $name = $self->name // '';
     $uri =  $self->normalize_uri($uri);
+    if($name eq $self->name) {
+        $self->EXPECTED_AMOUNT_CREATED($self->EXPECTED_AMOUNT_CREATED - 1);
+    }
     my ($req,$res,$content) = $self->request_delete($uri);#,$uri,$req
     $self->http_code_msg(204, "$name: check delete item $uri",$res,$content);
     return ($req,$res,$content);
@@ -1315,6 +1433,7 @@ sub check_create_correct{
     if(!$self->KEEP_CREATED){
         $self->clear_data_created;
     }
+    $self->EXPECTED_AMOUNT_CREATED($self->EXPECTED_AMOUNT_CREATED + $number);
     $self->DATA_CREATED->{ALL} //= {};
     my @created = ();
     for(my $i = 1; $i <= $number; ++$i) {
@@ -1495,13 +1614,27 @@ sub check_patch2get{
     delete $get_in->{ignore_fields} if ref $get_in eq 'HASH';
     delete $patch_in->{ignore_fields} if ref $patch_in eq 'HASH';
 
-    $patch_out->{content_in} = ref $patch_in eq 'HASH' && $patch_in->{content} 
-        ? $patch_in->{content} 
-        : ref $patch_in eq 'ARRAY'
-            ? $patch_in 
-            : []
-        ;
+    my $patch_exclude_fields = $params->{patch_exclude_fields} // {};
+    if (ref $patch_exclude_fields eq 'ARRAY') {
+        $patch_exclude_fields = {map {$_ => 1} @$patch_exclude_fields};
+    }
+
     (undef, $patch_out->{content_before}) = $self->check_item_get( $patch_uri );
+
+    my @patches;
+    while (my ($path, $value) = each %{$patch_out->{content_before}} ) {
+        if ($path ne 'id' && $path ne '_links' && !exists $patch_exclude_fields->{$path}) {
+            push @patches, {'op' => 'replace', 'path' => '/'.$path, 'value' => $value};
+        }
+    }
+
+    $patch_out->{content_in} = ref $patch_in eq 'HASH' && $patch_in->{content} 
+        ? $patch_in->{content}
+        : ref $patch_in eq 'ARRAY'
+            ? $patch_in
+            : [@patches]
+        ;
+
     $patch_out->{content_patched} = Test::ApplyPatch::apply_patch(clone($patch_out->{content_before}),$patch_out->{content_in});
     @{$patch_out}{qw/response content request/} = $self->request_patch( $patch_out->{content_in}, $patch_uri );
     $self->http_code_msg(200, "check_patch2get: check patch successful",$patch_out->{response}, $patch_out->{content});
@@ -1660,7 +1793,7 @@ sub http_code_msg{
     if ( ($res->code < 300) || ( $code >= 300 ) ) {
         my $res_message = $res->message // '';
         my $content_message = 'HASH' eq ref $content ? $content->{message} // '' : '' ;
-        $message_res = $message.' (' . $res_message . ': ' . $content_message . ')';
+        $message_res = $message.' (' . $res->code . ': ' . $res_message . ': ' . $content_message . ')';
         if($check_message){
             my $check_message_content = length($check_message) > 1 ? $check_message : $message;
             ok($content_message =~/$check_message_content/, "$name: check http message: expected: $check_message_content; got: $content_message;");
@@ -1673,7 +1806,25 @@ sub http_code_msg{
             $message_res = "$name: ".$message . ' (' . $res->message . ')';
         }
     }
-    $code and is($res->code, $code, $message_res);
+    my $result;
+    $code and $result = is($res->code, $code, $message_res);
+    if (!$result && $res) {
+        push @$failed_http_tests, {response => $res, expected => $code, got => $res->code, message => $message, 'name' => $self->name, 'caller' => [caller(1)]};
+    }
+    return $result;
+}
+
+sub print_statistic {
+    my($self) = @_;
+    my @long_queries = grep {$_->{time} > 0} @$requests_time;
+    print "#---------------------------- REQUESTS LONGER THAN 0 SECOND: ".scalar(@long_queries)."\n";
+    print Dumper [map {
+            join("\t",$_->{time},$_->{response}->request->method, "\t", $_->{response}->request->uri->as_string)
+        } sort {$b->{time} <=> $a->{time}} @long_queries ] if scalar(@long_queries);
+    print "#---------------------------- FAILED HTTP CODE CHECKINGS: ".scalar(@$failed_http_tests)."\n";
+    print Dumper [map {
+            join("\t", $_->{response}->request->method, "\t", $_->{got}, $_->{expected}, $_->{name}, $_->{response}->request->uri->as_string)
+        } @$failed_http_tests] if scalar(@$failed_http_tests);
 }
 
 sub name_prefix{
