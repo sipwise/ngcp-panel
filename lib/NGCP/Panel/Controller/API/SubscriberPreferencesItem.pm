@@ -15,7 +15,7 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 
 __PACKAGE__->set_config({
-    PATCH => { ops => [qw/add replace remove copy/] },
+    PATCH => { ops => [qw/add addmulti replace remove copy/] },
     allowed_roles => {
         Default => [qw/admin reseller subscriberadmin subscriber/],
         Journal => [qw/admin reseller subscriberadmin subscriber/],
@@ -87,7 +87,7 @@ sub PATCH :Allow {
             c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
-            ops => [qw/add replace remove copy/],
+            ops => [qw/add replace remove copy addmulti/],
         );
         last unless $json;
 
