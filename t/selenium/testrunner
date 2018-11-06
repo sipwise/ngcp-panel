@@ -51,16 +51,17 @@ echo "Selenium server log file available at /home/selenium/selenium.log"
 echo "Watch at test runs by connecting via VNC (password: '${PASSWORD}'):"
 echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024x16 passwd=/tmp/vncpasswd localhost:5999"
 
-RC=0
 if [ -n "${3:-}" ] && [ "${3:-}" = "junit" ] ; then
   CATALYST_SERVER=https://${SERVER}:1443/ prove -m --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t | \
-    tee -a "${OUTPUT_DIRECTORY}/selenium.xml" || RC=$?
+    tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
+  RC="${PIPESTATUS[0]}"
 else
   CATALYST_SERVER="https://${SERVER}:1443" prove -m -v --color -l -It/lib t/selenium/*.t | \
-    tee -a "${OUTPUT_DIRECTORY}/selenium.pretty" || RC=$?
+    tee -a "${OUTPUT_DIRECTORY}/selenium.pretty"
+  RC="${PIPESTATUS[0]}"
 fi
 
-echo "Finished test execution, test execution returned with exit code ${RC}."
+echo "Finished test execution, test execution returned with exit code ${RC:-0}."
 for file in "${OUTPUT_DIRECTORY}/selenium.pretty" "${OUTPUT_DIRECTORY}/selenium.xml" ; do
   if [ -f "$file" ] ; then
     echo "Test results available at ${file}"
