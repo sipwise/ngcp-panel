@@ -130,11 +130,17 @@ ok($d->find_element('//*[@id="masthead"]//h2[contains(text(),"times for mytestpr
 diag("Edit Wednesday");
 $row = $d->find_element('//table//td[contains(text(),"Wednesday")]');
 ok($row);
+diag("Move mouse over 'Weekdays' row to make 'Edit' button available");
 $d->move_action(element => ($d->find_element('//h3[contains(text(),"Weekdays")]')));
 sleep 2 if ($d->browser_name_in("htmlunit"));
 $d->move_action(element => $row);
-$d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]')->click();
+diag("Find 'Edit' button for element 'Wednesday'");
+my $btn = $d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
+ok($btn);
+diag("Click 'Edit' button for element 'Wednesday'");
+$btn->click;
 $d->find_text("Edit Wednesday");
+diag("Pop-up 'Edit Wednesday' was properly opened");
 
 diag("add/delete a time def to Wednesday");
 $d->fill_element('#start', 'css', "03:14:15");
