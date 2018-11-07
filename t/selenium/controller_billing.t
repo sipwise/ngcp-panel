@@ -138,7 +138,7 @@ diag("Find 'Edit' button for element 'Wednesday'");
 my $btn = $d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
 ok($btn);
 diag("Click 'Edit' button for element 'Wednesday'");
-$btn->click;
+$btn->click();
 $d->find_text("Edit Wednesday");
 diag("Pop-up 'Edit Wednesday' was properly opened");
 
