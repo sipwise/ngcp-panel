@@ -73,7 +73,7 @@ $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(t
 diag("Edit Fraud Limits");
 my $elem = $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]');
 $d->scroll_to_element($elem);
-$elem->click;
+$elem->click();
 sleep 4 if ($d->browser_name_in("phantomjs", "chrome")); # time to move
 $row = $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]');
 ok($row);
