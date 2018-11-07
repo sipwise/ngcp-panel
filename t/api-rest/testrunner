@@ -3,14 +3,14 @@
 set -e
 set -u
 
-if ! [ -f /.dockerenv ] && ! grep -q 'devices:/docker' /proc/1/cgroup ; then
-  echo "Not running inside docker, exiting to avoid data damage." >&2
-  exit 1
-fi
+#if ! [ -f /.dockerenv ] && ! grep -q 'devices:/docker' /proc/1/cgroup ; then
+#  echo "Not running inside docker, exiting to avoid data damage." >&2
+#  exit 1
+#fi
 
 SERVER="${1:-}"
 SELECT="${2:-all}"
-OUTPUT_DIRECTORY="${3:-/code/}"
+OUTPUT_DIRECTORY="${3:-/root/VMHost/ngcp-panel/}"
 FORMAT="${4:-pretty}"
 
 if [ -z "${SERVER}" ] ; then
@@ -25,7 +25,7 @@ fi
 
 if [ "${SELECT}" = "stable" ] ; then
   echo "Test selection: ${SELECT}"
-  SELECT=$(echo t/api-rest/api-{all-links,bannedips,bannedusers,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,contracts,customercontacts,customers,lnp,ncoslevels,pbxdevicemodels,peeringgroups,profilepackages,resellers,rewriterules,rewriterulesets,root,soundsets,systemcontacts,threads,topuplogs,valid-patch,vouchers,method-override}.t)
+  SELECT=$(echo ./t/api-rest/api-{all-links,balanceintervals,bannedips,bannedusers,billingfees,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,cfdestinationsets,contracts,conversations,customercontacts,customers,emailtemplates,faxes,journals,headerrulesets,lnp,ncoslevels,pbxdevicemodels,pbxdevices,peeringgroups,peeringrules,peeringinboundrules,peeringservers,preferences,profilepackages,resellers,rewriterules,rewriterulesets,root,soundsets,subscriberregistrations,subscribers,systemcontacts,threads,topuplogs,trustedsources,valid-patch,vouchers,method-override}.t)
 elif [ "${SELECT}" = "fast" ] ; then
   echo "Test selection: ${SELECT}"
   SELECT=$(echo t/api-rest/api-{bannedips,bannedusers,billingnetworks,billingzones,calls,cert-auth,cfdestinationsets,ncoslevels,peeringgroups,peeringrules,peeringinboundrules,peeringservers,resellers,rewriterules,root,soundsets,systemcontacts,valid-patch,vouchers,method-override}.t)
