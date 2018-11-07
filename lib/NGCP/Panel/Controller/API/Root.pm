@@ -226,6 +226,7 @@ sub GET : Allow {
             fields => $form_fields,
             uploads => $form_fields_upload,
             config => $full_mod->config ,
+            ( $full_item_mod && $full_item_mod->can('config') ) ? (item_config => $full_item_mod->config) : () ,
             query_params => $query_params,
             actions => $actions,
             item_actions => $item_actions,
