@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_e1d46c48",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 785,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T17:23:07Z",
+      "side": 1,
+      "message": "yes - do you want this as a comment?",
+      "parentUuid": "3ae2911b_4676b63f",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_e6e122d2",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2018-11-07T13:29:49Z",
       "side": 1,
       "message": "delete on ary is discouraged. i honestly would not modify @$patch list in memory, but rather push()ing to a fresh one here, which you then return.",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_c1c970ae",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T17:23:07Z",
+      "side": 1,
+      "message": "ues, forgot replace it with splice",
+      "parentUuid": "3ae2911b_e6e122d2",
       "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_a1ce64b2",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 798,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T17:23:07Z",
+      "side": 1,
+      "message": "No, here we have correct syntax (path without \"/-\") for adding full array, as far as path didn\u0027t exists before",
+      "parentUuid": "3ae2911b_867c9e21",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_66f53282",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 4
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_21bb9410",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 805,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T17:23:07Z",
+      "side": 1,
+      "message": "Good idea",
+      "parentUuid": "3ae2911b_66f53282",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_26ef2ab2",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 4
@@ -81,6 +153,24 @@
       "writtenOn": "2018-11-07T13:29:49Z",
       "side": 1,
       "message": "why is this label needed?",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_41bea000",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 815,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T17:23:07Z",
+      "side": 1,
+      "message": "yes, it is from old code structure, will remove",
+      "parentUuid": "3ae2911b_26ef2ab2",
       "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
