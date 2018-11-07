@@ -281,19 +281,36 @@ sub generate_swagger_datastructure {
         }
 
         if (grep {m/^GET$/} @{ $col->{item_actions} }) {
+            my $action_config = $col->{item_config}->{action}->{GET};
+            my $produces = $action_config->{ReturnContentType} 
+                ? ref $action_config->{ReturnContentType} eq 'ARRAY' 
+                    ? $action_config->{ReturnContentType}
+                    : $action_config->{ReturnContentType} eq 'binary' ? ['application/octet-stream'] : undef
+                : undef;
             $item_p->{get} = {
                 summary => "Get a specific $entity",
                 tags => ["$entity"],
+                $produces ? ( produces => $produces ) : (),
                 responses => {
                     "200" => {
                         description => "$title",
-                        content => {
-                            "application/json" => {
+                        $produces ? ( content => { map { 
+                            $_ => {
                                 schema => {
-                                    '$ref' => "#/components/schemas/$entity",
+                                    $_ ne 'application/json' 
+                                        ? (type => 'string') 
+                                        : ('$ref' => "#/components/schemas/$entity"),
                                 }
-                            },
-                        },
+                            } } @$produces } )
+                        : (
+                            content => {
+                                "application/json" => {
+                                    schema => {
+                                        '$ref' => "#/components/schemas/$entity",
+                                    }
+                                },
+                            }
+                        ),
                     }
                 }
             };
