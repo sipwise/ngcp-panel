@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ae2911b_4676b63f",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 785,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-07T13:29:49Z",
+      "side": 1,
+      "message": "this method expands the newly added ops/modes to the know patch ops.",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_e6e122d2",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-07T13:29:49Z",
+      "side": 1,
+      "message": "delete on ary is discouraged. i honestly would not modify @$patch list in memory, but rather push()ing to a fresh one here, which you then return.",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_867c9e21",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 798,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-07T13:29:49Z",
+      "side": 1,
+      "message": "dont you want to expand the ary value here as well?",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_66f53282",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 805,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-07T13:29:49Z",
+      "side": 1,
+      "message": "what if if we have field names like \"gppa1\", \"gppa2\" \"gppa3\" etc. one day? why not encode that \"delete limit\" into the value? a value for delete seems off-standard anyway, so imho better to add there. ie.\n\nop: \"delete\",\npath: ...,\nvalue: {\n  limit: 10,\n  value: [ ... ]\n}",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_26ef2ab2",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 815,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-07T13:29:49Z",
+      "side": 1,
+      "message": "why is this label needed?",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
