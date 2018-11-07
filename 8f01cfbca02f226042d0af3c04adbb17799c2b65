@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_01a1b8a9",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T18:13:32Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "3ae2911b_e6e122d2",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_867c9e21",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 4
@@ -160,6 +178,24 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_e1a58cb5",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 805,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T18:13:32Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "3ae2911b_66f53282",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_26ef2ab2",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 4
@@ -188,6 +224,24 @@
       "writtenOn": "2018-11-07T17:23:07Z",
       "side": 1,
       "message": "yes, it is from old code structure, will remove",
+      "parentUuid": "3ae2911b_26ef2ab2",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_c1aa9085",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 815,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T18:13:32Z",
+      "side": 1,
+      "message": "done",
       "parentUuid": "3ae2911b_26ef2ab2",
       "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
