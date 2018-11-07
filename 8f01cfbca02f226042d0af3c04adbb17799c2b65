@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_015e58e9",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-07T17:39:09Z",
+      "side": 1,
+      "message": "We van also have other operators, like\n[\n{op \u003d\u003e addmulti, path\u003d\u003d\u003e /aaa, value \u003d\u003e bbb}\n{op \u003d\u003e replace, path\u003d\u003d\u003e /xxx, value \u003d\u003e yyy}\n]\nso even if we cloned patch - anyway it will be modified original patch, with saved usual op\u0027s and transformed  \"new\" ops",
+      "parentUuid": "3ae2911b_e6e122d2",
+      "revId": "8f01cfbca02f226042d0af3c04adbb17799c2b65",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_867c9e21",
         "filename": "lib/NGCP/Panel/Role/API.pm",
         "patchSetId": 4
