@@ -1434,6 +1434,7 @@ sub check_create_correct{
         $self->clear_data_created;
     }
     $self->EXPECTED_AMOUNT_CREATED($self->EXPECTED_AMOUNT_CREATED + $number);
+    $self->EXPECTED_AMOUNT_CREATED(int($self->EXPECTED_AMOUNT_CREATED + $number));
     $self->DATA_CREATED->{ALL} //= {};
     my @created = ();
     for(my $i = 1; $i <= $number; ++$i) {
