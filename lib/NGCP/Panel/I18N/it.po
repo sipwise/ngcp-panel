@@ -657,6 +657,10 @@ msgstr ""
 msgid "Always offer the audio codec Speex (8 kHz) to this subscriber or peer."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always transcode media from the user"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm lib/NGCP/Panel/Utils/Voucher.pm
 msgid "Amount"
 msgstr "Importo"
@@ -4047,6 +4051,13 @@ msgstr ""
 msgid "If enabled, npdi parameter will be added if there is a LNP query."
 msgstr ""
 "Se abilitato, il parametro npdi sarà aggiunto se c'è una richiesta LNP."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"If enabled, rtpengine will always trancode any received media to the first "
+"(highest priority) codec offered by the other side that is supported for "
+"transcoding."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
