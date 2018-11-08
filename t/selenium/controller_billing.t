@@ -135,6 +135,7 @@ $d->move_action(element => ($d->find_element('//h3[contains(text(),"Weekdays")]'
 sleep 2 if ($d->browser_name_in("htmlunit"));
 $d->move_action(element => $row);
 diag("Find 'Edit' button for element 'Wednesday'");
+sleep 1; # give ajax time to load
 my $btn = $d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
 ok($btn);
 diag("Click 'Edit' button for element 'Wednesday'");
