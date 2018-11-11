@@ -77,7 +77,7 @@ sub GET :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
-    $c->model('DB')->set_transaction_isolation('READ COMMITTED');    
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -96,7 +96,7 @@ sub PATCH :Allow {
         my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $subscriber->contract,
             ); #apply underrun lock level
-        
+
         my $old_resource = $self->get_resource($c, $subscriber, "subscribers");
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
@@ -105,11 +105,11 @@ sub PATCH :Allow {
         # for proper PATCH behavior
         $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, 0, "subscribers");
         last unless $subscriber;
-        
+
         my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
         last unless $self->add_update_journal_item_hal($c,$hal);
 
-        $guard->commit; 
+        $guard->commit;
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -130,7 +130,7 @@ sub PATCH :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
-    $c->model('DB')->set_transaction_isolation('READ COMMITTED');        
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -140,7 +140,7 @@ sub PUT :Allow {
         last unless $self->resource_exists($c, systemcontact => $subscriber);
         my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $subscriber->contract,
-            ); #apply underrun lock level        
+            ); #apply underrun lock level
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
@@ -156,8 +156,8 @@ sub PUT :Allow {
 
         my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
         last unless $self->add_update_journal_item_hal($c,$hal);
-        
-        $guard->commit; 
+
+        $guard->commit;
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -178,7 +178,7 @@ sub PUT :Allow {
 
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
-}   
+}
 
 1;
 
