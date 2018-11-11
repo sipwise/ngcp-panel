@@ -577,7 +577,11 @@ sub require_valid_patch {
         'replace' => { 'path' => 1, 'value' => 1 },
         'copy' => { 'from' => 1, 'path' => 1 },
         'remove' => { 'path' => 1 },
-        'add' => { 'path' => 1, 'value' => 1 },
+        'add' => { 'path' => 1, 'value' => 1, mode => {
+                required => 0,
+                allowed_values => [qw/append/],
+            },
+        },
         'test' => { 'path' => 1, 'value' => 1 },
         'move' => { 'from' => 1, 'path' => 1 },
     };
@@ -614,6 +618,22 @@ sub require_valid_patch {
                 return;
             }
             delete $tmpops->{$op}->{$k};
+        }
+        #remove optional op parameters, so only mandatory will stay
+        foreach my $k(keys %{ $tmpops->{$op} }) {
+            if (!ref $tmpops->{$op}->{$k} && !$tmpops->{$op}->{$k}) {
+                delete $tmpops->{$op}->{$k};
+            } elsif (ref $tmpops->{$op}->{$k} eq 'HASH') {
+                if (defined $tmpops->{$op}->{$k}->{allowed_values} && $elem->{$k}) {
+                    if (!grep {$elem->{$k} eq $_} @{$tmpops->{$op}->{$k}->{allowed_values}}) {
+                        $self->error($c, HTTP_BAD_REQUEST, "Invalid PATCH op '".$tmpops->{$op}."' modifier '$k' value '".$elem->{$k}."'. Allowed values are '". (join("', '", @{$tmpops->{$op}->{$k}->{allowed_values}}) ) . "'");
+                    }
+                }
+                if (exists $tmpops->{$op}->{$k}->{required} && ! $tmpops->{$op}->{$k}->{required}) {
+                    #by default all op spec keys are required, so only those with required = 0 shouldn't be cjecked in $elem
+                    delete $tmpops->{$op}->{$k};
+                }
+            }
         }
         if(keys %{ $tmpops->{$op} }) {
             $self->error($c, HTTP_BAD_REQUEST, "Missing PATCH keys ". (join(', ', map { "'".$_."'" } keys %{ $tmpops->{$op} }) ) . " for op '$op'");
@@ -775,10 +795,32 @@ sub collection_nav_links {
     return @links;
 }
 
+#this method expands the newly added ops/modes to the know patch ops.
+sub process_patch_description {
+    my ($self, $c, $entity, $patch) = @_;
+    my $patch_diff = [];
+    my $op_iterator = -1;
+    for my $op (@{ $patch }) {
+        $op_iterator++;
+        if ($op->{op} eq 'add' && $op->{mode} && $op->{mode} eq 'append') {
+            splice @$patch, $op_iterator, 1;
+            $op->{path} =~s/\/\-$//;#we will add it if element exists
+            my $value_current = JSON::Pointer->get($entity, $op->{path});
+            if (!$value_current) {
+                push @$patch_diff, {"op" => "add", "path" => $op->{path}, "value" => $op->{value}};
+            } else {
+                push @$patch_diff, map {{"op" => "add", "path" => $op->{path}.'/-', "value" => $_}} ref $op->{value} eq 'ARRAY' ? @{$op->{value}} : ($op->{value});
+            }
+        }
+    }
+    push @$patch, @$patch_diff;
+}
+
 sub apply_patch {
     my ($self, $c, $entity, $json, $optional_field_code_ref) = @_;
     my $patch = JSON::decode_json($json);
     try {
+        $self->process_patch_description($c, Storable::dclone($entity), $patch);
         for my $op (@{ $patch }) {
             my $coderef = JSON::Pointer->can($op->{op});
             die "invalid op '".$op->{op}."' despite schema validation" unless $coderef;
@@ -1494,11 +1536,11 @@ sub check_return_type {
     #while not strict requirement to the config
     my $result = 1;
     if ($allowed_types) {
-        if ( (!ref $allowed_types && $requested_type ne 'binary' && index($requested_type, $allowed_types) < 0) 
+        if ( (!ref $allowed_types && $requested_type ne 'binary' && index($requested_type, $allowed_types) < 0)
             ||
             ( ref $allowed_types eq 'ARRAY'
                 && !grep {index($requested_type, $_) > -1} @$allowed_types
-            ) 
+            )
         ) {
             $result = 0;
         }
