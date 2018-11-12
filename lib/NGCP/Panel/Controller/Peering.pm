@@ -693,8 +693,6 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            $form->values->{time_set_id} = $form->values->{time_set}{id} // undef;
-            delete $form->values->{time_set};
             $form->values->{callee_prefix} //= '';
             $form->values->{group_id} = $form->values->{group}{id};
             $c->stash->{rule_result}->update($form->values);
