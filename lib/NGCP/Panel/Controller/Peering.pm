@@ -130,7 +130,10 @@ sub edit :Chained('base') :PathPart('edit') {
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
-        fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
+        fields => {
+            'contract.create' => $c->uri_for('/contract/peering/create'),
+            'time_set.create' => $c->uri_for('/timeset/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
@@ -198,7 +201,10 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
-        fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
+        fields => {
+            'contract.create' => $c->uri_for('/contract/peering/create'),
+            'time_set.create' => $c->uri_for('/timeset/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
@@ -565,24 +571,6 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
     return;
 }
 
-######## tmp until we have a TimeSet controller
-sub tmp_timesets_ajax :Chained('group_list') :PathPart('timesetsajax') :Args(0) {
-    my ($self, $c) = @_;
-
-    $c->stash->{time_set_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'reseller_id', search => 1, title => $c->loc('Reseller #') },
-        { name => 'name', search => 1, title => $c->loc('Name') },
-    ]);
-
-    my $resultset = $c->model('DB')->resultset('voip_time_sets');
-    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{time_set_dt_columns});
-    $c->detach( $c->view("JSON") );
-    return;
-}
-
-########
-
 sub rules_list :Chained('base') :PathPart('rules') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
@@ -839,7 +827,7 @@ sub inbound_rules_edit :Chained('inbound_rules_base') :PathPart('edit') :Args(0)
     
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::InboundRuleEditAdmin", $c);
-    $c->stash->{rule}{group}{id} = delete $c->stash->{rule}{group_id};
+    $c->stash->{inbound_rule}{group}{id} = delete $c->stash->{inbound_rule}{group_id};
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -851,7 +839,7 @@ sub inbound_rules_edit :Chained('inbound_rules_base') :PathPart('edit') :Args(0)
         fields => {},
         back_uri => $c->req->uri,
     );
-    if($posted && $form->validated) {
+    if ($posted && $form->validated) {
         try {
             $form->values->{group_id} = $form->values->{group}{id};
             $c->stash->{inbound_rule_result}->update($form->values);
