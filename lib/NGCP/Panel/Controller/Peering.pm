@@ -128,7 +128,9 @@ sub edit :Chained('base') :PathPart('edit') {
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
-        fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
+        fields => {
+            'contract.create' => $c->uri_for('/contract/peering/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
@@ -196,7 +198,9 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
-        fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
+        fields => {
+            'contract.create' => $c->uri_for('/contract/peering/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
@@ -819,7 +823,7 @@ sub inbound_rules_edit :Chained('inbound_rules_base') :PathPart('edit') :Args(0)
     
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::InboundRuleEditAdmin", $c);
-    $c->stash->{rule}{group}{id} = delete $c->stash->{rule}{group_id};
+    $c->stash->{inbound_rule}{group}{id} = delete $c->stash->{inbound_rule}{group_id};
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -831,7 +835,7 @@ sub inbound_rules_edit :Chained('inbound_rules_base') :PathPart('edit') :Args(0)
         fields => {},
         back_uri => $c->req->uri,
     );
-    if($posted && $form->validated) {
+    if ($posted && $form->validated) {
         try {
             $form->values->{group_id} = $form->values->{group}{id};
             $c->stash->{inbound_rule_result}->update($form->values);
