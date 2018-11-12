@@ -9,7 +9,7 @@ has_field 'id' => (
     do_wrapper => 0,
     required => 1,
     template => 'helpers/datatables_field.tt',
-    ajax_src => '/peering/timesetsajax',
+    ajax_src => '/timeset/fieldajax',
     table_titles => ['#', 'Name', 'Reseller #'],
     table_fields => ['id', 'name', 'reseller_id'],
 );
@@ -17,7 +17,7 @@ has_field 'id' => (
 has_field 'create' => (
     type => 'Button',
     do_label => 0,
-    value => 'Create Reseller',
+    value => 'Create Time Set',
     element_class => [qw/btn btn-tertiary pull-right/],
 );
 

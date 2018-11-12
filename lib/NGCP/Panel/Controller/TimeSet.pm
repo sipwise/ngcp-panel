@@ -47,6 +47,17 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub fieldajax :Chained('list') :PathPart('fieldajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->stash->{timesets_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $rs, NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'reseller_id', search => 1, title => $c->loc('Reseller #') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+    ]));
+    $c->detach( $c->view("JSON") );
+}
+
 sub base :Chained('list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $timeset_id) = @_;
 
