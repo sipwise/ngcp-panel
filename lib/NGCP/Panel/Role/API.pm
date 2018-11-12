@@ -576,7 +576,7 @@ sub require_valid_patch {
     my $valid_ops = {
         'replace' => { 'path' => 1, 'value' => 1 },
         'copy' => { 'from' => 1, 'path' => 1 },
-        'remove' => { 'path' => 1 },
+        'remove' => { 'path' => 1, 'value' => 0, 'index' => 0 },# 0 means optional
         'add' => { 'path' => 1, 'value' => 1, mode => {
                 required => 0, 
                 allowed_values => [qw/append/],
@@ -808,6 +808,53 @@ sub process_patch_description {
                 push @$patch_diff, {"op" => "add", "path" => $op->{path}, "value" => $op->{value}};
             } else {
                 push @$patch_diff, map {{"op" => "add", "path" => $op->{path}.'/-', "value" => $_}} ref $op->{value} eq 'ARRAY' ? @{$op->{value}} : ($op->{value});
+            }
+        } elsif ($op->{op} eq 'remove' && $op->{value}) {
+            splice @$patch, $op_iterator, 1;
+            my $remove_index = $op->{index};#no default value, undefined means "remove all"
+            my $found_count = 0;
+            my $removal_done = 0;
+            my $values_to_remove;
+            if (ref $op->{value} eq 'ARRAY') {
+                undef $remove_index;#??? - this is according to AC, but during meeting it sounded different
+                $values_to_remove = $op->{value};
+            } else {
+                $values_to_remove = [$op->{value}];
+            }
+            my $value_current = JSON::Pointer->get($entity, $op->{path});
+            foreach my $value_to_remove (@$values_to_remove) {
+                #we are not able to request full array removal with exact value
+                if (ref $value_current eq 'ARRAY') {
+                    for (my $i=0; $i < @$value_current; $i++) {
+                        # 0 if different, 1 if equal
+                        if (compare($value_current->[$i], $value_to_remove)) {
+                            if ( defined $remove_index ) {
+                                if ($found_count == $remove_index) {
+                                #if we want to use patch info to try to make clear changes, we shouldn't use replace
+                                #from the other pov, if we requested 10000 removals, we will have 10000 ne op entries
+                                    push @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
+                                    $removal_done = 1;
+                                    last;
+                                } else {
+                                    $found_count++;
+                                }
+                            } else {
+                                push @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
+                            }
+                        }
+                    }
+                    if ($removal_done) {
+                        last;
+                    }
+                } else { #current value is not an array
+                    if (compare($value_current, $value_to_remove)) {
+                        push @$patch_diff, {"op" => "remove", "path" => $op->{path} };
+                    }
+                }
+            }
+            #we went through all the filter values and still didn't find enough elements to satisfy requested index
+            if ($remove_index && $found_count < $remove_index ) {
+                die("found '".$found_count."' elements under path '".$op->{path}."' but requested to remove number '".$remove_index."'");
             }
         }
     }
