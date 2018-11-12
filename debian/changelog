@@ -1,3 +1,71 @@
+ngcp-panel (7.0.1.0+0~mr7.0.1.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [bbbc474] TT#44638 call history: search for source_cli, destination_user_in
+  * [7960649] TT#44605 datatables search field tooltip
+  * [6e1b17b] TT#44960 /subscribers/?alias=123 w/o group_concat()
+  * [36169c0] TT#44963 fix getting contract in /api/capabilities
+  * [c30dfbd] TT#45308 fix /customerbalances/?status= column alias
+
+  [ Gerhard Jungwirth ]
+  * [25efe66] TT#41627 new /api/timesets in iCal format
+  * [542b9f9] TT#41629 time sets to peering
+
+  [ Sipwise Jenkins Builder ]
+  * [d395258] TT#4166 I18N dump: snapshot 2018.09.26-04.25.23
+  * [e75df00] TT#4166 I18N dump: snapshot 2018.09.29-04.13.30
+  * [f743934] TT#4166 I18N dump: snapshot 2018.10.10-04.20.46
+  * [f7c7314] TT#4166 I18N dump: snapshot 2018.10.11-04.20.11
+  * [5f5b18c] TT#4166 I18N dump: snapshot 2018.10.23-04.37.01
+  * [640d8d8] TT#4166 I18N dump: snapshot 2018.11.08-05.12.00
+
+  [ Kirill Solomko ]
+  * [3eab769] TT#33108 add email templates attachment_name field
+  * [ad9fead] TT#44603 fax number normalization logic selection
+  * [100a78d] TT#46700 fix permanent registration "received" param
+
+  [ Manuel Montecelo ]
+  * [8f9f92e] TT#44919 Change "openssl genrsa" so it works with buster and older releases
+
+  [ Irina Peshinskaya ]
+  * [b6ea54b] TT#40453 Remove callrecording files from WEB UI
+  * [bc926d6] TT#40453 Remove obsolete code from /api/callrecordings/
+  * [e462e95] TT#41628 Add web ui for the TimeSets
+  * [2a2d116] TT#44635 Fix order for subscriberregistrations api
+  * [507e98a] TT#44908 Add interface to copy email template
+  * [8903162] TT#45468 Adjust from_email to possible Template::Toolkit
+  * [70ce552] TT#45476 Allow empty attachment_name in email_templates
+  * [14c77fc] TT#44907 Create "default values" reseller with default emails
+  * [c1a3aaf] TT#45506 Validate email template name existence
+  * [af5b5d3] TT#45632 Add checking of configured Accept values
+  * [0182e36] TT#45632 Use query_params and Accept header config together
+  * [bf8ce93] TT#45632 Change return type from transcode_data to reference
+  * [ae4936d] TT#45632 Add more variants to Accept header in VoicemailGreetingsItem
+  * [85c2292] TT#45632 Add mime-type spec "format" to voicemailgreetings
+  * [a98bdfc] TT#44806 Fix product info in subscribers preferences template
+  * [a225d69] TT#45458 Rename Faxe to Fax in swagger api doc
+  * [5d499b4] TT#45685 Fix peering server uniq check
+  * [c3e818c] TT#46201 Use proper profile_id/profile_set_id in unrelated tests
+  * [e438fea] Revert "TT#45685 Fix peering server uniq check"
+  * [b99a725] TT#45685 Temporarily fix in the test for peeringserver api
+  * [19e88ef] TT#46667 Make mime-type query param higher prio than Accept header
+  * [01ad2e2] TT#45456 Add description of the upload allowed mime-types
+  * [dbb08e7] TT#46187 Test patch operation
+  * [7e9f7ad] TT#47109 Fix pbxdevices test broken by bignum export
+
+  [ Alexander Lutay ]
+  * [c1965d2] TT#44824 Fix error messages pointing to ngcp-panel log files
+  * [95e1c49] TT#46791 Wait for 'Edit' button in controller_billing.t
+  * [571c09f] TT#46791 Fix exit code passing in pipe for selenium testrunner
+  * [45bf7ec] TT#46791 Call proper method 'click()' instead of 'click' (cosmetic)
+  * [72834f1] TT#46791 Add timeout 1 second for controller_billing.t
+
+  [ Michael Prokop ]
+  * [b65374e] TT#45479 Ensure /run/fastcgi is owned by www-data + install file in usr/lib/tmpfiles.d/
+    Thanks to Manuel Montecelo for the suggestion to use systemd's tmpfiles.d approach
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 12 Nov 2018 22:37:46 +0100
+
 ngcp-panel (7.0.0.0+0~mr7.0.0.0) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
