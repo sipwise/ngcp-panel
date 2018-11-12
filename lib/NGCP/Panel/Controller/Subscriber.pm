@@ -4118,26 +4118,44 @@ sub delete_recording :Chained('recording') :PathPart('delete') :Args(0) {
     $c->detach('/denied_page')
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
-    try {
-        my $recording = $c->stash->{recording};
-        my $data = { $recording->get_inflated_columns };
-        $c->model('DB')->schema->txn_do( sub {
-            NGCP::Panel::Utils::Subscriber::delete_callrecording( c => $c, recording => $recording );
-        });
-        NGCP::Panel::Utils::Message::info(
-            c    => $c,
-            data => $data,
-            desc => $c->loc('Successfully deleted recording'),
-        );
-    } catch($e) {
-        NGCP::Panel::Utils::Message::error(
-            c     => $c,
-            error => $e,
-            desc  => $c->loc('Failed to delete recording'),
-        );
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::CallRecordingDelete", $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $recording = $c->stash->{recording};
+            my $data = { $recording->get_inflated_columns };
+            $c->model('DB')->schema->txn_do( sub {
+                NGCP::Panel::Utils::Subscriber::delete_callrecording( 
+                    c => $c, 
+                    recording => $recording, 
+                    force_files_deletion => $form->values->{force_files_deletion} 
+                );
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                data => $data,
+                desc => $c->loc('Successfully deleted recording'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to delete recording'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
-    NGCP::Panel::Utils::Navigation::back_or($c,
-        $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+
+    $c->stash(form => $form);
+    $c->stash(edit_flag => 1);
+    return;
+
+
 }
 
 
