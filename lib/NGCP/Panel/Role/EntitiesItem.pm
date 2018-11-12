@@ -353,6 +353,8 @@ sub delete {  ## no critic (ProhibitBuiltinHomonyms)
         #here we left space for information that checking failed and we decided not to delete item
         if ($self->delete_item($c, $item)) {
             $self->add_journal_item_hal($c, { hal => $hal });
+        } else {
+            return;
         }
 
         $self->complete_transaction($c);
