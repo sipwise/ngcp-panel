@@ -19,6 +19,7 @@ sub delete_item {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
     my $user = $item;
     NGCP::Panel::Utils::Security::user_unban($c, $user);
+    return 1;
 }
 
 1;

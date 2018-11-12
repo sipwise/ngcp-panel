@@ -31,7 +31,7 @@ sub delete_item {
         $guard->commit;
         NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
     }
-    return;
+    return 1;
 }
 
 sub update_item_model {

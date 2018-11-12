@@ -49,7 +49,7 @@ sub delete_item {
         return $self->hal_from_item($c, $item); });
     
     $item->delete;
-    return;
+    return 1;
 }
 
 #we don't use update_item for the admins now, as we dont allo PUT and PATCH

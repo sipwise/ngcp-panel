@@ -23,12 +23,12 @@ sub delete_item {
         } catch($e) {
             $c->log->error("Failed to delete rewriterule with id '".$item->id."': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
-            die;
+            return;
         }
         $guard->commit;
         NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
     }
-    return;
+    return 1;
 }
 
 sub update_item_model {

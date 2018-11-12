@@ -18,7 +18,7 @@ sub allowed_methods{
 sub delete_item {
     my ($self, $c, $item) = @_;
     NGCP::Panel::Utils::Subscriber::delete_callrecording( c => $c, recording => $item );
-    return;
+    return 1;
 }
 
 1;
