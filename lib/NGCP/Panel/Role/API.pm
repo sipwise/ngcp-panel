@@ -1428,7 +1428,7 @@ sub validate_request {
 
 sub check_transaction_control{
     my ($self, $c, $action, $step, %params) = @_;
-    my $res = 1;
+    my $res = 1;#means that transaction control is on framework side, 0 - on controller side
     my $transaction_config = $self->get_config('own_transaction_control');
     if (!$transaction_config) {
         $res = 1;
@@ -1436,7 +1436,7 @@ sub check_transaction_control{
         if ($transaction_config->{ALL}) {
             $res = 0;
         } elsif ( ('HASH' eq ref $transaction_config->{$action} && $transaction_config->{$action}->{$step} )
-            || $transaction_config->{$action}) {
+            || ( $transaction_config->{$action} && !ref $transaction_config->{$action}) ) {
             $res = 0;
         }
     }
