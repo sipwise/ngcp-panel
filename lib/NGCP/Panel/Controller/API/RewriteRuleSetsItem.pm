@@ -9,7 +9,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Rewrite;
 
 __PACKAGE__->set_config({
-    own_transaction_control => { POST => 1 },
+    own_transaction_control => { POST => 1, DELETE => 1 },
 });
 
 sub allowed_methods{
