@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ae2911b_4c1a5419",
+        "filename": "lib/NGCP/Panel/Controller/API/CallRecordingsItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-11-13T17:25:27Z",
+      "side": 1,
+      "message": "should be also added into the api/controller section describing available parameters, so it\u0027s visible on the doc page.\nalso I would rename it into \"force_delete\"",
+      "range": {
+        "startLine": 26,
+        "startChar": 58,
+        "endLine": 26,
+        "endChar": 77
+      },
+      "revId": "36e8c7aa45be1ae2dba1b478911fdc560be48d67",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
