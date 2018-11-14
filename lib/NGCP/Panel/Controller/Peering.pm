@@ -28,7 +28,6 @@ sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) {
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'priority', search => 1, title => $c->loc('Priority') },
         { name => 'description', search => 1, title => $c->loc('Description') },
-        { name => 'time_set.name', search => 0, title => $c->loc('Time Set') },
     ]);
     
     $c->stash(template => 'peering/list.tt');
@@ -121,7 +120,6 @@ sub edit :Chained('base') :PathPart('edit') {
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::Group", $c);
     my $params = { $c->stash->{group_result}->get_inflated_columns };
     $params->{contract}{id} = delete $params->{peering_contract_id};
-    $params->{time_set}{id} = delete $params->{time_set_id};
     $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
@@ -565,24 +563,6 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
     return;
 }
 
-######## tmp until we have a TimeSet controller
-sub tmp_timesets_ajax :Chained('group_list') :PathPart('timesetsajax') :Args(0) {
-    my ($self, $c) = @_;
-
-    $c->stash->{time_set_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'reseller_id', search => 1, title => $c->loc('Reseller #') },
-        { name => 'name', search => 1, title => $c->loc('Name') },
-    ]);
-
-    my $resultset = $c->model('DB')->resultset('voip_time_sets');
-    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{time_set_dt_columns});
-    $c->detach( $c->view("JSON") );
-    return;
-}
-
-########
-
 sub rules_list :Chained('base') :PathPart('rules') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
@@ -693,8 +673,6 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            $form->values->{time_set_id} = $form->values->{time_set}{id} // undef;
-            delete $form->values->{time_set};
             $form->values->{callee_prefix} //= '';
             $form->values->{group_id} = $form->values->{group}{id};
             $c->stash->{rule_result}->update($form->values);
