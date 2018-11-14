@@ -22,6 +22,30 @@
       "revId": "c68e4ed8c97a8238475cb127d32af5f4206ba5af",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_67be4901",
+        "filename": "lib/NGCP/Panel/Controller/API/CallRecordingsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-14T14:43:17Z",
+      "side": 1,
+      "message": "As comment say, \n\n#here we left space for information that checking failed and we decided not to delete item\n\nSo for all api\u0027s that are configured for journaling, this 1 will lead to the journal record creation, that is correct in case of successfull deletion.\n\nadd_journal_item_hal has internal checking if api is configured for the journaling or not.",
+      "parentUuid": "3ae2911b_e7c919ae",
+      "range": {
+        "startLine": 21,
+        "startChar": 11,
+        "endLine": 21,
+        "endChar": 12
+      },
+      "revId": "c68e4ed8c97a8238475cb127d32af5f4206ba5af",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
