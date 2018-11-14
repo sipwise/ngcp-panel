@@ -30,25 +30,20 @@ sub delete_item {
 
     if($item->login eq $special_user_login) {
         $self->error($c, HTTP_FORBIDDEN, "Cannot delete special user '$special_user_login'");
-        last;
+        return;
     }
     if($c->user->id == $item->id) {
         $self->error($c, HTTP_FORBIDDEN, "Cannot delete own user");
-        last;
+        return;
     }
     if($c->user->read_only) {
         $self->error($c, HTTP_FORBIDDEN, "Insufficient permissions");
-        last;
+        return;
     }
 
     # reseller association is checked in item_rs of role
-
-    last unless $self->add_delete_journal_item_hal($c,sub {
-        my $self = shift;
-        my ($c) = @_;
-        return $self->hal_from_item($c, $item); });
-    
     $item->delete;
+
     return 1;
 }
 
