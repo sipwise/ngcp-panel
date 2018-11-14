@@ -2026,11 +2026,17 @@ sub get_voicemail_content_type {
 
 sub delete_callrecording {
     my %params = @_;
-    my($recording) = @params{qw/recording/};
+    my($recording, $force_delete) = @params{qw/recording force_delete/};
 
     foreach my $stream($recording->recording_streams->all) {
         #if we met some error deleting file - we will fail and transaction will be rollbacked 
-        unlink($stream->full_filename);
+        if (! -e $stream->full_filename) {
+            if ( !$force_delete ) {
+                die("Callrecording file ".$stream->full_filename." is absent");
+            }
+        } elsif( !unlink($stream->full_filename) && !$force_delete ) {
+            die($!);
+        }
     }
     $recording->recording_streams->delete;
     $recording->recording_metakeys->delete;

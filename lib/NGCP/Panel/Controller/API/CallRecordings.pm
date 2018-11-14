@@ -47,6 +47,12 @@ sub query_params {
             param => 'tz',
             description => 'Format start_time according to the optional time zone provided here, e.g. Europe/Berlin.',
         },
+        {
+            param => 'force_delete',
+            type  => 'item_params',
+            apply_to  => {'item' => {DELETE => 1}},
+            description => 'Force callrecording info deletion from database despite callrecording files deletion errors.',
+        },
     ];
 }
 
