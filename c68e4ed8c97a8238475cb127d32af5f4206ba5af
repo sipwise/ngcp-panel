@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ae2911b_e7c919ae",
+        "filename": "lib/NGCP/Panel/Controller/API/CallRecordingsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-14T14:16:05Z",
+      "side": 1,
+      "message": "what is the effect of returning 1, to create the journal record?",
+      "range": {
+        "startLine": 21,
+        "startChar": 11,
+        "endLine": 21,
+        "endChar": 12
+      },
+      "revId": "c68e4ed8c97a8238475cb127d32af5f4206ba5af",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
