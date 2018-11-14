@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "3ae2911b_c745fd17",
+        "filename": "lib/NGCP/Panel/Controller/API/AdminsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-14T14:53:46Z",
+      "side": 1,
+      "message": "then in this case, 2 journal records are created.",
+      "revId": "c68e4ed8c97a8238475cb127d32af5f4206ba5af",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_e7c919ae",
         "filename": "lib/NGCP/Panel/Controller/API/CallRecordingsItem.pm",
         "patchSetId": 2
