@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_4746adc0",
+        "filename": "lib/NGCP/Panel/Controller/API/AdminsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-15T00:59:08Z",
+      "side": 1,
+      "message": "Yes, you are right, I saw that added return in the EntitiesItem should change behavior and checked all controllers that have implemented delete_item, but overlooked journaling in the admins. Generally changes are correct, when we don\u0027t return success from the delete_item, we shouldn\u0027t log it. I ran all tests and relied on the fact that no new fails appeared.\n\nAfter your comment I checked why no tests failed for me and found that:\n\njournaling in the \"admins\" is a \"victim of the copy-paste\".\n\n- journaling in the admins is not configured and will require commit into cfg-schema.\n- when configured in the cfg-schema, current code with error control in the /api/admins doesn\u0027t work. On attempt to get maningful error message I got:\n\nhttps://paste.mgm.sipwise.com/show/4593/\n\nCaught exception in NGCP::Panel::Controller::API::AdminsItem-\u003eDELETE \"Exiting subroutine via last at /media/sf_/VMHost/ngcp-panel/lib/NGCP/Panel/Controller/API/AdminsItem.pm line 33.\"\n\nSo we will need further fixes in /api/admins/ and, as I found additionally, in /api/cfnumbers to remove possibility of the duplicated \"delete\" journal record.\n\nIf we will need more precise control of the journaling, we may use or configuration parameter, like it was done for the transactions, or just some stash flag, as more lightweight solution.",
+      "parentUuid": "3ae2911b_c745fd17",
+      "revId": "c68e4ed8c97a8238475cb127d32af5f4206ba5af",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_e7c919ae",
         "filename": "lib/NGCP/Panel/Controller/API/CallRecordingsItem.pm",
         "patchSetId": 2
