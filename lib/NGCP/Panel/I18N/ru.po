@@ -2005,6 +2005,10 @@ msgstr "Удалить"
 msgid "Delete after sending Email"
 msgstr "Удалить после отправки Email"
 
+#: share/templates/subscriber/master.tt
+msgid "Delete recording"
+msgstr ""
+
 #: share/templates/customer/details.tt share/templates/device/list.tt
 msgid "Deployed Device"
 msgstr "Предоставленное устройство"
@@ -6194,7 +6198,7 @@ msgstr ""
 msgid "Reseller"
 msgstr "Реселлер"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Reseller #"
 msgstr ""
 
