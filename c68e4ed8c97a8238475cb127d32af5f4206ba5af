@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_071785a4",
+        "filename": "lib/NGCP/Panel/Controller/API/AdminsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-15T01:11:01Z",
+      "side": 1,
+      "message": "the api-journals.at only covered the journal creations for those 18 entitites for which it was originally implemented.\napart adding a testcase adding journal impl for some entity will be an indiviadual thing; otherwise it could have been a gneralized operation ever since.\n\nalso, just think of the fact that you dont want to store the cert in the journal. \n\nin fact it seems it was added at some point maybe in a bulk way for missing entities.",
+      "parentUuid": "3ae2911b_4746adc0",
+      "revId": "c68e4ed8c97a8238475cb127d32af5f4206ba5af",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_e7c919ae",
         "filename": "lib/NGCP/Panel/Controller/API/CallRecordingsItem.pm",
         "patchSetId": 2
