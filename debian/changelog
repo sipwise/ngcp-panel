@@ -1,3 +1,29 @@
+ngcp-panel (5.5.7.1+0~mr5.5.7.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [8e1250d] TT#43561 /api/calllists add init_time field
+
+  [ Rene Krenn ]
+  * [14be6c9] TT#43555 fix sql error from /callists/?call_id=456
+  * [6ec239a] TT#43755 fix miliseconds presentation
+
+  [ Gerhard Jungwirth ]
+  * [239d4a3] TT#44168 create additional form for subadmin non-pbx subscriber edit
+
+  [ Irina Peshinskaya ]
+  * [87d01d9] TT#40453 Remove callrecording files from WEB UI
+  * [0b86f32] TT#44907 Create "default values" reseller with default emails
+
+  [ Alexander Lutay ]
+  * [387a733] TT#46791 Wait for 'Edit' button in controller_billing.t
+  * [367ccc6] TT#46791 Fix exit code passing in pipe for selenium testrunner
+  * [4f36d7e] TT#46791 Call proper method 'click()' instead of 'click' (cosmetic)
+  * [4a11e90] TT#46791 Add timeout 1 second for controller_billing.t
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Nov 2018 17:59:11 +0100
+
 ngcp-panel (5.5.7.0+0~mr5.5.7.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
