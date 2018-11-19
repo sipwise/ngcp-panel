@@ -101,8 +101,9 @@ sub get_handles_rs {
     my (%params) = @_;
 
     my $c = $params{c};
-    my $set_rs = $params{set_rs}; 
-
+    my $set_rs = $params{set_rs};
+    use Data::Dumper;
+    $c->log->debug(Dumper(["get_handles_rs",caller]));
     my $handles_rs = $c->model('DB')->resultset('voip_sound_groups')
         ->search({
         },{
