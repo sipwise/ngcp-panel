@@ -22,6 +22,10 @@ $fake_data->set_data_from_script({
             name             => 'api_test soundset name'.time(),
             description      => 'api_test soundset description',
             contract_default => '1',#0
+            copy_from_default => '1',#0
+            language => 'en',
+            override => '1',#0
+            loopplay => '1',#0
         },
     },
 });
@@ -31,10 +35,22 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('soundsets'));
 
 $test_machine->form_data_item( );
 # create 3 new sound sets from DATA_ITEM
-$test_machine->check_create_correct( 3, sub{ $_[0]->{name} .=  $_[1]->{i}; } );
+my $soundsets_with_files = $test_machine->check_create_correct( 1, sub{ $_[0]->{name} .=  $_[1]->{i}; } );
+my $soundsets_without_files = $test_machine->check_create_correct( 1, sub{ 
+    $_[0]->{name} .=  $_[1]->{i}; 
+    $_[0]->{copy_from_default} =  0; 
+} );
+my($res,$content,$req) = $test_machine->request_put({
+    %{$test_machine->DATA_ITEM},
+    copy_from_default => '1',#0
+    language => 'en',
+    override => '1',#0
+    loopplay => '1',#0
+},$soundsets_with_files->[0]->{location} );
+$test_machine->http_code_msg(200, "Check put with files replacement", $res, $content);
 $test_machine->check_get2put();
 $test_machine->check_bundle();
-$test_machine->clear_test_data_all();
+#$test_machine->clear_test_data_all();
 
 done_testing;
 
