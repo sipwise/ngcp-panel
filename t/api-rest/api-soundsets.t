@@ -22,6 +22,10 @@ $fake_data->set_data_from_script({
             name             => 'api_test soundset name'.time(),
             description      => 'api_test soundset description',
             contract_default => '1',#0
+            copy_from_default => '1',#0
+            language => 'en',
+            override => '1',#0
+            loopplay => '1',#0
         },
     },
 });

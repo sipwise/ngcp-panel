@@ -8,8 +8,6 @@ use parent 'Catalyst::Controller';
 use NGCP::Panel::Form;
 
 use File::Type;
-use File::Slurp;
-use File::Basename;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Sems;
@@ -441,47 +439,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     $c->stash(handles_base_uri =>
         $c->uri_for_action("/sound/handles_root", [$c->req->captures->[0]]));
 
-    my $handles_rs = $c->model('DB')->resultset('voip_sound_groups')
-        ->search({
-        },{
-            select => ['groups.name', \'handles.name', \'handles.id', 'files.filename', 'files.loopplay', 'files.codec', 'files.id'],
-            as => [ 'groupname', 'handlename', 'handleid', 'filename', 'loopplay', 'codec', 'fileid'],
-            alias => 'groups',
-            from => [
-                { groups => 'provisioning.voip_sound_groups' },
-                [
-                    { handles => 'provisioning.voip_sound_handles', -join_type=>'left'},
-                    { 'groups.id' => 'handles.group_id'},
-                ],
-                [
-                    { files => 'provisioning.voip_sound_files', -join_type => 'left'},
-                    { 'handles.id' => { '=' => \'files.handle_id'}, 'files.set_id' => $c->stash->{set_result}->id},
-                ],
-            ],
-            order_by => { -asc => 'handles.name' }
-        });
-
-    if($c->stash->{set_result}->contract_id) {
-        $handles_rs = $handles_rs->search({
-            'groups.name' => { '-in' => [qw/pbx music_on_hold digits/] }
-        });
-    } else {
-        #$handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
-    }
-
-    unless($c->config->{features}->{cloudpbx}) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
-    }
-    unless($c->config->{features}->{cloudpbx} || $c->config->{features}->{musiconhold}) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'music_on_hold' } });
-    }
-    unless($c->config->{features}->{callingcard}) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'calling_card' } });
-    }
-    unless($c->config->{features}->{mobilepush}) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'mobile_push' } });
-    }
-
+    my $handles_rs = NGCP::Panel::Utils::Sounds::get_handles_rs(c => $c, set_rs => $c->stash->{set_result});
 
     my @rows = $handles_rs->all;
 
@@ -725,74 +683,18 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
     );
 
     if($posted && $form->validated) {
-        my $lang = $form->params->{language};
-        my $base = "/var/lib/ngcp-soundsets";
-        my $set_id = $c->stash->{set_result}->id;
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                foreach my $h($c->stash->{handles_rs}->all) {
-                    my $hname = $h->get_column("handlename");
-                    my @paths = (
-                        "$base/system/$lang/$hname.wav",
-                        "$base/customer/$lang/$hname.wav",
-                        "/var/lib/asterisk/sounds/$lang/digits/$hname.wav",
-                    );
-                    my $path;
-                    foreach my $p(@paths) {
-                        if(-f $p) {
-                            $path = $p;
-                            last;
-                        }
-                    }
-                    next unless(defined $path);
-
-                    my $data_ref;
-                    my $codec = 'WAV';
-                    my $handle_id = $h->get_column("handleid");
-                    my $file_id = $h->get_column("fileid");
-                    my $fres;
-                    my $fname = basename($path);
-
-                    read_file($path, buf_ref => \$data_ref);
-                    unless (${data_ref}) {
-                        $error = "Cannot upload an empty sound file, $fname";
-                        die $error;
-                    }
-
-                    if(defined $file_id) {
-                        if($form->params->{override}) {
-                            $c->log->debug("override $path as $hname for existing id $file_id");
-
-                            $fres = $schema->resultset('voip_sound_files')->find($file_id);
-                            $fres->update({
-                                    filename => $fname,
-                                    data => ${data_ref},
-                                    loopplay => $form->params->{loopplay} ? 1 : 0,
-                                });
-                        } else {
-                            $c->log->debug("skip $path as $hname exists via id $file_id and override is not set");
-                        }
-                    } else {
-                        $c->log->debug("inserting $path as $hname with new id");
-
-                        $fres = $schema->resultset('voip_sound_files')
-                            ->create({
-                                filename => $fname,
-                                data => ${data_ref},
-                                handle_id => $handle_id,
-                                set_id => $set_id,
-                                loopplay => $form->params->{loopplay} ? 1 : 0,
-                                codec => $codec,
-                            });
-                    }
-
-                    next unless defined($fres);
-
-                    my $group_name = $fres->handle->group->name;
-                    NGCP::Panel::Utils::Sems::clear_audio_cache($c, $fres->set_id,
-                        $fres->handle->name, $group_name);
-                }
+                NGCP::Panel::Utils::Sounds::apply_default_soundset_files(
+                    c          => $c,
+                    lang       => $form->params->{language},
+                    set_id     => $c->stash->{set_result}->id,
+                    handles_rs => $c->stash->{handles_rs},
+                    loopplay   => $form->params->{loopplay},
+                    override   => $form->params->{override},
+                    error_ref  => \$error,
+                );
             });
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -815,8 +717,6 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
     $c->stash(edit_default_flag => 1);
     return;
 }
-
-
 
 1;
 
