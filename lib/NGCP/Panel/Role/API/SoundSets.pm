@@ -33,11 +33,11 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::AdminSet", $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::AdminSetAPI", $c);
     } elsif($c->user->roles eq "reseller") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::ResellerSet", $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::ResellerSetAPI", $c);
     } elsif ($c->user->roles eq "subscriberadmin") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::SubadminSet", $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::SubadminSetAPI", $c);
     }
 }
 
@@ -145,7 +145,21 @@ sub update_item {
 
     $resource->{contract_default} //= 0;
 
+    my $copy_from_default_params =  { map {$_ => delete $resource->{$_}} (qw/copy_from_default loopplay override language/) };
     $item->update($resource);
+    if ($copy_from_default_params->{copy_from_default}) {
+        my $error;
+        my $handles_rs = NGCP::Panel::Utils::Sounds::get_handles_rs(c => $c, set_rs => $item);
+        NGCP::Panel::Utils::Sounds::apply_default_soundset_files(
+            c          => $c,
+            lang       => $copy_from_default_params->{language},
+            set_id     => $item->id,
+            handles_rs => $handles_rs,
+            loopplay   => $copy_from_default_params->{loopplay},
+            override   => $copy_from_default_params->{override},
+            error_ref  => \$error,
+        );
+    }
 
     if($item->contract_id && $item->contract_default && !$old_resource->{contract_default}) {
         $c->model('DB')->resultset('voip_sound_sets')->search({

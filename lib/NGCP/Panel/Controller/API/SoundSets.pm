@@ -174,6 +174,8 @@ sub POST :Allow {
 
         my $item;
         try {
+            my $copy_from_default_params =  { map {$_ => delete $resource->{$_}} (qw/copy_from_default loopplay override language/)};
+
             $item = $c->model('DB')->resultset('voip_sound_sets')->create($resource);
             if($item->contract_id && $item->contract_default) {
                 $c->model('DB')->resultset('voip_sound_sets')->search({
@@ -183,7 +185,19 @@ sub POST :Allow {
                     id => { '!=' => $item->id },
                 })->update({ contract_default => 0 });
             }
-
+            if ($copy_from_default_params->{copy_from_default}) {
+                my $error;
+                my $handles_rs = NGCP::Panel::Utils::Sounds::get_handles_rs(c => $c, set_rs => $item);
+                NGCP::Panel::Utils::Sounds::apply_default_soundset_files(
+                    c          => $c,
+                    lang       => $copy_from_default_params->{language},
+                    set_id     => $item->id,
+                    handles_rs => $handles_rs,
+                    loopplay   => $copy_from_default_params->{loopplay},
+                    override   => $copy_from_default_params->{override},
+                    error_ref  => \$error,
+                );
+            }
         } catch($e) {
             $c->log->error("failed to create soundset: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundset.");
