@@ -5,11 +5,14 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
+
+sub resource_name{
+    return 'soundsets';
+}
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -41,60 +44,14 @@ sub get_form {
     }
 }
 
-sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
-
-    $form //= $self->get_form($c);
-    my $resource = $self->resource_from_item($c, $item, $form);
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            # nth: these should also be adapted/adaptable when using subscriber(admin) roles
-            Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)),
-            $item->contract_id ? Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)) : (),
-            Data::HAL::Link->new(relation => 'ngcp:soundfiles', href => sprintf("/api/soundfiles/?set_id=%d", $item->id)),
-            $self->get_journal_relation_link($c, $item->id),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-
-    $self->validate_form(
-        c => $c,
-        resource => $resource,
-        form => $form,
-        run => 0,
-    );
-    if (exists $resource->{contract_id}) {
-        $resource->{customer_id} = delete $resource->{contract_id};
-    }
-
-    $resource->{id} = int($item->id);
-    $hal->resource($resource);
-    return $hal;
-}
-
-sub resource_from_item {
-    my ($self, $c, $item, $form) = @_;
-
-    my $resource = { $item->get_inflated_columns };
-
-    return $resource;
-}
-
-sub item_by_id {
-    my ($self, $c, $id) = @_;
-    my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
+sub hal_links {
+    my($self, $c, $item, $resource, $form) = @_;
+    my $adm = $c->user->roles eq "admin";
+    return [
+        Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)),
+        $item->contract_id ? Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)) : (),
+        Data::HAL::Link->new(relation => 'ngcp:soundfiles', href => sprintf("/api/soundfiles/?set_id=%d", $item->id)),
+    ];
 }
 
 sub update_item {
