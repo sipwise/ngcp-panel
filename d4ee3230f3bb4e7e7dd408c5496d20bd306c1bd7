@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_6edd0f70",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 799,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-19T12:51:43Z",
+      "side": 1,
+      "message": "nice appraoch",
+      "range": {
+        "startLine": 799,
+        "startChar": 7,
+        "endLine": 799,
+        "endChar": 18
+      },
+      "revId": "d4ee3230f3bb4e7e7dd408c5496d20bd306c1bd7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_4e6ff392",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-19T12:51:43Z",
+      "side": 1,
+      "message": "\"delete index $remove_index out of bounds\"",
+      "range": {
+        "startLine": 857,
+        "startChar": 21,
+        "endLine": 857,
+        "endChar": 134
+      },
+      "revId": "d4ee3230f3bb4e7e7dd408c5496d20bd306c1bd7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
