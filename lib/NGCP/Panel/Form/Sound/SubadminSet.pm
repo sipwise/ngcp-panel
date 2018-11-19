@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Sound::SubadminSet;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler';
+extends 'NGCP::Panel::Form::Sound::SoundSetBase';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
@@ -10,32 +10,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'name' => (
-    type => 'Text',
-    label => 'Name',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The name of the sound set'],
-    },
-);
-
-has_field 'description' => (
-    type => 'Text',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The description of the sound set'],
-    },
-);
-
-has_field 'contract_default' => (
-    type => 'Boolean',
-    label => 'Default for Subscribers',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['If active (and a customer is selected), this sound set is used for all existing and new subscribers within this customer if no specific sound set is specified for the subscribers'],
-    },
-);
 
 has_field 'save' => (
     type => 'Submit',
