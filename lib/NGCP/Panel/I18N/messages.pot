@@ -3501,6 +3501,10 @@ msgid "If enabled, rtpengine will always trancode any received media to the firs
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, set the outbound headers as per peer outbound_* preferences when the call is forced to the peer by force_outbound_calls_to_peer setting. Otherwise, the outbound headers are controlled by the user/domain settings of the subscriber which forces the call to peer (by default)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If set and a CF to an outbound number is configured on the subscriber, the selection of the outbound peer is done using the forwarder as caller number."
 msgstr ""
 
@@ -7101,6 +7105,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use integrated call recording functionality or notify external call recording server by providing SIP header specified in 'rtpproxy.recording.add_header_for_external_callrecording' config.yml key"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Use peer-specific outbound headers when call is forced to peer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
