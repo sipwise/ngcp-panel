@@ -55,15 +55,7 @@ sub get_subscriber_location_rs {
             return;
         }
     } else {
-        my $reg_rs = $c->model('DB')->resultset('location')->search({
-            username => $filter->{username},
-        });
-        if($c->config->{features}->{multidomain}) {
-            $reg_rs = $reg_rs->search({
-                domain => $filter->{domain},
-            });
-        }
-        return $reg_rs;
+        return $c->model('DB')->resultset('location')->search($filter);
     }
 }
 
