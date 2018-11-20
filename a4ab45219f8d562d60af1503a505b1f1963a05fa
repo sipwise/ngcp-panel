@@ -104,6 +104,30 @@
       "revId": "a4ab45219f8d562d60af1503a505b1f1963a05fa",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_5492e258",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 631,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-11-20T14:58:09Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "1adf8d57_0e17abee",
+      "range": {
+        "startLine": 631,
+        "startChar": 18,
+        "endLine": 631,
+        "endChar": 23
+      },
+      "revId": "a4ab45219f8d562d60af1503a505b1f1963a05fa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
