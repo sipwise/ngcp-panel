@@ -1,3 +1,31 @@
+ngcp-panel (6.5.3.0+0~mr6.5.3.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [21490e5] TT#45960 Disable timesets for 6.5
+  * [bc285f2] TT#46201 Use proper profile_id/profile_set_id in unrelated tests
+  * [92a79b1] TT#44806 Fix product info in subscribers preferences template
+  * [dfe26d6] TT#45458 Rename Faxe to Fax in swagger api doc
+  * [1f505d2] TT#45685 Fix peering server uniq check
+  * [3d4d1b1] TT#44635 Fix order for subscriberregistrations api
+  * [a025c13] TT#40453 Remove callrecording files from WEB UI
+  * [42e96ac] TT#44907 Create "default values" reseller with default emails
+  * [6a30199] TT#45468 Adjust from_email to possible Template::Toolkit
+  * [46615d6] TT#45476 Allow empty attachment_name in email_templates
+  * [4665dd0] Revert "TT#45685 Fix peering server uniq check"
+  * [ba3e432] TT#45685 Temporarily fix in the test for peeringserver api
+  * [996b664] Revert "TT#41629 time sets to peering"
+  * [a9923f1] TT#47261 Fix voip_peer_rule linking to voip_peer_group
+
+  [ Alexander Lutay ]
+  * [12f430f] TT#46791 Wait for 'Edit' button in controller_billing.t
+  * [e246301] TT#46791 Fix exit code passing in pipe for selenium testrunner
+  * [7032d7c] TT#46791 Call proper method 'click()' instead of 'click' (cosmetic)
+  * [5ea4c03] TT#46791 Add timeout 1 second for controller_billing.t
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 20 Nov 2018 13:26:53 +0100
+
 ngcp-panel (6.5.2.0+0~mr6.5.2.0) unstable; urgency=medium
 
   [ Rene Krenn ]
