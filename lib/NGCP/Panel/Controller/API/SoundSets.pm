@@ -174,7 +174,7 @@ sub POST :Allow {
 
         my $item;
         try {
-            my $copy_from_default_params =  { map {$_ => delete $resource->{$_}} (qw/copy_from_default loopplay override language/)};
+            my $copy_from_default_params =  { map {$_ => delete $resource->{$_}} (qw/copy_from_default loopplay replace_existing language/)};
 
             $item = $c->model('DB')->resultset('voip_sound_sets')->create($resource);
             if($item->contract_id && $item->contract_default) {
@@ -194,7 +194,7 @@ sub POST :Allow {
                     set_id     => $item->id,
                     handles_rs => $handles_rs,
                     loopplay   => $copy_from_default_params->{loopplay},
-                    override   => $copy_from_default_params->{override},
+                    override   => $copy_from_default_params->{replace_existing},
                     error_ref  => \$error,
                 );
             }

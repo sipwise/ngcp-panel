@@ -43,7 +43,7 @@ has_field 'loopplay' => (
     required => 0,
 );
 
-has_field 'override' => (
+has_field 'replace_existing' => (
     type => 'Boolean',
     label => 'Replace existing',
     element_attr => {

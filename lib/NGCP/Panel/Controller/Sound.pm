@@ -692,7 +692,7 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                     set_id     => $c->stash->{set_result}->id,
                     handles_rs => $c->stash->{handles_rs},
                     loopplay   => $form->params->{loopplay},
-                    override   => $form->params->{override},
+                    override   => $form->params->{replace_existing},
                     error_ref  => \$error,
                 );
             });

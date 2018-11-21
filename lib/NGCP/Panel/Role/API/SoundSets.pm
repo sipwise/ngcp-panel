@@ -145,7 +145,7 @@ sub update_item {
 
     $resource->{contract_default} //= 0;
 
-    my $copy_from_default_params =  { map {$_ => delete $resource->{$_}} (qw/copy_from_default loopplay override language/) };
+    my $copy_from_default_params =  { map {$_ => delete $resource->{$_}} (qw/copy_from_default loopplay replace_existing language/) };
     $item->update($resource);
     if ($copy_from_default_params->{copy_from_default}) {
         my $error;
@@ -156,7 +156,7 @@ sub update_item {
             set_id     => $item->id,
             handles_rs => $handles_rs,
             loopplay   => $copy_from_default_params->{loopplay},
-            override   => $copy_from_default_params->{override},
+            override   => $copy_from_default_params->{replace_existing},
             error_ref  => \$error,
         );
     }

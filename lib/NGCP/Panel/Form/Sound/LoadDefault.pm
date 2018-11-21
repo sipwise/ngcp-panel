@@ -21,7 +21,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/language loopplay override/],
+    render_list => [qw/language loopplay replace_existing/],
 );
 
 has_block 'actions' => (
