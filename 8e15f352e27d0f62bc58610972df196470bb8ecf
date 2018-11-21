@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1adf8d57_5f22fbba",
+        "filename": "lib/NGCP/Panel/Role/API/SoundSets.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-11-21T10:44:13Z",
+      "side": 1,
+      "message": "I would rename \"override\" to \"replace\" as override has a slightly different situational meaning",
+      "range": {
+        "startLine": 148,
+        "startChar": 104,
+        "endLine": 148,
+        "endChar": 112
+      },
+      "revId": "8e15f352e27d0f62bc58610972df196470bb8ecf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_7fb0178c",
         "filename": "lib/NGCP/Panel/Role/API/SoundSets.pm",
         "patchSetId": 6
