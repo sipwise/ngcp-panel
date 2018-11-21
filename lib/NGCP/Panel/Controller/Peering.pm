@@ -28,7 +28,7 @@ sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) {
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'priority', search => 1, title => $c->loc('Priority') },
         { name => 'description', search => 1, title => $c->loc('Description') },
-        { name => 'time_set.name', search => 0, title => $c->loc('Time Set') },
+        #{ name => 'time_set.name', search => 0, title => $c->loc('Time Set') },
     ]);
     
     $c->stash(template => 'peering/list.tt');
@@ -132,7 +132,7 @@ sub edit :Chained('base') :PathPart('edit') {
         c => $c, form => $form,
         fields => {
             'contract.create' => $c->uri_for('/contract/peering/create'),
-            'time_set.create' => $c->uri_for('/timeset/create'),
+            #'time_set.create' => $c->uri_for('/timeset/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -203,7 +203,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
         c => $c, form => $form,
         fields => {
             'contract.create' => $c->uri_for('/contract/peering/create'),
-            'time_set.create' => $c->uri_for('/timeset/create'),
+            #'time_set.create' => $c->uri_for('/timeset/create'),
         },
         back_uri => $c->req->uri,
     );
