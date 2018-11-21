@@ -25,6 +25,54 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_da03990c",
+        "filename": "lib/NGCP/Panel/Role/API/SoundSets.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-11-21T10:51:13Z",
+      "side": 1,
+      "message": "I know that in our code",
+      "parentUuid": "1adf8d57_5f22fbba",
+      "range": {
+        "startLine": 148,
+        "startChar": 104,
+        "endLine": 148,
+        "endChar": 112
+      },
+      "revId": "8e15f352e27d0f62bc58610972df196470bb8ecf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_ba08cd29",
+        "filename": "lib/NGCP/Panel/Role/API/SoundSets.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-11-21T10:51:13Z",
+      "side": 1,
+      "message": "I know it is called \"override\" in the UI/Controller code but it is \"Replace existing\" on the UI page, so \"replace\" or \"replace_existing\" as the param name aligns better imho as we also have in the API \"replace_*\" param names but no \"override\" param names.",
+      "parentUuid": "1adf8d57_5f22fbba",
+      "range": {
+        "startLine": 148,
+        "startChar": 104,
+        "endLine": 148,
+        "endChar": 112
+      },
+      "revId": "8e15f352e27d0f62bc58610972df196470bb8ecf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_7fb0178c",
         "filename": "lib/NGCP/Panel/Role/API/SoundSets.pm",
         "patchSetId": 6
