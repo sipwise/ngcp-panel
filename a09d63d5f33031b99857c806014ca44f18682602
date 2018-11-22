@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_e57d9ae8",
+        "filename": "share/templates/reseller/details.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-22T11:14:41Z",
+      "side": 1,
+      "message": "pull together.\n\nbtw. nice way to prevent the cumbersome xml commenting \u003c!-- --\u003e",
+      "range": {
+        "startLine": 446,
+        "startChar": 0,
+        "endLine": 447,
+        "endChar": 2
+      },
+      "revId": "a09d63d5f33031b99857c806014ca44f18682602",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
