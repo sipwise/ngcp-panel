@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_c50bbe7c",
+        "filename": "lib/NGCP/Panel/Role/API/SoundSets.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-11-22T11:10:28Z",
+      "side": 1,
+      "message": "i would ensure this delete is definitely executed, to not have it in %$resource any more. just in case.",
+      "range": {
+        "startLine": 62,
+        "startChar": 33,
+        "endLine": 62,
+        "endChar": 39
+      },
+      "revId": "17a23232beff5de6ab39ee41682ceaef29b8c4ae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
