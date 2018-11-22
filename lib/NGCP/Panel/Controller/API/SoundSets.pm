@@ -126,8 +126,8 @@ sub POST :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-
-        $resource->{contract_id} = delete $resource->{customer_id};
+        my $customer_id = delete $resource->{customer_id};
+        $resource->{contract_id} //= $customer_id;
         my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,

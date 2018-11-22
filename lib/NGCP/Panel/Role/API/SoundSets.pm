@@ -100,7 +100,8 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-    $resource->{contract_id} = delete $resource->{customer_id};
+    my $customer_id = delete $resource->{customer_id};
+    $resource->{contract_id} //= $customer_id;
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
