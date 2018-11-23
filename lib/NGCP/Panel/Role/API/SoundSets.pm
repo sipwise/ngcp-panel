@@ -69,6 +69,7 @@ sub pre_process_form_resource{
     #So now we allow both, and one documented (contract_id) has higher priority
     my $customer_id = delete $resource->{customer_id};
     $resource->{contract_id} //= $customer_id;
+    return $resource;
 }
 
 sub process_form_resource{

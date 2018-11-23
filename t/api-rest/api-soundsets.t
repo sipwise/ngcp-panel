@@ -36,6 +36,7 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('soundsets'));
 $test_machine->form_data_item( );
 # create 3 new sound sets from DATA_ITEM
 my $soundsets_with_files = $test_machine->check_create_correct( 1, sub{ $_[0]->{name} .=  $_[1]->{i}; } );
+my $soundsets_without_contract = $test_machine->check_create_correct( 1, sub{ delete $_[0]->{contract_id}; } );
 my $soundsets_without_files = $test_machine->check_create_correct( 1, sub{ 
     $_[0]->{name} .=  $_[1]->{i}; 
     $_[0]->{copy_from_default} =  0; 
