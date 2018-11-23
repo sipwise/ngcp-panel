@@ -69,6 +69,7 @@ sub pre_process_form_resource{
     #So now we allow both, and one documented (contract_id) has higher priority
     my $customer_id = delete $resource->{customer_id};
     $resource->{contract_id} //= $customer_id;
+    return $resource;
 }
 
 sub process_form_resource{
@@ -98,7 +99,7 @@ sub check_resource{
         return;
     }
     my $customer;
-    if(defined $resource->{contract_id}) {
+    if(defined $resource->{contract_id} && $resource->{contract_id}) {
         $customer = $c->model('DB')->resultset('contracts')->find({
             id => $resource->{contract_id},
             'contact.reseller_id' => { '!=' => undef },

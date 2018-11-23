@@ -1292,7 +1292,7 @@ sub update_item {
     }
 
     if($form){
-        last unless $self->pre_process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
+        return unless $self->pre_process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
         return unless $self->validate_form(
             c => $c,
             resource => $resource,
