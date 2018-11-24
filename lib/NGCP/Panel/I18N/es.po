@@ -6410,6 +6410,20 @@ msgid "SIP URI"
 msgstr "SIP URI"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SIP URI for looking up registration"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"SIP URI of another subscriber (typically a SIP trunk) for looking up "
+"registration. If non-empty, the calls will be routed to registered location "
+"of specified user. This means that registration of current user will be "
+"ignored for incoming calls and can be combined with e164_to_ruri preference "
+"for SIP trunking, thus allowing to reach subscriber/extension behind the SIP "
+"trunk. A valid value must begin with sip:"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SIP User-Agent Filter List"
 msgstr ""
 
