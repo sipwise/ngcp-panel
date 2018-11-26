@@ -79,7 +79,6 @@ sub GET : Allow {
         "PbxDeviceProfilePreferenceDefs" => 1,
         "PbxFieldDevicePreferenceDefs" => 1,
         "MetaConfigDefs" => 1,
-        "TimeSets" => 1,
     };
 
     my $colls = NGCP::Panel::Utils::API::get_collections_files;
