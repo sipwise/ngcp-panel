@@ -44,7 +44,6 @@ $ua = Test::Collection->new()->ua();
             next if $relname eq "calllists";
             next if $relname eq "conversations";
             next if $relname eq "phonebookentries";
-            next if $relname eq "timesets";#temporarily disabled
             #my $uri = "$uri/api/$relname/";
             #if('conversations' eq $relname){
             #    $uri .= '?type=call';
