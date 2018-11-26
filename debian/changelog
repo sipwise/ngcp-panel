@@ -1,3 +1,12 @@
+ngcp-panel (6.5.1.5+0~mr6.5.1.5) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [cc946a8] TT#47587 fix get_subscriber_location_rs
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 26 Nov 2018 16:33:01 +0100
+
 ngcp-panel (6.5.1.4+0~mr6.5.1.4) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
