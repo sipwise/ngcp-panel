@@ -51,7 +51,20 @@ my($res,$content,$req) = $test_machine->request_put({
 $test_machine->http_code_msg(200, "Check put with files replacement", $res, $content);
 $test_machine->check_get2put();
 $test_machine->check_bundle();
-#$test_machine->clear_test_data_all();
+
+my $filtered_by_reseller_correct = $test_machine->get_collection_hal('soundsets', '/api/soundsets?reseller_id='.$test_machine->DATA_ITEM->{reseller_id});
+ok($filtered_by_reseller_correct->{total_count} > 0,"check that found soundsets of reseller_id");
+
+my $filtered_by_reseller_wrong = $test_machine->get_collection_hal('soundsets', '/api/soundsets?reseller_id=9999999');
+ok(!$filtered_by_reseller_wrong->{total_count},"check that not found soundsets of wrong reseller_id");
+
+my $filtered_by_name_correct = $test_machine->get_collection_hal('soundsets', '/api/soundsets?name=api_test%25');
+ok($filtered_by_name_correct->{total_count} > 0,"check that found soundsets of name");
+
+my $filtered_by_name_wrong = $test_machine->get_collection_hal('soundsets', '/api/soundsets?name=api_test');
+ok(!$filtered_by_name_wrong->{total_count},"check that not found soundsets of wrong name");
+
+$test_machine->clear_test_data_all();
 
 done_testing;
 

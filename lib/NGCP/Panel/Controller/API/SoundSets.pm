@@ -34,12 +34,12 @@ sub query_params {
         {
             param => 'reseller_id',
             description => 'Filter for sound sets of a specific reseller',
-            type => 'string_eq',
+            query_type => 'string_eq',
         },
         {
             param => 'name',
             description => 'Filter for sound sets with a specific name (wildcard pattern allowed)',
-            type => 'string_like',
+            query_type => 'string_like',
         },
     ];
 }
