@@ -100,8 +100,13 @@ sub validate {
         name => $name,
         reseller_id => $reseller_id,
     });
-    my $current_item = $c->stash->{tmpl};
-    if ($existing_item && (!$current_item || $existing_item->id != $current_item->id)) {
+    my $current_item = $self->item ? $self->item : $c->stash->{tmpl};
+    my $current_item_id = 
+        $current_item 
+            ? ref $current_item eq 'HASH' 
+                ? $current_item->{id} : $current_item->id
+            : undef;
+    if ($existing_item && (!$current_item_id || $existing_item->id != $current_item_id)) {
         $self->field('name')->add_error($c->loc('This name already exists'));
     }
 }

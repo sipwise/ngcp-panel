@@ -218,6 +218,7 @@ sub validate_form {
     my $c = $params{c};
     my $resource = $params{resource};
     my $form = $params{form};
+    my $item = $params{item};
     my $run = $params{run} // 1;
     my $form_params = $params{form_params} // {};
 
@@ -246,7 +247,13 @@ sub validate_form {
 
     if($run) {
         # check keys/vals
-        $form->process(params => $resource, posted => 1, %{$form_params} );
+        $form->process(
+            params => $resource, 
+            posted => 1, 
+            %{$form_params}, 
+            item => $item, 
+            no_update => 1
+        );
         unless($form->validated) {
             my $e = join '; ', map {
                 my $in = (defined $_->input && ref $_->input eq 'HASH' && exists $_->input->{id}) ? $_->input->{id} : ($_->input // '');
@@ -1297,6 +1304,7 @@ sub update_item {
             c => $c,
             resource => $resource,
             form => $form,
+            item => $item,
         );
         return unless $resource;
     }

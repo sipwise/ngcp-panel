@@ -79,6 +79,7 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
+        item => $item,
     );
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
