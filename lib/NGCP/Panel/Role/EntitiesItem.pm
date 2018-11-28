@@ -255,14 +255,11 @@ sub patch {
         my ($form, $process_extras);
         ($form) = $self->get_form($c, 'edit');
 
-        my $method_config =  $self->get_config('action')->{PATCH};
-        my $patch_ops = ref $method_config eq 'HASH' && defined $method_config->{ops} ? $method_config->{ops} : [qw/replace copy/];
         my $json = $self->get_valid_patch_data(
             c          => $c,
             id         => $id,
             media_type => 'application/json-patch+json',
             form       => $form,
-            ops        => $patch_ops,
         );
         last unless $json;
 
