@@ -3,8 +3,6 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Preferences/;
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -15,28 +13,8 @@ use JSON qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ProfilePackages qw();
 
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
-});
-
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
-}
-
-sub resource_name{
-    return 'subscriberpreferences';
-}
-
-sub container_resource_type{
-    return 'subscribers';
-}
-
-sub dispatch_path{
-    return '/api/subscriberpreferences/';
-}
-
-sub relation{
-    return 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferences';
 }
 
 sub api_description {
@@ -81,6 +59,28 @@ sub documentation_sample {
         peer_auth_user => "mypeer",
     };
 }
+
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Preferences/;
+
+sub resource_name{
+    return 'subscriberpreferences';
+}
+
+sub container_resource_type{
+    return 'subscribers';
+}
+
+sub dispatch_path{
+    return '/api/subscriberpreferences/';
+}
+
+sub relation{
+    return 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferences';
+}
+
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+});
 
 sub GET :Allow {
     my ($self, $c) = @_;
