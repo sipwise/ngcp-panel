@@ -5695,6 +5695,14 @@ msgid "Play"
 msgstr "Reproducir"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Play announcement before call setup"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Play announcement before recording"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play announcement before routing to CFU/CFNA"
 msgstr ""
 
@@ -5702,6 +5710,14 @@ msgstr ""
 msgid ""
 "Playback announcement as early media before Call Forward Unconditional or "
 "Unavailable."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Playback announcement as early media before send the call to callee."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Playback announcement as early media before start call recording."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
