@@ -283,6 +283,10 @@ sub auto :Private {
     my $topmenu_templates = [];
     if ($c->user->roles eq 'admin') {
         $topmenu_templates = ['widgets/admin_topmenu_settings.tt'];
+        if (!$c->stash->{openvpn_info}) {
+            my $openvpn_info = NGCP::Panel::Utils::Admin::check_openvpn_status($c);
+            $c->stash(openvpn_info => $openvpn_info);
+        }
     } elsif ($c->user->roles eq 'reseller') {
         $topmenu_templates = ['widgets/reseller_topmenu_settings.tt'];
     } elsif ($c->user->roles eq 'subscriberadmin') {
