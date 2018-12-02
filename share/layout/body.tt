@@ -18,6 +18,7 @@
                           [% login_name = c.user.webusername _'@'_ c.user.domain.domain %]
                         [%- END -%]
                         <i class="icon-user"></i> [% c.loc("Logged in as [_1]", login_name) %]
+
                       [%- ELSE -%]
                         <i class="icon-user"></i> [% c.loc("Not logged in") %]
                       [%- END -%]
@@ -25,20 +26,31 @@
                     <li>
                         [% IF c.user && c.session.user_tz_name; '(' _ c.session.user_tz_name _ ')'; END; %]
                     </li>
+[%- IF ( c.user && ( c.user.roles == 'admin' || c.user.is_superuser ) ) && openvpn_info.allowed -%]
+[%- IF !openvpn_info.active %]
+                    <li>
+                        <a class="btn btn-small btn-secondary" href="javascript:toggleOpenvpn('confirm');void(0);"><i class="icon-off"></i>Openvpn</a>
+                    </li>
+[%ELSE-%]
+                    <li>
+                        <a class="btn btn-small btn-success" href="javascript:toggleOpenvpn('confirm');void(0);"><i class="icon-ok"></i>Openvpn</a>
+                    </li>
+[%END-%]
+[%END-%]
                     <li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<i class="icon-globe"></i> [% c.loc('Language') %]
-						<b class="caret"></b>
-					</a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-globe"></i> [% c.loc('Language') %]
+                        <b class="caret"></b>
+                    </a>
 
-					<ul class="dropdown-menu pull-right">
-						<li><a href="?lang=en"><img src="/img/lang/en.png" class="ngcp-lang-flag"/> English</a></li>
-						<li><a href="?lang=de"><img src="/img/lang/de.png" class="ngcp-lang-flag"/> German</a></li>
-						<li><a href="?lang=it"><img src="/img/lang/it.png" class="ngcp-lang-flag"/> Italian</a></li>
-						<li><a href="?lang=es"><img src="/img/lang/es.png" class="ngcp-lang-flag"/> Spanish</a></li>
-						<li><a href="?lang=ru"><img src="/img/lang/ru.png" class="ngcp-lang-flag"/> Russian</a></li>
-					</ul>
-				</li>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="?lang=en"><img src="/img/lang/en.png" class="ngcp-lang-flag"/> English</a></li>
+                        <li><a href="?lang=de"><img src="/img/lang/de.png" class="ngcp-lang-flag"/> German</a></li>
+                        <li><a href="?lang=it"><img src="/img/lang/it.png" class="ngcp-lang-flag"/> Italian</a></li>
+                        <li><a href="?lang=es"><img src="/img/lang/es.png" class="ngcp-lang-flag"/> Spanish</a></li>
+                        <li><a href="?lang=ru"><img src="/img/lang/ru.png" class="ngcp-lang-flag"/> Russian</a></li>
+                    </ul>
+                    </li>
                     <li><a href="[% c.uri_for('/logout') %]">[% c.loc('Logout') %]</a></li>
                 </ul>
             </div> <!-- /#top-nav -->
@@ -68,13 +80,13 @@
         </div> <!-- /.container -->
     </div> <!-- /#header -->
     <div id="masthead">
-	    <div class="container">
-		    <div class="masthead-pad">
-			    <div class="masthead-text">
-				    <h2>[% template.title or site_config.title %]</h2>
-			    </div>
-		    </div>
-	    </div>
+        <div class="container">
+            <div class="masthead-pad">
+                <div class="masthead-text">
+                    <h2>[% template.title or site_config.title %]</h2>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="content">
         <div class="container">
@@ -106,7 +118,7 @@
 <script>
 var isIE = /(MSIE|Trident\/|Edge\/)/i.test(navigator.userAgent);
 if(isIE){
-	$.ajaxSetup({ cache: false });
+    $.ajaxSetup({ cache: false });
 }
 var addConsoleNoOp =  function (window) {
     var names = ["log", "debug", "info", "warn", "error",
@@ -257,5 +269,9 @@ $( document ).ready(function() {
 });
 //$(function(){Theme.init();mainWrapperInit();});
 </script>
+
+
+[%PROCESS 'administrator/openvpn_wrapper.tt' %]
+
 </body>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

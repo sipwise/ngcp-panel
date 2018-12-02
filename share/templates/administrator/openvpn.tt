@@ -1,0 +1,37 @@
+
+[%IF confirm -%]
+[%- IF c.user && c.user.roles == 'admin' || c.user.is_superuser -%]
+<span class="pull-right" style="margin:15px 15px 10px 5px;">
+[%- IF !openvpn_info.active %]
+    <a class="btn btn-small btn-run" href="javascript:toggleOpenvpn(1);void(0);"><i class="icon-off"></i>Open connection?</a>
+[%ELSE-%]
+    <a class="btn btn-small btn-secondary" href="javascript:toggleOpenvpn(0);void(0);"><i class="icon-ok"></i>Close connection?</a>
+[%END-%]
+</span>
+[%END-%]
+[%ELSE%]
+[%IF messages.size -%]
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]" style="margin:2px 5px 2px 5px;"> [% m.text %]</div>
+    [% END -%]
+[% END -%]
+[% END -%]
+
+<script type="text/javascript" src="/js/background.js"></script>
+<script type="text/javascript">
+function toggleOpenvpn(status){
+    var divId = 'openvpn_details';
+    var uri = '[%c.uri_for_action('/administrator/toggle_openvpn', ['status'])%]';
+    uri=uri.replace('status', status);
+    fetch_into(
+        'openvpn_details_container',
+        uri,
+        '',
+        function(){
+            $('#'+divId).modal({keyboard: false, backdrop: 'static'}).css('display','block').find($('.mod_close')).click(function(event) {
+                $('#'+divId).modal('hide').css('display','none');
+            });
+        }
+    );
+}
+</script>

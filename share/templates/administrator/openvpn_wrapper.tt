@@ -1,0 +1,21 @@
+<style>
+#openvpn_details{
+    display:none;
+}   
+</style>
+    
+<div id="openvpn_details" class="modal hide ngcp-modal">
+    <div class="modal-header">
+        <h3>[%c.loc('Openvpn details')%]
+        <button type="button" class="close mod_close">×</button>
+        </h3>
+    </div>
+    <div id="openvpn_details_container">
+
+[%PROCESS 'administrator/openvpn.tt' %]
+
+    </div>
+    <div class="modal-footer">
+        <a class="mod_close btn btn-small">[%c.loc('Cancel')%]</a>
+    </div>
+</div>
