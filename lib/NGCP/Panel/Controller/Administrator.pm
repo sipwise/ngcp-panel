@@ -369,6 +369,41 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     );
 }
 
+sub toggle_openvpn :Chained('list_admin') :PathPart('openvpn/toggle') :Args(1) {
+    my ($self, $c, $set_active) = @_;
+
+    unless ($set_active eq 'confirm') {
+        my ($message, $error) = NGCP::Panel::Utils::Admin::toggle_openvpn($c, $set_active);
+        if ( $message ) { 
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                desc  => $c->loc($message),
+                #modal info screen
+                stash => 1,
+                flash => 0,
+            );
+        }
+        if ( $error ) { 
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $error,
+                desc  => $c->loc($error),
+                #modal info screen, we don't need to show error later on some sporadic screen
+                stash => 1,
+                flash => 0,
+            );
+        }
+    } else {
+        $c->stash(
+            confirm => 1,
+        );
+    }
+    $c->stash(
+        template => 'administrator/openvpn.tt',
+    );
+    $c->detach( $c->view('TT') );
+}
+
 1;
 
 __END__
