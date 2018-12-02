@@ -4,6 +4,8 @@ use Sipwise::Base;
 use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 use Data::Entropy::Algorithms qw/rand_bits/;
 use IO::Compress::Zip qw/zip/;
+use IPC::System::Simple qw/capturex/;
+
 
 sub get_special_admin_login {
     return 'sipwise';
@@ -138,6 +140,150 @@ sub generate_client_cert {
     $zip->close();
 
     return { serial => $serial, file => $zipped_file };
+}
+
+sub check_openvpn_status {
+    my ($c, $params) = @_;
+    $params //= {};
+    #possible params:
+    # - no_check_availability - check availability is expensive. If we did it already, we can skip it
+    # - check_status - check particular command, active or enabled
+    my $ret = {
+        allowed   => 0, #based on role
+        available => 0, #unavailable
+        enabled   => 0, #disabled
+        active    => 0, #inactive
+    };
+    my $config = $c->config->{openvpn} // {};
+    my $systemctl_cmd = $config->{command};
+    #default service is openvpn@ovpn, where ovpn profile is a openvpn config located at /etc/openvpn/ovpn.conf
+    my $openvpn_service = $config->{service};
+    if (!$config->{allowed}) {
+        return $ret;
+    }
+    if ($params->{no_check_availability} || check_openvpn_availability($c)) {
+        $ret->{available} = 1;
+        if ( !$params->{check_status} || $params->{check_status} eq 'enabled') {
+            my $output = cmd($c, undef, $systemctl_cmd, 'is-enabled', $openvpn_service);
+            if ($output eq 'enabled') {#what we will see on localized OS? should "enabled" be localized?
+                $ret->{enabled} = 1;
+            } elsif ($output ne 'disabled') {
+                #all other is-enabled responses, except "enabled" and "disabled" mean that service is not available at all
+                $ret->{available} = 0;
+            }
+        }
+        if ($ret->{available}) {
+            if ( !$params->{check_status} || $params->{check_status} eq 'active') {
+                my $output = cmd($c, undef, $systemctl_cmd, 'is-active', $openvpn_service);
+                if ($output eq 'active') {
+                    $ret->{active} = 1;
+                }
+            }
+        }
+    }
+    #testing
+    #$ret->{active} = 1;
+    return $ret;
+}
+
+sub check_openvpn_availability {
+    my ($c) = @_;
+    my $res = 0;
+    my $config = $c->config->{openvpn} // {};
+    my $systemctl_cmd = $config->{command};
+    #default service is openvpn@ovpn, where ovpn profile is a openvpn config located at /etc/openvpn/ovpn.conf
+    my $openvpn_service = $config->{service};
+    my $output = cmd($c, {no_debug_output =>1 }, $systemctl_cmd, 'list-unit-files');
+    #$c->log->debug( $output );
+    if ($output =~/^openvpn.service/m) {
+        $res = 1;
+    }
+    return $res;
+}
+
+sub toggle_openvpn {
+    my ($c, $set_active) = @_;
+    my ($message, $error);
+    my $config = $c->config->{openvpn} // {};
+    my $systemctl_cmd = $config->{command};
+    #default service is openvpn@ovpn, where ovpn profile is a openvpn config located at /etc/openvpn/ovpn.conf
+    my $openvpn_service = $config->{service};
+    my $status_in = check_openvpn_status($c);
+    my $status_out;
+    if (!$status_in->{allowed}) {
+        $error = $c->loc('Openvpn service is not enabled or host role is not allowed.');
+    } elsif (!$status_in->{available}) {
+        $error = $c->loc('Openvpn service is not avaialbe on the system.');
+    } else {
+        if ($set_active) {
+            if ( $status_in->{active} ) {
+                $message = $c->loc('Openvpn connection is already opened.');
+            } else {
+                my $status_enabled = { enabled => $status_in->{enabled} };
+                if (!$status_enabled->{enabled}) {
+                    $error = cmd($c, undef, $systemctl_cmd, 'enable', $openvpn_service);
+                    if (!$error) {
+                        my $status_enabled = check_openvpn_status($c, {
+                                no_check_availability => 1, 
+                                check_status          => 'enabled',
+                            },
+                        );
+                    }
+                }
+                if ($status_enabled->{enabled}) {
+                    $error = cmd($c, undef, $systemctl_cmd, 'start', $openvpn_service);
+                    if (!$error) {
+                        $status_out = check_openvpn_status($c, {
+                                no_check_availability => 1, 
+                            },
+                        );
+                        if ($status_out->{active}) {
+                            $message = $c->loc('Openvpn connection open.');
+                        } else {
+                            $error = $c->loc('Can not open openvpn connection.');
+                        }
+                    }
+                } else {
+                    $error = $c->loc('Can not enable openvpn.');
+                }
+            }
+        } else { #requested to close connection
+            if ( !$status_in->{active} ) {
+                $message = $c->loc('Openvpn connection is already closed.');
+            } else {
+                $error = cmd($c, undef, $systemctl_cmd, 'stop', $openvpn_service);
+            }
+            if (!$error) {
+                $status_out = check_openvpn_status($c, {
+                        no_check_availability => 1, 
+                    },
+                );
+                if (!$status_out->{active}) {
+                    $message = $c->loc('Openvpn connection closed.');
+                } else {
+                    $error = $c->loc('Can not close openvpn connection.');
+                }
+            }
+        }
+    }
+    return $message, $error;
+}
+
+sub cmd {
+    my($c, $params, $cmd, @cmd_args) = @_;
+    $params //= {};
+    my $cmd_full = $cmd.' '.join(' ', @cmd_args);
+    $c->log->debug( $cmd_full );
+    my $output = '';
+    try {
+        $output = capturex([0..1,3], $cmd, @cmd_args);
+        $output =~s/^\s+|\s+$//g;
+        $c->log->debug( "output=$output;" ) unless $params->{no_debug_output};
+    } catch ($e) {
+        $c->log->debug( "error=$e;" );
+        return $e;
+    }
+    return $output;
 }
 
 1;
