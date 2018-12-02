@@ -180,11 +180,22 @@ sub error {
     my $rc = $c->log->error(
         sprintf $logstr, @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
     if ($type eq 'panel') {
-        $c->flash(messages => [{ type => $usr_type,
+        if (!defined $params{flash} || $params{flash} ) {
+            $c->flash(messages => [{ type => $usr_type,
                                  text => sprintf '%s [%s]',
                                             $usr_text,
                                             $log_params->{tx_id},
                                 }]);
+        }
+        if ($params{stash} ) {
+            my $messages = $c->stash->{messages} // [];
+            push @$messages, { type => $usr_type,
+                                 text => sprintf '%s [%s]',
+                                            $usr_text,
+                                            $log_params->{tx_id},
+                                };
+            $c->stash(messages => $messages);
+        }
         $c->stash(panel_error_message => $msg);
     }
     return $rc;
@@ -230,7 +241,15 @@ sub info {
         sprintf $logstr,
                 @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
     if ($type eq 'panel') {
-        $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
+        #flash is on by default
+        if (!defined $params{flash} || $params{flash} ) {
+            $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
+        } 
+        if ($params{stash} ) {
+            my $messages = $c->stash->{messages} // [];
+            push @$messages, { type => $usr_type, text => $usr_text };
+            $c->stash(messages => $messages);
+        }
     }
     return $rc;
 }
