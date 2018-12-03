@@ -348,7 +348,9 @@ sub error {
     my ($self, $c, $code, $message) = @_;
 
     $c->log->error("error $code - $message"); # TODO: user, trace etc
-
+use Carp qw/longmess/;
+use Data::Dumper;
+print longmess(Dumper([$code, $message]));
     $c->response->content_type('application/json');
     $c->response->status($code);
     $c->response->body(JSON::to_json({ code => $code, message => $message })."\n");
@@ -802,21 +804,68 @@ sub collection_nav_links {
     return @links;
 }
 
+sub get_patch_append_point {
+    my ($self, $c, $entity_root, $path, $value) = @_;
+    $entity_root //= {};
+    my $entity_sub = $entity_root;
+    my $entity_sub_ref;
+    $path =~s/^\///;
+    my @keys = split /\//, $path;
+    print Dumper \@keys;
+    my $key_next;
+    for (my $i = 0; $i < @keys; $i++) {
+        my $key = $keys[$i];
+        $key_next = $i < $#keys ? $keys[$i+1] : undef;
+        print Dumper [$i,$key, $key_next,$entity_sub,$entity_root];
+        if ($key =~/^-?\d+$/) {
+            if ($key_next) {
+                $entity_sub->[$key] = $key_next =~/^\d+$/ ? [] : {};
+            } else {
+                #$entity_sub->[$key] = undef;
+                $entity_sub->[$key] = ref $value eq 'ARRAY' ? [] :  ref $value eq 'HASH' ? {} : undef;#$value;
+            }
+            $entity_sub_ref = \$entity_sub->[$key];
+            $entity_sub = $entity_sub->[$key];
+        } else {
+            if ($key_next) {
+                $entity_sub->{$key} = $key_next =~/^\d+$/ ? [] : {};
+             } else {
+                #$entity_sub->[$key] = undef;
+                $entity_sub->{$key} = ref $value eq 'ARRAY' ? [] :  ref $value eq 'HASH' ? {} : undef;
+            }
+            $entity_sub_ref = \$entity_sub->{$key};
+            $entity_sub = $entity_sub->{$key};
+        } 
+    }
+    use Data::Dumper;
+    print Dumper ["entity_root",$entity_root,"entity_sub_ref",$entity_sub_ref];
+    return $entity_root, $entity_sub_ref;
+}
+
 #this method expands the newly added ops/modes to the know patch ops.
 sub process_patch_description {
     my ($self, $c, $entity, $patch) = @_;
     my $patch_diff = [];
     my $op_iterator = -1;
+    my $entity_diff = {add => [], remove => []};
+    my $entity_root = {};
     for my $op (@{ $patch }) {
         $op_iterator++;
         if ($op->{op} eq 'add' && $op->{mode} && $op->{mode} eq 'append') {
             splice @$patch, $op_iterator, 1;
             $op->{path} =~s/\/\-$//;#we will add it if element exists
+            #we force value to array as append means that we will add values to some (existing or newly created) array.
+            #So we will not add create /path as a plain string value, but only as array
+            my $value_new = ref $op->{value} eq 'ARRAY' ? $op->{value} : [$op->{value}];
             my $value_current = JSON::Pointer->get($entity, $op->{path});
+            my ($entity_diff_sub,$entity_append_point) = $self->get_patch_append_point($c,  $entity_root, $op->{path}, $value_new);
+            push @{$entity_diff->{add}}, [$entity_diff_sub,$entity_append_point];
             if (!$value_current) {
-                push @$patch_diff, {"op" => "add", "path" => $op->{path}, "value" => $op->{value}};
+                push @$patch_diff, {"op" => "add", "path" => $op->{path}, "value" => $value_new};
+            } elsif (ref $value_current eq 'ARRAY') {
+                push @$patch_diff, map {{"op" => "add", "path" => $op->{path}.'/-', "value" => $_}} @{$op->{value}};
             } else {
-                push @$patch_diff, map {{"op" => "add", "path" => $op->{path}.'/-', "value" => $_}} ref $op->{value} eq 'ARRAY' ? @{$op->{value}} : ($op->{value});
+                die("invalid attempt to append in not-array path '".$op->{path}."'");
             }
         } elsif ($op->{op} eq 'remove' && $op->{value}) {
             splice @$patch, $op_iterator, 1;
@@ -865,23 +914,31 @@ sub process_patch_description {
             if ($remove_index && $found_count < $remove_index ) {
                 die("delete index $remove_index out of bounds");
             }
+        } elsif ($op->{op} eq 'add') {
+            my $path = $op->{path};
+            my ($entity_diff_sub,$entity_append_point) = $self->get_patch_append_point($c,  $entity_root, $op->{path}, $op->{value});
         }
     }
     push @$patch, @$patch_diff;
+    use Data::Dumper;
+    print Dumper [$entity_diff, $entity_root];
+    return $entity_diff, $entity_root;
 }
 
 sub apply_patch {
     my ($self, $c, $entity, $json, $optional_field_code_ref) = @_;
     my $patch = JSON::decode_json($json);
+    my ($entity_diff, $entity_root);
     try {
-        $self->process_patch_description($c, Storable::dclone($entity), $patch);
+        (undef, $entity_root) = $self->process_patch_description($c, Storable::dclone($entity), $patch);
         for my $op (@{ $patch }) {
             my $coderef = JSON::Pointer->can($op->{op});
             die "invalid op '".$op->{op}."' despite schema validation" unless $coderef;
             for ($op->{op}) {
                 if ('add' eq $_ or 'replace' eq $_) {
                     try {
-                        $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
+                        #$entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
+                        $entity_diff = $coderef->('JSON::Pointer', $entity_root, $op->{path}, $op->{value});
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed($pe) && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
@@ -894,7 +951,8 @@ sub apply_patch {
                     }
                 } elsif ('remove' eq $_) {
                     try {
-                        $entity = $coderef->('JSON::Pointer', $entity, $op->{path});
+                        #$entity = $coderef->('JSON::Pointer', $entity, $op->{path});
+                        $entity_diff = $coderef->('JSON::Pointer', $entity_root, $op->{path});
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
@@ -907,7 +965,8 @@ sub apply_patch {
                     }
                 } elsif ('move' eq $_ or 'copy' eq $_) {
                     try {
-                        $entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
+                        #$entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
+                        $entity_diff = $coderef->('JSON::Pointer', $entity_root, $op->{path});
                     } catch($pe) {
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
@@ -940,6 +999,7 @@ sub apply_patch {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The entity could not be processed: $e");
         return;
     }
+    print Dumper [$patch,$entity_diff];
     return $entity;
 }
 
