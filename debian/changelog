@@ -1,3 +1,12 @@
+ngcp-panel (6.4.1.9+0~mr6.4.1.9) unstable; urgency=medium
+
+  [ Manuel Montecelo ]
+  * [535277a] TT#44919 Change "openssl genrsa" so it works with buster and older releases
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 04 Dec 2018 10:19:39 +0100
+
 ngcp-panel (6.4.1.8+0~mr6.4.1.8) unstable; urgency=medium
 
   [ Rene Krenn ]
