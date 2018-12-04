@@ -348,7 +348,9 @@ sub error {
     my ($self, $c, $code, $message) = @_;
 
     $c->log->error("error $code - $message"); # TODO: user, trace etc
-
+use Carp qw/longmess/;
+use Data::Dumper;
+print longmess(Dumper([$code, $message]));
     $c->response->content_type('application/json');
     $c->response->status($code);
     $c->response->body(JSON::to_json({ code => $code, message => $message })."\n");
@@ -809,10 +811,12 @@ sub get_patch_append_point {
     my $entity_sub_ref;
     $path =~s/^\///;
     my @keys = split /\//, $path;
+    print Dumper \@keys;
     my $key_next;
     for (my $i = 0; $i < @keys; $i++) {
         my $key = $keys[$i];
         $key_next = $i < $#keys ? $keys[$i+1] : undef;
+        print Dumper [$i,$key, $key_next,$entity_sub,$entity_root];
         if ($key =~/^-?\d+$/) {
             if ($key_next) {
                 $entity_sub->[$key] = $key_next =~/^\d+$/ ? [] : {};
@@ -833,6 +837,8 @@ sub get_patch_append_point {
             $entity_sub = $entity_sub->{$key};
         } 
     }
+    use Data::Dumper;
+    print Dumper ["entity_root",$entity_root,"entity_sub_ref",$entity_sub_ref];
     return $entity_root, $entity_sub_ref;
 }
 
@@ -914,6 +920,8 @@ sub process_patch_description {
         }
     }
     push @$patch, @$patch_diff;
+    use Data::Dumper;
+    print Dumper [$entity_diff, $entity_root];
     return $entity_diff, $entity_root;
 }
 
@@ -991,6 +999,7 @@ sub apply_patch {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The entity could not be processed: $e");
         return;
     }
+    print Dumper [$patch,$entity_diff];
     return $entity;
 }
 
