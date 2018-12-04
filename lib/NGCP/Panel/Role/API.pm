@@ -715,7 +715,7 @@ sub define_collection_infinite_pager {
     $no_count //= $self->dont_count_collection_total($c);
     if (! defined $c->stash->{collection_infinite_pager_stop}) {
         #$item_rs->pager->entries_on_this_page leads to the count query
-        my $entries_on_this_page = $items_count // $item_rs->count;
+        my $entries_on_this_page = $items_count // scalar $item_rs->all;
         $c->stash->{collection_infinite_pager_stop} = (( $entries_on_this_page < $rows_on_page ) and $no_count );
     }
 }
