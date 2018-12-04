@@ -54,6 +54,21 @@ sub query_params {
     ];
 };
 
+sub order_by_cols {
+    my ($self, $c) = @_;
+    my $cols = {
+        'contact' => 'contact',
+        'expires' => 'expires',
+        'id'      => 'id',
+        'nat'     => 'nat',
+        'path'    => 'path',
+        'q'       => 'q',
+        'subscriber_id' => 'subscriber_id',
+        'user_agent'    => 'user_agent',
+    };
+    return $cols;
+}
+
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::SubscriberRegistrations/;
 
 sub resource_name{
