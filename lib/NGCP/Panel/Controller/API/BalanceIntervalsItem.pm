@@ -105,10 +105,10 @@ sub GET :Allow {
         my $contract = $self->contract_by_id($c, $id);
         last unless $self->resource_exists($c, contract => $contract);
         my $balances = $self->balances_rs($c,$contract,$now);
-        (my $total_count, $balances) = $self->paginate_order_collection($c, $balances);
+        (my $total_count, $balances, my $balances_rows) = $self->paginate_order_collection($c, $balances);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $balance ($balances->all) {
+        for my $balance (@$balances_rows) {
             my $hal = $self->hal_from_balance($c, $balance, $form, $now);
             $hal->_forcearray(1);
             push @embedded, $hal;
