@@ -73,9 +73,9 @@ sub GET :Allow {
     {
         my $cls = $self->item_rs($c);
 
-        (my $total_count, $cls) = $self->paginate_order_collection($c, $cls);
+        (my $total_count, $cls, my $cls_rows) = $self->paginate_order_collection($c, $cls);
         my (@embedded, @links);
-        for my $cl ($cls->all) {
+        for my $cl (@$cls_rows) {
             push @embedded, $self->hal_from_item($c, $cl, $self->resource_name);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
