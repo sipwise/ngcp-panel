@@ -79,10 +79,10 @@ sub GET :Allow {
             return;
         }
         my $callrecordingstreams = $self->item_rs($c);
-        (my $total_count, $callrecordingstreams) = $self->paginate_order_collection($c, $callrecordingstreams);
+        (my $total_count, $callrecordingstreams, my $callrecordingstreams_rows) = $self->paginate_order_collection($c, $callrecordingstreams);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $domain ($callrecordingstreams->all) {
+        for my $domain (@$callrecordingstreams_rows) {
             push @embedded, $self->hal_from_item($c, $domain, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
