@@ -95,12 +95,12 @@ sub GET :Allow {
     {
         my $field_devs = $self->item_rs($c);
 
-        (my $total_count, $field_devs) = $self->paginate_order_collection($c, $field_devs);
+        (my $total_count, $field_devs, my $field_devs_rows) = $self->paginate_order_collection($c, $field_devs);
         my $query_string = $self->query_param_string($c);
         return unless $query_string;
         my (@embedded, @links);
         my $error_flag = 0;
-        for my $dev ($field_devs->all) {
+        for my $dev (@$field_devs_rows) {
             my $hal = $self->hal_from_item($c, $dev);
             $error_flag = 1 unless $hal;
             push @embedded, $hal;
