@@ -17,7 +17,7 @@ sub allowed_methods {
 
 sub delete_item {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
-    my $ip = $item;
+    my $ip = $item->{ip};
     NGCP::Panel::Utils::Security::ip_unban($c, $ip);
     return 1;
 }
