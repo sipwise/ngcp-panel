@@ -80,9 +80,9 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $cfs = $self->item_rs($c);
-        (my $total_count, $cfs) = $self->paginate_order_collection($c, $cfs);
+        (my $total_count, $cfs, my $cfs_rows) = $self->paginate_order_collection($c, $cfs);
         my (@embedded, @links);
-        for my $cf ($cfs->all) {
+        for my $cf (@$cfs_rows) {
             try {
                 push @embedded, $self->hal_from_item($c, $cf);
                 push @links, Data::HAL::Link->new(

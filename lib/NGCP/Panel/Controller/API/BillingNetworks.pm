@@ -85,9 +85,9 @@ sub GET :Allow {
     {
         my $bns = $self->item_rs($c);
 
-        (my $total_count, $bns) = $self->paginate_order_collection($c, $bns);
+        (my $total_count, $bns, my $bns_rows) = $self->paginate_order_collection($c, $bns);
         my (@embedded, @links);
-        for my $bn ($bns->all) {
+        for my $bn (@$bns_rows) {
             push @embedded, $self->hal_from_item($c, $bn, "billingnetworks");
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
