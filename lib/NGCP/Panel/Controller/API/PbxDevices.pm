@@ -108,9 +108,9 @@ sub GET :Allow {
     {
         my $field_devs = $self->item_rs($c);
 
-        (my $total_count, $field_devs) = $self->paginate_order_collection($c, $field_devs);
+        (my $total_count, $field_devs, my $field_devs_rows) = $self->paginate_order_collection($c, $field_devs);
         my (@embedded, @links);
-        for my $dev ($field_devs->all) {
+        for my $dev (@$field_devs_rows) {
             push @embedded, $self->hal_from_item($c, $dev);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,

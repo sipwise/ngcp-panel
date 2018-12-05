@@ -122,10 +122,10 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $packages = $self->item_rs($c);
-        (my $total_count, $packages) = $self->paginate_order_collection($c, $packages);
+        (my $total_count, $packages, my $packages_rows) = $self->paginate_order_collection($c, $packages);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $package ($packages->all) {
+        for my $package (@$packages_rows) {
             push @embedded, $self->hal_from_item($c, $package, "profilepackages", $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,

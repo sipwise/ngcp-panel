@@ -99,9 +99,9 @@ sub GET :Allow {
     {
         my $dsets = $self->item_rs($c);
 
-        (my $total_count, $dsets) = $self->paginate_order_collection($c, $dsets);
+        (my $total_count, $dsets, my $dsets_rows) = $self->paginate_order_collection($c, $dsets);
         my (@embedded, @links);
-        for my $dset ($dsets->all) {
+        for my $dset (@$dsets_rows) {
             push @embedded, $self->hal_from_item($c, $dset, "cfdestinationsets");
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
