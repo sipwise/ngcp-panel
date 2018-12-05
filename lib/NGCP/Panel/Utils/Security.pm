@@ -7,7 +7,7 @@ use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::DateTime;
 
 sub list_banned_ips  {
-    my ( $c ) = @_;
+    my ( $c, %params ) = @_;
     my $xml_parser = XML::LibXML->new();
 
     my $ip_xml = <<'EOF';
@@ -23,13 +23,18 @@ EOF
     my $ip_res = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "loadbalancer", 1, 1, $ip_xml);
 
     my @ips = ();
-    for my $host (grep {$$_[1]} @$ip_res) {
+    XML_RESULTS_LOOP: for my $host (grep {$$_[1]} @$ip_res) {
         my $xmlDoc = $xml_parser->parse_string($host->[2]);
         foreach my $node ($xmlDoc->findnodes('//member')) {
             my $name = $node->findvalue('./name');
             my $value = $node->findvalue('./value/string');
             if ($name eq 'name') {
-                push @ips, { ip => $value };
+                if (!defined $params{id} || $params{id} eq $value) {
+                    push @ips, { ip => $value, id => $value, };
+                    if (defined $params{id}) {
+                        last XML_RESULTS_LOOP;
+                    }
+                }
             }
         }
     }
@@ -74,7 +79,8 @@ EOF
         }
     }
     my $config_failed_auth_attempts = $c->config->{security}->{failed_auth_attempts} // 3;
-    for my $key (keys %{ $usr }) {
+    #in case we requested to filter by username, we will use it as the only possible key
+    for my $key ( ( defined $params{id} && exists $usr->{$params{id}}) ? ( $params{id} ) : (keys %{ $usr }) ) {
         my $last_auth = $usr->{$key}->{last_auth} ? NGCP::Panel::Utils::DateTime::epoch_local($usr->{$key}->{last_auth}) : undef;
         if ($last_auth) {
             $last_auth->set_time_zone($c->session->{user_tz}) if $c->session->{user_tz};
@@ -84,6 +90,7 @@ EOF
             && $usr->{$key}->{auth_count} >= $config_failed_auth_attempts ) {
             push @users, {
                 username => $key,
+                id => $key,
                 auth_count => $usr->{$key}->{auth_count},
                 last_auth  => $last_auth,
             };
