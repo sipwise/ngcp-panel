@@ -31,7 +31,8 @@ sub valid_id {
 
 sub item_by_id{
     my ($self, $c, $id) = @_;
-    return $id;
+    my $list = NGCP::Panel::Utils::Security::list_banned_users($c, id => $id );
+    return ref $list eq 'ARRAY' ? $list->[0] : undef ;
 }
 
 
