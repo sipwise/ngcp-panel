@@ -70,10 +70,12 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $contacts = $self->item_rs($c);
+        #todo - is it really necessary? move to item_rs?
+        $contacts = $contacts->search_rs({}, {prefetch => ['reseller']});
         (my $total_count, $contacts) = $self->paginate_order_collection($c, $contacts);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $contact ($contacts->search({}, {prefetch => ['reseller']})->all) {
+        for my $contact ($contacts->all) {
             push @embedded, $self->hal_from_contact($c, $contact, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
