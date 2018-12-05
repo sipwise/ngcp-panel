@@ -561,13 +561,13 @@ sub paginate_order_collection {
         order_by => $c->request->params->{order_by},
         direction => $c->request->params->{order_by_direction} // "asc",
     };
-    my($total_count, $item_rs);
+    my($total_count, $item_rs, $items_rows);
     if('ARRAY' eq ref $items){
-        ($total_count, $item_rs) = $self->paginate_order_collection_array($c, $items, $params);
+        ($total_count, $items_rows) = $self->paginate_order_collection_array($c, $items, $params);
     }else{
-        ($total_count, $item_rs) = $self->paginate_order_collection_rs($c, $items, $params);
+        ($total_count, $item_rs, $items_rows) = $self->paginate_order_collection_rs($c, $items, $params);
     }
-    return ($total_count, $item_rs);
+    return ($total_count, $item_rs, $items_rows);
 }
 
 sub paginate_order_collection_array {
@@ -597,12 +597,12 @@ sub dont_count_collection_total {
 }
 
 sub define_collection_infinite_pager {
-    my ($self, $c, $items_count, $item_rs, $rows_on_page, $no_count) = @_;
+    my ($self, $c, $items_count, $rows_on_page, $no_count) = @_;
     $no_count //= $self->dont_count_collection_total($c);
+    #we save it into the stash because we set/use it in two separated methods, called in every API controller
     if (! defined $c->stash->{collection_infinite_pager_stop}) {
-        #$item_rs->pager->entries_on_this_page leads to the count query
-        my $entries_on_this_page = $items_count // scalar $item_rs->all;
-        $c->stash->{collection_infinite_pager_stop} = (( $entries_on_this_page < $rows_on_page ) and $no_count );
+        # to get items_count we tried to select with limit = pagesize + 1. So we should stop pager if we get less or exact numbers of entries to fill that page. And we should continue to next page, if we get more entries, that should be placed on the page.
+        $c->stash->{collection_infinite_pager_stop} = (( $items_count <= $rows_on_page ) and $no_count );
     }
 }
 
@@ -612,17 +612,35 @@ sub paginate_order_collection_rs {
 
     
     my $total_count;
+    my $items = [];
     my $no_count = $self->dont_count_collection_total($c);
     if ( !$no_count ) {
         $total_count = int($item_rs->count);
+        $item_rs = $item_rs->search(undef, {
+            page => $page,
+            rows => $rows,
+        });
+        $items = [ $item_rs->all ];
+    } else {
+        #extra row is used as indicator if we need next page link in infinite paging
+        my $count_item_rs = $item_rs->search(undef, {
+            offset => ($page - 1) * $rows, #page numbers start from 1
+            rows => $rows + 1,
+        });
+        $items = [ $count_item_rs->all ];
+        #$item_rs->pager->entries_on_this_page leads to the count query
+        my $item_rs_count = scalar @$items;
+        if ($item_rs_count > $rows) {
+            pop @$items;
+        }
+
+        $item_rs = $item_rs->search(undef, {
+            page => $page,
+            rows => $rows,
+        });
+        $self->define_collection_infinite_pager($c, $item_rs_count, $rows, $no_count);
     }
 
-
-    $item_rs = $item_rs->search(undef, {
-        page => $page,
-        rows => $rows,
-    });
-    $self->define_collection_infinite_pager($c, undef, $item_rs, $rows, $no_count);
 
     if ($order_by && ((my $explicit = ($self->can('order_by_cols') && exists $self->order_by_cols()->{$order_by})) or $item_rs->result_source->has_column($order_by))) {
         my $col = ($explicit ? $self->order_by_cols()->{$order_by} : $item_rs->current_source_alias . '.' . $order_by);
@@ -638,7 +656,7 @@ sub paginate_order_collection_rs {
             $c->log->debug("ordering by $col");
         }
     }
-    return ($total_count, $item_rs);
+    return ($total_count, $item_rs, $items);
 }
 
 sub collection_nav_links {
@@ -653,6 +671,10 @@ sub collection_nav_links {
 
     my @links = (NGCP::Panel::Utils::DataHalLink->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
 
+    #IMPORTANT!
+    #now situation is so that forarray collections, total_count is always known
+    #it may change in case when e.g. kamailio rpc start to return requested info using paging too and we will start to use it
+    #so - in array collections we don't define now collection_infinite_pager_stop, but get total_count from array size.
     if ( (! defined $total_count 
             && ! $c->stash->{collection_infinite_pager_stop} ) 
         || ( defined $total_count && ($total_count / $rows) > $page ) ) {
