@@ -80,7 +80,7 @@ sub GET :Allow {
         my $preference = $self->require_preference($c);
 
         my $cfs = $self->item_rs($c, "managersecretary");
-        (my $total_count, $cfs) = $self->paginate_order_collection($c, $cfs);
+        (my $total_count, $cfs, my $cfs_rows) = $self->paginate_order_collection($c, $cfs);
 
         if ($preference && $preference eq 'internal') {
             my @items = ();
@@ -95,7 +95,7 @@ sub GET :Allow {
 
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $cf ($cfs->all) {
+        for my $cf (@$cfs_rows) {
             try {
                 push @embedded, $self->hal_from_item($c, $cf, $form);
                 push @links, NGCP::Panel::Utils::DataHalLink->new(

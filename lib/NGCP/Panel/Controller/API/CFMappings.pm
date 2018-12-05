@@ -90,9 +90,9 @@ sub GET :Allow {
     {
         my $items = $self->item_rs($c); # items is actually a voip_subscribers
 
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
-        for my $subs ($items->all) {
+        for my $subs (@$items_rows) {
             push @embedded, $self->hal_from_item($c, $subs, "cfmappings");
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,

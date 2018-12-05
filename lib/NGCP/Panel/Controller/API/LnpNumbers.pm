@@ -123,13 +123,13 @@ sub GET :Allow {
             $c->request->params->{'actual'},
             $c->request->params->{'number'});
         #my $t1 = time;
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
         #my $t2 = time; print(($t2 - $t1) . "secs\n"); $t1 = time;
         #my @test = $items->all;
         #$t2 = time; print("page: " . ($t2 - $t1) . "secs\n"); $t1 = time;
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
+        for my $item (@$items_rows) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
