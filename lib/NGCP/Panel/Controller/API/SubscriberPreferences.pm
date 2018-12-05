@@ -90,7 +90,7 @@ sub GET :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $subscribers_rs = $self->item_rs($c, "subscribers");
-        (my $total_count, $subscribers_rs) = $self->paginate_order_collection($c, $subscribers_rs);
+        (my $total_count, $subscribers_rs, my $subscribers_rows) = $self->paginate_order_collection($c, $subscribers_rs);
         my $subscribers = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
             rs => $subscribers_rs,
             contract_id_field => 'contract_id');          
