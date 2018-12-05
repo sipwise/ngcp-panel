@@ -71,10 +71,10 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $profiles = $self->item_rs($c);
-        (my $total_count, $profiles) = $self->paginate_order_collection($c, $profiles);
+        (my $total_count, $profiles, my $profiles_rows) = $self->paginate_order_collection($c, $profiles);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $profile ($profiles->all) {
+        for my $profile (@$profiles_rows) {
             push @embedded, $self->hal_from_profile($c, $profile, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
