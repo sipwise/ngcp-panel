@@ -61,10 +61,10 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $resellers = $self->item_rs($c);
-        (my $total_count, $resellers) = $self->paginate_order_collection($c, $resellers);
+        (my $total_count, $resellers, my $resellers_rows) = $self->paginate_order_collection($c, $resellers);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $reseller ($resellers->all) {
+        for my $reseller (@$resellers_rows) {
             push @embedded, $self->hal_from_reseller($c, $reseller, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,

@@ -313,13 +313,13 @@ sub GET :Allow {
         last unless $owner;
         $c->stash(owner => $owner); # for query_param: direction
         my $items = $self->item_rs($c);
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         my $href_data = $owner->{subscriber} ?
             "subscriber_id=".$owner->{subscriber}->id :
             "customer_id=".$owner->{customer}->id;
-        for my $item ($items->all) {
+        for my $item (@$items_rows) {
             push @embedded, $self->hal_from_item($c, $item, $form, { 'owner' => $owner });
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,

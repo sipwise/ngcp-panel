@@ -232,10 +232,10 @@ sub handle_api_journals_get {
         last unless $controller->valid_id($c, $item_id);
 
         my $journals = get_journal_rs($controller,$c,$item_id);
-        (my $total_count, $journals) = $controller->paginate_order_collection($c,$journals);
+        (my $total_count, $journals, my $journals_rows ) = $controller->paginate_order_collection($c,$journals);
 
         my (@embedded, @links);
-        for my $journal($journals->all) {
+        for my $journal(@$journals_rows) {
             my $hal = hal_from_journal($controller,$c,$journal);
             $hal->_forcearray(1);
             push @embedded,$hal;
