@@ -159,7 +159,7 @@ sub GET :Allow {
     {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $customers_rs = $self->item_rs($c,$now);
-        (my $total_count, $customers_rs) = $self->paginate_order_collection($c, $customers_rs);
+        (my $total_count, $customers_rs, my $customers_rows) = $self->paginate_order_collection($c, $customers_rs);
         my $customers = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
             rs => $customers_rs,
             contract_id_field => 'id');

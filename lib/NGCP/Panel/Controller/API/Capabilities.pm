@@ -54,7 +54,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $capabilities = $self->item_rs($c);
-        (my $total_count, $capabilities) = $self->paginate_order_collection($c, $capabilities);
+        (my $total_count, $capabilities, my $capabilities_rows) = $self->paginate_order_collection($c, $capabilities);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $cap (@{ $capabilities }) {
