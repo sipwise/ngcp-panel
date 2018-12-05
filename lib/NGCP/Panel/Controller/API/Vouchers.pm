@@ -95,10 +95,10 @@ sub GET :Allow {
         my $items = $self->item_rs($c);
         #todo - is it really necessary? move to item_rs?
         $items = $items->search_rs({}, {prefetch => ['reseller']});
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
+        for my $item (@$items_rows) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,

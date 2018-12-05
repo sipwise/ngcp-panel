@@ -129,10 +129,10 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $items = $self->item_rs($c);
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
+        for my $item (@$items_rows) {
             my $hal = $self->hal_from_item($c, $item, $form);
             $hal->_forcearray(1);
             push @embedded,$hal;

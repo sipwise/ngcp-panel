@@ -97,10 +97,10 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $domains = $self->item_rs($c);
-        (my $total_count, $domains) = $self->paginate_order_collection($c, $domains);
+        (my $total_count, $domains, my $domains_rows) = $self->paginate_order_collection($c, $domains);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $domain ($domains->all) {
+        for my $domain (@$domains_rows) {
             push @embedded, $self->hal_from_item($c, $domain, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,

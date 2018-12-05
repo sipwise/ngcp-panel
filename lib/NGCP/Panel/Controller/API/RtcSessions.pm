@@ -73,9 +73,9 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $subscribers = $self->item_rs($c);
-        (my $total_count, $subscribers) = $self->paginate_order_collection($c, $subscribers);
+        (my $total_count, $subscribers, my $subscribers_rows) = $self->paginate_order_collection($c, $subscribers);
         my (@embedded, @links);
-        for my $subscriber ($subscribers->all) {
+        for my $subscriber (@$subscribers_rows) {
             my $hal = $self->hal_from_item($c, $subscriber);
             next unless $hal;
             push @embedded, $hal;

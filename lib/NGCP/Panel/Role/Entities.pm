@@ -60,11 +60,10 @@ sub get {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $items = $self->get_list($c);
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my ($form) = $self->get_form($c);
-        my @items = 'ARRAY' eq ref $items ? @$items : $items->all;
-        for my $item (@items) {
+        for my $item (@$items_rows) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
