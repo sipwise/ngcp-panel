@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_72b95c2e",
+        "filename": "lib/NGCP/Panel/Controller/API/SpeedDials.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-07T14:00:10Z",
+      "side": 1,
+      "message": "typo ?",
+      "range": {
+        "startLine": 67,
+        "startChar": 40,
+        "endLine": 67,
+        "endChar": 43
+      },
+      "revId": "b912d7bea45c6d10b1f063d0a2034435ff0232f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
