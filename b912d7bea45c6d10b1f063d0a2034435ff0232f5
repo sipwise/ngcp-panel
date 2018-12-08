@@ -22,6 +22,30 @@
       "revId": "b912d7bea45c6d10b1f063d0a2034435ff0232f5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_b2a3449e",
+        "filename": "lib/NGCP/Panel/Controller/API/SpeedDials.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-08T20:56:54Z",
+      "side": 1,
+      "message": "No, this is intentionally. \n\nYou see, we took all the variables in parentheses, and thus we can declare them inside parentheses, like we did before this changes for $total_count. We didn\u0027t declare these *_rows before, so do it here. This code runs and works well.",
+      "parentUuid": "1adf8d57_72b95c2e",
+      "range": {
+        "startLine": 67,
+        "startChar": 40,
+        "endLine": 67,
+        "endChar": 43
+      },
+      "revId": "b912d7bea45c6d10b1f063d0a2034435ff0232f5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
