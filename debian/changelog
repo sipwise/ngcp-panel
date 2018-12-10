@@ -1,3 +1,21 @@
+ngcp-panel (7.0.2.0+0~mr7.0.2.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [40d2b49] TT#45484 Allow api controllers to control errors and return code
+  * [0830b3f] TT#45484 Add "force_delete" option to callrecordings
+  * [4d10d80] TT#47261 Remove occasional time_set_id relation from peering_rule
+  * [bbafbe9] TT#47261 Fix timeset linking to voip_peer_group
+  * [2a7867b] TT#47024 Use config to document allowed Accept header values
+  * [a7aed31] TT#45960 Disable timesets API for 7.0
+  * [1f35735] TT#45960 disable timesets web ui in 7.0
+
+  [ Kirill Solomko ]
+  * [1cf2f94] TT#47587 fix get_subscriber_location_rs
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 Dec 2018 22:09:23 +0100
+
 ngcp-panel (7.0.1.0+0~mr7.0.1.0) unstable; urgency=medium
 
   [ Rene Krenn ]
