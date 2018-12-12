@@ -98,12 +98,6 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    $c->stash->{zone_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'zone', search => 1, title => $c->loc('Zone') },
-        { name => 'detail', search => 1, title => $c->loc('Zone Details') },
-    ]);
-
     my $res = $c->stash->{profiles_rs}->find($profile_id);
     unless(defined($res)) {
         NGCP::Panel::Utils::Message::error(
@@ -386,7 +380,7 @@ sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
     $c->stash(fee => {$res->get_columns}); #get_columns should not be used
-    $c->stash->{fee}->{'billing_zone.id'} = $res->billing_zone->id
+    $c->stash->{fee}->{'billing_zone_id'} = $res->billing_zone->id
         if (defined $res->billing_zone);
     $c->stash(fee_result => $res);
 }
@@ -526,7 +520,6 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     $params->{billing_zone}{id} = delete $params->{billing_zone_id};
     $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingFee", $c);
-    $form->field('billing_zone')->field('id')->ajax_src('../../zones/ajax');
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -581,9 +574,16 @@ sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
 sub zones_list :Chained('base') :PathPart('zones') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
+    $c->stash->{zone_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'zone', search => 1, title => $c->loc('Zone') },
+        { name => 'detail', search => 1, title => $c->loc('Zone Details') },
+    ]);
+
     $c->stash( zones_root_uri =>
         $c->uri_for_action('/billing/zones', [$c->req->captures->[0]])
     );
+
     $c->stash(template => 'billing/zones.tt');
 }
 
