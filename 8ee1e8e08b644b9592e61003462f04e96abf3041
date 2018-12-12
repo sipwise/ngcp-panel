@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_d5f8f57e",
+        "filename": "lib/NGCP/Panel/Controller/Billing.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-12T17:31:13Z",
+      "side": 0,
+      "message": "This is correct path, when we want to dit fee:\n\nhttps://127.0.0.1:1443/billing/347/fees/77/edit?back\u003dhttps%3A%2F%2F127.0.0.1%3A1443%2Fbilling%2F347%2Ffees\n\n../../zones/ajax means\n\nhttps://127.0.0.1:1443/billing/347/zones/ajax, that is correct.\n\nFor Javier this path was broken, because he met an error, loaded edit form from other location (I didn\u0027t reproduce). This path ../../zones/ajax become incorrect, and as far as we cache form - tayed incorrect.\n\nI didn\u0027t really reproduce, but we met similar issues with cached forms already. Really, I think, the best solution here may be set path from action here. And don\u0027t forget to reset it considering every place where this form is used.",
+      "range": {
+        "startLine": 529,
+        "startChar": 57,
+        "endLine": 529,
+        "endChar": 63
+      },
+      "revId": "8ee1e8e08b644b9592e61003462f04e96abf3041",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
