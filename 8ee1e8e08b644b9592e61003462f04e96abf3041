@@ -22,6 +22,30 @@
       "revId": "8ee1e8e08b644b9592e61003462f04e96abf3041",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_d53fd523",
+        "filename": "lib/NGCP/Panel/Controller/Billing.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-12T17:59:53Z",
+      "side": 0,
+      "message": "I tested both creation, edit, creation after edit, creation after error, edit after error\n\n    #or we can use [$c-\u003ereq-\u003ecaptures-\u003e[0]]\n    $form-\u003efield(\u0027billing_zone\u0027)-\u003efield(\u0027id\u0027)-\u003eajax_src(\n        $c-\u003euri_for_action(\u0027/billing/zones_ajax\u0027, [$c-\u003estash-\u003e{profile}-\u003e{id}] )-\u003eas_string \n    );\n\nBut I need to say that even with original (old) code I couldn\u0027t reproduce wrong behavior from Javier - form after error showed successfully. \n\nBut I definitely got ajax error with suggested fix in use case:\n\ncreate fee using form\nedit fee using form",
+      "parentUuid": "1adf8d57_d5f8f57e",
+      "range": {
+        "startLine": 529,
+        "startChar": 57,
+        "endLine": 529,
+        "endChar": 63
+      },
+      "revId": "8ee1e8e08b644b9592e61003462f04e96abf3041",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
