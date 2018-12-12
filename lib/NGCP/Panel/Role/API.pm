@@ -705,9 +705,37 @@ sub paginate_order_collection_rs {
     my($page,$rows,$order_by,$direction) = @$params{qw/page rows order_by direction/};
 
     my $result_class = $item_rs->result_class();
-
-    my $total_count;
     my $items = [];
+
+    if ($order_by) {
+        my $explicit_order_col_spec;
+        if ($self->can('order_by_cols')) {
+            my($explicit_order_cols,$explicit_order_cols_params) = $self->order_by_cols($c);
+            $explicit_order_col_spec = $explicit_order_cols->{$order_by};
+            $explicit_order_cols_params //= {};
+            if ( exists $explicit_order_cols_params->{$order_by}->{join} ) {
+                $item_rs = $item_rs->search(undef, {
+                    join => $explicit_order_cols_params->{$order_by}->{join},
+                });
+            }
+        }
+        if ($explicit_order_col_spec || 
+            ( $item_rs->result_source->can('has_column') && $item_rs->result_source->has_column($order_by) )) {
+            my $col = $explicit_order_col_spec || $item_rs->current_source_alias . '.' . $order_by;
+            if (lc($direction) eq 'desc') {
+                $item_rs = $item_rs->search(undef, {
+                    order_by => {-desc => $col},
+                });
+                $c->log->debug("ordering by $col DESC");
+            } else {
+                $item_rs = $item_rs->search(undef, {
+                    order_by => "$col",
+                });
+                $c->log->debug("ordering by $col");
+            }
+        }
+    }
+    my $total_count;
     my $no_count = $self->dont_count_collection_total($c);
     if ( !$no_count ) {
         $total_count = int($item_rs->count);
@@ -735,33 +763,6 @@ sub paginate_order_collection_rs {
         $self->define_collection_infinite_pager($c, $item_rs_count, $rows, $no_count);
     }
 
-    if ($order_by) {
-        my $explicit_order_col_spec;
-        if ($self->can('order_by_cols')) {
-            my($explicit_order_cols,$explicit_order_cols_params) = $self->order_by_cols($c);
-            $explicit_order_col_spec = $explicit_order_cols->{$order_by};
-            $explicit_order_cols_params //= {};
-            if ( exists $explicit_order_cols_params->{$order_by}->{join} ) {
-                $item_rs = $item_rs->search(undef, {
-                    join => $explicit_order_cols_params->{$order_by}->{join},
-                });
-            }
-        }
-        if ($explicit_order_col_spec || $item_rs->result_source->has_column($order_by)) {
-            my $col = $explicit_order_col_spec || $item_rs->current_source_alias . '.' . $order_by;
-            if (lc($direction) eq 'desc') {
-                $item_rs = $item_rs->search(undef, {
-                    order_by => {-desc => $col},
-                });
-                $c->log->debug("ordering by $col DESC");
-            } else {
-                $item_rs = $item_rs->search(undef, {
-                    order_by => "$col",
-                });
-                $c->log->debug("ordering by $col");
-            }
-        }
-    }
     my $result_class_after = $item_rs->result_class();
     if($result_class ne $result_class_after){
         $item_rs->result_class($result_class);
