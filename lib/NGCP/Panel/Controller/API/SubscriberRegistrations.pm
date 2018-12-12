@@ -60,10 +60,8 @@ sub order_by_cols {
         'contact' => 'contact',
         'expires' => 'expires',
         'id'      => 'id',
-        'nat'     => 'nat',
         'path'    => 'path',
         'q'       => 'q',
-        'subscriber_id' => 'subscriber_id',
         'user_agent'    => 'user_agent',
     };
     return $cols;
