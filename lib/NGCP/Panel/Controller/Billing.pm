@@ -526,7 +526,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     $params->{billing_zone}{id} = delete $params->{billing_zone_id};
     $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingFee", $c);
-    $form->field('billing_zone')->field('id')->ajax_src('../../zones/ajax');
+    $form->field('billing_zone')->field('id')->ajax_src('../zones/ajax');
     $form->process(
         posted => $posted,
         params => $c->request->params,
