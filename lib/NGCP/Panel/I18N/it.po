@@ -1300,11 +1300,23 @@ msgstr "Storico Chiamate"
 msgid "Callthrough CLIs"
 msgstr "DISA/Callthrough CLIs"
 
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Can not close openvpn connection."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Can not enable openvpn."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Can not open openvpn connection."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr "Impossibile creare un gruppo PBX senza un abbonato pilota."
 
-#: share/layout/body.tt
+#: share/layout/body.tt share/templates/administrator/openvpn_wrapper.tt
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -5442,6 +5454,34 @@ msgstr "Offline"
 #: share/templates/notfound_page.tt
 msgid "Oops!"
 msgstr "Oops!"
+
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Openvpn connection closed."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Openvpn connection is already closed."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Openvpn connection is already opened."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Openvpn connection open."
+msgstr ""
+
+#: share/templates/administrator/openvpn_wrapper.tt
+msgid "Openvpn details"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Openvpn service is not avaialbe on the system."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Admin.pm
+msgid "Openvpn service is not enabled or host role is not allowed."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Opus mono bitrate"
