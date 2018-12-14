@@ -298,7 +298,7 @@ __END__
 
 =head1 NAME
 
-create_testusers.pl
+ngcp-create-testusers
 
 =head1 DESCRIPTION
 
@@ -306,7 +306,7 @@ Optimized batch-creation for test customers/subscribers
 
 =head1 SYNOPSIS
 
-create_testusers.pl [options]
+ngcp-create-testusers [options]
 
 Options:
 
