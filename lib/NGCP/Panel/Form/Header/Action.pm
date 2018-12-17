@@ -126,7 +126,8 @@ sub update_fields {
     my ($self) = @_;
 
     my $c = $self->ctx;
-    return unless($c);
+    return unless $c;
+    return unless $c->stash->{set_result};
 
     #if ($c->stash->{create_flag} || $c->stash->{edit_flag}) {
         my $rwr_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets')->search({

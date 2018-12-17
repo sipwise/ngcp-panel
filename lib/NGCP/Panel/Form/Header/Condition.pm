@@ -178,7 +178,8 @@ sub options_rwr_set {
     my ($self, $field) = @_;
 
     my $c = $self->ctx;
-    return unless($c);
+    return unless $c;
+    return unless $c->stash->{set_result};
 
     my $rwr_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets')->search({
         reseller_id => $c->stash->{set_result}->reseller_id,
