@@ -255,11 +255,13 @@ has_field 'bootstrap_method' => (
         { label => 'Polycom', value => 'redirect_polycom' },
         { label => 'Snom', value => 'redirect_snom' },
         { label => 'Grandstream', value => 'redirect_grandstream' },
+        { label => 'Sipwise Redirect', value => 'redirect_sipwise' },
+        { label => 'Sipwise Profile', value => 'profile_sipwise' },
     ],
     default => 'http',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom, redirect_grandstream.'],
+        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom, redirect_grandstream, redirect_sipwise, profile_sipwise.'],
         javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
     },
 );
