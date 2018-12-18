@@ -104,6 +104,13 @@ sub get_server_cert {
     return $cert_file->slurp;
 }
 
+sub get_server_ca_cert {
+    my ($self, $c) = @_;
+
+    my $cert_file = Path::Tiny->new($c->config->{ssl}->{server_cacertfile});
+    return $cert_file->slurp;
+}
+
 sub get_provisioning_server_cert {
     my ($self, $c) = @_;
 
