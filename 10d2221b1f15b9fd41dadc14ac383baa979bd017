@@ -142,6 +142,29 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_954a6882",
+        "filename": "lib/NGCP/Panel/Form/Header/Condition.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T01:08:24Z",
+      "side": 1,
+      "message": "these changes don\u0027t look as related to api. As for me it is ok, but maybe you would prefer to keep them in ui commit.",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 182,
+        "endChar": 42
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_f5740cd0",
         "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
         "patchSetId": 2
