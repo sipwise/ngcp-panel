@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_b5a7a44e",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleConditionsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T00:38:28Z",
+      "side": 1,
+      "message": "Or everything will be done by deletion cascade?",
+      "parentUuid": "1adf8d57_f5ad2c32",
+      "range": {
+        "startLine": 18,
+        "startChar": 42,
+        "endLine": 18,
+        "endChar": 48
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_55b6408b",
         "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
         "patchSetId": 2
