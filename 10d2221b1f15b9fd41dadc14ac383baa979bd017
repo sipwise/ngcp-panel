@@ -142,6 +142,29 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_f5740cd0",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T01:04:29Z",
+      "side": 1,
+      "message": "these two methods can be omitted",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 1
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_55b6408b",
         "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
         "patchSetId": 2
@@ -158,6 +181,29 @@
         "startChar": 0,
         "endLine": 160,
         "endChar": 5
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_d5811091",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T01:04:29Z",
+      "side": 1,
+      "message": "Wasn\u0027t there possibility to separate some common with UI part and move it somewhere to utils? Don\u0027t you think that in future some fix in logic may be lost here or in ui?",
+      "range": {
+        "startLine": 163,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 36
       },
       "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
