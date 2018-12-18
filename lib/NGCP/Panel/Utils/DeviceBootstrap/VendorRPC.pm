@@ -38,6 +38,23 @@ has 'unregister_content' => (
     accessor => '_unregister_content',
 );
 
+has '_ua' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+
+        my $cfg = $self->rpc_server_params;
+
+        my $ua = LWP::UserAgent->new(keep_alive => 1);
+        $ua->ssl_opts(
+            verify_hostname => 0,
+            SSL_verify_mode => 0,
+        );
+        return $ua;
+    }
+);
+
 sub redirect_server_call{
     my ($self, $action) = @_;
     my $c = $self->params->{c};
@@ -67,12 +84,7 @@ sub rpc_https_call{
     eval {
         local $SIG{ALRM} = sub { die "Connection timeout\n" };
         alarm(25);
-        my $ua = LWP::UserAgent->new;
-        $ua->credentials($cfg->{host}.':'.$cfg->{port}, $cfg->{realm} // '', @$cfg{qw/user password/});
-        $ua->ssl_opts(
-            verify_hostname => 0,
-            SSL_verify_mode => 0,
-        );
+        my $ua = $self->_ua;
         $cfg->{port} //= '';
         my $uri = $cfg->{proto}.'://'.$cfg->{host}.($cfg->{port} ? ':' : '').$cfg->{port}.$cfg->{path};
         my $request = POST $uri,
@@ -147,6 +159,18 @@ sub get_basic_authorization{
     return { 'Authorization' => 'Basic '.$authorization };
 }
 
+sub get_config_uri{
+    my ($self) = @_;
+    my $uri = $self->params->{redirect_uri};
+    my $uri_params = $self->params->{redirect_params}->{sync_params} || '';
+    if(!$uri){
+        my $cfg = $self->config_uri_conf();
+        $uri = "$cfg->{schema}://$cfg->{host}:$cfg->{port}/device/autoprov/config/";
+    }
+    $uri .= $uri_params;
+    return $self->process_bootstrap_uri($uri);
+}
+
 sub get_bootstrap_uri{
     my ($self) = @_;
     my $uri = $self->params->{redirect_uri};
@@ -192,6 +216,17 @@ sub bootstrap_uri_conf{
         schema => 'http', # for bootstrapping, we always use http
         host => $c->config->{deviceprovisioning}->{host} // $c->req->uri->host,
         port => $c->config->{deviceprovisioning}->{bootstrap_port} // 1445,
+    };
+    return $cfg;
+}
+
+sub config_uri_conf{
+    my ($self) = @_;
+    my $c = $self->params->{c};
+    my $cfg = {
+        schema => $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http',
+        host => $c->config->{deviceprovisioning}->{host} // $c->req->uri->host,
+        port => $c->config->{deviceprovisioning}->{port} // 1444,
     };
     return $cfg;
 }
