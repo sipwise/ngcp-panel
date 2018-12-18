@@ -1610,6 +1610,8 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                     $c, 'register', $fdev);
                 unless($err) {
                     $err = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
+                } else {
+                    die $err;
                 }
 
             });
