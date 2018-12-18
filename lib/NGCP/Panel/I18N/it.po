@@ -519,6 +519,14 @@ msgstr "Amministratori"
 msgid "Advice of charge type"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Alert-Info Type"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Alert-Info URL"
+msgstr ""
+
 #: share/templates/subscriber/master.tt
 msgid "Alias Numbers"
 msgstr "Numeri Alias"
@@ -4123,6 +4131,12 @@ msgid ""
 msgstr ""
 "Se settato, sarà riprodotto come numero della casella vocale. Altrimenti "
 "sarà riprodotto il numero della preferenza \"cli\"."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"If the Alert-Info Type is set to \"url\", then specify a URL to a ring tone "
+"file (e.g. a WAV file) here"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -8526,6 +8540,12 @@ msgid ""
 msgstr ""
 "Se impostato su true, viena usato il link ottico al posto della porta ISDN. "
 "Questo avrà effetto solo nelle modalità SS7 o ISDN."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Whether to send a specific Alert-Info to the called party to control the "
+"ring tone"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Which transport protocol (e.g. RTP, SRTP, etc) to use"

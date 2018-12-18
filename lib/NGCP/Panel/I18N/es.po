@@ -457,6 +457,14 @@ msgstr "Administradores"
 msgid "Advice of charge type"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Alert-Info Type"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Alert-Info URL"
+msgstr ""
+
 #: share/templates/subscriber/master.tt
 msgid "Alias Numbers"
 msgstr "Alias Numbers"
@@ -4012,6 +4020,12 @@ msgstr ""
 msgid ""
 "If set, will be played as Number of the voicebox owner. Otherwise the number "
 "of the preference \"cli\" is used."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"If the Alert-Info Type is set to \"url\", then specify a URL to a ring tone "
+"file (e.g. a WAV file) here"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8347,6 +8361,12 @@ msgstr ""
 msgid ""
 "When set to true, use the optical link instead of the ISDN ports. This only "
 "has an effect in the SS7 or ISDN mode."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Whether to send a specific Alert-Info to the called party to control the "
+"ring tone"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
