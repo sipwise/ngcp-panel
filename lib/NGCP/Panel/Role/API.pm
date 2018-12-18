@@ -658,6 +658,7 @@ sub paginate_order_collection {
     my($total_count, $item_rs, $items_rows);
     if('ARRAY' eq ref $items){
         ($total_count, $items_rows) = $self->paginate_order_collection_array($c, $items, $params);
+        $item_rs = $items_rows;
     }else{
         ($total_count, $item_rs, $items_rows) = $self->paginate_order_collection_rs($c, $items, $params);
     }
