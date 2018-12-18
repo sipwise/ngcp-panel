@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_75c13ce4",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleConditions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T00:34:52Z",
+      "side": 1,
+      "message": "If creation is",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 37
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_55b6408b",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T00:34:52Z",
+      "side": 1,
+      "message": "By default transaction control is on framework side. If own transaction control is necessary, it should be also set in config:\n\n__PACKAGE__-\u003eset_config({\n    #... other config params\n    own_transaction_control \u003d\u003e { POST \u003d\u003e 1 },\n});",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 5
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
