@@ -38,6 +38,24 @@ has 'unregister_content' => (
     accessor => '_unregister_content',
 );
 
+has '_ua' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+
+        my $cfg = $self->rpc_server_params;
+
+        my $ua = LWP::UserAgent->new(keep_alive => 1);
+        $ua->credentials($cfg->{host}.':'.$cfg->{port}, $cfg->{realm} // '', @$cfg{qw/user password/});
+        $ua->ssl_opts(
+            verify_hostname => 0,
+            SSL_verify_mode => 0,
+        );
+        return $ua;
+    }
+);
+
 sub redirect_server_call{
     my ($self, $action) = @_;
     my $c = $self->params->{c};
@@ -67,12 +85,7 @@ sub rpc_https_call{
     eval {
         local $SIG{ALRM} = sub { die "Connection timeout\n" };
         alarm(25);
-        my $ua = LWP::UserAgent->new;
-        $ua->credentials($cfg->{host}.':'.$cfg->{port}, $cfg->{realm} // '', @$cfg{qw/user password/});
-        $ua->ssl_opts(
-            verify_hostname => 0,
-            SSL_verify_mode => 0,
-        );
+        my $ua = $self->_ua;
         $cfg->{port} //= '';
         my $uri = $cfg->{proto}.'://'.$cfg->{host}.($cfg->{port} ? ':' : '').$cfg->{port}.$cfg->{path};
         my $request = POST $uri,
