@@ -119,6 +119,29 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_357294e6",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleSets.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T00:53:56Z",
+      "side": 1,
+      "message": "maybe it would be better to take item_rs?  if we will apply some restrictions to item_rs, we will keep them safe here too. What do you think?\n\nDefault method is:\nsub create_item {\n    my ($self, $c, $resource, $form, $process_extras) \u003d @_;\n    my $rs \u003d $self-\u003e_item_rs($c);\n    return unless $rs;\n    my $item \u003d $rs-\u003ecreate($resource);\n    return $item;\n}\n\nI think we can extend it to use exception to generate error message. \n\nAnd default \"post\" method creates transaction guard on very top, so If we need transaction control - we need to use own_transactoin_control flag.",
+      "range": {
+        "startLine": 50,
+        "startChar": 19,
+        "endLine": 50,
+        "endChar": 63
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_55b6408b",
         "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
         "patchSetId": 2
