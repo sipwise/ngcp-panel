@@ -82,7 +82,7 @@ sub GET :Allow {
         (my $total_count, $capabilities, my $capabilities_rows) = $self->paginate_order_collection($c, $capabilities);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $cap (@{ $capabilities }) {
+        for my $cap (@{ $capabilities_rows }) {
             push @embedded, $self->hal_from_item($c, $cap, $form);
             push @links, NGCP::Panel::Utils::DataHalLink->new(
                 relation => 'ngcp:'.$self->resource_name,
