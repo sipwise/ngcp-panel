@@ -21,6 +21,9 @@ sub store_and_process_device_model {
     my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $item, $resource);
     my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $item, $resource);
     NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $resource);
+    # TODO: DB errors thrown in the actions below are not caught and
+    # produce a 500 error without any logs, which makes it really=
+    # difficult to find the reason
     if($item){
         $item->update($resource);
         $c->model('DB')->resultset('autoprov_sync')->search_rs({
