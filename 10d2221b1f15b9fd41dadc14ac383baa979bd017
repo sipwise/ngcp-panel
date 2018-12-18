@@ -25,6 +25,53 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_15b1d88f",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleConditions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T00:37:50Z",
+      "side": 1,
+      "message": "Sorry, the note above posted occasionally.",
+      "parentUuid": "1adf8d57_75c13ce4",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 37
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_f5ad2c32",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleConditionsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T00:37:50Z",
+      "side": 1,
+      "message": "Creation method is not just simple creation. Does this api require some special deletion implementation?",
+      "range": {
+        "startLine": 18,
+        "startChar": 42,
+        "endLine": 18,
+        "endChar": 48
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_55b6408b",
         "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
         "patchSetId": 2
