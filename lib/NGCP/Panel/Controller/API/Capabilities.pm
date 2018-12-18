@@ -57,7 +57,7 @@ sub GET :Allow {
         (my $total_count, $capabilities, my $capabilities_rows) = $self->paginate_order_collection($c, $capabilities);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $cap (@{ $capabilities }) {
+        for my $cap (@{ $capabilities_rows }) {
             push @embedded, $self->hal_from_item($c, $cap, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
@@ -83,7 +83,7 @@ sub GET :Allow {
         });
         my $rname = $self->resource_name;
 
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
