@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_18690dbf",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleActionsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-18T09:37:39Z",
+      "side": 1,
+      "message": "good point, not really sure about the journaling part, Rene@ please share your thoughts on this.",
+      "parentUuid": "1adf8d57_75681cf6",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 1
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_75c13ce4",
         "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleConditions.pm",
         "patchSetId": 2
@@ -119,6 +143,54 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_b848b95c",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleConditionsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-18T09:37:39Z",
+      "side": 1,
+      "message": "normally no, it\u0027s all handled by the constraints, means if you delete a Condition all the values from the voip_header_rule_condition_values are also auto removed.",
+      "parentUuid": "1adf8d57_f5ad2c32",
+      "range": {
+        "startLine": 18,
+        "startChar": 42,
+        "endLine": 18,
+        "endChar": 48
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_9874dd9c",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleConditionsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-18T09:37:39Z",
+      "side": 1,
+      "message": "yes",
+      "parentUuid": "1adf8d57_b5a7a44e",
+      "range": {
+        "startLine": 18,
+        "startChar": 42,
+        "endLine": 18,
+        "endChar": 48
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_357294e6",
         "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleSets.pm",
         "patchSetId": 2
@@ -130,6 +202,30 @@
       "writtenOn": "2018-12-18T00:53:56Z",
       "side": 1,
       "message": "maybe it would be better to take item_rs?  if we will apply some restrictions to item_rs, we will keep them safe here too. What do you think?\n\nDefault method is:\nsub create_item {\n    my ($self, $c, $resource, $form, $process_extras) \u003d @_;\n    my $rs \u003d $self-\u003e_item_rs($c);\n    return unless $rs;\n    my $item \u003d $rs-\u003ecreate($resource);\n    return $item;\n}\n\nI think we can extend it to use exception to generate error message. \n\nAnd default \"post\" method creates transaction guard on very top, so If we need transaction control - we need to use own_transactoin_control flag.",
+      "range": {
+        "startLine": 50,
+        "startChar": 19,
+        "endLine": 50,
+        "endChar": 63
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_d86265d8",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleSets.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-18T09:37:39Z",
+      "side": 1,
+      "message": "yeah good idea, I think I can leave create_item() like this for now when we do not have the way to control exceptions, can be done by just using $self-\u003eitem_name in   the base implementation of create_item().\n\nnot sure if item_rs is what we need when creating a new item or possible restrictions that we could apply in there + we avoid possible not needed extra selects.",
+      "parentUuid": "1adf8d57_357294e6",
       "range": {
         "startLine": 50,
         "startChar": 19,
@@ -165,6 +261,30 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_98829d51",
+        "filename": "lib/NGCP/Panel/Form/Header/Condition.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-18T09:37:39Z",
+      "side": 1,
+      "message": "good point will do then",
+      "parentUuid": "1adf8d57_954a6882",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 182,
+        "endChar": 42
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_f5740cd0",
         "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
         "patchSetId": 2
@@ -176,6 +296,30 @@
       "writtenOn": "2018-12-18T01:04:29Z",
       "side": 1,
       "message": "these two methods can be omitted",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 1
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_b85f990d",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-18T09:37:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1adf8d57_f5740cd0",
       "range": {
         "startLine": 18,
         "startChar": 0,
@@ -211,6 +355,30 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_989bbdc9",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-18T09:37:39Z",
+      "side": 1,
+      "message": "ok so it\u0027s better to use own_transaction_control then as the whole \"action\" is guarded, good.",
+      "parentUuid": "1adf8d57_55b6408b",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 5
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_d5811091",
         "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
         "patchSetId": 2
@@ -222,6 +390,30 @@
       "writtenOn": "2018-12-18T01:04:29Z",
       "side": 1,
       "message": "Wasn\u0027t there possibility to separate some common with UI part and move it somewhere to utils? Don\u0027t you think that in future some fix in logic may be lost here or in ui?",
+      "range": {
+        "startLine": 163,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 36
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_b8b6793b",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleConditions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-18T09:37:39Z",
+      "side": 1,
+      "message": "yes, done.",
+      "parentUuid": "1adf8d57_d5811091",
       "range": {
         "startLine": 163,
         "startChar": 0,
