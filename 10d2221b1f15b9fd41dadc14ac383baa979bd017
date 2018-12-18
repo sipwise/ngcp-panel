@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1adf8d57_75681cf6",
+        "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleActionsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-18T00:44:54Z",
+      "side": 1,
+      "message": "Just a note: without adding this api to journaled in /etc/ngcp-config/config.yml these jorunal methods don\u0027t have any effect. If we will have the same configuration in all api\u0027s - we can place it in framework as default, I think, with possibility to customize in API package, if necessary.",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 1
+      },
+      "revId": "10d2221b1f15b9fd41dadc14ac383baa979bd017",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_75c13ce4",
         "filename": "lib/NGCP/Panel/Controller/API/HeaderRuleConditions.pm",
         "patchSetId": 2
