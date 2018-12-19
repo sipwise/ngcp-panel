@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_09ae612e",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 1613,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2018-12-19T15:35:45Z",
+      "side": 1,
+      "message": "We really need to die here, because if the redirect server creation fails, the device is still created in the system (with an error message on the panel), which must be avoided.",
+      "revId": "7dff1da4887f2445d363533e64d3803027e00625",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
