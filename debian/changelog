@@ -1,3 +1,20 @@
+ngcp-panel (7.0.1.2+0~mr7.0.1.2) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [0c2d303] TT#47963 Fix emailtemplates put and patch
+  * [c34c86c] TT#48198 Fix no_count behavior in API.pm
+  * [4c61193] TT#48198 Avoid extra page in no_count mode
+  * [19594b8] TT#48198 Remove differences before items array from pagination
+  * [69f8dee] TT#48198 Use items array from paginations in all api controllers
+  * [2f86df8] TT#47268 Use order_by_cols to avoid item_rs call for api doc gen
+  * [ded3452] TT#47268 Fix getting banned items
+  * [68a32ad] TT#48198 Fix order_by functionality in api
+  * [b9de4e5] TT#49027 Fix capabilities api
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 19 Dec 2018 17:33:01 +0100
+
 ngcp-panel (7.0.1.1+0~mr7.0.1.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
