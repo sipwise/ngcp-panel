@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_64574c03",
+        "filename": "lib/NGCP/Panel/Form/Device/Model.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-19T16:34:42Z",
+      "side": 1,
+      "message": "I saw in cloudpbx-sources that username, password and profile should be specified, but these fields are absent for new bootstrap method.",
+      "parentUuid": "1adf8d57_497229e7",
+      "range": {
+        "startLine": 332,
+        "startChar": 11,
+        "endLine": 332,
+        "endChar": 55
+      },
+      "revId": "7dff1da4887f2445d363533e64d3803027e00625",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_c97e19ae",
         "filename": "lib/NGCP/Panel/Utils/DeviceBootstrap/VendorREST.pm",
         "patchSetId": 6
