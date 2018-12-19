@@ -1166,6 +1166,7 @@ sub check_get2order_by{
                 $self->add_query_params($order_by_query_params);
                 $uri = $self->get_uri_collection_paged($name);
                 $self->get_collection_hal( $name, $uri, 1 );
+                #todo: foreach item in collection - check order of the values
                 $self->QUERY_PARAMS($query_params_old);
             }
         }
