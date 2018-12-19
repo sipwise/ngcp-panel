@@ -39,6 +39,29 @@
       "revId": "7dff1da4887f2445d363533e64d3803027e00625",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_c97e19ae",
+        "filename": "lib/NGCP/Panel/Utils/DeviceBootstrap/VendorREST.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2018-12-19T15:44:16Z",
+      "side": 1,
+      "message": "Indentation seems broken in new files.",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 1
+      },
+      "revId": "7dff1da4887f2445d363533e64d3803027e00625",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
