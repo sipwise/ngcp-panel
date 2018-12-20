@@ -15,7 +15,7 @@ use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
 use HTTP::Status qw(:constants);
-
+use JSON;
 use NGCP::Schema qw//;
 
 #
@@ -26,6 +26,7 @@ __PACKAGE__->config(namespace => '');
 
 sub auto :Private {
     my($self, $c) = @_;
+    $c->log->debug(JSON::to_json($c->request->params));
 
     my $is_api_request = 0;
     $c->log->debug("Path: " . $c->request->path);
