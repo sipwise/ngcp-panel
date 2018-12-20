@@ -107,6 +107,7 @@ __PACKAGE__->config(
     },
 
     'Plugin::Static::Simple' => {
+        logging => 1,
         include_path => [
             '/usr/share/ngcp-panel/static',
             __PACKAGE__->path_to('share', 'static'),
