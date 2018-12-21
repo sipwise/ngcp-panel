@@ -3525,6 +3525,10 @@ msgid "If enabled, set the outbound headers as per peer outbound_* preferences w
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, the media direction attributes (sendrecv, sendonly, recvonly, inactive) from the original SDP will remain unchanged as they were received"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If set and a CF to an outbound number is configured on the subscriber, the selection of the outbound peer is done using the forwarder as caller number."
 msgstr ""
 
@@ -4170,6 +4174,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Lawful Interception"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Leave media direction attributes in SDP unchanged"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/NCOS.pm
