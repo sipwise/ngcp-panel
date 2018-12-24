@@ -505,7 +505,7 @@ sub _set_session_tz_from_row {
     $tz_name =~ s/^localtime$/local/ if $tz_name;
     eval { $c->session->{user_tz} = DateTime::TimeZone->new( name => $tz_name ); };
     if ($@) {
-        $c->log->warning("couldnt set timezone. error in creation probably caused by invalid timezone name. role $role ($identifier) to $tz_name");
+        $c->log->warn("couldnt set timezone. error in creation probably caused by invalid timezone name. role $role ($identifier) to $tz_name");
     } else {
         $c->session->{user_tz_name} = $tz_name;
         $c->log->debug("timezone set for $role ($identifier) to $tz_name");
