@@ -1,0 +1,158 @@
+<script type="text/javascript" src="/js/rrule/rrule-tz.js"></script>
+[% site_config.title = c.loc('Time Set Events') -%]
+<script>
+function dynamicFields(){
+  //remember about after error and edit form cases
+
+  if ($('#repeat\\.freq').val() != 'no') {
+    $('.ngcp-recurrent-control').removeClass('ngcp-control-hidden');
+  } else {
+    $('.ngcp-recurrent-control').addClass('ngcp-control-hidden');
+  }
+  //we need to hide again everything that we showed according to rrule on
+  toggleRepeatStopControl();
+  toggleLabeledFields();
+}
+
+function toggleEndControl (id) {
+  var id_jquery = id;
+  id_jquery = id_jquery.replace(/\./g,'\\.');
+  var id_label_jquery = id_jquery + '\\.label';
+  var id_control_jquery = id_jquery + '\\.label\\.control';
+  var endSwitch = $('#' + id_jquery);
+  var endSwitchLabel = $('#' + id_label_jquery);
+  var endSwitchControl = $('#' + id_control_jquery);
+  var endSwitchLabelText;
+  var endSwitchControlText;
+  if (endSwitch.val() == '0') {
+    $('.ngcp-end-control').addClass('ngcp-control-hidden');
+    endSwitchLabel.removeClass('ngcp-control-hidden');
+    endSwitchLabelText = endSwitchLabel.data('toggle-off');
+    endSwitchControlText = endSwitchControl.data('toggle-off');
+  } else {
+    $('.ngcp-end-control').removeClass('ngcp-control-hidden');
+    endSwitchLabel.addClass('ngcp-control-hidden');
+    endSwitchLabelText = endSwitchLabel.data('toggle-on');
+    endSwitchControlText = endSwitchControl.data('toggle-on');
+  }
+  endSwitchLabel.html(endSwitchLabelText);
+  endSwitchControl.html(endSwitchControlText);
+}
+
+function toggleEndField(){
+  var endSwitch = $('#end\\.switch');
+  var val = ((endSwitch.val() == '0') ? '1' : '0');
+  endSwitch.val(val);
+  toggleEndControl('end.switch');
+}
+
+function toggleRepeatStopControl () {
+  var stop_control_on = $('#repeat_stop\\.switch').val();
+  $("[class*='ngcp-repeatstop-']").addClass('ngcp-control-hidden');
+  $('.ngcp-repeatstop-'+stop_control_on).removeClass('ngcp-control-hidden');
+}
+
+function frequencySuffix(){
+  //remember about after error and edit form cases
+  var intervalField = $('#repeat\\.interval');
+  var suffix_regexp = /s$/;
+  if (intervalField.val() > 1) {
+    $("#repeat\\.freq option").each(function() {
+      if (!suffix_regexp.test($(this).text())) {
+        $(this).text($(this).text() + 's');
+      }
+    });
+  } else {
+    $("#repeat\\.freq option").each(function() {
+      if (suffix_regexp.test($(this).text())) {
+        $(this).text($(this).text().replace(suffix_regexp, ''));
+      }
+    });
+  }
+}
+
+function toggleLabeledField(field_name) {
+  var field_name_jquery = field_name;
+  field_name_jquery = field_name_jquery.replace(/\./g,'\\.');
+  var field = $("[name*='" + field_name_jquery + "']").closest( "div.controls" );            
+  if (field.is(":visible")) {
+    field.hide();
+  } else {
+    field.show();
+  }
+}
+
+function toggleLabeledFields() {
+  $(".ngcp-label-field-switch").each(function() {
+    var field_name_jquery = $(this).data('field');
+    field_name_jquery = field_name_jquery.replace(/\./g,'\\.');
+    var field = $("[name*='" + field_name_jquery + "']").closest( "div.controls" );     
+    if (!field.val() && field.is(":visible")) {
+      field.hide();
+    } else if (field.val() && !field.is(":visible")) {
+      field.show();
+    }
+  });
+}
+
+$( document ).ready(function() {
+    frequencySuffix();
+    dynamicFields();
+    toggleEndControl('end.switch');
+});
+</script>
+<style>
+.ngcp-60-checkboxes label.checkbox,.ngcp-32-checkboxes label.checkbox, .ngcp-7-checkboxes label.checkbox, .ngcp-inline-control, .ngcp-inline-control .control-label, .ngcp-inline-control .controls, .ngcp-inline-control input{
+    display: inline-block;
+    *display: inline;
+}
+.ngcp-60-checkboxes label.checkbox {
+    width: 25px;
+}
+.ngcp-32-checkboxes label.checkbox {
+    width: 20px;
+}
+.ngcp-7-checkboxes label.checkbox {
+    width: 35px;
+}
+.ngcp-inline-control .control-label, .ngcp-inline-control .controls{
+    margin-left: 5px;
+    padding-left: 5px;
+    text-align: left;
+}
+.ngcp-inline-control .control-label{
+    width: 30px;
+}
+
+.ngcp-control-hidden, .control-label.ngcp-control-hidden{
+    display: none;
+}
+</style>
+
+[%
+    helper.name = c.loc('Time Set Events');
+    helper.identifier = 'event';
+    helper.messages = messages;
+    helper.dt_columns = event_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action( "/timeset/event_ajax", [c.req.captures.0] );
+    helper.custom_renderers => { ical => 'function ( data, type, full ) { const rule = new RRule(data);return data.toText(); }'};
+    
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/timeset/'+full.id+'/event/'+full.event_id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/timeset/'+full.id+'/event/'+full.event_id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Event'), uri = c.uri_for_action('/timeset/event_create', [c.req.captures.0] ), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
