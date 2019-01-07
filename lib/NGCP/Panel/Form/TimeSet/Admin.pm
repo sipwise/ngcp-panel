@@ -15,7 +15,7 @@ has_field 'reseller' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id reseller name times times_add/],
+    render_list => [qw/id reseller name/],
 );
 
 1;

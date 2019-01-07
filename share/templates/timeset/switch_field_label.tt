@@ -1,0 +1,1 @@
+<div class="sw_actions pull-right controls" style="width: 120px;"><a id="[%vars.field.full_name%].label" class="btn btn-small btn-primary ngcp-label-field-switch" data-field="[%vars.field.full_name%]" style="visibility:visible;">[%c.loc(vars.field.label)%]</a> </div>
