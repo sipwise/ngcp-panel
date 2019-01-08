@@ -150,6 +150,8 @@ sub get_preference_existen_value{
     my $res;
     if($preference->{name}=~/^rewrite_rule_set$/){
         $res = get_fake_data_created_or_data('rewriterulesets','name');
+    }elsif($preference->{name}=~/^header_rule_set$/){
+        $res = get_fake_data_created_or_data('headerrulesets','name');
     }elsif($preference->{name}=~/^(adm_)?(cf_)?ncos$/){
         $res = get_fake_data_created_or_data('ncoslevels','level');
     }elsif($preference->{name}=~/^(contract_)?sound_set$/){
