@@ -15,6 +15,10 @@ $ua = Test::Collection->new()->ua();
 
 # OPTIONS tests
 {
+    # disabled
+    ok(1, "skip OPTIONS test in all-links");
+    last;
+
     diag("server is $uri");
     # test some uri params
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/?foo=bar&bla');
