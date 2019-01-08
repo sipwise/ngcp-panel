@@ -116,7 +116,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Domain.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
-#: lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Controller/Header.pm lib/NGCP/Panel/Controller/Invoice.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/MaliciousCall.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Network.pm
@@ -354,6 +354,12 @@ msgstr "Zugriffsbeschränkungen"
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Account balance successfully changed!"
 msgstr "Konto-Saldo erfolgreich geändert!"
+
+#: share/templates/header/actions_edit.tt
+#: share/templates/header/conditions_list.tt
+#: share/templates/header/rules_list.tt
+msgid "Actions"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 #: lib/NGCP/Panel/Controller/Reseller.pm
@@ -656,6 +662,12 @@ msgstr "Sind Sie sicher?"
 msgid "Area Code"
 msgstr "Ortsvorwahl"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Assign a \"Header Rule Set\" to manipulate SIP headers based on dynamic "
+"conditions"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "Attach WAV in Email"
 msgstr "WAV in Email anhängen"
@@ -726,12 +738,15 @@ msgstr "BLF Taste"
 #: share/templates/device/profilepreferences.tt
 #: share/templates/domain/preferences.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
-#: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
-#: share/templates/lnp/list.tt share/templates/package/details.tt
-#: share/templates/peering/preferences.tt share/templates/reseller/branding.tt
-#: share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt
-#: share/templates/security/list.tt share/templates/sound/handles_list.tt
-#: share/templates/statistics/list.tt
+#: share/templates/header/actions_edit.tt
+#: share/templates/header/actions_list.tt
+#: share/templates/header/conditions_list.tt
+#: share/templates/header/rules_list.tt share/templates/helpers/datatables.tt
+#: share/templates/invoice/template.tt share/templates/lnp/list.tt
+#: share/templates/package/details.tt share/templates/peering/preferences.tt
+#: share/templates/reseller/branding.tt share/templates/reseller/details.tt
+#: share/templates/rewrite/rules_list.tt share/templates/security/list.tt
+#: share/templates/sound/handles_list.tt share/templates/statistics/list.tt
 #: share/templates/statistics/supportstatus.tt
 #: share/templates/statistics/versions.tt
 #: share/templates/subprofile/preferences.tt
@@ -1358,6 +1373,10 @@ msgstr "Klicke und Ziehe auf den Graphen, um individuell zu zoomen."
 msgid "Clone"
 msgstr "Klonen"
 
+#: share/templates/header/set_list.tt
+msgid "Cloned Header Rule Set"
+msgstr ""
+
 #: share/templates/invoice/template_editor_form.tt
 #: share/templates/subscriber/call_details_wrapper.tt
 msgid "Close"
@@ -1415,6 +1434,11 @@ msgstr ""
 #: share/templates/customer/details.tt
 msgid "Company"
 msgstr "Firma"
+
+#: share/templates/header/actions_edit.tt
+#: share/templates/header/actions_list.tt share/templates/header/rules_list.tt
+msgid "Conditions"
+msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "Config"
@@ -1668,6 +1692,22 @@ msgstr ""
 #: share/templates/billing/fees.tt
 msgid "Create Fee Entry"
 msgstr "Neuer Verrechnungs-Eintrag"
+
+#: share/templates/header/actions_edit.tt share/templates/header/rules_list.tt
+msgid "Create Header Rule"
+msgstr ""
+
+#: share/templates/header/actions_list.tt
+msgid "Create Header Rule Action"
+msgstr ""
+
+#: share/templates/header/conditions_list.tt
+msgid "Create Header Rule Condition"
+msgstr ""
+
+#: share/templates/header/set_list.tt
+msgid "Create Header Rule Set"
+msgstr ""
 
 #: share/templates/peering/servers_rules.tt
 msgid "Create Inbound Peering Rule"
@@ -1999,6 +2039,10 @@ msgstr ""
 #: share/templates/customer/details.tt share/templates/device/list.tt
 #: share/templates/domain/list.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
+#: share/templates/header/actions_edit.tt
+#: share/templates/header/actions_list.tt
+#: share/templates/header/conditions_list.tt
+#: share/templates/header/rules_list.tt share/templates/header/set_list.tt
 #: share/templates/helpers/datatables.tt share/templates/helpers/pref_table.tt
 #: share/templates/invoice/invoice_list.tt
 #: share/templates/invoice/template_list.tt share/templates/lnp/list.tt
@@ -2039,12 +2083,13 @@ msgstr "Installierte Geräte"
 msgid "Deprecated, no longer used by the system."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/NCOS.pm
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Header.pm
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
-#: lib/NGCP/Panel/Utils/Sounds.pm share/templates/rewrite/rules_list.tt
+#: lib/NGCP/Panel/Utils/Sounds.pm share/templates/header/actions_edit.tt
+#: share/templates/header/rules_list.tt share/templates/rewrite/rules_list.tt
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -2212,7 +2257,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
-#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm share/templates/header/rules_list.tt
 msgid "Direction"
 msgstr "Richtung"
 
@@ -2368,6 +2413,10 @@ msgstr ""
 #: share/templates/customer/list.tt share/templates/device/list.tt
 #: share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
+#: share/templates/header/actions_edit.tt
+#: share/templates/header/actions_list.tt
+#: share/templates/header/conditions_list.tt
+#: share/templates/header/rules_list.tt share/templates/header/set_list.tt
 #: share/templates/helpers/pref_table.tt share/templates/lnp/list.tt
 #: share/templates/ncos/list.tt share/templates/ncos/pattern_list.tt
 #: share/templates/network/list.tt share/templates/numberblock/block_list.tt
@@ -2584,7 +2633,9 @@ msgid ""
 "Enable T38 Fax-over-IP via auto-provisioning if the end device supports it."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm share/templates/rewrite/rules_list.tt
+#: lib/NGCP/Panel/Controller/Peering.pm share/templates/header/actions_list.tt
+#: share/templates/header/conditions_list.tt
+#: share/templates/header/rules_list.tt share/templates/rewrite/rules_list.tt
 msgid "Enabled"
 msgstr ""
 
@@ -2644,6 +2695,10 @@ msgid ""
 "Export this subscriber into the shared XMPP buddy list for the customer."
 msgstr ""
 "Exportiere diesen Subscriber in die gemeinsame XMPP Kontakt-Liste des Kunden"
+
+#: share/templates/header/conditions_list.tt
+msgid "Expression"
+msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "Extended Away"
@@ -2715,6 +2770,10 @@ msgstr ""
 msgid "Failed to clear reminder setting."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to clone header rule set."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Failed to clone rewrite rule set."
 msgstr "Klonen des Übersetzungsregel-Sets fehlgeschlagen."
@@ -2753,6 +2812,18 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to create UPN rewrite set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to create a header rule"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to create a header rule action"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to create a header rule condition"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
@@ -2829,6 +2900,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Failed to create emergency mapping container"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to create header rule set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
@@ -3049,6 +3124,22 @@ msgstr ""
 msgid "Failed to delete emergency mapping container"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to delete header rule"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to delete header rule action"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to delete header rule condition"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to delete header rule set"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Failed to delete inbound peering rule"
 msgstr ""
@@ -3190,6 +3281,14 @@ msgstr "Präferenz aktualisieren fehlgeschlagen"
 
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Failed to load default sound files."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to move action."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to move header rule."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
@@ -3412,6 +3511,22 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update fax setting"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to update header rule"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to update header rule action"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to update header rule condition"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Failed to update header rule set"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
@@ -3834,6 +3949,114 @@ msgstr ""
 
 #: share/templates/widgets/admin_system_overview.tt
 msgid "Hardware"
+msgstr ""
+
+#: share/templates/header/actions_list.tt
+msgid "Header"
+msgstr ""
+
+#: share/templates/header/set_list.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Header Manipulations"
+msgstr ""
+
+#: share/templates/header/actions_edit.tt share/templates/header/rules_list.tt
+msgid "Header Rule"
+msgstr ""
+
+#: share/templates/header/actions_list.tt
+msgid "Header Rule Actions"
+msgstr ""
+
+#. (rule_result.name)
+#: share/templates/header/actions_list.tt
+msgid "Header Rule Actions for %1"
+msgstr ""
+
+#: share/templates/header/conditions_list.tt
+msgid "Header Rule Conditions"
+msgstr ""
+
+#. (rule_result.name)
+#: share/templates/header/conditions_list.tt
+msgid "Header Rule Conditions for %1"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/header/set_list.tt
+msgid "Header Rule Set"
+msgstr ""
+
+#. (set_result.name)
+#: share/templates/header/actions_edit.tt share/templates/header/rules_list.tt
+msgid "Header Rules for %1"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule action does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule action successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule action successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule action successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule condition does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule condition successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule condition successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule condition successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule set does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule set successfully cloned"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule set successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule set successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule set successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Header rule successfully updated"
 msgstr ""
 
 #: share/templates/subscriber/webphone.tt
@@ -4366,6 +4589,22 @@ msgstr "Ungültiger Missbrauchs-Intervall '%1'!"
 msgid "Invalid group id detected"
 msgstr "Ungültige Gruppen ID"
 
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Invalid header rule action id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Invalid header rule condition id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Invalid header rule id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Header.pm
+msgid "Invalid header rule set id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Invalid inbound peering rule id detected"
 msgstr ""
@@ -4836,6 +5075,10 @@ msgstr "Master"
 msgid "Master Data"
 msgstr "Stamm-Daten"
 
+#: share/templates/header/conditions_list.tt
+msgid "Match"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Match Mode"
 msgstr ""
@@ -5135,6 +5378,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+#: lib/NGCP/Panel/Controller/Header.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Network.pm
 #: lib/NGCP/Panel/Controller/Package.pm lib/NGCP/Panel/Controller/Peering.pm
@@ -5143,7 +5387,9 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 #: lib/NGCP/Panel/Controller/TimeSet.pm lib/NGCP/Panel/Utils/Sounds.pm
-#: share/templates/customer/details.tt share/templates/helpers/pref_table.tt
+#: share/templates/customer/details.tt share/templates/header/actions_edit.tt
+#: share/templates/header/conditions_list.tt
+#: share/templates/header/rules_list.tt share/templates/helpers/pref_table.tt
 #: share/templates/sound/handles_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Name"
@@ -5544,6 +5790,11 @@ msgstr "Seiten"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Panel Branding"
 msgstr "Benutzerdefiniertes Panel-Layout"
+
+#: share/templates/header/actions_list.tt
+#: share/templates/header/conditions_list.tt
+msgid "Part"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Party Call Control"
@@ -6267,6 +6518,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Domain.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+#: lib/NGCP/Panel/Controller/Header.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/NCOS.pm
 #: lib/NGCP/Panel/Controller/Network.pm lib/NGCP/Panel/Controller/Package.pm
@@ -6371,7 +6623,9 @@ msgstr "Web-Password zurücksetzen"
 msgid "Result"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/rewrite/set_list.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/header/actions_list.tt
+#: share/templates/header/conditions_list.tt
+#: share/templates/rewrite/set_list.tt
 #: share/templates/widgets/reseller_domain_overview.tt
 msgid "Rewrite Rule Set"
 msgstr "Übersetzungsregeln-Set"
@@ -6382,6 +6636,11 @@ msgstr "Übersetzungsregeln-Set"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Rewrite Rule Sets"
 msgstr "Übersetzungsregeln-Sets"
+
+#: share/templates/header/actions_list.tt
+#: share/templates/header/conditions_list.tt
+msgid "Rewrite Rules"
+msgstr ""
 
 #. (set_result.name)
 #: share/templates/rewrite/rules_list.tt
@@ -6441,7 +6700,7 @@ msgstr ""
 msgid "Rule"
 msgstr "Regel"
 
-#: share/templates/rewrite/set_list.tt
+#: share/templates/header/set_list.tt share/templates/rewrite/set_list.tt
 msgid "Rules"
 msgstr "Regeln"
 
@@ -7128,7 +7387,7 @@ msgstr ""
 msgid "Status"
 msgstr "Status"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm share/templates/header/rules_list.tt
 msgid "Stopper"
 msgstr ""
 
@@ -8035,6 +8294,8 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
+#: share/templates/header/actions_list.tt
+#: share/templates/header/conditions_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Type"
 msgstr "Typ"
@@ -8208,11 +8469,17 @@ msgstr ""
 msgid "Valid Until"
 msgstr ""
 
-#: share/templates/customer/details.tt share/templates/helpers/pref_table.tt
+#: share/templates/customer/details.tt share/templates/header/actions_list.tt
+#: share/templates/helpers/pref_table.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Value"
 msgstr "Wert"
 
+#: share/templates/header/actions_list.tt
+msgid "Value Part"
+msgstr ""
+
+#: share/templates/header/conditions_list.tt
 #: share/templates/subscriber/edit_webpass.tt
 #: share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
