@@ -155,12 +155,13 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'times'. Must be an array.");
             last;
         }
+        my $times = $self->apply_owner_timezone($c,$b_subscriber,$resource->{times},'deflate');
         try {
             $tset = $schema->resultset('voip_cf_time_sets')->create({
                     name => $resource->{name},
                     subscriber_id => $subscriber->id,
                 });
-            for my $t ( @{$resource->{times}} ) {
+            for my $t ( @$times ) {
                 delete $t->{time_set_id};
                 $tset->create_related("voip_cf_periods", $t);
             }
@@ -169,7 +170,7 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cftimeset.");
             last;
         }
-        
+
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
