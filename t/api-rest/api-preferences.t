@@ -29,6 +29,7 @@ $fake_data->set_data_from_script({
             emergencymappingcontainer_id  =>  sub { return shift->get_id('emergencymappingcontainers',@_); },
 
             rewriteruleset_id  =>  sub { return shift->get_id('rewriterulesets',@_); },
+            headerruleset_id  =>  sub { return shift->get_id('headerrulesets',@_); },
             soundset_id  =>  sub { return shift->get_id('soundsets',@_); },
             ncoslevel_id  =>  sub { return shift->get_id('ncoslevels',@_); },
         },
