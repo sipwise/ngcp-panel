@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1adf8d57_a4a52a05",
+        "filename": "t/api-rest/api-all-links.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-01-09T14:14:07Z",
+      "side": 1,
+      "message": "do we need this ?",
+      "range": {
+        "startLine": 23,
+        "startChar": 1,
+        "endLine": 24,
+        "endChar": 22
+      },
+      "revId": "e91f8752eb08b1ce8e773677bf9a19d52504af56",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_c404b616",
         "filename": "t/lib/Test/Collection.pm",
         "patchSetId": 2
