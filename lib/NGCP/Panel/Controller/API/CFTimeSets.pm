@@ -155,6 +155,7 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'times'. Must be an array.");
             last;
         }
+        $self->inflate_times($c, $resource->{times});
         try {
             $tset = $schema->resultset('voip_cf_time_sets')->create({
                     name => $resource->{name},
@@ -169,7 +170,7 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cftimeset.");
             last;
         }
-        
+
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
