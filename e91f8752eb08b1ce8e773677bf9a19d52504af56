@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_c404b616",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-01-09T13:55:52Z",
+      "side": 1,
+      "message": "is there a possibility to set it for that api root request only?",
+      "revId": "e91f8752eb08b1ce8e773677bf9a19d52504af56",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
