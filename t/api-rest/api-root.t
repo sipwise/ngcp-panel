@@ -9,6 +9,11 @@ my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
 my ($ua, $req, $res);
 
+#to eliminate 'Too many header lines (limit is 128) at /usr/share/perl5/Net/HTTP/Methods.pm line 383. 
+#on the curl -i -k --user administrator:administrator -X OPTIONS -H 'Content-Type: application/json' 'https://127.0.0.1:1443/api/?foo=bar&bla' 
+use LWP::Protocol::http; 
+push @LWP::Protocol::http::EXTRA_SOCK_OPTS, MaxHeaderLines => 256;
+
 use Test::Collection;
 $ua = Test::Collection->new()->ua();
 
