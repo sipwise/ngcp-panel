@@ -467,6 +467,17 @@ sub build_data{
                 'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
             },
         },
+        'headerrulesets' => {
+            'data' => {
+                reseller_id     => sub { return shift->get_id('resellers',@_); },
+                name            => 'api_test',
+                description     => 'api_test rule set description',
+            },
+            'query' => ['name'],
+            'data_callbacks' => {
+                'uniquizer_cb' => sub { Test::FakeData::string_uniquizer(\$_[0]->{name}); },
+            },
+        },
     };
     $self->process_data($data);
     return $data;
