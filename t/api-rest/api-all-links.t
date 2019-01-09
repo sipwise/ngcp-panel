@@ -10,19 +10,23 @@ my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
 
 my ($ua, $req, $res);
 
+#to eliminate 'Too many header lines (limit is 128) at /usr/share/perl5/Net/HTTP/Methods.pm line 383. 
+#on the curl -i -k --user administrator:administrator -X OPTIONS -H 'Content-Type: application/json' 'https://127.0.0.1:1443/api/?foo=bar&bla' 
+use LWP::Protocol::http; 
+push @LWP::Protocol::http::EXTRA_SOCK_OPTS, MaxHeaderLines => 256;
+
+
 use Test::Collection;
 $ua = Test::Collection->new()->ua();
 
 # OPTIONS tests
 {
-    # disabled
-    ok(1, "skip OPTIONS test in all-links");
-    last;
 
     diag("server is $uri");
     # test some uri params
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/?foo=bar&bla');
     $res = $ua->request($req);
+
     is($res->code, 200, "check options request with uri params");
 
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/');
