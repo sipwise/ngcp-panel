@@ -16,6 +16,24 @@
       "revId": "e91f8752eb08b1ce8e773677bf9a19d52504af56",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_c42b9681",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-01-09T14:02:26Z",
+      "side": 1,
+      "message": "But is for parsing responses, so I don\u0027t think we will want this error in any other place",
+      "parentUuid": "1adf8d57_c404b616",
+      "revId": "e91f8752eb08b1ce8e773677bf9a19d52504af56",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
