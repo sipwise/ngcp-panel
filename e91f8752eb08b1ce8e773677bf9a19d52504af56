@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_84e22e02",
+        "filename": "t/api-rest/api-all-links.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-01-09T14:57:32Z",
+      "side": 1,
+      "message": "removed",
+      "parentUuid": "1adf8d57_a4a52a05",
+      "range": {
+        "startLine": 23,
+        "startChar": 1,
+        "endLine": 24,
+        "endChar": 22
+      },
+      "revId": "e91f8752eb08b1ce8e773677bf9a19d52504af56",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_c404b616",
         "filename": "t/lib/Test/Collection.pm",
         "patchSetId": 2
@@ -72,6 +96,24 @@
       "side": 1,
       "message": "well, thought it would be nice to detect eg. if something with pagesize went wrong",
       "parentUuid": "1adf8d57_c42b9681",
+      "revId": "e91f8752eb08b1ce8e773677bf9a19d52504af56",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_64cf4280",
+        "filename": "t/lib/Test/Collection.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-01-09T14:57:32Z",
+      "side": 1,
+      "message": "moved to particular test script",
+      "parentUuid": "1adf8d57_04b75e3a",
       "revId": "e91f8752eb08b1ce8e773677bf9a19d52504af56",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
