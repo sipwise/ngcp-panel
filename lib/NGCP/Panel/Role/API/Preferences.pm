@@ -726,6 +726,18 @@ sub update_item {
                     }
                     last SWITCH;
                 };
+                /^header_rule_set$/ && do {
+                    my $hdr_set = $c->model('DB')->resultset('voip_header_rule_sets')->find({
+                        name => $resource->{$pref},
+                        reseller_id => $reseller_id,
+                    });
+                    unless($hdr_set) {
+                        $c->log->error("no header rule set '".$resource->{$pref}."' for reseller id $reseller_id found");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown header_rule_set '".$resource->{$pref}."'");
+                        return;
+                    }
+                    last SWITCH;
+                };
                 /^(adm_)?(cf_)?ncos$/ && do {
                     my $pref_name = $pref . "_id";
                     my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
