@@ -17,7 +17,7 @@ use Data::Compare qw//;
 my $MIME_TYPES = {
     #first extension is default, others are for extension 2 mime_type detection
     'audio/x-wav' => ['wav'],
-    'audio/mpeg'  => ['mp3'], 
+    'audio/mpeg'  => ['mp3'],
     'audio/ogg'   => ['ogg'],
 };
 
@@ -166,6 +166,50 @@ sub extension_to_mime_type {
         }
     }
     return $mime_type;
+}
+
+sub array_to_map {
+
+    my ($array_ptr,$get_key_code,$get_value_code,$mode) = @_;
+    my $map = {};
+    my @keys = ();
+    my @values = ();
+    if (defined $array_ptr and ref $array_ptr eq 'ARRAY') {
+        if (defined $get_key_code and ref $get_key_code eq 'CODE') {
+            if (not (defined $get_value_code and ref $get_value_code eq 'CODE')) {
+                $get_value_code = sub { return shift; };
+            }
+            $mode = lc($mode);
+            if (not ($mode eq 'group' or $mode eq 'first' or $mode eq 'last')) {
+                $mode = 'group';
+            }
+            foreach my $item (@$array_ptr) {
+                my $key = &$get_key_code($item);
+                if (defined $key) {
+                    my $value = &$get_value_code($item);
+                    if (defined $value) {
+                        if (not exists $map->{$key}) {
+                            if ($mode eq 'group') {
+                                $map->{$key} = [ $value ];
+                            } else {
+                                $map->{$key} = $value;
+                            }
+                            push(@keys,$key);
+                        } else {
+                            if ($mode eq 'group') {
+                                push(@{$map->{$key}}, $value);
+                            } elsif ($mode eq 'last') {
+                                $map->{$key} = $value;
+                            }
+                        }
+                        push(@values,$value);
+                    }
+                }
+            }
+        }
+    }
+    return ($map,\@keys,\@values);
+
 }
 
 1;
