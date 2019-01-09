@@ -61,6 +61,7 @@ has_field 'times.hour' => (
     min_start => 0,
     max_end => 23,
     label => 'Hour',
+    cyclic => 1,
     empty_select => '',
 );
 
@@ -69,6 +70,7 @@ has_field 'times.minute' => (
     min_start => 0,
     max_end => 59,
     label => 'Minute',
+    cyclic => 1,
     empty_select => '',
 );
 
