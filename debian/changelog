@@ -1,3 +1,70 @@
+ngcp-panel (7.1.1.0+0~mr7.1.1.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [c68e4ed] TT#45484 Allow api controllers to control errors and return code
+  * [d003c66] TT#45484 Add "force_delete" option to callrecordings
+  * [0425b5c] TT#47261 Remove occasional time_set_id relation from peering_rule
+  * [e36c5da] TT#47261 Fix timeset linking to voip_peer_group
+  * [7c13308] TT#47024 Use config to document allowed Accept header values
+  * [aeb5cd9] TT#46183 Add "mode" modifier to "add" PATCH operator
+  * [7e3a1d1] TT#46187 Use value in "remove" PATCH op as filter
+  * [b88000b] TT#47569 Add possibility to load default files in sounsets api
+  * [e0ee27d] TT#47569 Rename soundset override parameter to replace_existing
+  * [4ceb775] TT#47906 Fix discrepancy between doc and code in /api/soundsets/
+  * [048b0f7] TT#45960 Disable timesets API for 7.0
+  * [e55e4a8] TT#45960 disable timesets web ui in 7.0
+  * [af314a0] TT#47906 Remove unnecessary code from /api/soundsets/
+  * [bb04e38] Revert "Revert "TT#47906 Remove unnecessary code from /api/soundsets/""
+  * [73d4c8f] TT#47906 Fix soundsets POST without contract or customer
+  * [7c366d8] TT#47906 Fix soundsets filters
+  * [f08e982] Revert "TT#45960 disable timesets web ui in 7.0"
+  * [72c771e] Revert "TT#45960 Disable timesets API for 7.0"
+  * [83d7152] TT#47963 Fix emailtemplates put and patch
+  * [5219cdb] TT#48198 Fix no_count behavior in API.pm
+  * [39918f4] TT#48198 Avoid extra page in no_count mode
+  * [760ba75] TT#48198 Remove differences before items array from pagination
+  * [1fe6db9] TT#48198 Use items array from paginations in all api controllers
+  * [b27e4c5] TT#46856 Add openvpn toggle from admin panel
+  * [667522f] TT#47268 Use order_by_cols to avoid item_rs call for api doc gen
+  * [8ee1e8e] TT#47268 Fix getting banned items
+  * [39bc7eb] TT#48198 Fix order_by functionality in api
+  * [a376cc6] TT#49027 Fix capabilities api
+  * [335a09b] TT#49552 Use Log::Log4perl->warn instead of waning
+  * [f6c447f] TT#49754 Increase header lines limit in http response parsing
+
+  [ Sipwise Jenkins Builder ]
+  * [ee88453] TT#4166 I18N dump: snapshot 2018.11.15-05.38.13
+  * [b069ca5] TT#4166 I18N dump: snapshot 2018.11.20-16.28.59
+  * [d781ea8] TT#4166 I18N dump: snapshot 2018.11.24-05.00.32
+  * [3e764be] TT#4166 I18N dump: snapshot 2018.12.01-05.23.01
+  * [1c41bf2] TT#4166 I18N dump: snapshot 2018.12.13-05.36.25
+  * [fa3b9e3] TT#4166 I18N dump: snapshot 2018.12.18-05.07.00
+  * [4a2ad98] TT#4166 I18N dump: snapshot 2018.12.21-05.26.23
+  * [c242e38] TT#4166 I18N dump: snapshot 2019.01.08-05.28.44
+
+  [ Kirill Solomko ]
+  * [59a960b] TT#47587 fix get_subscriber_location_rs
+  * [04500cb] Revert "TT#47906 Remove unnecessary code from /api/soundsets/"
+  * [b364746] TT#48855 fix UI billing zones
+  * [87a1c78] TT#30387 implement Header Manipulations UI
+  * [13d1216] TT#47004 Implement Header Manipulation API endpoints
+  * [8c7441f] TT#47004 add headerrules api-root
+  * [54fad5c] TT#47004 add t/rest-api/api-preferences header_rule_set support
+  * [9b2ec32] TT#49754 disable OPTIONS test in api-all-links
+  * [66241b6] TT#49754 add t/api-rest/api-headerrulesets.t
+
+  [ Andreas Granig ]
+  * [bff6bda] TT#42767 Allow Range header in firmware downloads
+
+  [ Guillem Jover ]
+  * [8fb7c65] TT#44809 Create the _ngcp-api group
+  * [1a76702] TT#49150 Namespace program names with ngcp-
+
+  [ Rene Krenn ]
+  * [fec183c] TT#46159 fix saving sip_username re in Intrecept-SOAP
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 09 Jan 2019 22:00:55 +0100
+
 ngcp-panel (7.1.0.0+0~mr7.1.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
