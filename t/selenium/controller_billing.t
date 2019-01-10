@@ -127,6 +127,14 @@ $d->move_action(element => $row,xoffset=>2);
 $edit_link->click();
 ok($d->find_element('//*[@id="masthead"]//h2[contains(text(),"times for mytestprofile")]'));
 
+diag("Wait for datatable loading");
+my $dates_first_row_text;
+do {
+    sleep 1;
+    $dates_first_row_text = $d->get_text('Dates table text:' . '//*[@id="date_definition_table"]/tbody/tr[1]/td[1]');
+    diag($dates_first_row_text);
+} while ($dates_first_row_text =~ /Processing|Loading/i );
+
 diag("Edit Wednesday");
 diag("Wait for 'Dates' AXAJ is finished, otherwise it might hide 'Edit' popup button");
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"2018-01-01 11:11:11")]');
@@ -140,7 +148,6 @@ diag("Find 'Edit' button for element 'Wednesday'");
 sleep 1; # give ajax time to load
 my $btn = $d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
 ok($btn);
-diag("Click 'Edit' button for element 'Wednesday'");
 $btn->click();
 $d->find_text("Edit Wednesday");
 diag("Pop-up 'Edit Wednesday' was properly opened");
