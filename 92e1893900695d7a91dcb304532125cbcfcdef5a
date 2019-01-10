@@ -22,6 +22,29 @@
       "revId": "92e1893900695d7a91dcb304532125cbcfcdef5a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_27dc9c11",
+        "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-01-10T08:06:47Z",
+      "side": 1,
+      "message": "maybe it worth to add short comment about sub purpose?",
+      "range": {
+        "startLine": 219,
+        "startChar": 4,
+        "endLine": 219,
+        "endChar": 5
+      },
+      "revId": "92e1893900695d7a91dcb304532125cbcfcdef5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
