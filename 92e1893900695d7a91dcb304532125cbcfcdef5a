@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_67d2a402",
+        "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-01-10T08:05:41Z",
+      "side": 1,
+      "message": "seems like sub is repeated?",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 1
+      },
+      "revId": "92e1893900695d7a91dcb304532125cbcfcdef5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
