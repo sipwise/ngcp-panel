@@ -116,9 +116,16 @@ $d->find_element('#dataConfirmOK', 'css')->click();
 $d->find_text("successfully deleted"); # delete does not work
 
 diag("Delete the previously created Peering Rule");
-sleep 1;
+diag(" - searching garbage (waiting for AJAX to load)");
+$d->fill_element('#PeeringRules_table_filter input', 'css', 'thisshouldnotexist');
+$d->find_element('#PeeringRules_table tr > td.dataTables_empty', 'css');
+diag(" - searching valid item (waiting for AJAX to load)");
+$d->fill_element('#PeeringRules_table_filter input', 'css', 'for testing purposes');
+$d->find_element('#PeeringRules_table tr > td.sorting_1', 'css');
+diag(" - searching delete button");
 $row = $d->find_element('//table[@id="PeeringRules_table"]/tbody/tr[1]');
 ok($row);
+diag(" - pressing delete button");
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
 $d->move_action(element => $row);
