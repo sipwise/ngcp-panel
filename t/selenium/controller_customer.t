@@ -27,19 +27,24 @@ $d->find_element("Customers", 'link_text')->click();
 diag("Create a Customer");
 $d->find_element('//*[@id="masthead"]//h2[contains(text(),"Customers")]');
 $d->find_element('Create Customer', 'link_text')->click();
+diag(" - fill contact data");
 $d->fill_element('#contactidtable_filter input', 'css', 'thisshouldnotexist');
 $d->find_element('#contactidtable tr > td.dataTables_empty', 'css');
 $d->fill_element('#contactidtable_filter input', 'css', 'default-customer');
 $d->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]/td[contains(text(),"default-customer")]/..//input[@type="checkbox"]');
+diag(" - fill billing data");
 $d->fill_element('#billing_profileidtable_filter input', 'css', 'thisshouldnotexist');
 $d->find_element('#billing_profileidtable tr > td.dataTables_empty', 'css');
 $d->fill_element('#billing_profileidtable_filter input', 'css', 'Default Billing Profile');
 $d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td[contains(text(),"Default Billing Profile")]/..//input[@type="checkbox"]');
+diag(" - fill product data");
 eval { #lets only try this
     $d->select_if_unselected('//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
 };
+diag(" - fill external_id");
 $d->scroll_to_id('external_id');
 $d->fill_element('#external_id', 'css', $rnd_id);
+diag(" - save");
 $d->find_element('#save', 'css')->click();
 
 diag("Open Details for our just created Customer");
