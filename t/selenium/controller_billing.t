@@ -128,6 +128,8 @@ $edit_link->click();
 ok($d->find_element('//*[@id="masthead"]//h2[contains(text(),"times for mytestprofile")]'));
 
 diag("Edit Wednesday");
+diag("Wait for 'Dates' AXAJ is finished, otherwise it might hide 'Edit' popup button");
+$d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"2018-01-01 11:11:11")]');
 $row = $d->find_element('//table//td[contains(text(),"Wednesday")]');
 ok($row);
 diag("Move mouse over 'Weekdays' row to make 'Edit' button available");
@@ -159,6 +161,7 @@ $d->fill_element('#end', 'css', "2008-02-28 13:37:00");
 $d->find_element('#save', 'css')->click();
 
 diag("Find/delete my created date definition");
+$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2008-02-28');
 $elem = $d->find_element('//div[contains(@class,"dataTables_wrapper")]');
 $d->scroll_to_element($elem);
 $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"2008-02-28")]/..');
