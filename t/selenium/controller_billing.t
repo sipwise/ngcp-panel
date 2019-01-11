@@ -164,10 +164,10 @@ $d->scroll_to_element($elem);
 $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"2008-02-28")]/..');
 ok($row);
 $d->move_action(element => $row);
-$edit_link = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
-ok($edit_link);
+my $delete_button = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
+ok($delete_button);
 sleep 2 if ($browsername eq "htmlunit");
-$edit_link->click();
+$delete_button->click();
 $d->find_text("Are you sure?");
 $d->find_element('#dataConfirmOK', 'css')->click();
 
