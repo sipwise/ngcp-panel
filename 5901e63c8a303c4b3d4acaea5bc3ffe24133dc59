@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_30cf3058",
+        "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-01-11T17:23:19Z",
+      "side": 1,
+      "message": "no; its the intermediate overflow result after applyin the offset. this way, its possibleto determine when to shift the weekday.",
+      "parentUuid": "1adf8d57_b08d6033",
+      "range": {
+        "startLine": 141,
+        "startChar": 51,
+        "endLine": 141,
+        "endChar": 57
+      },
+      "revId": "5901e63c8a303c4b3d4acaea5bc3ffe24133dc59",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_507d1c1b",
         "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2019-01-11T17:13:19Z",
       "side": 1,
       "message": "$hour_start \u003c $hour_end ?",
+      "range": {
+        "startLine": 152,
+        "startChar": 16,
+        "endLine": 152,
+        "endChar": 32
+      },
+      "revId": "5901e63c8a303c4b3d4acaea5bc3ffe24133dc59",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_50d2bc01",
+        "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-01-11T17:23:19Z",
+      "side": 1,
+      "message": "we dont use it, but since timerec supports it, it could come from db.\n\nthe testcases are here: https://gerrit.mgm.sipwise.com/#/c/26097/5/sandbox/cftimeset_time_tz_conversion.pl",
+      "parentUuid": "1adf8d57_507d1c1b",
       "range": {
         "startLine": 152,
         "startChar": 16,
