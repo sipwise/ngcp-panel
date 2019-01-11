@@ -52,11 +52,11 @@ echo "Watch at test runs by connecting via VNC (password: '${PASSWORD}'):"
 echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024x16 passwd=/tmp/vncpasswd localhost:5999"
 
 if [ -n "${3:-}" ] && [ "${3:-}" = "junit" ] ; then
-  CATALYST_SERVER=https://${SERVER}:1443/ prove -m --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t | \
+  CATALYST_SERVER=https://${SERVER}:1443/ prove -ofmv --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
   RC="${PIPESTATUS[0]}"
 else
-  CATALYST_SERVER="https://${SERVER}:1443" prove -m -v --color -l -It/lib t/selenium/*.t | \
+  CATALYST_SERVER="https://${SERVER}:1443" prove -ofmv --color -l -It/lib t/selenium/*.t | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.pretty"
   RC="${PIPESTATUS[0]}"
 fi
@@ -68,3 +68,7 @@ for file in "${OUTPUT_DIRECTORY}/selenium.pretty" "${OUTPUT_DIRECTORY}/selenium.
   fi
 done
 echo "################################################################################"
+
+## exit cleanly here, Jenkins will detect errors in produced artifacts if any
+## as a result the Jenkins job will be "yellow" instead of "red".
+# exit "${RC}"
