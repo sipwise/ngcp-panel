@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1adf8d57_3b3831d3",
+        "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-01-14T10:12:37Z",
+      "side": 1,
+      "message": "the CF periods we must conver look like this:\n\n\"MO-WED 18-22 *\" (wday hour minute)\n\nshifting it by eg. 3 hrs offset means:\n\n\"MO-WED 21-23 *\"\n\"TUE-THU 00-01 *\"",
+      "parentUuid": "1adf8d57_b09a0013",
+      "range": {
+        "startLine": 99,
+        "startChar": 4,
+        "endLine": 99,
+        "endChar": 8
+      },
+      "revId": "5901e63c8a303c4b3d4acaea5bc3ffe24133dc59",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_b08d6033",
         "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
         "patchSetId": 4
