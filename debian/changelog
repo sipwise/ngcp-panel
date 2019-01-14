@@ -1,3 +1,13 @@
+ngcp-panel (5.5.7.4+0~mr5.5.7.4) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [31395e9] TT#44275 Fix fields adjustment in cached forms
+  * [e0da424] TT#48987 Fix alias_numbers in cached ubscriber form
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Jan 2019 15:11:47 +0100
+
 ngcp-panel (5.5.7.3+0~mr5.5.7.3) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
