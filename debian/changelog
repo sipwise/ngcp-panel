@@ -1,3 +1,28 @@
+ngcp-panel (6.5.3.1+0~mr6.5.3.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a090d4e] TT#47587 fix get_subscriber_location_rs
+
+  [ Manuel Montecelo ]
+  * [25302d1] TT#44919 Change "openssl genrsa" so it works with buster and older releases
+
+  [ Irina Peshinskaya ]
+  * [1cb3872] TT#48198 Fix no_count behavior in API.pm
+  * [ebb493d] TT#48198 Avoid extra page in no_count mode
+  * [f9c7216] TT#48198 Remove differences before items array from pagination
+  * [eff8a51] TT#48198 Use items array from paginations in all api controllers
+  * [6fca4fe] TT#47268 Fix getting banned items
+  * [654d811] TT#48198 Fix order_by functionality in api
+  * [1643cb0] TT#49027 Fix capabilities api
+  * [d2a60ae] TT#49552 Use Log::Log4perl->warn instead of waning
+
+  [ Rene Krenn ]
+  * [a6c8c15] TT#46159 fix saving sip_username re in Intrecept-SOAP
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Jan 2019 14:19:13 +0100
+
 ngcp-panel (6.5.3.0+0~mr6.5.3.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
