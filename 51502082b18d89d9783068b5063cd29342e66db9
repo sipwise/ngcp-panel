@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1adf8d57_5b3bfdd1",
+        "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-01-14T10:12:37Z",
+      "side": 1,
+      "message": "todo: mandatory check that subscriber and system tz have the same DST cycle.",
+      "revId": "51502082b18d89d9783068b5063cd29342e66db9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
