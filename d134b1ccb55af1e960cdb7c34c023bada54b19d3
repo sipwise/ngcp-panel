@@ -34,6 +34,24 @@
       "revId": "d134b1ccb55af1e960cdb7c34c023bada54b19d3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_d6dd8415",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-01-15T13:12:07Z",
+      "side": 1,
+      "message": "in the datatable.js, it uses \"All\" as a fallback - ie. if no pagesize is present.\n\nthere were quite some effords to prevent this slow loading in any case, and now it again should be acceptable?\n\nthe idea (as suggested by vowa iirc), is to remove the default \"All\" option in the .js antirely.",
+      "parentUuid": "1adf8d57_36c84855",
+      "revId": "d134b1ccb55af1e960cdb7c34c023bada54b19d3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
