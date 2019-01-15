@@ -16,6 +16,24 @@
       "revId": "d134b1ccb55af1e960cdb7c34c023bada54b19d3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_36c84855",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-01-15T13:08:33Z",
+      "side": 1,
+      "message": "I would say that if someone selects option \"All\" - he wants to see all records, and also should be ready for slow loading.",
+      "parentUuid": "1adf8d57_96ab7c89",
+      "revId": "d134b1ccb55af1e960cdb7c34c023bada54b19d3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
