@@ -165,8 +165,9 @@ sub process {
                 offset => $pageStart,
                 rows => $pageSize,
             });
-            @rows = $rs->all;
         }
+        #for case $displayRecords < 0, that means All. And for all other cases too.
+        @rows = $rs->all;
     }
 
     for my $row (@rows) {
