@@ -6,7 +6,10 @@ my %forms = ();
 sub get {
     my ($name, $c, $create_new) = @_;
     my $form;
-    if(exists $forms{$name} && !$create_new) {
+    if(exists $forms{$name} 
+        && !($forms{$name}->can('ngcp_no_cache') && $forms{$name}->ngcp_no_cache) 
+        && !$create_new
+    ) {
         $form = $forms{$name};
         $form->clear();
         $form->ctx($c);
