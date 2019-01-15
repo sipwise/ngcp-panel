@@ -6,7 +6,7 @@ if ! [ -f /.dockerenv ] && ! grep -q 'devices:/docker' /proc/1/cgroup ; then
 fi
 
 set -e
-set -u
+set -ux
 
 PASSWORD="selenium"
 
@@ -16,7 +16,7 @@ if [ -z "${1:-}" ] ; then
   echo "Usage examples:
 
   $0 192.168.88.162
-  $0 192.168.88.162 /results/ junit"
+  $0 192.168.88.162 /results/ junit controller_billing.t"
   exit 1
 fi
 
