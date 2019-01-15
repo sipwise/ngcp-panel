@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "1adf8d57_d6e9041c",
+        "filename": "t/selenium/controller_billing.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-01-15T09:36:06Z",
+      "side": 1,
+      "message": "Tested as PPA:\n\nhttps://jenkins.mgm.sipwise.com/job/ngcp-panel-test-selenium-docker-alutay-test/4/testReport/junit/(root)/_init_/selenium_controller_billing_t/\n\n# Wait for datatable loading\nCan\u0027t use string (\"invalid selector\") as a HASH ref while \"strict refs\" in use at /home/selenium/Selenium-Remote-Driver/lib/Selenium/Remote/Driver.pm line 684.\n at /home/selenium/Selenium-Remote-Driver/lib/Selenium/Remote/Driver.pm line 655.",
+      "revId": "1930a4ea22466703d0b80e474f4d774e7f2b2822",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1adf8d57_16baec23",
         "filename": "t/selenium/controller_billing.t",
         "patchSetId": 1
