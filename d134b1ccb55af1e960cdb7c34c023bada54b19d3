@@ -52,6 +52,24 @@
       "revId": "d134b1ccb55af1e960cdb7c34c023bada54b19d3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1adf8d57_b61798a2",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-01-15T14:34:43Z",
+      "side": 1,
+      "message": "I see that he suggested to remove option All because it doesn\u0027t work.\n\n\"Hi in pages like Customers we have dropdown list item \"all\" which actually do not work at all. \nCould maybe just remove this item. \nIn the attachment to a ticket, please find video proof that it does not work at least in mr6.5.2 .\"\n\nSo question is - do we really want to remove it because it works, but may hang, or we will just leave it to customer do decide to select this option or not?",
+      "parentUuid": "1adf8d57_d6dd8415",
+      "revId": "d134b1ccb55af1e960cdb7c34c023bada54b19d3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
