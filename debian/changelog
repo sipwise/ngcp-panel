@@ -1,3 +1,12 @@
+ngcp-panel (5.5.7.5+0~mr5.5.7.5) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [eb8e74a] TT#48165 Return field_list for profilee form
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 16 Jan 2019 15:43:27 +0100
+
 ngcp-panel (5.5.7.4+0~mr5.5.7.4) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
