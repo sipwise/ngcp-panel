@@ -1,3 +1,15 @@
+ngcp-panel (5.5.7.6+0~mr5.5.7.6) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [e5aecc4] TT#46791 Wait for ajax table loading for "Edit" button work
+
+  [ Alexander Lutay ]
+  * [fe936e8] TT#46791 Fix floating bug with 'Delete' button on 'Peering Servers' page
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Jan 2019 12:23:23 +0100
+
 ngcp-panel (5.5.7.5+0~mr5.5.7.5) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
