@@ -234,6 +234,7 @@ sub event_list :Chained('base') :PathPart('event') :CaptureArgs(0) {
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'time_set_id', search => 1, title => $c->loc('Time Set #') },
         { name => 'comment', search => 1, title => $c->loc('Comment') },
+        { name => 'periods_ical.rrule_ical', search => 0, accessor => "ical", title => $c->loc('iCal')},#, literal_sql => '""'
     ]);
 
     $c->stash(template => 'timeset/event_list.tt');
