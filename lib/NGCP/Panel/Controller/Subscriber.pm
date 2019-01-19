@@ -3279,6 +3279,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
             };
             /^voicemailgreeting$/ && do {
                 my ($action, $type) = @additions;
+                my $return = 0;
                 try{
                     if( !grep{ $action eq $_ } (qw/edit delete download/) ){
                         die('Wrong voicemail greeting action.');
@@ -3329,6 +3330,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                     }elsif($posted){
                         my $greetingfile = delete $form->values->{'greetingfile'};
                         my $greeting_converted_ref;
+                        $return = 0;
                         try {
                             NGCP::Panel::Utils::Subscriber::convert_voicemailgreeting(
                                 c => $c,
@@ -3343,8 +3345,10 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                             );
                             NGCP::Panel::Utils::Navigation::back_or($c,
                                 $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
-                            return;
+                            $return = 1;
                         }
+                        return if ($return);
+
                         if($form->validated) {
                             if('edit' eq $action){
                                 $vm_user->voicemail_spools->update_or_create({
@@ -3365,8 +3369,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                     );
                     NGCP::Panel::Utils::Navigation::back_or($c,
                         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
-                    return;
+                    $return = 1;
                 }
+                return if ($return);
                 last SWITCH;
             };
             # default
