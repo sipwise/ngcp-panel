@@ -22,11 +22,11 @@ sub update_timesets {
             reseller_id => $resource->{reseller_id},
         })->discard_changes;
     $timeset->time_periods->delete;
-    for my $t ( @{$resource->{times} } ) { 
-        $timeset->create_related("time_periods", {
-            %{ $t },
-        });
-    }
+    create_timeset_events(
+        c       => $c,
+        timeset => $timeset,
+        events  => $resource->{times},
+    );
 }
 
 sub create_timesets {
@@ -34,17 +34,27 @@ sub create_timesets {
     my($c, $resource) = @params{qw/c resource/};
 
     my $schema = $c->model('DB');
-
     my $timeset = $schema->resultset('voip_time_sets')->create({
         name => $resource->{name},
         reseller_id => $resource->{reseller_id},
     });
-    for my $t ( @{$resource->{times}} ) {
+    create_timeset_events(
+        c       => $c,
+        timeset => $timeset,
+        events  => $resource->{times},
+    );
+    return $timeset;
+}
+
+sub create_timeset_events {
+    my %params = @_;
+    my($c, $timeset, $events) = @params{qw/c timeset events/};
+    $events //= [];
+    for my $t ( @{$events} ) {
         $timeset->create_related("time_periods", {
             %{ $t },
         });
     }
-    return $timeset;
 }
 
 sub get_timeset {
