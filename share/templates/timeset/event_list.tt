@@ -1,3 +1,23 @@
+<script src="/js/require.js"></script>
+<script>
+require.config({
+  paths: {
+    "luxon": "/js/libs/rrule/luxon",
+    "rrule": "/js/libs/rrule/rrule",
+  },
+});
+var RRule;
+require(['rrule'], function (rrule) {
+  RRule = rrule;
+});
+function toText(data, type, full) {
+  if (!data) {
+    return '';
+  }
+  var r = RRule.rrulestr(data);
+  return r.toText();
+}
+</script>
 [% site_config.title = c.loc('Time Set Event') -%]
 <script>
 function dynamicFields(){
@@ -182,6 +202,9 @@ $( document ).ready(function() {
     helper.edit_flag = edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action( "/timeset/event_ajax", [c.req.captures.0] );
+    helper.custom_renderers => { 
+      ical => 'function ( data, type, full ) { return toText(data, type, full); }'
+    };
     
     UNLESS c.user.read_only;
         helper.dt_buttons = [
