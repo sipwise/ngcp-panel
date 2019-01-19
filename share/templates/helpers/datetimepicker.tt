@@ -1,16 +1,34 @@
-<div class="control-group [% IF errors.size %]error[% END %]">
+<div class="control-group [% IF errors.size %]error[% END %] [% wrapper_class.join(' ') %]">
 <script src="/js/libs/jquery-ui-timepicker-addon.js"></script>
+[% tooltip = field.element_attr.title.0 %]
 [% date_format_js = date_format_js || 'yy-mm-dd' %]
 [% time_format_js = time_format_js || 'HH:mm:ss' %]
-<label class="control-label" for="[% field_id %]">[% label %]</label>
+[%
+IF !no_date_picker && !no_time_picker;
+control = 'datetimepicker';
+IF !tooltip; tooltip = date_format_js _ ' ' _ time_format_js; END;
+ELSIF no_date_picker;
+control = 'timepicker';
+IF !tooltip; tooltip = time_format_js; END;
+ELSIF no_time_picker;
+control = 'datepicker';
+IF !tooltip; tooltip = date_format_js; END;
+END;
+%]
+[%IF label && !(do_label.defined && do_label == 0) %]<label class="control-label" for="[% field_id %]">[% label %]</label>[%END%]
 <div class="controls">
-<input type="text" name="[% field_name %]" id="[% field_id %]" value="[%value%]" class="ngcp-datepicker" rel="tooltip" data-original-title="[% date_format_js %] [% time_format_js %]" onclick="
-    $(this).datetimepicker({
-        'dateFormat': '[% date_format_js %]',
-        'showSecond': true,
-        'timeFormat': '[% time_format_js %]',
+[% USE Dumper %]
+
+<input type="text" name="[% field_name %]" id="[% field_id %]" value="[%value%]" class="ngcp-datepicker" rel="tooltip" data-original-title="[% tooltip %]" onclick="
+    $(this).[%control%]({
+        [%IF !options.exists('dateFormat') %]'dateFormat': '[% date_format_js %]',[%END%]
+        [%IF !options.exists('showSecond') %]'showSecond': true,[%END%]
+        [%IF !options.exists('timeFormat') %]'timeFormat': '[% time_format_js %]',[%END%]
+[%FOR k IN options.keys %]
+        '[% k %]': '[% options.${k} %]',
+[%END%]
     });
-    $(this).datetimepicker('show');"/>
+    $(this).[%control%]('show');"/>
 [% IF errors.size -%]
 <span class="help-inline">
     [% errors.join('<br/>') %]
