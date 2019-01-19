@@ -3,7 +3,7 @@
         helper.column_titles = [];
         helper.column_fields = [];
         helper.column_sortable_map = {};
-        helper.custom_renderers = {};
+        helper.custom_renderers = helper.custom_renderers ? helper.custom_renderers : {};
         helper.strict_search = 0;
         FOR col IN helper.dt_columns;
             IF !col.accessor;
@@ -19,6 +19,9 @@
             helper.column_sortable_map.${col.accessor} = (col.sortable.defined ? col.sortable : 1);
             IF col.custom_renderer.defined;
                 helper.custom_renderers.${col.accessor} = col.custom_renderer;
+            END;
+            IF col.visible.defined && !col.visible;
+                helper.columns_hidden.${col.accessor} = 1;
             END;
         END;
     END;
@@ -93,6 +96,9 @@ $(document).ready(function() {
             [% FOREACH f IN helper.column_fields -%]
             {
                 "mData": "[% f %]",
+                [%IF helper.columns_hidden.${f} %]
+                "visible": false,
+                [%END%]
                 "mRender": function ( data, type, full ) {
                     if(data == null)
                         return '';
