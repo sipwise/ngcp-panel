@@ -460,8 +460,9 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
+            { name = c.loc('Events'), uri = "/timeset/'+full.id+'/event", class = 'btn-small btn-tertiary', icon = 'icon-th-list' },
             { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-tertiary', icon = 'icon-edit' },
-            { name = c.loc('Delete'), uri =  helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Delete'), uri =  helper.tmpuri _ "/'+full.id+'/delete_timeset", class = 'btn-small btn-secondary', icon = 'icon-remove' },
         ];
         helper.top_buttons = [
             { name = c.loc('Create Time Set'), uri = c.uri_for_action('/reseller/timeset_create', [c.req.captures.0]), class = 'btn-small btn-primary', icon = 'icon-star' },

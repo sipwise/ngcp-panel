@@ -14,8 +14,9 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
+            { name = c.loc('Events'), uri = "/timeset/'+full.id+'/event", class = 'btn-small btn-tertiary', icon = 'icon-th-list' },
             { name = c.loc('Edit'), uri = "/timeset/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Delete'), uri = "/timeset/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Delete'), uri = "/timeset/'+full.id+'/delete_timeset", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
             { name = c.loc('Create Time Set Entry'), uri = c.uri_for('/timeset/create'), icon = 'icon-star' },
