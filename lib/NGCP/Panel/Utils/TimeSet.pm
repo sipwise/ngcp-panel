@@ -34,12 +34,28 @@ sub create_timesets {
     my($c, $resource) = @params{qw/c resource/};
 
     my $schema = $c->model('DB');
-
     my $timeset = $schema->resultset('voip_time_sets')->create({
         name => $resource->{name},
         reseller_id => $resource->{reseller_id},
     });
+    create_timeset_events(
+        c       => $c,
+        timeset => $timeset,
+        events  => $resource->{times},
+    );
     for my $t ( @{$resource->{times}} ) {
+        $timeset->create_related("time_periods", {
+            %{ $t },
+        });
+    }
+    return $timeset;
+}
+
+sub create_timeset_events {
+    my %params = @_;
+    my($c, $timeset, $events) = @params{qw/c timeset events/};
+    $events //= [];
+    for my $t ( @{$events} ) {
         $timeset->create_related("time_periods", {
             %{ $t },
         });
