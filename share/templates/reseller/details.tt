@@ -460,6 +460,7 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
+            { name = c.loc('Events'), uri = "/timeset/'+full.id+'/event", class = 'btn-small btn-tertiary', icon = 'icon-th-list' },
             { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-tertiary', icon = 'icon-edit' },
             { name = c.loc('Delete'), uri =  helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
         ];

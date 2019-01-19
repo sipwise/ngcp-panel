@@ -225,4 +225,150 @@ sub delete_timeset :Chained('base') :PathPart('delete') {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/timeset'));
 }
 
+sub event_list :Chained('base') :PathPart('event') :CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{events_rs} = $c->model('DB')->resultset('voip_time_periods');
+
+    $c->stash->{event_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'time_set_id', search => 1, title => $c->loc('Time Set #') },
+        { name => 'comment', search => 1, title => $c->loc('Comment') },
+    ]);
+
+    $c->stash(template => 'timeset/event_list.tt');
+}
+
+sub event_root :Chained('event_list') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+sub event_ajax :Chained('event_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->stash->{events_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{event_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub event_create :Chained('event_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->stash->{events_rs};
+    my $posted = ($c->request->method eq 'POST');
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet::EventAdvanced", $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $params,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $rrule = $form->custom_get_values();
+            $c->model('DB')->schema->txn_do( sub {
+                NGCP::Panel::Utils::TimeSet::create_timeset_events(
+                    c => $c,
+                    timeset => $c->stash->{timeset_rs},
+                    events  => [$rrule],
+                );
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Event entry successfully created'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create event entry'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
+    }
+
+    $c->stash(form => $form);
+    $c->stash(create_flag => 1);
+}
+
+sub event_base :Chained('event_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $event_id) = @_;
+
+    unless($event_id && is_int($event_id)) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'Invalid event entry id detected',
+            desc  => $c->loc('Invalid event entry id detected'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
+    }
+
+    my $rs = $c->stash->{events_rs}->find($event_id);
+    unless(defined($rs)) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'Event entry does not exist',
+            desc  => $c->loc('Event entry does not exist'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
+    }
+    $c->stash(
+        event => {$rs->get_inflated_columns},
+        event_rs => $rs
+    );
+}
+
+sub event_edit :Chained('event_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->stash->{events_rs};
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet::EventAdvanced", $c);
+    my $params = merge($form->custom_set_values($c->stash->{event}), $c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $params,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $rrule = $form->custom_get_values();
+            $c->model('DB')->schema->txn_do( sub {
+                $c->stash->{event_rs}->update($rrule);
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Event entry successfully created'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update event entry'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
+    }
+
+    $c->stash(form => $form);
+    $c->stash(create_flag => 1);
+}
+
+sub event_delete :Chained('event_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{event_rs}->delete;
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => $c->stash->{timeset},
+            desc => $c->loc('Event entry successfully deleted'),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete event entry'),
+        );
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
+}
 1;
