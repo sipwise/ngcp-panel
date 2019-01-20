@@ -225,6 +225,76 @@ sub delete :Chained('base') :PathPart('delete') {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/timeset'));
 }
 
+
+sub upload :Chained('list') :PathPart('upload') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet::Upload", $c);
+    my $upload = $c->req->upload('upload');
+    my $posted = $c->req->method eq 'POST';
+    my @params = ( upload => $posted ? $upload : undef, );
+    $form->process(
+        posted => $posted,
+        params => { @params },
+        action => $c->uri_for_action('/timeset/upload'),
+    );
+    if($form->validated) {
+        # TODO: check by formhandler?
+        unless($upload) {
+            NGCP::Panel::Utils::Message::error(
+                c    => $c,
+                desc => $c->loc('No iCalendar file specified!'),
+            );
+            $c->response->redirect($c->uri_for('/timeset'));
+            return;
+        }
+        my $data = $upload->slurp;
+        my($resource, $fails, $text_success);
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                ( $resource, $fails, $text_success ) = NGCP::Panel::Utils::TimeSet::proocess_uploaded_calendar(
+                    c          => $c,
+                    data       => \$data,
+                    timeset    => $c->stash->{'timeset_rs'},
+                    schema     => $schema,
+                );
+            });
+
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $$text_success,
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to upload iCalendar'),
+            );
+        }
+
+        $c->response->redirect($c->uri_for('/timeset'));
+        return;
+    }
+
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+}
+
+sub download :Chained('base') :PathPart('download') :Args(0) {
+    my ($self, $c) = @_;
+    my $schema = $c->model('DB');
+    my $data = NGCP::Panel::Utils::TimeSet::get_timeset_icalendar(
+        c       => $c,
+        timeset => $c->stash->{'timeset_rs'},
+        schema  => $schema,
+    );
+    $c->response->header('Content-Disposition' => 'attachment; filename="'.$c->stash->{timeset}->{name}.'_'.$c->stash->{timeset}->{id}.'.ics"');
+    $c->response->content_type('text/calendar');
+    $c->response->body($$data);
+    return;
+}
+
 sub event_list :Chained('base') :PathPart('event') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
@@ -373,5 +443,63 @@ sub event_delete :Chained('event_base') :PathPart('delete') :Args(0) {
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
+}
+
+sub event_upload :Chained('event_list') :PathPart('upload') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet::EventUpload", $c);
+    my $upload = $c->req->upload('upload');
+    my $posted = $c->req->method eq 'POST';
+    my @params = ( upload => $posted ? $upload : undef, );
+    $form->process(
+        posted => $posted,
+        params => { @params },
+        action => $c->uri_for_action('/timeset/upload', $c->req->captures),
+    );
+    if($form->validated) {
+        # TODO: check by formhandler?
+        unless($upload) {
+            NGCP::Panel::Utils::Message::error(
+                c    => $c,
+                desc => $c->loc('No iCalendar file specified!'),
+            );
+            $c->response->redirect($c->uri_for($c->stash->{timeset}->{id}, 'event'));
+            return;
+        }
+        if ($c->req->params->{purge_existing}) {
+            $c->stash->{'timeset_rs'}->events->delete;
+        }
+        my $data = $upload->slurp;
+        my($events, $fails, $text_success);
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                ( $events, $fails, $text_success ) = NGCP::Panel::Utils::TimeSet::upload(
+                    c          => $c,
+                    data       => \$data,
+                    timeset    => $c->stash->{'timeset_rs'},
+                    schema     => $schema,
+                );
+            });
+
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $$text_success,
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to upload iCalendar events'),
+            );
+        }
+
+        $c->response->redirect($c->uri_for($c->stash->{timeset}->{id}, 'event'));
+        return;
+    }
+
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
 }
 1;
