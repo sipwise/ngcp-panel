@@ -5,6 +5,8 @@ use warnings;
 
 use Sipwise::Base;
 use NGCP::Panel::Utils::DateTime;
+use Data::ICal;
+use iCal::Parser;
 
 sub delete_timesets {
     my %params = @_;
@@ -87,6 +89,65 @@ sub get_timeset {
     }
     $resource->{times} = \@periods;
     return $resource;
+}
+
+sub get_timeset_icalendar {
+    my %params = @_;
+    my($c, $timeset) = @params{qw/c timeset/};
+    my $data = '';
+    my $data_ref = $timeset->timeset_ical ? \$timeset->timeset_ical->ical : \$data;
+    return $data_ref;
+}
+
+sub proocess_uploaded_calendar{
+    my %params = @_;
+    my($c, $timeset_in, $data, $purge_existing) = @params{qw/c timeset data purge_existing/};
+    if (!$data && !ref $data && !$$data) {
+        return {};
+    }
+    $$data =~s/\n+/\n/g;
+    $c->log->debug("calendar data: ".$$data.";");
+    my $calendar = Data::ICal->new( data => $$data );
+    my $timeset = {};
+    if (!$calendar) {
+        #https://metacpan.org/pod/Data::ICal
+        #parse [ data => $data, ] [ filename => $file, ]
+        #Returns $self on success. Returns a false value upon failure to open or parse the file or data; this false value is a Class::ReturnValue object and can be queried as to its error_message.
+        $c->log->debug("calendar error messages: ".$calendar->error_message.";");
+        return {};
+    } else {
+        if ($timeset_in) {
+            $timeset = $timeset_in;
+        } else {
+            $timeset = {
+                name =>  $calendar->property('summary')->[0]->value,
+            };
+        }
+        my @allowed_rrule_fields = (qw/FREQ COUNT UNTIL INTERVAL BYSECOND BYMINUTE BYHOUR BYDAY BYMONTHDAY BYYEARDAY BYWEEKNO BYMONTH BYSETPOS WKST RDATE EXDATE/);
+        my %rrule_fields_end_markers = map { 
+            my $field = $_; 
+            $field => join('|', grep {$_ ne $field} @allowed_rrule_fields)
+        } @allowed_rrule_fields;
+
+        $timeset->{times} = [];
+        foreach my $entry (@{$calendar->entries}) {
+            my $event = {
+                comment => $calendar->property('description')->[0]->value,
+            };
+            my $rrule = $entry->property('rrule');
+            if ( ref $rrule eq 'ARRAY' && @$rrule ) {
+                #we don't expect some RRULE spec in one event for now
+                my $rrule_data = { map {
+                    my $re = '(?:^|;)'.$_.'=(.*?)(?:;(?:'.$rrule_fields_end_markers{$_}.')|;$|$)';
+                    $rrule->[0]->value =~/$re/i;
+                    $1 ? ($_ => $1) : ();
+                } @allowed_rrule_fields };
+                $event = {%$event, %$rrule_data};
+            }
+            push @{$timeset->{times}}, $event;
+        }
+    }
+    return $timeset;
 }
 1;
 
