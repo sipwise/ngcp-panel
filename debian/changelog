@@ -1,3 +1,24 @@
+ngcp-panel (7.1.2.0+0~mr7.1.2.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [978dbcf] TT#49754 Increase header lines limit in http response parsing
+  * [a1e8b1a] TT#46791 Wait for ajax table loading for "Edit" button work
+  * [eb6a22d] TT#48165 Return field_list for profilee form
+
+  [ Alexander Lutay ]
+  * [485d6ee] TT#46791 Fix floating bug with 'Edit' problem on 'Weekdays' page
+  * [dfc4ca3] TT#46791 Fix floating bug with 'Delete' button on 'Peering Servers' page
+  * [bd517fb] Revert "TT#46791 Fix floating bug with 'Edit' problem on 'Weekdays' page"
+  * [7521641] TT#46791 Use proper variable name in test controller_billing.t
+  * [717a286] TT#46791 Fix floating bug with 'Edit' problem on page 'Weekdays' (try #2)
+  * [1d9b3d0] TT#46791 Improve 'prove' output for Selenium and REST API tests
+  * [26d6a56] TT#46791 Add more debug for test controller_customer.t
+  * [bae1f8c] TT#46791 Teach Jenkins job ngcp-panel-test-selenium-docker run one test only
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Jan 2019 22:45:53 +0100
+
 ngcp-panel (7.1.1.0+0~mr7.1.1.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
