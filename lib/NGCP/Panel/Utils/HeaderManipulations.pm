@@ -60,7 +60,7 @@ sub invalidate_ruleset {
             my $s = Net::HTTP->new(Host => $ip, KeepAlive => 0, PeerPort => $port, Timeout => 5);
             $s or die "could not connect to server $hostid";
 
-            my $res = $s->write_request("POST", $path || "/", %headers, '');
+            my $res = $s->write_request("POST", $path || "/", %headers, $set_id);
             $res or die "did not get result from $hostid";
 
             my ($code, $status, @hdrs) = $s->read_response_headers();
