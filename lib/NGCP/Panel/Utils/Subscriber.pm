@@ -1179,8 +1179,10 @@ sub update_subadmin_sub_aliases {
         if($sadmin->provisioning_voip_subscriber && $c->config->{numbermanagement}->{auto_allow_cli});
 
     for my $num ($num_rs->all) {
-        next if ($num->voip_subscribers->first); # is a primary number
-
+        # if exists active or locked (any except terminated) subscriber that keep this number as a primary number, we shouldn't manipulate by this number as by alias
+        if ($num->primary_number_owners_active->first) {
+            next;
+        }
         my $cli = $num->cc . ($num->ac // '') . $num->sn;
 
         my $tmpsubscriber;
