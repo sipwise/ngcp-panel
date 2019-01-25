@@ -1,6 +1,7 @@
 package NGCP::Panel::Controller::Grafana;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
+use Encode qw/decode/;
 
 use parent 'Catalyst::Controller';
 
@@ -43,12 +44,18 @@ sub root :Chained('/') :PathPart('grafana') :Args() {
     my $body = $c->request->body ? (do { local $/ = undef; $c->request->body->getline }) : '';
     $req->content($body);
     my $res = $ua->request($req);
-    $c->res->content_type($res->header('Content-Type') // 'text/plain');
+    $c->res->content_type($res->content_type // 'text/plain');
     if($res->header('Location')) {
         $c->res->header(Location => $res->header('Location'))
     }
     $c->res->status($res->code);
-    $c->res->body($res->decoded_content);
+
+    if ($c->res->content_type eq "application/javascript") {
+        # work around broken Grafana not indicating UTF-8 encoding in application/js files
+        $c->res->body(decode('UTF-8', $res->decoded_content));
+    } else {
+        $c->res->body($res->decoded_content);
+    }
 }
 
 
