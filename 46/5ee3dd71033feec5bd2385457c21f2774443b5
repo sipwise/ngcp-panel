@@ -1,0 +1,8 @@
+Verified+1: Jenkins Jenkins
+Code-Review+1: Michael Prokop <mprokop@sipwise.com>
+Code-Review+2: Richard Fuchs <rfuchs@sipwise.com>
+Submitted-by: Guillem Jover <gjover@sipwise.com>
+Submitted-at: Fri, 25 Jan 2019 23:53:53 +0100
+Reviewed-on: http://gerrit.mgm.sipwise.com/26659
+Project: ngcp-panel
+Branch: refs/heads/master
