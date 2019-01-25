@@ -3094,9 +3094,9 @@ sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL)
     my @alias_nums = ();
     my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
         'subscriber.contract_id' => $subscriber->contract_id,
-        'voip_subscribers.id' => undef,
+        'primary_number_owners_active.id' => undef,
     },{
-        prefetch => ['subscriber', 'voip_subscribers'],
+        prefetch => ['subscriber', 'primary_number_owners_active'],
     });
 
     my $alias_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
