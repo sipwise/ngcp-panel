@@ -16,6 +16,24 @@
       "revId": "3337d5814681ceff2466161c0c423c43110c58cc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da1255d7_9eaf4994",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3097,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-01-28T10:26:03Z",
+      "side": 1,
+      "message": "Yes, forgot about join type when moved from \"from\" implementation, thank you.\nHere this two conditioned join is the most efficient way to do it. Although efficiency of the both queries should be the same:\n\nhttps://paste.mgm.sipwise.com/show/4830/\n\nusing join condition still is more clear and universal to use way.",
+      "parentUuid": "da1255d7_de3021a1",
+      "revId": "3337d5814681ceff2466161c0c423c43110c58cc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
