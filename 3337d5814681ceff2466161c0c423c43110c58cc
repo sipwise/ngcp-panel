@@ -34,6 +34,24 @@
       "revId": "3337d5814681ceff2466161c0c423c43110c58cc",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da1255d7_7ea3759f",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3097,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-01-28T11:22:15Z",
+      "side": 1,
+      "message": "queries with more than 1 left joins are bad.",
+      "parentUuid": "da1255d7_9eaf4994",
+      "revId": "3337d5814681ceff2466161c0c423c43110c58cc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
