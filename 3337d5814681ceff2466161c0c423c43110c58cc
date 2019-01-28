@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da1255d7_de3021a1",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3097,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-01-28T09:36:08Z",
+      "side": 1,
+      "message": "this can only be NULL, if the join_type of primary_number_owners_active is \"left join\"\n\nok it turns out that voip_numbers-\u003esubscriber is left join.\n\nthis is quite confusing, i think its more readable to cover this with a where clause here only, not a join\u0027s ON clause of another relationship.",
+      "revId": "3337d5814681ceff2466161c0c423c43110c58cc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
