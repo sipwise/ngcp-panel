@@ -60,15 +60,15 @@ sub _item_rs {
 
     if($c->req->param('type') && $c->req->param('type') eq "primary") {
         $item_rs = $item_rs->search({
-            'primary_number_owners.id' => { '!=' => undef },
+            'primary_number_owners_active.id' => { '!=' => undef },
         }, {
-            join => ['subscriber', 'primary_number_owners'],
+            join => ['subscriber', 'primary_number_owners_active'],
         });
     } elsif($c->req->param('type') && $c->req->param('type') eq "alias") {
         $item_rs = $item_rs->search({
-            'primary_number_owners.id' => { '=' => undef },
+            'primary_number_owners_active.id' => { '=' => undef },
         }, {
-            join => ['subscriber', 'primary_number_owners'],
+            join => ['subscriber', 'primary_number_owners_active'],
         });
     }
     return $item_rs;
