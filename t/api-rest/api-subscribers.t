@@ -93,6 +93,7 @@ my $remote_config = $test_machine->init_catalyst_config;
 #modify time changes on every data change, and primary_number_id on every primary number change
 my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{update_change_fields} };
 
+
 {
 #20369
     diag("20369: informative error for the PUT method on subscriber with duplicated number;\n\n");
@@ -207,6 +208,121 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
 }
 
 if($remote_config->{config}->{features}->{cloudpbx}){
+    {
+    #TT#50802
+        my $member_to_terminate;
+        my $member_to_get_number;
+        my $pilot_local;
+        my $alias_numbers = [
+                    { ac => '115', cc=> 15, sn => '50802' },
+                    { ac => '116', cc=> 16, sn => '50802' },
+                    { ac => '117', cc=> 17, sn => '50802' },
+                    { ac => '118', cc=> 18, sn => '50802' },
+                ];
+        if(!$pilot) {
+            diag("50802: create pilot");
+            $pilot = $test_machine->check_create_correct( 1, sub{
+                my $num = $_[1]->{i}.Test::FakeData::seq;
+                $_[0]->{username} .= time().'_50802_'.$num ;
+                $_[0]->{webusername} .= time().'_'.$num;
+                $_[0]->{pbx_extension} .= '50802'.$num;
+                $_[0]->{primary_number}->{ac} .= $num;
+                $_[0]->{is_pbx_group} = 0;
+                $_[0]->{is_pbx_pilot} = 1;
+                $_[0]->{alias_numbers} = $alias_numbers;
+            } )->[0];
+            $pilot_local = $pilot;
+        } else {
+            $pilot_local = $pilot;
+            
+            $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => $alias_numbers } ], $pilot_local->{location} );
+        }
+        diag("50802: create member_to_terminate");
+        $member_to_terminate = $test_machine->check_create_correct( 1, sub{
+            my $num = $_[1]->{i}.Test::FakeData::seq;
+            $_[0]->{username} .= time().'_50802_'.$num ;
+            $_[0]->{webusername} .= time().'_'.$num;
+            $_[0]->{pbx_extension} = '50802'.'1';
+            $_[0]->{primary_number}->{sn} .= '50802';
+            $_[0]->{is_pbx_group} = 0;
+            $_[0]->{is_pbx_pilot} = 0;
+            $_[0]->{alias_numbers} = [];#@{$alias_numbers}[0,1]
+        } )->[0];
+        #print Dumper $member_to_terminate;
+        diag("50802: create member_to_get_number");
+        $member_to_get_number = $test_machine->check_create_correct( 1, sub{
+            my $num = $_[1]->{i}.Test::FakeData::seq;
+            $_[0]->{username} .= time().'_50802_'.$num ;
+            $_[0]->{webusername} .= time().'_'.$num;
+            $_[0]->{pbx_extension} .= '50802'.$num;
+            $_[0]->{primary_number}->{ac} .= $num;
+            $_[0]->{is_pbx_group} = 0;
+            $_[0]->{is_pbx_pilot} = 0;
+            $_[0]->{alias_numbers} = [];#@{$alias_numbers}[2,3]
+        } )->[0];
+        my ($aliases) = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$pilot_local->{content}->{id}, 1)->{collection};
+        ok(((scalar @$aliases) == 4),"50802: aliases of ".$pilot_local->{content}->{id}." arent empty:".(scalar @$aliases ));
+        diag("50802: assign all aliases to member_to_terminate");
+        foreach my $alias (@$aliases) {
+            !$alias->{location} && next;
+            diag("50802: check 'before' ownership, subscriber_id should be a pilot id:".$pilot_local->{content}->{id});
+            is($pilot_local->{content}->{id},$alias->{content}->{subscriber_id},"50802: check ownership: prev owner id: ".$pilot_local->{content}->{id}."; alias subscriber_id:".$alias->{content}->{subscriber_id});
+            $test_machine->check_patch2get([ { op => 'replace', path => '/subscriber_id', value => $member_to_terminate->{content}->{id} } ] , $alias->{location});
+        }
+        $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$member_to_terminate->{content}->{id}, 1)->{collection};
+        ok(((scalar @$aliases) == 4),"50802: aliases of ".$member_to_terminate->{content}->{id}." arent empty:".(scalar @$aliases));
+        diag("50802: assign all aliases to member_to_get_number");
+        foreach my $alias (@$aliases) {
+            !$alias->{location} && next;
+            diag("50802: check 'before' ownership, subscriber_id should be a member_to_terminate id:".$member_to_terminate->{content}->{id});
+            is($member_to_terminate->{content}->{id},$alias->{content}->{subscriber_id},"50802: check ownership: prev owner id: ".$member_to_terminate->{content}->{id}."; alias subscriber_id:".$alias->{content}->{subscriber_id});
+            $test_machine->check_patch2get([ { op => 'replace', path => '/subscriber_id', value => $member_to_get_number->{content}->{id} } ] , $alias->{location});
+        }
+        $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$member_to_get_number->{content}->{id}, 1)->{collection};
+        ok(((scalar @$aliases) == 4),"50802: aliases of ".$member_to_get_number->{content}->{id}." arent empty:".(scalar @$aliases ));
+        diag("50802: assign all aliases to member_to_terminate again");
+        foreach my $alias (@$aliases) {
+            diag("50802: check 'before' ownership, subscriber_id should be a member_to_get_number id:".$member_to_get_number->{content}->{id});
+            is($member_to_get_number->{content}->{id},$alias->{content}->{subscriber_id},"50802: check ownership: prev owner id: ".$member_to_get_number->{content}->{id}."; alias subscriber_id:".$alias->{content}->{subscriber_id});
+            $test_machine->check_patch2get([ { op => 'replace', path => '/subscriber_id', value => $member_to_terminate->{content}->{id} } ] , $alias->{location});
+        }
+        
+        my $terminated_primary_number = $member_to_terminate->{content}->{primary_number};
+        diag("50802: primary_number of member_to_terminate");
+        diag(Dumper($terminated_primary_number));
+        
+        diag("50802: terminate member_to_terminate");
+        $test_machine->request_delete($member_to_terminate->{location});
+ 
+        $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$pilot_local->{content}->{id}, 1)->{collection};
+        #print Dumper $aliases;
+        ok(((scalar @$aliases) == 4),"50802: aliases of ".$pilot_local->{content}->{id}." arent empty:".(scalar @$aliases ).". We returned aliases to pilot.");
+
+        $pilot_local = $test_machine->get_item_hal('subscribers', '/api/subscribers/'.$pilot_local->{content}->{id}, 1);
+
+
+        $test_machine->check_patch2get([ { op => 'replace', path => '/alias_numbers', value => [@$pilot_local->{content}->{alias_numbers}, $terminated_primary_number] } ] , $pilot_local->{location});
+
+        $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$pilot_local->{content}->{id}, 1)->{collection};
+        #print Dumper $aliases;
+        ok(((scalar @$aliases) == 5),"50802: aliases of ".$pilot_local->{content}->{id}." arent empty:".(scalar @$aliases ).". We added ex-primary number as an alias.");
+
+        diag("50802: steal numbers of terminated subscriber");
+        foreach my $alias (@$aliases) {
+            diag("50802: check ownership, subscriber_id should be a pilot id:".$pilot_local->{content}->{id});
+            is($pilot_local->{content}->{id},$alias->{content}->{subscriber_id},"50802: check ownership: prev owner id: ".$pilot_local->{content}->{id}."; alias subscriber_id:".$alias->{content}->{subscriber_id});
+
+            $test_machine->check_patch2get([ { op => 'replace', path => '/subscriber_id', value => $member_to_get_number->{content}->{id} } ] , $alias->{location});
+        }
+
+        $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$member_to_get_number->{content}->{id}, 1)->{collection};
+        #print Dumper $aliases;
+        ok(((scalar @$aliases) == 5),"50802: aliases of ".$member_to_get_number->{content}->{id}." arent empty:".(scalar @$aliases ).". We added ex-primary number as an alias.");
+
+        $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
+        $test_machine->request_delete($member_to_get_number->{location});
+        #die;
+    }
     {#18601
         diag("18601: config->features->cloudpbx: ".$remote_config->{config}->{features}->{cloudpbx}.";\n");
         my $groups = $test_machine->check_create_correct( 3, sub{
