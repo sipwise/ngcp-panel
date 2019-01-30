@@ -1163,10 +1163,11 @@ sub update_subadmin_sub_aliases {
     my $contract_id    = $params{contract_id};
     my $alias_selected = $params{alias_selected};
 
-    my $num_rs = $schema->resultset('voip_numbers')->search_rs({
-        'subscriber.contract_id' => $contract_id,
+    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+        'subscriber.contract_id' => $subscriber->contract_id,
+        'primary_number_owners_active.id' => undef,
     },{
-        prefetch => 'subscriber',
+        prefetch => ['subscriber', 'primary_number_owners_active'],
     });
 
     my $acli_pref_sub;
@@ -1179,8 +1180,6 @@ sub update_subadmin_sub_aliases {
         if($sadmin->provisioning_voip_subscriber && $c->config->{numbermanagement}->{auto_allow_cli});
 
     for my $num ($num_rs->all) {
-        next if ($num->voip_subscribers->first); # is a primary number
-
         my $cli = $num->cc . ($num->ac // '') . $num->sn;
 
         my $tmpsubscriber;
