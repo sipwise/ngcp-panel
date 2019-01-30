@@ -693,7 +693,11 @@ sub get_collection_hal{
             #push @{$self->DATA_LOADED->{$name}}, $resitem;
             push @{$rescollection->{collection}}, $resitem;
         };
-        $add_item->(0);
+        if($location){
+            $add_item->(0, $location);
+        } else {
+            $add_item->(0);
+        }
         for(my $i=1; $i<$total_count; $i++){
             ($reshals[$i],$location) = $self->get_hal_from_collection($reshal_collection,$name,$i);
             $add_item->($i,$location);
