@@ -60,15 +60,15 @@ sub _item_rs {
 
     if($c->req->param('type') && $c->req->param('type') eq "primary") {
         $item_rs = $item_rs->search({
-            'voip_subscribers.id' => { '!=' => undef },
+            'primary_number_owners.id' => { '!=' => undef },
         }, {
-            join => ['subscriber', 'voip_subscribers'],
+            join => ['subscriber', 'primary_number_owners'],
         });
     } elsif($c->req->param('type') && $c->req->param('type') eq "alias") {
         $item_rs = $item_rs->search({
-            'voip_subscribers.id' => { '=' => undef },
+            'primary_number_owners.id' => { '=' => undef },
         }, {
-            join => ['subscriber', 'voip_subscribers'],
+            join => ['subscriber', 'primary_number_owners'],
         });
     }
     return $item_rs;
