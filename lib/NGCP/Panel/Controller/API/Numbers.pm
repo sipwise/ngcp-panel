@@ -49,15 +49,22 @@ sub query_params {
         {
             param => 'subscriber_id',
             description => 'Filter for numbers assigned to a specific subscriber.',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { 'subscriber_id' => $q };
-                },
-                second => sub {
-                    return { };
-                },
-            },
+            query_type => 'string_eq',
+        },
+        {
+            param => 'ac',
+            description => 'Filter for ac field of the number.',
+            query_type => 'string_like',
+        },
+        {
+            param => 'cc',
+            description => 'Filter for cc field c the number.',
+            query_type => 'string_like',
+        },
+        {
+            param => 'sn',
+            description => 'Filter for sn field c the number.',
+            query_type => 'string_like',
         },
         {
             param => 'type',
