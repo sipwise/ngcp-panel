@@ -99,37 +99,60 @@ sub get_timeset_icalendar {
     return $data_ref;
 }
 
-sub proocess_uploaded_calendar{
+sub parse_calendar{
     my %params = @_;
-    my($c, $timeset_in, $data, $purge_existing) = @params{qw/c timeset data purge_existing/};
+    my($c, $timeset_in, $data) = @params{qw/c timeset data/};
+
+    $timeset_in //= {};
+    my $timeset = {%$timeset_in};
+
+    #we will use caching because we need to parse uploaded fie to check name existence and uniqueness
+    if ($c->stash->{parsed_calendar}) {
+        return $c->stash->{parsed_calendar}, $c->stash->{parsed_calendar_result};
+    }
+    if (!$data && $c->req->upload('upload')) {
+        $data = \$c->req->upload('upload')->slurp;
+    }
     if (!$data && !ref $data && !$$data) {
-        return {};
+        return $timeset;
     }
     $$data =~s/\n+/\n/g;
     $c->log->debug("calendar data: ".$$data.";");
+
     my $calendar = Data::ICal->new( data => $$data );
-    my $timeset = {};
     if (!$calendar) {
         #https://metacpan.org/pod/Data::ICal
         #parse [ data => $data, ] [ filename => $file, ]
         #Returns $self on success. Returns a false value upon failure to open or parse the file or data; this false value is a Class::ReturnValue object and can be queried as to its error_message.
         $c->log->debug("calendar error messages: ".$calendar->error_message.";");
-        return {};
+        return $timeset;
     } else {
-        if ($timeset_in) {
-            $timeset = $timeset_in;
-        } else {
-            $timeset = {
-                name =>  $calendar->property('summary')->[0]->value,
-            };
+        if ($calendar->property('name')) {
+            $timeset->{name} = $calendar->property('name')->[0]->value;
         }
+    }
+    $c->stash(
+        parsed_calendar => $calendar,
+        parsed_calendar_result => $timeset,
+    );
+    return $timeset, $calendar;
+}
+
+sub parse_calendar_events {
+    my %params = @_;
+    my($c, $calendar) = @params{qw/c calendar/};
+    $calendar //= $c->stash->{parsed_calendar};
+
+    my $events = [];
+
+    if ($calendar) {
         my @allowed_rrule_fields = (qw/FREQ COUNT UNTIL INTERVAL BYSECOND BYMINUTE BYHOUR BYDAY BYMONTHDAY BYYEARDAY BYWEEKNO BYMONTH BYSETPOS WKST RDATE EXDATE/);
         my %rrule_fields_end_markers = map { 
             my $field = $_; 
             $field => join('|', grep {$_ ne $field} @allowed_rrule_fields)
         } @allowed_rrule_fields;
-
-        $timeset->{times} = [];
+        #or:
+        #my $rrule_fields_end_marker = '[a-z]+';
         foreach my $entry (@{$calendar->entries}) {
             my $event = {
                 comment => $calendar->property('description')->[0]->value,
@@ -144,10 +167,10 @@ sub proocess_uploaded_calendar{
                 } @allowed_rrule_fields };
                 $event = {%$event, %$rrule_data};
             }
-            push @{$timeset->{times}}, $event;
+            push @$events, $event;
         }
     }
-    return $timeset;
+    return $events;
 }
 1;
 

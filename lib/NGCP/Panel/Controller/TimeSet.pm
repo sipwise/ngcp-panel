@@ -89,7 +89,8 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $params = {};
+    my $upload = $c->req->upload('upload');
+    my $params = { upload => $posted ? $upload : undef, };
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
@@ -99,8 +100,8 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     }
     $form->process(
         posted => $posted,
-        params => $c->request->params,
-        item   => $params,
+        params => $params,
+        action => $c->uri_for_action('/timeset/create'),
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -119,10 +120,17 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
             }  else {
                 $resource->{reseller_id} = $c->user->reseller_id;
             }
+
+            ( $resource ) = NGCP::Panel::Utils::TimeSet::parse_calendar(
+                c => $c,
+                timeset => $resource,
+            );
+            $resource->{times} = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
+
             $c->model('DB')->schema->txn_do( sub {
                 NGCP::Panel::Utils::TimeSet::create_timesets(
                     c => $c,
-                    resource => $form->values,
+                    resource => $resource,
                 );
             });
             delete $c->session->{created_objects}->{reseller};
@@ -260,6 +268,10 @@ sub upload :Chained('list') :PathPart('upload') :Args(0) {
                     schema     => $schema,
                 );
             });
+            NGCP::Panel::Utils::TimeSet::create_timesets(
+                c => $c,
+                resource => $resource,
+            );
 
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
