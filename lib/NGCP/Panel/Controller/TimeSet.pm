@@ -119,10 +119,17 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
             }  else {
                 $resource->{reseller_id} = $c->user->reseller_id;
             }
+
+            ( $resource ) = NGCP::Panel::Utils::TimeSet::parse_calendar(
+                c => $c,
+                timeset => $resource,
+            );
+            $resource->{times} = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
+
             $c->model('DB')->schema->txn_do( sub {
                 NGCP::Panel::Utils::TimeSet::create_timesets(
                     c => $c,
-                    resource => $form->values,
+                    resource => $resource,
                 );
             });
             delete $c->session->{created_objects}->{reseller};
@@ -260,6 +267,10 @@ sub upload :Chained('list') :PathPart('upload') :Args(0) {
                     schema     => $schema,
                 );
             });
+            NGCP::Panel::Utils::TimeSet::create_timesets(
+                c => $c,
+                resource => $resource,
+            );
 
             NGCP::Panel::Utils::Message::info(
                 c    => $c,

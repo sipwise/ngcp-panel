@@ -1,9 +1,15 @@
 package NGCP::Panel::Form::TimeSet::EventUpload;
 use Sipwise::Base;
 
-extends 'NGCP::Panel::Form::TimeSet::Upload';
+extends 'HTML::FormHandler';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
+
+has '+widget_wrapper' => ( default => 'Bootstrap' );
+has '+enctype' => ( default => 'multipart/form-data');
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'purge_existing' => (
     type => 'Boolean',

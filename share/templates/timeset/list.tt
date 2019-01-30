@@ -21,7 +21,6 @@
         ];
         helper.top_buttons = [
             { name = c.loc('Create Time Set Entry'), uri = c.uri_for('/timeset/create'), icon = 'icon-star' },
-            { name = c.loc('Upload iCalendar file'), uri = c.uri_for_action('/timeset/upload'), icon = 'icon-star' },
         ];
     END;
 
