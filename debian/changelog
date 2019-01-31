@@ -1,3 +1,12 @@
+ngcp-panel (5.5.7.7+0~mr5.5.7.7) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [1d1a017] TT#50802 Consider terminated subscribers in alias management
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 31 Jan 2019 09:27:47 +0100
+
 ngcp-panel (5.5.7.6+0~mr5.5.7.6) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
