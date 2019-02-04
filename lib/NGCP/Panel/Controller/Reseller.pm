@@ -893,7 +893,7 @@ sub timeset_create :Chained('base') :PathPart('timeset/create') :Args(0) :Does(A
             my $resource = $form->values;
             $resource->{reseller_id} = $reseller->id;
             $c->model('DB')->schema->txn_do( sub {
-                NGCP::Panel::Utils::TimeSet::create_timesets(
+                NGCP::Panel::Utils::TimeSet::create_timeset(
                     c => $c,
                     resource => $resource,
                 );
@@ -970,7 +970,7 @@ sub timeset_edit :Chained('timeset_base') :PathPart('edit') :Args(0) :Does(ACL) 
             $c->model('DB')->schema->txn_do( sub {
                 my $resource = $form->values;
                 $resource->{reseller_id} = $reseller->id;
-                NGCP::Panel::Utils::TimeSet::update_timesets(
+                NGCP::Panel::Utils::TimeSet::update_timeset(
                     c => $c,
                     timeset => $c->stash->{'timeset_rs'},
                     resource => $resource,
