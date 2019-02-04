@@ -893,7 +893,7 @@ sub timeset_create :Chained('base') :PathPart('timeset/create') :Args(0) :Does(A
             my $resource = $form->values;
             $resource->{reseller_id} = $reseller->id;
             $c->model('DB')->schema->txn_do( sub {
-                NGCP::Panel::Utils::TimeSet::create_timesets(
+                NGCP::Panel::Utils::TimeSet::create_timeset(
                     c => $c,
                     resource => $resource,
                 );
