@@ -31,7 +31,7 @@ sub update_timesets {
     }
 }
 
-sub create_timesets {
+sub create_timeset {
     my %params = @_;
     my($c, $resource) = @params{qw/c resource/};
 

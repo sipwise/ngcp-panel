@@ -128,7 +128,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
             $resource->{times} = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
 
             $c->model('DB')->schema->txn_do( sub {
-                NGCP::Panel::Utils::TimeSet::create_timesets(
+                NGCP::Panel::Utils::TimeSet::create_timeset(
                     c => $c,
                     resource => $resource,
                 );
