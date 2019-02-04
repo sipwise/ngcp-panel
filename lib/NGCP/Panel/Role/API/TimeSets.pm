@@ -108,7 +108,7 @@ sub update_item_model {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     try {
-        NGCP::Panel::Utils::TimeSet::update_timesets( 
+        NGCP::Panel::Utils::TimeSet::update_timeset( 
             c => $c,
             timeset  => $item,
             resource => $resource,
