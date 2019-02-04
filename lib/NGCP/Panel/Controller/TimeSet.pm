@@ -90,7 +90,10 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $upload = $c->req->upload('upload');
-    my $params = { upload => $posted ? $upload : undef, };
+    my $params = {
+        %{$c->request->params},
+        upload => $posted ? $upload : undef,
+    };
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
@@ -113,20 +116,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            my $resource = $form->values;
-            if($c->user->roles eq "admin") {
-                $resource->{reseller_id} = $form->values->{reseller}{id};
-                delete $resource->{reseller};
-            }  else {
-                $resource->{reseller_id} = $c->user->reseller_id;
-            }
-
-            ( $resource ) = NGCP::Panel::Utils::TimeSet::parse_calendar(
-                c => $c,
-                timeset => $resource,
-            );
-            $resource->{times} = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
-
+            my $resource = $c->forward('timeset_resource',[$form]);
             $c->model('DB')->schema->txn_do( sub {
                 NGCP::Panel::Utils::TimeSet::create_timeset(
                     c => $c,
@@ -156,8 +146,10 @@ sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
+    my $upload = $c->req->upload('upload');
     my $params = NGCP::Panel::Utils::TimeSet::get_timeset(c => $c, timeset => $c->stash->{timeset_rs});
     $params->{reseller}{id} = delete $params->{reseller_id};
+    $params->{upload} = $posted ? $upload : undef;
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
@@ -167,8 +159,8 @@ sub edit :Chained('base') :PathPart('edit') {
     }
     $form->process(
         posted => $posted,
-        params => $c->request->params,
-        item   => $params,
+        params => $params,
+        item   => $c->stash->{timeset_rs},
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -181,13 +173,7 @@ sub edit :Chained('base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             $c->model('DB')->schema->txn_do( sub {
-                my $resource = $form->values;
-                if($c->user->roles eq "admin") {
-                    $resource->{reseller_id} = $form->values->{reseller}{id};
-                    delete $resource->{reseller};
-                }  else {
-                    $resource->{reseller_id} = $c->user->reseller_id;
-                }
+                my $resource = $c->forward('timeset_resource',[$form]);
                 NGCP::Panel::Utils::TimeSet::update_timesets(
                     c => $c,
                     timeset => $c->stash->{timeset_rs},
@@ -234,63 +220,27 @@ sub delete :Chained('base') :PathPart('delete') {
 }
 
 
-sub upload :Chained('list') :PathPart('upload') :Args(0) {
-    my ($self, $c) = @_;
+sub timeset_resource :Private {
+    my ($self, $c, $form) = @_;
 
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet::Upload", $c);
-    my $upload = $c->req->upload('upload');
-    my $posted = $c->req->method eq 'POST';
-    my @params = ( upload => $posted ? $upload : undef, );
-    $form->process(
-        posted => $posted,
-        params => { @params },
-        action => $c->uri_for_action('/timeset/upload'),
-    );
-    if($form->validated) {
-        # TODO: check by formhandler?
-        unless($upload) {
-            NGCP::Panel::Utils::Message::error(
-                c    => $c,
-                desc => $c->loc('No iCalendar file specified!'),
-            );
-            $c->response->redirect($c->uri_for('/timeset'));
-            return;
-        }
-        my $data = $upload->slurp;
-        my($resource, $fails, $text_success);
-        try {
-            my $schema = $c->model('DB');
-            $schema->txn_do(sub {
-                ( $resource, $fails, $text_success ) = NGCP::Panel::Utils::TimeSet::proocess_uploaded_calendar(
-                    c          => $c,
-                    data       => \$data,
-                    timeset    => $c->stash->{'timeset_rs'},
-                    schema     => $schema,
-                );
-            });
-            NGCP::Panel::Utils::TimeSet::create_timesets(
-                c => $c,
-                resource => $resource,
-            );
-
-            NGCP::Panel::Utils::Message::info(
-                c    => $c,
-                desc => $$text_success,
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc => $c->loc('Failed to upload iCalendar'),
-            );
-        }
-
-        $c->response->redirect($c->uri_for('/timeset'));
-        return;
+    my $resource = $form->values;
+    delete $resource->{upload};
+    if($c->user->roles eq "admin") {
+        $resource->{reseller_id} = $form->values->{reseller}{id};
+        delete $resource->{reseller};
+    }  else {
+        $resource->{reseller_id} = $c->user->reseller_id;
     }
-
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
+    if (!$resource->{name}) {
+        my( $calendar_parsed ) = NGCP::Panel::Utils::TimeSet::parse_calendar(
+            c => $c,
+        );
+        #we have checked that $name is not empty in the form validation
+        $resource->{name} = $calendar_parsed->{name};
+    }
+    #data will be taken from the request parameters or cache
+    ($resource->{times}) = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
+    return $resource;
 }
 
 sub download :Chained('base') :PathPart('download') :Args(0) {
@@ -310,7 +260,7 @@ sub download :Chained('base') :PathPart('download') :Args(0) {
 sub event_list :Chained('base') :PathPart('event') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash->{events_rs} = $c->model('DB')->resultset('voip_time_periods');
+    $c->stash->{events_rs} = $c->stash->{timeset_rs}->time_periods;
 
     $c->stash->{event_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
@@ -467,7 +417,7 @@ sub event_upload :Chained('event_list') :PathPart('upload') :Args(0) {
     $form->process(
         posted => $posted,
         params => { @params },
-        action => $c->uri_for_action('/timeset/upload', $c->req->captures),
+        action => $c->uri_for_action('/timeset/event_upload', $c->req->captures),
     );
     if($form->validated) {
         # TODO: check by formhandler?

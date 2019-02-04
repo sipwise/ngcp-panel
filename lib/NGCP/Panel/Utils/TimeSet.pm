@@ -45,11 +45,6 @@ sub create_timeset {
         timeset => $timeset,
         events  => $resource->{times},
     );
-    for my $t ( @{$resource->{times}} ) {
-        $timeset->create_related("time_periods", {
-            %{ $t },
-        });
-    }
     return $timeset;
 }
 
@@ -62,7 +57,6 @@ sub create_timeset_events {
             %{ $t },
         });
     }
-    return $timeset;
 }
 
 sub get_timeset {
@@ -99,53 +93,68 @@ sub get_timeset_icalendar {
     return $data_ref;
 }
 
-sub parse_calendar{
+sub get_calendar_data_parsed {
     my %params = @_;
-    my($c, $timeset_in, $data) = @params{qw/c timeset data/};
-
-    $timeset_in //= {};
-    my $timeset = {%$timeset_in};
-
-    #we will use caching because we need to parse uploaded fie to check name existence and uniqueness
-    if ($c->stash->{parsed_calendar}) {
-        return $c->stash->{parsed_calendar}, $c->stash->{parsed_calendar_result};
+    my($c, $data) = @params{qw/c data/};
+    if ($c->stash->{calendar_upload_parsed}) {
+        return $c->stash->{calendar_upload_parsed};
     }
     if (!$data && $c->req->upload('upload')) {
         $data = \$c->req->upload('upload')->slurp;
+        $$data =~s/\n+/\n/g;
+        $c->stash(
+            calendar_upload => $data,
+        );
     }
-    if (!$data && !ref $data && !$$data) {
-        return $timeset;
-    }
-    $$data =~s/\n+/\n/g;
     $c->log->debug("calendar data: ".$$data.";");
-
     my $calendar = Data::ICal->new( data => $$data );
     if (!$calendar) {
         #https://metacpan.org/pod/Data::ICal
         #parse [ data => $data, ] [ filename => $file, ]
         #Returns $self on success. Returns a false value upon failure to open or parse the file or data; this false value is a Class::ReturnValue object and can be queried as to its error_message.
         $c->log->debug("calendar error messages: ".$calendar->error_message.";");
-        return $timeset;
     } else {
+        $c->stash(
+            calendar_upload_parsed => $calendar,
+        );
+    }
+    return $calendar, $data;
+}
+
+sub parse_calendar{
+    my %params = @_;
+    my($c, $data) = @params{qw/c data/};
+
+    my $timeset = {};
+
+    #we will use caching because we need to parse uploaded fie to check name existence and uniqueness
+    if ($c->stash->{calendar_upload_parsed_result}) {
+        return $c->stash->{calendar_upload_parsed_result}, $c->stash->{calendar_upload_parsed};
+    }
+    my ($calendar) = get_calendar_data_parsed( c=> $c, data => $data );
+    if ($calendar) {
         if ($calendar->property('name')) {
             $timeset->{name} = $calendar->property('name')->[0]->value;
         }
     }
     $c->stash(
-        parsed_calendar => $calendar,
-        parsed_calendar_result => $timeset,
+        calendar_upload_parsed => $calendar,
+        calendar_upload_parsed_result => $timeset,
     );
     return $timeset, $calendar;
 }
 
 sub parse_calendar_events {
     my %params = @_;
-    my($c, $calendar) = @params{qw/c calendar/};
-    $calendar //= $c->stash->{parsed_calendar};
-
+    my($c, $calendar, $data) = @params{qw/c calendar data/};
     my $events = [];
-
+    if(!$calendar) {
+        if (!$c->stash->{calendar_upload_parsed}) {
+            ($calendar) = get_calendar_data_parsed( c=> $c, data => $data );
+        }
+    }
     if ($calendar) {
+        $c->log->debug("parse calendar events;");
         my @allowed_rrule_fields = (qw/FREQ COUNT UNTIL INTERVAL BYSECOND BYMINUTE BYHOUR BYDAY BYMONTHDAY BYYEARDAY BYWEEKNO BYMONTH BYSETPOS WKST RDATE EXDATE/);
         my %rrule_fields_end_markers = map { 
             my $field = $_; 
@@ -154,8 +163,11 @@ sub parse_calendar_events {
         #or:
         #my $rrule_fields_end_marker = '[a-z]+';
         foreach my $entry (@{$calendar->entries}) {
+            $c->log->debug("parse calendar entry:".$entry->as_string .";");
             my $event = {
-                comment => $calendar->property('description')->[0]->value,
+                comment => $calendar->property('description') 
+                    ? $calendar->property('description')->[0]->value 
+                    : undef,
             };
             my $rrule = $entry->property('rrule');
             if ( ref $rrule eq 'ARRAY' && @$rrule ) {
@@ -163,7 +175,7 @@ sub parse_calendar_events {
                 my $rrule_data = { map {
                     my $re = '(?:^|;)'.$_.'=(.*?)(?:;(?:'.$rrule_fields_end_markers{$_}.')|;$|$)';
                     $rrule->[0]->value =~/$re/i;
-                    $1 ? ($_ => $1) : ();
+                    $1 ? (lc($_) => $1) : ();
                 } @allowed_rrule_fields };
                 $event = {%$event, %$rrule_data};
             }
@@ -188,9 +200,9 @@ A temporary helper to manipulate resellers data
 
 Update timesets database data
 
-=head2 create_timesets
+=head2 create_timeset
 
-Create timesets database data
+Create timeset database data
 
 =head2 get_timesets
 

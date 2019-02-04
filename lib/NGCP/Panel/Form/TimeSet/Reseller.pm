@@ -77,11 +77,11 @@ sub validate {
 
     my $name = $self->field('name')->value;
 
-    my $timeset_uploaded = {};
-    if ($self->field('upload')->value) {
-        ($timeset_uploaded) = NGCP::Panel::Utils::TimeSet::parse_calendar( c => $c );
-    }
     if (!$name) {
+        my $timeset_uploaded = {};
+        if ($self->field('upload')->value) {
+            ($timeset_uploaded) = NGCP::Panel::Utils::TimeSet::parse_calendar( c => $c );
+        }
         if (!$timeset_uploaded->{name}) {
             $self->field('name')->add_error($c->loc('Name field is required and should be defined in the form field or in the uploaded calendar file.'));
         } else {
