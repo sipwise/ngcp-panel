@@ -52,13 +52,17 @@ sub resource_from_item {
     return $resource;
 }
 
+#is used only in application/json input processing, and not in upload variant
 sub process_form_resource{
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     $resource->{times} = $form->values->{times}; # not taking times from get_valid_data, but from form values, to benefit from formhandler inflation
+    if($c->user->roles eq 'reseller') {
+        $resource->{reseller_id} = $c->user->reseller_id;
+    }
     return $resource;
 }
 
-# called automatically by POST (and manually by update_item if you want)
+# called automatically by POST, application/json processing variant (and manually by update_item if you want)
 sub check_resource {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
@@ -108,10 +112,14 @@ sub update_item_model {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     try {
-        NGCP::Panel::Utils::TimeSet::update_timesets( 
+        my ($timeset_resource, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::timeset_resource(
+            c => $c, 
+            resource => $resource
+        );
+        NGCP::Panel::Utils::TimeSet::update_timeset( 
             c => $c,
             timeset  => $item,
-            resource => $resource,
+            resource => $timeset_resource,
         );
         $item->discard_changes;
     } catch($e) {
@@ -121,6 +129,40 @@ sub update_item_model {
     };
 
     return $item;
+}
+
+sub process_data {
+    my ($self, %params) = @_;
+    my ($c,$data_ref,$item,$resource,$form,$process_extras) = @params{qw/c data item resource form process_extra/}; 
+
+    my($timeset_resource, $fails, $text_success);
+    try {
+        ($timeset_resource, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::timeset_resource(
+            c => $c, 
+            resource => $resource
+        );
+        last unless $self->check_duplicate($c, $item, undef, $resource, $form, $process_extras);
+        last unless $self->check_resource($c, $item, undef, $resource, $form, $process_extras);
+        if (!$item) {
+            last unless NGCP::Panel::Utils::TimeSet::update_timeset(
+                c => $c,
+                timeset  => $item,
+                resource => $timeset_resource,
+            );
+        } else {
+            last unless NGCP::Panel::Utils::TimeSet::create_timeset(
+                c => $c,
+                resource => $timeset_resource,
+            );
+        }
+        $c->log->info( $text_success );
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            desc => $c->loc('Failed to upload iCalendar events'),
+        );
+    }
 }
 
 1;
