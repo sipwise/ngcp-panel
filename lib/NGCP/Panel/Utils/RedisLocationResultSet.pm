@@ -96,11 +96,11 @@ sub search {
         } elsif ($filter->{username} && $filter->{domain}) {
             push @{ $new_rs->_rows },
                 @{ $new_rs->_rows_from_mapkey("location:usrdom::" .
-                    $filter->{username} . ":" . $filter->{domain}, $filter) };
+                    lc($filter->{username}) . ":" . lc($filter->{domain}), $filter) };
         } elsif ($filter->{username}) {
             push @{ $new_rs->_rows },
                 @{ $new_rs->_rows_from_mapkey("location:usrdom::" .
-                    $filter->{username}, $filter) };
+                    lc($filter->{username}), $filter) };
         } else {
             $new_rs->_scan($filter);
         }
@@ -132,7 +132,7 @@ sub search {
     $opt->{rows} //= -1;
     $opt->{offset} //= 0;
     if (!defined $opt->{page} && $opt->{rows} > -1 || $opt->{offset} > 0) {
-        $new_rs->_rows([ splice @{ $new_rs->_rows }, $opt->{offset}, $opt->{rows} ]);   
+        $new_rs->_rows([ splice @{ $new_rs->_rows }, $opt->{offset}, $opt->{rows} ]);
     }
 
     if (defined $opt->{page} && $opt->{rows} > 0) {
