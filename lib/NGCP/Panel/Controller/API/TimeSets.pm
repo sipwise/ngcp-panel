@@ -43,7 +43,7 @@ sub create_item {
 
     try {
         # # no checks, they are in check_resource
-        $tset = NGCP::Panel::Utils::TimeSet::create_timesets( c => $c, resource => $resource );
+        $tset = NGCP::Panel::Utils::TimeSet::create_timeset( c => $c, resource => $resource );
     } catch($e) {
         $c->log->error("failed to create timeset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create timeset.");
