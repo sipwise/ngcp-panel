@@ -6,14 +6,14 @@ use warnings;
 use Sipwise::Base;
 use NGCP::Panel::Utils::DateTime;
 
-sub delete_timesets {
+sub delete_timeset {
     my %params = @_;
     my($c, $timeset) = @params{qw/c timeset/};
 
     $timeset->delete();
 }
 
-sub update_timesets {
+sub update_timeset {
     my %params = @_;
     my($c, $timeset, $resource) = @params{qw/c timeset resource/};
 
@@ -29,7 +29,7 @@ sub update_timesets {
     );
 }
 
-sub create_timesets {
+sub create_timeset {
     my %params = @_;
     my($c, $resource) = @params{qw/c resource/};
 
@@ -94,15 +94,15 @@ A temporary helper to manipulate resellers data
 
 =head1 METHODS
 
-=head2 update_timesets
+=head2 update_timeset
 
 Update timesets database data
 
-=head2 create_timesets
+=head2 create_timeset
 
-Create timesets database data
+Create timeset database data
 
-=head2 get_timesets
+=head2 get_timeset
 
 Get timesets data from database to show to the user
 
