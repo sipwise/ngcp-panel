@@ -36,6 +36,7 @@ Depends:
  libdata-compare-perl,
  libdata-entropy-perl,
  libdata-hal-perl,
+ libdata-ical-perl,
  libdata-printer-perl,
  libdata-record-perl,
  libdata-serializer-perl,
