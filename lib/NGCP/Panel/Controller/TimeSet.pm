@@ -120,7 +120,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
                 $resource->{reseller_id} = $c->user->reseller_id;
             }
             $c->model('DB')->schema->txn_do( sub {
-                NGCP::Panel::Utils::TimeSet::create_timesets(
+                NGCP::Panel::Utils::TimeSet::create_timeset(
                     c => $c,
                     resource => $form->values,
                 );
