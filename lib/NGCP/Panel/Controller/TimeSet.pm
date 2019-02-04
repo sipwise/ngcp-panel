@@ -120,7 +120,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
                 $resource->{reseller_id} = $c->user->reseller_id;
             }
             $c->model('DB')->schema->txn_do( sub {
-                NGCP::Panel::Utils::TimeSet::create_timesets(
+                NGCP::Panel::Utils::TimeSet::create_timeset(
                     c => $c,
                     resource => $form->values,
                 );
@@ -180,7 +180,7 @@ sub edit :Chained('base') :PathPart('edit') {
                 }  else {
                     $resource->{reseller_id} = $c->user->reseller_id;
                 }
-                NGCP::Panel::Utils::TimeSet::update_timesets(
+                NGCP::Panel::Utils::TimeSet::update_timeset(
                     c => $c,
                     timeset => $c->stash->{timeset_rs},
                     resource => $resource,
