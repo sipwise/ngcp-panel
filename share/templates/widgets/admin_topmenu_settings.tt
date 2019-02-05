@@ -19,10 +19,10 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="/grafana/dashboard/file/system-statistics.json?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('System Statistics') %]</a></li>
-        <li><a href="/grafana/dashboard/file/sip-statistics.json?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('SIP Statistics') %]</a></li>
-        <li><a href="/grafana/dashboard/file/database-statistics.json?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('DB Statistics') %]</a></li>
-        <li><a href="/grafana/dashboard/file/cluster-overview.json?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('Cluster Overview') %]</a></li>
+        <li><a href="/grafana/d/system-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('System Statistics') %]</a></li>
+        <li><a href="/grafana/d/sip-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('SIP Statistics') %]</a></li>
+        <li><a href="/grafana/d/database-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('DB Statistics') %]</a></li>
+        <li><a href="/grafana/d/cluster-overview?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('Cluster Overview') %]</a></li>
         [% IF c.config.features.callflow -%]
         <li><a href="[% c.uri_for('/callflow') %]">[% c.loc('SIP Call Flows') %]</a></li>
         [% END -%]
