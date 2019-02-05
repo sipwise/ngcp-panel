@@ -5,7 +5,9 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SoundGroup
 
 use HTTP::Status qw(:constants);
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller subscriberadmin/],
+});
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
