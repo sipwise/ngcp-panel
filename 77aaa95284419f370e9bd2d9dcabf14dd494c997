@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da1255d7_3dc73914",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-02-06T13:21:44Z",
+      "side": 1,
+      "message": "why should both \"primay\" and \"alias\" type parameter produce the same result?",
+      "revId": "77aaa95284419f370e9bd2d9dcabf14dd494c997",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
