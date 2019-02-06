@@ -1,3 +1,12 @@
+ngcp-panel (6.5.2.7+0~mr6.5.2.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [fab7111] TT#47658 lowercase redis usrloc filter (username, domain)
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Feb 2019 12:59:17 +0100
+
 ngcp-panel (6.5.2.6+0~mr6.5.2.6) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
