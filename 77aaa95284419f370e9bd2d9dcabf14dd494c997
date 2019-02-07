@@ -16,6 +16,24 @@
       "revId": "77aaa95284419f370e9bd2d9dcabf14dd494c997",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da1255d7_8b937ba3",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-02-07T09:09:43Z",
+      "side": 1,
+      "message": "Hello Rene,\nBut they produce different results, according to where condition:\n\nprimary ---\u003e \u0027!\u003d\u0027 \u003c--- undef\nalias   ---\u003e \u0027\u003d\u0027  \u003c--- undef\n\nAnd in testing they also produce different results, that is expectable.",
+      "parentUuid": "da1255d7_3dc73914",
+      "revId": "77aaa95284419f370e9bd2d9dcabf14dd494c997",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
