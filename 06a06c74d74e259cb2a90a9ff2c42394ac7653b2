@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da1255d7_863c9230",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-02-08T14:03:19Z",
+      "side": 1,
+      "message": "I do not think that we need that.\nIt should be always partial if used by named value and it is a hash.\n\nso { cc \u003d\u003e 43, ac \u003d\u003e 1, sn \u003d\u003e 2345 } will work, even without number. and then essentially { cc \u003d\u003e 43, ac \u003d\u003e 1 } will remove all entries matching the cc + ac",
+      "range": {
+        "startLine": 587,
+        "startChar": 0,
+        "endLine": 589,
+        "endChar": 14
+      },
+      "revId": "06a06c74d74e259cb2a90a9ff2c42394ac7653b2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
