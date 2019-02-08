@@ -581,9 +581,13 @@ sub require_valid_patch {
     my ($self, $c, $json, $ops) = @_;
 
     my $valid_ops = {
-        'replace' => { 'path' => 1, 'value' => 1 },
+        'replace' => { 'path' => 1, 'value' => 1 },# 1 - required, 0 - optional
         'copy' => { 'from' => 1, 'path' => 1 },
-        'remove' => { 'path' => 1, 'value' => 0, 'index' => 0 },# 0 means optional
+        'remove' => { 'path' => 1, 'value' => 0, 'index' => 0 , mode => {
+                required => 0,
+                allowed_values => [qw/hashpartialfit/],
+            },
+        },
         'add' => { 'path' => 1, 'value' => 1, mode => {
                 required => 0,
                 allowed_values => [qw/append/],
@@ -860,7 +864,7 @@ sub process_patch_description {
                 if (ref $value_current eq 'ARRAY') {
                     for (my $i=0; $i < @$value_current; $i++) {
                         # 0 if different, 1 if equal
-                        if (compare($value_current->[$i], $value_to_remove)) {
+                        if ($self->compare_patch_value($c, $op, $value_current->[$i], $value_to_remove)) {
                             if ( defined $remove_index ) {
                                 if ($found_count == $remove_index) {
                                 #if we want to use patch info to try to make clear changes, we shouldn't use replace
@@ -880,7 +884,7 @@ sub process_patch_description {
                         last;
                     }
                 } else { #current value is not an array
-                    if (compare($value_current, $value_to_remove)) {
+                    if ($self->compare_patch_value($c, $op, $value_current, $value_to_remove)) {
                         push @$patch_diff, {"op" => "remove", "path" => $op->{path} };
                     }
                 }
@@ -892,6 +896,23 @@ sub process_patch_description {
         }
     }
     push @$patch, @$patch_diff;
+}
+
+sub compare_patch_value {
+    my ($self, $c, $op, $value_current, $value_requested) = @_;
+    $value_requested //= $op->{value};
+    my $value_to_compare;
+    if ($op->{mode} && $op->{mode} eq 'hashpartialfit' 
+        && ref $value_current eq 'HASH' 
+        && ref $value_requested eq 'HASH'
+    ) {
+        my @keys = keys %$value_requested;
+        $value_to_compare = {};
+        @{$value_to_compare}{@keys} = @{$value_current}{@keys};
+    } else {
+        $value_to_compare = $value_current;
+    }
+    return compare($value_to_compare, $value_requested)
 }
 
 sub apply_patch {
@@ -1079,7 +1100,7 @@ sub apply_query_params {
             } elsif (defined $p[0]->{query} || defined $p[0]->{query_type}) {
                 #regular chaining:
                 my($sub_where,$sub_attributes) = $self->get_query_callbacks(\@p);
-                $item_rs = $item_rs->search($sub_where->($q,$c), $sub_attributes->($q,$c));
+                $item_rs = $item_rs->search_rs($sub_where->($q,$c), $sub_attributes->($q,$c));
             }
         }
     }
