@@ -860,7 +860,7 @@ sub process_patch_description {
                 if (ref $value_current eq 'ARRAY') {
                     for (my $i=0; $i < @$value_current; $i++) {
                         # 0 if different, 1 if equal
-                        if (compare($value_current->[$i], $value_to_remove)) {
+                        if ($self->compare_patch_value($c, $op, $value_current->[$i], $value_to_remove)) {
                             if ( defined $remove_index ) {
                                 if ($found_count == $remove_index) {
                                 #if we want to use patch info to try to make clear changes, we shouldn't use replace
@@ -880,7 +880,7 @@ sub process_patch_description {
                         last;
                     }
                 } else { #current value is not an array
-                    if (compare($value_current, $value_to_remove)) {
+                    if ($self->compare_patch_value($c, $op, $value_current, $value_to_remove)) {
                         push @$patch_diff, {"op" => "remove", "path" => $op->{path} };
                     }
                 }
@@ -892,6 +892,22 @@ sub process_patch_description {
         }
     }
     push @$patch, @$patch_diff;
+}
+
+sub compare_patch_value {
+    my ($self, $c, $op, $value_current, $value_requested) = @_;
+    $value_requested //= $op->{value};
+    my $value_to_compare;
+    if (   ref $value_current eq 'HASH' 
+        && ref $value_requested eq 'HASH'
+    ) {
+        my @keys = keys %$value_requested;
+        $value_to_compare = {};
+        @{$value_to_compare}{@keys} = @{$value_current}{@keys};
+    } else {
+        $value_to_compare = $value_current;
+    }
+    return compare($value_to_compare, $value_requested)
 }
 
 sub apply_patch {
