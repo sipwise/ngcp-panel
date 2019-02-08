@@ -16,6 +16,24 @@
       "revId": "2f1c40bd742d9d8a320546dd4c2944409cc2a8e3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da1255d7_6b2f27a2",
+        "filename": "lib/NGCP/Panel/Role/API/SoundHandles.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-02-08T10:52:55Z",
+      "side": 1,
+      "message": "Hello Rene,\n\nJust to keep all questions and answers together:\n\nNo, these items (both groups and handles) are not related to resellers or any other owner types and we don\u0027t allow edit data (no add/edit/delete actions), just get",
+      "parentUuid": "da1255d7_2b4a4f84",
+      "revId": "2f1c40bd742d9d8a320546dd4c2944409cc2a8e3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
