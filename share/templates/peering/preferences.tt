@@ -14,6 +14,7 @@
     helper.rewrite_rule_sets = rwr_sets;
     helper.header_rule_sets = hdr_sets;
     helper.man_aip_grp_rs = man_aip_grp_rs;
+    helper.sound_sets = sound_sets;
 
     helper.top_buttons = [
         { name = c.loc('Back'), uri = c.uri_for(group.id, "servers"), icon = 'icon-arrow-left' },
