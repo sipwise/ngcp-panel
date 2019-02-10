@@ -518,11 +518,17 @@ sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :
               hdr_sets_rs => $header_rule_sets_rs,
               hdr_sets    => [$header_rule_sets_rs->all]);
 
+    my $sound_sets_rs = $c->model('DB')
+        ->resultset('voip_sound_sets')->search({
+            contract_id => undef });
+    $c->stash(sound_sets_rs => $sound_sets_rs,
+              sound_sets    => [$sound_sets_rs->all]);
+
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         peer_pref => 1,
     );
-    
+
     $c->stash(template => 'peering/preferences.tt');
     return;
 }
