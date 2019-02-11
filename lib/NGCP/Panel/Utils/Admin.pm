@@ -193,7 +193,7 @@ sub check_openvpn_availability {
     my $systemctl_cmd = $config->{command};
     #default service is openvpn@ovpn, where ovpn profile is a openvpn config located at /etc/openvpn/ovpn.conf
     my $openvpn_service = $config->{service};
-    my $output = cmd($c, {no_debug_output =>1 }, $systemctl_cmd, 'list-unit-files');
+    my $output = cmd($c, {no_debug_output =>1 }, $systemctl_cmd, 'list-unit-files', 'openvpn.service');
     #$c->log->debug( $output );
     if ($output =~/^openvpn.service/m) {
         $res = 1;
