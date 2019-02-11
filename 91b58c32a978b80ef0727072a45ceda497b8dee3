@@ -34,6 +34,24 @@
       "revId": "91b58c32a978b80ef0727072a45ceda497b8dee3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da1255d7_ecafad7b",
+        "filename": "lib/NGCP/Panel/Utils/Admin.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-02-11T12:25:00Z",
+      "side": 1,
+      "message": "And a little clarification from my side:\n\nI wasn\u0027t sure that _enabling_ should also be part of the openvpn management from the panel, together with _start_ of already enabled service, Manuel mentioned it, so I added these steps too:\n\n1. check if not enabled service is presented: systemctl list-unit-files\n2. enable service: systemctl enable openvpn.service\n\nI suppose that this step may be eliminated by management tool provided by Core team.\n\nNow after the steps above we check service is enabled:\nsystemctl is-enabled openvpn@ovpn\n\nif it is enabled, we check if it is not running:\nsystemctl is-active openvpn@ovpn\n\nAnd then start it, if necessary:\nsystemctl start openvpn@ovpn",
+      "parentUuid": "da1255d7_ec98cd6c",
+      "revId": "91b58c32a978b80ef0727072a45ceda497b8dee3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
