@@ -22,6 +22,30 @@
       "revId": "06a06c74d74e259cb2a90a9ff2c42394ac7653b2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da1255d7_5173f64d",
+        "filename": "lib/NGCP/Panel/Role/API.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-02-11T01:15:52Z",
+      "side": 1,
+      "message": "Hello Kirill,\n\nI think that deleting all entries those fit to partial hash is unsafe without clearly said user intention. Initial requirement was equivalence of the value, and it is something that user can easily suppose. Also, introducing this mode we will support both variants of behavior, and safer one will be default.",
+      "parentUuid": "da1255d7_863c9230",
+      "range": {
+        "startLine": 587,
+        "startChar": 0,
+        "endLine": 589,
+        "endChar": 14
+      },
+      "revId": "06a06c74d74e259cb2a90a9ff2c42394ac7653b2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
