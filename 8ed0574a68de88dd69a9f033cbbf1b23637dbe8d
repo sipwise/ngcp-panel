@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da1255d7_a09f795e",
+        "filename": "lib/NGCP/Panel/Role/API/CFTimeSets.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-02-11T18:53:28Z",
+      "side": 1,
+      "message": "docs don\u0027t spend a word that this returns offset to GMT only, not the offset difference to the passed dt\u0027s timezone.",
+      "range": {
+        "startLine": 52,
+        "startChar": 31,
+        "endLine": 52,
+        "endChar": 50
+      },
+      "revId": "8ed0574a68de88dd69a9f033cbbf1b23637dbe8d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
