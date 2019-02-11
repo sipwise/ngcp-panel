@@ -1,3 +1,31 @@
+ngcp-panel (7.0.2.1+0~mr7.0.2.1) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [350733a] TT#47963 Fix emailtemplates put and patch
+  * [8dc7540] TT#48198 Fix no_count behavior in API.pm
+  * [5b4a071] TT#48198 Avoid extra page in no_count mode
+  * [6321070] TT#48198 Remove differences before items array from pagination
+  * [6a9d053] TT#48198 Use items array from paginations in all api controllers
+  * [e41d0a5] TT#47268 Use order_by_cols to avoid item_rs call for api doc gen
+  * [6e5270d] TT#47268 Fix getting banned items
+  * [46e939e] TT#48198 Fix order_by functionality in api
+  * [c479d35] TT#49027 Fix capabilities api
+  * [60bb85d] TT#49552 Use Log::Log4perl->warn instead of waning
+  * [3aa9756] TT#46791 Wait for ajax table loading for "Edit" button work
+  * [81f349d] TT#48165 Return field_list for profilee form
+  * [50d7df4] TT#50802 Consider terminated subscribers in alias management
+
+  [ Rene Krenn ]
+  * [27507f9] TT#46159 fix saving sip_username re in Intrecept-SOAP
+  * [3ed92f0] TT#47658 lowercase redis usrloc filter (username, domain)
+
+  [ Alexander Lutay ]
+  * [ecc39a6] TT#46791 Fix floating bug with 'Delete' button on 'Peering Servers' page
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 11 Feb 2019 12:30:40 +0100
+
 ngcp-panel (7.0.2.0+0~mr7.0.2.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
