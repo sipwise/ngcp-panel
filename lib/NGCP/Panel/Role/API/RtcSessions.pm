@@ -11,14 +11,14 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 
+use NGCP::Panel::Form::Rtc::Session;
+
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Rtc;
 
 sub get_form {
-    my ($self) = @_;
-
-    #return NGCP::Panel::Form::get("NGCP::Panel::Form::Rtc::NetworksAdmin", $c);
-    return;
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Rtc::Session", $c);
 }
 
 sub hal_from_item {
