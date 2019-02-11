@@ -10,8 +10,6 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-
-
 sub api_description {
     return 'Show a collection of RTC sessions, belonging to a specific subscriber.';
 }
@@ -97,29 +95,47 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $resource->{reseller_id} = $c->user->reseller_id;  # TODO: ?
-        } else {
+        my $subscriber_item;
+        if ($c->user->roles eq 'subscriber' 
+            || (
+                !$resource->{subscriber_id} 
+                && $c->user->roles eq 'subscriberadmin'
+            )
+        ) {
             $resource->{subscriber_id} = $c->user->voip_subscriber->id;
         }
-
-        my $subscriber_item = $c->model('DB')->resultset('voip_subscribers')->search_rs({
-                id => $resource->{subscriber_id},
-            })->first;
-
-        unless ($subscriber_item) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber invalid or not found.");
+        if (!$resource->{subscriber_id}) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "subscriber_id parameter is required.");
             last;
+        } else {
+            $subscriber_item = $c->model('DB')->resultset('voip_subscribers')->search_rs({
+                    id => $resource->{subscriber_id},
+                })->first;
+            unless ($subscriber_item) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber invalid or not found.");
+                last;
+            }
+            if ($c->user->roles eq 'reseller') {
+                if ($subscriber_item->contract->contact->reseller_id != $c->user->reseller_id) {
+                    #tried to access subscriber of other reseller
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber invalid or not found.");
+                    last;
+                }
+            } elsif ($c->user->roles eq 'subscriberadmin') {
+                if ($subscriber_item->contract_id != $c->user->account_id) {
+                    #tried to access subscriber of other customer
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber invalid or not found.");
+                    last;
+                }
+            }
         }
 
-        # my $form = $self->get_form();
-        # $resource->{reseller_id} //= undef;
-        # last unless $self->validate_form(
-        #     c => $c,
-        #     resource => $resource,
-        #     form => $form,
-        # );
+        my $form = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+        );
 
         my $session_item = NGCP::Panel::Utils::Rtc::create_rtc_session(
             config => $c->config,
