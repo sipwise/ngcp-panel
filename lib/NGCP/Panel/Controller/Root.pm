@@ -22,6 +22,14 @@ __PACKAGE__->config(namespace => '');
 sub auto :Private {
     my($self, $c) = @_;
 
+    if ($c->request->path =~/^api\//i) {
+        $c->log->debug("Root::auto: enable cache");
+        NGCP::Panel::Form::dont_use_cache(0);
+    } else {
+        $c->log->debug("Root::auto: disable cache");
+        NGCP::Panel::Form::dont_use_cache(1);
+    }
+
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");
         if($c->request->params->{lang} eq "en") {
