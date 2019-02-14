@@ -1850,6 +1850,7 @@ sub dev_field_firmware_base :Chained('/') :PathPart('device/autoprov/firmware') 
             $c->response->body("404 - device not found");
         }
         $c->response->status(404);
+        $c->detach();
         return;
     }
     $id =~ s/^([^\=]+)\=0$/$1/;
@@ -1866,6 +1867,7 @@ sub dev_field_firmware_base :Chained('/') :PathPart('device/autoprov/firmware') 
             $c->response->body("404 - device not found");
         }
         $c->response->status(404);
+        $c->detach();
         return;
     }
 
@@ -1907,6 +1909,7 @@ sub dev_field_firmware_version_base :Chained('dev_field_firmware_base') :PathPar
             $c->response->body("404 - firmware not found");
         }
         $c->response->status(404);
+        $c->detach();
         return;
     }
 
