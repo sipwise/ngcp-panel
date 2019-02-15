@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da1255d7_5404ff7c",
+        "filename": "lib/NGCP/Panel/Form.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-02-15T10:39:45Z",
+      "side": 1,
+      "message": "just a thought, negative variable are historically harder to read in the code\n\ne.g.:\n\ndont_use_cache(0)\ndont_use_cache(1)\n\nvs\n\nuse_cache(1)\nuse_cache(0)",
+      "range": {
+        "startLine": 10,
+        "startChar": 5,
+        "endLine": 10,
+        "endChar": 19
+      },
+      "revId": "466ed265544ec7737b8f7b673695750dbf573e31",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
