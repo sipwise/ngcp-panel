@@ -18,7 +18,6 @@ function toText(data, type, full) {
   return r.toText();
 }
 </script>
-[% site_config.title = c.loc('Time Set Event') -%]
 <script>
 function dynamicFields(){
   //remember about after error and edit form cases
@@ -189,6 +188,7 @@ $( document ).ready(function() {
 }
 
 </style>
+[% site_config.title = c.loc('Time Set Event') -%]
 
 [%
     helper.name = c.loc('Time Set Event');
