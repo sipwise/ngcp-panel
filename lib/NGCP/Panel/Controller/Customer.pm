@@ -1843,14 +1843,14 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
 
         my $sub = $line->provisioning_voip_subscriber;
         next unless($sub);
-        my $reg_rs = $c->model('DB')->resultset('location')->search({
-            username => $sub->username,
-        });
-        if($c->config->{features}->{multidomain}) {
-            $reg_rs = $reg_rs->search({
-                domain => $sub->domain->domain,
-            });
-        }
+
+        my $reg_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs(
+            $c,
+            {
+                username => $sub->username,
+                $c->config->{features}->{multidomain} ? (domain => $sub->domain->domain) : (),
+            }
+        );
         my $uri = $sub->username . '@' . $sub->domain->domain;
         if($reg_rs->count) {
             $c->log->debug("trigger device resync for $uri as it is registered");
