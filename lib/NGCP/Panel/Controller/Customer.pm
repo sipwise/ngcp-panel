@@ -1916,7 +1916,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
 
     my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
     my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
-    my $port = $c->config->{deviceprovisioning}->{port} // 1444;
+    my $port = $c->config->{deviceprovisioning}->{bootstrap_port} // 1445;
 
     my $t = Template->new;
     my $conf = {
@@ -1925,7 +1925,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
 
         },
         server => {
-            uri => "$schema://$host:$port/device/autoprov/config",
+            uri => "$schema://$host:$port/device/autoprov/bootstrap",
         },
     };
     my $sync_params_rs = $dev->profile->config->device->autoprov_sync->search_rs({
@@ -1941,12 +1941,23 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     if($sync_uri && $sync_uri->first){
         $sync_uri = $sync_uri->first->parameter_value;
     }
+
+    my $bootstrap_uri = $sync_params_rs->search({
+        'autoprov_sync_parameters.parameter_name' => 'bootstrap_uri',
+    });
+    if($bootstrap_uri && $bootstrap_uri->first){
+        $conf->{server}->{uri} = $bootstrap_uri->first->parameter_value;
+    }
+
     $t->process(\$sync_uri, $conf, \$real_sync_uri);
 
     my ($sync_params_field, $real_sync_params) = ("", "");
     $sync_params_field = $sync_params_rs->search({
         'autoprov_sync_parameters.parameter_name' => 'sync_params',
     });
+
+    # TODO: replace server.uri var by custom bootstrap uri if set?
+
     if($sync_params_field && $sync_params_field->first){
         $sync_params_field = $sync_params_field->first->parameter_value;
     }
