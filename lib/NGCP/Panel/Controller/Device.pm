@@ -1234,6 +1234,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $schema = 'https';
     my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
     my $port = $c->config->{deviceprovisioning}->{port} // 1444;
+    my $cisco_port = $c->config->{deviceprovisioning}->{cisco_port} // 1447;
     my $boot_port = $c->config->{deviceprovisioning}->{bootstrap_port} // 1445;
 
     my $vars = {
@@ -1250,7 +1251,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             lineranges => [],
         },
         directory => {
-            spaurl => "$schema://$host:$port/pbx/directory/spa/$id",
+            spaurl => "$schema://$host:$cisco_port/pbx/directory/spa/$id",
             panaurl => "$schema://$host:$port/pbx/directory/panasonic",
             yeaurl => "$schema://$host:$port/pbx/directory/yealink?userid=$id",
             name => 'PBX Address Book',
