@@ -21,6 +21,7 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0) {
     $c->stash->{schema} = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
     $c->stash->{host} = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
     $c->stash->{port} = $c->config->{deviceprovisioning}->{port} // 1444;
+    $c->stash->{cisco_port} = $c->config->{deviceprovisioning}->{cisco_port} // 1447;
 
     $c->log->debug("SSL_CLIENT_M_DN: " . ($c->request->env->{SSL_CLIENT_M_DN} // ""));
     unless(
@@ -43,7 +44,7 @@ sub spa_directory_getsearch :Chained('base') :PathPart('pbx/directory/spasearch'
 
     my $schema = $c->stash->{schema};
     my $host = $c->stash->{host};
-    my $port = $c->stash->{port};
+    my $port = $c->stash->{cisco_port};
 
     my $baseuri = "$schema://$host:$port/pbx/directory/spa/$id";
     my $data = '';
@@ -101,7 +102,7 @@ sub spa_directory_list :Chained('base') :PathPart('pbx/directory/spa') :Args(1) 
 
     my $schema = $c->stash->{schema};
     my $host = $c->stash->{host};
-    my $port = $c->stash->{port};
+    my $port = $c->stash->{cisco_port};
 
     my $baseuri = "$schema://$host:$port/pbx/directory/spa/$id";
     my $data = '';
