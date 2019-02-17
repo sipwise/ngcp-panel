@@ -876,12 +876,16 @@ sub timeset_create :Chained('base') :PathPart('timeset/create') :Args(0) :Does(A
     my $reseller = $c->stash->{reseller}->first;
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet::Reseller", $c);
-    my $params = {};
+    my $upload = $c->req->upload('upload');
+    my $params = {
+        %{$c->request->params},
+        upload => $posted ? $upload : undef,
+    };
     $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
-        params => $c->request->params,
-        item => $params,
+        params => $params,
+        action => $c->uri_for_action('/reseller/timeset_create'),
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -891,6 +895,10 @@ sub timeset_create :Chained('base') :PathPart('timeset/create') :Args(0) :Does(A
     if($posted && $form->validated) {
         try {
             my $resource = $form->values;
+            $resource = NGCP::Panel::Utils::TimeSet::timeset_resource(
+                c => $c, 
+                resource => $resource,
+            );
             $resource->{reseller_id} = $reseller->id;
             $c->model('DB')->schema->txn_do( sub {
                 NGCP::Panel::Utils::TimeSet::create_timeset(
@@ -958,17 +966,28 @@ sub timeset_edit :Chained('timeset_base') :PathPart('edit') :Args(0) :Does(ACL) 
     my $reseller = $c->stash->{reseller}->first;
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::TimeSet::Reseller", $c);
-    my $params = NGCP::Panel::Utils::TimeSet::get_timeset(c => $c, timeset => $c->stash->{timeset_rs});
-    $params = merge($params, $c->session->{created_objects});
+    my $upload = $c->req->upload('upload');
+
+    my $params = {
+        %{$c->request->params},
+        upload => $posted ? $upload : undef,
+    };
+
+    my $item = NGCP::Panel::Utils::TimeSet::get_timeset(c => $c, timeset => $c->stash->{timeset_rs});
+    $item = merge($item, $c->session->{created_objects});
     $form->process(
         posted => $posted,
-        params => $c->request->params,
-        item => $params,
+        params => $params,
+        item   => $item,
     );
     if($posted && $form->validated) {
         try {
             $c->model('DB')->schema->txn_do( sub {
                 my $resource = $form->values;
+                $resource = NGCP::Panel::Utils::TimeSet::timeset_resource(
+                    c => $c, 
+                    resource => $resource
+                );
                 $resource->{reseller_id} = $reseller->id;
                 NGCP::Panel::Utils::TimeSet::update_timeset(
                     c => $c,

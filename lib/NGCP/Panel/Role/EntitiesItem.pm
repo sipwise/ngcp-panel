@@ -14,7 +14,7 @@ use Data::HAL::Link qw();
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
-
+use TryCatch;
 ##### --------- common part
 
 sub auto :Private {
@@ -310,7 +310,7 @@ sub put {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
         my $method_config = $self->get_config('action')->{PUT};
-        my ($resource, $data) = $self->get_valid_data(
+        my ($resource, $data, $non_json_data) = $self->get_valid_data(
             c          => $c,
             id         => $id,
             method     => 'PUT',
@@ -321,8 +321,27 @@ sub put {
         last unless $resource;
         my $old_resource = $self->resource_from_item($c, $item);
 
-        ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
-        last unless $item;
+        my ($data_processed_result);
+        if (!$non_json_data || !$data) {
+            ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+            last unless $item;
+        } else {
+            try {
+                #$processed_ok(array), $processed_failed(array), $info, $error
+                $data_processed_result = $self->process_data(
+                    c        => $c,
+                    item     => $item,
+                    data     => \$data,
+                    resource => $resource,
+                    form     => $form,
+                    process_extras => $process_extras,
+                );
+            } catch($e) {
+                $c->log->error("failed to proces non json data: $e");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                last;
+            };
+        }
 
         my $hal = $self->get_journal_item_hal($c, $item, { form => $form });
         last unless $self->add_journal_item_hal($c, { hal => $hal });
