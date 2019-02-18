@@ -1,19 +1,9 @@
 package NGCP::Panel::Form::TimeSet::API;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler';
-
-has_field 'id' => (
-    type => 'Hidden',
-);
+extends 'NGCP::Panel::Form::TimeSet::Reseller';
 
 has_field 'reseller_id' => (
     type => 'Integer',
-    required => 1,
-);
-
-has_field 'name' => (
-    type => 'Text',
-    label => 'Name',
     required => 1,
 );
 
