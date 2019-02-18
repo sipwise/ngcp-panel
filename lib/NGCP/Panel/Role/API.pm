@@ -1662,6 +1662,21 @@ sub mime_type_from_query_params {
     return;
 }
 
+sub mime_type_from_allowed_default {
+    my ($self, $c, $config_allowed_types, $system_default) = @_;
+    my $mime_type_from_config;
+    if ($config_allowed_types) {
+        if (!ref $config_allowed_types 
+            && $config_allowed_types ne $system_default ) {
+            $mime_type_from_config = $config_allowed_types;
+        } elsif (ref $config_allowed_types eq 'ARRAY'
+            && $config_allowed_types->[0] ne $system_default) {
+            $mime_type_from_config = $config_allowed_types->[0];
+        }
+    }
+    return $mime_type_from_config;
+}
+
 sub supported_mime_types_extensions {
     my ($self) = @_;
     my $action_config = $self->get_item_config('action');
@@ -1671,7 +1686,6 @@ sub supported_mime_types_extensions {
     }
     return [];
 }
-
 
 sub return_requested_type {
     my ($self, $c, $id, $item, $return_type) = @_;
