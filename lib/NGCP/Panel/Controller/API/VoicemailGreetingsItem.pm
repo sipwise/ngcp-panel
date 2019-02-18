@@ -15,7 +15,7 @@ __PACKAGE__->set_config({
         'Uploads'    => {'greetingfile' => ['audio/x-wav', 'application/octet-stream']},
     },
     GET => {
-        #'application/json' is default, if no accept header was recieved.
+        #'application/json' is first one and thus is default, if no accept header was received.
         'ReturnContentType' => ['application/json', 'audio/x-wav', 'audio/mpeg', 'audio/ogg'],#,
     },
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
