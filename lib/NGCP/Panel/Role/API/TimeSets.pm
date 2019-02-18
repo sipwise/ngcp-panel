@@ -52,13 +52,26 @@ sub resource_from_item {
     return $resource;
 }
 
+sub pre_process_form_resource{
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    my ($fails, $text_success);
+    #name probably will be taken from uploaded file
+    ($resource, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::timeset_resource(
+        c => $c, 
+        resource => $resource,
+    );
+}
+
 sub process_form_resource{
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     $resource->{times} = $form->values->{times}; # not taking times from get_valid_data, but from form values, to benefit from formhandler inflation
+    if($c->user->roles eq 'reseller') {
+        $resource->{reseller_id} = $c->user->reseller_id;
+    }
     return $resource;
 }
 
-# called automatically by POST (and manually by update_item if you want)
+# called automatically by POST, application/json processing variant (and manually by update_item if you want)
 sub check_resource {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
@@ -108,7 +121,7 @@ sub update_item_model {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     try {
-        NGCP::Panel::Utils::TimeSet::update_timesets( 
+        NGCP::Panel::Utils::TimeSet::update_timeset( 
             c => $c,
             timeset  => $item,
             resource => $resource,
