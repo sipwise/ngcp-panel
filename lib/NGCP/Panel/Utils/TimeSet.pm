@@ -127,9 +127,13 @@ sub timeset_resource {
         #we have checked that $name is not empty in the form validation
         $resource->{name} = $calendar_parsed->{name};
     }
-    #data will be taken from the request parameters or cache
-    my($fails, $text_success);
-    ($resource->{times}, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
+    #data taken from the request parameters or cache has higher priority
+    my($events, $fails, $text_success);
+    #empty array from json input will be not overwritten, only if json "times" was not set 
+    if (!$resource->{times}) {
+        ($events, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
+        $resource->{times} = $events;
+    }
     return $resource;
 }
 
