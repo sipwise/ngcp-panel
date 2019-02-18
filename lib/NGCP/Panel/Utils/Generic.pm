@@ -16,9 +16,10 @@ use Data::Compare qw//;
 
 my $MIME_TYPES = {
     #first extension is default, others are for extension 2 mime_type detection
-    'audio/x-wav' => ['wav'],
-    'audio/mpeg'  => ['mp3'],
-    'audio/ogg'   => ['ogg'],
+    'audio/x-wav'   => ['wav'],
+    'audio/mpeg'    => ['mp3'],
+    'audio/ogg'     => ['ogg'],
+    'text/calendar' => ['ics'],
 };
 
 sub is_int {
