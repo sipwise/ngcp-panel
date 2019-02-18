@@ -5,6 +5,15 @@ use warnings;
 
 use Sipwise::Base;
 use NGCP::Panel::Utils::DateTime;
+use Data::ICal;
+
+use constant CALENDAR_MIME_TYPE => 'text/calendar';
+
+sub get_calendar_file_name {
+    my %params = @_;
+    my($c, $timeset) = @params{qw/c timeset/};
+    return $timeset->name.'_'.$timeset->id;
+}
 
 sub delete_timeset {
     my %params = @_;
@@ -21,6 +30,7 @@ sub update_timeset {
             name => $resource->{name},
             reseller_id => $resource->{reseller_id},
         })->discard_changes;
+
     $timeset->time_periods->delete;
     create_timeset_events(
         c       => $c,
@@ -81,6 +91,171 @@ sub get_timeset {
     }
     $resource->{times} = \@periods;
     return $resource;
+}
+
+sub get_timeset_icalendar {
+    my %params = @_;
+    my($c, $timeset) = @params{qw/c timeset/};
+    my $data = '';
+    my $data_ref = $timeset->timeset_ical ? \$timeset->timeset_ical->ical : \$data;
+    return $data_ref;
+}
+
+sub timeset_resource {
+    my (%params) = @_;
+
+    my $c = $params{c};
+    my $api_format = $params{api_format};
+    my $resource = $params{resource}
+        // ( $params{form} ? $params{form}->values : {});
+
+    delete $resource->{calendarfile};
+    if($c->user->roles eq 'admin') {
+        if ($resource->{reseller}) {
+            if ( !$resource->{reseller_id} ) {
+                $resource->{reseller_id} = $resource->{reseller}{id};
+            }
+            delete $resource->{reseller};
+        }
+    }  elsif($c->user->roles eq 'reseller') {
+        $resource->{reseller_id} = $c->user->reseller_id;
+    }
+    if (!$resource->{name}) {
+        my( $calendar_parsed ) = NGCP::Panel::Utils::TimeSet::parse_calendar(
+            c => $c,
+        );
+        #we have checked that $name is not empty in the form validation
+        $resource->{name} = $calendar_parsed->{name};
+    }
+    #data will be taken from the request parameters or cache
+    my($fails, $text_success);
+    ($resource->{times}, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
+    return $resource;
+}
+
+
+sub get_calendar_data_parsed {
+    my %params = @_;
+    my($c, $data) = @params{qw/c data/};
+    use Carp qw/longmess/;
+    $c->log->debug(longmess);
+    if ($c->stash->{calendar_upload_parsed}) {
+        return $c->stash->{calendar_upload_parsed};
+    }
+    if (!$data && $c->req->upload('calendarfile')) {
+        $data = \$c->req->upload('calendarfile')->slurp;
+        $data //= '';
+        $$data =~s/\n+/\n/g;
+        $c->stash(
+            calendar_upload => $data,
+        );
+    }
+    if (!$data) {
+        return;
+    }
+    $c->log->debug("calendar data: ".$$data.";");
+    my $calendar = Data::ICal->new( data => $$data );
+    if (!$calendar) {
+        #https://metacpan.org/pod/Data::ICal
+        #parse [ data => $data, ] [ filename => $file, ]
+        #Returns $self on success. Returns a false value upon failure to open or parse the file or data; this false value is a Class::ReturnValue object and can be queried as to its error_message.
+        $c->log->debug("calendar error messages: ".$calendar->error_message.";");
+    } else {
+        $c->stash(
+            calendar_upload_parsed => $calendar,
+        );
+    }
+    return $calendar, $data;
+}
+
+sub parse_calendar{
+    my %params = @_;
+    my($c, $data) = @params{qw/c data/};
+
+    my $timeset = {};
+
+    #we will use caching because we need to parse uploaded fie to check name existence and uniqueness
+    if ($c->stash->{calendar_upload_parsed_result}) {
+        return $c->stash->{calendar_upload_parsed_result}, $c->stash->{calendar_upload_parsed};
+    }
+    my ($calendar) = get_calendar_data_parsed( c=> $c, data => $data );
+    if ($calendar) {
+        if ($calendar->property('name')) {
+            $timeset->{name} = $calendar->property('name')->[0]->value;
+        }
+    }
+    $c->stash(
+        calendar_upload_parsed => $calendar,
+        calendar_upload_parsed_result => $timeset,
+    );
+    return $timeset, $calendar;
+}
+
+sub parse_calendar_events {
+    my %params = @_;
+    my($c, $calendar, $data, $api_format) = @params{qw/c calendar data api_format/};
+    my ($events, $fails, $text_success) = ([], undef, 'Calendar events successfully uploaded');
+    if(!$calendar) {
+        if (!$c->stash->{calendar_upload_parsed}) {
+            ($calendar) = get_calendar_data_parsed( c=> $c, data => $data );
+        }
+    }
+    if ($calendar) {
+        $c->log->debug("parse calendar events;");
+        my @allowed_rrule_fields = (qw/FREQ COUNT UNTIL INTERVAL BYSECOND BYMINUTE BYHOUR BYDAY BYMONTHDAY BYYEARDAY BYWEEKNO BYMONTH BYSETPOS WKST SUMMARY/);
+        my @all_rrule_fields = (@allowed_rrule_fields, qw/RDATE EXDATE/);
+        my %rrule_fields_end_markers = map { 
+            my $field = $_; 
+            $field => join('|', grep {$_ ne $field} @all_rrule_fields)
+        } @all_rrule_fields;
+        #or:
+        #my $rrule_fields_end_marker = '[a-z]+';
+        my @datetime_fields = qw/dtstart dtend until/;
+        my $mapped_fields = {
+            'dtstart' => 'start',
+            'dtend' => 'end',
+            'summary' => 'comment',
+        };
+        foreach my $entry (@{$calendar->entries}) {
+            $c->log->debug("parse calendar entry:".$entry->as_string .";");
+            my $event = {
+                map {
+                    $entry->property($_) 
+                        ? ( $_ => $entry->property($_)->[0]->value )
+                        : ()
+                } qw/summary dtstart dtend/
+            };
+            my $rrule = $entry->property('rrule');
+            if ( ref $rrule eq 'ARRAY' && @$rrule ) {
+                #we don't expect some RRULE spec in one event for now
+                my $rrule_data = { map {
+                    my $FIELD = $_;
+                    my $field = lc($FIELD);
+                    my $re = '(?:^|;)'.$FIELD.'=(.*?)(?:;(?:'.$rrule_fields_end_markers{$FIELD}.')|;$|$)';
+                    $rrule->[0]->value =~/$re/i;
+                    my $value = $1;
+                    if ($value) {
+                        ($field => $value);
+                    } else {
+                        ();
+                    }
+                } @allowed_rrule_fields };
+                $event = {%$event, %$rrule_data};
+                foreach my $dt_field (@datetime_fields) {
+                    if ($event->{$dt_field}) {
+                        $event->{$dt_field} =~s/^\s*(\d{4})\D*(\d{2})\D*(\d{2})(\D*)(\d{2})\D*(\d{2})\D*(\d{2})(\D*?)\s*$/$1-$2-$3$4$5:$6:$7$8/;
+                    }
+                }
+                foreach my $ical_field (keys %$mapped_fields) {
+                    if ($event->{$ical_field}) {
+                        $event->{$mapped_fields->{$ical_field}} = delete $event->{$ical_field};
+                    }
+                }
+            }
+            push @$events, $event;
+        }
+    }
+    return $events, $fails, $text_success;
 }
 1;
 
