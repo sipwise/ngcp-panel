@@ -9,6 +9,11 @@ use NGCP::Panel::Utils::TimeSet;
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
+    no_item_created   => 1,
+    POST => {
+        'ContentType' => ['multipart/form-data','application/json'],
+        'Uploads'     => { calendar => [NGCP::Panel::Utils::TimeSet::CALENDAR_MIME_TYPE] },
+    },
 });
 
 sub allowed_methods{
@@ -39,18 +44,18 @@ sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
 
     my $schema = $c->model('DB');
-    my $tset;
+    my $timeset;
 
     try {
         # # no checks, they are in check_resource
-        $tset = NGCP::Panel::Utils::TimeSet::create_timeset( c => $c, resource => $resource );
+        $timeset = NGCP::Panel::Utils::TimeSet::create_timeset( c => $c, resource => $resource );
     } catch($e) {
         $c->log->error("failed to create timeset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create timeset.");
         return;
     }
 
-    return $tset;
+    return $timeset;
 }
 
 1;
