@@ -12,6 +12,17 @@ __PACKAGE__->set_config({
         Journal => [qw/admin reseller/],
     },
     PATCH => { ops => [qw/add replace remove copy/] },
+    PUT => { 
+        'ContentType' => ['multipart/form-data'],#,
+        #'Uploads'    => {'calendarfile' => [NGCP::Panel::Utils::TimeSet::CALENDAR_MIME_TYPE]},
+        #perl -e 'use File::Type; my $ft = File::Type->new();print $ft->mime_type("/root/VMHost/data/test_from_form_1.ics");'
+        # =====> application/x-awk 
+        'Uploads'     => ['calendarfile'],
+    },
+    GET => {
+        #first element of array is default, if no accept header was recieved.
+        'ReturnContentType' => [ NGCP::Panel::Utils::TimeSet::CALENDAR_MIME_TYPE, 'application/json' ],
+    },
 });
 
 sub allowed_methods{
@@ -25,6 +36,19 @@ sub journal_query_params {
 
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
+}
+
+sub get_item_binary_data{
+    my($self, $c, $id, $item, $return_type) = @_;
+    #caller waits for: $data_ref,$mime_type,$filename
+    #while we will not strictly check Accepted header, if item can return only one type of the binary data
+    my $extension = mime_type_to_extension($return_type);
+    my $filename = NGCP::Panel::Utils::TimeSet::get_calendar_file_name(c => $c, timeset => $item ).'.'.$extension;
+    my $data_ref = NGCP::Panel::Utils::TimeSet::get_timeset_icalendar(
+        c       => $c,
+        timeset => $item,
+    );
+    return $data_ref, $return_type, $filename;
 }
 
 1;
