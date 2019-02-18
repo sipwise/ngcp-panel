@@ -48,17 +48,38 @@ sub _item_rs {
 sub resource_from_item {
     my ($self, $c, $item, $form) = @_;
     my $resource = NGCP::Panel::Utils::TimeSet::get_timeset(
-        c => $c, timeset => $item, date_mysql_format => 1);
+        c => $c, timeset => $item);#, date_mysql_format => 1
     return $resource;
 }
 
 sub process_form_resource{
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
-    $resource->{times} = $form->values->{times}; # not taking times from get_valid_data, but from form values, to benefit from formhandler inflation
+    my ($resource_from_upload,$fails, $text_success);
+    #name probably will be taken from uploaded file
+
+    if($c->user->roles eq 'reseller') {
+        $resource->{reseller_id} = $c->user->reseller_id;
+    }
+    use Data::Dumper;
+    $c->log->debug(Dumper([$form->values->{times}]));
+    #events specification in the body json part has higher priority than in uploaded file
+    #now resource is data from json, lets take it
+    if ($resource->{times}) {
+        # not taking times from get_valid_data, but from form values, to benefit from formhandler inflation for DateTime fields
+        $resource->{times} = $form->values->{times}; 
+    }
+    if (!$resource->{times} || !$resource->{name}) {
+        my ($fails, $text_success);
+        #name may be taken from uploaded file
+        ($resource, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::timeset_resource(
+            c => $c, 
+            resource => $resource,
+        );
+    }
+
     return $resource;
 }
 
-# called automatically by POST (and manually by update_item if you want)
 sub check_resource {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
 

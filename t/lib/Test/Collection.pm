@@ -248,6 +248,18 @@ has 'QUERY_PARAMS' =>(
     default => '',
 );
 
+has 'HEADERS' =>(
+    is => 'rw',
+    isa => 'HashRef',
+    default => sub{{
+        'GET' => {}, 
+        'POST' => {}, 
+        'PUT' => {}, 
+        'PATCH' => {}, 
+        'DELETE' => {},
+    }},
+);
+
 has 'PAGE' =>(
     is => 'rw',
     isa => 'Str',
@@ -787,11 +799,16 @@ sub request_process{
 
 sub get_request_get{
     my($self, $uri, $headers) = @_;
-    $headers ||= {};
     $uri = $self->normalize_uri($uri);
+    my $headers_default = $self->HEADERS->{GET}->{$self->uri2collection($uri)};
+    $headers_default ||= $self->HEADERS->{GET} // {};
+    $headers ||= {};
     my $req = HTTP::Request->new('GET', $uri);
     foreach my $key (keys %$headers){
         $req->header($key => $headers->{$key});
+    }
+    foreach my $key (keys %$headers_default){
+        $req->header($key => $headers_default->{$key});
     }
     return $req ;
 }
@@ -1783,6 +1800,13 @@ sub uri2location{
     my($self,$uri) = @_;
     $uri=~s/^.*?(\/api\/.*$)/$1/;
     return $uri;
+}
+
+sub uri2collection{
+    my($self,$uri) = @_;
+    my $collection = $uri;
+    $collection =~s/^.*?\/api\/(.*?)\//$1/;
+    return $collection;
 }
 
 sub http_code_msg{
