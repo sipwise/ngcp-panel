@@ -14,7 +14,7 @@ use Data::HAL::Link qw();
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
-
+use TryCatch;
 ##### --------- common part
 
 sub auto :Private {
@@ -188,42 +188,44 @@ sub get {
 
         my $action_config = $self->get_config('action');
         my $config_allowed_types = $action_config->{GET}->{ReturnContentType};
-        my $apllication_json = 'application/json';
+        my $system_default = 'application/json';
+        my $mime_type_from_config = $self->mime_type_from_allowed_default(
+            $c, $config_allowed_types, $system_default
+        );
 
         my $header_accept = $c->request->header('Accept');
 
         my $mime_type_from_accept_header;
         if( ( defined $header_accept
-        #apllication/json is default,  so we will not consider it in the Accept header
+        #apllication/json is default,  so we will not consider it in the Accept header, until our default in config is different from 'application/json'
         #*/* allows us everything, so we will first try query parameter or default configured default mime-type
-        #while we will not implement more complex logic, when application/json is not default
-            && ($header_accept !~ m!\bapplication/json\b!)
-            && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) # application/json OR */*
+            && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) #*/*
         )) {
-            $mime_type_from_accept_header = $header_accept;
+            if ( $header_accept !~ m!\b\Q$system_default\E\b!) {
+                $mime_type_from_accept_header = $header_accept;
+            } elsif (ref $config_allowed_types eq 'ARRAY' 
+                && ( grep {$_ eq $system_default} @$config_allowed_types )
+                && $mime_type_from_config ne $system_default
+            ) {
+                #we have system default in allowed types, and accept header requested exactly it, so we are not going to process according to $mime_type_from_config
+                $mime_type_from_config = undef;
+            }
         }
         my $mime_type_from_query_params = $self->mime_type_from_query_params($c);
+
 
         #TODO: to method
         if( defined $mime_type_from_accept_header
             || defined $mime_type_from_query_params
             #no header Accept passed, check configured return type
-            || ( $config_allowed_types
-                && (
-                    ( ( !ref $config_allowed_types)
-                        && $config_allowed_types ne $apllication_json)
-                    || ( ref $config_allowed_types eq 'ARRAY'
-                         && !grep { $_ eq  $apllication_json } @{ $config_allowed_types } )
-                )
-            )
-
+            || defined $mime_type_from_config
         ) {
             my $return_type = $mime_type_from_accept_header // $mime_type_from_query_params;
 
             if ($return_type) {
                 return unless $self->check_return_type($c, $return_type, $config_allowed_types);
-            } elsif (!ref $config_allowed_types) {
-                $return_type = $config_allowed_types;
+            } else {
+                $return_type = $mime_type_from_config;
             }
             $self->return_requested_type($c, $id, $item, $return_type);
             # in case this method is not defined, we should return a reasonable error explaining the Accept Header
@@ -310,7 +312,7 @@ sub put {
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
         my $method_config = $self->get_config('action')->{PUT};
-        my ($resource, $data) = $self->get_valid_data(
+        my ($resource, $data, $non_json_data) = $self->get_valid_data(
             c          => $c,
             id         => $id,
             method     => 'PUT',
@@ -321,8 +323,27 @@ sub put {
         last unless $resource;
         my $old_resource = $self->resource_from_item($c, $item);
 
-        ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
-        last unless $item;
+        my ($data_processed_result);
+        if (!$non_json_data || !$data) {
+            ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+            last unless $item;
+        } else {
+            try {
+                #$processed_ok(array), $processed_failed(array), $info, $error
+                $data_processed_result = $self->process_data(
+                    c        => $c,
+                    item     => $item,
+                    data     => \$data,
+                    resource => $resource,
+                    form     => $form,
+                    process_extras => $process_extras,
+                );
+            } catch($e) {
+                $c->log->error("failed to proces non json data: $e");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                last;
+            };
+        }
 
         my $hal = $self->get_journal_item_hal($c, $item, { form => $form });
         last unless $self->add_journal_item_hal($c, { hal => $hal });
