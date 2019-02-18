@@ -83,6 +83,8 @@ sub validate {
     if ($c->user->roles eq 'admin') {
         if ($self->field('reseller')) {
             $reseller_id = $self->field('reseller')->value;
+        } elsif ($self->field('reseller_id')) { #api variant
+            $reseller_id = $self->field('reseller_id')->value;
         } elsif ($c->stash->{reseller} && $c->stash->{reseller}->first) {
             #strange, reseller interface keeps rs as reseller, not reseller_rs
             $reseller_id = $c->stash->{reseller}->first->id;

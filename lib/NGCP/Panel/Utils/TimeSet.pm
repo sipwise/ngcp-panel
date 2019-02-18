@@ -128,8 +128,10 @@ sub timeset_resource {
         $resource->{name} = $calendar_parsed->{name};
     }
     #data will be taken from the request parameters or cache
-    my($fails, $text_success);
-    ($resource->{times}, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
+    my($events, $fails, $text_success) = NGCP::Panel::Utils::TimeSet::parse_calendar_events(c => $c);
+    if ((!$resource->{times} || (ref $resource->{times} eq 'ARRAY' && ! scalar @{$resource->{times}})) && $events && ref $events eq 'ARRAY' && scalar @$events) {
+        $resource->{times} = $events;
+    }
     return $resource;
 }
 
