@@ -9,6 +9,14 @@ use NGCP::Panel::Utils::TimeSet;
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
+    no_item_created   => 1,
+    POST => {
+        'ContentType' => ['multipart/form-data','application/json'],
+        #'Uploads'     => { 'calendarfile' => [NGCP::Panel::Utils::TimeSet::CALENDAR_MIME_TYPE] },
+        #perl -e 'use File::Type; my $ft = File::Type->new();print $ft->mime_type("/root/VMHost/data/test_from_form_1.ics");'
+        # =====> application/x-awk 
+        'Uploads'     => ['calendarfile'],
+    },
 });
 
 sub allowed_methods{
@@ -38,19 +46,21 @@ sub query_params {
 sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
 
-    my $schema = $c->model('DB');
-    my $tset;
+    my $timeset;
 
     try {
-        # # no checks, they are in check_resource
-        $tset = NGCP::Panel::Utils::TimeSet::create_timeset( c => $c, resource => $resource );
+        # no checks, they are in check_resource
+        $timeset = NGCP::Panel::Utils::TimeSet::create_timeset(
+            c => $c,
+            resource => $resource,
+        );
     } catch($e) {
         $c->log->error("failed to create timeset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create timeset.");
         return;
     }
 
-    return $tset;
+    return $timeset;
 }
 
 1;
