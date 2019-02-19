@@ -1476,12 +1476,20 @@ msgid "Code"
 msgstr "Codice"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Codecs filter"
-msgstr "Filtro Codecs"
+msgid "Codecs filter by ID"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Codecs list"
-msgstr "Lista Codecs"
+msgid "Codecs filter by name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Codecs list of IDs"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Codecs list of names"
+msgstr ""
 
 #: share/layout/body.tt
 msgid "Collapse Groups"
@@ -1489,6 +1497,11 @@ msgstr "Riduci Gruppi"
 
 #: share/templates/peeringoverview/list.tt
 msgid "Columns"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Comma separated list of audio and video codecs IDs to whitelist or blacklist."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
@@ -2678,6 +2691,14 @@ msgstr "Abilita Deviazione di chiamata (Call Deflection)"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Caller LNP lookup"
 msgstr "Abilita controllo su DB di portabilità per il chiamante"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable DNS SRV"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable DNS SRV on device when resolving server host"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -7925,6 +7946,12 @@ msgstr "Stato Supporto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Switch between blacklisting (bl) or whitelisting (wl) of codec IDs listed in "
+"codecs_id_list (1 for wl, 0 bl)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Switch between blacklisting (bl) or whitelisting (wl) of codecs listed in "
 "codecs_list (1 for wl, 0 bl)."
 msgstr ""
@@ -9124,6 +9151,12 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid "Codecs filter"
+#~ msgstr "Filtro Codecs"
+
+#~ msgid "Codecs list"
+#~ msgstr "Lista Codecs"
 
 #~ msgid "Invalid subscriber profile set id"
 #~ msgstr "Id set profili abbonato non valido!"

@@ -1415,11 +1415,19 @@ msgid "Code"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Codecs filter"
+msgid "Codecs filter by ID"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Codecs list"
+msgid "Codecs filter by name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Codecs list of IDs"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Codecs list of names"
 msgstr ""
 
 #: share/layout/body.tt
@@ -1428,6 +1436,11 @@ msgstr "Alle einklappen"
 
 #: share/templates/peeringoverview/list.tt
 msgid "Columns"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Comma separated list of audio and video codecs IDs to whitelist or blacklist."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
@@ -2600,6 +2613,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Caller LNP lookup"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable DNS SRV"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable DNS SRV on device when resolving server host"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7761,6 +7782,12 @@ msgstr ""
 
 #: share/templates/statistics/versions.tt
 msgid "Support Status"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Switch between blacklisting (bl) or whitelisting (wl) of codec IDs listed in "
+"codecs_id_list (1 for wl, 0 bl)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
