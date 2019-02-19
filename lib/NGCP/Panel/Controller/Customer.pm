@@ -381,14 +381,37 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         { name => "provisioning_voip_subscriber.pbx_hunt_policy", search => 1, title => $c->loc("Hunt Policy") },
         { name => "provisioning_voip_subscriber.pbx_hunt_timeout", search => 1, title => $c->loc("Serial Hunt Timeout") },
     ]);
+
     $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
         contract_id => $contract_id,
         status => { '!=' => 'terminated' },
         'provisioning_voip_subscriber.is_pbx_group' => 0,
     }, {
         join => 'provisioning_voip_subscriber',
+        order_by => [qw/username/],
     });
+
     if($c->config->{features}->{cloudpbx}) {
+
+        # we maintain the display names in a separate hash identified by
+        # subscriber uuid, because if we put the display name in the
+        # above query, we'll implicitly filter subscribers without a
+        # display name due to the inner join
+        my $subscriber_display_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+            contract_id => $contract_id,
+            status => { '!=' => 'terminated' },
+            'provisioning_voip_subscriber.is_pbx_group' => 0,
+            'attribute.attribute' => 'display_name',
+        }, {
+            join => { 'provisioning_voip_subscriber' => { 'voip_usr_preferences' => 'attribute' }},
+            '+select' => ['voip_usr_preferences.value'],
+            '+as' => ['display_name'],
+             order_by => [qw/voip_usr_preferences.value pbx_extension/],
+        });
+        foreach my $sub ($subscriber_display_rs->all) {
+            $c->stash->{subscriber_displays}->{$sub->uuid} = $sub->get_column('display_name');
+        }
+
         $c->stash->{pbx_groups} = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_rs(
             c => $c,
             schema => $c->model('DB'),
