@@ -412,8 +412,14 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
         back_uri => $c->req->uri,
     );
     if($form->validated) {
-        $form->values->{source} ||= '.';
         $form->values->{match_mode} ||= 'regex_longest_pattern';
+        if (not defined $form->values->{source}) {
+            if ($form->values->{match_mode} eq 'regex_longest_pattern') {
+                $form->values->{source} = '.';
+            } else {
+                $form->values->{source} = '';
+            }
+        }
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
             NGCP::Panel::Utils::Billing::insert_unique_billing_fees(
@@ -531,8 +537,14 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
-        $form->values->{source} ||= '.';
         $form->values->{match_mode} ||= 'regex_longest_pattern';
+        if (not defined $form->values->{source}) {
+            if ($form->values->{match_mode} eq 'regex_longest_pattern') {
+                $form->values->{source} = '.';
+            } else {
+                $form->values->{source} = '';
+            }
+        }
         $form->values->{billing_zone_id} = $form->values->{billing_zone}{id};
         delete $form->values->{billing_zone};
         $c->stash->{'fee_result'}
@@ -1108,3 +1120,4 @@ it under the same terms as Perl itself.
 =cut
 
 # vim: set tabstop=4 expandtab:
+
