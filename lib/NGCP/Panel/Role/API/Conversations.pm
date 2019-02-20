@@ -253,8 +253,8 @@ sub get_mandatory_params {
     if ('item' eq $href_type) {
         if('HASH' eq ref $item){
             $mandatory_params{type} = $item->{type};
-        }elsif(blessed $item){
-            $mandatory_params{type} = $item->type;
+        }elsif(blessed $item && $item->can('get_column')){
+            $mandatory_params{type} = $item->get_column('type');
         }
     }
     return \%mandatory_params;
@@ -760,6 +760,7 @@ sub process_hal_resource {
     # todo: mashal specific fields, per conversation event type ...
     #$c->log->debug(Dumper('item'));
     #$c->log->debug(Dumper($item));
+    $item = {$item->get_inflated_columns};
     my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $item);
     if('call' eq $item->{type}){
         my $owner = $self->get_owner_cached($c);
