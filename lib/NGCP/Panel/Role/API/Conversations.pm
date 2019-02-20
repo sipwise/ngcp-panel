@@ -251,11 +251,7 @@ sub get_mandatory_params {
         : ( customer_id => $owner->{customer}->id )
     );
     if ('item' eq $href_type) {
-        if('HASH' eq ref $item){
-            $mandatory_params{type} = $item->{type};
-        }elsif(blessed $item){
-            $mandatory_params{type} = $item->type;
-        }
+        $mandatory_params{type} = $resource->{type};
     }
     return \%mandatory_params;
 }
@@ -758,10 +754,10 @@ sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
     my $schema = $c->model('DB');
     # todo: mashal specific fields, per conversation event type ...
-    #$c->log->debug(Dumper('item'));
+    #$c->log->debug(Dumper($resource));
     #$c->log->debug(Dumper($item));
-    my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $item);
-    if('call' eq $item->{type}){
+    my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $resource);
+    if('call' eq $resource->{type}){
         my $owner = $self->get_owner_cached($c);
         return unless $owner;
         $resource = NGCP::Panel::Utils::CallList::process_cdr_item(
@@ -774,7 +770,9 @@ sub process_hal_resource {
         } else {
             @{$resource}{qw/caller callee/} = @{$resource}{qw/other_cli own_cli/};
         }
-        $resource->{type} = $item->{type};
+        foreach my $field (qw/type/){
+            $resource->{$field} = $item_mock_obj->$field;
+        }
         my $fee;
         if ($fee = $schema->resultset('billing_fees_history')->search_rs({
                 'id' => ($resource->{direction} eq "out" ? $item_mock_obj->source_customer_billing_fee_id : $item_mock_obj->destination_customer_billing_fee_id),
@@ -787,7 +785,7 @@ sub process_hal_resource {
         } else {
             $resource->{currency} = '';
         }
-    }elsif('fax' eq $item->{type}){
+    }elsif('fax' eq $resource->{type}){
         my $fax_subscriber_provisioning = $schema->resultset('provisioning_voip_subscribers')->search_rs({
             'id' => $item_mock_obj->subscriber_id,
         })->first;
@@ -798,7 +796,7 @@ sub process_hal_resource {
         }
         $resource->{subscriber_id} = $fax_subscriber_billing->id;
         $resource->{call_id} = $item_mock_obj->call_id;
-    }elsif('voicemail' eq $item->{type}){
+    }elsif('voicemail' eq $resource->{type}){
         $resource = $item_accessors_hash;
         $resource->{caller} = $item_mock_obj->callerid;
         $resource->{voicemail_subscriber_id} = $schema->resultset('voicemail_spool')->search_rs({
@@ -811,10 +809,10 @@ sub process_hal_resource {
         $resource->{direction} = 'in';
         $resource->{filename} = $filename;
         $resource->{call_id} = $item_mock_obj->call_id;
-    }elsif('sms' eq $item->{type}){
+    }elsif('sms' eq $resource->{type}){
         $resource = $item_accessors_hash;
         #$resource->{start_time} =  NGCP::Panel::Utils::DateTime::from_string($item_mock_obj->timestamp)->epoch;
-    }elsif('xmpp' eq $item->{type}){
+    }elsif('xmpp' eq $resource->{type}){
         $resource = $item_accessors_hash;
     }
     #$c->log->debug(Dumper('resource'));
@@ -922,3 +920,4 @@ sub hal_links {
 
 
 1;
+
