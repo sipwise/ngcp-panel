@@ -1,3 +1,12 @@
+ngcp-panel (6.5.3.6+0~mr6.5.3.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [0267ad3] TT#46700 fix permanent registration "received" param
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 21 Feb 2019 13:02:10 +0100
+
 ngcp-panel (6.5.3.5+0~mr6.5.3.5) unstable; urgency=medium
 
   [ Rene Krenn ]
