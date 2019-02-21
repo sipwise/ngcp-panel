@@ -5228,6 +5228,10 @@ msgstr "Tiempo de espera del Push a Móvil"
 msgid "Mode"
 msgstr "Modo"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Mode to handle SIP URI for looking up registration"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Model"
 msgstr "Modelo"
@@ -6777,10 +6781,12 @@ msgstr ""
 msgid ""
 "SIP URI of another subscriber (typically a SIP trunk) for looking up "
 "registration. If non-empty, the calls will be routed to registered location "
-"of specified user. This means that registration of current user will be "
-"ignored for incoming calls and can be combined with e164_to_ruri preference "
-"for SIP trunking, thus allowing to reach subscriber/extension behind the SIP "
-"trunk. A valid value must begin with sip:"
+"of specified user. Depending on the location_from_subscriber_mode "
+"preference, registration of current user will be ignored for incoming calls "
+"(\"replace\" mode) or registrations of both current user and specified URI "
+"will be combined (\"add\" mode). This feature can be combined with "
+"e164_to_ruri preference for SIP trunking, thus allowing to reach subscriber/"
+"extension behind the SIP trunk. A valid value must begin with sip:"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8055,6 +8061,16 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The members (as SIP URIs) of the PBX hunt group."
 msgstr "Los miembros (como direcciones SIP) del grupo de captura de la PBX"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The mode how to handle SIP URI of another subscriber (typically a SIP trunk) "
+"for looking up registration. In \"add\" mode, the registrations of the SIP "
+"URI specified in location_from_subscriber preference will be added in "
+"addtion to the registrations of the current subscriber. In \"replace\" mode, "
+"the registrations of the current subscriber will be ignored and be replaced "
+"by the registrations of the SIP URI specified in the preference"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
