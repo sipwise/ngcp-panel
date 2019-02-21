@@ -1,23 +1,7 @@
-package NGCP::Panel::Field::AliasNumber;
+package NGCP::Panel::Field::E164Alias;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Repeatable';
-
-
-#has 'label' => ( default => 'E164 Number');
-
-has_field 'id' => (
-    type => 'Hidden',
-);
-
-has_field 'e164' => (
-    type => '+NGCP::Panel::Field::E164', 
-    order => 97,
-    required => 0,
-    label => 'Alias Number',
-    do_label => 1,
-    do_wrapper => 1,
-    wrapper_class => [qw/hfh-rep-field/],
-);
+use NGCP::Panel::Field::E164;
+extends 'NGCP::Panel::Field::E164';
 
 has_field 'is_devid' => (
     type => 'Boolean',
@@ -47,21 +31,6 @@ has_field 'devid_alias' => (
         title => ['An optional device id to be configured on a phone, which is associated with this alias number (e.g. "softphone").']
     },
 );
-
-
-has_field 'rm' => (
-    type => 'RmElement',
-    value => 'Remove',
-    order => 100,
-    element_class => [qw/btn btn-primary pull-right/],
-);
-
-has_block 'fields' => (
-    tag => 'div',
-    class => [qw/modal-body/],
-    render_list => [qw/e164 is_devid devid_alias/ ],
-);
-
 
 no Moose;
 1;
