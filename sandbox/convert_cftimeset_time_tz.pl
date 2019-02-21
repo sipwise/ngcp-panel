@@ -78,6 +78,13 @@ WRITE_TO_DB:
 print "\n" . process_rows('voip_cf_time_sets', sub {
     my $item = shift;
     my @times;
+
+    my $tz = $schema->resultset('voip_subscriber_timezone')->search_rs({
+            subscriber_id => $item->subscriber->voip_subscriber->id
+        })->first;
+    my $tz_name = normalize_db_tz_name($tz->name) if $tz;
+    print "\nsubscriber id " . $item->subscriber->voip_subscriber->id . " - $tz_name: ";
+
     for my $time ($item->voip_cf_periods->all) {
         my $timeelem = {$time->get_inflated_columns};
         delete $timeelem->{'id'};
@@ -99,6 +106,33 @@ print "\n" . process_rows('voip_cf_time_sets', sub {
             delete $t->{time_set_id};
             $item->create_related("voip_cf_periods", $t);
         }
+
+        my $indent = 40;
+        for (my $i = 0; $i < ((scalar @times > scalar @$converted_times) ? scalar @times : scalar @$converted_times); $i++) {
+            my $old = $times[$i];
+            my $new = $converted_times->[$i];
+            my $str = '';
+            $str .= ' ' x $indent unless $old;
+            #$str = print_item($old,'time_set_id',$str);
+            $str = print_item($old,'year',$str);
+            $str = print_item($old,'month',$str);
+            $str = print_item($old,'mday',$str);
+            $str = print_item($old,'wday',$str);
+            $str = print_item($old,'hour',$str);
+            $str = print_item($old,'minute',$str);
+            if ($new) {
+                $str .= ' ' x ($indent-length($str));
+                #$str = print_item($new,'time_set_id',$str,1);
+                $str = print_item($new,'year',$str,1);
+                $str = print_item($new,'month',$str);
+                $str = print_item($new,'mday',$str);
+                $str = print_item($new,'wday',$str);
+                $str = print_item($new,'hour',$str);
+                $str = print_item($new,'minute',$str);
+            }
+            print $str . "\n";
+        }
+
         return 1;
     } else {
         return 0;
