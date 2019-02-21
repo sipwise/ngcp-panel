@@ -47,7 +47,7 @@ has_field 'webpassword' => (
 );
 
 has_field 'e164' => (
-    type => '+NGCP::Panel::Field::E164',
+    type => '+NGCP::Panel::Field::E164Alias',
     order => 99,
     required => 0,
     label => 'E164 Number',
