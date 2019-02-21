@@ -29,6 +29,18 @@ sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head handle_journalsitem_put handle_journalsitem_patch/];
 }
 
+sub pre_process_form_resource {
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    if (!exists $resource->{is_devid} && defined $item->voip_dbalias) {
+        $resource->{is_devid} = $item->voip_dbalias->is_devid;
+    }
+    if (!exists $resource->{devid_alias} && defined $item->voip_dbalias) {
+        $resource->{devid_alias} = $item->voip_dbalias->devid_alias;
+    }
+    return 1;
+}
+
 sub update_item_model {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
     my $schema = $c->model('DB');
@@ -97,7 +109,12 @@ sub update_item_model {
                     ();
                 } else {
                     # otherwise keep number
-                    { e164 => { cc => $_->cc, ac => $_->ac, sn => $_->sn } };
+                    { e164 => {
+                            cc => $_->cc, ac => $_->ac, sn => $_->sn,
+                            is_devid => (defined $_->voip_dbalias ? $_->voip_dbalias->is_devid : 0),
+                            devid_alias => (defined $_->voip_dbalias ? $_->voip_dbalias->devid_alias : undef),
+                        }
+                    };
                 }
             }
         } @{ $oldalias } ];
@@ -121,11 +138,22 @@ sub update_item_model {
                     ();
                 } else {
                     # otherwise keep number
-                    { e164 => { cc => $_->cc, ac => $_->ac, sn => $_->sn } };
+                    { e164 => {
+                            cc => $_->cc, ac => $_->ac, sn => $_->sn,
+                            is_devid => (defined $_->voip_dbalias ? $_->voip_dbalias->is_devid : 0),
+                            devid_alias => (defined $_->voip_dbalias ? $_->voip_dbalias->devid_alias : undef),
+                        }
+                    };
                 }
             }
         } @{ $newalias } ];
-        push @{ $newalias }, { e164 => { cc => $item->cc, ac => $item->ac, sn => $item->sn } };
+
+        push @{ $newalias }, { e164 => {
+                cc => $item->cc, ac => $item->ac, sn => $item->sn,
+                is_devid => $resource->{is_devid} // 0,
+                devid_alias => $resource->{devid_alias},
+            }
+        };
 
         NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
             c => $c,
@@ -157,12 +185,18 @@ sub update_item_model {
         return;
     }
 
-    # reload item, in case the id changed (which shouldn't happen)
     $item = $self->_item_rs($c)->find({
-        cc => $item->cc, ac => $item->ac, sn => $item->sn
+        cc => $item->cc, ac => $item->ac, sn => $item->sn,
     });
 
     return $item;
+}
+
+sub post_process_hal_resource {
+    my($self, $c, $item, $resource, $form) = @_;
+    $resource->{is_devid} = bool $item->voip_dbalias->is_devid;
+    $resource->{devid_alias} = $item->voip_dbalias->devid_alias;
+    return $resource;
 }
 
 
