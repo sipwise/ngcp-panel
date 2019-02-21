@@ -108,6 +108,8 @@ sub resource_from_item {
                 ac => $n->ac,
                 sn => $n->sn,
                 number_id => int($n->id),
+                (defined $n->voip_dbalias ? (is_devid => bool $n->voip_dbalias->is_devid) : ()),
+                (defined $n->voip_dbalias ? (devid_alias => $n->voip_dbalias->devid_alias) : ()),
             };
             next if($resource{primary_number} &&
                compare($resource{primary_number}, $alias));
@@ -688,6 +690,7 @@ sub update_item {
         schema => $schema,
         subscriber => $subscriber,
     );
+
     try {
         NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
             c => $c,

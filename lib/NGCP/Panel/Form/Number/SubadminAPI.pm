@@ -44,5 +44,24 @@ has_field 'is_primary' => (
     },
 );
 
+has_field 'is_devid' => (
+    type => 'Boolean',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['When selected, a call to this alias number is only sent to registered devices indicating either the alias number or the optional alternative device id during registration in the Display-Name.']
+    },
+);
+
+has_field 'devid_alias' => (
+    type => 'Text',
+    required => 0,
+    maxlength => 127,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An optional device id to be configured on a phone, which is associated with this alias number (e.g. "softphone").']
+    },
+);
+
+
 1;
 # vim: set tabstop=4 expandtab:
