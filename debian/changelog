@@ -1,3 +1,12 @@
+ngcp-panel (5.5.7.8+0~mr5.5.7.8) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [6f5501d] TT#40540 fix accept header recognition for */*
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 21 Feb 2019 16:14:57 +0100
+
 ngcp-panel (5.5.7.7+0~mr5.5.7.7) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
