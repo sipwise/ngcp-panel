@@ -45,7 +45,7 @@ sub _item_rs {
     },{
         '+select' => [\'if(me.id=subscriber.primary_number_id,1,0)'],
         '+as' => ['is_primary'],
-        join => 'subscriber'
+        join => 'subscriber',
     });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
