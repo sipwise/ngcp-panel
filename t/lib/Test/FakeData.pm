@@ -22,7 +22,7 @@ use File::Temp qw(tempfile);
 
 
 Moose::Exporter->setup_import_methods(
-    as_is     => [ 'seq' ],
+    as_is     => [ 'seq', 'json_true', 'json_false' ],
 );
 
 sub BUILD {
@@ -922,6 +922,15 @@ sub seq{
     state $seq = 0;
     $number //= 0;
     return $number + $seq++;
+}
+
+my $json = '{"true": true, "false": false}';
+my $perl = decode_json $json;
+sub json_true {
+    return $perl->{true};
+}
+sub json_false {
+    return $perl->{false};
 }
 
 1;

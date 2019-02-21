@@ -1111,14 +1111,18 @@ sub update_subscriber_numbers {
                 username => $cli,
             });
             if($dbalias) {
-                if($dbalias->is_primary) {
-                    $dbalias->update({ is_primary => 0 });
-                }
+                $dbalias->update({
+                    is_primary => 0,
+                    is_devid => $alias->{e164}->{is_devid} // 0,
+                    devid_alias => $alias->{e164}->{devid_alias},
+                });
             } else {
                 $dbalias = $prov_subs->voip_dbaliases->create({
                     username => $cli,
                     domain_id => $prov_subs->domain->id,
                     is_primary => 0,
+                    is_devid => $alias->{e164}->{is_devid} // 0,
+                    devid_alias => $alias->{e164}->{devid_alias},
                 });
             }
             if(defined $acli_pref) {

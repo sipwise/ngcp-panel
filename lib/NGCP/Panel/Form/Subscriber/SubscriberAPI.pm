@@ -38,7 +38,7 @@ has_field 'alias_numbers' => (
 );
 
 has_field 'alias_numbers.contains' => (
-    type => '+NGCP::Panel::Field::E164',
+    type => '+NGCP::Panel::Field::E164Alias',
 );
 
 has_field 'lock' => (
