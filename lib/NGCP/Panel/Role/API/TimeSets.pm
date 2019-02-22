@@ -60,8 +60,6 @@ sub process_form_resource{
     if($c->user->roles eq 'reseller') {
         $resource->{reseller_id} = $c->user->reseller_id;
     }
-    use Data::Dumper;
-    $c->log->debug(Dumper([$form->values->{times}]));
     #events specification in the body json part has higher priority than in uploaded file
     #now resource is data from json, lets take it
     if ($resource->{times}) {
