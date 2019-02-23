@@ -1423,6 +1423,10 @@ msgstr ""
 msgid "Choose the logic of IPv4/IPv6 autodetection for the RTP relay"
 msgstr "Scegliere la logica per autorilevamento IPv4/IPv6 per flusso RTP"
 
+#: share/templates/timeset/switch_field_label.tt
+msgid "Clear"
+msgstr ""
+
 #: share/templates/statistics/list.tt
 msgid "Click&Drag on the graphs to zoom individual ranges."
 msgstr "Clicca e trascina sui grafici per ingrandire una determinata zona."
@@ -1502,6 +1506,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Comma separated list of audio and video codecs IDs to whitelist or blacklist."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Comment"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
@@ -1597,6 +1605,19 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Contains a list of numbers used in the \"Manager Secretary\" call forwardings"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Contains a list of the announcements that will be played to the caller in "
+"case the respective error code is returned back from the callee. Each entry "
+"of the list has to be a string composed in the following way: <error_code>;"
+"<announcement_name>, where error_code is the SIP return code and the "
+"announcement_name is name of the announcement taken from the sound_set list. "
+"'*', '?' and 'x-y' with 'x' and 'y' representing numbers from 0 to 9 may be "
+"used as wildcards like in shell patterns. For example, to play "
+"callee_unknown message in case of 404 returned from the callee: 404;"
+"callee_unknown"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -1762,6 +1783,10 @@ msgstr "Crea Gruppo Numeri di Emergenza"
 #: share/templates/emergencymapping/list.tt
 msgid "Create Emergency Mapping"
 msgstr "Crea Numero di Emergenza"
+
+#: share/templates/timeset/event_list.tt
+msgid "Create Event"
+msgstr ""
 
 #: share/templates/billing/fees.tt
 msgid "Create Fee Entry"
@@ -2019,6 +2044,10 @@ msgstr "Cliente non è stato trovato"
 msgid "Customers"
 msgstr "Clienti"
 
+#: share/templates/timeset/switch_end_control.tt
+msgid "Customize.."
+msgstr ""
+
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "DB Statistics"
 msgstr ""
@@ -2145,7 +2174,8 @@ msgstr ""
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
 #: share/templates/subscriber/recording.tt
-#: share/templates/subscriber/voicemail.tt share/templates/timeset/list.tt
+#: share/templates/subscriber/voicemail.tt
+#: share/templates/timeset/event_list.tt share/templates/timeset/list.tt
 #: share/templates/voucher/list.tt
 msgid "Delete"
 msgstr "Elimina"
@@ -2452,8 +2482,8 @@ msgid "Down"
 msgstr "Giù"
 
 #: share/templates/customer/details.tt share/templates/device/list.tt
-#: share/templates/invoice/invoice_list.tt
-#: share/templates/subscriber/preferences.tt
+#: share/templates/invoice/invoice_list.tt share/templates/reseller/details.tt
+#: share/templates/subscriber/preferences.tt share/templates/timeset/list.tt
 msgid "Download"
 msgstr "Scarica"
 
@@ -2515,7 +2545,8 @@ msgstr ""
 #: share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt
 #: share/templates/sound/list.tt share/templates/subprofile/profile_list.tt
 #: share/templates/subprofile/set_list.tt share/templates/subscriber/master.tt
-#: share/templates/subscriber/preferences.tt share/templates/timeset/list.tt
+#: share/templates/subscriber/preferences.tt
+#: share/templates/timeset/event_list.tt share/templates/timeset/list.tt
 #: share/templates/voucher/list.tt
 msgid "Edit"
 msgstr "Modifica"
@@ -2765,12 +2796,32 @@ msgstr "Fine"
 msgid "End Date"
 msgstr "Data di Fine"
 
+#: share/templates/timeset/switch_end_control.tt
+msgid "Endless event"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid ""
 "Error while sending fax (have the fax settings been configured properly?)"
 msgstr ""
 "Errore durante l´invio del fax (le impostazione fax dell´abbonato sono state "
 "configurate ?)"
+
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Event entry does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Event entry successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Event entry successfully deleted"
+msgstr ""
+
+#: share/templates/reseller/details.tt share/templates/timeset/list.tt
+msgid "Events"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Exact string (destination)"
@@ -3003,6 +3054,10 @@ msgstr "Creazione del numero di emergenza fallita."
 msgid "Failed to create emergency mapping container"
 msgstr "Creazione del gruppo dei numeri di emergenza fallita."
 
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to create event entry"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Failed to create header rule set"
 msgstr ""
@@ -3224,6 +3279,10 @@ msgstr "Eliminazione numero di emergenza fallita"
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Failed to delete emergency mapping container"
 msgstr "Eliminazione del gruppo dei numeri di emergenza fallita"
+
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to delete event entry"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Failed to delete header rule"
@@ -3610,6 +3669,10 @@ msgstr "Aggiornamento del numero di emergenza fallito"
 msgid "Failed to update emergency mapping container"
 msgstr "Aggiornamento del gruppo di numeri di emergenza fallito"
 
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to update event entry"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update fax setting"
 msgstr "Aggiornamento impostazioni fax fallito"
@@ -3780,6 +3843,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Failed to upload emergency mappings"
 msgstr "Caricamento numeri di emergenza fallito"
+
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Failed to upload iCalendar events"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Failover to next peer on 5xx with given Reason text"
@@ -4390,6 +4457,15 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"If this option is set, the announcements defined in "
+"'announce_error_codes_list' preference will be played on behalf callee "
+"failure in case of outbound calls. In case of activation it is important "
+"that the remote endpoint doesn't play an announcement, otherwise the final "
+"result will be to have 2 announcements."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "If true, calling party number is shown regardles of caller CLIR settings."
 msgstr ""
 "Se vero, il numero chiamante verrà visualizzato, indipendentemente dal "
@@ -4708,6 +4784,10 @@ msgstr "Id gruppo di numeri di emergenza non valido!"
 msgid "Invalid emergency mapping id detected!"
 msgstr "Id numero di emergenza non valido!"
 
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Invalid event entry id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Invalid fax setting."
 msgstr "Impostazione fax non valida."
@@ -4867,6 +4947,10 @@ msgstr "Impostazione casella vocale non valida!"
 #: lib/NGCP/Panel/Controller/Voucher.pm
 msgid "Invalid voucher id detected!"
 msgstr "Id voucher non valido!"
+
+#: share/templates/timeset/switch_field_label.tt
+msgid "Invert selection"
+msgstr ""
 
 #: share/templates/customer/details.tt share/templates/invoice/invoice_list.tt
 msgid "Invoice"
@@ -5072,6 +5156,10 @@ msgid ""
 "are G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, "
 "DVI4, G729, AMR, AMR-WB, opus, telephone-event, CelB, JPEG, H261, H263, "
 "H263-1998, MPV, MP2T, nv, vp8, vp9 and h264."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "List of error codes and respective announcements"
 msgstr ""
 
 #: share/templates/sound/handles_list.tt
@@ -5553,6 +5641,12 @@ msgstr ""
 msgid "Name"
 msgstr "Nome"
 
+#: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
+msgid ""
+"Name field is required and should be defined in the form field or in the "
+"uploaded calendar file."
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "Name in Fax Header for Sendfax"
 msgstr "Nome intestazione fax per Sendfax"
@@ -5621,6 +5715,10 @@ msgstr "Nessun dispositivo registrato"
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "No emergency mapping file specified!"
 msgstr "Nessun file dei numeri di emergenza specificato!"
+
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "No iCalendar file specified!"
+msgstr ""
 
 #: share/templates/widgets/subscriber_vm_overview.tt
 msgid "No new messages"
@@ -6174,6 +6272,10 @@ msgstr ""
 #: share/templates/subscriber/voicemail.tt
 msgid "Play"
 msgstr "Riproduci"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Play an announcement for failure on outbound call"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play announcement before call setup"
@@ -8310,6 +8412,14 @@ msgstr "Orario"
 msgid "Time Set"
 msgstr "Set Temporale"
 
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "Time Set #"
+msgstr ""
+
+#: share/templates/timeset/event_list.tt
+msgid "Time Set Event"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Time Sets"
@@ -8571,6 +8681,10 @@ msgstr "Carica Costo come CSV"
 #: share/templates/voucher/list.tt
 msgid "Upload Vouchers as CSV"
 msgstr "Carica Vouchers come CSV"
+
+#: share/templates/timeset/event_list.tt
+msgid "Upload iCalendar events"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use Number instead of Contact first for outbound calls"
@@ -9031,6 +9145,10 @@ msgstr "ora"
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "hours"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/TimeSet.pm
+msgid "iCal"
 msgstr ""
 
 #: share/templates/subscriber/webphone.tt
