@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba076199_11310eed",
+        "filename": "lib/NGCP/Panel/Controller/API/NumbersItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-02-25T12:38:30Z",
+      "side": 1,
+      "message": "Should it stay here?",
+      "range": {
+        "startLine": 161,
+        "startChar": 7,
+        "endLine": 161,
+        "endChar": 59
+      },
+      "revId": "fbfcedd67de6522991f9c1946cca4983a1b9e737",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
