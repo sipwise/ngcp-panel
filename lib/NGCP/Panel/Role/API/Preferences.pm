@@ -780,7 +780,8 @@ sub update_item {
                     # TODO: not applicable for domains, but for subs, check for contract_id!
                     my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
                         name => $resource->{$pref},
-                        reseller_id => $reseller_id,
+                        #we can use any sound_set for peer preference
+                        #reseller_id => $reseller_id,
                     });
                     unless($set) {
                         $c->log->error("no $pref '".$resource->{$pref}."' for reseller id $reseller_id found");
