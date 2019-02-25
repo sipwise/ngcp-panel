@@ -93,6 +93,30 @@
       "revId": "fbfcedd67de6522991f9c1946cca4983a1b9e737",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba076199_5148a62d",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1118,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-02-25T15:17:17Z",
+      "side": 1,
+      "message": "Thank you for explanation. Yes, I got it. Everything that is presented in db_alias - is always an alias.\n\nNow switched to failed test in preferences, I hope to find it quickly, and then will return to failed subscribers tests, related to this review.",
+      "parentUuid": "ba076199_f1367ab3",
+      "range": {
+        "startLine": 1114,
+        "startChar": 16,
+        "endLine": 1118,
+        "endChar": 19
+      },
+      "revId": "fbfcedd67de6522991f9c1946cca4983a1b9e737",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
