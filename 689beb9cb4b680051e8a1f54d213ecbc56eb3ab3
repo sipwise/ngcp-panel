@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba076199_d11c9679",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 784,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-02-25T19:50:21Z",
+      "side": 1,
+      "message": "Should we apply some checking for contract_sound_set?",
+      "range": {
+        "startLine": 783,
+        "startChar": 0,
+        "endLine": 784,
+        "endChar": 53
+      },
+      "revId": "689beb9cb4b680051e8a1f54d213ecbc56eb3ab3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
