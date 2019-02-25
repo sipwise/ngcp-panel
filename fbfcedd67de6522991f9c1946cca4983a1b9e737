@@ -22,6 +22,29 @@
       "revId": "fbfcedd67de6522991f9c1946cca4983a1b9e737",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba076199_f181da4e",
+        "filename": "lib/NGCP/Panel/Utils/Subscriber.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 1118,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-02-25T13:28:12Z",
+      "side": 1,
+      "message": "Why we don\u0027t use condition about primary_number more? Was it unnecessary?",
+      "range": {
+        "startLine": 1114,
+        "startChar": 16,
+        "endLine": 1118,
+        "endChar": 19
+      },
+      "revId": "fbfcedd67de6522991f9c1946cca4983a1b9e737",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
