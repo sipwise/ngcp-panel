@@ -1,3 +1,17 @@
+ngcp-panel (7.0.2.2+0~mr7.0.2.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [95a279b] TT#53421 fix conversations item<->resource confusion
+
+  [ Irina Peshinskaya ]
+  * [586f4d3] TT#50204 Fix "All" datatables entries option
+  * [0c43854] TT#50907 Don't use form caching in WEB UI
+  * [83aa8a6] TT#50802 Use one-to-one relation to filter numbers by type
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Feb 2019 12:41:51 +0100
+
 ngcp-panel (7.0.2.1+0~mr7.0.2.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
