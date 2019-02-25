@@ -1,3 +1,70 @@
+ngcp-panel (7.3.0.0+0~mr7.3.0.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [c111d1e] TT#49754 Increase header lines limit in http response parsing
+  * [a136015] TT#46791 Wait for ajax table loading for "Edit" button work
+  * [4bac7f0] TT#48165 Return field_list for profilee form
+  * [e9486b8] TT#50802 Consider terminated subscribers in alias management
+  * [e15e404] TT#51109 Enable api soundgroups and soundhandles for subscriberadmin
+  * [08a6b81] TT#50802 Use one-to-one relation to filter numbers by type
+  * [4b2dc9a] TT#52355 Use pattern for systemctl --list-unit-files openvpn search
+  * [8589050] TT#50975 Replace "value" logic to "filter" in "remove-by-value"
+  * [86a2ae7] TT#50907 Don't use form caching in WEB UI
+  * [85aeeaa] TT#50204 Fix "All" datatables entries option
+  * [4099adf] TT#49689 Implement web UI for ical events
+  * [92ac694] TT#49689 Rename method *_timesets to *_timeset
+  * [0162f70] TT#49688 Implement human readable rrule in ical events list
+  * [345f89d] TT#47534 Add configured defailt mime-type to Entities FW
+  * [9adf470] TT#47534 Add iCalendar download/upload web ui
+  * [ec178cd] TT#47534 Implement api timesets upload/download
+  * [80b0cf0] TT#47534 Remove unnecessary debug from timesets api
+  * [bee5da9] TT#50802 Additional test cases for aliases management
+
+  [ Alexander Lutay ]
+  * [a9399b1] TT#46791 Fix floating bug with 'Edit' problem on 'Weekdays' page
+  * [dce4c30] TT#46791 Fix floating bug with 'Delete' button on 'Peering Servers' page
+  * [18d4e25] Revert "TT#46791 Fix floating bug with 'Edit' problem on 'Weekdays' page"
+  * [cb7d6ec] TT#46791 Use proper variable name in test controller_billing.t
+  * [82172e5] TT#46791 Fix floating bug with 'Edit' problem on page 'Weekdays' (try #2)
+  * [c2ae23f] TT#46791 Improve 'prove' output for Selenium and REST API tests
+  * [0ff1d1d] TT#46791 Add more debug for test controller_customer.t
+  * [653291b] TT#46791 Teach Jenkins job ngcp-panel-test-selenium-docker run one test only
+
+  [ Andreas Granig ]
+  * [465ee3d] TT#51065 Workaround for grafana not setting UTF-8 in Content-Type for js
+  * [ea25662] TT#49037 Implement rds connector to sipwise eds
+  * [ca97df4] TT#52628 Fix serving autoprov firmwares for unknown macs
+  * [1caea82] TT#52961 Use separate port for Cisco SPA search
+  * [ec2c977] TT#52961 Use redis if enabled to fetch reg subsscribers
+  * [c56e140] TT#52961 Use custom bootstrap uri on http sync if set
+  * [de6f270] TT#52961 Use cisco port for http bootstrap method
+  * [a1f4779] TT#53326 Fix showing display name in field dev creation form
+  * [d5ba7c1] TT#52989 Implement device alias provisioning logic
+
+  [ Kirill Solomko ]
+  * [7dbbe5e] TT#50815 Fix HeaderManipulations invalidate request to kamailio
+  * [3615635] TT#50151 enable peering host sound_sets
+  * [759ce4e] TT#51910 add HM cf_inbound, cf_outbound direction
+
+  [ Guillem Jover ]
+  * [5cdd1d2] TT#50954 Use <<>> instead of <> as that has unsafe semantics
+  * [e4cfc98] TT#51065 Update grafana dashboard URLs for grafana 5.x
+
+  [ Rene Krenn ]
+  * [9d3030f] TT#47658 lowercase redis usrloc filter (username, domain)
+  * [8ed0574] TT#48988 timezone conversions for CF timeset periods
+  * [915e317] TT#53421 fix conversations item<->resource confusion
+  * [97ecd6d] TT#53382 no default '.' source for prefix fees
+  * [d532728] TT#52456 cftimeset period timezone transformation script
+  * [36ff829] TT#52456 log cf timeset timezone transformation output
+
+  [ Sipwise Jenkins Builder ]
+  * [30af629] TT#4166 I18N dump: snapshot 2019.02.19-14.00.04
+  * [97701c9] TT#4166 I18N dump: snapshot 2019.02.21-16.09.07
+  * [dae9821] TT#4166 I18N dump: snapshot 2019.02.23-06.18.59
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Feb 2019 22:56:31 +0100
+
 ngcp-panel (7.2.0.0+0~mr7.2.0.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
