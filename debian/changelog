@@ -1,3 +1,20 @@
+ngcp-panel (7.1.1.5+0~mr7.1.1.5) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [8c074ef] TT#45960 Disable timesets API for 7.0
+  * [dab07a2] TT#45960 disable timesets web ui in 7.0
+  * [2a787c6] TT#52355 Use pattern for systemctl --list-unit-files openvpn search
+  * [40c1bbc] TT#50204 Fix "All" datatables entries option
+  * [340fd1b] TT#50907 Don't use form caching in WEB UI
+  * [7f58426] TT#50802 Use one-to-one relation to filter numbers by type
+
+  [ Rene Krenn ]
+  * [f31036d] TT#53421 fix conversations item<->resource confusion
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Feb 2019 10:33:32 +0100
+
 ngcp-panel (7.1.1.4+0~mr7.1.1.4) unstable; urgency=medium
 
   [ Rene Krenn ]
