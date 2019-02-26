@@ -22,6 +22,30 @@
       "revId": "689beb9cb4b680051e8a1f54d213ecbc56eb3ab3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba076199_bc57b9c9",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 784,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-02-26T09:29:06Z",
+      "side": 1,
+      "message": "I think we should check it here \n1. if it\u0027s contract\u0027s\u0027 add the contract_id search into the RS\n2. if it\u0027s reseller\u0027s\u0027 add the reselelr_id search into the RS\n3. it\u0027s peering server\u0027s, no additional filters",
+      "parentUuid": "ba076199_d11c9679",
+      "range": {
+        "startLine": 783,
+        "startChar": 0,
+        "endLine": 784,
+        "endChar": 53
+      },
+      "revId": "689beb9cb4b680051e8a1f54d213ecbc56eb3ab3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
