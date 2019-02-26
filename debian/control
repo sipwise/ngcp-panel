@@ -131,6 +131,7 @@ Depends:
  curl,
  libio-prompter-perl,
  libmoose-perl,
+ libngcp-api-client-perl | ngcp-api-tools,
  libredis-perl,
  libtrycatch-perl,
  liburi-perl,
