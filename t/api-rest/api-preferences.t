@@ -15,6 +15,43 @@ my $test_machine = Test::Collection->new(
     name => 'preferences',
 );
 my $fake_data =  Test::FakeData->new;
+
+my $test_machine_soundsets = Test::Collection->new(
+    name => 'soundsets',
+    QUIET_DELETION => 1,
+);
+my $fake_data_soundsets = Test::FakeData->new(
+    keep_db_data => 1,
+    test_machine => $test_machine_soundsets,
+);
+$fake_data_soundsets->load_collection_data('soundsets');
+$fake_data_soundsets->apply_data({
+    'soundsets' => {
+        'reseller_id' => 1,
+    },
+    'billingprofiles' => {
+        'reseller_id' => 1,
+    },
+    'customercontacts' => {
+        'reseller_id' => 1,
+        'email' => 'api_preferences_tests@tests.com',
+    },
+    'sysemcontacts' => {
+        'email' => 'api_preferences_tests@tests.com',
+    },
+    'customers' => {
+        'external_id' => 'api_preferences_tests',
+    },
+    'resellers' => {
+        'name' => 'api_preferences_tests',
+    },
+    'contracts' => {
+        'external_id' => 'api_preferences_tests',
+    },
+});
+$fake_data_soundsets->process('soundsets');
+$fake_data->{data}->{'orphansoundsets'} = $fake_data_soundsets->{data}->{'soundsets'};
+
 $fake_data->set_data_from_script({
     preferences => {
         data => {
@@ -31,17 +68,17 @@ $fake_data->set_data_from_script({
             rewriteruleset_id  =>  sub { return shift->get_id('rewriterulesets',@_); },
             headerruleset_id  =>  sub { return shift->get_id('headerrulesets',@_); },
             soundset_id  =>  sub { return shift->get_id('soundsets',@_); },
+            orphan_soundset_id  =>  sub { return $fake_data_soundsets->get_id('soundsets',@_); },
             ncoslevel_id  =>  sub { return shift->get_id('ncoslevels',@_); },
         },
     },
 });
-
 #for item creation test purposes /post request data/
 $test_machine->DATA_ITEM_STORE($fake_data->process('preferences'));
 $test_machine->form_data_item( );
 
 my @apis = qw/subscriber domain peeringserver customer profile pbxdevice pbxfielddevice pbxdeviceprofile/;
-#my @apis = qw/pbxdevice/;
+#my @apis = qw/peeringserver/;
 
 foreach my $api (@apis){
     my $preferences_old;
@@ -81,9 +118,9 @@ foreach my $api (@apis){
             #
             #}
         }elsif('string' eq $preference->{data_type}){
-            $value = get_preference_existen_value($preference) // "test_api preference string";
+            $value = get_preference_existen_value($preference, $api) // "test_api preference string";
         }elsif('int' eq $preference->{data_type}){
-            $value = get_preference_existen_value($preference) // 33;
+            $value = get_preference_existen_value($preference, $api) // 33;
         }else{
             die("unknown data type: ".$preference->{data_type}." for $preference_name;\n");
         }
@@ -147,7 +184,7 @@ done_testing;
 
 #----------------- aux
 sub get_preference_existen_value{
-    my $preference = shift;
+    my ($preference, $api) = @_;
     my $res;
     if($preference->{name}=~/^rewrite_rule_set$/){
         $res = get_fake_data_created_or_data('rewriterulesets','name');
@@ -156,7 +193,11 @@ sub get_preference_existen_value{
     }elsif($preference->{name}=~/^(adm_)?(cf_)?ncos$/){
         $res = get_fake_data_created_or_data('ncoslevels','level');
     }elsif($preference->{name}=~/^(contract_)?sound_set$/){
-        $res = get_fake_data_created_or_data('soundsets','name');
+        if ($api eq 'peeringserver') {
+            $res = get_fake_data_created_or_data('orphansoundsets','name');
+        } else {
+            $res = get_fake_data_created_or_data('soundsets','name');
+        }
     }elsif($preference->{name}=~/^emergency_mapping_container$/){
         $res = get_fake_data_created_or_data('emergencymappingcontainers','name');
     }elsif($preference->{name}=~/^(man_)?allowed_ips_grp$/){
