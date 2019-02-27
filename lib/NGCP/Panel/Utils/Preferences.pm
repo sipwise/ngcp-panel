@@ -38,6 +38,7 @@ sub load_preference_list {
     my $c = $params{c};
     my $pref_values = $params{pref_values};
     my $peer_pref = $params{peer_pref};
+    my $reseller_pref = $params{reseller_pref};
     my $dom_pref = $params{dom_pref};
     my $dev_pref = $params{dev_pref};
     my $devprof_pref = $params{devprof_pref};
@@ -65,6 +66,9 @@ sub load_preference_list {
             $peer_pref ? ('voip_preferences.peer_pref' => 1,
                 -or => ['voip_preferences_enums.peer_pref' => 1,
                     'voip_preferences_enums.peer_pref' => undef]) : (),
+            $reseller_pref ? ('voip_preferences.reseller_pref' => 1,
+                -or => ['voip_preferences_enums.reseller_pref' => 1,
+                    'voip_preferences_enums.reseller_pref' => undef]) : (),
             $dom_pref ? ('voip_preferences.dom_pref' => 1,
                 -or => ['voip_preferences_enums.dom_pref' => 1,
                     'voip_preferences_enums.dom_pref' => undef]) : (),
@@ -117,50 +121,51 @@ sub load_preference_list {
                 my $tmp;
                 $pref->{rwrs_id} = $pref_values->{rewrite_caller_in_dpid} &&
                     ($tmp = $c->stash->{rwr_sets_rs}->search({
-                        caller_in_dpid =>$pref_values->{rewrite_caller_in_dpid}
+                        caller_in_dpid => $pref_values->{rewrite_caller_in_dpid}
                     })->first) ?
                     $tmp->id
                     : undef;
-            }
-            elsif($pref->attribute eq "ncos") {
+            } elsif($pref->attribute eq "cdr_export_sclidui_rwrs") {
+                my $tmp;
+                $pref->{rwrs_id} = $pref_values->{$pref->attribute . '_id'} &&
+                    ($tmp = $c->stash->{rwr_sets_rs}->search({
+                        id => $pref_values->{$pref->attribute . '_id'}
+                    })->first) ?
+                    $tmp->id
+                    : undef;
+            } elsif($pref->attribute eq "ncos") {
                 if ($pref_values->{ncos_id} &&
                     (my $tmp = $c->stash->{ncos_levels_rs}
                         ->find($pref_values->{ncos_id}) )) {
                     $pref->{ncos_id} = $tmp->id;
                 }
-            }
-            elsif($pref->attribute eq "adm_ncos") {
+            } elsif($pref->attribute eq "adm_ncos") {
                 if ($pref_values->{adm_ncos_id} &&
                     (my $tmp = $c->stash->{ncos_levels_rs}
                         ->find($pref_values->{adm_ncos_id}) )) {
                     $pref->{adm_ncos_id} = $tmp->id;
                 }
-            }
-            elsif($pref->attribute eq "adm_cf_ncos") {
+            } elsif($pref->attribute eq "adm_cf_ncos") {
                 if ($pref_values->{adm_cf_ncos_id} &&
                     (my $tmp = $c->stash->{ncos_levels_rs}
                         ->find($pref_values->{adm_cf_ncos_id}) )) {
                     $pref->{adm_cf_ncos_id} = $tmp->id;
                 }
-            }
-            elsif($pref->attribute eq "emergency_mapping_container") {
+            } elsif($pref->attribute eq "emergency_mapping_container") {
                 if ($pref_values->{emergency_mapping_container_id} &&
                     (my $tmp = $c->stash->{emergency_mapping_containers_rs}
                         ->find($pref_values->{emergency_mapping_container_id}) )) {
                     $pref->{emergency_mapping_container_id} = $tmp->id;
                 }
-            }
-            elsif($pref->attribute eq "allowed_ips") {
+            } elsif($pref->attribute eq "allowed_ips") {
                 $pref->{allowed_ips_group_id} = $pref_values->{allowed_ips_grp};
                 $pref->{allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
                     ->search_rs({ group_id => $pref_values->{allowed_ips_grp} });
-            }
-            elsif($pref->attribute eq "man_allowed_ips") {
+            } elsif($pref->attribute eq "man_allowed_ips") {
                 $pref->{man_allowed_ips_group_id} = $pref_values->{man_allowed_ips_grp};
                 $pref->{man_allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
                     ->search_rs({ group_id => $pref_values->{man_allowed_ips_grp} });
-            }
-            elsif($c->stash->{subscriber} &&
+            } elsif($c->stash->{subscriber} &&
                   ($pref->attribute eq "block_in_list" || $pref->attribute eq "block_out_list")) {
                 foreach my $v(@values) {
                     my $prefix = "";
@@ -241,6 +246,20 @@ sub create_preference_form {
         if (defined $rewrite_caller_in_dpid && (
             my $tmp = $preselected_value = $c->stash->{rwr_sets_rs}->search({
                     caller_in_dpid => $rewrite_caller_in_dpid->value,
+                })->first
+        )) {
+            $preselected_value = $tmp->id;
+        }
+    } elsif ($c->stash->{preference_meta}->attribute eq "cdr_export_sclidui_rwrs") {
+
+        my $rwrs_id_pref = $pref_rs->search({
+                'attribute.attribute' => $c->stash->{preference_meta}->attribute . '_id'
+            },{
+                join => 'attribute'
+            })->first;
+        if (defined $rwrs_id_pref && (
+            my $tmp = $preselected_value = $c->stash->{rwr_sets_rs}->search({
+                    id => $rwrs_id_pref->value,
                 })->first
         )) {
             $preselected_value = $tmp->id;
@@ -405,6 +424,11 @@ sub create_preference_form {
                       peer_group_name => $c->stash->{group}{name},
                       peer_host_id    => $c->stash->{server}{id},
                       peer_host_name  => $c->stash->{server}{name},
+                    );
+    } elsif ($c->stash->{reseller}) {
+        %log_data = ( %log_data,
+                      type            => 'reseller',
+                      reseller_id => $c->stash->{reseller}->id,
                     );
     } elsif ($c->stash->{devmod}) {
         %log_data = ( %log_data,
@@ -606,6 +630,23 @@ sub create_preference_form {
                 c             => $c,
                 rwrs_result   => $selected_rwrs,
                 pref_rs       => $pref_rs,
+            );
+            NGCP::Panel::Utils::Message::info(
+                c => $c,
+                data => \%log_data,
+                desc => $c->loc('Preference [_1] successfully updated', $attribute),
+            );
+            $c->response->redirect($base_uri);
+            return 1;
+        } elsif ($attribute eq "cdr_export_sclidui_rwrs") {
+            my $selected_rwrs = $c->stash->{rwr_sets_rs}->find(
+                $form->field($attribute)->value
+            );
+            set_rewrite_id_preference(
+                c             => $c,
+                rwrs_result   => $selected_rwrs,
+                pref_rs       => $pref_rs,
+                rwrs_pref_attribute => $attribute,
             );
             NGCP::Panel::Utils::Message::info(
                 c => $c,
@@ -881,13 +922,13 @@ sub set_rewrite_preferences {
     my $rwrs_result   = $params{rwrs_result};
     my $pref_rs       = $params{pref_rs};
 
-    for my $rules(qw/
+    for my $dprules(qw/
                     callee_in_dpid caller_in_dpid
                     callee_out_dpid caller_out_dpid
                     callee_lnp_dpid caller_lnp_dpid/) {
 
         my $attribute_id = $c->model('DB')->resultset('voip_preferences')
-            ->find({attribute => "rewrite_$rules"})->id;
+            ->find({attribute => "rewrite_$dprules"})->id;
         my $preference = $pref_rs->search({
             attribute_id => $attribute_id,
         });
@@ -895,10 +936,34 @@ sub set_rewrite_preferences {
         if(!defined $rwrs_result) {
             $preference->first->delete if $preference->first;
         } elsif($preference->first) {
-            $preference->first->update({ value => $rwrs_result->$rules });
+            $preference->first->update({ value => $rwrs_result->$dprules });
         } else {
-            $preference->create({ value => $rwrs_result->$rules });
+            $preference->create({ value => $rwrs_result->$dprules });
         }
+    }
+
+}
+
+sub set_rewrite_id_preference {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $rwrs_result = $params{rwrs_result};
+    my $pref_rs = $params{pref_rs};
+    my $rwrs_pref_attribute = $params{rwrs_pref_attribute};
+
+    my $attribute_id = $c->model('DB')->resultset('voip_preferences')
+        ->find({attribute => $rwrs_pref_attribute . '_id'})->id;
+    my $preference = $pref_rs->search({
+        attribute_id => $attribute_id,
+    });
+
+    if(!defined $rwrs_result) {
+        $preference->first->delete if $preference->first;
+    } elsif($preference->first) {
+        $preference->first->update({ value => $rwrs_result->id });
+    } else {
+        $preference->create({ value => $rwrs_result->id });
     }
 
 }
@@ -911,7 +976,7 @@ sub get_usr_preferences_rs {
     my $prov_subscriber = $params{prov_subscriber};
     my $schema = $params{schema} // $c->model('DB');
     my $get_rows = $params{get_rows};
-    
+
     my $pref_rs = $schema->resultset('voip_usr_preferences')->search({
             'attribute.usr_pref' => 1,
             $attribute ? ( 'attribute.attribute' => (('ARRAY' eq ref $attribute) ? { '-in' => $attribute } : $attribute ) ) : ()  ,
@@ -939,6 +1004,7 @@ sub get_preferences_rs {
         'dom'      => [qw/voip_dom_preferences dom_pref domain_id/],
         'prof'     => [qw/voip_prof_preferences prof_pref profile_id/],
         'peer'     => [qw/voip_peer_preferences peer_pref peer_host_id/],
+        'reseller' => [qw/reseller_preferences reseller_pref reseller_id/],
         'dev'      => [qw/voip_dev_preferences dev_pref device_id/],
         'devprof'  => [qw/voip_devprof_preferences devprof_pref profile_id/],
         'fielddev' => [qw/voip_fielddev_preferences fielddev_pref device_id/],
@@ -989,6 +1055,12 @@ sub get_preference_rs {
             c => $c,
             attribute => $attr,
             peer_host => $elem,
+        );
+    } elsif($type eq "reseller") {
+        $rs = get_reseller_preference_rs(
+            c => $c,
+            attribute => $attr,
+            reseller => $elem,
         );
     } elsif($type eq "dev") {
         $rs = get_dev_preference_rs(
@@ -1162,6 +1234,22 @@ sub get_peer_preference_rs {
     return unless($preference);
     return $preference->voip_peer_preferences->search_rs({
             peer_host_id => $host->id,
+        });
+}
+
+sub get_reseller_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $reseller = $params{reseller};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'reseller_pref' => 1,
+        });
+    return unless($preference);
+    return $preference->reseller_preferences->search_rs({
+            reseller_id => $reseller->id,
         });
 }
 
@@ -1358,7 +1446,7 @@ sub api_preferences_defs{
     for my $pref($preferences->all) {
         my $fields = { $pref->get_inflated_columns };
         # remove internal fields
-        delete @{$fields}{qw/type attribute expose_to_customer internal peer_pref usr_pref dom_pref contract_pref contract_location_pref prof_pref voip_preference_groups_id id modify_timestamp/};
+        delete @{$fields}{qw/type attribute expose_to_customer internal peer_pref reseller_pref usr_pref dom_pref contract_pref contract_location_pref prof_pref voip_preference_groups_id id modify_timestamp/};
         $fields->{max_occur} = int($fields->{max_occur});
         $fields->{read_only} = JSON::Types::bool($fields->{read_only});
         if($fields->{data_type} eq "enum") {
@@ -1368,12 +1456,12 @@ sub api_preferences_defs{
             $fields->{enum_values} = [];
             foreach my $enum(@enums) {
                 my $efields = { $enum->get_inflated_columns };
-                delete @{$efields}{qw/id preference_id usr_pref prof_pref dom_pref peer_pref contract_pref contract_location_pref/};
+                delete @{$efields}{qw/id preference_id usr_pref prof_pref dom_pref peer_pref reseller_pref contract_pref contract_location_pref/};
                 $efields->{default_val} = JSON::Types::bool($efields->{default_val});
                 push @{ $fields->{enum_values} }, $efields;
             }
         }
-        if ($pref->attribute =~ m/^(rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|emergency_mapping_container|sound_set|contract_sound_set|header_rule_set)$/) {
+        if ($pref->attribute =~ m/^(cdr_export_sclidui_rwrs|rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|emergency_mapping_container|sound_set|contract_sound_set|header_rule_set)$/) {
             $fields->{data_type} = 'string';
         }
         $resource->{$pref->attribute} = $fields;
@@ -1455,7 +1543,7 @@ sub update_dynamic_preference {
     if(defined $enums and ref $enums eq 'ARRAY'){
         my $enums_rs = $preference->voip_preferences_enums;
         $enums_rs->search_rs({
-            id => { -not_in => [ map { $_->{id} } @$enums ] }, 
+            id => { -not_in => [ map { $_->{id} } @$enums ] },
         })->delete;
         foreach my $enum (@$enums) {
             my $id = delete $enum->{id};
@@ -1495,7 +1583,7 @@ sub save_dynamic_preference_relations {
             $preference->search_related_rs('voip_preference_relations')->update_or_create({
                 autoprov_device_id => undef,
                 reseller_id => $relations->{reseller_id},
-            });        
+            });
         }
     }
 }
