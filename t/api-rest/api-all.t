@@ -10,18 +10,18 @@ use File::Find::Rule;
 use File::Basename;
 use Clone qw/clone/;
 
-my($opt,$report,$api_config,$api_info,$config,$test_machine,$fake_data) = 
+my($opt,$report,$api_config,$api_info,$config,$test_machine,$fake_data) =
     ({},{},{},{} );
 
 $opt = {
     'collections'      => {'billingzones' => 1,},
     'collections'      => {},
     'ignore_existence' => 1,
-    'test_groups'      => { 
-        get2put   => 1, 
-        patch2get => 1, 
-        post      => 1, 
-        get       => 1, 
+    'test_groups'      => {
+        get2put   => 1,
+        patch2get => 1,
+        post      => 1,
+        get       => 1,
         bundle    => 1,
     },#post,get2put,get2patch,bundle
     #'test_groups'      => { post => 1 },#post,get2put,get2patch,bundle
@@ -75,7 +75,7 @@ sub run{
         if($opt->{test_groups}->{post}){
             if($test_machine->{methods}->{collection}->{allowed}->{POST}){
                 print "collection: $collection: post;\n";
-                #load date 
+                #load date
                 if($fake_data->{data}->{$collection}->{data}){
                     my $data = $fake_data->{data}->{$collection}->{data};
                     $fake_data->process($collection);
@@ -111,7 +111,7 @@ sub run{
                         };
                         $test_machine->check_get2put( {
                                 data_cb => $fake_data->{data}->{$collection}->{data_callbacks}->{get2put},
-                            }, { 
+                            }, {
                                 uri => $item->{location} ,
                             }, $params );
                     }
@@ -133,7 +133,7 @@ sub run{
                         };
                         $test_machine->check_patch2get( {
                                 data_cb => $fake_data->{data}->{$collection}->{data_callbacks}->{patch2get},
-                            }, { 
+                            }, {
                                 uri => $item->{location} ,
                             }, $params );
                     }
@@ -177,17 +177,18 @@ sub get_opt{#get $opt
 }
 
 sub get_api_config{#get api_config
-    my $api_config = $test_machine->init_catalyst_config; 
+    my $api_config = $test_machine->init_catalyst_config;
     $api_info = $api_config->{meta}->{'collections'};
 }
 
-sub init_config{#init config 
+sub init_config{#init config
     my %test_exclude = (
         'metaconfigdefs' => 1,
         'subscriberpreferencedefs' => 1,
         'customerpreferencedefs' => 1,
         'domainpreferencedefs' => 1,
         'peeringserverpreferencedefs' => 1,
+        'resellerpreferencedefs' => 1,
         'profilepreferencedefs' => 1,
         'pbxdevicepreferencedefs' => 1,
         'pbxdeviceprofilepreferencedefs' => 1,
@@ -196,6 +197,7 @@ sub init_config{#init config
         'customerpreferences' => 1,
         'domainpreferences' => 1,
         'peeringserverpreferences' => 1,
+        'resellerpreferences' => 1,
         'profilepreferences' => 1,
         'pbxdevicepreferences' => 1,
         'pbxdeviceprofilepreferences' => 1,
@@ -278,7 +280,7 @@ sub collection4testing{
                         #method excluded
                         $run_collection_test = 0;
                     } else {
-                        $run_collection_test = 1;                    
+                        $run_collection_test = 1;
                     }
                 } elsif (! ref $config->{tests_exclude}->{$collection}) {
                     $run_collection_test = 0 ;
@@ -318,5 +320,5 @@ sub init_report{
 #$test_machine->DATA_ITEM_STORE($item_post->{content});
 #$test_machine->form_data_item();
 ##$test_machine->check_create_correct( 1, undef,  );
-   
+
 # vim: set tabstop=4 expandtab:
