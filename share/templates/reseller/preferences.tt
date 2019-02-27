@@ -1,0 +1,20 @@
+[% site_config.title = c.loc('Reseller "[_1]" - Preferences',reseller.name) -%]
+
+[%
+    helper.messages = messages;
+
+    helper.edit_preference = edit_preference;
+    helper.preference = preference;
+    helper.preference_meta = preference_meta;
+    helper.preference_values = preference_values;
+    helper.pref_groups = pref_groups;
+    helper.form = form;
+    helper.base_uri = c.uri_for_action("/reseller/resellers_preferences_root", [c.req.captures.0]);
+    helper.rewrite_rule_sets = rwr_sets;
+
+    helper.top_buttons = [
+        { name = c.loc('Back'), uri = c.uri_for(reseller.id, 'details'), icon = 'icon-arrow-left' },
+    ];
+
+    PROCESS 'helpers/pref_table.tt';
+%]
