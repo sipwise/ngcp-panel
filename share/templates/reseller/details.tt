@@ -3,6 +3,7 @@
 <div class="row">
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/reseller/resellers_preferences_root', [c.req.captures.0]) %]"><i class="icon-list"></i> [% c.loc('Preferences') %]</a>
     </span>
 </div>
 
@@ -175,14 +176,14 @@
             { name = c.loc('Preferences'), uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
-    
+
     PROCESS 'helpers/datatables.tt';
 -%]
             </div>
         </div>
-    </div>    
-    
-    
+    </div>
+
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_profile">[% c.loc('Billing Profiles') %]</a>
@@ -204,18 +205,18 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = c.loc('Edit'), uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },                        
+            { name = c.loc('Edit'), uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Terminate'), uri = "/billing/'+full[\"id\"]+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0" && full.package_cnt == "0"' },
         ];
     END;
-    
+
     PROCESS 'helpers/datatables.tt';
 -%]
             </div>
         </div>
     </div>
-    
-    
+
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_network">[% c.loc('Billing Networks') %]</a>
@@ -241,13 +242,13 @@
             { name = c.loc('Terminate'), uri = "/network/'+full[\"id\"]+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0" && full.package_cnt == "0"' },
         ];
     END;
-    
+
     PROCESS 'helpers/datatables.tt';
 -%]
             </div>
         </div>
     </div>
-    
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_package">[% c.loc('Profile Packages') %]</a>
@@ -273,13 +274,13 @@
             { name = c.loc('Delete'), uri = "/package/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0" && full.voucher_cnt == "0"' },
         ];
     END;
-    
+
     PROCESS 'helpers/datatables.tt';
 -%]
             </div>
         </div>
-    </div>    
-    
+    </div>
+
 
     <div class="accordion-group">
         <div class="accordion-heading">
