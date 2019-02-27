@@ -50,7 +50,7 @@
                     <a href="#" onclick="$.msgbox(
                         '[% c.loc(r.description.remove('[\[\]]')).squote | html %]',
                         {
-                            type:'info', 
+                            type:'info',
                             buttons:[
                                 {type:'cancel',value:'Close'}
                             ]
@@ -64,6 +64,13 @@
                 </td>
                 <td>
                     [% IF r.attribute == "rewrite_rule_set" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR set IN helper.rewrite_rule_sets -%]
+                            <option [% (r.rwrs_id.defined && r.rwrs_id == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
+                        [% END -%]
+                        </select>
+                    [% ELSIF r.attribute == "cdr_export_sclidui_rwrs" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.rewrite_rule_sets -%]
@@ -265,4 +272,3 @@
 [% END -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
-

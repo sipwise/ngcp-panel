@@ -75,6 +75,7 @@ sub GET : Allow {
         "CustomerPreferenceDefs" => 1,
         "ProfilePreferenceDefs" => 1,
         "PeeringServerPreferenceDefs" => 1,
+        "ResellerPreferenceDefs" => 1,
         "PbxDevicePreferenceDefs" => 1,
         "PbxDeviceProfilePreferenceDefs" => 1,
         "PbxFieldDevicePreferenceDefs" => 1,

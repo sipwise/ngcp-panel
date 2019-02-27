@@ -19,6 +19,7 @@ use NGCP::Panel::Utils::Billing qw();
 use NGCP::Panel::Utils::Admin;
 use NGCP::Panel::Utils::Phonebook;
 use NGCP::Panel::Utils::TimeSet;
+use NGCP::Panel::Utils::Preferences qw();
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -679,6 +680,89 @@ sub get_branding_css :Chained('base') :PathPart('css/download') :Args(0) {
     $c->response->body($branding->css);
 }
 
+sub resellers_preferences_list :Chained('base') :PathPart('preferences') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+
+    $c->stash->{reseller} = $c->stash->{reseller}->first;
+    my $x_pref_values = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->search({
+                'reseller.id' => $c->stash->{reseller}->id,
+            },{
+                prefetch => {'reseller_preferences' => 'reseller'},
+            });
+
+    my %pref_values;
+    foreach my $value($x_pref_values->all) {
+
+        $pref_values{$value->attribute} =
+            [ map {$_->value} $value->reseller_preferences->all ];
+    }
+
+    my $rewrite_rule_sets_rs = $c->model('DB')
+        ->resultset('voip_rewrite_rule_sets')->search_rs({
+        reseller_id => $c->stash->{reseller}->id,
+    },undef);
+    $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
+              rwr_sets    => [$rewrite_rule_sets_rs->all],);
+
+    NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
+        pref_values => \%pref_values,
+        reseller_pref => 1,
+    );
+
+    $c->stash(template => 'reseller/preferences.tt');
+    return;
+}
+
+sub resellers_preferences_root :Chained('resellers_preferences_list') :PathPart('') :Args(0) {
+    return;
+}
+
+sub resellers_preferences_base :Chained('resellers_preferences_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $pref_id) = @_;
+
+    $c->stash->{preference_meta} = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->search({
+            -or => ['voip_preferences_enums.reseller_pref' => 1,
+                'voip_preferences_enums.reseller_pref' => undef],
+        },{
+            prefetch => 'voip_preferences_enums',
+        })
+        ->find({id => $pref_id});
+
+    $c->stash->{preference} = $c->model('DB')
+        ->resultset('reseller_preferences')
+        ->search({
+            attribute_id => $pref_id,
+            'reseller.id' => $c->stash->{reseller}->id,
+        },{
+            prefetch => 'reseller',
+        });
+    return;
+}
+
+sub resellers_preferences_edit :Chained('resellers_preferences_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(edit_preference => 1);
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->all;
+
+    my $pref_rs = $c->stash->{reseller}->reseller_preferences;
+
+    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
+        pref_rs => $pref_rs,
+        enums   => \@enums,
+        base_uri => $c->uri_for_action('/reseller/resellers_preferences_root', [@{ $c->req->captures }[0]]),
+        edit_uri => $c->uri_for_action('/reseller/resellers_preferences_edit', $c->req->captures),
+    );
+    return;
+}
+
 sub phonebook_ajax :Chained('base') :PathPart('phonebook/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     NGCP::Panel::Utils::Datatables::process($c,
@@ -896,7 +980,7 @@ sub timeset_create :Chained('base') :PathPart('timeset/create') :Args(0) :Does(A
         try {
             my $resource = $form->values;
             $resource = NGCP::Panel::Utils::TimeSet::timeset_resource(
-                c => $c, 
+                c => $c,
                 resource => $resource,
             );
             $resource->{reseller_id} = $reseller->id;
@@ -985,7 +1069,7 @@ sub timeset_edit :Chained('timeset_base') :PathPart('edit') :Args(0) :Does(ACL) 
             $c->model('DB')->schema->txn_do( sub {
                 my $resource = $form->values;
                 $resource = NGCP::Panel::Utils::TimeSet::timeset_resource(
-                    c => $c, 
+                    c => $c,
                     resource => $resource
                 );
                 $resource->{reseller_id} = $reseller->id;
