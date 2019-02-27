@@ -89,6 +89,8 @@ sub get_resource {
         $prefs = $item->provisioning_voip_domain->voip_dom_preferences;
     } elsif($type eq "peerings") {
         $prefs = $item->voip_peer_preferences;
+    } elsif($type eq "resellers") {
+        $prefs = $item->reseller_preferences;
     } elsif($type eq "contracts") {
         $prefs = $item->voip_contract_preferences->search(
                     { location_id => $c->request->param('location_id') || undef },
@@ -139,6 +141,21 @@ sub get_resource {
                 });
                 if($rwr_set) {
                     $resource->{rewrite_rule_set} = $rwr_set->name;
+                } else {
+                    $c->log->error("no rewrite rule set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, although it's stored in preference id ".$pref->id);
+                    # let it slip through
+                }
+                $processed = 1;
+                last SWITCH;
+            };
+            /^cdr_export_sclidui_rwrs_id$/ && do {
+                my $pref_name = $pref->attribute->attribute;
+                $pref_name =~ s/_id$//;
+                my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
+                    id => $pref->value,
+                });
+                if($rwr_set) {
+                    $resource->{$pref_name} = $rwr_set->name;
                 } else {
                     $c->log->error("no rewrite rule set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, although it's stored in preference id ".$pref->id);
                     # let it slip through
@@ -265,6 +282,9 @@ sub get_resource {
     } elsif($type eq "peerings") {
         $resource->{peering_id} = int($item->id);
         $resource->{id} = int($item->id);
+    } elsif($type eq "resellers") {
+        $resource->{reseller_id} = int($item->id);
+        $resource->{id} = int($item->id);
     } elsif($type eq "pbxdevicemodels") {
         $resource->{device_id} = int($item->id);
         $resource->{id} = int($item->id);
@@ -347,6 +367,17 @@ sub _item_rs {
         } else {
             return;
         }
+    } elsif($type eq "resellers") {
+        if ($c->user->roles eq "admin") {
+            $item_rs = $c->model('DB')->resultset('resellers')->search_rs({
+                'me.status' => { '!=' => 'terminated' },
+            },);
+        } elsif ($c->user->roles eq "reseller") {
+            $item_rs = $c->model('DB')->resultset('resellers')->search_rs({
+                'me.id' => $c->user->reseller_id,
+                'me.status' => { '!=' => 'terminated' },
+            },);
+        }
     } elsif($type eq "pbxdevicemodels") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('autoprov_devices');
@@ -413,6 +444,7 @@ sub get_preference_rs {
         'profiles'          => 'prof',
         'subscribers'       => 'usr',
         'peerings'          => 'peer',
+        'resellers'         => 'reseller',
         'pbxdevicemodels'   => 'dev',
         'pbxdeviceprofiles' => 'devprof',
         'pbxdevices'        => 'fielddev',
@@ -496,6 +528,16 @@ sub update_item {
         $full_rs = $elem->voip_peer_preferences;
         $pref_type = 'peer_pref';
         $reseller_id = 1;
+    } elsif($type eq "resellers") {
+        delete $resource->{reseller_id};
+        delete $resource->{resellerpreferences_id};
+        delete $old_resource->{reseller_id};
+        delete $old_resource->{resellerpreferences_id};
+        $accessor = $item->name;
+        $elem = $item;
+        $full_rs = $elem->reseller_preferences;
+        $pref_type = 'reseller_pref';
+        $reseller_id = $item->id;
     } elsif($type eq "contracts") {
         delete $resource->{customer_id};
         delete $old_resource->{customer_id};
@@ -554,6 +596,7 @@ sub update_item {
         rewrite_caller_in_dpid rewrite_caller_out_dpid
         rewrite_callee_in_dpid rewrite_callee_out_dpid
         rewrite_caller_lnp_dpid rewrite_callee_lnp_dpid
+        cdr_export_sclidui_rwrs_id
         ncos_id adm_ncos_id adm_cf_ncos_id
         emergency_mapping_container_id
         sound_set contract_sound_set
@@ -593,6 +636,14 @@ sub update_item {
                                 next unless $rs; # unknown resource, just ignore
                                 $rs->delete;
                             }
+                        }
+                        last SWITCH;
+                    };
+                    /^cdr_export_sclidui_rwrs/ && do {
+                        unless(exists $resource->{$k}) {
+                            my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_id');
+                            last SWITCH unless $rs; # unknown resource, just ignore
+                            $rs->delete;
                         }
                         last SWITCH;
                     };
@@ -723,6 +774,25 @@ sub update_item {
                         } else {
                             $rs->create({ value => $rwr_set->$k });
                         }
+                    }
+                    last SWITCH;
+                };
+                /^cdr_export_sclidui_rwrs$/ && do {
+                    my $pref_name = $pref . "_id";
+                    my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
+                        name => $resource->{$pref},
+                        reseller_id => $reseller_id,
+                    });
+                    unless($rwr_set) {
+                        $c->log->error("no rewrite rule set '".$resource->{$pref}."' for reseller id $reseller_id found");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown rewrite_rule_set '".$resource->{$pref}."'");
+                        return;
+                    }
+                    my $rs = $self->get_preference_rs($c, $type, $elem, $pref_name);
+                    if($rs->first) {
+                        $rs->first->update({ value => $rwr_set->id });
+                    } else {
+                        $rs->create({ value => $rwr_set->id });
                     }
                     last SWITCH;
                 };
