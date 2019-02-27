@@ -172,6 +172,11 @@ has_field 'linerange.keys.id' => (
     type => 'Hidden',
 );
 
+has_field 'linerange.num_lines' => (
+    type => 'Hidden',
+    readonly => 1,
+);
+
 has_field 'linerange.keys.x' => (
     type => 'PosInteger',
     label => 'x',
