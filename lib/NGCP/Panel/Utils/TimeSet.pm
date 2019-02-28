@@ -245,15 +245,15 @@ sub parse_calendar_events {
                     }
                 } @allowed_rrule_fields };
                 $event = {%$event, %$rrule_data};
-                foreach my $dt_field (@datetime_fields) {
-                    if ($event->{$dt_field}) {
-                        $event->{$dt_field} =~s/^\s*(\d{4})\D*(\d{2})\D*(\d{2})(\D*)(\d{2})\D*(\d{2})\D*(\d{2})(\D*?)\s*$/$1-$2-$3$4$5:$6:$7$8/;
-                    }
+            }
+            foreach my $dt_field (@datetime_fields) {
+                if ($event->{$dt_field}) {
+                    $event->{$dt_field} =~s/^\s*(\d{4})\D*(\d{2})\D*(\d{2})(\D*)(\d{2})\D*(\d{2})\D*(\d{2}).*?\s*$/$1-$2-$3$4$5:$6:$7/;
                 }
-                foreach my $ical_field (keys %$mapped_fields) {
-                    if ($event->{$ical_field}) {
-                        $event->{$mapped_fields->{$ical_field}} = delete $event->{$ical_field};
-                    }
+            }
+            foreach my $ical_field (keys %$mapped_fields) {
+                if ($event->{$ical_field}) {
+                    $event->{$mapped_fields->{$ical_field}} = delete $event->{$ical_field};
                 }
             }
             push @$events, $event;
