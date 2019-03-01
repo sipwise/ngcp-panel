@@ -221,6 +221,7 @@ sub tmpl_copy :Chained('tmpl_list') :PathPart('copy'): Args(1) {
     }
 
     my $tmpl = $c->model('DB')->resultset('email_templates')->find($tmpl_id);
+    $c->stash->{is_copy} = 1;
     my ($posted, $form, $params) = $self->prepare_email_template_edit($c, $tmpl);
     if($posted) {
         $self->create_email_template($c, $form);
