@@ -102,7 +102,7 @@ sub validate {
     });
     my $current_item = $self->item ? $self->item : $c->stash->{tmpl};
     my $current_item_id = 
-        $current_item && $c->request->path !~ /\/copy\//
+        $current_item && $c->stash->{is_copy}
             ? ref $current_item eq 'HASH' 
                 ? $current_item->{id} : $current_item->id
             : undef;
