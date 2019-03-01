@@ -16,6 +16,24 @@
       "revId": "3d02b9674a15fb3101aa06d60fba2e66717fddf3",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_10aa2a71",
+        "filename": "lib/NGCP/Panel/Form/EmailTemplate/Reseller.pm",
+        "patchSetId": 42
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-03-01T11:43:09Z",
+      "side": 1,
+      "message": "ok -\u003epath is without domain.\nbut if query params are included it can again hold arbitrary string that matches \"copy\"",
+      "parentUuid": "9a0c5dc1_f08e7626",
+      "revId": "3d02b9674a15fb3101aa06d60fba2e66717fddf3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
