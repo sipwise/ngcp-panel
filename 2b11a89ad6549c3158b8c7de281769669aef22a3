@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0c5dc1_f0879610",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 34
+      },
+      "lineNbr": 3348,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-03-01T11:30:08Z",
+      "side": 1,
+      "message": "i know it\u0027s a pain",
+      "revId": "2b11a89ad6549c3158b8c7de281769669aef22a3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
