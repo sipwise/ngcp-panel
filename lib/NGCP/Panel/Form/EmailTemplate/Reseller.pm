@@ -47,7 +47,7 @@ Please go to [% url %] to set your password and log into your self-care interfac
 
 Your faithful Sipwise system
 
--- 
+--
 This is an automatically generated message. Do not reply.
 EOS_DEFAULT_TEXT
 );
@@ -100,12 +100,15 @@ sub validate {
         name => $name,
         reseller_id => $reseller_id,
     });
-    my $current_item = $self->item ? $self->item : $c->stash->{tmpl};
-    my $current_item_id = 
-        $current_item && $c->stash->{is_copy}
-            ? ref $current_item eq 'HASH' 
-                ? $current_item->{id} : $current_item->id
-            : undef;
+    my $current_item_id;
+    if (!$c->stash->{is_copy}) {
+        my $current_item = $self->item ? $self->item : $c->stash->{tmpl};
+        $current_item_id =
+            $current_item
+                ? ref $current_item eq 'HASH'
+                    ? $current_item->{id} : $current_item->id
+                : undef;
+    }
     if ($existing_item && (!$current_item_id || $existing_item->id != $current_item_id)) {
         $self->field('name')->add_error($c->loc('This name already exists'));
     }
