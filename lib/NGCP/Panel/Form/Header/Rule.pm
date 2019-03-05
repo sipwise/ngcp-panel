@@ -19,6 +19,15 @@ has_field 'name' => (
     },
 );
 
+has_field 'priority' => (
+    type => 'PosInteger',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Header rule priority, smaller value has the higher priority.'],
+    },
+);
+
 has_field 'direction' => (
     type => 'Select',
     options => [
@@ -70,7 +79,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name direction description stopper enabled/],
+    render_list => [qw/name priority direction description stopper enabled/],
 );
 
 has_block 'actions' => (
