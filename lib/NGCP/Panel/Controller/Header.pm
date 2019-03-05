@@ -270,6 +270,16 @@ sub rules_list :Chained('set_base') :PathPart('rules') :CaptureArgs(0) {
         order_by => { -asc => 'priority' },
     });
     $c->stash(rules_rs => $rules_rs);
+
+    $c->stash->{rule_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'priority', search => 0, title => $c->loc('Priority') },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        { name => 'description', search => 1, title => $c->loc('Description') },
+        { name => 'stopper', search => 1, title => $c->loc('Stopper') },
+        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
+    ]);
+
     $c->stash(rules_uri => $c->uri_for_action("/header/rules_root", [$c->req->captures->[0]]));
 
     $c->stash(template => 'header/rules_list.tt');
@@ -321,6 +331,13 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
 
     $c->stash(rules => [ $rules_rs->all ]);
     return;
+}
+
+sub rules_ajax :Chained('rules_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->stash->{rules_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{rule_dt_columns});
+    $c->detach( $c->view("JSON") );
 }
 
 sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
@@ -456,7 +473,20 @@ sub conditions_list :Chained('rules_base') :PathPart('conditions') :CaptureArgs(
     my ( $self, $c ) = @_;
 
     my $conditions_rs = $c->stash->{rule_result}->conditions;
+
     $c->stash(conditions_rs => $conditions_rs);
+
+    $c->stash->{condition_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'match_type', search => 1, title => $c->loc('Match') },
+        { name => 'match_part', search => 1, title => $c->loc('Part') },
+        { name => 'match_name', search => 1, title => $c->loc('Name') },
+        { name => 'expression', search => 1, title => $c->loc('Expression') },
+        { name => 'value_type', search => 1, title => $c->loc('Type') },
+        { name => 'c_values', search => 0, title => $c->loc('Values') },
+        { name => 'c_rwr_set', search => 0, title => $c->loc('Rewrite Rule Set') },
+        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
+    ]);
 
     $c->stash(conditions_uri => $c->uri_for_action("/header/conditions_root", $c->req->captures));
 
@@ -469,24 +499,34 @@ sub conditions_root :Chained('conditions_list') :PathPart('') :Args(0) {
 
     my $conditions_rs = $c->stash->{conditions_rs};
 
-    my @conditions = ();
+    $c->stash(conditions => [ $conditions_rs->all ] );
 
-    foreach my $condition ($conditions_rs->all) {
-        my $row = { $condition->get_inflated_columns };
-        @{$row->{values}} = map { $_->value } $condition->values->all;
-        push @conditions, $row;
-        if ($row->{rwr_set_id}) {
-                my $rwr_set = { $condition->rwr_set->get_inflated_columns };
-                $row->{rwr_set} = $rwr_set->{name};
-                my $dp_id = $row->{rwr_dp_id} // 0;
-                ($row->{rwr_dp}) =
-                    grep { $_ =~ /_dpid/ && $rwr_set->{$_} eq $dp_id }
-                        keys %{$rwr_set};
-        }
-    }
-
-    $c->stash(conditions => \@conditions);
     return;
+}
+
+sub conditions_ajax :Chained('conditions_list') :PathPart('rules_ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->stash->{conditions_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{condition_dt_columns}, sub {
+        my $item = shift;
+        my %cols = $item->get_inflated_columns;
+        my ($c_rwr_set, $c_rwr_dp) = ('','');
+        if ($cols{rwr_set_id}) {
+            my %rwr_set = $item->rwr_set->get_inflated_columns;
+            $c_rwr_set = $rwr_set{name};
+            my $dp_id = $cols{rwr_dp_id} // 0;
+            ($c_rwr_dp) =
+                grep { $_ =~ /_dpid/ && $rwr_set{$_} eq $dp_id }
+                    keys %rwr_set;
+            $c_rwr_dp =~ s/_dpid$//;
+        }
+        return (
+            expression => ($cols{expression_negation} ? ' ! ' : ' ') . $cols{expression},
+            c_values => join("<br/>", map { $_->value } $item->values->all) // '',
+            c_rwr_set => $c_rwr_set ? "$c_rwr_set ($c_rwr_dp)" : '',
+        );
+    });
+    $c->detach( $c->view("JSON") );
 }
 
 sub conditions_base :Chained('conditions_list') :PathPart('') :CaptureArgs(1) {
@@ -695,6 +735,18 @@ sub actions_list :Chained('rules_base') :PathPart('actions') :CaptureArgs(0) {
     });
     $c->stash(actions_rs => $actions_rs);
 
+    $c->stash->{action_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'priority', search => 0, title => $c->loc('Priority') },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'header', search => 1, title => $c->loc('Header') },
+        { name => 'header_part', search => 1, title => $c->loc('Part') },
+        { name => 'action_type', search => 1, title => $c->loc('Type') },
+        { name => 'value_part', search => 1, title => $c->loc('Value Part') },
+        { name => 'value', search => 1, title => $c->loc('Value') },
+        { name => 'c_rwr_set', search => 0, title => $c->loc('Rewrite Rule Set') },
+        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
+    ]);
+
     $c->stash(actions_uri => $c->uri_for_action("/header/actions_root", $c->req->captures));
 
     $c->stash(template => 'header/actions_list.tt');
@@ -744,23 +796,32 @@ sub actions_root :Chained('actions_list') :PathPart('') :Args(0) {
         }
     }
 
-    my @actions = ();
+    $c->stash(actions => [ $actions_rs->all ]);
 
-    foreach my $action ($actions_rs->all) {
-        my $row = { $action->get_inflated_columns };
-        push @actions, $row;
-        if ($row->{rwr_set_id}) {
-                my $rwr_set = { $action->rwr_set->get_inflated_columns };
-                $row->{rwr_set} = $rwr_set->{name};
-                my $dp_id = $row->{rwr_dp_id} // 0;
-                ($row->{rwr_dp}) =
-                    grep { $_ =~ /_dpid/ && $rwr_set->{$_} eq $dp_id }
-                        keys %{$rwr_set};
-        }
-    }
-
-    $c->stash(actions => \@actions);
     return;
+}
+
+sub actions_ajax :Chained('actions_list') :PathPart('rules_ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->stash->{actions_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{action_dt_columns}, sub {
+        my $item = shift;
+        my %cols = $item->get_inflated_columns;
+        my ($c_rwr_set, $c_rwr_dp) = ('','');
+        if ($cols{rwr_set_id}) {
+            my %rwr_set = $item->rwr_set->get_inflated_columns;
+            $c_rwr_set = $rwr_set{name};
+            my $dp_id = $cols{rwr_dp_id} // 0;
+            ($c_rwr_dp) =
+                grep { $_ =~ /_dpid/ && $rwr_set{$_} eq $dp_id }
+                    keys %rwr_set;
+            $c_rwr_dp =~ s/_dpid$//;
+        }
+        return (
+            c_rwr_set => $c_rwr_set ? "$c_rwr_set ($c_rwr_dp)" : '',
+        );
+    });
+    $c->detach( $c->view("JSON") );
 }
 
 sub actions_base :Chained('actions_list') :PathPart('') :CaptureArgs(1) {
