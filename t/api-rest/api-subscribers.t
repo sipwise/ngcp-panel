@@ -475,6 +475,10 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
         my $data = clone $test_machine->DATA_ITEM;
         $data->{administrative} = 1;
+        $pilot = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$data->{customer_id}.'&'.'is_pbx_pilot=1');
+        if(!$pilot->{total_count} || $pilot->{total_count} <= 0){
+            undef $pilot;
+        }
         my $pbxsubscriberadmin = $test_machine->check_create_correct(1, sub {
             my $num = $_[1]->{i};
             $_[0]->{administrative} = 1;
@@ -533,10 +537,12 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
             ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_set_id', value => $wrong_profile_sets->[0]->{content}->{id} } ], $subscriber->{location} );
             $test_machine->http_code_msg(422, "Check incorrect profile_set_id patch for administrator", $res, $content);
-            
+
+            ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_id', value => undef }, { op => 'replace', path => '/profile_set_id', value => undef } ], $subscriber->{location} );
+            $test_machine->http_code_msg(200, "Check unset profile_id and profile_set_id patch for administrator", $res, $content);
+
             ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_id', value => $wrong_profiles->[0]->{content}->{id} } ], $subscriber->{location} );
             $test_machine->http_code_msg(422, "Check incorrect profile_id patch for administrator", $res, $content);
-
             ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_set_id', value => $wrong_profile_sets->[0]->{content}->{id} } ], $subscriber->{location} );
             $test_machine->http_code_msg(422, "Check profile_set_id patch for administrator", $res, $content);
             
