@@ -454,7 +454,11 @@ sub check_profile_set_and_profile {
     my ($profile_set, $profile, $profile_set_rs);
     my $schema = $c->model('DB');
 
+        use Data::Dumper;
     my $prov_subscriber;
+
+    $c->log->debug(Dumper($resource));
+
     if ($subscriber) { #edit
         $prov_subscriber = $subscriber->provisioning_voip_subscriber;
         #as we don't allow to change customer (l. 624), so we shouldn't allow profile_set that belongs to other reseller
@@ -462,20 +466,25 @@ sub check_profile_set_and_profile {
         $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets')->search({
             'me.reseller_id' => $subscriber->contract->contact->reseller_id,
         });
+        $c->log->debug(Dumper(["subscriber reseller_id",$subscriber->contract->contact->reseller_id,"profile_set_rs reseller_id",$profile_set_rs->first ? $profile_set_rs->first->reseller_id : "not found"]));
     } else {
         $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets');
     }
     if($c->user->roles eq "admin") {
+        $c->log->debug("We are here 1");
         #we allow to admins (both superadmin and reseller admin roles)
         #to pick any profile_set, even not linked to pilot. 
         #it may lead to situation when subscriberadmin will not see profile options, as profile ajax call is based on pilot profile_set setting
         #this was old behavior and I left untouched this administrator privilege
     } elsif($c->user->roles eq "reseller") {
+        $c->log->debug("We are here 2");
         $profile_set_rs = $profile_set_rs->search({
             'me.reseller_id' => $c->user->reseller_id,
         });
     }  elsif($c->user->roles eq "subscriberadmin") {
+        $c->log->debug("We are here 3");
         if ($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->profile_set_id) {
+        $c->log->debug("We are here 5");
             #$c->user->voip_subscriber->provisioning_voip_subscriber->profile_set_id
             #this is new condition, as now we allow subscriberadmin to edit subscribers using API
             #(and previousely we allowed to add)
@@ -484,6 +493,7 @@ sub check_profile_set_and_profile {
                 'me.id' => $c->stash->{pilot}->provisioning_voip_subscriber->profile_set_id
             });
         } else {
+        $c->log->debug("We are here 6");
             #subscriberadmin is not supposed to add a pilot,
             #pilot will be created first by force, if not exists
             #but this situation still is possible if pilot doesn't have profile_set setting
@@ -494,8 +504,10 @@ sub check_profile_set_and_profile {
         }
     }
     if (defined $resource->{profile_set}{id} && $resource->{profile_set}{id}) {
+        $c->log->debug("We are here 7");
         $profile_set = $profile_set_rs->find($resource->{profile_set}{id});
         unless($profile_set) {
+        $c->log->debug("We are here 8");
             return {
                 error         => "invalid subscriber profile set id '" . $resource->{profile_set}{id} . "'",
                 description   => "Invalid profile_set_id parameter",
@@ -503,21 +515,27 @@ sub check_profile_set_and_profile {
             };
         }
     } elsif (!exists $resource->{profile_set}{id}) {
+        $c->log->debug("We are here 9");
         if ($c->user->roles eq "subscriberadmin") { #we are in subscriberadmin web UI
+        $c->log->debug("We are here 10");
         #this is for subscriberadmin web ui to edit subscriber. 
         #Edit subscriber form for subscriberadmin doesn't contain profile_set control
         #API form doesn't suppose profile_set field.
         # => subscriberadmin can't manage profile_set via web ui and API
         #here we will provide profile_set so below we can check profile id
         #please note, that we don't allow to subscriberadmin unset profile_set_id and profile_set at all, . Later we will take default profile for profile_set
-            if ($prov_subscriber && $resource->{profile}{id}) { #edit, preserve current profile_set
+            if ($prov_subscriber && $resource->{profile}{id}) {         $c->log->debug("We are here 11");
+#edit, preserve current profile_set
                 #not pbx account or pilot doesn't have any profile set
                 $profile_set = $prov_subscriber->voip_subscriber_profile_set;
             } elsif ($c->stash->{pilot} && $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set) {
+         $c->log->debug("We are here 12");
                 $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
             }
         }
     }
+         $c->log->debug("We are here 13");
+    $c->log->debug(Dumper(["found profile_set", $profile_set ? $profile_set->id : "not found", 'resource->profile_id', $resource->{profile}{id}]));
     if ($profile_set) {
     #inverted condition to don't repeate taking default for empty input and input mismatch in web admin ui
         if ($resource->{profile}{id}) {
@@ -540,6 +558,7 @@ sub check_profile_set_and_profile {
             });
         }
     } elsif ($resource->{profile}{id}) {#so - user requested profile, but we didn't find proper profile_set
+    $c->log->debug(Dumper(["we are here and should return error - and what???"]));
         return {
             error         => "empty subscriber profile_set id for profile id '" . $resource->{profile}{id} . "'",
             description   => "Empty profile_set_id parameter",
