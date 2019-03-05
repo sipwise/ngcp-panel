@@ -12,15 +12,6 @@ has_field 'set_id' => (
     },
 );
 
-has_field 'priority' => (
-    type => 'PosInteger',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Header rule priority, smaller value has the higher priority.'],
-    },
-);
-
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],

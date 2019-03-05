@@ -14,6 +14,15 @@ has_field 'rule_id' => (
     type => 'Hidden',
 );
 
+has_field 'priority' => (
+    type => 'PosInteger',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Header rule action priority, smaller value has the higher priority.'],
+    },
+);
+
 has_field 'header' => (
     type => 'Text',
     label => 'Header',
@@ -113,7 +122,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/rule_id header header_part action_type value_part value rwr_set rwr_set_id rwr_dp rwr_dp_id enabled/ ],
+    render_list => [qw/rule_id priority header header_part action_type value_part value rwr_set rwr_set_id rwr_dp rwr_dp_id enabled/ ],
 );
 
 has_block 'actions' => (

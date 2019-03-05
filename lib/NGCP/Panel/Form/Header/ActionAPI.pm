@@ -18,7 +18,7 @@ has_field 'rwr_dp' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/rule_id header header_part action_type value_part value rwr_set_id rwr_dp enabled/ ],
+    render_list => [qw/rule_id priority header header_part action_type value_part value rwr_set_id rwr_dp enabled/ ],
 );
 
 1;
