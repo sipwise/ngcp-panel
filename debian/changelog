@@ -1,3 +1,22 @@
+ngcp-panel (6.5.3.7+0~mr6.5.3.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [0b3d996] TT#53421 fix conversations item<->resource confusion
+
+  [ Irina Peshinskaya ]
+  * [68fd8f2] TT#50204 Fix "All" datatables entries option
+  * [eb5378d] TT#50907 Don't use form caching in WEB UI
+  * [4934d74] TT#50802 Use one-to-one relation to filter numbers by type
+  * [15e7687] TT#52980 Return num_lines to api device models lineranges
+  * [ff2ddea] TT#53320 Fix voicemailgreetings upload error handling
+
+  [ Kirill Solomko ]
+  * [3518c4a] TT#48855 fix UI billing zones
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Mar 2019 10:49:25 +0100
+
 ngcp-panel (6.5.3.6+0~mr6.5.3.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
