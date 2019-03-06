@@ -1,3 +1,16 @@
+ngcp-panel (7.1.1.6+0~mr7.1.1.6) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [2c88689] TT#52980 Return num_lines to api device models lineranges
+  * [852436d] TT#53320 Fix voicemailgreetings upload error handling
+  * [2cba233] TT#53760 Consider copy in email templates name checking
+  * [11e944c] TT#53760 Use explicit email template copy mode
+  * [e43e7cb] TT#53760 Fix using of the explicit copy mode flag
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Mar 2019 13:48:37 +0100
+
 ngcp-panel (7.1.1.5+0~mr7.1.1.5) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
