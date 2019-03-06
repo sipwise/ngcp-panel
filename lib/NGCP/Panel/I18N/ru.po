@@ -357,7 +357,6 @@ msgstr "Ограничения доступа"
 msgid "Account balance successfully changed!"
 msgstr "Баланс счета успешно изменен!"
 
-#: share/templates/header/actions_edit.tt
 #: share/templates/header/conditions_list.tt
 #: share/templates/header/rules_list.tt
 msgid "Actions"
@@ -739,15 +738,12 @@ msgstr "BLF ключ"
 #: share/templates/device/profilepreferences.tt
 #: share/templates/domain/preferences.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
-#: share/templates/header/actions_edit.tt
-#: share/templates/header/actions_list.tt
-#: share/templates/header/conditions_list.tt
-#: share/templates/header/rules_list.tt share/templates/helpers/datatables.tt
-#: share/templates/invoice/template.tt share/templates/lnp/list.tt
-#: share/templates/package/details.tt share/templates/peering/preferences.tt
-#: share/templates/reseller/branding.tt share/templates/reseller/details.tt
-#: share/templates/rewrite/rules_list.tt share/templates/security/list.tt
-#: share/templates/sound/handles_list.tt share/templates/statistics/list.tt
+#: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
+#: share/templates/lnp/list.tt share/templates/package/details.tt
+#: share/templates/peering/preferences.tt share/templates/reseller/branding.tt
+#: share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt
+#: share/templates/security/list.tt share/templates/sound/handles_list.tt
+#: share/templates/statistics/list.tt
 #: share/templates/statistics/supportstatus.tt
 #: share/templates/statistics/versions.tt
 #: share/templates/subprofile/preferences.tt
@@ -1457,7 +1453,6 @@ msgstr ""
 msgid "Company"
 msgstr "Компания"
 
-#: share/templates/header/actions_edit.tt
 #: share/templates/header/actions_list.tt share/templates/header/rules_list.tt
 msgid "Conditions"
 msgstr ""
@@ -1732,7 +1727,7 @@ msgstr ""
 msgid "Create Fee Entry"
 msgstr "Создать запись о цене"
 
-#: share/templates/header/actions_edit.tt share/templates/header/rules_list.tt
+#: share/templates/header/rules_list.tt
 msgid "Create Header Rule"
 msgstr ""
 
@@ -2083,7 +2078,6 @@ msgstr ""
 #: share/templates/customer/details.tt share/templates/device/list.tt
 #: share/templates/domain/list.tt share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
-#: share/templates/header/actions_edit.tt
 #: share/templates/header/actions_list.tt
 #: share/templates/header/conditions_list.tt
 #: share/templates/header/rules_list.tt share/templates/header/set_list.tt
@@ -2133,8 +2127,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
-#: lib/NGCP/Panel/Utils/Sounds.pm share/templates/header/actions_edit.tt
-#: share/templates/header/rules_list.tt share/templates/rewrite/rules_list.tt
+#: lib/NGCP/Panel/Utils/Sounds.pm share/templates/rewrite/rules_list.tt
 msgid "Description"
 msgstr "Описание"
 
@@ -2301,7 +2294,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
-#: lib/NGCP/Panel/Controller/Subscriber.pm share/templates/header/rules_list.tt
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Direction"
 msgstr "Направление"
 
@@ -2457,7 +2450,6 @@ msgstr ""
 #: share/templates/customer/list.tt share/templates/device/list.tt
 #: share/templates/emailtemplate/list.tt
 #: share/templates/emergencymapping/list.tt
-#: share/templates/header/actions_edit.tt
 #: share/templates/header/actions_list.tt
 #: share/templates/header/conditions_list.tt
 #: share/templates/header/rules_list.tt share/templates/header/set_list.tt
@@ -2686,9 +2678,8 @@ msgid ""
 "Enable T38 Fax-over-IP via auto-provisioning if the end device supports it."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm share/templates/header/actions_list.tt
-#: share/templates/header/conditions_list.tt
-#: share/templates/header/rules_list.tt share/templates/rewrite/rules_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm lib/NGCP/Panel/Controller/Peering.pm
+#: share/templates/rewrite/rules_list.tt
 msgid "Enabled"
 msgstr ""
 
@@ -2768,7 +2759,7 @@ msgid ""
 "Export this subscriber into the shared XMPP buddy list for the customer."
 msgstr "Экспортировать этого абонента в XMPP список контактов клиента."
 
-#: share/templates/header/conditions_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm
 msgid "Expression"
 msgstr ""
 
@@ -4038,17 +4029,13 @@ msgstr ""
 msgid "Hardware"
 msgstr ""
 
-#: share/templates/header/actions_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm
 msgid "Header"
 msgstr ""
 
 #: share/templates/header/set_list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Header Manipulations"
-msgstr ""
-
-#: share/templates/header/actions_edit.tt share/templates/header/rules_list.tt
-msgid "Header Rule"
 msgstr ""
 
 #: share/templates/header/actions_list.tt
@@ -4073,8 +4060,12 @@ msgstr ""
 msgid "Header Rule Set"
 msgstr ""
 
+#: share/templates/header/rules_list.tt
+msgid "Header Rules"
+msgstr ""
+
 #. (set_result.name)
-#: share/templates/header/actions_edit.tt share/templates/header/rules_list.tt
+#: share/templates/header/rules_list.tt
 msgid "Header Rules for %1"
 msgstr ""
 
@@ -5189,7 +5180,7 @@ msgstr "Мастер"
 msgid "Master Data"
 msgstr "Основные данные"
 
-#: share/templates/header/conditions_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm
 msgid "Match"
 msgstr ""
 
@@ -5501,9 +5492,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm
 #: lib/NGCP/Panel/Controller/TimeSet.pm lib/NGCP/Panel/Utils/Sounds.pm
-#: share/templates/customer/details.tt share/templates/header/actions_edit.tt
-#: share/templates/header/conditions_list.tt
-#: share/templates/header/rules_list.tt share/templates/helpers/pref_table.tt
+#: share/templates/customer/details.tt share/templates/helpers/pref_table.tt
 #: share/templates/sound/handles_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Name"
@@ -5915,8 +5904,7 @@ msgstr "Страницы"
 msgid "Panel Branding"
 msgstr "Панель стилизирования"
 
-#: share/templates/header/actions_list.tt
-#: share/templates/header/conditions_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm
 msgid "Part"
 msgstr ""
 
@@ -6230,7 +6218,7 @@ msgstr "Пред. просмотр как PDF"
 msgid "Primary Number"
 msgstr "Первичный номер"
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Header.pm lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
 msgid "Priority"
 msgstr "Приоритет"
@@ -6756,8 +6744,7 @@ msgstr "Сброс Web пароля"
 msgid "Result"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/header/actions_list.tt
-#: share/templates/header/conditions_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/rewrite/set_list.tt
 #: share/templates/widgets/reseller_domain_overview.tt
 msgid "Rewrite Rule Set"
@@ -6769,11 +6756,6 @@ msgstr "Набор правил перезаписи"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Rewrite Rule Sets"
 msgstr "Наборы правил перезаписи"
-
-#: share/templates/header/actions_list.tt
-#: share/templates/header/conditions_list.tt
-msgid "Rewrite Rules"
-msgstr ""
 
 #. (set_result.name)
 #: share/templates/rewrite/rules_list.tt
@@ -7527,7 +7509,7 @@ msgstr ""
 msgid "Status"
 msgstr "Статус"
 
-#: lib/NGCP/Panel/Controller/Peering.pm share/templates/header/rules_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm lib/NGCP/Panel/Controller/Peering.pm
 msgid "Stopper"
 msgstr ""
 
@@ -8443,13 +8425,11 @@ msgstr "Вторник"
 msgid "Turns on and off \"Manager Secretary\" call forwardings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm
+#: lib/NGCP/Panel/Controller/Device.pm lib/NGCP/Panel/Controller/Header.pm
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
-#: share/templates/header/actions_list.tt
-#: share/templates/header/conditions_list.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Type"
 msgstr "Тип"
@@ -8627,17 +8607,17 @@ msgstr "Размер НДС"
 msgid "Valid Until"
 msgstr ""
 
-#: share/templates/customer/details.tt share/templates/header/actions_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm share/templates/customer/details.tt
 #: share/templates/helpers/pref_table.tt
 #: share/templates/subscriber/preferences.tt
 msgid "Value"
 msgstr "Значение"
 
-#: share/templates/header/actions_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm
 msgid "Value Part"
 msgstr ""
 
-#: share/templates/header/conditions_list.tt
+#: lib/NGCP/Panel/Controller/Header.pm
 #: share/templates/subscriber/edit_webpass.tt
 #: share/templates/subscriber/master.tt
 #: share/templates/subscriber/preferences.tt
