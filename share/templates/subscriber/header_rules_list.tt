@@ -1,0 +1,48 @@
+[% site_config.title = c.loc('Header Rules for subscriber [_1]', subscriber.id) -%]
+
+[%
+    helper.name = c.loc('Header Rules');
+    helper.identifier = 'header_rules';
+    helper.messages = messages;
+    helper.dt_columns = hm_rule_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action( "/subscriber/header_rules_ajax", [c.req.captures.0] );
+
+    UNLESS c.user.read_only;
+        FILTER null;
+            backuritmp=c.req.uri;
+            backuritmp.query_param_delete('back');
+            backuritmp.query_param_delete('move');
+            backuritmp.query_param_delete('where');
+        END;
+        helper.top_buttons = [
+            { name = c.loc('Create Header Rule'), uri = c.uri_for_action('/subscriber/header_rules_create', [c.req.captures.0]), icon = 'icon-star' },
+        ];
+        helper.dt_buttons = [
+            { uri = "/subscriber/" _ subscriber.id _ "/preferences/header/?move='+full.id+'&where=up", class = 'btn-small btn-primary', icon = 'icon-arrow-up' },
+            { uri = "/subscriber/" _ subscriber.id _ "/preferences/header/?move='+full.id+'&where=down", class = 'btn-small btn-primary', icon = 'icon-arrow-down' },
+            { name = c.loc('Edit'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Conditions'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/'+full.id+'/conditions", class = 'btn-small btn-tertiary', icon = 'icon-glass' },
+            { name = c.loc('Actions'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/'+full.id+'/actions", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+            { name = c.loc('Delete'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+    ELSE;
+        helper.top_buttons = [
+        ];
+        helper.dt_buttons = [
+            { name = c.loc('Conditions'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/'+full.id+'/conditions", class = 'btn-small btn-tertiary', icon = 'icon-glass' },
+            { name = c.loc('Actions'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/'+full.id+'/actions", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

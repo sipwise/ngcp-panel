@@ -1,10 +1,10 @@
-[% site_config.title = c.loc('Header Rule Conditions for [_1]', rule_result.name) -%]
+[% site_config.title = c.loc('Header Rule Conditions for [_1]', hm_rule_result.name) -%]
 
 [%
     helper.name = c.loc('Header Rule Conditions');
     helper.identifier = 'header_rule_conditions';
     helper.messages = messages;
-    helper.dt_columns = condition_dt_columns;
+    helper.dt_columns = hm_condition_dt_columns;
     helper.length_change = 1;
 
     helper.close_target = close_target;
@@ -14,13 +14,19 @@
     helper.ajax_uri = c.uri_for_action( "/header/conditions_ajax", [c.req.captures.0, c.req.captures.1] );
 
     UNLESS c.user.read_only;
-        helper.dt_buttons = [
-            { name = c.loc('Edit'), uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/conditions/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Delete'), uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/conditions/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        ];
         helper.top_buttons = [
             { name = c.loc('Create Header Rule Condition'), uri = c.uri_for_action('/header/conditions_create', [c.req.captures.0, c.req.captures.1]), icon = 'icon-star' },
-            { name = c.loc('Actions'), uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/actions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
+            { name = c.loc('Actions'), uri = "/header/" _ hm_set_result.id _ "/rules/" _ hm_rule_result.id _ "/actions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
+        ];
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/header/" _ hm_set_result.id _ "/rules/" _ hm_rule_result.id _ "/conditions/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/header/" _ hm_set_result.id _ "/rules/" _ hm_rule_result.id _ "/conditions/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+    ELSE;
+        helper.top_buttons = [
+            { name = c.loc('Actions'), uri = "/header/" _ hm_set_result.id _ "/rules/" _ hm_rule_result.id _ "/actions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
+        ];
+        helper.dt_buttons = [
         ];
     END;
 

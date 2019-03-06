@@ -1,0 +1,36 @@
+[% site_config.title = c.loc('Header Rule Conditions for subscriber [_1]', subscriber.id) -%]
+
+[%
+    helper.name = c.loc('Header Rule Conditions');
+    helper.identifier = 'header_rule_conditions';
+    helper.messages = messages;
+    helper.dt_columns = hm_condition_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action( "/subscriber/header_conditions_ajax", [c.req.captures.0, c.req.captures.1] );
+
+    UNLESS c.user.read_only;
+        helper.top_buttons = [
+            { name = c.loc('Create Header Rule Condition'), uri = c.uri_for_action('/subscriber/header_conditions_create', [c.req.captures.0, c.req.captures.1]), icon = 'icon-star' },
+            { name = c.loc('Actions'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/" _ hm_rule_result.id _ "/actions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
+        ];
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/" _ hm_rule_result.id _ "/conditions/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/" _ hm_rule_result.id _ "/conditions/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+    ELSE;
+        helper.top_buttons = [
+            { name = c.loc('Actions'), uri = "/subscriber/" _ subscriber.id _ "/preferences/header/" _ hm_rule_result.id _ "/actions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
+        ];
+        helper.dt_buttons = [
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
