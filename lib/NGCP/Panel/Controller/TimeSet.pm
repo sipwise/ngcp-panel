@@ -153,9 +153,9 @@ sub edit :Chained('base') :PathPart('edit') {
         calendarfile => $posted ? $upload : undef,
     };
 
-    my $item = NGCP::Panel::Utils::TimeSet::get_timeset(c => $c, timeset => $c->stash->{timeset_rs});
-    $item->{reseller}{id} = delete $params->{reseller_id};
-    $item = merge($item, $c->session->{created_objects});
+    my $timeset = NGCP::Panel::Utils::TimeSet::get_timeset(c => $c, timeset => $c->stash->{timeset_rs});
+    $timeset->{reseller}{id} = delete $timeset->{reseller_id};
+    $timeset = merge($timeset, $c->session->{created_objects});
 
     my $form;
     if($c->user->roles eq "admin") {
@@ -166,7 +166,7 @@ sub edit :Chained('base') :PathPart('edit') {
     $form->process(
         posted => $posted,
         params => $params,
-        item => $item,
+        item => $timeset,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -261,9 +261,9 @@ sub event_list :Chained('base') :PathPart('event') :CaptureArgs(0) {
 
     $c->stash->{event_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'time_set_id', search => 1, title => $c->loc('Time Set #') },
+        { name => 'time_set_id', visible => 0 },
         { name => 'comment', search => 1, title => $c->loc('Comment') },
-        { name => 'periods_ical.rrule_ical', search => 0, accessor => "ical", title => $c->loc('iCal')},#, literal_sql => '""'
+        { name => 'periods_ical.rrule_ical', search => 0, accessor => "ical", title => $c->loc('Rules')},#, literal_sql => '""'
     ]);
 
     $c->stash(template => 'timeset/event_list.tt');
