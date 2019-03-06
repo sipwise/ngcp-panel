@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Header::AdminRuleSetAPI;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Header::ResellerRuleSet';
+extends 'NGCP::Panel::Form::Header::ResellerRuleSetAPI';
 
 has_field 'reseller_id' => (
     type => 'PosInteger',
@@ -15,7 +15,7 @@ has_field 'reseller_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller_id name description/],
+    render_list => [qw/reseller_id subscriber_id name description/],
 );
 
 1;

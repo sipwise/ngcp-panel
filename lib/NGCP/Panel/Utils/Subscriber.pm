@@ -2038,6 +2038,34 @@ sub delete_callrecording {
     $recording->delete;
 }
 
+sub prov_to_billing_subscriber_id {
+    my %params = @_;
+    my ($c, $subscriber_id) = @params{qw/c subscriber_id/};
+
+    return unless $subscriber_id;
+
+    my $schema = $c->model('DB');
+    my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find($subscriber_id);
+
+    return unless $prov_subscriber;
+    return unless $prov_subscriber->voip_subscriber;
+    return $prov_subscriber->voip_subscriber->id;
+}
+
+sub billing_to_prov_subscriber_id {
+    my %params = @_;
+    my ($c, $subscriber_id) = @params{qw/c subscriber_id/};
+
+    return unless $subscriber_id;
+
+    my $schema = $c->model('DB');
+    my $subscriber = $schema->resultset('voip_subscribers')->find($subscriber_id);
+
+    return unless $subscriber;
+    return unless $subscriber->provisioning_voip_subscriber;
+    return $subscriber->provisioning_voip_subscriber->id;
+}
+
 1;
 
 =head1 NAME

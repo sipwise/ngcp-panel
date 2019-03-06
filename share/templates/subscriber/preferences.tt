@@ -820,7 +820,6 @@ $( document ).ready(function() {
     </div>
 [% END -%]
 
-
 [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -881,6 +880,50 @@ $( document ).ready(function() {
     </div>
 [% END -%]
 
+[% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_hdr">[% c.loc('Header Manipulations') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_hdr">
+            <div class="accordion-inner">
+
+
+[%
+    helper.name = c.loc('Header Manipulations');
+    helper.identifier = 'header_rules';
+    helper.length_change = 1;
+    helper.dt_columns = hdr_rule_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/header/rules_ajax', [ sub_hdr_set.id ]);
+
+    IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1;
+        helper.top_buttons = [
+            { name = c.loc('Create Header Rule'), uri = c.uri_for_action('/header/rules_create', [sub_hdr_set.id]), icon = 'icon-star' },
+        ];
+        helper.dt_buttons = [
+            { uri = "/header/" _ sub_hdr_set.id _ "/rules/?move='+full.id+'&where=up", class = 'btn-small btn-primary', icon = 'icon-arrow-up' },
+            { uri = "/header/" _ sub_hdr_set.id _ "/rules/?move='+full.id+'&where=down", class = 'btn-small btn-primary', icon = 'icon-arrow-down' },
+            { name = c.loc('Edit'), uri = "/header/" _ sub_hdr_set.id _ "/rules/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Conditions'), uri = "/header/"_ sub_hdr_set.id _ "/rules/'+full.id+'/conditions", class = 'btn-small btn-tertiary', icon = 'icon-glass' },
+            { name = c.loc('Actions'), uri = "/header/"_ sub_hdr_set.id _ "/rules/'+full.id+'/actions", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+            { name = c.loc('Delete'), uri = "/header/" _ sub_hdr_set.id _ "/rules/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+    ELSE;
+        helper.top_buttons = [
+        ];
+        helper.dt_buttons = [
+            { name = c.loc('Conditions'), uri = "/header/"_ sub_hdr_set.id _ "/rules/'+full.id+'/conditions", class = 'btn-small btn-tertiary', icon = 'icon-glass' },
+            { name = c.loc('Actions'), uri = "/header/"_ sub_hdr_set.id _ "/rules/'+full.id+'/actions", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+%]
+
+            </div>
+        </div>
+    </div>
+[% END -%]
 
 [%
     PROCESS 'helpers/pref_table.tt';
