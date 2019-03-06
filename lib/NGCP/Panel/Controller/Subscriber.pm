@@ -26,6 +26,7 @@ use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Phonebook;
+use NGCP::Panel::Utils::HeaderManipulations;
 
 use UUID;
 
@@ -733,6 +734,19 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
         }
         $c->stash->{special_prefs} = $special_prefs;
     }
+
+    $c->stash->{hdr_rule_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'priority', search => 0, title => $c->loc('Priority') },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        { name => 'description', search => 1, title => $c->loc('Description') },
+        { name => 'stopper', search => 1, title => $c->loc('Stopper') },
+        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
+    ]);
+
+    $c->stash->{sub_hdr_set} = NGCP::Panel::Utils::HeaderManipulations::get_subscriber_set(
+        c => $c, subscriber_id => $prov_subscriber->id
+    );
 }
 
 sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {

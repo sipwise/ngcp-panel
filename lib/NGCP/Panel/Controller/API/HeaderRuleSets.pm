@@ -26,6 +26,13 @@ sub query_params {
             query_type => 'string_eq',
         },
         {
+            param => 'subscriber_id',
+            description => 'Filter for header rule sets of a specific subscriber',
+            # no query_type is specified here on purpose
+            # the filter applies in the _item_rs() instead
+            # because the value is inflated there
+        },
+        {
             param => 'name',
             description => 'Filter for header rule sets with a specific name (wildcard pattern allowed)',
             query_type => 'string_like',

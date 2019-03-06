@@ -5,6 +5,7 @@ use warnings;
 
 use Sipwise::Base;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Message;
 
 sub update_condition {
     my %params = @_;
@@ -77,6 +78,37 @@ sub invalidate_ruleset {
     }
 
     return \@err;
+}
+
+sub get_subscriber_set {
+    my %params = @_;
+    my ($c, $subscriber_id) = @params{qw/c subscriber_id/};
+
+    my $schema = $c->model('DB');
+
+    my $sub_set = $schema->resultset('voip_header_rule_sets')->find({
+        subscriber_id => $subscriber_id
+    });
+
+    unless ($sub_set) {
+        my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find($subscriber_id);
+        my $subscriber = $prov_subscriber->voip_subscriber;
+        unless ($prov_subscriber) {
+            NGCP::Panel::Utils::Message::error(
+                c    => $c,
+                type => 'internal',
+                desc => $c->loc("Invalid provisioning subscriber id '[_1]'", $subscriber_id),
+            );
+            return;
+        }
+        $sub_set = $schema->resultset('voip_header_rule_sets')->create({
+            reseller_id => $subscriber->contract->contact->reseller_id,
+            subscriber_id => $subscriber_id,
+            name => 'subscriber_'.$subscriber->id,
+            description => '',
+        });
+    }
+    return $sub_set;
 }
 
 1;
