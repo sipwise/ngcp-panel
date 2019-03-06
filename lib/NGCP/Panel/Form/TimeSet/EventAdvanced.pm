@@ -90,7 +90,7 @@ has_field 'start.time' => (
 #dtend
 has_field 'end' => (
     type => 'Compound',
-    label => 'Event stop ',
+    label => 'Stop ',
     do_label => 1,
     do_wrapper => 1,
     tags => {
