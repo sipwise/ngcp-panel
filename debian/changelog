@@ -1,3 +1,12 @@
+ngcp-panel (6.5.2.8+0~mr6.5.2.8) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [39ad57a] TT#50204 Fix "All" datatables entries option
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Mar 2019 11:42:54 +0100
+
 ngcp-panel (6.5.2.7+0~mr6.5.2.7) unstable; urgency=medium
 
   [ Rene Krenn ]
