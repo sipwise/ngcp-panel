@@ -90,7 +90,7 @@ has_field 'start.time' => (
 #dtend
 has_field 'end' => (
     type => 'Compound',
-    label => 'Event stop ',
+    label => 'Stop ',
     do_label => 1,
     do_wrapper => 1,
     tags => {
@@ -131,7 +131,6 @@ has_field 'end.time' => (
     do_wrapper => 1,
     tags => {
         inline => 1,
-        after_element => 
     },
     wrapper_class => [qw/ngcp-inline-control ngcp-end-control ngcp-datetimepicker-input/],
 );
@@ -208,9 +207,10 @@ has_field 'repeat.freq' => (
 
 sub frequency_options {
     my %values = ('secondly' => 'Second', 'minutely' => 'Minute', 'hourly' => 'Hour', 'daily' => 'Day', 'weekly' => 'Week', 'monthly' => 'Month', 'yearly' => 'Year');
+    my @freq_order = qw/daily weekly monthly yearly hourly minutely secondly/;
     my $options = [
         { value => 'no', label => 'None (run once)' },
-        map { +{value => $_, label => $values{$_} }; } keys %values
+        map { +{value => $_, label => $values{$_} }; } @freq_order
     ];
 }
 
@@ -652,7 +652,7 @@ sub custom_set_values {
         $fif->{repeat}->{freq} = $values->{freq};
         $fif->{repeat}->{interval} = $values->{interval};
     } else {
-        $fif->{repeat}->{freq} ne 'no';
+        $fif->{repeat}->{freq} = 'no';
     }
 
     if ($values->{count}) {
@@ -670,7 +670,9 @@ sub custom_set_values {
 
     my @join_fields = qw/bymonthday byminute byweekno bysecond bymonth byhour/;
     foreach my $join_field (@join_fields) {
-        $fif->{$join_field} = [split(/,/, $values->{$join_field})];
+        if ($values->{$join_field}) {
+            $fif->{$join_field} = [split(/,/, $values->{$join_field})];
+        }
     }
     if ($values->{byday}) {
         if ($values->{byday} =~ /^(?:(?:MO|TU|WE|TH|FR|SA|SU),?)+$/) {#
