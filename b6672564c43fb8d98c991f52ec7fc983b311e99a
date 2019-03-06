@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "9a0c5dc1_898950cd",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleSets.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-03-06T22:46:04Z",
+      "side": 1,
+      "message": "ah sry i was looking for ::Generic;",
+      "parentUuid": "9a0c5dc1_8996f092",
+      "range": {
+        "startLine": 41,
+        "startChar": 33,
+        "endLine": 41,
+        "endChar": 63
+      },
+      "revId": "b6672564c43fb8d98c991f52ec7fc983b311e99a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a0c5dc1_09ffa002",
         "filename": "lib/NGCP/Panel/Utils/HeaderManipulations.pm",
         "patchSetId": 3
