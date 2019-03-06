@@ -12,7 +12,10 @@ use constant CALENDAR_MIME_TYPE => 'text/calendar';
 sub get_calendar_file_name {
     my %params = @_;
     my($c, $timeset) = @params{qw/c timeset/};
-    return $timeset->name.'_'.$timeset->id;
+    my $name = $timeset->name;
+    #replacement not collapsed intentionally
+    $name =~s/[^[:alnum:] ]/_/g;
+    return $name.'_'.$timeset->id;
 }
 
 sub delete_timeset {
