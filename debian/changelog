@@ -1,3 +1,12 @@
+ngcp-panel (5.5.7.9+0~mr5.5.7.9) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [66a106a] TT#52980 Return num_lines to api device models lineranges
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Mar 2019 11:44:40 +0100
+
 ngcp-panel (5.5.7.8+0~mr5.5.7.8) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
