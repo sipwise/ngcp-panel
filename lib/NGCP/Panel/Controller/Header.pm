@@ -21,13 +21,15 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub set_list :Chained('/') :PathPart('header') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash->{sets_rs} = $c->model('DB')->resultset('voip_header_rule_sets');
+    $c->stash->{hm_sets_rs} = $c->model('DB')->resultset('voip_header_rule_sets')->search({
+        subscriber_id => undef
+    });
     unless($c->user->roles eq "admin") {
-        $c->stash->{sets_rs} = $c->stash->{sets_rs}->search({
+        $c->stash->{hm_sets_rs} = $c->stash->{hm_sets_rs}->search({
             reseller_id => $c->user->reseller_id
         });
     }
-    $c->stash->{set_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+    $c->stash->{hm_set_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
         { name => 'name', search => 1, title => $c->loc('Name') },
@@ -43,8 +45,8 @@ sub set_root :Chained('set_list') :PathPart('') :Args(0) {
 
 sub set_ajax :Chained('set_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $rs = $c->stash->{sets_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{set_dt_columns});
+    my $rs = $c->stash->{hm_sets_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{hm_set_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -60,7 +62,7 @@ sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/header'));
     }
 
-    my $res = $c->stash->{sets_rs}->find($set_id);
+    my $res = $c->stash->{hm_sets_rs}->find($set_id);
     unless(defined($res)) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
@@ -69,14 +71,14 @@ sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/header'));
     }
-    $c->stash(set_result => $res);
+    $c->stash(hm_set_result => $res);
 }
 
 sub set_edit :Chained('set_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $params = { $c->stash->{set_result}->get_inflated_columns };
+    my $params = { $c->stash->{hm_set_result}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
     my $form;
@@ -104,10 +106,10 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 delete $form->values->{reseller};
             }
-            $c->stash->{set_result}->update($form->values);
+            $c->stash->{hm_set_result}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
+                c => $c, set_id => $c->stash->{hm_set_result}->id
             );
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -131,14 +133,14 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {
-        my $set_id = $c->stash->{set_result}->id;
-        $c->stash->{set_result}->delete;
+        my $set_id = $c->stash->{hm_set_result}->id;
+        $c->stash->{hm_set_result}->delete;
         NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
             c => $c, set_id => $set_id
         );
         NGCP::Panel::Utils::Message::info(
             c    => $c,
-            data => { $c->stash->{set_result}->get_inflated_columns },
+            data => { $c->stash->{hm_set_result}->get_inflated_columns },
             desc => $c->loc('Header rule set successfully deleted'),
         );
     } catch($e) {
@@ -155,7 +157,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $params = { $c->stash->{set_result}->get_inflated_columns };
+    my $params = { $c->stash->{hm_set_result}->get_inflated_columns };
     $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Header::CloneRuleSet", $c);
     $form->process(
@@ -173,11 +175,11 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $new_set = $c->stash->{sets_rs}->create({
+                my $new_set = $c->stash->{hm_sets_rs}->create({
                     %{ $form->values }, ## no critic (ProhibitCommaSeparatedStatements)
-                    reseller_id => $c->stash->{set_result}->reseller_id,
+                    reseller_id => $c->stash->{hm_set_result}->reseller_id,
                 });
-                my @old_rules = $c->stash->{set_result}->voip_header_rules->all;
+                my @old_rules = $c->stash->{hm_set_result}->voip_header_rules->all;
                 for my $rule (@old_rules) {
                     $new_set->voip_rewrite_rules->create({
                         match_pattern => $rule->match_pattern,
@@ -242,7 +244,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
-            $c->stash->{sets_rs}->create($form->values);
+            $c->stash->{hm_sets_rs}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -265,23 +267,11 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
 sub rules_list :Chained('set_base') :PathPart('rules') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    my $rules_rs = $c->stash->{set_result}->voip_header_rules({
-    },{
-        order_by => { -asc => 'priority' },
-    });
-    $c->stash(rules_rs => $rules_rs);
+    NGCP::Panel::Utils::HeaderManipulations::ui_rules_list(
+        c => $c
+    );
 
-    $c->stash->{rule_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'priority', search => 0, title => $c->loc('Priority') },
-        { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'name', search => 1, title => $c->loc('Name') },
-        { name => 'description', search => 1, title => $c->loc('Description') },
-        { name => 'stopper', search => 1, title => $c->loc('Stopper') },
-        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
-    ]);
-
-    $c->stash(rules_uri => $c->uri_for_action("/header/rules_root", [$c->req->captures->[0]]));
-
+    $c->stash(hm_rules_uri => $c->uri_for_action("/header/rules_root", [$c->req->captures->[0]]));
     $c->stash(template => 'header/rules_list.tt');
     return;
 }
@@ -289,207 +279,59 @@ sub rules_list :Chained('set_base') :PathPart('rules') :CaptureArgs(0) {
 sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 
-    my $rules_rs    = $c->stash->{rules_rs};
-    my $param_move  = $c->req->params->{move};
-    my $param_where = $c->req->params->{where};
-
-    if ($param_move && is_int($param_move) && $param_where) {
-        my $elem = $rules_rs->find($param_move);
-        my $use_next = ($param_where eq "down") ? 1 : 0;
-        my $swap_elem = $rules_rs->search({
-            priority => { ($use_next ? '>' : '<') => $elem->priority },
-        },{
-            order_by => {($use_next ? '-asc' : '-desc') => 'priority'},
-        })->first;
-        try {
-            if ($swap_elem) {
-                my $tmp_priority = $swap_elem->priority;
-                $swap_elem->priority($elem->priority);
-                $elem->priority($tmp_priority);
-                $swap_elem->update;
-                $elem->update;
-            } elsif ($use_next) {
-                my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 99;
-                $elem->priority(int($last_priority) + 1);
-                $elem->update;
-            } else {
-                my $last_priority = $c->stash->{rules_rs}->get_column('priority')->min() || 1;
-                $elem->priority(int($last_priority) - 1);
-                $elem->update;
-            }
-            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to move header rule.'),
-            );
-        }
-    }
-
-    $c->stash(rules => [ $rules_rs->all ]);
-    return;
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_root(
+        c => $c
+    );
 }
 
 sub rules_ajax :Chained('rules_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $rs = $c->stash->{rules_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{rule_dt_columns});
-    $c->detach( $c->view("JSON") );
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_ajax(
+        c => $c
+    );
 }
 
 sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $rule_id) = @_;
 
-    unless($rule_id && is_int($rule_id)) {
-        NGCP::Panel::Utils::Message::error(
-            c     => $c,
-            log   => 'Invalid header rule id detected',
-            desc  => $c->loc('Invalid header rule id detected'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-    }
-
-    my $res = $c->stash->{rules_rs}->find($rule_id);
-    unless(defined($res)) {
-        NGCP::Panel::Utils::Message::error(
-            c     => $c,
-            log   => 'Header rule does not exist',
-            desc  => $c->loc('Header rule does not exist'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-    }
-    $c->stash(rule_result => $res);
-    return;
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_base(
+        c => $c, rule_id => $rule_id
+    );
 }
 
 sub rules_edit :Chained('rules_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
-    my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Header::Rule", $c);
-    $form->process(
-        posted => $posted,
-        params => $c->request->params,
-        item   => $c->stash->{rule_result},
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_edit(
+        c => $c
     );
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {},
-        back_uri => $c->req->uri,
-    );
-    if($posted && $form->validated) {
-        try {
-            $c->stash->{rule_result}->update($form->values);
-            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
-            );
-            NGCP::Panel::Utils::Message::info(
-                c    => $c,
-                desc => $c->loc('Header rule successfully updated'),
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to update header rule'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-    }
-
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
 }
 
 sub rules_delete :Chained('rules_base') :PathPart('delete') {
     my ($self, $c) = @_;
 
-    try {
-        $c->stash->{rule_result}->delete;
-        NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-            c => $c, set_id => $c->stash->{set_result}->id
-        );
-        NGCP::Panel::Utils::Message::info(
-            c    => $c,
-            data => { $c->stash->{rule_result}->get_inflated_columns },
-            desc => $c->loc('Header rule successfully deleted'),
-        );
-    } catch($e) {
-        NGCP::Panel::Utils::Message::error(
-            c => $c,
-            error => $e,
-            desc  => $c->loc('Failed to delete header rule'),
-        );
-    };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_delete(
+        c => $c
+    );
 }
 
 sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Header::Rule", $c);
-    $form->process(
-        posted => $posted,
-        params => $c->request->params,
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_create(
+        c => $c
     );
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {},
-        back_uri => $c->req->uri,
-    );
-    if($posted && $form->validated) {
-        try {
-            my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 99;
-            $form->values->{priority} = int($last_priority) + 1;
-            $c->stash->{rules_rs}->create($form->values);
-            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
-            );
-            NGCP::Panel::Utils::Message::info(
-                c    => $c,
-                desc => $c->loc('Header rule successfully created'),
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to create a header rule'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-    }
-
-    $c->stash(form => $form);
-    $c->stash(create_flag => 1);
 }
 
 sub conditions_list :Chained('rules_base') :PathPart('conditions') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    my $conditions_rs = $c->stash->{rule_result}->conditions;
+    NGCP::Panel::Utils::HeaderManipulations::ui_conditions_list(
+        c => $c
+    );
 
-    $c->stash(conditions_rs => $conditions_rs);
-
-    $c->stash->{condition_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'match_type', search => 1, title => $c->loc('Match') },
-        { name => 'match_part', search => 1, title => $c->loc('Part') },
-        { name => 'match_name', search => 1, title => $c->loc('Name') },
-        { name => 'expression', search => 1, title => $c->loc('Expression') },
-        { name => 'value_type', search => 1, title => $c->loc('Type') },
-        { name => 'c_values', search => 0, title => $c->loc('Values') },
-        { name => 'c_rwr_set', search => 0, title => $c->loc('Rewrite Rule Set') },
-        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
-    ]);
-
-    $c->stash(conditions_uri => $c->uri_for_action("/header/conditions_root", $c->req->captures));
-
+    $c->stash(hm_conditions_uri => $c->uri_for_action("/header/conditions_root", $c->req->captures));
     $c->stash(template => 'header/conditions_list.tt');
     return;
 }
@@ -497,258 +339,59 @@ sub conditions_list :Chained('rules_base') :PathPart('conditions') :CaptureArgs(
 sub conditions_root :Chained('conditions_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 
-    my $conditions_rs = $c->stash->{conditions_rs};
-
-    $c->stash(conditions => [ $conditions_rs->all ] );
-
-    return;
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_root(
+        c => $c
+    );
 }
 
 sub conditions_ajax :Chained('conditions_list') :PathPart('rules_ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $rs = $c->stash->{conditions_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{condition_dt_columns}, sub {
-        my $item = shift;
-        my %cols = $item->get_inflated_columns;
-        my ($c_rwr_set, $c_rwr_dp) = ('','');
-        if ($cols{rwr_set_id}) {
-            my %rwr_set = $item->rwr_set->get_inflated_columns;
-            $c_rwr_set = $rwr_set{name};
-            my $dp_id = $cols{rwr_dp_id} // 0;
-            ($c_rwr_dp) =
-                grep { $_ =~ /_dpid/ && $rwr_set{$_} eq $dp_id }
-                    keys %rwr_set;
-            $c_rwr_dp =~ s/_dpid$//;
-        }
-        return (
-            expression => ($cols{expression_negation} ? ' ! ' : ' ') . $cols{expression},
-            c_values => join("<br/>", map { $_->value } $item->values->all) // '',
-            c_rwr_set => $c_rwr_set ? "$c_rwr_set ($c_rwr_dp)" : '',
-        );
-    });
-    $c->detach( $c->view("JSON") );
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_ajax(
+        c => $c
+    );
 }
 
 sub conditions_base :Chained('conditions_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $condition_id) = @_;
 
-    $c->stash(conditions_uri => $c->uri_for_action("/header/conditions_root",
-        [$c->stash->{set_result}->id, $c->stash->{rule_result}->id])
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_base(
+        c => $c, condition_id => $condition_id
     );
-
-    unless ($condition_id && is_int($condition_id)) {
-        NGCP::Panel::Utils::Message::error(
-            c     => $c,
-            log   => 'Invalid header rule condition id detected',
-            desc  => $c->loc('Invalid header rule condition id detected'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{conditions_uri});
-    }
-
-    my $res = $c->stash->{conditions_rs}->find($condition_id);
-    unless (defined($res)) {
-        NGCP::Panel::Utils::Message::error(
-            c     => $c,
-            log   => 'Header rule condition does not exist',
-            desc  => $c->loc('Header rule condition does not exist'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{conditions_uri});
-    }
-    $c->stash(condition_result => $res);
-
-    return;
 }
 
 sub conditions_edit :Chained('conditions_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
-    my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Header::Condition", $c);
-    my $condition = $c->stash->{condition_result};
-    my $params = {};
-
-    unless ($posted) {
-        $params = { $condition->get_inflated_columns };
-        @{$params->{values}} =
-            map { { $_->get_inflated_columns } } $condition->values->all;
-        if ($params->{rwr_set_id}) {
-                my $rwr_set = { $condition->rwr_set->get_inflated_columns };
-                $params->{rwr_set} = $rwr_set->{id};
-                my $dp_id = $params->{rwr_dp_id} // 0;
-                ($params->{rwr_dp}) =
-                    grep { $_ =~ /_dpid/ && $rwr_set->{$_} eq $dp_id }
-                        keys %{$rwr_set};
-        }
-    }
-
-    $form->process(params => $posted ? $c->req->params : $params);
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {},
-        back_uri => $c->req->uri,
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_edit(
+        c => $c
     );
-    if($posted && $form->validated) {
-        try {
-            my $guard = $c->model('DB')->txn_scope_guard;
-            {
-                my $data = $form->values;
-                if ($data->{rwr_set}) {
-                    $data->{rwr_set_id} = delete $data->{rwr_set};
-                    my $rwr_rs = $c->model('DB')
-                                ->resultset('voip_rewrite_rule_sets')
-                                ->search({ id => $data->{rwr_set_id} });
-                    if ($rwr_rs->count) {
-                        my $rwr_set = { $rwr_rs->first->get_inflated_columns };
-                        $data->{rwr_dp_id} = $rwr_set->{$data->{rwr_dp}} // undef;
-                    } else {
-                        $data->{rwr_set_id} = undef;
-                        $data->{rwr_dp_id} = undef;
-                    }
-                } else {
-                    $data->{rwr_set_id} = undef;
-                    $data->{rwr_dp_id} = undef;
-                }
-                delete $data->{rwr_set};
-                delete $data->{rwr_dp};
-
-                NGCP::Panel::Utils::HeaderManipulations::update_condition(
-                    c => $c, resource => $data, item => $condition
-                );
-            }
-            $guard->commit;
-            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
-            );
-            NGCP::Panel::Utils::Message::info(
-                c    => $c,
-                desc => $c->loc('Header rule condition successfully updated'),
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to update header rule condition'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{conditions_uri});
-    }
-
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
 }
 
 sub conditions_delete :Chained('conditions_base') :PathPart('delete') {
     my ($self, $c) = @_;
 
-    try {
-        $c->stash->{condition_result}->delete;
-        NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-            c => $c, set_id => $c->stash->{set_result}->id
-        );
-        NGCP::Panel::Utils::Message::info(
-            c    => $c,
-            data => { $c->stash->{condition_result}->get_inflated_columns },
-            desc => $c->loc('Header rule condition successfully deleted'),
-        );
-    } catch($e) {
-        NGCP::Panel::Utils::Message::error(
-            c => $c,
-            error => $e,
-            desc  => $c->loc('Failed to delete header rule condition'),
-        );
-    };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{conditions_uri});
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_delete(
+        c => $c
+    );
 }
 
 sub conditions_create :Chained('conditions_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Header::Condition", $c);
-    $form->process(
-        posted => $posted,
-        params => $c->request->params,
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_create(
+        c => $c
     );
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {},
-        back_uri => $c->req->uri,
-    );
-    if($posted && $form->validated) {
-        try {
-            my $guard = $c->model('DB')->txn_scope_guard;
-            {
-                my $data = $form->values;
-                $data->{rule_id} = $c->stash->{rule_result}->id;
-
-                if ($data->{rwr_set}) {
-                    $data->{rwr_set_id} = delete $data->{rwr_set};
-                    my $rwr_rs = $c->model('DB')
-                                ->resultset('voip_rewrite_rule_sets')
-                                ->search({ id => $data->{rwr_set_id} });
-                    if ($rwr_rs->count) {
-                        my $rwr_set = { $rwr_rs->first->get_inflated_columns };
-                        $data->{rwr_dp_id} = $rwr_set->{$data->{rwr_dp}} // undef;
-                    } else {
-                        $data->{rwr_set_id} = undef;
-                        $data->{rwr_dp_id} = undef;
-                    }
-                } else {
-                    $data->{rwr_set_id} = undef;
-                    $data->{rwr_dp_id} = undef;
-                }
-                delete $data->{rwr_set};
-                delete $data->{rwr_dp};
-
-                $c->stash->{conditions_rs}->create($data);
-            }
-            $guard->commit;
-            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
-            );
-            NGCP::Panel::Utils::Message::info(
-                c    => $c,
-                desc => $c->loc('Header rule condition successfully created'),
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to create a header rule condition'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{conditions_uri});
-    }
-
-    $c->stash(form => $form);
-    $c->stash(create_flag => 1);
 }
 
 sub actions_list :Chained('rules_base') :PathPart('actions') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    my $actions_rs = $c->stash->{rule_result}->actions({
-    },{
-        order_by => { -asc => 'priority' },
-    });
-    $c->stash(actions_rs => $actions_rs);
+    NGCP::Panel::Utils::HeaderManipulations::ui_actions_list(
+        c => $c
+    );
 
-    $c->stash->{action_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'priority', search => 0, title => $c->loc('Priority') },
-        { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'header', search => 1, title => $c->loc('Header') },
-        { name => 'header_part', search => 1, title => $c->loc('Part') },
-        { name => 'action_type', search => 1, title => $c->loc('Type') },
-        { name => 'value_part', search => 1, title => $c->loc('Value Part') },
-        { name => 'value', search => 1, title => $c->loc('Value') },
-        { name => 'c_rwr_set', search => 0, title => $c->loc('Rewrite Rule Set') },
-        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
-    ]);
-
-    $c->stash(actions_uri => $c->uri_for_action("/header/actions_root", $c->req->captures));
-
+    $c->stash(hm_actions_uri => $c->uri_for_action("/header/actions_root", $c->req->captures));
     $c->stash(template => 'header/actions_list.tt');
     return;
 }
@@ -756,269 +399,49 @@ sub actions_list :Chained('rules_base') :PathPart('actions') :CaptureArgs(0) {
 sub actions_root :Chained('actions_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 
-    my $actions_rs = $c->stash->{actions_rs};
-    my $param_move  = $c->req->params->{move};
-    my $param_where = $c->req->params->{where};
-
-    if ($param_move && is_int($param_move) && $param_where) {
-        my $elem = $actions_rs->find($param_move);
-        my $use_next = ($param_where eq "down") ? 1 : 0;
-        my $swap_elem = $actions_rs->search({
-            priority => { ($use_next ? '>' : '<') => $elem->priority },
-        },{
-            order_by => {($use_next ? '-asc' : '-desc') => 'priority'},
-        })->first;
-        try {
-            if ($swap_elem) {
-                my $tmp_priority = $swap_elem->priority;
-                $swap_elem->priority($elem->priority);
-                $elem->priority($tmp_priority);
-                $swap_elem->update;
-                $elem->update;
-            } elsif ($use_next) {
-                my $last_priority = $c->stash->{actions_rs}->get_column('priority')->max() || 99;
-                $elem->priority(int($last_priority) + 1);
-                $elem->update;
-            } else {
-                my $last_priority = $c->stash->{actions_rs}->get_column('priority')->min() || 1;
-                $elem->priority(int($last_priority) - 1);
-                $elem->update;
-            }
-            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to move action.'),
-            );
-        }
-    }
-
-    $c->stash(actions => [ $actions_rs->all ]);
-
-    return;
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_root(
+        c => $c
+    );
 }
 
 sub actions_ajax :Chained('actions_list') :PathPart('rules_ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $rs = $c->stash->{actions_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{action_dt_columns}, sub {
-        my $item = shift;
-        my %cols = $item->get_inflated_columns;
-        my ($c_rwr_set, $c_rwr_dp) = ('','');
-        if ($cols{rwr_set_id}) {
-            my %rwr_set = $item->rwr_set->get_inflated_columns;
-            $c_rwr_set = $rwr_set{name};
-            my $dp_id = $cols{rwr_dp_id} // 0;
-            ($c_rwr_dp) =
-                grep { $_ =~ /_dpid/ && $rwr_set{$_} eq $dp_id }
-                    keys %rwr_set;
-            $c_rwr_dp =~ s/_dpid$//;
-        }
-        return (
-            c_rwr_set => $c_rwr_set ? "$c_rwr_set ($c_rwr_dp)" : '',
-        );
-    });
-    $c->detach( $c->view("JSON") );
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_ajax(
+        c => $c
+    );
 }
 
 sub actions_base :Chained('actions_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $action_id) = @_;
 
-    $c->stash(actions_uri => $c->uri_for_action("/header/actions_root",
-        [$c->stash->{set_result}->id, $c->stash->{rule_result}->id])
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_base(
+        c => $c, action_id => $action_id
     );
-
-    unless ($action_id && is_int($action_id)) {
-        NGCP::Panel::Utils::Message::error(
-            c     => $c,
-            log   => 'Invalid header rule action id detected',
-            desc  => $c->loc('Invalid header rule action id detected'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{actions_uri});
-    }
-
-    my $res = $c->stash->{actions_rs}->find($action_id);
-    unless (defined($res)) {
-        NGCP::Panel::Utils::Message::error(
-            c     => $c,
-            log   => 'Header rule action does not exist',
-            desc  => $c->loc('Header rule action does not exist'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{actions_uri});
-    }
-    $c->stash(action_result => $res);
-
-    return;
 }
 
 sub actions_edit :Chained('actions_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
-    my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Header::Action", $c);
-    my $action = $c->stash->{action_result};
-    my $params = {};
-
-    unless ($posted) {
-        $params = { $action->get_inflated_columns };
-        if ($params->{rwr_set_id}) {
-                my $rwr_set = { $action->rwr_set->get_inflated_columns };
-                $params->{rwr_set} = $rwr_set->{id};
-                my $dp_id = $params->{rwr_dp_id} // 0;
-                ($params->{rwr_dp}) =
-                    grep { $_ =~ /_dpid/ && $rwr_set->{$_} eq $dp_id }
-                        keys %{$rwr_set};
-        }
-    }
-
-    $form->process(params => $posted ? $c->req->params : $params);
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {},
-        back_uri => $c->req->uri,
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_edit(
+        c => $c
     );
-    if($posted && $form->validated) {
-        try {
-            my $guard = $c->model('DB')->txn_scope_guard;
-            {
-                my $data = $form->values;
-
-                if ($data->{rwr_set}) {
-                    $data->{rwr_set_id} = delete $data->{rwr_set};
-                    my $rwr_rs = $c->model('DB')
-                                ->resultset('voip_rewrite_rule_sets')
-                                ->search({ id => $data->{rwr_set_id} });
-                    if ($rwr_rs->count) {
-                        my $rwr_set = { $rwr_rs->first->get_inflated_columns };
-                        $data->{rwr_dp_id} = $rwr_set->{$data->{rwr_dp}} // undef;
-                    } else {
-                        $data->{rwr_set_id} = undef;
-                        $data->{rwr_dp_id} = undef;
-                    }
-                } else {
-                    $data->{rwr_set_id} = undef;
-                    $data->{rwr_dp_id} = undef;
-                }
-                delete $data->{rwr_set};
-                delete $data->{rwr_dp};
-
-                $action->update($data);
-            }
-            $guard->commit;
-            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
-            );
-            NGCP::Panel::Utils::Message::info(
-                c    => $c,
-                desc => $c->loc('Header rule action successfully updated'),
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to update header rule action'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{actions_uri});
-    }
-
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
 }
 
 sub actions_delete :Chained('actions_base') :PathPart('delete') {
     my ($self, $c) = @_;
 
-    try {
-        $c->stash->{action_result}->delete;
-        NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-            c => $c, set_id => $c->stash->{set_result}->id
-        );
-        NGCP::Panel::Utils::Message::info(
-            c    => $c,
-            data => { $c->stash->{action_result}->get_inflated_columns },
-            desc => $c->loc('Header rule action successfully deleted'),
-        );
-    } catch($e) {
-        NGCP::Panel::Utils::Message::error(
-            c => $c,
-            error => $e,
-            desc  => $c->loc('Failed to delete header rule action'),
-        );
-    };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{actions_uri});
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_delete(
+        c => $c
+    );
 }
 
 sub actions_create :Chained('actions_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Header::Action", $c);
-    $form->process(
-        posted => $posted,
-        params => $c->request->params,
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_create(
+        c => $c
     );
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {},
-        back_uri => $c->req->uri,
-    );
-    if($posted && $form->validated) {
-        try {
-            my $guard = $c->model('DB')->txn_scope_guard;
-            {
-                my $data = $form->values;
-                $data->{rule_id} = $c->stash->{rule_result}->id;
-
-                if ($data->{rwr_set}) {
-                    $data->{rwr_set_id} = delete $data->{rwr_set};
-                    my $rwr_rs = $c->model('DB')
-                                ->resultset('voip_rewrite_rule_sets')
-                                ->search({ id => $data->{rwr_set_id} });
-                    if ($rwr_rs->count) {
-                        my $rwr_set = { $rwr_rs->first->get_inflated_columns };
-                        $data->{rwr_dp_id} = $rwr_set->{$data->{rwr_dp}} // undef;
-                    } else {
-                        $data->{rwr_set_id} = undef;
-                        $data->{rwr_dp_id} = undef;
-                    }
-                } else {
-                    $data->{rwr_set_id} = undef;
-                    $data->{rwr_dp_id} = undef;
-                }
-                delete $data->{rwr_set};
-                delete $data->{rwr_dp};
-
-                my $last_priority = $c->stash->{actions_rs}->get_column('priority')->max() || 99;
-                $data->{priority} = int($last_priority) + 1;
-
-                $c->stash->{actions_rs}->create($data);
-            }
-            $guard->commit;
-            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
-                c => $c, set_id => $c->stash->{set_result}->id
-            );
-            NGCP::Panel::Utils::Message::info(
-                c    => $c,
-                desc => $c->loc('Header rule action successfully created'),
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to create a header rule action'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{actions_uri});
-    }
-
-    $c->stash(form => $form);
-    $c->stash(create_flag => 1);
 }
 
 1;

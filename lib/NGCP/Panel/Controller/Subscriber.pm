@@ -26,6 +26,7 @@ use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Phonebook;
+use NGCP::Panel::Utils::HeaderManipulations;
 
 use UUID;
 
@@ -211,6 +212,14 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     });
 
     $c->stash->{phonebook} = $c->stash->{subscriber}->phonebook;
+
+    $c->stash->{hm_set_result} = NGCP::Panel::Utils::HeaderManipulations::get_or_create_subscriber_set(
+        c => $c, subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id
+    );
+
+    NGCP::Panel::Utils::HeaderManipulations::ui_rules_list(
+        c => $c
+    );
 }
 
 sub webfax :Chained('base') :PathPart('webfax') :Args(0) {
@@ -5383,6 +5392,182 @@ sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') 
         $c, $c->stash->{phonebook}, 'subscriber', $subscriber->id
     );
     return;
+}
+
+sub header_rules_list :Chained('base') :PathPart('preferences/header') :CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(hm_rules_uri => $c->uri_for_action("/subscriber/header_rules_root", [$c->req->captures.0]));
+    $c->stash(template => 'subscriber/header_rules_list.tt');
+
+    return;
+}
+
+sub header_rules_root :Chained('header_rules_list') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_root(
+        c => $c
+    );
+}
+
+sub header_rules_ajax :Chained('header_rules_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_ajax(
+        c => $c
+    );
+}
+
+sub header_rules_base :Chained('header_rules_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $rule_id) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_base(
+        c => $c, rule_id => $rule_id
+    );
+}
+
+sub header_rules_edit :Chained('header_rules_base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_edit(
+        c => $c
+    );
+}
+
+sub header_rules_delete :Chained('header_rules_base') :PathPart('delete') {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_delete(
+        c => $c
+    );
+}
+
+sub header_rules_create :Chained('header_rules_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_rules_create(
+        c => $c
+    );
+}
+
+sub header_conditions_list :Chained('header_rules_base') :PathPart('conditions') :CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    NGCP::Panel::Utils::HeaderManipulations::ui_conditions_list(
+        c => $c
+    );
+    $c->stash(hm_conditions_uri => $c->uri_for_action("/subscriber/header_conditions_root", $c->req->captures));
+    $c->stash(template => 'subscriber/header_rule_conditions_list.tt');
+    return;
+}
+
+sub header_conditions_root :Chained('header_conditions_list') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_root(
+        c => $c
+    );
+}
+
+sub header_conditions_ajax :Chained('header_conditions_list') :PathPart('header_rules_ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_ajax(
+        c => $c
+    );
+}
+
+sub header_conditions_base :Chained('header_conditions_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $condition_id) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_base(
+        c => $c, condition_id => $condition_id
+    );
+}
+
+sub header_conditions_edit :Chained('header_conditions_base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_edit(
+        c => $c
+    );
+}
+
+sub header_conditions_delete :Chained('header_conditions_base') :PathPart('delete') {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_delete(
+        c => $c
+    );
+}
+
+sub header_conditions_create :Chained('header_conditions_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_conditions_create(
+        c => $c
+    );
+}
+
+sub header_actions_list :Chained('header_rules_base') :PathPart('actions') :CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    NGCP::Panel::Utils::HeaderManipulations::ui_actions_list(
+        c => $c
+    );
+    $c->stash(hm_actions_uri => $c->uri_for_action("/subscriber/header_actions_root", $c->req->captures));
+    $c->stash(template => 'subscriber/header_rule_actions_list.tt');
+    return;
+}
+
+sub header_actions_root :Chained('header_actions_list') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_root(
+        c => $c
+    );
+}
+
+sub header_actions_ajax :Chained('header_actions_list') :PathPart('header_rules_ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_ajax(
+        c => $c
+    );
+}
+
+sub header_actions_base :Chained('header_actions_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $action_id) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_base(
+        c => $c, action_id => $action_id
+    );
+}
+
+sub header_actions_edit :Chained('header_actions_base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_edit(
+        c => $c
+    );
+}
+
+sub header_actions_delete :Chained('header_actions_base') :PathPart('delete') {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_delete(
+        c => $c
+    );
+}
+
+sub header_actions_create :Chained('header_actions_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    return NGCP::Panel::Utils::HeaderManipulations::ui_actions_create(
+        c => $c
+    );
 }
 
 =head1 AUTHOR
