@@ -17,15 +17,17 @@
     END;
 
     UNLESS c.user.read_only;
+        helper.top_buttons = [
+            { name = c.loc('Create Header Rule Set'), uri = c.uri_for('/header/create'), icon = 'icon-star' },
+        ];
         helper.dt_buttons = [
             { name = c.loc('Edit'), uri = "/header/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Delete'), uri = "/header/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
             { name = c.loc('Rules'), uri = "/header/'+full.id+'/rules", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
-        helper.top_buttons = [
-            { name = c.loc('Create Header Rule Set'), uri = c.uri_for('/header/create'), icon = 'icon-star' },
-        ];
     ELSE;
+        helper.top_buttons = [
+        ];
         helper.dt_buttons = [
             { name = c.loc('Rules'), uri = "/header/'+full.id+'/rules", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];

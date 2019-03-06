@@ -14,15 +14,21 @@
     helper.ajax_uri = c.uri_for_action( "/header/actions_ajax", [c.req.captures.0, c.req.captures.1] );
 
     UNLESS c.user.read_only;
+        helper.top_buttons = [
+            { name = c.loc('Create Header Rule Action'), uri = c.uri_for_action('/header/actions_create', [c.req.captures.0, c.req.captures.1]), icon = 'icon-star' },
+            { name = c.loc('Conditions'), uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/conditions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
+        ];
         helper.dt_buttons = [
             { uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/actions/?move='+full.id+'&where=up", class = 'btn-small btn-primary', icon = 'icon-arrow-up' },
             { uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/actions/?move='+full.id+'&where=down", class = 'btn-small btn-primary', icon = 'icon-arrow-down' },
             { name = c.loc('Edit'), uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/actions/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Delete'), uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/actions/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
+    ELSE;
         helper.top_buttons = [
-            { name = c.loc('Create Header Rule Action'), uri = c.uri_for_action('/header/actions_create', [c.req.captures.0, c.req.captures.1]), icon = 'icon-star' },
             { name = c.loc('Conditions'), uri = "/header/" _ set_result.id _ "/rules/" _ rule_result.id _ "/conditions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
+        ];
+        helper.dt_buttons = [
         ];
     END;
 

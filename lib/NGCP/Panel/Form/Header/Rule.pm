@@ -21,7 +21,7 @@ has_field 'name' => (
 
 has_field 'priority' => (
     type => 'PosInteger',
-    required => 1,
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
         title => ['Header rule priority, smaller value has the higher priority.'],
