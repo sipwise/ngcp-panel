@@ -5,7 +5,7 @@ Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends:
  debhelper (>= 10),
  libmodule-build-perl | perl (<< 5.21.0~),
- ngcp-schema,
+ libngcp-schema-perl | ngcp-schema,
 Standards-Version: 3.9.8
 Homepage: https://www.sipwise.com/
 
@@ -86,6 +86,7 @@ Depends:
  libnet-https-any-perl,
  libnet-telnet-perl,
  libnetaddr-ip-perl,
+ libngcp-schema-perl | ngcp-schema,
  libpath-tiny-perl,
  libplack-middleware-deflater-perl,
  librole-rest-client-perl,
@@ -113,7 +114,6 @@ Depends:
  libuuid-perl,
  libxml-mini-perl,
  libxml-xpath-perl,
- ngcp-schema,
  nginx-common,
  openssl,
  sipsak (>= 0.9.6+git20160713),
