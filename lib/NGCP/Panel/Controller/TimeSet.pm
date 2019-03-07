@@ -361,8 +361,6 @@ sub event_edit :Chained('event_base') :PathPart('edit') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $rrule = $form->custom_get_values();
-            use irka;
-            irka::loglong($rrule);
             $c->model('DB')->schema->txn_do( sub {
                 $c->stash->{event_rs}->update($rrule);
             });
