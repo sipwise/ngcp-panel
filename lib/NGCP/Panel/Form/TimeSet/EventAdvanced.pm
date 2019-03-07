@@ -574,16 +574,10 @@ sub wrap_label_field_switch {
     return $element->render({ field => $self });
 }
 
-use irka;
-
-
 sub custom_get_values {
     my ($self, $params) = @_;
     my $fif = $self->values;
     my $values = {};
-
-    irka::loglong(['custom_get_values','fif',$fif]);
-    irka::loglong(['custom_get_values','params',$params]);
 
     $values->{start} = join('T', @{$fif->{start}}{qw/date time/});
 
@@ -638,14 +632,11 @@ sub custom_get_values {
         }
     }
 
-    irka::loglong(['custom_get_values','values',$values]);
-
     return $values;
 }
 
 sub custom_set_values {
     my ($self, $values) = @_;
-    irka::loglong(['custom_set_values','values',$values]);
     my $fif;
     @{$fif->{start}}{qw/date time/} = split(/[T ]/, $values->{start});
 
@@ -695,180 +686,10 @@ sub custom_set_values {
             $fif->{label_switch}->{$switched_field} = 1;
         }
     }
-    irka::loglong(['custom_set_values','fif',$fif]);
 
     return $fif;
 }
 
 1;
-
-__DATA__
-
-sub custom_get_values_ {
-    my ($self) = @_;
-    my $fif = $self->fif;
-    irka::loglong(['custom_get_values','fif',$fif]);
-    my $values = {};
-
-    $values->{start} = join('T', @{$fif}{qw/start.date start.time/});
-
-    if ($fif->{'end.switch'}) {
-        $values->{end} = join('T', @{$fif->{qw/end.date end.time/}});
-    }
-
-    if ($fif->{'repeat.freq'} ne 'no') {
-        $values->{'freq'} = $fif->{'repeat.freq'};
-        $values->{'interval'} = $fif->{'repeat.interval'};
-    }
-
-    if ($fif->{'repeat_stop.switch'} ne 'never') {
-        if ($fif->{'repeat_stop.switch'} eq 'count') {
-            $values->{count} = $fif->{'repeat_stop.count'};
-        } else {
-            $values->{until} = join('T', @$fif{qw/repeat_stop.until_date repeat_stop.until_time/});
-        }
-    }
-
-    my @simple_fields = qw/comment/;
-    @{$values}{@simple_fields} = @{$fif}{@simple_fields} || undef;
-
-    my @simple_switched_fields = qw/bysetpos byyearday/;
-    foreach my $simple_field (@simple_switched_fields) {
-        if ($fif->{'label_switch.'.$simple_field}) {
-            $values->{$simple_field} = $fif->{$simple_field} || undef;
-        }
-    }
-    my @join_switched_fields = qw/bymonthday byminute byweekno bysecond bymonth byhour/;
-    foreach my $join_field (@join_switched_fields) {
-        if ($fif->{'label_switch.'.$join_field}) {
-            $fif->{$join_field} and $values->{$join_field} = join(',',@{$fif->{$join_field}});
-        }
-    }
-
-    if ($fif->{'byday.weekdaynumber'}) {
-        $values->{byday} = $fif->{'byday.weekdaynumber'};
-    } elsif ($fif->{'byday.weekdays'}) {
-        $values->{'byday'} = join(',', @{$fif->{'byday.weekdays'}});
-    }
-
-    irka::loglong(['custom_get_values','values',$values]);
-
-    return $values;
-}
-
-sub custom_set_values_ {
-    my ($self, $values) = @_;
-    my $fif = {};
-
-    @$fif{'start.date', 'start.time'} = split(/[T ]/, $values->{'start'});
-
-    my @simple_fields = qw/comment bysetpos byyearday/;
-    @{$fif}{@simple_fields} = @{$values}{@simple_fields};
-
-    my @join_fields = qw/bymonthday byminute byweekno bysecond bymonth byhour/;
-    foreach my $join_field (@join_fields) {
-        $values->{$join_field} and $fif->{$join_field} = [split(',',@{$values->{$join_field}})];
-    }
-
-    #really, javascript will care about it
-    my @switched_fields = qw/bysetpos byyearday bymonthday byminute byweekno bysecond bymonth byhour/;
-    foreach my $switched_field (@switched_fields) {
-        if ($fif->{$switched_field}) {
-            $fif->{'label_switch.'.$switched_field} = 1;
-        }
-    }
-
-    if ($values->{'end'}) {
-        $values->{'end.switch'} = 1;
-        @$fif{'end.date','end.time'} = split(/[T ]/, $values->{'end'});
-    }
-
-    $fif->{'repeat.freq'} = $values->{'freq'} // 'no';
-    $fif->{'repeat.interval'} = $values->{'interval'};
-
-    if ($values->{'count'}) {
-        $fif->{'repeat_stop.count'} = $values->{'count'};
-        $fif->{'repeat_stop.switch'} = 'count';
-    } elsif($values->{until}) {
-        @{$fif}{'repeat_stop.until_date','repeat_stop.until_time',} = split(/[T ]/, $values->{until});
-        $fif->{'repeat_stop.switch'} = 'until';
-    }
-
-    if ($values->{'byday'}) {
-        $fif->{'label_switch.byday'} = 1;
-        if ($values->{'byday'} =~ /^(\d+,?)+$/) {
-            $fif->{byday}->{'byday.weekdays'} = [split(',', $values->{'byday'})];
-        } else {
-            $values->{'byday.weekdaynumber'} = $values->{'byday'};
-        }
-    }
-
-    return $fif;
-}
-
-
-
-1;
-
-__DATA__
-values:
-
-[
-  {
-    'byday' => undef,
-    'end' => {
-               'time' => '23:59:59',
-               'date' => '2019-01-07',
-               'switch' => '0'
-             },
-    'repeat' => {
-                  'freq' => 'no',
-                  'interval' => '1'
-                },
-    'start' => {
-                 'date' => '2019-01-07',
-                 'time' => '00:00:00'
-               },
-    'submitid' => undef,
-    'bymonthday' => [],
-    'byyearday' => undef,
-    'byminute' => [],
-    'byweekno' => [],
-    'bysecond' => [],
-    'repeat_stop' => {
-                       'count' => '1',
-                       'switch' => 'never',
-                       'until_date' => '2019-01-07',
-                       'until_time' => '23:59:59'
-                     },
-    'bysetpos' => undef,
-    'comment' => undef,
-    'bymonth' => [],
-    'id' => undef,
-    'byhour' => []
-  }
-];
-fif:
-$VAR1 = [
-          {
-            'end.switch' => '0',
-            'bysetpos' => '',
-            'start.time' => '00:00:00',
-            'end.time' => '23:59:59',
-            'start.date' => '2019-01-10',
-            'repeat_stop.until_date' => '2019-01-10',
-            'repeat_stop.switch' => 'never',
-            'repeat_stop.count' => '1',
-            'end.date' => '2019-01-10',
-            'repeat.freq' => 'no',
-            'byyearday' => '',
-            'repeat.interval' => '1',
-            'byday.weekdaynumber' => '',
-            'submitid' => '',
-            'comment' => '',
-            'repeat_stop.until_time' => '23:59:59',
-            'id' => ''
-          }
-        ];
 
 # vim: set tabstop=4 expandtab:
