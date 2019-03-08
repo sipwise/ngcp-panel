@@ -744,9 +744,9 @@ msgstr "BLF Taste"
 #: share/templates/helpers/datatables.tt share/templates/invoice/template.tt
 #: share/templates/lnp/list.tt share/templates/package/details.tt
 #: share/templates/peering/preferences.tt share/templates/reseller/branding.tt
-#: share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt
-#: share/templates/security/list.tt share/templates/sound/handles_list.tt
-#: share/templates/statistics/list.tt
+#: share/templates/reseller/details.tt share/templates/reseller/preferences.tt
+#: share/templates/rewrite/rules_list.tt share/templates/security/list.tt
+#: share/templates/sound/handles_list.tt share/templates/statistics/list.tt
 #: share/templates/statistics/supportstatus.tt
 #: share/templates/statistics/versions.tt
 #: share/templates/subprofile/preferences.tt
@@ -1004,6 +1004,10 @@ msgstr ""
 #. ($result)
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "CA certificate verification failed: "
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CDR/EDR Export Settings"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -3815,6 +3819,14 @@ msgstr "Gebühren"
 msgid "Field"
 msgstr "Feld"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Field delimiter"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Field delimiter symbol used in .cdr files."
+msgstr ""
+
 #: share/templates/sound/handles_list.tt
 msgid "Filename"
 msgstr "Dateiname"
@@ -4565,6 +4577,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal NCOS Level #"
 msgstr "Interne NCOS-Stufe #"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal Rewrite Rule Set # for Source/Destination fields"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal User CLI rewrite #"
@@ -6689,6 +6705,11 @@ msgstr ""
 msgid "Reseller"
 msgstr "Reseller"
 
+#. (reseller.name)
+#: share/templates/reseller/preferences.tt
+msgid "Reseller \"%1\" - Preferences"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Reseller #"
 msgstr ""
@@ -6787,6 +6808,10 @@ msgstr ""
 msgid "Rewrite Rule Set"
 msgstr "Übersetzungsregeln-Set"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Rewrite Rule Set for Source/Destination fields"
+msgstr ""
+
 #: share/templates/rewrite/set_list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/reseller_domain_overview.tt
@@ -6826,6 +6851,12 @@ msgstr "Übersetzungsregeln-Set erfolgreich gelöscht"
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule set successfully updated"
 msgstr "Übersetzungsregeln-Set erfolgreich aktualisiert"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Rewrite rule set to apply caller outbound rule to \"SOURCE_CLI\", callee "
+"outbound rule to \"DESTINATION_USER_IN\" CDR export fields."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule successfully created"
