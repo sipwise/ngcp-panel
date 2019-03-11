@@ -1,3 +1,25 @@
+ngcp-panel (7.2.1.1+0~mr7.2.1.1) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [8efe757] TT#49259 Fix tests for peeringserver sound_set preference
+  * [1ec4557] TT#52980 Return num_lines to api device models lineranges
+  * [717be45] TT#53320 Fix voicemailgreetings upload error handling
+  * [d752cf9] TT#53760 Consider copy in email templates name checking
+  * [728905c] TT#53760 Use explicit email template copy mode
+  * [5d51818] TT#53760 Fix using of the explicit copy mode flag
+
+  [ Kirill Solomko ]
+  * [821bd0d] TT#51911 rework Header Manipulations to support datatables
+  * [b8b859a] TT#52006 header manipulations priority is now editable in the UI
+  * [cf62ae4] TT#47010 add per subscriber header manipulations
+
+  [ Rene Krenn ]
+  * [6e608c7] TT#46955 reseller preferences
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 11 Mar 2019 15:48:44 +0100
+
 ngcp-panel (7.2.1.0+0~mr7.2.1.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
