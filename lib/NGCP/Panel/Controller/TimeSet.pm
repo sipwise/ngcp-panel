@@ -262,8 +262,10 @@ sub event_list :Chained('base') :PathPart('event') :CaptureArgs(0) {
     $c->stash->{event_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'time_set_id', 'visible' => 0, 'title' => 'Time Set #' },
+        { name => 'start', 'visible' => 0, search => 0, 'title' => 'Start' },
+        { name => 'end', 'visible' => 0, search => 0, 'title' => 'End' },
         { name => 'comment', search => 1, title => $c->loc('Comment') },
-        { name => 'periods_ical.rrule_ical', search => 0, accessor => "ical", title => $c->loc('Rules')},#, literal_sql => '""'
+        { name => 'periods_ical.rrule_ical', search => 0, accessor => "ical", title => $c->loc('Rules'), dont_skip_empty_data => 1},#, literal_sql => '""'
     ]);
 
     $c->stash(template => 'timeset/event_list.tt');
