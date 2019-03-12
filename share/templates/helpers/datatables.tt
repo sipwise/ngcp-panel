@@ -4,6 +4,8 @@
         helper.column_fields = [];
         helper.column_sortable_map = {};
         helper.custom_renderers = helper.custom_renderers ? helper.custom_renderers : {};
+        helper.options = {};
+        helper.columns_hidden = {};
         helper.strict_search = 0;
         FOR col IN helper.dt_columns;
             IF !col.accessor;
@@ -17,11 +19,15 @@
             helper.column_titles.push(col.title);
             helper.column_fields.push(col.accessor);
             helper.column_sortable_map.${col.accessor} = (col.sortable.defined ? col.sortable : 1);
+            helper.options.${col.accessor} = {};
             IF col.custom_renderer.defined;
                 helper.custom_renderers.${col.accessor} = col.custom_renderer;
             END;
             IF col.visible.defined && !col.visible;
                 helper.columns_hidden.${col.accessor} = 1;
+            END;
+            IF col.dont_skip_empty_data;
+                helper.options.${col.accessor}.dont_skip_empty_data = 1;
             END;
         END;
     END;
@@ -98,10 +104,17 @@ $(document).ready(function() {
                 "mData": "[% f %]",
                 [%IF helper.columns_hidden.${f} %]
                 "visible": false,
+                "className": 'hidden',
+                "hidden": true,
                 [%END%]
                 "mRender": function ( data, type, full ) {
+                    [% IF !helper.options.${f}.dont_skip_empty_data %]
                     if(data == null)
-                        return '';
+                      return '';
+                    [% ELSE %]
+                    if(data == null)
+                      data = '';
+                    [% END %]
                     [% IF helper.custom_renderers.${f} -%]
                         data.escapeHtml = true; //true by default;
                         var renderCustom = [% helper.custom_renderers.${f} -%];
