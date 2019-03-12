@@ -11,11 +11,51 @@ require(['rrule'], function (rrule) {
   RRule = rrule;
 });
 function toText(data, type, full) {
-  if (!data) {
-    return '';
+  var rrule_text = '';
+  var dtstart, dtend, freq;
+  var dtstart_obj;
+  var dtend_obj;
+  if (data) {
+    var r = RRule.rrulestr(data);
+    rrule_text = r.toText();
+    freq = r.options.freq;
   }
-  var r = RRule.rrulestr(data);
-  return r.toText();
+  if (full.start){ 
+    dtstart = full.start;
+  }
+  if (full.end){ 
+    dtend = full.end;
+  }
+  var rrule_date_text = '';
+  if (dtstart) {
+    var dtstart_obj = new Date(dtstart);
+    var dtstart_date = fomatDate(dtstart_obj.getFullYear(), dtstart_obj.getMonth(), dtstart_obj.getDate(), '-');
+    var dtstart_time = fomatDate(dtstart_obj.getHours(), dtstart_obj.getMinutes(), dtstart_obj.getSeconds(),':');
+    var rrule_dtstart_text = ' [%c.loc("from")%] ' + (needDate(freq) ? dtstart_date + ' ' : '') + dtstart_time;
+    var rrule_dtend_text = '';
+    if (dtend) {
+        var dtend_obj = new Date(dtend);
+        var dtend_date = fomatDate(dtend_obj.getFullYear(), dtend_obj.getMonth(), dtend_obj.getDate(), '-');
+        var dtend_time = fomatDate(dtend_obj.getHours(), dtend_obj.getMinutes(), dtend_obj.getSeconds(),':');
+        rrule_dtend_text = ' [%c.loc("to")%] ' + (needDate(freq) ?  dtend_date + ' ': '') + dtend_time;
+    }
+    rrule_date_text = rrule_dtstart_text + rrule_dtend_text;
+  }
+  rrule_text += rrule_date_text;
+  return rrule_text;
+}
+
+function needDate(freq) {
+    if (freq == 3) {
+        return 0;
+    }
+    return 1;
+}
+function fomatDate (d1,d2,d3,delimiter) {
+  var addZero = function(d){
+    return d < 10 ? '0' + d : d;
+  }
+  return [addZero(d1),addZero(d2),addZero(d3)].join(delimiter);
 }
 </script>
 <script>
