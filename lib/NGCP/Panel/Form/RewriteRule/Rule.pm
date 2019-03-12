@@ -151,7 +151,7 @@ sub validate {
         $self->field('replace_pattern')->add_error("Spaces are not allowed in replacement pattern");
     }
 
-    if ( $s =~ /\\\w/i ) {
+    if ( $s =~ /\\[0-9]/i ) { #[^wsdtnrb\[\]\(\)\{\}.+*?,]
         $self->field('match_pattern')->add_error("Ambiguous escape of non special characters");
     }
 
