@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9a0c5dc1_adf9b7ca",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-03-13T15:03:03Z",
+      "side": 1,
+      "message": "there might be way more places to check.\nyou can eg. walk through \"cdr_export_sclidui_rwrs\" occurences.",
+      "revId": "91ae1cfa13f5faa40ab942d6a8b7e797149fa0fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a0c5dc1_2d05c7c1",
         "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
         "patchSetId": 1
