@@ -35,7 +35,7 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voip_sound_files')->search(
-        {}, 
+        {},
         {
             prefetch => ['handle', 'set'],
         });
@@ -131,8 +131,7 @@ sub update_item {
 
     $resource->{loopplay} = ($resource->{loopplay} eq "true" || is_int($resource->{loopplay}) && $resource->{loopplay}) ? 1 : 0;
 
-
-    my $set_rs = $c->model('DB')->resultset('voip_sound_sets')->search({ 
+    my $set_rs = $c->model('DB')->resultset('voip_sound_sets')->search({
         id => $resource->{set_id},
     });
     if($c->user->roles eq "admin") {
@@ -145,11 +144,11 @@ sub update_item {
     unless($set) {
         $c->log->error("invalid set_id '$$resource{set_id}'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Sound set does not exist");
-        last;
+        return;
     }
 
     my $handle_rs = $c->model('DB')->resultset('voip_sound_handles')->search({
-        'me.name' => $resource->{handle},   
+        'me.name' => $resource->{handle},
     });
     my $handle;
     if($set->contract_id) {
@@ -186,13 +185,17 @@ sub update_item {
     } catch ($e) {
         $c->log->error("Failed to clear audio cache for " . $group_name . " at appserver",);
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to clear audio cache.');
-        last;
+        return;
     }
 
     $resource->{codec} = 'WAV';
     $resource->{data} = $recording;
     $resource = $self->transcode_data($c, 'WAV', $resource);
-    last unless($resource);
+    unless ($resource) {
+        $c->log->error("Failed to transcode sound file",);
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to transcode sound file');
+        return;
+    }
     delete $resource->{handle};
 
     try {
