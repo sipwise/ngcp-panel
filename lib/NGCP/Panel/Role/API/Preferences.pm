@@ -236,6 +236,23 @@ sub get_resource {
                 $processed = 1;
                 last SWITCH;
             };
+            /^header_rule_set$/ && do {
+                # TODO: not applicable for domains, but for subs, check for contract_id!
+                do { $processed = 1; last SWITCH; }
+                    if($attr && !$self->_check_profile($c, $_, \%profile_attrs));
+
+                my $hrs = $c->model('DB')->resultset('voip_header_rule_sets')->find({
+                    id => $pref->value,
+                });
+                if($hrs) {
+                    $resource->{$pref->attribute->attribute} = $hrs->name;
+                } else {
+                    $c->log->error("no header rule set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, although it's stored in preference id ".$pref->id);
+                    # let it slip through
+                }
+                $processed = 1;
+                last SWITCH;
+            };
             # default
             if($attr && !$profile_attrs{$pref->attribute->id}) {
                 $processed = 1; last SWITCH;
@@ -801,11 +818,18 @@ sub update_item {
                         name => $resource->{$pref},
                         reseller_id => $reseller_id,
                     });
-                    unless($hdr_set) {
+                    unless ($hdr_set) {
                         $c->log->error("no header rule set '".$resource->{$pref}."' for reseller id $reseller_id found");
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown header_rule_set '".$resource->{$pref}."'");
                         return;
                     }
+                    my $rs = $self->get_preference_rs($c, $type, $elem, $pref);
+                    if ($rs->first) {
+                        $rs->first->update({ value => $hdr_set->id });
+                    } else {
+                        $rs->create({ value => $hdr_set->id });
+                    }
+
                     last SWITCH;
                 };
                 /^(adm_)?(cf_)?ncos$/ && do {
