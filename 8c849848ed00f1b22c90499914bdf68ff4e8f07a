@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0c5dc1_c2895acc",
+        "filename": "share/templates/timeset/event_list.tt",
+        "patchSetId": 8
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-13T10:42:10Z",
+      "side": 1,
+      "message": "rename to just \"upload\", no point in having \"even_upload\" and \"download\"",
+      "range": {
+        "startLine": 216,
+        "startChar": 88,
+        "endLine": 216,
+        "endChar": 100
+      },
+      "revId": "8c849848ed00f1b22c90499914bdf68ff4e8f07a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_029f7204",
+        "filename": "share/templates/timeset/event_list.tt",
+        "patchSetId": 8
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-13T10:42:10Z",
+      "side": 1,
+      "message": "can be removed to have it unified \nas \nUpload iCalendar\nDownload iCalendar",
+      "range": {
+        "startLine": 216,
+        "startChar": 44,
+        "endLine": 216,
+        "endChar": 51
+      },
+      "revId": "8c849848ed00f1b22c90499914bdf68ff4e8f07a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
