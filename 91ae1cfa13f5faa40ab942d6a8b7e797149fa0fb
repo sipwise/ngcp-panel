@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a0c5dc1_2d2ca749",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-13T15:07:43Z",
+      "side": 1,
+      "message": "so far it\u0027s only considering this preferences part as it\u0027s the only one I missed so far, the other \"Preferences\" related parts are covered correctly, but surely worth to double check if there is something else.",
+      "parentUuid": "9a0c5dc1_adf9b7ca",
+      "revId": "91ae1cfa13f5faa40ab942d6a8b7e797149fa0fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a0c5dc1_2d05c7c1",
         "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
         "patchSetId": 1
