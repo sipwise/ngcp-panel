@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0c5dc1_2d05c7c1",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-13T15:00:03Z",
+      "side": 1,
+      "message": "test",
+      "range": {
+        "startLine": 813,
+        "startChar": 47,
+        "endLine": 813,
+        "endChar": 59
+      },
+      "revId": "91ae1cfa13f5faa40ab942d6a8b7e797149fa0fb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
