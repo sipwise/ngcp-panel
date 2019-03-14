@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0c5dc1_e87b1d7a",
+        "filename": "share/templates/helpers/datatables.tt",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-14T12:00:51Z",
+      "side": 1,
+      "message": "can we preserve our coding style ?\n[% IF ...\ninstead of\n[%IF\nand on the other relevant places of the change",
+      "range": {
+        "startLine": 111,
+        "startChar": 20,
+        "endLine": 111,
+        "endChar": 24
+      },
+      "revId": "1230c88c603a798143e40367771eeae201f21251",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
