@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a0c5dc1_88cb8172",
+        "filename": "lib/NGCP/Panel/Controller/TimeSet.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-03-14T13:09:17Z",
+      "side": 1,
+      "message": "these columns are hidden and are necessary for event description generation",
+      "parentUuid": "9a0c5dc1_a8964592",
+      "range": {
+        "startLine": 265,
+        "startChar": 8,
+        "endLine": 266,
+        "endChar": 73
+      },
+      "revId": "1230c88c603a798143e40367771eeae201f21251",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a0c5dc1_e87b1d7a",
         "filename": "share/templates/helpers/datatables.tt",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2019-03-14T12:00:51Z",
       "side": 1,
       "message": "can we preserve our coding style ?\n[% IF ...\ninstead of\n[%IF\nand on the other relevant places of the change",
+      "range": {
+        "startLine": 111,
+        "startChar": 20,
+        "endLine": 111,
+        "endChar": 24
+      },
+      "revId": "1230c88c603a798143e40367771eeae201f21251",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_c89df95a",
+        "filename": "share/templates/helpers/datatables.tt",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-03-14T13:09:17Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "9a0c5dc1_e87b1d7a",
       "range": {
         "startLine": 111,
         "startChar": 20,
