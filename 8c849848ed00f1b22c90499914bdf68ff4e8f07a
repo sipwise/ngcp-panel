@@ -45,6 +45,30 @@
       "revId": "8c849848ed00f1b22c90499914bdf68ff4e8f07a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_ed432f6b",
+        "filename": "share/templates/timeset/event_list.tt",
+        "patchSetId": 8
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-03-14T07:51:36Z",
+      "side": 1,
+      "message": "Here we will get exactly events from ics, we will ignore name of the calendar. When we edit calendar infousing upload, we also will take name from ics, if form field is empty.\n\nSo I wanted to show this difference.\n\nThis difference between uploads was additional reason for me to keep Download functionality on the top level.",
+      "parentUuid": "9a0c5dc1_029f7204",
+      "range": {
+        "startLine": 216,
+        "startChar": 44,
+        "endLine": 216,
+        "endChar": 51
+      },
+      "revId": "8c849848ed00f1b22c90499914bdf68ff4e8f07a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
