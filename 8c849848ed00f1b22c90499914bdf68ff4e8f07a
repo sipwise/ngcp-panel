@@ -69,6 +69,30 @@
       "revId": "8c849848ed00f1b22c90499914bdf68ff4e8f07a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_ad5e5743",
+        "filename": "share/templates/timeset/event_list.tt",
+        "patchSetId": 8
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-03-14T08:03:24Z",
+      "side": 1,
+      "message": "But it is exactly events upload, it doesn\u0027t change timeset entry, but just timeset_periods. Full calendar upload, with calendar name was originally implemented as upload, but later I combined it with edit, this is why there isn\u0027t upload method.",
+      "parentUuid": "9a0c5dc1_c2895acc",
+      "range": {
+        "startLine": 216,
+        "startChar": 88,
+        "endLine": 216,
+        "endChar": 100
+      },
+      "revId": "8c849848ed00f1b22c90499914bdf68ff4e8f07a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
