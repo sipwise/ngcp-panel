@@ -16,6 +16,24 @@
       "revId": "83521b3b700b370a5e7cc3ed125211c34170d4d7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_02cf6db1",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-15T16:40:24Z",
+      "side": 1,
+      "message": "as it\u0027s the attribute, the name of it is \u0027header_rule_set\u0027 in voiop_preferences, so all good here :)",
+      "parentUuid": "9a0c5dc1_02f88de4",
+      "revId": "83521b3b700b370a5e7cc3ed125211c34170d4d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
