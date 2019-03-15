@@ -34,6 +34,41 @@
       "revId": "83521b3b700b370a5e7cc3ed125211c34170d4d7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_225831fa",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-03-15T16:56:50Z",
+      "side": 1,
+      "message": "but this means if i edit the header_rule_set\u0027s name,\ni break all preferences that refer to the old name",
+      "parentUuid": "9a0c5dc1_02cf6db1",
+      "revId": "83521b3b700b370a5e7cc3ed125211c34170d4d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_620509c1",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-03-15T16:56:50Z",
+      "side": 1,
+      "message": "this same issue seem to exists with these sound_set prefs\n\nthere were numerous \"_id\" pref impelementations before (ncos_id, emergency_container_id etc.). was there a special reason to change it for header_rule sets and soundsets?",
+      "revId": "83521b3b700b370a5e7cc3ed125211c34170d4d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
