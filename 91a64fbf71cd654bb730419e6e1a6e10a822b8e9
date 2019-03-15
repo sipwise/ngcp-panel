@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0c5dc1_2ebc9d6b",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-15T14:47:02Z",
+      "side": 1,
+      "message": "not relevant here, please remove",
+      "range": {
+        "startLine": 240,
+        "startChar": 16,
+        "endLine": 240,
+        "endChar": 88
+      },
+      "revId": "91a64fbf71cd654bb730419e6e1a6e10a822b8e9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_4ea7d14f",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-15T14:47:02Z",
+      "side": 1,
+      "message": "this is most likely not needed, please remove.",
+      "range": {
+        "startLine": 241,
+        "startChar": 16,
+        "endLine": 242,
+        "endChar": 81
+      },
+      "revId": "91a64fbf71cd654bb730419e6e1a6e10a822b8e9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
