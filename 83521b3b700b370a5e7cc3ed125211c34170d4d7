@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "9a0c5dc1_42bfa5d0",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-15T17:55:42Z",
+      "side": 1,
+      "message": "no, because internally the id is stored in voip_preferences. so if you change header rule set\u0027s name and then go to subscriber preferences you will see the new name there.",
+      "parentUuid": "9a0c5dc1_225831fa",
+      "revId": "83521b3b700b370a5e7cc3ed125211c34170d4d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a0c5dc1_620509c1",
         "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
         "patchSetId": 6
@@ -66,6 +84,24 @@
       "writtenOn": "2019-03-15T16:56:50Z",
       "side": 1,
       "message": "this same issue seem to exists with these sound_set prefs\n\nthere were numerous \"_id\" pref impelementations before (ncos_id, emergency_container_id etc.). was there a special reason to change it for header_rule sets and soundsets?",
+      "revId": "83521b3b700b370a5e7cc3ed125211c34170d4d7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_62baa9e3",
+        "filename": "lib/NGCP/Panel/Role/API/Preferences.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-15T17:55:42Z",
+      "side": 1,
+      "message": "well, in rewrite_rules the _dpid part is used in preferences, the only reason for that is they are replicated and used in kamailio that way (by _dpid). header rule sets do not need that and therefore, only its id is stored. it is only in /subscriber/preferences where you assign it by name, in the /api/headerrulesets (as well as in /api/rewriterulesets) it\u0027s all by id.",
+      "parentUuid": "9a0c5dc1_620509c1",
       "revId": "83521b3b700b370a5e7cc3ed125211c34170d4d7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
