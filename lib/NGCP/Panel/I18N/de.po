@@ -1991,10 +1991,6 @@ msgstr "Kunde nicht gefunden"
 msgid "Customers"
 msgstr "Kunden"
 
-#: share/templates/timeset/switch_end_control.tt
-msgid "Customize.."
-msgstr ""
-
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "DB Statistics"
 msgstr ""
@@ -2422,7 +2418,7 @@ msgstr ""
 
 #: share/templates/customer/details.tt share/templates/device/list.tt
 #: share/templates/invoice/invoice_list.tt share/templates/reseller/details.tt
-#: share/templates/subscriber/preferences.tt share/templates/timeset/list.tt
+#: share/templates/subscriber/preferences.tt
 msgid "Download"
 msgstr "Runterladen"
 
@@ -2443,6 +2439,10 @@ msgstr "PCAP runterladen"
 
 #: share/templates/peeringoverview/list.tt
 msgid "Download as CSV"
+msgstr ""
+
+#: share/templates/timeset/event_list.tt
+msgid "Download iCalendar"
 msgstr ""
 
 #: share/templates/billing/list.tt
@@ -2733,10 +2733,6 @@ msgstr "Ende"
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Lnp.pm
 msgid "End Date"
 msgstr "End-Datum"
-
-#: share/templates/timeset/switch_end_control.tt
-msgid "Endless event"
-msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid ""
@@ -5674,6 +5670,7 @@ msgid "No such voicemail file."
 msgstr "Sprachnachricht nicht gefunden."
 
 #: share/templates/customer/details.tt
+#: share/templates/timeset/switch_end_control.tt
 msgid "None"
 msgstr ""
 
@@ -6883,7 +6880,8 @@ msgstr ""
 msgid "Rule"
 msgstr "Regel"
 
-#: share/templates/header/set_list.tt share/templates/rewrite/set_list.tt
+#: lib/NGCP/Panel/Controller/TimeSet.pm share/templates/header/set_list.tt
+#: share/templates/rewrite/set_list.tt
 msgid "Rules"
 msgstr "Regeln"
 
@@ -7202,6 +7200,10 @@ msgstr "Session-Timer Refresh-Intervall"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session-Timer Refresh Method"
 msgstr "Session-Timer Refresh-Methode"
+
+#: share/templates/timeset/switch_end_control.tt
+msgid "Set"
+msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "Set Cash Balance"
@@ -8299,10 +8301,6 @@ msgstr "Zeit"
 msgid "Time Set"
 msgstr "Zeit-Set"
 
-#: lib/NGCP/Panel/Controller/TimeSet.pm
-msgid "Time Set #"
-msgstr ""
-
 #: share/templates/timeset/event_list.tt
 msgid "Time Set Event"
 msgstr ""
@@ -8311,6 +8309,11 @@ msgstr ""
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Time Sets"
 msgstr "Zeit-Sets"
+
+#. (timeset.name)
+#: share/templates/timeset/event_list.tt
+msgid "Time set \"%1\" - Events"
+msgstr ""
 
 #: share/templates/reseller/details.tt
 msgid "Time sets"
@@ -8920,6 +8923,10 @@ msgstr ""
 msgid "any number"
 msgstr ""
 
+#: share/templates/timeset/event_list.tt
+msgid "at"
+msgstr ""
+
 #: share/templates/customer/details.tt
 msgid "billing profile default"
 msgstr "Verrechnungs-Profil Standard"
@@ -9001,6 +9008,10 @@ msgstr ""
 msgid "foreign calls"
 msgstr "fremde Anrufe"
 
+#: share/templates/timeset/event_list.tt
+msgid "from"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "from_email"
 msgstr ""
@@ -9019,10 +9030,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "hours"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/TimeSet.pm
-msgid "iCal"
 msgstr ""
 
 #: share/templates/subscriber/webphone.tt
@@ -9131,6 +9138,7 @@ msgid "time of incident:"
 msgstr "Zeitpunkt des Vorfalls:"
 
 #: share/templates/subscriber/preferences.tt
+#: share/templates/timeset/event_list.tt
 msgid "to"
 msgstr ""
 
