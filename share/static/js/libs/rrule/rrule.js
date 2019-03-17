@@ -2858,10 +2858,10 @@ var totext_ToText = /** @class */ (function () {
         if (this.bymonthday) {
             this._bymonthday();
         }
-        else if (this.byweekday) {
+        if (this.byweekday) {
             this._byweekday();
         }
-        else if (this.origOptions.byhour) {
+        if (this.origOptions.byhour) {
             this._byhour();
         }
     };
