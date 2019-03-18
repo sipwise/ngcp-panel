@@ -417,9 +417,12 @@
     helper.identifier = 'phonebook';
     helper.messages = messages;
     helper.length_change = 1;
+    helper.create_flag = phonebook_create_flag;
+    helper.edit_flag = phonebook_edit_flag;
+    helper.form_object = form;
     helper.dt_columns = phonebook_dt_columns;
     helper.ajax_uri = c.uri_for_action('/reseller/phonebook_ajax', [ c.req.captures.0 ]);
-    helper.tmpuri = c.uri_for(reseller.first.id, 'phonebook');
+    helper.tmpuri = c.uri_for_action('/reseller/phonebook_root', [ c.req.captures.0 ]);
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
