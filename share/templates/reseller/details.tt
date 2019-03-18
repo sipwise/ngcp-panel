@@ -418,9 +418,12 @@
     helper.identifier = 'phonebook';
     helper.messages = messages;
     helper.length_change = 1;
+    helper.create_flag = phonebook_create_flag;
+    helper.edit_flag = phonebook_edit_flag;
+    helper.form_object = form;
     helper.dt_columns = phonebook_dt_columns;
     helper.ajax_uri = c.uri_for_action('/reseller/phonebook_ajax', [ c.req.captures.0 ]);
-    helper.tmpuri = c.uri_for(reseller.first.id, 'phonebook');
+    helper.tmpuri = c.uri_for_action('/reseller/phonebook_root', [ c.req.captures.0 ]);
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
@@ -453,12 +456,11 @@
     helper.dt_columns = timeset_dt_columns;
     helper.messages = messages;
     helper.close_target = close_target;
-    helper.create_flag = create_flag;
-    helper.edit_flag = edit_flag;
+    helper.create_flag = timeset_create_flag;
+    helper.edit_flag = timeset_edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/reseller/timeset_ajax', [c.req.captures.0] );
-    helper.tmpuri = c.uri_for(reseller.first.id, 'timeset');
-
+    helper.tmpuri = c.uri_for_action('/reseller/timeset_root', [ c.req.captures.0 ]);
     UNLESS c.user.read_only;
         helper.dt_buttons = [
             { name = c.loc('Events'), uri = "/timeset/'+full.id+'/event", class = 'btn-small btn-tertiary', icon = 'icon-th-list' },
