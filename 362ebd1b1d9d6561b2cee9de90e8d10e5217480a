@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0c5dc1_25203b9b",
+        "filename": "lib/NGCP/Panel/Controller/Sound.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-18T15:01:44Z",
+      "side": 1,
+      "message": "perhaps this should be inside \"if (defined $upload)\" so that we only create the file if there is actual content for it.",
+      "range": {
+        "startLine": 523,
+        "startChar": 8,
+        "endLine": 524,
+        "endChar": 31
+      },
+      "revId": "362ebd1b1d9d6561b2cee9de90e8d10e5217480a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
