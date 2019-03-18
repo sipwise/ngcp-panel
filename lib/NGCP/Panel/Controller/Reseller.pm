@@ -416,7 +416,14 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
 }
 
-sub details :Chained('base') :PathPart('details') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+sub base_details :Chained('base') :PathPart('details') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+    my ($self, $c) = @_;
+
+    $c->stash(template => 'reseller/details.tt');
+    return;
+}
+
+sub details :Chained('base_details') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
 
     $c->stash(template => 'reseller/details.tt');
@@ -770,7 +777,11 @@ sub phonebook_ajax :Chained('base') :PathPart('phonebook/ajax') :Args(0) :Does(A
     $c->detach( $c->view("JSON") );
 }
 
-sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub phonebook_root :Chained('base_details') :PathPart('phonebook') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+sub phonebook_create :Chained('base_details') :PathPart('phonebook/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $reseller = $c->stash->{reseller}->first;
@@ -814,12 +825,12 @@ sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) :Do
 
     $c->stash(
         close_target => $c->uri_for_action("/reseller/details", [$reseller->id]),
-        create_flag => 1,
+        phonebook_create_flag => 1,
         form => $form
     );
 }
 
-sub phonebook_base :Chained('base') :PathPart('phonebook') :CaptureArgs(1) {
+sub phonebook_base :Chained('base_details') :PathPart('phonebook') :CaptureArgs(1) {
     my ($self, $c, $phonebook_id) = @_;
 
     unless($phonebook_id && is_int($phonebook_id)) {
@@ -888,7 +899,7 @@ sub phonebook_edit :Chained('phonebook_base') :PathPart('edit') :Args(0) :Does(A
 
     $c->stash(
         close_target => $c->uri_for_action("/reseller/details", [$reseller->id]),
-        edit_flag => 1,
+        phonebook_edit_flag => 1,
         form => $form
     );
 }
@@ -918,7 +929,7 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) :Do
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
 }
 
-sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Args(0) {
+sub phonebook_upload_csv :Chained('base_details') :PathPart('phonebook_upload_csv') :Args(0) {
     my ($self, $c) = @_;
 
     my $reseller = $c->stash->{reseller}->first;
@@ -929,8 +940,10 @@ sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Arg
         $c->uri_for_action('/reseller/details',[$reseller->id])
     );
 
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
+    $c->stash(
+        phonebook_create_flag => 1,
+        form => $form
+    );
     return;
 }
 
@@ -954,7 +967,11 @@ sub timeset_ajax :Chained('base') :PathPart('reseller/ajax') :Args(0) :Does(ACL)
     $c->detach( $c->view("JSON") );
 }
 
-sub timeset_create :Chained('base') :PathPart('timeset/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub timeset_root :Chained('base_details') :PathPart('timeset') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+sub timeset_create :Chained('base_details') :PathPart('timeset/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $reseller = $c->stash->{reseller}->first;
@@ -1007,12 +1024,12 @@ sub timeset_create :Chained('base') :PathPart('timeset/create') :Args(0) :Does(A
 
     $c->stash(
         close_target => $c->uri_for_action("/reseller/details", [$reseller->id]),
-        create_flag => 1,
+        timeset_create_flag => 1,
         form => $form
     );
 }
 
-sub timeset_base :Chained('base') :PathPart('timeset') :CaptureArgs(1) {
+sub timeset_base :Chained('base_details') :PathPart('timeset') :CaptureArgs(1) {
     my ($self, $c, $timeset_id) = @_;
 
     unless($timeset_id && is_int($timeset_id)) {
@@ -1097,7 +1114,7 @@ sub timeset_edit :Chained('timeset_base') :PathPart('edit') :Args(0) :Does(ACL) 
 
     $c->stash(
         close_target => $c->uri_for_action("/reseller/details", [$reseller->id]),
-        edit_flag => 1,
+        timeset_edit_flag => 1,
         form => $form
     );
 }

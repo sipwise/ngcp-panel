@@ -2441,6 +2441,10 @@ sub phonebook_ajax :Chained('base') :PathPart('phonebook/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub phonebook_root :Chained('base_restricted') :PathPart('phonebook') :Args(0) {
+    my ($self, $c) = @_;
+}
+
 sub phonebook_create :Chained('base_restricted') :PathPart('phonebook/create') :Args(0) {
     my ($self, $c) = @_;
 
@@ -2485,7 +2489,7 @@ sub phonebook_create :Chained('base_restricted') :PathPart('phonebook/create') :
 
     $c->stash(
         close_target => $c->uri_for_action("/customer/details", [$contract->id]),
-        create_flag => 1,
+        phonebook_create_flag => 1,
         form => $form
     );
 }
@@ -2559,7 +2563,7 @@ sub phonebook_edit :Chained('phonebook_base') :PathPart('edit') :Args(0) {
 
     $c->stash(
         close_target => $c->uri_for_action("/customer/details", [$contract->id]),
-        edit_flag => 1,
+        phonebook_edit_flag => 1,
         form => $form
     );
 }
@@ -2589,7 +2593,7 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
 }
 
-sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Args(0) {
+sub phonebook_upload_csv :Chained('base_restricted') :PathPart('phonebook_upload_csv') :Args(0) {
     my ($self, $c) = @_;
 
     my $contract = $c->stash->{contract};
@@ -2600,8 +2604,10 @@ sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Arg
         $c->uri_for_action('/customer/details',[$contract->id])
     );
 
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
+    $c->stash(
+        phonebook_create_flag => 1,
+        form => $form,
+    );
     return;
 }
 
