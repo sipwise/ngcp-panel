@@ -343,11 +343,14 @@ function process_pbx_items(moveId,direction){
 [%
     helper.name = c.loc('Phonebook');
     helper.identifier = 'phonebook';
+    helper.create_flag = phonebook_create_flag;
+    helper.edit_flag = phonebook_edit_flag;
+    helper.form_object = form;
     helper.messages = messages;
     helper.length_change = 1;
     helper.dt_columns = phonebook_dt_columns;
     helper.ajax_uri = c.uri_for_action('/subscriber/phonebook_ajax', [ c.req.captures.0 ]);
-    helper.tmpuri = c.uri_for(subscriber.id, 'phonebook');
+    helper.tmpuri = c.uri_for_action('/subscriber/phonebook_root', [ c.req.captures.0 ]);
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
