@@ -5183,7 +5183,11 @@ sub phonebook_ajax :Chained('base') :PathPart('phonebook/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) {
+sub phonebook_root :Chained('master') :PathPart('phonebook') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+sub phonebook_create :Chained('master') :PathPart('phonebook/create') :Args(0) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
@@ -5228,12 +5232,12 @@ sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) {
 
     $c->stash(
         close_target => $c->uri_for_action("/subscriber/details", [$subscriber->id]),
-        create_flag => 1,
+        phonebook_create_flag => 1,
         form => $form
     );
 }
 
-sub phonebook_base :Chained('base') :PathPart('phonebook') :CaptureArgs(1) {
+sub phonebook_base :Chained('master') :PathPart('phonebook') :CaptureArgs(1) {
     my ($self, $c, $phonebook_id) = @_;
 
     unless($phonebook_id && is_int($phonebook_id)) {
@@ -5303,7 +5307,7 @@ sub phonebook_edit :Chained('phonebook_base') :PathPart('edit') :Args(0) {
 
     $c->stash(
         close_target => $c->uri_for_action("/subscriber/details", [$subscriber->id]),
-        edit_flag => 1,
+        phonebook_edit_flag => 1,
         form => $form
     );
 }
@@ -5333,7 +5337,7 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/subscriber/details", [$subscriber->id]));
 }
 
-sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Args(0) {
+sub phonebook_upload_csv :Chained('master') :PathPart('phonebook_upload_csv') :Args(0) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
@@ -5344,8 +5348,10 @@ sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Arg
         $c->uri_for_action('/subscriber/details',[$subscriber->id])
     );
 
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
+    $c->stash(
+        phonebook_create_flag => 1,
+        form => $form
+    );
     return;
 }
 
