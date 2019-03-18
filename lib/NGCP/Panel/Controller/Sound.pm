@@ -483,7 +483,7 @@ sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
 
-    my $res = $c->stash->{files_rs}->find_or_create(handle_id => $handle_id);
+    my $res = $c->stash->{files_rs}->find_or_new(handle_id => $handle_id);
     unless(defined $res ) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
@@ -520,6 +520,8 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
     );
 
     if($posted && $form->validated) {
+        # only if the form is validated and a POST is issued, insert the sound file in the db
+        $file_result->insert();
         if (defined $upload) {
             my $soundfile = eval { $upload->slurp };
             my $filename = eval { $upload->filename };
