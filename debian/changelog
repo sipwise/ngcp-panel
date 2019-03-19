@@ -1,3 +1,12 @@
+ngcp-panel (7.2.1.4+0~mr7.2.1.4) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [3358765] TT#52989 Fix device-id handling in panel UI
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 Mar 2019 13:05:39 +0100
+
 ngcp-panel (7.2.1.3+0~mr7.2.1.3) unstable; urgency=medium
 
   [ Andreas Granig ]
