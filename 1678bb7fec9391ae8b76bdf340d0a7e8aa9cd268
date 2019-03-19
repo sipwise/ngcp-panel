@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0c5dc1_5860b235",
+        "filename": "lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-03-19T13:49:44Z",
+      "side": 1,
+      "message": "would then only overload this for Snom.pm",
+      "revId": "1678bb7fec9391ae8b76bdf340d0a7e8aa9cd268",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
