@@ -9,7 +9,7 @@ sub rpc_server_params{
     my $self = shift;
     my $cfg  = {
         proto    => 'https',
-        host     => 'provisioning.snom.com',
+        host     => 'secure-provisioning.snom.com',
         port     => '8083',
         path     => '/xmlrpc',
     };
