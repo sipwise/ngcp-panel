@@ -110,7 +110,7 @@
                             <td>
                                 [% FOR num IN subscriber.voip_numbers.all -%]
                                     [% NEXT IF num.id == subscriber.primary_number.id -%]
-                                    [% num.cc %] [% num.ac %] [% num.sn %]<br/>
+                                    [% num.cc %] [% num.ac %] [% num.sn %] [% IF num.voip_dbalias.is_devid %]<span class="icon-phone"></span> [% num.voip_dbalias.devid_alias.length ? "(" _ num.voip_dbalias.devid_alias _ ")" : "" %] [% END %]<br/>
                                 [% END -%]
                             </td>
                         </tr>
