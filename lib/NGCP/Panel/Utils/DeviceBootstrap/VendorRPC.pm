@@ -38,6 +38,40 @@ has 'unregister_content' => (
     accessor => '_unregister_content',
 );
 
+has '_ua' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+
+        my $c = $self->params->{c};
+        my $vendor = lc($self->params->{vendor} // '');
+        my ($verify_ssl, $verify_ssl_hostname) = (1,1);
+        if ($c && $vendor) {
+            my $autoprov_config = $c->config->{deviceprovisioning};
+            if (ref $autoprov_config eq 'HASH') {
+                if ($autoprov_config->{skip_vendor_ssl_verify}) {
+                    if (grep {$_ eq $vendor} split(/\W+/, lc($autoprov_config->{skip_vendor_ssl_verify}))) {
+                        $verify_ssl = 0;
+                    }
+                }
+                if ($autoprov_config->{skip_vendor_ssl_verify_hostname}) {
+                    if (grep {$_ eq $vendor} split(/\W+/, lc($autoprov_config->{skip_vendor_ssl_verify_hostname}))) {
+                        $verify_ssl_hostname = 0;
+                    }
+                }
+            }
+            $c->log->debug("vendor: $vendor; verify_ssl: $verify_ssl; verify_ssl_hostname: $verify_ssl_hostname;");
+        }
+        my $ua = LWP::UserAgent->new(keep_alive => 1);
+        $ua->ssl_opts(
+            SSL_verify_mode => $verify_ssl,
+            verify_hostname => $verify_ssl_hostname,
+        );
+        return $ua;
+    }
+);
+
 sub redirect_server_call{
     my ($self, $action) = @_;
     my $c = $self->params->{c};
@@ -67,13 +101,9 @@ sub rpc_https_call{
     eval {
         local $SIG{ALRM} = sub { die "Connection timeout\n" };
         alarm(25);
-        my $ua = LWP::UserAgent->new;
-        $ua->credentials($cfg->{host}.':'.$cfg->{port}, $cfg->{realm} // '', @$cfg{qw/user password/});
-        $ua->ssl_opts(
-            verify_hostname => 0,
-            SSL_verify_mode => 0,
-        );
+        my $ua = $self->_ua;
         $cfg->{port} //= '';
+        $ua->credentials($cfg->{host}.':'.$cfg->{port}, $cfg->{realm} // '', @$cfg{qw/user password/});
         my $uri = $cfg->{proto}.'://'.$cfg->{host}.($cfg->{port} ? ':' : '').$cfg->{port}.$cfg->{path};
         my $request = POST $uri,
             Content_Type => $cfg->{content_type} // 'text/xml',
