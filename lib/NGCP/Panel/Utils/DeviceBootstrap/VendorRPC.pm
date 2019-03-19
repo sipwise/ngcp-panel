@@ -44,12 +44,30 @@ has '_ua' => (
     default => sub {
         my $self = shift;
 
-        my $cfg = $self->rpc_server_params;
-
+        my $c = $self->params->{c};
+        my $vendor = lc($self->params->{vendor} // '');
+        my ($verify_ssl, $verify_ssl_hostname) = (1,1);
+        if ($c && $vendor) {
+            
+            my $autoprov_config = $c->config->{deviceprovisioning};
+            if (ref $autoprov_config eq 'HASH') {
+                if ($autoprov_config->{skip_vendor_ssl_verify}) {
+                    if (grep {$_ eq $vendor} split(/\W+/, lc($autoprov_config->{skip_vendor_ssl_verify}))) {
+                        $verify_ssl = 0;
+                    }
+                }
+                if ($autoprov_config->{skip_vendor_ssl_verify_hostname}) {
+                    if (grep {$_ eq $vendor} split(/\W+/, lc($autoprov_config->{skip_vendor_ssl_verify_hostname}))) {
+                        $verify_ssl_hostname = 0;
+                    }
+                }
+            }
+            $c->log->debug("vendor: $vendor; verify_ssl: $verify_ssl; verify_ssl_hostname: $verify_ssl_hostname;");
+        }
         my $ua = LWP::UserAgent->new(keep_alive => 1);
         $ua->ssl_opts(
-            verify_hostname => 0,
-            SSL_verify_mode => 0,
+            SSL_verify_mode => $verify_ssl,
+            verify_hostname => $verify_ssl_hostname,
         );
         return $ua;
     }
