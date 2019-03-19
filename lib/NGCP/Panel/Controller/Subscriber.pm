@@ -519,8 +519,6 @@ sub reset_webpassword_nosubscriber :Chained('/') :PathPart('resetwebpassword') :
 sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->log->debug("++++++++++++++++++++ password recovery attempt");
-
     $c->user->logout if($c->user);
 
     my $posted = $c->req->method eq "POST";
@@ -590,7 +588,6 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
             $c->detach('/denied_page');
         }
 
-        $c->log->debug("+++++++++++++++++++++++ successfully recovered subscriber " . $subscriber->username . '@' . $subscriber->domain->domain);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { username => $subscriber->username . '@' . $subscriber->domain->domain },
@@ -4210,7 +4207,6 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
 
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
-    $c->log->error("+++++ getting subscriber location rs");
     my $reg_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs(
         $c, { id => $reg_id },
     );
