@@ -48,8 +48,8 @@ has '_ua' => (
 
         my $ua = LWP::UserAgent->new(keep_alive => 1);
         $ua->ssl_opts(
-            verify_hostname => 0,
-            SSL_verify_mode => 0,
+            verify_hostname => 1,
+            SSL_verify_mode => 1,
         );
         return $ua;
     }
