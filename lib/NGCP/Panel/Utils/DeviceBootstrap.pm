@@ -62,6 +62,7 @@ sub _dispatch{
     }
     return $err;
 }
+
 sub get_devmod_params{
     my($c, $devmod) = @_;
 
@@ -87,6 +88,7 @@ sub get_devmod_params{
         redirect_uri => $devmod->bootstrap_uri,
         redirect_params => $sync_params,
         credentials => $vcredentials,
+        vendor => $devmod->vendor,
     };
     return $params;
 }
