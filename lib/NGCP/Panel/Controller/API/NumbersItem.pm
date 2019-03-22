@@ -203,13 +203,6 @@ sub update_item_model {
     return $item;
 }
 
-sub post_process_hal_resource {
-    my($self, $c, $item, $resource, $form) = @_;
-    $resource->{is_devid} = bool $item->voip_dbalias->is_devid;
-    $resource->{devid_alias} = $item->voip_dbalias->devid_alias;
-    return $resource;
-}
-
 
 1;
 
