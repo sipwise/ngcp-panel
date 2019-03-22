@@ -8,6 +8,7 @@ use parent 'NGCP::Panel::Role::API';
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use NGCP::Panel::Form;
+use JSON::Types;
 
 sub resource_name{
     return 'numbers';
@@ -43,9 +44,9 @@ sub _item_rs {
         'me.subscriber_id' => { '!=' => undef },
         'subscriber.status' => { '!=' => 'terminated' },
     },{
-        '+select' => [\'if(me.id=subscriber.primary_number_id,1,0)'],
-        '+as' => ['is_primary'],
-        join => 'subscriber',
+        '+select' => [\'if(me.id=subscriber.primary_number_id,1,0)','voip_dbalias.is_devid','voip_dbalias.devid_alias'],
+        '+as' => ['is_primary','is_devid','devid_alias'],
+        join => ['subscriber', 'voip_dbalias'],
     });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
@@ -85,6 +86,13 @@ sub post_process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
     if($c->user->roles eq "admin") {
         $resource->{reseller_id} = int($item->reseller_id);
+    }
+    if ($item->voip_dbalias) {
+        $resource->{is_devid} = bool $item->voip_dbalias->is_devid;
+        $resource->{devid_alias} = $item->voip_dbalias->devid_alias;
+    } else {
+        $resource->{is_devid} = JSON::false;
+        $resource->{devid_alias} = undef;
     }
     return $resource;
 }
