@@ -22,6 +22,13 @@ sub _item_rs {
         as => [qw/id handle group/],
         join => 'group',
     });
+    if ($c->user->roles eq 'subscriberadmin' ||
+        $c->user->roles eq 'subscriber') {
+
+        $item_rs = $item_rs->search({
+                expose_to_customer => 1,
+        });
+    }
     return $item_rs;
 }
 
