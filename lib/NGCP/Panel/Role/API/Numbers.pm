@@ -43,9 +43,9 @@ sub _item_rs {
         'me.subscriber_id' => { '!=' => undef },
         'subscriber.status' => { '!=' => 'terminated' },
     },{
-        '+select' => [\'if(me.id=subscriber.primary_number_id,1,0)'],
-        '+as' => ['is_primary'],
-        join => 'subscriber',
+        '+select' => [\'if(me.id=subscriber.primary_number_id,1,0)','voip_dbalias.is_devid','voip_dbalias.devid_alias'],
+        '+as' => ['is_primary','is_devid','devid_alias'],
+        join => ['subscriber', 'voip_dbalias'],
     });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
