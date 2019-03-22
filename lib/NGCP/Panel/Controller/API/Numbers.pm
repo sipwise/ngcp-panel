@@ -49,7 +49,13 @@ sub query_params {
         {
             param => 'subscriber_id',
             description => 'Filter for numbers assigned to a specific subscriber.',
-            query_type => 'string_eq',
+            #query_type => 'string_eq',#need to use full query spec due to the "me." absence
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'me.subscriber_id' => $q };
+                },
+            },
         },
         {
             param => 'ac',

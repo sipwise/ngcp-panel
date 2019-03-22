@@ -4,6 +4,7 @@ use warnings;
 use threads;
 use Test::Collection;
 use Test::FakeData;
+use JSON;
 use Test::More;
 use Data::Dumper;
 use Clone qw/clone/;
@@ -13,6 +14,10 @@ use Clone qw/clone/;
 my $test_machine = Test::Collection->new(
     name => 'numbers',
 );
+$test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS)};
+$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH)};
+
+
 my $fake_data = Test::FakeData->new;
 
 $fake_data->set_data_from_script({
@@ -29,6 +34,40 @@ $fake_data->set_data_from_script({
 my $fake_data_processed = $fake_data->process('numbers');
 $test_machine->DATA_ITEM_STORE($fake_data_processed);
 $test_machine->form_data_item();
+
+my ($res,$content,$req);
+
+my $subscriber = $test_machine->get_item_hal('subscribers', '/api/subscribers/'.$test_machine->DATA_ITEM->{subscriber_id}, 1);
+($res,$content,$req) = $test_machine->request_patch( [ { 
+    op => 'replace', 
+    path => '/alias_numbers', 
+    value => [
+        {'cc' => '111'.seq(),'ac' => '222','sn' => '444'.time(),},
+        {'cc' => '111'.seq(),'ac' => '222','sn' => '444'.time(),},
+        {'cc' => '111'.seq(),'ac' => '222','sn' => '444'.time(),},
+    ] } ], $subscriber->{location} );
+$test_machine->http_code_msg(200, "Check patch alias_numbers", $res, $content);
+my $number_aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$test_machine->DATA_ITEM->{subscriber_id}, 1)->{collection};
+my $number_primary = $test_machine->get_item_hal('numbers', '/api/numbers/?type=primary&subscriber_id='.$test_machine->DATA_ITEM->{subscriber_id}, 1);
+
+$test_machine->check_bundle();
+$test_machine->check_get2put(  {location => $number_aliases->[0]->{location}});
+$test_machine->check_patch2get({location => $number_aliases->[0]->{location}});
+
+$test_machine->check_patch2get({
+        location => $number_aliases->[0]->{location}, 
+        content => [
+            {'op' => 'replace', 'path' => '/is_devid', 'value' => JSON::true },
+            {'op' => 'replace', 'path' => '/devid_alias', 'value' => '000123456'},
+        ],
+    });
+
+#Two tests below will fail with error: Unprocessable Entity: Cannot reassign primary number, already at subscriber 357
+#$test_machine->check_get2put(  {location => $number_primary->{location}});
+#$test_machine->check_patch2get({location => $number_primary->{location}}, undef, {
+##we can exclude subscriber_id from patch, but anyway old_resource will provide it
+#   patch_exclude_fields => ['subscriber_id'],
+#});
 
 {
     my $ticket = '32913';
