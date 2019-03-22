@@ -1678,7 +1678,9 @@ sub check_patch2get{
         $params->{compare_cb}->($patch_out,$get_out);
     }
     if(!$params->{skip_compare}){
-        is_deeply($get_out->{content}, $patch_out->{content_patched}, "$self->{name}: check_patch2get: check PATCHed item against GETed item");
+        if(!is_deeply($get_out->{content}, $patch_out->{content_patched}, "$self->{name}: check_patch2get: check PATCHed item against GETed item")) {
+            print Dumper ['get_out content',$get_out->{content},'patch_out content_patched',$patch_out->{content_patched}];
+        }
     }
     $get_out->{content}->{id} = $item_id;
     $patch_out->{content_patched}->{id} = $item_id_in;
