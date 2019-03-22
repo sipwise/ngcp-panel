@@ -15,7 +15,8 @@ function toText(data, type, full) {
   var dtstart, dtend, freq;
   var dtstart_obj;
   var dtend_obj;
-  if (data) {
+  var rrule_re = RegExp('[^a-z]RRULE:','i');
+  if (data && rrule_re.test(data)) {
     var r = RRule.rrulestr(data);
     if (r.isFullyConvertibleToText()) {
       rrule_text = r.toText();
