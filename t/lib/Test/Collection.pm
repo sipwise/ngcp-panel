@@ -909,7 +909,7 @@ sub request_get{
     my($self,$uri,$req,$headers) = @_;
     if (!$req) {
         $uri = $self->normalize_uri($uri);
-        $req //= $self->get_request_get($uri,$headers);    
+        $req //= $self->get_request_get($uri,$headers);
     }
     my $res = $self->request($req);
     my $content = $self->get_response_content($res);
@@ -994,9 +994,9 @@ sub check_list_collection{
         is($selfuri, $nexturi, $test_info_prefix."check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
         if(
-            (!$self->NO_COUNT) 
+            (!$self->NO_COUNT)
             && (
-                ( $list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 ) 
+                ( $list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 )
                 || !$self->ALLOW_EMPTY_COLLECTION)){
             ok($list_collection->{total_count} > 0, $test_info_prefix."check 'total_count' of collection");
         }
@@ -1026,9 +1026,9 @@ sub check_list_collection{
         }
 
         my $hal_name = $self->get_hal_name;
-        if((!$self->NO_COUNT) 
+        if((!$self->NO_COUNT)
             && (
-                ($list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 ) 
+                ($list_collection->{total_count} && is_int($list_collection->{total_count}) && $list_collection->{total_count} > 0 )
                 || !$self->ALLOW_EMPTY_COLLECTION) ){
             if (! ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
                 (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), $test_info_prefix."check if 'ngcp:".$self->name."' is array/hash-ref")) {
@@ -1495,7 +1495,7 @@ sub check_patch2get{
     delete $get_in->{ignore_fields} if ref $get_in eq 'HASH';
     delete $patch_in->{ignore_fields} if ref $patch_in eq 'HASH';
 
-    $patch_out->{content_in} = ref $patch_in eq 'HASH' && $patch_in->{content} 
+    $patch_out->{content_in} = ref $patch_in eq 'HASH' && $patch_in->{content}
         ? $patch_in->{content} 
         : ref $patch_in eq 'ARRAY'
             ? $patch_in 
@@ -1505,7 +1505,7 @@ sub check_patch2get{
     $patch_out->{content_patched} = Test::ApplyPatch::apply_patch(clone($patch_out->{content_before}),$patch_out->{content_in});
     @{$patch_out}{qw/response content request/} = $self->request_patch( $patch_out->{content_in}, $patch_uri );
     $self->http_code_msg(200, "check_patch2get: check patch successful",$patch_out->{response}, $patch_out->{content});
-    
+
     #print Dumper $patch_out;
 
     @{$get_out}{qw/response content request/} = $self->check_item_get($get_out->{uri});
@@ -1523,7 +1523,9 @@ sub check_patch2get{
         $params->{compare_cb}->($patch_out,$get_out);
     }
     if(!$params->{skip_compare}){
-        is_deeply($get_out->{content}, $patch_out->{content_patched}, "$self->{name}: check_patch2get: check PATCHed item against GETed item");
+        if(!is_deeply($get_out->{content}, $patch_out->{content_patched}, "$self->{name}: check_patch2get: check PATCHed item against GETed item")) {
+            print Dumper ['get_out content',$get_out->{content},'patch_out content_patched',$patch_out->{content_patched}];
+        }
     }
     $get_out->{content}->{id} = $item_id;
     $patch_out->{content_patched}->{id} = $item_id_in;
@@ -1578,7 +1580,7 @@ sub put_and_get{
     my($put_out,$put_get_out,$get_out);
 
     $params //= ();
-    
+
     $put_in->{uri} //= $put_in->{location};
 
     $get_in->{ignore_fields} //= [];
@@ -1680,7 +1682,7 @@ sub name_prefix{
     my($self,$name) = @_;
     $name //= $self->name;
     return $name ? $name.': ' : '';
-} 
+}
 
 sub get_cached_data{
     my($self) = @_;

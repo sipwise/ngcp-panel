@@ -4,26 +4,26 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
 has_field 'cc' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['Country Code, e.g. 1 for US or 43 for Austria (read-only)'] 
+    type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Country Code, e.g. 1 for US or 43 for Austria (read-only)']
     },
 );
 
 has_field 'ac' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['Area Code, e.g. 212 for NYC or 1 for Vienna (read-only)'] 
+    type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Area Code, e.g. 212 for NYC or 1 for Vienna (read-only)']
     },
 );
 
 has_field 'sn' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['Subscriber Number, e.g. 12345678 (read-only)'] 
+    type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Subscriber Number, e.g. 12345678 (read-only)']
     },
 );
 
