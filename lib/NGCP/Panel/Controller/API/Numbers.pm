@@ -60,6 +60,21 @@ sub query_params {
             },
         },
         {
+            param => 'ac',
+            description => 'Filter for ac field of the number.',
+            query_type => 'string_like',
+        },
+        {
+            param => 'cc',
+            description => 'Filter for cc field c the number.',
+            query_type => 'string_like',
+        },
+        {
+            param => 'sn',
+            description => 'Filter for sn field c the number.',
+            query_type => 'string_like',
+        },
+        {
             param => 'type',
             description => 'Filter for number type, either "primary" or "alias".',
         },
