@@ -2163,6 +2163,7 @@ sub location_create :Chained('base_restricted') :PathPart('location/create') :Ar
     }
 
     $c->stash(
+        description => $c->loc('Location'),
         close_target => $c->uri_for_action("/customer/details", [$contract->id]),
         create_flag => 1,
         form => $form
