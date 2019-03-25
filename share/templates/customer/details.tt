@@ -738,6 +738,7 @@ $(function() {
     helper.messages = messages;
     helper.create_flag = phonebook_create_flag;
     helper.edit_flag = phonebook_edit_flag;
+    helper.close_target = close_target;
     helper.form_object = form;
     helper.length_change = 1;
     helper.dt_columns = phonebook_dt_columns;
