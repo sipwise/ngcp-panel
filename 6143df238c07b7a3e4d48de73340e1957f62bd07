@@ -16,6 +16,24 @@
       "revId": "6143df238c07b7a3e4d48de73340e1957f62bd07",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a016987_0c90dbeb",
+        "filename": "lib/NGCP/Panel/Role/API/SoundFiles.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-03-26T13:54:43Z",
+      "side": 1,
+      "message": "Yes, /usr/bin/sox gets confused otherwise",
+      "parentUuid": "7a016987_8ceccb90",
+      "revId": "6143df238c07b7a3e4d48de73340e1957f62bd07",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
