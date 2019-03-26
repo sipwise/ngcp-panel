@@ -13,15 +13,16 @@ use HTTP::Status qw(:constants);
 use File::Temp qw(tempfile);
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::Generic;
 
 sub transcode_data {
     my ($self, $c, $from_codec, $resource) = @_;
 
-    my ($fh, $filename) = tempfile();
+    my ($fh, $filename) = tempfile(SUFFIX => ".$from_codec");
     print $fh $resource->{data};
     try {
         $resource->{data} = NGCP::Panel::Utils::Sounds::transcode_file(
-            $filename, $from_codec, $resource->{codec},
+            $filename, uc($from_codec), $resource->{codec},
         );
     } catch($e) {
         $c->log->error("failed to transcode file: $e");
@@ -188,9 +189,10 @@ sub update_item {
         return;
     }
 
+    my $from_codec = mime_type_to_extension($c->req->content_type) // '';
     $resource->{codec} = 'WAV';
     $resource->{data} = $recording;
-    $resource = $self->transcode_data($c, 'WAV', $resource);
+    $resource = $self->transcode_data($c, $from_codec, $resource);
     unless ($resource) {
         $c->log->error("Failed to transcode sound file",);
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to transcode sound file');
