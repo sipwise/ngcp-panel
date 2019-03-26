@@ -110,7 +110,7 @@ sub POST :Allow {
     {
         my $recording = $self->get_valid_raw_post_data(
             c => $c, 
-            media_type => 'audio/x-wav',
+            media_type => ['audio/x-wav', 'audio/mpeg', 'audio/ogg'],
         );
         last unless $recording;
         my $resource = $c->req->query_params;
