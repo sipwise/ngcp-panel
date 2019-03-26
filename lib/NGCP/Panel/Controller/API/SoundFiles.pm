@@ -8,6 +8,8 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use JSON;
+use Encode qw (encode_utf8);
 
 
 sub allowed_methods{
@@ -108,12 +110,22 @@ sub POST :Allow {
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $recording = $self->get_valid_raw_post_data(
-            c => $c, 
-            media_type => 'audio/x-wav',
-        );
+        my ($recording, $resource);
+        if ( $c->req->content_type eq 'multipart/form-data' ) {
+            my $upload = $c->req->upload('soundfile');
+            if (defined $upload) {
+                $recording = eval { $upload->slurp };
+            }
+            my $json_raw = encode_utf8($c->req->params->{json});
+            $resource = JSON::from_json($json_raw, { utf8 => 0 });
+        } else {
+            $recording = $self->get_valid_raw_post_data(
+                c => $c,
+                media_type => ['audio/x-wav', 'audio/mpeg', 'audio/ogg'],
+            );
+            $resource = $c->req->query_params;
+        }
         last unless $recording;
-        my $resource = $c->req->query_params;
         $resource->{data} = $recording;
         my $form = $self->get_form($c);
         my $item;
