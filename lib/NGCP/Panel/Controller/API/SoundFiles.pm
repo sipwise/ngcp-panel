@@ -109,8 +109,8 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $recording = $self->get_valid_raw_post_data(
-            c => $c, 
-            media_type => 'audio/x-wav',
+            c => $c,
+            media_type => ['audio/x-wav', 'audio/mpeg', 'audio/ogg'],
         );
         last unless $recording;
         my $resource = $c->req->query_params;
