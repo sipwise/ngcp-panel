@@ -6,5 +6,5 @@ script/*			usr/share/ngcp-panel/script
 script/ngcp_panel_fastcgi.pl	usr/share/ngcp-panel/
 share/*				usr/share/ngcp-panel/
 
-usr/share/man/
-usr/share/perl5/
+usr/share/man/man3/NGCP::*
+usr/share/perl5/NGCP
