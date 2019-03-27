@@ -5097,6 +5097,10 @@ msgid "Loading..."
 msgstr "Cargando..."
 
 #: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Location"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Location does not exist"
 msgstr ""
 
