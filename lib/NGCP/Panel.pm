@@ -40,7 +40,7 @@ for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.c
         last;
     }
 }
-$panel_config //= 'ngcp_panel.conf';
+$panel_config //= 'etc/ngcp_panel.conf';
 
 sub get_panel_config{
     my $config;
