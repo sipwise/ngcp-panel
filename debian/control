@@ -11,9 +11,25 @@ Build-Depends:
 Standards-Version: 3.9.8
 Homepage: https://www.sipwise.com/
 
+Package: libcatalyst-plugin-session-store-redis-perl
+Section: perl
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${perl:Depends},
+ libcatalyst-plugin-session-perl,
+ libclass-data-inheritable-perl,
+ libredis-perl,
+ libtry-tiny-perl,
+Description: Redis Session store for Catalyst
+ Catalyst::Plugin::Session::Store::Redis is a session storage plugin
+ for Catalyst that uses the Redis (https://redis.io/) key-value database.
+
 Package: ngcp-panel
 Architecture: all
 Depends:
+ ${misc:Depends},
+ ${perl:Depends},
  cracklib-runtime,
  gettext,
  ghostscript,
@@ -28,6 +44,7 @@ Depends:
  libcatalyst-modules-perl,
  libcatalyst-perl (>= 5.90040),
  libcatalyst-plugin-authentication-perl,
+ libcatalyst-plugin-session-store-redis-perl,
  libcatalyst-view-tt-perl,
  libconfig-general-perl,
  libconfig-tiny-perl,
@@ -110,7 +127,6 @@ Depends:
  libtie-ixhash-perl,
  libtime-period-perl,
  libtime-warp-perl,
- libtry-tiny-perl,
  libtrycatch-perl,
  libtype-tiny-perl,
  liburi-encode-perl,
@@ -125,8 +141,6 @@ Depends:
  openssl,
  sipsak (>= 0.9.6+git20160713),
  sox,
- ${misc:Depends},
- ${perl:Depends},
 Recommends:
  libngcp-rating-inew-perl,
 Description: catalyst based panel application for NGCP

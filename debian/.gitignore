@@ -4,6 +4,7 @@
 /.debhelper/
 /debhelper-build-stamp
 /files
+/libcatalyst-plugin-session-store-redis-perl/
 /ngcp-panel-tools/
 /ngcp-panel/
 /tmp/
