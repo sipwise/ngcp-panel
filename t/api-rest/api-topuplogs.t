@@ -20,7 +20,7 @@ my $is_local_env = 0;
 use Config::General;
 my $catalyst_config;
 if ($is_local_env) {
-    $catalyst_config = Config::General->new("../../ngcp_panel.conf");
+    $catalyst_config = Config::General->new("../../etc/ngcp_panel.conf");
 } else {
     #taken 1:1 from /lib/NGCP/Panel.pm
     my $panel_config;
@@ -30,7 +30,7 @@ if ($is_local_env) {
             last;
         }
     }
-    $panel_config //= 'ngcp_panel.conf';
+    $panel_config //= 'etc/ngcp_panel.conf';
     $catalyst_config = Config::General->new($panel_config);
 }
 my %config = $catalyst_config->getall();
