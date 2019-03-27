@@ -1,8 +1,12 @@
 package Local::Module::Build;
-use Moose qw(around extends);
+
+use strict;
+use warnings;
+
 use TryCatch;
 use LWP::UserAgent;
-extends 'Module::Build';
+
+use parent qw(Module::Build);
 
 sub _test_preconditions {
     my ($self) = @_;
@@ -53,16 +57,15 @@ sub _test_preconditions {
     }
 }
 
-around('ACTION_test', sub {
-    my $super = shift;
+sub ACTION_test {
     my $self = shift;
 
     $self->_test_preconditions;
 
     try {
-        $self->$super(@_);
+        $self->SUPER::ACTION_test(@_);
     };
-});
+}
 
 sub ACTION_testcover {
     my ($self) = @_;
