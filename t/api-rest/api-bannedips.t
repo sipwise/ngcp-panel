@@ -33,7 +33,7 @@ my $hal_before = $test_machine->get_item_hal(undef,undef,1);
 
 my @ips = qw/127.0.0.1 127.0.0.2 127.0.0.3/;
 foreach (@ips){
-    `ngcp-sercmd lb htable.sets ipban $_ 1`;
+    `ngcp-kamcmd lb htable.sets ipban $_ 1`;
 }
 
 $test_machine->check_bundle();
