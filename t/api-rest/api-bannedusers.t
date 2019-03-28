@@ -32,8 +32,8 @@ my $hal_before = $test_machine->get_item_hal(undef,undef,1);
 my $time = time();
 my @users = qw/user1 user2 user3/;
 foreach (@users){
-    my $cmd1 = "ngcp-sercmd lb htable.sets auth $_\@domain.com::auth_count 10";
-    my $cmd2 = "ngcp-sercmd lb htable.sets auth $_\@domain.com::last_auth $time";
+    my $cmd1 = "ngcp-kamcmd lb htable.sets auth $_\@domain.com::auth_count 10";
+    my $cmd2 = "ngcp-kamcmd lb htable.sets auth $_\@domain.com::last_auth $time";
     print $cmd1."\n".$cmd2."\n";
     `$cmd1`;
     `$cmd2`;
