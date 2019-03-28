@@ -22,6 +22,30 @@
       "revId": "0f6754fadd6ab2cb562e5cb84802d945843e9c3d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a016987_55ce565b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2019-03-28T10:37:20Z",
+      "side": 1,
+      "message": "I think this is already checked by lintian, so whoever introduces this kind of thing again should get a jenkins error.",
+      "parentUuid": "7a016987_9524ceaf",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 27
+      },
+      "revId": "0f6754fadd6ab2cb562e5cb84802d945843e9c3d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
