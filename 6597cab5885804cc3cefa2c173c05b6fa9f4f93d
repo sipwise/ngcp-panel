@@ -22,6 +22,30 @@
       "revId": "6597cab5885804cc3cefa2c173c05b6fa9f4f93d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a016987_d5080694",
+        "filename": "debian/ngcp-panel.install",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2019-03-28T10:39:07Z",
+      "side": 1,
+      "message": "This means to grab the contents under debian/tmp/usr/share/perl5/ and install into debian/ngcp-panel/usr/share/perl5.\n\nBefore we were using an override and installing directly into debian/ngcp-panel, now we use the standard staged installation process, so that we can choose what to install or not into each individual binary package.",
+      "parentUuid": "7a016987_553776e3",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 16
+      },
+      "revId": "6597cab5885804cc3cefa2c173c05b6fa9f4f93d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
