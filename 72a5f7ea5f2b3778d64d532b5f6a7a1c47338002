@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_f54c2278",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-03-28T08:12:12Z",
+      "side": 1,
+      "message": "It was a bad practice to set +2 themself :-(\nhttps://gerrit.mgm.sipwise.com/#/c/1199/\n\nIt is still allowed, but not currently popular. Kirill, right?",
+      "revId": "72a5f7ea5f2b3778d64d532b5f6a7a1c47338002",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
