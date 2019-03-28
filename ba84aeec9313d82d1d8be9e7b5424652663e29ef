@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_955bae2e",
+        "filename": "script/ngcp_panel_debug.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-03-28T08:14:59Z",
+      "side": 1,
+      "message": "Jenkins is not happy here , use \"$(which plackup)\"",
+      "range": {
+        "startLine": 11,
+        "startChar": 8,
+        "endLine": 11,
+        "endChar": 23
+      },
+      "revId": "ba84aeec9313d82d1d8be9e7b5424652663e29ef",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
