@@ -12,7 +12,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD PATCH PUT/];
+    return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::BillingProfiles/;
@@ -131,8 +131,33 @@ sub PUT :Allow {
     return;
 }
 
-# we don't allow to DELETE a billing profile
+sub DELETE :Allow {
+   my ($self, $c, $id) = @_;
+   my $guard = $c->model('DB')->txn_scope_guard;
+   {
+       my $billing_profile = $self->item_by_id($c, $id);
+       last unless $self->resource_exists($c, billingprofile => $billing_profile);
+       last unless NGCP::Panel::Utils::Reseller::check_reseller_delete_item($c, $billing_profile->reseller_id, sub {
+           my ($err) = @_;
+           $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+       });
+       try {
+           $billing_profile->update({
+                status => 'terminated',
+                terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local
+            });
+       } catch($e) {
+           $c->log->error("Failed to terminate billingprofile with id '$id': $e");
+           $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+           last;
+       }
+       $guard->commit;
 
+       $c->response->status(HTTP_NO_CONTENT);
+       $c->response->body(q());
+   }
+   return;
+}
 
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
