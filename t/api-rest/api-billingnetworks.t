@@ -122,14 +122,9 @@ my $default_reseller_id = 1;
     is($res->code, 200, "fetch PATCHed test billingnetwork");
     $billingnetwork = JSON::from_json($res->decoded_content);
 
-    $req = HTTP::Request->new('PATCH', $billingnetwork_uri);
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->header('Prefer' => 'return=representation');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => "terminated" } ]
-    ));
+    $req = HTTP::Request->new('DELETE', $billingnetwork_uri);
     $res = $ua->request($req);
-    is($res->code, 200, "terminate test billingnetwork");
+    is($res->code, 204, "terminate test billingnetwork");
     $req = HTTP::Request->new('GET', $billingnetwork_uri);
     $res = $ua->request($req);
     is($res->code, 404, "try to fetch terminated test billingnetwork");

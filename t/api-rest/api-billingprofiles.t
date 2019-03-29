@@ -159,14 +159,13 @@ my @allprofiles = ();
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     my $opts = JSON::from_json($res->decoded_content);
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
-    foreach my $opt(qw( GET HEAD OPTIONS PUT PATCH )) {
+    foreach my $opt(qw( GET HEAD OPTIONS PUT PATCH DELETE )) {
         ok(grep { /^$opt$/ } @hopts, "check for existence of '$opt' in Allow header");
         ok(grep { /^$opt$/ } @{ $opts->{methods} }, "check for existence of '$opt' in body");
     }
-    foreach my $opt(qw( POST DELETE )) {
-        ok(!grep { /^$opt$/ } @hopts, "check for absence of '$opt' in Allow header");
-        ok(!grep { /^$opt$/ } @{ $opts->{methods} }, "check for absence of '$opt' in body");
-    }
+
+    ok(!grep { /^POST$/ } @hopts, "check for absence of 'POST' in Allow header");
+    ok(!grep { /^POST$/ } @{ $opts->{methods} }, "check for absence of 'POST' in body");
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstprofile);
     $res = $ua->request($req);
@@ -250,11 +249,9 @@ my @allprofiles = ();
 
     # TODO: invalid handle etc
 
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => 'terminated' } ]
-    ));
+    $req = HTTP::Request->new('DELETE', $uri.'/'.$firstprofile);
     $res = $ua->request($req);
-    is($res->code, 200, "terminated profile successful");
+    is($res->code, 204, "terminated profile successful");
     $req = HTTP::Request->new('GET', $uri.'/'.$firstprofile);
     $res = $ua->request($req);
     is($res->code, 404, "try to fetch terminated profile");

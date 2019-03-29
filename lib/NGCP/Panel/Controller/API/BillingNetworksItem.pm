@@ -11,12 +11,13 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Reseller qw();
+use NGCP::Panel::Utils::BillingNetworks qw /check_network_update_item/;
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD PATCH PUT/];
+    return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::BillingNetworks/;
@@ -133,30 +134,36 @@ sub PUT :Allow {
     return;
 }
 
-#sub DELETE :Allow {
-#    my ($self, $c, $id) = @_;
-#    my $guard = $c->model('DB')->txn_scope_guard;
-#    {
-#        my $bn = $self->item_by_id($c, $id);
-#        last unless $self->resource_exists($c, billingnetwork => $bn);
-#        last unless NGCP::Panel::Utils::Reseller::check_reseller_delete_item($c,$bn->reseller_id,sub {
-#            my ($err) = @_;
-#            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
-#        });
-#        try {
-#            $bn->delete;
-#        } catch($e) {
-#            $c->log->error("Failed to delete billingnetwork with id '$id': $e");
-#            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
-#            last;
-#        }
-#        $guard->commit;
-#
-#        $c->response->status(HTTP_NO_CONTENT);
-#        $c->response->body(q());
-#    }
-#    return;
-#}
+sub DELETE :Allow {
+   my ($self, $c, $id) = @_;
+   my $guard = $c->model('DB')->txn_scope_guard;
+   {
+       my $billing_network = $self->item_by_id($c, $id);
+       last unless $self->resource_exists($c, billingnetwork => $billing_network);
+       last unless NGCP::Panel::Utils::Reseller::check_reseller_delete_item($c, $billing_network->reseller_id, sub {
+           my ($err) = @_;
+           $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+       });
+       return unless NGCP::Panel::Utils::BillingNetworks::check_network_update_item($c,undef,$billing_network,sub {
+            my ($err) = @_;
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+        });
+       try {
+           $billing_network->update({
+                status => 'terminated'
+            });
+       } catch($e) {
+           $c->log->error("Failed to terminate billingnetwork with id '$id': $e");
+           $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+           last;
+       }
+       $guard->commit;
+
+       $c->response->status(HTTP_NO_CONTENT);
+       $c->response->body(q());
+   }
+   return;
+}
 
 sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
