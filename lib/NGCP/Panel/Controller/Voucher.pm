@@ -137,7 +137,7 @@ sub delete_voucher :Chained('base') :PathPart('delete') {
     } catch($e) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
-            data => { id => $$c->stash->{voucher_result}->id },
+            data => { id => $c->stash->{voucher_result}->id },
             desc  => $c->loc('Failed to delete Billing Voucher'),
         );
     }
