@@ -1,3 +1,33 @@
+ngcp-panel (6.5.5.0+0~mr6.5.5.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [0c420d6] TT#46791 Wait for ajax table loading for "Edit" button work
+  * [667381e] TT#48165 Return field_list for profilee form
+  * [2fec78f] TT#50802 Consider terminated subscribers in alias management
+  * [0ab6220] TT#50204 Fix "All" datatables entries option
+  * [d82611d] TT#50907 Don't use form caching in WEB UI
+  * [adde2fe] TT#50802 Use one-to-one relation to filter numbers by type
+  * [3b0fe8c] TT#52980 Return num_lines to api device models lineranges
+  * [df56897] TT#53320 Fix voicemailgreetings upload error handling
+
+  [ Alexander Lutay ]
+  * [a7524aa] TT#46791 Fix floating bug with 'Delete' button on 'Peering Servers' page
+
+  [ Rene Krenn ]
+  * [63992e7] TT#47658 lowercase redis usrloc filter (username, domain)
+  * [80e835a] TT#52456 cftimeset period timezone transformation script
+  * [4bdbbca] TT#53382 no default '.' source for prefix fees
+  * [40a42d1] TT#53421 fix conversations item<->resource confusion
+  * [6c2b9ba] TT#49694 match patterns: reject malformed "\0"-"\9" only
+
+  [ Kirill Solomko ]
+  * [c1476e7] TT#46700 fix permanent registration "received" param
+  * [c07d64d] TT#48855 fix UI billing zones
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Apr 2019 00:40:11 +0200
+
 ngcp-panel (6.5.4.0+0~mr6.5.4.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
