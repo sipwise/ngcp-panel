@@ -27,9 +27,12 @@ __PACKAGE__->config(namespace => '');
 sub auto :Private {
     my($self, $c) = @_;
 
+    my $is_api_request = 0;
+    $c->log->debug("Path: " . $c->request->path);
     if ($c->request->path =~/^api\//i) {
         $c->log->debug("Root::auto: enable cache");
         NGCP::Panel::Form::dont_use_cache(0);
+        $is_api_request = 1;
     } else {
         $c->log->debug("Root::auto: disable cache");
         NGCP::Panel::Form::dont_use_cache(1);
@@ -43,31 +46,35 @@ sub auto :Private {
         }
         if(exists $c->installed_languages->{$c->request->params->{lang}} ||
            $c->request->params->{lang} eq "i-default") {
-            $c->session->{lang} = $c->request->params->{lang};
-            $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
+            unless ($is_api_request) {
+                $c->session->{lang} = $c->request->params->{lang};
+                $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
+            }
             $c->log->debug("Setting language to ". $c->request->params->{lang});
         }
         # clear form cache (they need to be properly re-translated)
         NGCP::Panel::Form::clear_form_cache();
     }
-    if (defined $c->session->{lang}) {
-        $c->languages([$c->session->{lang}, "i-default"]);
-    } elsif ( $c->req->cookie('ngcp_panel_lang') ) {
-        $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
-        $c->languages([$c->session->{lang}, 'i-default']);
-    } else { # if language has not yet be set, set it from config or browser
-        if (defined $c->config->{appearance}{force_language}) {
-            $c->log->debug("lang set by config: " . $c->config->{appearance}{force_language});
-            $c->languages([$c->config->{appearance}{force_language}, 'i-default']);
-        } else {
-            $c->languages([ map { s/^en.*$/i-default/r } @{ $c->languages } ]);
+    unless ($is_api_request) {
+        if (defined $c->session->{lang}) {
+            $c->languages([$c->session->{lang}, "i-default"]);
+        } elsif ( $c->req->cookie('ngcp_panel_lang') ) {
+            $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
+            $c->languages([$c->session->{lang}, 'i-default']);
+        } else { # if language has not yet be set, set it from config or browser
+            if (defined $c->config->{appearance}{force_language}) {
+                $c->log->debug("lang set by config: " . $c->config->{appearance}{force_language});
+                $c->languages([$c->config->{appearance}{force_language}, 'i-default']);
+            } else {
+                $c->languages([ map { s/^en.*$/i-default/r } @{ $c->languages } ]);
+            }
+            $c->session->{lang} = $c->language;
+            $c->log->debug("lang set by browser or config: " . $c->language);
         }
-        $c->session->{lang} = $c->language;
-        $c->log->debug("lang set by browser or config: " . $c->language);
     }
 
     ################################################### timezone retrieval
-    if ($c->user_exists) {
+    if (not $is_api_request and $c->user_exists) {
         if ($c->session->{user_tz}) {
             # nothing to do
         } elsif ($c->user->roles eq 'admin') {
@@ -110,7 +117,7 @@ sub auto :Private {
         return 1;
     }
 
-    unless($c->user_exists) {
+    #if($is_api_request or not $c->user_exists) {
 
         if(index($c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') == 0) {
             $c->log->debug("++++++ Root::auto unauthenticated API request");
@@ -215,18 +222,19 @@ sub auto :Private {
                 return 1;
             } else {
                 $c->log->debug("++++++ Root::auto API admin request with http auth");
-                my $realm = "api_admin_http";
                 my ($user, $pass) = $c->req->headers->authorization_basic;
-                my $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass);
-                unless($c->user_exists && $c->user->is_active)  {
+                $c->log->debug("user: " . $user . " pass: " . $pass);
+                my $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
+                if($res and $c->user_exists and $c->user->is_active)  {
+                    $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
+                } else {
+                    my $realm = 'api_admin_http';
                     $c->user->logout if($c->user);
                     $c->log->debug("+++++ invalid api admin http login");
                     $c->log->warn("invalid api http login from '".$c->req->address."' by '$user'");
                     my $r = $c->get_auth_realm($realm);
                     $r->credential->authorization_required_response($c, $r);
                     return;
-                } else {
-                    $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
                 }
                 if($c->user->read_only && $c->req->method eq "POST" &&
                         $c->req->uri->path =~ m|^/api/admincerts/$|) {
@@ -243,33 +251,34 @@ sub auto :Private {
                     return;
                 }
                 $self->api_apply_fake_time($c);
+                $c->log->debug("return 1");
                 return 1;
             }
-        }
+        } elsif (not $c->user_exists) {
 
-        # don't redirect to login page for ajax uris
-        if($c->request->path =~ /\/ajax$/) {
-            $c->response->body($c->loc("403 - Permission denied"));
-            $c->response->status(403);
+            # don't redirect to login page for ajax uris
+            if($c->request->path =~ /\/ajax$/) {
+                $c->response->body($c->loc("403 - Permission denied"));
+                $c->response->status(403);
+                return;
+            }
+
+            # store uri for redirect after login
+            my $target = undef;
+            if($c->request->method eq 'GET') {
+                if($c->request->uri !~ /\/logout$/) {
+                    $target = $c->request->uri;
+                } else {
+                    $target = $c->uri_for("/dashboard");
+                }
+            } else {
+                $target = $c->request->headers->referer;
+            }
+            $c->log->debug("*** Root::auto do login, target='$target'");
+            $c->session(target => $target);
+            $c->response->redirect($c->uri_for('/login'));
             return;
         }
-
-        # store uri for redirect after login
-        my $target = undef;
-        if($c->request->method eq 'GET') {
-            if($c->request->uri !~ /\/logout$/) {
-                $target = $c->request->uri;
-            } else {
-                $target = $c->uri_for("/dashboard");
-            }
-        } else {
-            $target = $c->request->headers->referer;
-        }
-        $c->log->debug("*** Root::auto do login, target='$target'");
-        $c->session(target => $target);
-        $c->response->redirect($c->uri_for('/login'));
-        return;
-    }
 
     $c->log->debug("*** Root::auto grant access for authenticated user");
 
