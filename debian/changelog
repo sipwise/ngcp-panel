@@ -1,3 +1,32 @@
+ngcp-panel (7.1.3.0+0~mr7.1.3.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [5f4883d] TT#50815 Fix HeaderManipulations invalidate request to kamailio
+
+  [ Irina Peshinskaya ]
+  * [3ef91f9] TT#50802 Consider terminated subscribers in alias management
+  * [466ed1a] TT#45960 Disable timesets API for 7.0
+  * [052fa75] TT#45960 disable timesets web ui in 7.0
+  * [60af2fc] TT#52355 Use pattern for systemctl --list-unit-files openvpn search
+  * [7999f03] TT#50204 Fix "All" datatables entries option
+  * [89e7acb] TT#50907 Don't use form caching in WEB UI
+  * [1ee5c1a] TT#50802 Use one-to-one relation to filter numbers by type
+  * [9a2d817] TT#52980 Return num_lines to api device models lineranges
+  * [f949b51] TT#53320 Fix voicemailgreetings upload error handling
+  * [c921544] TT#53760 Consider copy in email templates name checking
+  * [5f245e0] TT#53760 Use explicit email template copy mode
+  * [8c7f146] TT#53760 Fix using of the explicit copy mode flag
+
+  [ Rene Krenn ]
+  * [124fa86] TT#47658 lowercase redis usrloc filter (username, domain)
+  * [97bbdbb] TT#53421 fix conversations item<->resource confusion
+  * [40a34ba] TT#53382 no default '.' source for prefix fees
+  * [2e2f204] TT#49694 match patterns: reject malformed "\0"-"\9" only
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 01 Apr 2019 16:32:09 +0200
+
 ngcp-panel (7.1.2.0+0~mr7.1.2.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
