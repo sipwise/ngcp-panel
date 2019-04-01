@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_c31f295a",
+        "filename": "lib/NGCP/Panel/Controller/API/BillingNetworksItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-04-01T09:15:21Z",
+      "side": 1,
+      "message": "the update logic also performs this check:\n\nreturn unless NGCP::Panel::Utils::BillingNetworks::check_network_update_item($c,$resource,$item,sub {\n        my ($err) \u003d @_;\n        $self-\u003eerror($c, HTTP_UNPROCESSABLE_ENTITY, $err);\n    });",
+      "revId": "5072fee33fcc9816e9a5954bd3fe0b17efd2ea4b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
