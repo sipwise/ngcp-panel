@@ -112,7 +112,7 @@ sub delete_mcall :Chained('base') :PathPart('delete') {
     } catch($e) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
-            data => { id => $$c->stash->{mcid_res}->id },
+            data => { id => $c->stash->{mcid_res}->id },
             desc  => $c->loc('Failed to delete Malicious call'),
         );
     }
