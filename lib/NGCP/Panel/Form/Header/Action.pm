@@ -136,11 +136,11 @@ sub update_fields {
 
     my $c = $self->ctx;
     return unless $c;
-    return unless $c->stash->{set_result};
+    return unless $c->stash->{hm_set_result};
 
     #if ($c->stash->{create_flag} || $c->stash->{edit_flag}) {
         my $rwr_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets')->search({
-            reseller_id => $c->stash->{set_result}->reseller_id,
+            reseller_id => $c->stash->{hm_set_result}->reseller_id,
         });
 
       #  my $condition = $c->stash->{condition_result};
