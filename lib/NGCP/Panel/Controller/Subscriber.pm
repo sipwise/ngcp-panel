@@ -2506,7 +2506,10 @@ sub load_preference_list :Private {
     my $rewrite_rule_sets_rs = $c->model('DB')
         ->resultset('voip_rewrite_rule_sets')->search({ reseller_id => $reseller_id });
     my $header_rule_sets_rs = $c->model('DB')
-        ->resultset('voip_header_rule_sets')->search({ reseller_id => $reseller_id });
+        ->resultset('voip_header_rule_sets')->search({
+            reseller_id => $reseller_id,
+            subscriber_id => undef,
+        });
     $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
               rwr_sets    => [$rewrite_rule_sets_rs->all],
               hdr_sets_rs => $header_rule_sets_rs,
