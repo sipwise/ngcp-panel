@@ -55,12 +55,12 @@ echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024
 
 if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
    # shellcheck disable=SC2086
-  CATALYST_SERVER=https://${SERVER}:1443/ prove -ofmv --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/${TEST_PLAN} | \
+  CATALYST_SERVER=https://${SERVER}:1443/ prove -ofv --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/${TEST_PLAN} | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
   RC="${PIPESTATUS[0]}"
 else
    # shellcheck disable=SC2086
-  CATALYST_SERVER="https://${SERVER}:1443" prove -ofmv --color -l -It/lib t/selenium/${TEST_PLAN} | \
+  CATALYST_SERVER="https://${SERVER}:1443" prove -ofv --color -l -It/lib t/selenium/${TEST_PLAN} | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.pretty"
   RC="${PIPESTATUS[0]}"
 fi
