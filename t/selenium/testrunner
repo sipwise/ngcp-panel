@@ -23,7 +23,10 @@ fi
 SERVER="${1}"
 OUTPUT_DIRECTORY="${2:-/code/}"
 OUTPUT_TYPE=${3:-}
-TEST_PLAN="${4:-*.t}"
+shift; shift; shift # remove first three argv to to use "{$@}" below.
+declare -a DEFAULT_TEST_PLAN=( $(find t/selenium/ -name \*.t) )
+declare -a CUSTOM_TEST_PLAN=( "${@/#/t/selenium/}" )
+declare -a TEST_PLAN=( ${CUSTOM_TEST_PLAN[*]:-${DEFAULT_TEST_PLAN[*]}} )
 
 # workaround for new Selenium::Remote::Driver (see Dockerfile)
 export PERL5LIB=/home/selenium/Selenium-Remote-Driver/lib/
@@ -53,16 +56,13 @@ echo "Selenium server log file available at /home/selenium/selenium.log"
 echo "Watch at test runs by connecting via VNC (password: '${PASSWORD}'):"
 echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024x16 passwd=/tmp/vncpasswd localhost:5999"
 
+export CATALYST_SERVER="https://${SERVER}:1443"
 if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
-   # shellcheck disable=SC2086
-  CATALYST_SERVER=https://${SERVER}:1443/ prove -ofmv --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/${TEST_PLAN} | \
+  prove -ofvm --formatter TAP::Formatter::JUnit -l -It/lib echo "${TEST_PLAN[@]}" | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
   RC="${PIPESTATUS[0]}"
 else
-   # shellcheck disable=SC2086
-  CATALYST_SERVER="https://${SERVER}:1443" prove -ofmv --color -l -It/lib t/selenium/${TEST_PLAN} | \
-    tee -a "${OUTPUT_DIRECTORY}/selenium.pretty"
-  RC="${PIPESTATUS[0]}"
+  prove -ofv --color -l -It/lib "${TEST_PLAN[@]}" || RC=$?
 fi
 
 echo "Finished test execution, test execution returned with exit code ${RC:-0}."
