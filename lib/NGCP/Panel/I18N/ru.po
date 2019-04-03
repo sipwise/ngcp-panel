@@ -4241,6 +4241,10 @@ msgstr "IP адрес"
 msgid "IP Header Field"
 msgstr "Поле SIP заголовка несущее IP источника пакета"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "IP header to use for \"allowed_ips\" check"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Security.pm
 msgid "IP successfully unbanned"
 msgstr "IP успешно разбанен"
@@ -8578,6 +8582,12 @@ msgstr ""
 
 #: share/templates/timeset/event_list.tt
 msgid "Upload iCalendar events"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Use IP address for \"allowed_ips\" check from a header name provided in this "
+"preference"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
