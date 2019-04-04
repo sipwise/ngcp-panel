@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_52f2e19b",
+        "filename": "t/selenium/controller_customer.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-04T09:59:24Z",
+      "side": 1,
+      "message": "should \"Found terminate button\" be inside () ?",
+      "range": {
+        "startLine": 141,
+        "startChar": 13,
+        "endLine": 141,
+        "endChar": 15
+      },
+      "revId": "746e075b2eda8b00e1198e356a36775b0669efbd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
