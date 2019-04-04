@@ -46,6 +46,30 @@
       "revId": "746e075b2eda8b00e1198e356a36775b0669efbd",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a016987_5249c1cf",
+        "filename": "t/selenium/controller_customer.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-04T10:04:55Z",
+      "side": 1,
+      "message": "IMHO it is wrong, we it must be inside, see Perl warning here:\n\nhttps://jenkins.mgm.sipwise.com/job/ngcp-panel-test-selenium-docker/81691/console\n\n00:03:32.212     \u003csystem-out\u003e\u003c![CDATA[Smartmatch is experimental at t/selenium/controller_customer.t line 111.\n00:03:32.212 Useless use of a constant (\"Found terminate button\") in void context at t/selenium/controller_customer.t line 141.",
+      "parentUuid": "7a016987_f22f8df4",
+      "range": {
+        "startLine": 141,
+        "startChar": 13,
+        "endLine": 141,
+        "endChar": 15
+      },
+      "revId": "746e075b2eda8b00e1198e356a36775b0669efbd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
