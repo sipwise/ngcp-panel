@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_d2d011cc",
+        "filename": "lib/NGCP/Panel/Utils/Admin.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-04-04T10:52:31Z",
+      "side": 0,
+      "message": "this is where the bug basically came from; the admin and admin_bcrypt realms were for panelUI, which have use_session \u003d\u003e 1. so the use_session \u003d\u003e 0 from the api_admin_http realm is not in effect.",
+      "revId": "e08d2369d7f5d705d04d1a864e1446b06f4ca040",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
