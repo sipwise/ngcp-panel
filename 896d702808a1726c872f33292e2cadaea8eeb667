@@ -2,6 +2,69 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a016987_72239d06",
+        "filename": "t/selenium/testrunner",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-04T10:15:02Z",
+      "side": 1,
+      "message": "please add here \"set -x\" temporary, I need to trace issue on jenkins here",
+      "revId": "896d702808a1726c872f33292e2cadaea8eeb667",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a016987_d20b717c",
+        "filename": "t/selenium/testrunner",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-04T10:15:02Z",
+      "side": 1,
+      "message": "It should be: ${@}",
+      "range": {
+        "startLine": 26,
+        "startChar": 57,
+        "endLine": 26,
+        "endChar": 61
+      },
+      "revId": "896d702808a1726c872f33292e2cadaea8eeb667",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a016987_92261915",
+        "filename": "t/selenium/testrunner",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-04T10:15:02Z",
+      "side": 1,
+      "message": "one \"to\" should be removed here",
+      "range": {
+        "startLine": 26,
+        "startChar": 46,
+        "endLine": 26,
+        "endChar": 51
+      },
+      "revId": "896d702808a1726c872f33292e2cadaea8eeb667",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a016987_d234914b",
         "filename": "t/selenium/testrunner",
         "patchSetId": 5
