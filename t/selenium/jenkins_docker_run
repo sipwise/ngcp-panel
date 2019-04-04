@@ -1,5 +1,4 @@
 #!/bin/bash
-# This script is used for running the tests with proper arguments
-# from within Jenkins
-# this is a workaround with PERL5LIB= ... until we've a proper libselenium-remote-driver-perl package again
-su - selenium -c "cd /code && PERL5LIB=/home/selenium/Selenium-Remote-Driver/ ./t/selenium/testrunner $*"
+# This script is used for running the tests with
+# proper arguments from Jenkins under user 'selenium'
+su - selenium -c "cd /code && ./t/selenium/testrunner $*"
