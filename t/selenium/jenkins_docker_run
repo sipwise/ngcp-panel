@@ -1,4 +1,12 @@
 #!/bin/bash
 # This script is used for running the tests with
 # proper arguments from Jenkins under user 'selenium'
-su - selenium -c "cd /code && ./t/selenium/testrunner $*"
+
+set -e
+
+su - selenium -c "cd /code && ./t/selenium/testrunner $*" || RC=$?
+
+## Jenkins will detect errors in produced artifacts if any
+## as a result the Jenkins job will be "yellow" instead of "red".
+[ -n "${RC}" ] && echo "Masking non-zero exit code '${RC}'"
+exit 0 # ${RC:-0}
