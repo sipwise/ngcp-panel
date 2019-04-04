@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_32d8851d",
+        "filename": "t/selenium/testrunner",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-04T09:38:02Z",
+      "side": 1,
+      "message": "del please",
+      "range": {
+        "startLine": 61,
+        "startChar": 59,
+        "endLine": 61,
+        "endChar": 63
+      },
+      "revId": "36617211ef3156fec94972b0a0c1666d2a213b90",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
