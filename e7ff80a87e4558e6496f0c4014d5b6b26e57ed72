@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_72a03d91",
+        "filename": "lib/NGCP/Panel/Controller/API/SoundFiles.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-04-04T08:36:37Z",
+      "side": 1,
+      "message": "just for my information - we didn\u0027t use it usually - will we apply it as good practice? I see that we don\u0027t check errors here, what will be behavior in case of error? Didn\u0027t method NGCP::Panel::Role::API::get_valid_data fit there? and maybe NGCP::Panel::Role::API::get_valid_post_data for the  else part? But really - as current solution is working, it is completely ok.",
+      "range": {
+        "startLine": 117,
+        "startChar": 29,
+        "endLine": 117,
+        "endChar": 52
+      },
+      "revId": "e7ff80a87e4558e6496f0c4014d5b6b26e57ed72",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
