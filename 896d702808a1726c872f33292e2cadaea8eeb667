@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_d234914b",
+        "filename": "t/selenium/testrunner",
+        "patchSetId": 5
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-04T10:02:39Z",
+      "side": 1,
+      "message": "we are no longer produce selenium.pretty, the code here can be simplified. Right? I believe it is enough:\n  \necho \"Finished test execution, test execution returned with exit code ${RC:-0}.\"\nif [ -f \"${OUTPUT_DIRECTORY}/selenium.xml\" ] ; then\n  echo \"Test results available at \u0027${OUTPUT_DIRECTORY}/selenium.xml\u0027\"\nfi",
+      "range": {
+        "startLine": 69,
+        "startChar": 12,
+        "endLine": 69,
+        "endChar": 49
+      },
+      "revId": "896d702808a1726c872f33292e2cadaea8eeb667",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
