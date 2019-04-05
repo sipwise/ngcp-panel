@@ -82,7 +82,20 @@ sub invalidate_ruleset {
     return \@err;
 }
 
-sub get_or_create_subscriber_set {
+sub get_subscriber_set {
+    my %params = @_;
+    my ($c, $prov_subscriber_id) = @params{qw/c subscriber_id/};
+
+    return unless $prov_subscriber_id;
+
+    my $schema = $c->model('DB');
+
+    return $schema->resultset('voip_header_rule_sets')->find({
+        subscriber_id => $prov_subscriber_id
+    });
+}
+
+sub create_subscriber_set {
     my %params = @_;
     my ($c, $prov_subscriber_id) = @params{qw/c subscriber_id/};
 
@@ -94,29 +107,60 @@ sub get_or_create_subscriber_set {
         subscriber_id => $prov_subscriber_id
     });
 
-    unless ($sub_set) {
-        my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find($prov_subscriber_id);
-        return unless $prov_subscriber;
-        my $subscriber = $prov_subscriber->voip_subscriber;
-        $sub_set = $schema->resultset('voip_header_rule_sets')->create({
-            reseller_id => $subscriber->contract->contact->reseller_id,
-            subscriber_id => $prov_subscriber_id,
-            name => 'subscriber_'.$subscriber->id,
-            description => '',
-        });
-        $sub_set->discard_changes;
-    }
+    return $sub_set if $sub_set;
+
+    my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find($prov_subscriber_id);
+    return unless $prov_subscriber;
+    my $subscriber = $prov_subscriber->voip_subscriber;
+    $sub_set = $schema->resultset('voip_header_rule_sets')->create({
+        reseller_id => $subscriber->contract->contact->reseller_id,
+        subscriber_id => $prov_subscriber_id,
+        name => 'subscriber_'.$subscriber->id,
+        description => '',
+    });
+    $sub_set->discard_changes;
+
     return $sub_set;
+}
+
+sub cleanup_subscriber_set {
+    my %params = @_;
+    my ($c, $prov_subscriber_id) = @params{qw/c subscriber_id/};
+
+    return unless $prov_subscriber_id;
+
+    my $schema = $c->model('DB');
+
+    my $set_rs = $schema->resultset('voip_header_rule_sets')->search({
+        subscriber_id => $prov_subscriber_id
+    });
+
+    return unless $set_rs && $set_rs->first;
+
+    return if $set_rs->first->voip_header_rules->count;
+
+    $set_rs->first->delete;
+
+    return;
 }
 
 sub ui_rules_list {
     my %params = @_;
     my ($c) = @params{qw/c/};
 
-    my $rules_rs = $c->stash->{hm_set_result}->voip_header_rules({
-    },{
-        order_by => { -asc => 'priority' },
-    });
+    my $schema = $c->model('DB');
+
+    my $rules_rs;
+    if ($c->stash->{hm_set_result}) {
+        $rules_rs = $c->stash->{hm_set_result}->voip_header_rules({
+        },{
+            order_by => { -asc => 'priority' },
+        });
+    } else {
+        $rules_rs = $schema->resultset('voip_header_rules')->search({
+            set_id => 0
+        });
+    }
     $c->stash(hm_rules_rs => $rules_rs);
 
     $c->stash->{hm_rule_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -261,13 +305,26 @@ sub ui_rules_delete {
     my ($c) = @params{qw/c/};
 
     try {
-        $c->stash->{hm_rule_result}->delete;
+        my $rule_res = delete $c->stash->{hm_rule_result};
+        my %hm_rule_columns = $rule_res->get_inflated_columns;
+        $rule_res->delete;
         NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
             c => $c, set_id => $c->stash->{hm_set_result}->id
         );
+        if ($c->stash->{subscriber}) {
+            $rule_res->discard_changes;
+            my $rules_cnt = NGCP::Panel::Utils::HeaderManipulations::cleanup_subscriber_set(
+                c => $c,
+                subscriber_id =>
+                    $c->stash->{subscriber}->provisioning_voip_subscriber->id
+            );
+            if ($c->stash->{subscriber} && !$rules_cnt) {
+                delete $c->stash->{hm_set_result};
+            }
+        }
         NGCP::Panel::Utils::Message::info(
             c    => $c,
-            data => { $c->stash->{hm_rule_result}->get_inflated_columns },
+            data => \%hm_rule_columns,
             desc => $c->loc('Header rule successfully deleted'),
         );
     } catch($e) {
@@ -299,9 +356,18 @@ sub ui_rules_create {
     );
     if($posted && $form->validated) {
         try {
+            if (!$c->stash->{hm_set_result} && $c->stash->{subscriber}) {
+                $c->stash->{hm_set_result} =
+                    NGCP::Panel::Utils::HeaderManipulations::create_subscriber_set(
+                        c => $c,
+                        subscriber_id =>
+                            $c->stash->{subscriber}->provisioning_voip_subscriber->id
+                    ) || die "could not create a subscriber header rule set";
+                $c->stash->{hm_rules_rs} = $c->stash->{hm_set_result}->voip_header_rules;
+            }
             my $last_priority = $c->stash->{hm_rules_rs}->get_column('priority')->max() || 99;
             $form->values->{priority} = int($last_priority) + 1;
-            $c->stash->{hm_rules_rs}->create($form->values);
+            $c->stash->{hm_rules_rs}->create($form->values)->discard_changes;
             NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
                 c => $c, set_id => $c->stash->{hm_set_result}->id
             );
