@@ -121,8 +121,8 @@ sub rpc_https_call{
             $response_value = 'Connection timeout';
         }
     }
-    $c->log->info( "response=$response_code; page=$page;" );
-    if($page){
+    $c->log->debug( "response=$response_code; page=$page;" );
+    if($page && $response_code < 300){
         my $rpc_response = $self->parse_rpc_response_page($page);
         $response_value = $self->parse_rpc_response($rpc_response);
     }
