@@ -213,7 +213,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
 
     $c->stash->{phonebook} = $c->stash->{subscriber}->phonebook;
 
-    $c->stash->{hm_set_result} = NGCP::Panel::Utils::HeaderManipulations::get_or_create_subscriber_set(
+    $c->stash->{hm_set_result} = NGCP::Panel::Utils::HeaderManipulations::get_subscriber_set(
         c => $c, subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id
     );
 
