@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_374ab484",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-05T12:33:46Z",
+      "side": 1,
+      "message": "I believe those two code changes must be separated into two independent and atomic commits.\n\nNico, I will show you on Monday how to do this easily in Git.",
+      "range": {
+        "startLine": 7,
+        "startChar": 19,
+        "endLine": 7,
+        "endChar": 22
+      },
+      "revId": "742e0893f0dcaa92cfdd2a49ca2c062dcf12d49f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
