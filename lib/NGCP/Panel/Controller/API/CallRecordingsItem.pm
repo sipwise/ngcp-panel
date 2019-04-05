@@ -66,7 +66,12 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, callrecording => $item);
 
         try {
-            NGCP::Panel::Utils::Subscriber::delete_callrecording( c => $c, recording => $item );
+			NGCP::Panel::Utils::Subscriber::delete_callrecording(
+				c => $c,
+				recording => $item,
+				#TODO: Now we don't use any way to document such parameters, need to be created
+				force_delete => $c->request->params->{force_delete},
+			);
         } catch($e) {
             $c->log->error("Failed to delete recording: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete recording.");
