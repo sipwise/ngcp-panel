@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a016987_b76d8434",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-04-05T11:39:46Z",
+      "side": 1,
+      "message": "where is this supposed to be used ?",
+      "range": {
+        "startLine": 56,
+        "startChar": 4,
+        "endLine": 56,
+        "endChar": 15
+      },
+      "revId": "dd8e36db2b265c73cd3dd75f6627adc82351792f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a016987_571d30bc",
         "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
         "patchSetId": 4
