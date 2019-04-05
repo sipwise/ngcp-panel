@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7a016987_37607435",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-05T11:41:41Z",
+      "side": 1,
+      "message": "Apparenty this function scans the entire site for a string. Used in controller_domain.t, can remove or refractor if wanted.",
+      "parentUuid": "7a016987_b76d8434",
+      "range": {
+        "startLine": 56,
+        "startChar": 4,
+        "endLine": 56,
+        "endChar": 15
+      },
+      "revId": "dd8e36db2b265c73cd3dd75f6627adc82351792f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a016987_571d30bc",
         "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
         "patchSetId": 4
