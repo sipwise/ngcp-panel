@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "7a016987_b7db44ed",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-05T11:54:36Z",
+      "side": 1,
+      "message": "ok it returns the web element for the found string. new function only checks if a string is there and either returns 0/1 or times out if wanted.",
+      "parentUuid": "7a016987_37607435",
+      "range": {
+        "startLine": 56,
+        "startChar": 4,
+        "endLine": 56,
+        "endChar": 15
+      },
+      "revId": "dd8e36db2b265c73cd3dd75f6627adc82351792f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a016987_571d30bc",
         "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
         "patchSetId": 4
