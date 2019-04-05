@@ -46,7 +46,7 @@ sub get_log_params {
     if ($c->user_exists) {
         if ($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') {
             $r_user = $c->user->login;
-        } elsif ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') {
+        } else {
             $r_user = $c->user->webusername . '@' . $c->user->domain->domain;
         }
     }
@@ -166,7 +166,7 @@ sub error {
         $msg      = "$desc ($error)";
         $usr_text = "$desc ($dup)";
     }
-    elsif (my ($excerpt) = $error =~ /(Column \S+ cannot be null)/)
+    elsif (my ($excerpt) = $error =~ /(Column \S+ cannot be null)/) 
     {
         $msg      = "$desc ($error)";
         $usr_text = "$desc ($excerpt)";
@@ -244,7 +244,7 @@ sub info {
         #flash is on by default
         if (!defined $params{flash} || $params{flash} ) {
             $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
-        }
+        } 
         if ($params{stash} ) {
             my $messages = $c->stash->{messages} // [];
             push @$messages, { type => $usr_type, text => $usr_text };

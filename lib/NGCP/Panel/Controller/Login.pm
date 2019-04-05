@@ -12,7 +12,7 @@ use NGCP::Panel::Utils::Admin;
 sub login_index :Path Form {
     my ( $self, $c, $realm ) = @_;
 
-    $realm = 'subscriber'
+    $realm = 'subscriber' 
         unless($realm && $realm eq 'admin');
 
     my $posted = ($c->req->method eq 'POST');
@@ -30,7 +30,7 @@ sub login_index :Path Form {
         $c->log->debug("*** Login::index user=$user, pass=****, realm=$realm");
         my $res;
         if($realm eq 'admin') {
-            $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass, 'admin', 'admin_bcrypt');
+            $res = NGCP::Panel::Utils::Admin::perform_auth($c, $user, $pass);
         } elsif($realm eq 'subscriber') {
             my ($u, $d, $t) = split /\@/, $user;
             if(defined $t) {
@@ -52,12 +52,12 @@ sub login_index :Path Form {
             });
             $res = $c->authenticate(
                 {
-                    webusername => $u,
+                    webusername => $u, 
                     webpassword => $pass,
                     'dbix_class' => {
                         resultset => $authrs
                     }
-                },
+                }, 
                 $realm);
         }
 

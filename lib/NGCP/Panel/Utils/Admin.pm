@@ -29,14 +29,13 @@ sub generate_salted_hash {
 }
 
 sub perform_auth {
-    my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
+    my ($c, $user, $pass) = @_;
     my $res;
 
-    my $dbadmin;
-    $dbadmin = $c->model('DB')->resultset('admins')->find({
+    my $dbadmin = $c->model('DB')->resultset('admins')->find({
         login => $user,
         is_active => 1,
-    }) if $user;
+    });
     if(defined $dbadmin && defined $dbadmin->saltedpass) {
         $c->log->debug("login via bcrypt");
         my ($db_b64salt, $db_b64hash) = split /\$/, $dbadmin->saltedpass;
@@ -60,7 +59,7 @@ sub perform_auth {
                         ],
                     }],
                 }
-            }, $bcrypt_realm
+            }, 'admin_bcrypt'
         );
     } elsif(defined $dbadmin) { # we already know if the username is wrong, no need to check again
 
@@ -78,7 +77,7 @@ sub perform_auth {
                         ],
                     }],
                 }
-            }, $realm);
+            }, 'admin');
 
         if($res) {
             # login ok, time to move user to bcrypt hashing
@@ -108,7 +107,7 @@ sub generate_client_cert {
             return;
         }
         try {
-            $admin->update({
+            $admin->update({ 
                 ssl_client_m_serial => $serial,
                 ssl_client_certificate => undef, # not used anymore, clear it just in case
             });
@@ -225,7 +224,7 @@ sub toggle_openvpn {
                     $error = cmd($c, undef, $systemctl_cmd, 'enable', $openvpn_service);
                     if (!$error) {
                         my $status_enabled = check_openvpn_status($c, {
-                                no_check_availability => 1,
+                                no_check_availability => 1, 
                                 check_status          => 'enabled',
                             },
                         );
@@ -235,7 +234,7 @@ sub toggle_openvpn {
                     $error = cmd($c, undef, $systemctl_cmd, 'start', $openvpn_service);
                     if (!$error) {
                         $status_out = check_openvpn_status($c, {
-                                no_check_availability => 1,
+                                no_check_availability => 1, 
                             },
                         );
                         if ($status_out->{active}) {
@@ -256,7 +255,7 @@ sub toggle_openvpn {
             }
             if (!$error) {
                 $status_out = check_openvpn_status($c, {
-                        no_check_availability => 1,
+                        no_check_availability => 1, 
                     },
                 );
                 if (!$status_out->{active}) {
