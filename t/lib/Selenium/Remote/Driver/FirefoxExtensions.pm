@@ -2,7 +2,7 @@ package Selenium::Remote::Driver::FirefoxExtensions;
 
 use warnings;
 use strict;
-
+use TryCatch;
 use Moo;
 
 use Test::More import => [qw(diag ok is)];
@@ -54,9 +54,15 @@ sub login_ok {
 }
 
 sub find_text {
-    my ($self, $text, $scheme) = @_;
-    $scheme //= "xpath";
-    return $self->find_element("//*[contains(text(),\"$text\")]", $scheme);
+    try {
+        my ($self, $text, $scheme) = @_;
+        $scheme //= "xpath";
+        return $self->find_element("//*[contains(text(),\"$text\")]", $scheme);
+    }
+    catch {
+        return 1;
+    };
+
 }
 
 sub select_if_unselected {
@@ -106,6 +112,24 @@ sub browser_name_in {
     my ($self, @names) = @_;
     my $browser_name = $self->browser_name;
     return scalar grep {/^$browser_name$/} @names;
+}
+
+sub wait_for_text {
+    my ($self, $xpath, $expected, $timeout) = @_;
+    return 0 unless $xpath && $expected;
+    $timeout //= 5; # seconds
+    my $started = time();
+    my $elapsed = time();
+    try{
+        while ($elapsed - $started <= $timeout){
+            $elapsed = time();
+            return 1 if $self->find_element($xpath)->get_text() eq $expected;
+        }
+    }
+    catch{
+        return 0;
+    };
+    return 0;
 }
 
 1;
