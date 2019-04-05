@@ -245,7 +245,8 @@ function process_pbx_items(moveId,direction){
     helper.dt_buttons = [
         { name = c.loc('Call Details'), uri = "/subscriber/" _ subscriber.id _ "/calls?callid=' + encodeURIComponent(full.call_id_url) + '", class = 'btn-small btn-tertiary', icon = 'icon-search' },
         { name = c.loc('Recorded Files'), uri = "details/recording/'+full.id+'/streams", class = 'btn-small btn-tertiary', icon = 'icon-play' },
-        { name = c.loc('Delete'), uri = "details/recording/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+#we will confirm deletion in the form
+        { name = c.loc('Delete recording'), uri = "details/recording/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
     ELSE;
     helper.dt_buttons = [
