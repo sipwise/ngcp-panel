@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_3712b4b5",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-05T11:29:24Z",
+      "side": 1,
+      "message": "Had pretty much the same aproach. Refactored my code like Kirill has done.",
+      "range": {
+        "startLine": 117,
+        "startChar": 0,
+        "endLine": 117,
+        "endChar": 19
+      },
+      "revId": "aa9f7b3816e74a39ca733b19c88fee13c8c22396",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
