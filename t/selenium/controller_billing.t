@@ -172,11 +172,9 @@ $elem = $d->find_element('//div[contains(@class,"dataTables_wrapper")]');
 $d->scroll_to_element($elem);
 $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"2008-02-28")]/..');
 ok($row);
-$d->move_action(element => $row);
-my $delete_button = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
-ok($delete_button);
+$d->move_action(element => ($d->find_element('//*[@id="date_definition_table"]/tbody/tr/td[1]')));
+$d->find_element('//*[@id="date_definition_table"]/tbody/tr/td[4]/div/a[2]')->click();
 sleep 2 if ($browsername eq "htmlunit");
-$delete_button->click();
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
