@@ -46,7 +46,7 @@ RC=0
 
 if [ "${FORMAT}" = "junit" ] ; then
   # shellcheck disable=SC2086
-  prove -ofmv --formatter TAP::Formatter::JUnit -l -It/lib $SELECT | \
+  prove -ofmv --timer --formatter TAP::Formatter::JUnit -l -It/lib $SELECT | \
     tee -a "${OUTPUT_DIRECTORY}/api-rest.xml"
   RC=${PIPESTATUS[0]}
 else

@@ -59,7 +59,7 @@ echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024
 RC=0
 export CATALYST_SERVER="https://${SERVER}:1443"
 if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
-  prove -ofvm --formatter TAP::Formatter::JUnit -l -It/lib "${TEST_PLAN[@]}" | \
+  prove -ofvm --timer --formatter TAP::Formatter::JUnit -l -It/lib "${TEST_PLAN[@]}" | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
   RC="${PIPESTATUS[0]}"
 else
