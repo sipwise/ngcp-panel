@@ -38,11 +38,8 @@ $d->find_element('//*[@id="Domain_table"]/tbody/tr/td'); #trying to trick ajax
 diag("Check if entry exists and if the search works");
 $d->find_element('//*[@id="Domain_table_filter"]/label/input')->clear();
 $d->find_element('//*[@id="Domain_table_filter"]/label/input')->send_keys($domainstring); #actual value
-sleep(1) until $d->find_element('//*[@id="Domain_table"]/tbody/tr/td[3]')->get_text() ~~ $domainstring; #waiting because ajax
+ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr/td[3]', $domainstring), 'Entry was found');
 
-diag('Searching for element');
-my $domainfromtable = $d->get_text('//*[@id="Domain_table"]/tbody/tr/td[3]');
-is($domainfromtable, $domainstring, "Entry was found");
 sleep 1; # prevent stale element exception
 
 diag("Open Preferences of first Domain");
