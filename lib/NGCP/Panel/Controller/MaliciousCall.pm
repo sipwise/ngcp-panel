@@ -75,7 +75,7 @@ sub base :Chained('mcid_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
             log => 'Invalid malicious call id detected',
-            desc => $c->log('Invalid malicious call id detected'),
+            desc => $c->loc('Invalid malicious call id detected'),
         );
         $c->response->redirect($c->uri_for());
         $c->detach;
@@ -87,7 +87,7 @@ sub base :Chained('mcid_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
             log => 'Malicious call does not exist',
-            desc => $c->log('Malicious call does not exist'),
+            desc => $c->loc('Malicious call does not exist'),
         );
         $c->response->redirect($c->uri_for());
         $c->detach;
