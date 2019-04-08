@@ -108,9 +108,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Trying to find subscriber");
 $d->find_element('//*[@id="subscribers_table_filter"]/label/input')->send_keys($username);
-sleep(1) until $d->find_element('//*[@id="subscribers_table"]/tbody/tr/td[2]')->get_text() ~~ $username;
-my $userfromtable = $d->get_text('//*[@id="subscribers_table"]/tbody/tr/td[2]');
-is($userfromtable, $username, "Subscriber was found");
+ok($d->wait_for_text('//*[@id="subscribers_table"]/tbody/tr/td[2]', $username), 'Subscriber was found');
 
 diag("Edit Fraud Limits");
 my $elem = $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]');

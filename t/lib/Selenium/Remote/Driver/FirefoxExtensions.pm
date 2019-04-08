@@ -114,4 +114,22 @@ sub browser_name_in {
     return scalar grep {/^$browser_name$/} @names;
 }
 
+sub wait_for_text {
+    my ($self, $xpath, $expected, $timeout) = @_;
+    return unless $xpath && $expected;
+    $timeout = 5 unless $timeout; # seconds. Default timeout value if none is specified.
+    my $started = time();
+    my $elapsed = time();
+    try{
+        while ($elapsed - $started <= $timeout){
+            $elapsed = time();
+            return 1 if $self->find_element($xpath)->get_text() eq $expected;
+        }
+    }
+    catch{
+        return;
+    };
+    return;
+}
+
 1;
