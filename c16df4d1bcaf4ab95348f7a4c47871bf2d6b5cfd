@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_5d52f1de",
+        "filename": "t/selenium/controller_billing.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-08T11:41:37Z",
+      "side": 1,
+      "message": "this is probably not necessary here, as it was a delay to show the button. Isn\u0027t it?\n\nPlease ask Dev-Backend team (Kirill) do they still need this \"sleep if ($browsername eq \"htmlunit\")\".\n\nAFAIK it was added by the person which is no longer with Sipwise and we can clean the code from such sleeps completely.",
+      "range": {
+        "startLine": 177,
+        "startChar": 0,
+        "endLine": 177,
+        "endChar": 40
+      },
+      "revId": "c16df4d1bcaf4ab95348f7a4c47871bf2d6b5cfd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
