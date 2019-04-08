@@ -238,7 +238,7 @@ sub check_template_id :Private {
         NGCP::Panel::Utils::Message::error(
             c => $c,
             log => 'Invalid email template id detected',
-            desc => $c->log('Invalid email template id detected'),
+            desc => $c->loc('Invalid email template id detected'),
         );
         $c->response->redirect($c->uri_for());
         $c->detach;
