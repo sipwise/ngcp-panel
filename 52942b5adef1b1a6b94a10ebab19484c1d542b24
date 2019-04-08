@@ -16,6 +16,24 @@
       "revId": "52942b5adef1b1a6b94a10ebab19484c1d542b24",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a016987_7ae5b3a6",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-04-08T08:36:35Z",
+      "side": 1,
+      "message": "I would return undef (just \"return;\") here, so then there will be clear distinction between find_element() success and returning an empty string in some cases, or in case of an error undef is returned.\n\nso then it can be distinguished with \"defined\", \"//\" or \"//\u003d\" when needed (more flexibility)",
+      "parentUuid": "7a016987_3ac73b14",
+      "revId": "52942b5adef1b1a6b94a10ebab19484c1d542b24",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
