@@ -1396,7 +1396,8 @@ sub apply_rewrite {
     } elsif (!$subscriber || !ref($subscriber)) {
         $c->log->warn('could not apply rewrite: no subscriber found.');
         return $callee;
-    } elsif ($subscriber->can('provisioning_voip_subscriber')) {
+    } elsif ($subscriber->can('provisioning_voip_subscriber') &&
+             $subscriber->provisioning_voip_subscriber) {
         $rwr_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => $dir,
             prov_subscriber => $subscriber->provisioning_voip_subscriber,
