@@ -148,7 +148,7 @@ sub tmpl_base :Chained('tmpl_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
             log => 'Email template does not exist',
-            desc => $c->log('Email template does not exist'),
+            desc => $c->loc('Email template does not exist'),
         );
         $c->response->redirect($c->uri_for());
         $c->detach;
