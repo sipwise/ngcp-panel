@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_3ac73b14",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-08T08:31:46Z",
+      "side": 1,
+      "message": "As discussed:\n1) we have better return \"\" here, to keep the old logic: return xpath if found, otherwise nothing.\n2) fix all tests where we used to use find_text() to react on return nothing here \"properly\".",
+      "revId": "52942b5adef1b1a6b94a10ebab19484c1d542b24",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
