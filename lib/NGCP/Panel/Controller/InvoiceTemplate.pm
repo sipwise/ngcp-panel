@@ -217,7 +217,7 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
                 if($dup_item && $dup_item->id != $tmpl->id) {
                     die( ["Template name should be unique", "showdetails"] );
                 }
-                
+
                 $tmpl->update($form->values);
 
                 delete $c->session->{created_objects}->{reseller};
@@ -298,7 +298,7 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => 'empty svg file not allowed',
-            desc => $c->log('Attempted to save an empty invoice template'),
+            desc => $c->loc('Attempted to save an empty invoice template'),
         );
         return;
     }
@@ -387,7 +387,7 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args {
 
 sub embed_image :Chained('/') :PathPart('invoicetemplate/embedimage') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my ($in, $out);
     $in = $c->request->parameters;
     $in->{svg_file} = $c->request->upload('svg_file');
@@ -404,7 +404,7 @@ sub embed_image :Chained('/') :PathPart('invoicetemplate/embedimage') :Args(0) {
     $c->stash(in => $in);
     $c->stash(template => 'invoice/template_editor_aux_embedimage.tt');
     $c->detach( $c->view('TT') );
-    
+
 }
 
 
