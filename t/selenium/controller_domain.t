@@ -74,10 +74,11 @@ $formfield->send_keys('thisisnonumber');
 $d->find_element("#save", 'css')->click();
 
 diag('Type 789 and click Save');
-$d->find_text('Value must be an integer');
+ok($d->find_text('Value must be an integer'), "Wrong value detected");
 $formfield = $d->find_element('#concurrent_max', 'css');
 ok($formfield);
 $formfield->clear();
+diag('Saving integer value into "concurrent_max"');
 $formfield->send_keys('789');
 $d->find_element('#save', 'css')->click();
 done_testing();

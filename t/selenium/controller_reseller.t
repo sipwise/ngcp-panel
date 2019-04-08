@@ -38,8 +38,8 @@ is($d->find_element('//table[@id="Resellers_table"]//tr[1]/td[1]')->get_text(), 
 diag("Going to create a reseller");
 $d->find_element('Create Reseller', 'link_text')->click();
 $d->find_element('#save', 'css')->click();
-$d->find_text("Contract field is required");
-$d->find_text("Name field is required");
+ok($d->find_text("Contract field is required"), 'Error "Contract field is required" appears');
+ok($d->find_text("Name field is required"), 'Error "Name field is required" appears');
 $d->find_element('#mod_close', 'css')->click();
 
 diag("Click Edit on the first reseller shown (first row)");
@@ -61,7 +61,7 @@ $d->move_action(element => $row,xoffset=>1); # 1 because if the mouse doesn't mo
 $btn = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
 ok($btn);
 $btn->click();
-$d->find_text("Are you sure?");
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('//div[@id="dataConfirmModal"]//button[contains(text(),"Cancel")]')->click();
 
 done_testing;

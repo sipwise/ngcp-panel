@@ -141,9 +141,9 @@ $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Terminate"
 ok($edit_link, 'Found terminate button');
 $d->move_action(element => $row);
 $edit_link->click();
-$d->find_text("Are you sure?");
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
-$d->find_text("Customer successfully terminated");
+ok($d->find_text("Customer successfully terminated"), 'Text "Customer successfully terminated" appears');
 
 done_testing;
 # vim: filetype=perl

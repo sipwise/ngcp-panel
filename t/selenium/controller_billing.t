@@ -93,10 +93,10 @@ ok($row, "Find row");
 $d->move_action(element => $row);
 ok(1, "Mouse over row");
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..//a[contains(@class,"btn-secondary") and contains(text(),"Delete")]')->click();
-ok($d->find_text("Are you sure?"));
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 diag('skip was here');
-ok($d->find_text("successfully deleted"));
+ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
 
 diag("Click Edit Zones");
 $d->find_element("Edit Zones", 'link_text')->click();
@@ -110,7 +110,7 @@ $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contai
 ok($row);
 $d->move_action(element => $row);
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//a[contains(text(),"Delete")]')->click();
-$d->find_text("Are you sure?");
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Go to Billing page (again)");
@@ -148,7 +148,7 @@ sleep 1; # give ajax time to load
 my $btn = $d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
 ok($btn);
 $btn->click();
-$d->find_text("Edit Wednesday");
+ok($d->find_text("Edit Wednesday"), 'Edit Wednesday button exists');
 diag("Pop-up 'Edit Wednesday' was properly opened");
 
 diag("add/delete a time def to Wednesday");
@@ -177,7 +177,7 @@ my $delete_button = $d->find_child_element($row, './/a[contains(@class,"btn-seco
 ok($delete_button);
 sleep 2 if ($browsername eq "htmlunit");
 $delete_button->click();
-$d->find_text("Are you sure?");
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 done_testing;
