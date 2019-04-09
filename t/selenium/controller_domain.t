@@ -3,6 +3,7 @@ use strict;
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag like)];
 use Selenium::Remote::Driver::FirefoxExtensions;
+use Selenium::Collection::Common;
 
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
 
@@ -13,21 +14,15 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     },
 );
 
+my $c = Selenium::Collection::Common->new(
+    driver => $d
+);
+
 diag('Logging in');
 $d->login_ok();
 
-diag('Go to domains page');
-$d->find_element('//*[@id="main-nav"]/li[5]/a')->click();
-$d->find_element('//*[@id="main-nav"]/li[5]/ul/li[6]/a')->click();
-
-diag('Try to add a domain');
-$d->find_element('//*[@id="content"]/div/div[1]/span[2]/a')->click();
-ok(1, "Domain website seems to exist");
-$d->find_element('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input')->click(); #select default reseller
 my $domainstring = ("test" . int(rand(10000)) . ".example.org"); #create string for checking later
-$d->find_element('//*[@id="domain"]')->send_keys($domainstring);
-$d->find_element('//*[@id="save"]')->click();
-ok(2, "Create field shows and works");
+$c->create_domain($domainstring);
 
 diag('Ensure Ajax loading has finished by searching garbage');
 $d->find_element('//*[@id="Domain_table_filter"]/label/input')->send_keys('thisshouldnotexist'); #search random value
