@@ -141,7 +141,6 @@ $row = $d->find_element('//table//td[contains(text(),"Wednesday")]');
 ok($row);
 diag("Move mouse over 'Weekdays' row to make 'Edit' button available");
 $d->move_action(element => ($d->find_element('//h3[contains(text(),"Weekdays")]')));
-sleep 2 if ($d->browser_name_in("htmlunit"));
 $d->move_action(element => $row);
 diag("Find 'Edit' button for element 'Wednesday'");
 sleep 1; # give ajax time to load
@@ -174,7 +173,6 @@ $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contai
 ok($row);
 $d->move_action(element => ($d->find_element('//*[@id="date_definition_table"]/tbody/tr/td[1]')));
 $d->find_element('//*[@id="date_definition_table"]/tbody/tr/td[4]/div/a[2]')->click();
-sleep 2 if ($browsername eq "htmlunit");
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
