@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_88a02592",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-09T08:31:35Z",
+      "side": 1,
+      "message": "Maybe we can simplify it?\n  \n    while ($elapsed - $started \u003c\u003d $timeout){\n        $elapsed \u003d time();\n        try{\n            return 1 if $self-\u003efind_element($xpath)-\u003eget_text() eq $expected;\n        };\n    }",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 9
+      },
+      "revId": "05e9c1daccf65c392866ed1614abaccc85172b5b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
