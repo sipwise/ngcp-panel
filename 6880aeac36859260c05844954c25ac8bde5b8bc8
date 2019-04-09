@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_48c10d2e",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-09T08:42:30Z",
+      "side": 1,
+      "message": "spaces here must be deleted, otherwise it confuses.",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 4
+      },
+      "revId": "6880aeac36859260c05844954c25ac8bde5b8bc8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
