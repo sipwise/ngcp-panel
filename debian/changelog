@@ -1,3 +1,12 @@
+ngcp-panel (5.5.7.10+0~mr5.5.7.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d823269] TT#56602 no apply_rewrite for a terminated prov subscriber
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 09 Apr 2019 15:56:33 +0200
+
 ngcp-panel (5.5.7.9+0~mr5.5.7.9) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
