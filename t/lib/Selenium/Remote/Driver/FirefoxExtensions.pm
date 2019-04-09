@@ -120,16 +120,17 @@ sub wait_for_text {
     $timeout = 5 unless $timeout; # seconds. Default timeout value if none is specified.
     my $started = time();
     my $elapsed = time();
-    try{
-        while ($elapsed - $started <= $timeout){
+    while ($elapsed - $started <= $timeout){
+        try{
             $elapsed = time();
             return 1 if $self->find_element($xpath)->get_text() eq $expected;
         }
+        catch{
+            $elapsed = time();
+        }
+
     }
-    catch{
-        return;
-    };
     return;
-}
+    }
 
 1;
