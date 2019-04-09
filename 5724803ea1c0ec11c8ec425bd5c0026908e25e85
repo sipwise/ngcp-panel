@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_23883222",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-09T12:54:27Z",
+      "side": 1,
+      "message": "this is IMHO unnecessary here.\nLet\u0027s discuss it tomorrow.",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 22
+      },
+      "revId": "5724803ea1c0ec11c8ec425bd5c0026908e25e85",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
