@@ -110,16 +110,12 @@ diag("Trying to find subscriber");
 $d->find_element('//*[@id="subscribers_table_filter"]/label/input')->send_keys($username);
 ok($d->wait_for_text('//*[@id="subscribers_table"]/tbody/tr/td[2]', $username), 'Subscriber was found');
 
-diag("Edit Fraud Limits");
+diag("Go to Edit Fraud Limits");
 my $elem = $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]');
 $d->scroll_to_element($elem);
 $elem->click();
-$row = $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]');
-ok($row, 'Changed monthly settings');
-$edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]');
-ok($edit_link);
-$d->move_action(element => $row);
-$edit_link->click();
+$d->move_action(element => ($d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td[1]')));
+$d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td[5]/div/a[1]')->click();
 
 diag("Do Edit Fraud Limits");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
