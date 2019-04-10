@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_a920834a",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-10T12:46:15Z",
+      "side": 0,
+      "message": "Why did you remove this?\nIMHO, it is a proper test to ensure \u0027title\u0027 is not set on login page. Isn\u0027t it?",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 29
+      },
+      "revId": "0d1e5ead5b641d1bdb8bd8d73e7b06a959aa4f20",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
