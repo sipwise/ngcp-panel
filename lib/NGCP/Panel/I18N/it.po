@@ -732,6 +732,10 @@ msgstr ""
 msgid "Attach WAV in Email"
 msgstr "Allega WAV alla Email"
 
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
+msgid "Attempted to save an empty invoice template"
+msgstr ""
+
 #: share/templates/helpers/pref_table.tt
 msgid "Attribute"
 msgstr "Attributo"
@@ -2618,6 +2622,10 @@ msgstr "Modello Email"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Email Templates"
 msgstr "Modelli Email"
+
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Email template does not exist"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully created"
@@ -4819,6 +4827,10 @@ msgstr "Id profilo dispositivo non valido"
 msgid "Invalid domain id detected"
 msgstr "Id dominio non valido"
 
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Invalid email template id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Invalid emergency container id detected!"
 msgstr "Id gruppo di numeri di emergenza non valido!"
@@ -4887,6 +4899,10 @@ msgstr "Id locaizzazione non valido!"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Invalid mailtofax setting."
 msgstr "Impostazione mail2fax non valida!"
+
+#: lib/NGCP/Panel/Controller/MaliciousCall.pm
+msgid "Invalid malicious call id detected"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "Invalid number block id detected"
@@ -5317,6 +5333,10 @@ msgstr "Identificazione Chiamata Indesiderata"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Malicious Calls"
 msgstr "Chiamate Indesiderate"
+
+#: lib/NGCP/Panel/Controller/MaliciousCall.pm
+msgid "Malicious call does not exist"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 msgid "Malicious call successfully deleted"

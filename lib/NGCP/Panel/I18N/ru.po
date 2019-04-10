@@ -676,6 +676,10 @@ msgstr ""
 msgid "Attach WAV in Email"
 msgstr "Прикрепить WAV к Email"
 
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
+msgid "Attempted to save an empty invoice template"
+msgstr ""
+
 #: share/templates/helpers/pref_table.tt
 msgid "Attribute"
 msgstr "Атрибут"
@@ -2544,6 +2548,10 @@ msgstr "Шаблон электронной почты"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Email Templates"
 msgstr "Шаблоны электронной почты"
+
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Email template does not exist"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully created"
@@ -4709,6 +4717,10 @@ msgstr "Обнаружен некорректный id профиля устро
 msgid "Invalid domain id detected"
 msgstr "Обнаружен некорректный id домена"
 
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Invalid email template id detected"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Invalid emergency container id detected!"
 msgstr ""
@@ -4776,6 +4788,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Invalid mailtofax setting."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/MaliciousCall.pm
+msgid "Invalid malicious call id detected"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
@@ -5206,6 +5222,10 @@ msgstr ""
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Malicious Calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/MaliciousCall.pm
+msgid "Malicious call does not exist"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
