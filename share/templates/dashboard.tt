@@ -28,7 +28,9 @@ $(document).ready(function () {
     <div class="span12">
         <div class="pricing-plans plans-[% wcount %]">
             [% FOR w IN widgets -%]
-                [% INCLUDE $w -%]
+                [% IF w -%]
+                    [% INCLUDE $w -%]
+                [% END -%]
             [% END -%]
         </div>
     </div>
