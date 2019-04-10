@@ -50,7 +50,7 @@ $d->find_element('#save', 'css')->click();
 diag("Open Details for our just created Customer");
 sleep 2; #Else we might search on the previous page
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
-$d->find_element('#Customer_table tr > td.dataTables_empty', 'css');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
 $d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
 my $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
 ok($row);
@@ -81,11 +81,8 @@ $d->scroll_to_element($elem);
 $elem->click();
 sleep 4 if ($d->browser_name_in("phantomjs", "chrome")); # time to move
 $row = $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]');
-ok($row);
-$edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]');
-ok($edit_link);
 $d->move_action(element => $row);
-$edit_link->click();
+$edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]')->click();
 
 diag("Do Edit Fraud Limits");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
@@ -96,7 +93,7 @@ $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(t
 diag("Terminate our customer");
 $d->find_element('//a[contains(@class,"btn-primary") and text()[contains(.,"Back")]]')->click();
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
-$d->find_element('#Customer_table tr > td.dataTables_empty', 'css');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
 $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
 ok($row);
