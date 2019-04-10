@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_69060b22",
+        "filename": "share/templates/dashboard.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-04-10T17:10:46Z",
+      "side": 1,
+      "message": "does the ajax loading stuff work? maybe also align the hardcoded number (4) ajax request queues iirc.",
+      "revId": "d1e950d9ab13e8bff6d85154a51ddeea2449c125",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
