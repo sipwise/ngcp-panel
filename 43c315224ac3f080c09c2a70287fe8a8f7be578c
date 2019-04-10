@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_691a8b19",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-10T12:57:28Z",
+      "side": 1,
+      "message": "Please use here Git commit id \u002796dc84af28ada150459a355ec8211acec29df3e4\u0027\ninstead of Gerrit change-id \u0027I59aa27d7ef2fe06a6caa28620341363ff99f1042\u0027.",
+      "range": {
+        "startLine": 9,
+        "startChar": 17,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "43c315224ac3f080c09c2a70287fe8a8f7be578c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a016987_e9b31b09",
+        "filename": "t/selenium/controller_customer.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-10T12:57:28Z",
+      "side": 1,
+      "message": "I am not 100% about XPATH here. It is relative from \"collapse_fraud\" but static from the line/column number. \nWhat it the value will be in the second row?\n\nThis is why in the past code used \u0027.../td[contains(text(),\"Monthly Settings\")]\u0027\n\nDo you believe the new approach is stable enough for the future changes?",
+      "revId": "43c315224ac3f080c09c2a70287fe8a8f7be578c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
