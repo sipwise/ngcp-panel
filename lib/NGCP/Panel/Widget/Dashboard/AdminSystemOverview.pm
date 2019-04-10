@@ -6,7 +6,9 @@ use strict;
 use NGCP::Panel::Utils::Preferences;
 
 sub template {
-    return 'widgets/admin_system_overview.tt';
+    # disabled
+    #return 'widgets/admin_system_overview.tt';
+    return;
 }
 
 sub filter {
