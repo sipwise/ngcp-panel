@@ -42,15 +42,13 @@ sub login_ok {
 
     diag("Do Admin Login");
     ok($self->find_text("Admin Sign In"), "Text Admin Sign In found");
-    is($self->get_title, '');
     $self->find_element('#username', 'css')->send_keys('administrator');
     $self->find_element('#password', 'css')->send_keys('administrator');
     $self->find_element('#submit', 'css')->click();
 
     diag("Checking Admin interface");
-    is($self->get_title, 'Dashboard');
-    is($self->find_element('//*[@id="masthead"]//h2')->get_text(), "Dashboard");
-    ok(1, "Login Successful");
+    is($self->get_title, 'Dashboard', 'Tab Title is correct');
+    is($self->find_element('//*[@id="masthead"]//h2')->get_text(), "Dashboard", 'We are in the Dashboard. Login Successfull');
 }
 
 sub find_text {
