@@ -81,11 +81,8 @@ $d->scroll_to_element($elem);
 $elem->click();
 sleep 4 if ($d->browser_name_in("phantomjs", "chrome")); # time to move
 $row = $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]');
-ok($row);
-$edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]');
-ok($edit_link);
 $d->move_action(element => $row);
-$edit_link->click();
+$edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]')->click();
 
 diag("Do Edit Fraud Limits");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
