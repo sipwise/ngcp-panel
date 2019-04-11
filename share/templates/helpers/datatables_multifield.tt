@@ -1,28 +1,30 @@
 <!-- datatables_multifield -->
 <script type="text/javascript">
 
-var checked_fields = [];
+var checked_fields[%table_id%] = [];
 $(document).ready(function() {
 
     [%IF value%]
     JSON.parse('[% value %]').map( function (val) {
-        checked_fields.push(val);
+        //force string type for the correct comparison with $(nRow).find("td:first").text() below
+        val = '' + val;
+        checked_fields[%table_id%].push(val);
     });
     [%END%]
     $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
 
         var my_id = $(this).parents("tr").find("td:first").text();
-        var indexOfId = checked_fields.indexOf(my_id)
+        var indexOfId = checked_fields[%table_id%].indexOf(my_id)
         if($(this).attr("checked") == "checked") {
             if(indexOfId < 0){
-               checked_fields.push(my_id);
+               checked_fields[%table_id%].push(my_id);
             }
         } else {
             if( indexOfId >= 0){
-                checked_fields.splice(indexOfId,1);
+                checked_fields[%table_id%].splice(indexOfId,1);
             }
         }
-        $("#[% hidden_id %]").val( JSON.stringify(checked_fields) );
+        $("#[% hidden_id %]").val( JSON.stringify(checked_fields[%table_id%]) );
 
     });
     $('#[% table_id %]')
@@ -67,7 +69,7 @@ $(document).ready(function() {
         ],
         "fnRowCallback": function(nRow, aData, iDisplayIndex) {
             nRow.className = "sw_action_row";
-            if(checked_fields.indexOf($(nRow).find("td:first").text()) >= 0 )
+            if(checked_fields[%table_id%].indexOf($(nRow).find("td:first").text()) >= 0 )
             {
                 $(nRow).find("td input[type='checkbox']").attr("checked", "checked");
             }
