@@ -213,9 +213,11 @@ $(document).ready(function() {
         [% END -%]
         "fnDrawCallback": function( oSettings ) {
                 $('.sw_actions').css('visibility','hidden');
-                $('.sw_action_row').hover(
+                $('.sw_action_row').mouseover(
                     function() { $(this).find('.sw_actions').css('visibility','visible'); },
-                    function() { $(this).find('.sw_actions').css('visibility','hidden'); }
+                );
+                $('.sw_action_row').mouseout(
+                    function() { $(this).find('.sw_actions').css('visibility','hidden'); },
                 );
                 if ($('.sw_actions').find("[rel=tooltip]").length) {
                     $('.sw_actions').find("[rel=tooltip]").tooltip();
