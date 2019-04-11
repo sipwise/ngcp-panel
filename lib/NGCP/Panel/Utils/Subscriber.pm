@@ -1516,14 +1516,13 @@ sub prepare_group_select {
     my $subscriber = $p{subscriber};
     my $params = $p{params};
     my $unselect = $p{unselect} // 0;
-
     my @group_options = ();
-    my $group_rs = $c->model('DB')->resultset('voip_pbx_groups')->search({
-        'subscriber_id' => $subscriber->provisioning_voip_subscriber->id,
-    },{
-        'order_by' => 'me.id',
-    });
     unless($unselect) {
+        my $group_rs = $c->model('DB')->resultset('voip_pbx_groups')->search({
+            'subscriber_id' => $subscriber->provisioning_voip_subscriber->id,
+        },{
+            'order_by' => 'me.id',
+        });
         @group_options = map { $_->group->voip_subscriber->id } $group_rs->all;
     }
     $params->{group_select} = encode_json(\@group_options);
