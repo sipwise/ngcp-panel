@@ -73,4 +73,10 @@ $formfield->clear();
 diag('Saving integer value into "concurrent_max"');
 $formfield->send_keys('789');
 $d->find_element('#save', 'css')->click();
+
+diag('Check if Domain still exists');
+$c->delete_domain($domainstring);
+$d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
+ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Domain was deleted');
+
 done_testing();

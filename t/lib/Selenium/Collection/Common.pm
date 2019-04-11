@@ -25,4 +25,20 @@ sub create_domain {
     $self->driver->find_element('//*[@id="domain"]')->send_keys($name);
     $self->driver->find_element('//*[@id="save"]')->click();
 }
+
+sub delete_domain {
+    my ($self, $name) = @_;
+    return unless $name;
+
+    diag('Go to domains page');
+    $self->driver->find_element('//*[@id="main-nav"]/li[5]/a')->click();
+    $self->driver->find_element('//*[@id="main-nav"]/li[5]/ul/li[6]/a')->click();
+
+    diag('Try to delete a domain');
+    $self->driver->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $name);
+    ok($self->driver->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $name), "Domain found");
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]/td[3]'));
+    $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]/td[4]/div/a[1]')->click();
+    $self->driver->find_element('//*[@id="dataConfirmOK"]')->click();
+}
 1;
