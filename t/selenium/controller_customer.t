@@ -4,6 +4,7 @@ use warnings;
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag todo_skip)];
 use Selenium::Remote::Driver::FirefoxExtensions;
+use Selenium::Collection::Common;
 
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
 
@@ -14,7 +15,14 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     },
 );
 
+my $c = Selenium::Collection::Common->new(
+    driver => $d
+);
+
 $d->login_ok();
+
+my $domainstring = ("test" . int(rand(10000)) . ".example.org"); #create string for checking later
+$c->create_domain($domainstring);
 
 my @chars = ("A".."Z", "a".."z");
 my $rnd_id;
@@ -87,12 +95,11 @@ $d->find_element('//*[@id="customer_details"]/div[4]/div[1]/a')->click();
 $d->find_element('//*[@id="collapse_subs"]/div/a')->click();
 
 diag('Enter necessary information');
-$d->find_element('//*[@id="domainidtable_filter"]/label/input')->clear();
-$d->find_element('//*[@id="domainidtable_filter"]/label/input')->send_keys('thisshouldnotexist');
-$d->find_element('//*[@id="domainidtable"]/tbody/tr/td[contains(text(), "No matching records found")]');
-$d->find_element('//*[@id="domainidtable_filter"]/label/input')->clear();
-$d->find_element('//*[@id="domainidtable_filter"]/label/input')->send_keys('default');
-$d->find_element('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input')->click();
+$d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#domainidtable tr > td.dataTables_empty', 'css'), 'Table is empty');
+$d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', $domainstring);
+ok($d->wait_for_text('//*[@id="domainidtable"]/tbody/tr[1]/td[3]', $domainstring), 'Domain found');
+$d->select_if_unselected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
 $d->find_element('//*[@id="e164.cc"]')->send_keys('43');
 $d->find_element('//*[@id="e164.ac"]')->send_keys('99');
 $d->find_element('//*[@id="e164.sn"]')->send_keys(int(rand(99999999)));
@@ -139,5 +146,6 @@ ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 ok($d->find_text("Customer successfully terminated"), 'Text "Customer successfully terminated" appears');
 
+$c->delete_domain($domainstring);
 done_testing;
 # vim: filetype=perl
