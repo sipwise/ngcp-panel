@@ -1,6 +1,6 @@
 package NGCP::Panel::Utils::Message;
 
-use Catalyst;
+#use Catalyst;
 use Sipwise::Base;
 use Data::Dumper;
 use DateTime qw();
