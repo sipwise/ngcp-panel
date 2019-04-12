@@ -24,18 +24,11 @@ $d->login_ok();
 my $domainstring = ("test" . int(rand(10000)) . ".example.org"); #create string for checking later
 $c->create_domain($domainstring);
 
-diag('Ensure Ajax loading has finished by searching garbage');
-$d->find_element('//*[@id="Domain_table_filter"]/label/input')->send_keys('thisshouldnotexist'); #search random value
-
-diag('Wait for Ajax');
-$d->find_element('//*[@id="Domain_table"]/tbody/tr/td'); #trying to trick ajax
-
 diag("Check if entry exists and if the search works");
-$d->find_element('//*[@id="Domain_table_filter"]/label/input')->clear();
-$d->find_element('//*[@id="Domain_table_filter"]/label/input')->send_keys($domainstring); #actual value
+$d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
 ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr/td[3]', $domainstring), 'Entry was found');
-
-sleep 1; # prevent stale element exception
 
 diag("Open Preferences of first Domain");
 my ($row, $edit_link);
@@ -50,7 +43,6 @@ like($d->get_path, qr!domain/\d+/preferences!);
 $d->find_element("Access Restrictions", 'link_text')->click();
 
 diag("Click edit for the preference concurrent_max");
-sleep 1;
 $row = $d->find_element('//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]');
 ok($row, 'concurrent_max found');
 $edit_link = $d->find_child_element($row, '(./../td//a)[2]');
