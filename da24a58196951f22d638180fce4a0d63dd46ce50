@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_d1db65ec",
+        "filename": "t/selenium/controller_reseller.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-12T11:02:08Z",
+      "side": 0,
+      "message": "has the test deleted by intention or lost on refactoring.",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 34
+      },
+      "revId": "da24a58196951f22d638180fce4a0d63dd46ce50",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
