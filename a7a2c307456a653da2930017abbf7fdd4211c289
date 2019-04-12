@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a016987_d1b0058e",
+        "filename": "t/selenium/controller_reseller.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-12T11:37:23Z",
+      "side": 1,
+      "message": "maybe \"the default reseller found\" to hint the next developers what we are searching here.",
+      "range": {
+        "startLine": 37,
+        "startChar": 76,
+        "endLine": 37,
+        "endChar": 88
+      },
+      "revId": "a7a2c307456a653da2930017abbf7fdd4211c289",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
