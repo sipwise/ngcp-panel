@@ -1,3 +1,12 @@
+ngcp-panel (7.2.1.6+0~mr7.2.1.6) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [2e6f86c] TT#55953 Prevent hiding buttons on ajax search
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 12 Apr 2019 17:20:36 +0200
+
 ngcp-panel (7.2.1.5+0~mr7.2.1.5) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
