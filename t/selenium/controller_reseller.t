@@ -19,28 +19,21 @@ $d->login_ok();
 diag("Go to reseller list");
 $d->find_element('//a[@class="btn" and contains(@href,"/reseller")]')->click();
 
-diag("Search nonexisting reseller");
-my $searchfield = $d->find_element('#Resellers_table_filter label input', 'css');
-ok($searchfield);
-$searchfield->send_keys('donotfindme');
-
-diag("Verify that nothing is shown");
-my $elem = $d->find_element('#Resellers_table td.dataTables_empty', 'css');
-ok($elem);
-is($elem->get_text,'No matching records found');
-
-diag('Search for "1" in resellers');
-$searchfield->clear();
-$searchfield->send_keys('active');
-$d->find_element('#Resellers_table tr.sw_action_row', 'css');
-is($d->find_element('//table[@id="Resellers_table"]//tr[1]/td[1]')->get_text(), '1');
-
 diag("Going to create a reseller");
 $d->find_element('Create Reseller', 'link_text')->click();
 $d->find_element('#save', 'css')->click();
 ok($d->find_text("Contract field is required"), 'Error "Contract field is required" appears');
 ok($d->find_text("Name field is required"), 'Error "Name field is required" appears');
 $d->find_element('#mod_close', 'css')->click();
+
+diag("Search nonexisting reseller");
+my $searchfield = $d->find_element('#Resellers_table_filter label input', 'css');
+$searchfield->send_keys('thisshouldnotexist');
+
+diag("Verify that nothing is shown");
+ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$searchfield->clear();
+$searchfield->send_keys('1');
 
 diag("Click Edit on the first reseller shown (first row)");
 sleep 1; #prevent a StaleElementReferenceException
