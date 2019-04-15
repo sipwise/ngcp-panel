@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_a59e7e05",
+        "filename": "t/selenium/controller_reseller.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-15T11:29:01Z",
+      "side": 1,
+      "message": "maybe now you need to terminate your reseller you have created, and not the first in a list ?",
+      "range": {
+        "startLine": 59,
+        "startChar": 1,
+        "endLine": 59,
+        "endChar": 52
+      },
+      "revId": "d10aa91bd24bcd791ac478ffbdc9a82263d63b04",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
