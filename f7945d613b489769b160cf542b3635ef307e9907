@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_455b4a55",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-15T12:38:37Z",
+      "side": 1,
+      "message": "Please consider to insert empty lines here, like in sub delete_domain().\n\nIt is useful to have separated variable declaration section.",
+      "revId": "f7945d613b489769b160cf542b3635ef307e9907",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
