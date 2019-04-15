@@ -46,6 +46,29 @@
       "revId": "d10aa91bd24bcd791ac478ffbdc9a82263d63b04",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_e5bb5674",
+        "filename": "t/selenium/controller_reseller.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-15T11:33:28Z",
+      "side": 1,
+      "message": "Ah, right...",
+      "range": {
+        "startLine": 68,
+        "startChar": 73,
+        "endLine": 68,
+        "endChar": 79
+      },
+      "revId": "d10aa91bd24bcd791ac478ffbdc9a82263d63b04",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
