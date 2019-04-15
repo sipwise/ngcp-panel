@@ -4,6 +4,7 @@ use strict;
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag)];
 use Selenium::Remote::Driver::FirefoxExtensions;
+use Selenium::Collection::Common;
 
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
 
@@ -14,17 +15,25 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     },
 );
 
+my $c = Selenium::Collection::Common->new(
+    driver => $d
+);
+
 $d->login_ok();
 
-diag("Go to reseller list");
-$d->find_element('//a[@class="btn" and contains(@href,"/reseller")]')->click();
+my $resellername = ("test" . int(rand(10000)));
+my $contractid = ("test" . int(rand(10000)));
+$c->create_reseller_contract($contractid);
+$c->create_reseller($resellername, $contractid);
 
-diag("Going to create a reseller");
+diag("Check if invalid reseller will be rejected");
 $d->find_element('Create Reseller', 'link_text')->click();
 $d->find_element('#save', 'css')->click();
 ok($d->find_text("Contract field is required"), 'Error "Contract field is required" appears');
 ok($d->find_text("Name field is required"), 'Error "Name field is required" appears');
 $d->find_element('#mod_close', 'css')->click();
+
+$c->create_reseller();
 
 diag("Search nonexisting reseller");
 my $searchfield = $d->find_element('#Resellers_table_filter label input', 'css');
