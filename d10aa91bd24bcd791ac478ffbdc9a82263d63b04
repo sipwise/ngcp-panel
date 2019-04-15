@@ -22,6 +22,30 @@
       "revId": "d10aa91bd24bcd791ac478ffbdc9a82263d63b04",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_6589a6ca",
+        "filename": "t/selenium/controller_reseller.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-15T11:30:47Z",
+      "side": 1,
+      "message": "The program never terminated anything. It just clicked on terminate and did not accept it in the checkbox. I have added new methods to delete reseller and contract in a new commit.",
+      "parentUuid": "5afe65bd_a59e7e05",
+      "range": {
+        "startLine": 59,
+        "startChar": 1,
+        "endLine": 59,
+        "endChar": 52
+      },
+      "revId": "d10aa91bd24bcd791ac478ffbdc9a82263d63b04",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
