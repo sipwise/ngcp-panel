@@ -52,13 +52,25 @@ $d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[
 $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[5]/div/a[1]')->click();
 $d->find_element('#mod_close', 'css')->click();
 
+diag("Press cancel on delete dialog to check if reseller contract is still there");
+$c->delete_reseller_contract($contractid, 1);
+$d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
+ok($d->wait_for_text('//*[@id="contract_table"]/tbody/tr[1]/td[2]', $contractid), 'Reseller contract is still here');
+
+diag("Now deleting the reseller contract");
 $c->delete_reseller_contract($contractid);
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
-ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Reseller contract was not found');
+ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Reseller contract was deleted');
 
+diag("Press cancel on delete dialog to check if reseller is still there");
+$c->delete_reseller($resellername, 1);
+$d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
+ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller contract is still here');
+
+diag("Now deleting the reseller");
 $c->delete_reseller($resellername);
 $d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
-ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Reseller was not found');
+ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Reseller was deleted');
 
 done_testing;
 # vim: filetype=perl
