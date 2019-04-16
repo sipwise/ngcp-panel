@@ -42,18 +42,14 @@ $searchfield->send_keys('thisshouldnotexist');
 diag("Verify that nothing is shown");
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $searchfield->clear();
-$searchfield->send_keys('active');
-ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[2]', '1'), 'Default Reseller found');
 
-diag("Click Edit on the first reseller shown (first row)");
-sleep 1; #prevent a StaleElementReferenceException
-my $row = $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]');
-ok($row);
-$d->move_action(element => $row);
-my $btn = $d->find_child_element($row, './/a[contains(text(),"Edit")]');
-ok($btn);
-$btn->click();
-#is($d->find_element("name", id)->get_attribute("value"), "reseller 1");
+diag("Search for our newly created reseller");
+$searchfield->send_keys($resellername);
+ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Our new reseller was found');
+
+diag("Click Edit on our newly created reseller");
+$d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]'));
+$d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[5]/div/a[1]')->click();
 $d->find_element('#mod_close', 'css')->click();
 
 $c->delete_reseller_contract($contractid);
