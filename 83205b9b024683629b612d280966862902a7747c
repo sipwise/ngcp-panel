@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5afe65bd_28f2639b",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-16T09:49:16Z",
+      "side": 1,
+      "message": "If this function gets executed twice in a row without a move element in between, it will not move to another location but rather stay on the same one. Then the buttons would not appear and the test would crash because of element_not_interactable.",
+      "parentUuid": "5afe65bd_88eb97b0",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 119
+      },
+      "revId": "83205b9b024683629b612d280966862902a7747c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5afe65bd_68d17bfb",
         "filename": "t/lib/Selenium/Collection/Common.pm",
         "patchSetId": 1
