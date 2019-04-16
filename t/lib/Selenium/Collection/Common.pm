@@ -95,38 +95,58 @@ sub create_reseller_contract {
 
 
 sub delete_reseller {
-    my ($self, $name) = @_;
+    my ($self, $name, $cancel) = @_;
     return unless $name;
 
     diag('Go to reseller page');
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Resellers', 'link_text')->click();
-
-    diag('Try to delete a reseller');
     $self->driver->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($self->driver->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $name);
     ok($self->driver->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $name), 'Entry found');
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Resellers_table"]'));
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]'));
     $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[5]/div/a[2]')->click();
-    $self->driver->find_element('//*[@id="dataConfirmOK"]')->click();
+    if($cancel){
+        popup_confirm_cancel('We are not going to delete this reseller');
+    } else {
+        popup_confirm_ok('We are going to delete this reseller');
+    };
 }
 
 sub delete_reseller_contract {
-    my ($self, $resellerid) = @_;
+    my ($self, $resellerid, $cancel) = @_;
     return unless $resellerid;
 
     diag('Go to Reseller and Peering Contracts page');
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Reseller and Peering Contracts', 'link_text')->click();
-
-    diag('Try to delete a reseller contract');
     $self->driver->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($self->driver->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $resellerid);
     ok($self->driver->wait_for_text('//*[@id="contract_table"]/tbody/tr/td[2]', $resellerid), 'Entry found');
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="contract_table"]'));
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]/td[3]'));
     $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]/td[7]/div/a[2]')->click();
+    if($cancel){
+        popup_confirm_cancel('We are not going to delete this reseller contract');
+    } else {
+        popup_confirm_ok('We are going to delete this reseller contract');
+    };
+}
+
+sub popup_confirm_ok {
+    my($self, $message) = @_;
+
+    diag($message);
+    $self->driver->find_element('//*[@id="dataConfirmOK"]')->click();
+}
+
+sub popup_confirm_cancel {
+    my($self, $message) = @_;
+
+    diag($message);
     $self->driver->find_element('//*[@id="dataConfirmOK"]')->click();
 }
 1;
