@@ -62,14 +62,11 @@ $d->find_element('#save', 'css')->click();
 diag("Open Details for our just created Customer");
 sleep 2; #Else we might search on the previous page
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
-$d->find_element('#Customer_table tr > td.dataTables_empty', 'css');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
 $d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
-my $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
-ok($row, 'Searching for current customer works');
-my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Details")]');
-ok($edit_link, 'Can click on Details');
-$d->move_action(element => $row);
-$edit_link->click();
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $rnd_id), 'Customer found');
+$d->move_action(element=> $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]/td[2]'));
+$d->find_element('//*[@id="Customer_table"]/tbody/tr[1]/td[10]/div/a[3]')->click();
 
 diag("Edit our contact");
 $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Contact Details")]')->click();
@@ -96,7 +93,7 @@ $d->find_element('//*[@id="collapse_subs"]/div/a')->click();
 
 diag('Enter necessary information');
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#domainidtable tr > td.dataTables_empty', 'css'), 'Table is empty');
+ok($d->find_element_by_css('#domainidtable tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', $domainstring);
 ok($d->wait_for_text('//*[@id="domainidtable"]/tbody/tr[1]/td[3]', $domainstring), 'Domain found');
 $d->select_if_unselected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
@@ -118,12 +115,10 @@ $d->find_element('//*[@id="subscribers_table_filter"]/label/input')->send_keys($
 ok($d->wait_for_text('//*[@id="subscribers_table"]/tbody/tr/td[2]', $username), 'Subscriber was found');
 
 diag("Edit Fraud Limits");
-my $elem = $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]');
-$d->scroll_to_element($elem);
-$elem->click();
-$row = $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]');
-$d->move_action(element => $row);
-$edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]')->click();
+$d->scroll_to_element($d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]'));
+$d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]')->click();
+$d->move_action(element => $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]'));
+$d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td[5]/div/a[1]')->click();
 
 diag("Do Edit Fraud Limits");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
@@ -134,14 +129,11 @@ $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(t
 diag("Terminate our customer");
 $d->find_element('//a[contains(@class,"btn-primary") and text()[contains(.,"Back")]]')->click();
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
-$d->find_element('#Customer_table tr > td.dataTables_empty', 'css');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
-$row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
-ok($row, 'Found customer');
-$edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Terminate")]');
-ok($edit_link, 'Found terminate button');
-$d->move_action(element => $row);
-$edit_link->click();
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $rnd_id), 'Found customer');
+$d->move_action(element => $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]/td[2]'));
+$d->find_element('//*[@id="Customer_table"]/tbody/tr[1]/td[10]/div/a[2]')->click();
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 ok($d->find_text("Customer successfully terminated"), 'Text "Customer successfully terminated" appears');
