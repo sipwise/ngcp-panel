@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_0b8d617b",
+        "filename": "t/selenium/controller_customer.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-16T14:28:54Z",
+      "side": 1,
+      "message": "Should here we use relative XPATH, like\n\u0027./../td//a[text()[contains(.,\"Edit\")]]\u0027\n?",
+      "range": {
+        "startLine": 82,
+        "startChar": 17,
+        "endLine": 82,
+        "endChar": 80
+      },
+      "revId": "d5ddeddf5225531ad670a3be2e186c160f8ee148",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
