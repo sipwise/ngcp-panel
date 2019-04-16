@@ -1,3 +1,19 @@
+ngcp-panel (7.2.1.7+0~mr7.2.1.7) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [70e48e8] TT#47017 Fix Phonebook and Timeset UI rendering
+  * [e6cdb86] TT#47017 Fix return page after closing edit phonebook form
+  * [11b65a4] TT#55364 Fix /api/numbers PATCH for aliases
+  * [0baab8a] TT#54350 Always show hours related text in rrule description
+  * [ddd9582] TT#49255 Enable all ssl checkings for the ZTP RPC calls
+  * [6b85988] TT#49255 Change Snom ZTP server hostname
+  * [31b84f1] TT#50907 Make subscriber profiles tests more stable
+  * [70fe3d1] TT#55366 Fix strings comparison in datatable multifield
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 16 Apr 2019 11:54:22 +0200
+
 ngcp-panel (7.2.1.6+0~mr7.2.1.6) unstable; urgency=medium
 
   [ Andreas Granig ]
