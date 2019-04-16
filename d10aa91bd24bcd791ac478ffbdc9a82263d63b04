@@ -16,6 +16,24 @@
       "revId": "d10aa91bd24bcd791ac478ffbdc9a82263d63b04",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_28f143ce",
+        "filename": "t/selenium/controller_reseller.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-16T06:55:42Z",
+      "side": 0,
+      "message": "Should i add this test to all the other test files too? Now that you said it, would be pretty useful to check if stuff is not deleted when we dont want to.",
+      "parentUuid": "5afe65bd_25584e56",
+      "revId": "d10aa91bd24bcd791ac478ffbdc9a82263d63b04",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
