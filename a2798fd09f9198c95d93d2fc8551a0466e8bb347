@@ -22,6 +22,30 @@
       "revId": "a2798fd09f9198c95d93d2fc8551a0466e8bb347",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_889dd75b",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-16T08:25:27Z",
+      "side": 1,
+      "message": "OK, make sense.",
+      "parentUuid": "5afe65bd_48923f59",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 69
+      },
+      "revId": "a2798fd09f9198c95d93d2fc8551a0466e8bb347",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
