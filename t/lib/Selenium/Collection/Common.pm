@@ -27,7 +27,7 @@ sub create_domain {
 }
 
 sub delete_domain {
-    my ($self, $name) = @_;
+    my ($self, $name, $cancel) = @_;
     return unless $name;
 
     diag('Go to domains page');
@@ -39,9 +39,14 @@ sub delete_domain {
     ok($self->driver->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $name);
     ok($self->driver->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $name), "Domain found");
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Domain_table"]'));
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]/td[3]'));
     $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]/td[4]/div/a[1]')->click();
-    $self->driver->find_element('//*[@id="dataConfirmOK"]')->click();
+    if($cancel){
+        popup_confirm_cancel($self, 'We are NOT going to delete this domain');
+    } else {
+        popup_confirm_ok($self, 'We are going to delete this domain');
+    };
 }
 
 sub create_reseller {
@@ -108,7 +113,7 @@ sub delete_reseller {
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]'));
     $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[5]/div/a[2]')->click();
     if($cancel){
-        popup_confirm_cancel($self, 'We are not going to delete this reseller');
+        popup_confirm_cancel($self, 'We are NOT going to delete this reseller');
     } else {
         popup_confirm_ok($self, 'We are going to delete this reseller');
     };
@@ -129,7 +134,7 @@ sub delete_reseller_contract {
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]/td[3]'));
     $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]/td[7]/div/a[2]')->click();
     if($cancel){
-        popup_confirm_cancel($self, 'We are not going to delete this reseller contract');
+        popup_confirm_cancel($self, 'We are NOT going to delete this reseller contract');
     } else {
         popup_confirm_ok($self, 'We are going to delete this reseller contract');
     };

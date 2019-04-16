@@ -67,6 +67,11 @@ diag('Saving integer value into "concurrent_max"');
 $formfield->send_keys('789');
 $d->find_element('#save', 'css')->click();
 
+diag("Press cancel on delete dialog to check if domain is still there");
+$c->delete_domain($domainstring, 1);
+$d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
+ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $domainstring), 'Domain is still here');
+
 diag('Deleting Domain');
 $c->delete_domain($domainstring);
 
