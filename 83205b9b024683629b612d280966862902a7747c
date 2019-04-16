@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_88eb97b0",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-16T09:38:22Z",
+      "side": 1,
+      "message": "why do you need to move twice here? The first one on table and the second one on a row.",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 119
+      },
+      "revId": "83205b9b024683629b612d280966862902a7747c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_68d17bfb",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-16T09:38:22Z",
+      "side": 1,
+      "message": "please use single line here, Sipwise Perl style:\n  \n  } else {",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 115,
+        "endChar": 10
+      },
+      "revId": "83205b9b024683629b612d280966862902a7747c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_e8032b75",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-16T09:38:22Z",
+      "side": 1,
+      "message": "Maybe it should be just separate methods? Like:\n  \nsub popup_confirm_ok {\n  diag(\u0027Pressing the button \"OK\"\u0027);\n  $self-\u003edriver-\u003efind_element(\u0027//*[@id\u003d\"dataConfirmOK\"]\u0027)-\u003eclick();\n}\n\nsub popup_confirm_cancel {\n  diag(\u0027Pressing the button \"Cancel\"\u0027);\n  $self-\u003edriver-\u003efind_element(\u0027//*[@id\u003d\"dataConfirmCancel\"]\u0027)-\u003eclick();\n}\n\nsub delete_reseller_contract {\n...\n  if($cancel){\n    diag(\u0027We are not going to delete this reseller contract\u0027);\n    popup_confirm_cancel;\n  } else {\n    diag(\u0027We are going to delete this reseller contract\u0027);\n    popup_confirm_ok;\n}\n\nIn this case you will have XPATH on one place and not spread over delete_* methods.",
+      "range": {
+        "startLine": 135,
+        "startChar": 0,
+        "endLine": 142,
+        "endChar": 6
+      },
+      "revId": "83205b9b024683629b612d280966862902a7747c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
