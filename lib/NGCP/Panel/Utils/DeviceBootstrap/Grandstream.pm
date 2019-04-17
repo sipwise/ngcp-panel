@@ -5,7 +5,6 @@ use Moose;
 use Data::Dumper;
 
 use JSON;
-use LWP::UserAgent;
 use HTTP::Request::Common;
 use IPC::Run3;
 
@@ -87,7 +86,7 @@ around 'extract_response_description' => sub {
 
 sub get_server_time {
     my $self = shift;
-    my $ua = LWP::UserAgent->new;
+    my $ua = $self->_ua;
     my $req = HTTP::Request->new('GET', 
         $self->rpc_server_params->{proto}
         .'://'.$self->rpc_server_params->{host}
