@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_4bf59981",
+        "filename": "t/selenium/controller_domain.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-17T08:34:29Z",
+      "side": 1,
+      "message": "TIL 0 \u003d\u003d undef in perl. So i just write 0 there. Makes it more clear what is going on and i dont need to rewrite stuff in Common.pm for it to work.",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 36
+      },
+      "revId": "e3cdea88062d8f5ffc75a0bb0ebdcf1c5be97b5f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
