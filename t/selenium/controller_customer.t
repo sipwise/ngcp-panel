@@ -86,10 +86,10 @@ $d->find_element('#save', 'css')->click();
 diag("Check if successful");
 $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(text(),"Sipwise")]');
 
-
 diag("Trying to add a subscriber");
-$d->find_element('//*[@id="customer_details"]/div[4]/div[1]/a')->click();
-$d->find_element('//*[@id="collapse_subs"]/div/a')->click();
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]'));
+$d->find_element('Create Subscriber', 'link_text')->click();
 
 diag('Enter necessary information');
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -118,7 +118,7 @@ diag("Edit Fraud Limits");
 $d->scroll_to_element($d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]'));
 $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]')->click();
 $d->move_action(element => $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]'));
-$d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td[5]/div/a[1]')->click();
+$d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td//a[text()[contains(.,"Edit")]]')->click();
 
 diag("Do Edit Fraud Limits");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
