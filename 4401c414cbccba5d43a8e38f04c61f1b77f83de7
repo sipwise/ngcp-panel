@@ -88,6 +88,24 @@
       "revId": "4401c414cbccba5d43a8e38f04c61f1b77f83de7",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_6b7cd520",
+        "filename": "t/selenium/controller_domain.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-17T08:04:37Z",
+      "side": 1,
+      "message": "I could rewrite the check in Common.pm so it checks for 1/0 instead of defined/undefined. Currently you can write pretty much anything in there. As long as it finds something it wont get deleted",
+      "parentUuid": "5afe65bd_eb87a510",
+      "revId": "4401c414cbccba5d43a8e38f04c61f1b77f83de7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
