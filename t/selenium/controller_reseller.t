@@ -52,6 +52,29 @@ $d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[
 $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[5]/div/a[1]')->click();
 $d->find_element('#mod_close', 'css')->click();
 
+diag("Click Details on our newly created reseller");
+$d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]'));
+$d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]')->click();
+
+diag("Create a new Phonebook entry");
+$d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
+$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
+$d->find_element("Create Phonebook Entry", 'link_text')->click();
+$d->fill_element('//*[@id="name"]', 'xpath', 'Test Name');
+$d->fill_element('//*[@id="number"]', 'xpath', '0123456789');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Phonebook Entry has been created");
+$d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
+$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
+$d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', '0123456789');
+ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0123456789'), 'Entry has been found');
+
+diag("Go back to previous page");
+$d->find_element("Back", 'link_text')->click();
+
 diag("Press cancel on delete dialog to check if reseller contract is still there");
 $c->delete_reseller_contract($contractid, 1);
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
