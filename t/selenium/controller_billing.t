@@ -159,16 +159,14 @@ $d->fill_element('#end', 'css', "2008-02-28 13:37:00");
 $d->find_element('#save', 'css')->click();
 
 diag("Find/delete my created date definition");
-$elem = $d->find_element('//div[contains(@class,"dataTables_wrapper")]');
-$d->scroll_to_element($elem);
-$row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"2008-02-28")]/..');
-ok($row);
-$d->move_action(element => $row);
-$edit_link = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
-ok($edit_link);
-sleep 2 if ($browsername eq "htmlunit");
-$edit_link->click();
-$d->find_text("Are you sure?");
+$d->scroll_to_element($d->find_element('//div[contains(@class, "dataTables_filter")]//input'));
+$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2008-02-28 03:14:15');
+ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2008-02-28 03:14:15'), 'Created Date definition was found');
+$d->move_action(element => ($d->find_element('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]')));
+$d->find_element('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]')->click();
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 done_testing;
