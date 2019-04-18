@@ -48,12 +48,12 @@ $searchfield->send_keys($resellername);
 ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Our new reseller was found');
 
 diag("Click Edit on our newly created reseller");
-$d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]'));
-$d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[5]/div/a[1]')->click();
+$d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]'));
+$d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]')->click();
 $d->find_element('#mod_close', 'css')->click();
 
 diag("Click Details on our newly created reseller");
-$d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]'));
+$d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]'));
 $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]')->click();
 
 diag("Create a new Invoice Template");
