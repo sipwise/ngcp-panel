@@ -189,15 +189,18 @@ sub update_item {
         return;
     }
 
-    my $from_codec = mime_type_to_extension($c->req->content_type) // '';
-    $resource->{codec} = 'WAV';
-    $resource->{data} = $recording;
-    $resource = $self->transcode_data($c, $from_codec, $resource);
-    unless ($resource) {
-        $c->log->error("Failed to transcode sound file",);
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to transcode sound file');
-        return;
+    if ( $recording ) {
+        my $from_codec = mime_type_to_extension($c->req->content_type) // '';
+        $resource->{codec} = 'WAV';
+        $resource->{data} = $recording;
+        $resource = $self->transcode_data($c, $from_codec, $resource);
+        unless ($resource) {
+            $c->log->error("Failed to transcode sound file",);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to transcode sound file');
+            return;
+        }
     }
+
     delete $resource->{handle};
 
     try {
