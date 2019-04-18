@@ -1,3 +1,12 @@
+ngcp-panel (7.2.1.8+0~mr7.2.1.8) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [c145582] TT#56376 selenium: fix crash on entering fraud limits
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 18 Apr 2019 16:51:07 +0200
+
 ngcp-panel (7.2.1.7+0~mr7.2.1.7) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
