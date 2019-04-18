@@ -37,6 +37,7 @@ has_field 'direction' => (
         { label => 'Outbound', value => 'outbound' },
         { label => 'Call Forward Inbound', value => 'cf_inbound' },
         { label => 'Call Forward Outbound', value => 'cf_outbound' },
+        { label => 'Reply', value => 'reply' },
     ],
     label => 'Direction',
     required => 1,
