@@ -19,6 +19,14 @@ my $c = Selenium::Collection::Common->new(
     driver => $d
 );
 
+my $pbx = $ENV{PBX};
+
+if(!$pbx){
+    print "---PBX check is DISABLED---\n";
+    $pbx = 0;
+} else {
+    print "---PBX check is ENABLED---\n";
+};
 $d->login_ok();
 
 my $domainstring = ("test" . int(rand(10000)) . ".example.org"); #create string for checking later
@@ -49,7 +57,7 @@ $d->fill_element('#billing_profileidtable_filter input', 'css', 'Default Billing
 $d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td[contains(text(),"Default Billing Profile")]/..//input[@type="checkbox"]');
 
 diag("Fill product data");
-eval { #lets only try this
+if($pbx == 1){
     $d->select_if_unselected('//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
 };
 diag("Fill external_id");
