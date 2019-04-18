@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_19737b4f",
+        "filename": "lib/NGCP/Panel/Role/API/SoundFiles.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-04-18T16:20:31Z",
+      "side": 1,
+      "message": "what happens if i PATCH data, but did not include anything as upload?\n\nif ($recording) {\n\n} else {\n  #maybe zero-out data+codec here.\n}\n\n... so the -\u003eupdate() below can fail with a NOT NULL constraint.",
+      "revId": "6eb363f08e2fe41210a0beef3f2dfcfeaba7a2a8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
