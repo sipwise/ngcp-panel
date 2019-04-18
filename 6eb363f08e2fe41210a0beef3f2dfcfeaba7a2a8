@@ -16,6 +16,24 @@
       "revId": "6eb363f08e2fe41210a0beef3f2dfcfeaba7a2a8",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_d993a34e",
+        "filename": "lib/NGCP/Panel/Role/API/SoundFiles.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-04-18T16:35:46Z",
+      "side": 1,
+      "message": "$resource-\u003e{data} is deleted at the beginning of the subroutine and moved to $recording so it won\u0027t be included in the update if there\u0027s nothing in it. Also update will work because only the patched fields will be updated, the recording will stay the same in this case. PATCH is anyways intended for changing other fields besides the actual sound file. For changing the sound file a POST is required. Changing PATCH to support changing the sound file as well will require some changes, as it needs to be done with \u0027multipart/form-data\u0027 to work with the CSC platform.",
+      "parentUuid": "5afe65bd_19737b4f",
+      "revId": "6eb363f08e2fe41210a0beef3f2dfcfeaba7a2a8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
