@@ -40,7 +40,7 @@ sub delete_domain {
     $self->driver->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $name);
     ok($self->driver->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $name), "Domain found");
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="Domain_table"]'));
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]/td[3]'));
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Delete")]'));
     $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Delete")]')->click();
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this domain');
@@ -110,7 +110,7 @@ sub delete_reseller {
     $self->driver->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $name);
     ok($self->driver->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $name), 'Entry found');
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="Resellers_table"]'));
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]'));
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
     $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this reseller');
@@ -131,7 +131,7 @@ sub delete_reseller_contract {
     $self->driver->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $resellerid);
     ok($self->driver->wait_for_text('//*[@id="contract_table"]/tbody/tr/td[2]', $resellerid), 'Entry found');
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="contract_table"]'));
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]/td[3]'));
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
     $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this reseller contract');
