@@ -12,7 +12,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD PUT DELETE/];
+    return [qw/GET OPTIONS HEAD PUT PATCH DELETE/];
 }
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SoundFiles/;
@@ -79,6 +79,37 @@ sub PUT :Allow {
         last unless $item;
 
         $guard->commit; 
+
+        $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
+    }
+    return;
+}
+
+sub PATCH :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $json = $self->get_valid_patch_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json-patch+json',
+        );
+        last unless $json;
+
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, soundfile => $item);
+        my $form = $self->get_form($c);
+        my $old_resource = $self->resource_from_item($c, $item, $form);
+        my $resource = $self->apply_patch($c, $old_resource, $json);
+        last unless $resource;
+
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
+
+        $guard->commit;
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
