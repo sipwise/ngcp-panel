@@ -151,7 +151,7 @@ $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath',
 ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2008-02-28 03:14:15');
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2008-02-28 03:14:15'), 'Created Date definition was found');
-$d->move_action(element => ($d->find_element('//*[@id="date_definition_table"]/tbody/tr/td[2]')));
+$d->move_action(element => ($d->find_element('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]')));
 $d->find_element('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]')->click();
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
