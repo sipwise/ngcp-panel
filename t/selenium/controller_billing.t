@@ -15,6 +15,7 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
 );
 
 $d->login_ok();
+my $billingname = ("testprofile" . int(rand(10000))); #create string for checking later
 
 diag("Go to Billing page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -25,9 +26,8 @@ diag("Create a billing profile");
 $d->find_element('//*[@id="masthead"]//h2[contains(text(),"Billing Profiles")]')->click();
 $d->find_element('Create Billing Profile', 'link_text')->click();
 $d->find_element('//div[contains(@class,modal-body)]//table[@id="reselleridtable"]/tbody/tr[1]/td//input[@type="checkbox"]')->click();
-$d->find_element('#name', 'css')->send_keys('mytestprofile');
-$d->fill_element('[name=handle]', 'css', 'mytestprofile');
-$d->find_element('#fraud_interval_lock', 'css');
+$d->fill_element('#name', 'css', $billingname);
+$d->fill_element('[name=handle]', 'css', $billingname);
 $d->find_element('//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]')->click();
 $d->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
 
@@ -36,29 +36,25 @@ $d->fill_element('#billing_profile_table_filter label input', 'css', 'thisshould
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 
 diag('Search for "mytestprofile" in billing profile');
-$d->fill_element('#billing_profile_table_filter label input', 'css', 'mytestprofile');
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', 'mytestprofile'), 'Billing profile was found');
+$d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
 
 diag("Open edit dialog for mytestprofile");
-$d->move_action(element => $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/..'));
-$d->find_child_element($d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/..'), '(./td//a)[contains(text(),"Edit")]')->click();
+$d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]'));
+$d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]')->click();
 
 diag("Edit mytestprofile");
 my $elem = $d->find_element('#name', 'css');
 ok($elem);
-is($elem->get_value, "mytestprofile");
 $d->fill_element('#interval_charge', 'css', '3.2');
 $d->find_element('#save', 'css')->click();
 sleep 1;
 
 diag('Open "Fees" for mytestprofile');
-my $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/..');
-ok($row);
-my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Fees")]');
-ok($edit_link);
-$d->move_action(element => $row,xoffset => 1);
-$edit_link->click();
-$d->find_element('//*[@id="masthead"]//h2[contains(text(),"Billing Fees")]');
+$d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
+$d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]'));
+$d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]')->click();
 
 diag("Create a billing fee");
 $d->find_element('Create Fee Entry', 'link_text')->click();
@@ -75,7 +71,7 @@ $d->find_element('#save', 'css')->click();
 
 diag("Delete billing fee");
 $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..//a[contains(@class,"btn-primary") and contains(text(),"Edit")]');
-$row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..');
+my $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..');
 ok($row, "Find row");
 $d->move_action(element => $row);
 ok(1, "Mouse over row");
@@ -106,13 +102,10 @@ ok($d->find_element('//a[contains(@href,"/domain")]'));
 $d->find_element("Billing", 'link_text')->click();
 
 diag('Open "Edit Peak Times" for mytestprofile');
-$row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/..');
-ok($row);
-$edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Peaktimes")]');
-ok($edit_link);
-$d->move_action(element => $row,xoffset=>2);
-$edit_link->click();
-ok($d->find_element('//*[@id="masthead"]//h2[contains(text(),"times for mytestprofile")]'));
+$d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
+$d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]'));
+$d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]')->click();
 
 diag("Wait for datatable loading");
 my $dates_first_row_text;
