@@ -47,12 +47,9 @@ sleep 2; #Else we might search on the previous page
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
 $d->find_element('#Customer_table tr > td.dataTables_empty', 'css');
 $d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
-my $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
-ok($row);
-my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Details")]');
-ok($edit_link);
-$d->move_action(element => $row);
-$edit_link->click();
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $rnd_id), 'Customer found');
+$d->move_action(element=> $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]'));
+$d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]')->click();
 
 diag("Edit our contact");
 $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Contact Details")]')->click();
@@ -71,16 +68,10 @@ diag("Check if successful");
 $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(text(),"Sipwise")]');
 
 diag("Edit Fraud Limits");
-my $elem = $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]');
-$d->scroll_to_element($elem);
-$elem->click();
-sleep 4 if ($d->browser_name_in("phantomjs", "chrome")); # time to move
-$row = $d->find_element('//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]');
-ok($row);
-$edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]');
-ok($edit_link);
-$d->move_action(element => $row);
-$edit_link->click();
+$d->scroll_to_element($d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]'));
+$d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]')->click();
+$d->move_action(element => $d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td//a[text()[contains(.,"Edit")]]'));
+$d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td//a[text()[contains(.,"Edit")]]')->click();
 
 diag("Do Edit Fraud Limits");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
@@ -93,13 +84,10 @@ $d->find_element('//a[contains(@class,"btn-primary") and text()[contains(.,"Back
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
 $d->find_element('#Customer_table tr > td.dataTables_empty', 'css');
 $d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
-$row = $d->find_element('(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
-ok($row);
-$edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Terminate")]');
-ok($edit_link);
-$d->move_action(element => $row);
-$edit_link->click();
-$d->find_text("Are you sure?");
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $rnd_id), 'Found customer');
+$d->move_action(element => $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
+$d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 $d->find_text("Customer successfully terminated");
 
