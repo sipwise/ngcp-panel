@@ -16,6 +16,8 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
 
 $d->login_ok();
 
+my $groupname = ("testinggroup" . int(rand(10000))); #create string for checking later
+
 diag("Go to Peerings page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("Peerings", 'link_text')->click();
@@ -35,19 +37,19 @@ $d->find_element('//div[contains(@class,"modal-body")]//div//select[@id="status"
 $d->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
 ok($d->find_text('Create Peering Group'), 'Succesfully went back to previous form'); # Should go back to prev form
 
-$d->fill_element('#name', 'css', 'testinggroup');
+$d->fill_element('#name', 'css', $groupname);
 $d->fill_element('#description', 'css', 'A group created for testing purposes');
 $d->select_if_unselected('//table[@id="contractidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->find_element('#save', 'css')->click();
 sleep 1;
 
 diag("Edit Servers/Rules of testinggroup");
-my $row = $d->find_element('(//table/tbody/tr/td[contains(text(), "testinggroup")]/..)[1]');
-ok($row);
-my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Details")]');
-ok($edit_link);
-$d->move_action(element => $row);
-$edit_link->click();
+$d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
+ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[3]', $groupname), 'Testing Group was found');
+$d->move_action(element=> $d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]'));
+$d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]')->click();
 
 diag("Create a Peering Rule");
 $d->find_element('//a[contains(text(),"Create Outbound Peering Rule")]')->click();
@@ -71,8 +73,8 @@ sleep 1; #make sure, we are on the right page
 $d->fill_element('#peering_servers_table_filter input', 'css', 'thisshouldnotexist');
 $d->find_element('#peering_servers_table tr > td.dataTables_empty', 'css');
 $d->fill_element('#peering_servers_table_filter input', 'css', 'mytestserver');
-$edit_link = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserver")]/../td//a[contains(text(),"Preferences")]');
-$row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserver")]/..');
+my $edit_link = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserver")]/../td//a[contains(text(),"Preferences")]');
+my $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserver")]/..');
 ok($row);
 ok($edit_link);
 $d->move_action(element => $row);
@@ -139,12 +141,12 @@ diag('Go back to "SIP Peering Groups".');
 $d->get($peerings_uri);
 
 diag('Delete "testinggroup"');
-$row = $d->find_element('(//table/tbody/tr/td[contains(text(), "testinggroup")]/..)[1]');
-ok($row);
-$delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
-ok($delete_link);
-$d->move_action(element => $row);
-$delete_link->click();
+$d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
+ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[3]', $groupname), 'Testing Group was found');
+$d->move_action(element=> $d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
+$d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
