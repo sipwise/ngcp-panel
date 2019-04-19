@@ -88,8 +88,7 @@ $d->find_element('#countryidtable tr > td.dataTables_empty', 'css');
 $d->fill_element('#countryidtable_filter input', 'css', 'Ukraine');
 $d->select_if_unselected('//table[@id="countryidtable"]/tbody/tr[1]/td[contains(text(),"Ukraine")]/..//input[@type="checkbox"]');
 ok($d, 'Successfuly added a Country');
-# Save
-$d->find_element('#save', 'css')->click();
+$d->find_element('#save', 'css')->click(); # Save
 
 diag("Check if successful");
 $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(text(),"Sipwise")]');
@@ -133,6 +132,22 @@ $d->fill_element('#fraud_interval_limit', 'css', "100");
 $d->fill_element('#fraud_interval_notify', 'css', 'mymail@example.org');
 $d->find_element('#save', 'css')->click();
 $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(text(),"mymail@example.org")]');
+
+diag("Create a new Phonebook entry");
+$d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
+$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
+$d->find_element("Create Phonebook Entry", 'link_text')->click();
+$d->fill_element('//*[@id="name"]', 'xpath', 'Test Name');
+$d->fill_element('//*[@id="number"]', 'xpath', '0123456789');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Phonebook Entry has been created");
+$d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
+$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
+$d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', '0123456789');
+ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0123456789'), 'Entry has been found');
 
 diag("Terminate our customer");
 $d->find_element('//a[contains(@class,"btn-primary") and text()[contains(.,"Back")]]')->click();
