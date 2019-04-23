@@ -105,6 +105,8 @@ sub delete_reseller {
     diag('Go to reseller page');
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Resellers', 'link_text')->click();
+
+    diag('Trying to delete a reseller');
     $self->driver->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($self->driver->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $name);
@@ -126,6 +128,8 @@ sub delete_reseller_contract {
     diag('Go to Reseller and Peering Contracts page');
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Reseller and Peering Contracts', 'link_text')->click();
+
+    diag('Trying to delete reseller contract');
     $self->driver->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($self->driver->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $resellerid);
