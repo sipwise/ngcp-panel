@@ -105,7 +105,7 @@ has_field 'times.byday' => (
     label => 'By day',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Value format is ~[+|-~]~[NUMBER~](MO|DI|MI|DO|FR|SA|SU). Example: 5FR (means fifth friday).']
+        title => ['Value format is ~[+|-~]~[NUMBER~](MO|TU|WE|TH|FR|SA|SU). Example: 5FR (means fifth friday).']
     },
     # example: 5FR (means fifth friday)
 );
