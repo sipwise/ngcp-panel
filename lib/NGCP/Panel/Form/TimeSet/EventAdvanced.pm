@@ -334,7 +334,7 @@ has_field 'byday' => (
     wrapper_class => [qw/ngcp-recurrent-control/],#hfh-nested-rep-block 
 );
 
-has_field 'byday.weekdays' => (
+has_field 'byday.simple' => (
     #type => 'Text', # ((\+|-)?\d*(MO|TU|WE|TH|FR|SA|SO),?)+
     type => 'Multiple', # Select
     widget => 'CheckboxGroup',
@@ -351,30 +351,13 @@ has_field 'byday.weekdays' => (
     wrapper_class => [qw/ngcp-recurrent-control ngcp-7-checkboxes/],
 );
 
-has_field 'byday.weekdays' => (
-    #type => 'Text', # ((\+|-)?\d*(MO|TU|WE|TH|FR|SA|SO),?)+
-    type => 'Multiple', # Select
-    widget => 'CheckboxGroup',
-    required => '0',
-    label => 'By week day',
-    options => [
-        map { +{value => substr($_,0,2), label => substr($_,0,2)}; } (qw/MON TUE WED THU FRI SAT SUN/)
-    ],
-    label_attr => {
-        rel => ['tooltip'],
-        title => ['Defines week days to apply the recurrence to.']
-    },
-    # example: 5FR (means fifth friday)
-    wrapper_class => [qw/ngcp-recurrent-control ngcp-7-checkboxes/],
-);
-
-has_field 'byday.weekdaynumber' => (
-    type => 'Text', # ((\+|-)?\d*(MO|TU|WE|TH|FR|SA|SO),?)+
+has_field 'byday.advanced' => (
+    type => 'Text', # ((\+|-)?\d*(MO|TU|WE|TH|FR|SA|SU),?)+
     required => '0',
     label => 'By week day number',
     label_attr => {
         rel => ['tooltip'],
-        title => ['It\'s possible to use an argument n for the weekday instances, which will mean the nth occurrence of this weekday in the period. For example, with \'Repeat\' equal to \'monthly\', or with \'Repeat\' equal to \'yearly\' and \'bymonth\', using  \'+1FR\' in \'By day\' will specify the first friday of the month where the recurrence happens. Format is: (\+|-)?\d*(MO|TU|WE|TH|FR|SA|SO).']
+        title => ['It\'s possible to use an argument n for the weekday instances, which will mean the nth occurrence of this weekday in the period. For example, with \'Repeat\' equal to \'monthly\', or with \'Repeat\' equal to \'yearly\' and \'bymonth\', using  \'+1FR\' in \'By day\' will specify the first friday of the month where the recurrence happens. Format is: (\+|-)?\d*(MO|TU|WE|TH|FR|SA|SU).']
     },
     # example: 5FR (means fifth friday)
     wrapper_class => [qw/ngcp-recurrent-control/],
@@ -405,22 +388,49 @@ sub month_options {
 }
 
 has_field 'bymonthday' => (
-    #type => '+NGCP::Panel::Field::IntegerList',
-    type => 'Multiple', # Select
-    widget => 'CheckboxGroup',
+    type => 'Compound',
     label => 'By month day',
-    options => [
-        map { +{value => $_, label => $_}; } (1..31)
-    ],
-    min_value => 1,
-    max_value => 31,
-    plusminus => 1,
+    do_label => 1,
+    do_wrapper => 1,
+    tags => {
+        controls_div => 1,
+    },
     label_attr => {
         rel => ['tooltip'],
         title => ['If given, it must be either an integer, or a sequence of integers, meaning the month days to apply the recurrence to.']
     },
     wrap_label_method => \&wrap_label_field_switch,
+    wrapper_class => [qw/ngcp-recurrent-control/],#hfh-nested-rep-block 
+);
+
+has_field 'bymonthday.simple' => (
+    #type => '+NGCP::Panel::Field::IntegerList',
+    type => 'Multiple', # Select
+    required => '0',
+    widget => 'CheckboxGroup',
+    label => 'By month day',
+    options => [
+        map { +{value => $_, label => $_}; } (1..31)
+    ],
+    label_attr => {
+        rel => ['tooltip'],
+        title => ['Sequence of positive integers, meaning the month days to apply the recurrence to.']
+    },
     wrapper_class => [qw/ngcp-recurrent-control ngcp-32-checkboxes/],
+);
+
+has_field 'bymonthday.advanced' => (
+    type => '+NGCP::Panel::Field::IntegerList',
+    required => '0',
+    label => 'By month day number',
+    min_value => 1,
+    max_value => 31,
+    plusminus => 1,
+    label_attr => {
+        rel => ['tooltip'],
+        title => ['If given, it must be either an integer, or a sequence of positive and/or negative integers, meaning the month days to apply the recurrence to.']
+    },
+    wrapper_class => [qw/ngcp-recurrent-control/],
 );
 
 
@@ -620,10 +630,10 @@ sub custom_get_values {
     }
 
     if ($fif->{byday}) {
-        if ($fif->{byday}->{weekdaynumber}) {
-            $values->{byday} = $fif->{byday}->{weekdaynumber};
-        } elsif ($fif->{byday}->{weekdays}) {
-            $values->{byday} = join(',', @{$fif->{byday}->{weekdays}});
+        if ($fif->{byday}->{advanced}) {
+            $values->{byday} = $fif->{byday}->{advanced};
+        } elsif ($fif->{byday}->{simple}) {
+            $values->{byday} = join(',', @{$fif->{byday}->{simple}});
         }
     }
 
@@ -676,9 +686,9 @@ sub custom_set_values {
     }
     if ($values->{byday}) {
         if ($values->{byday} =~ /^(?:(?:MO|TU|WE|TH|FR|SA|SU),?)+$/) {#
-            $fif->{byday}->{weekdays} = [split(/,/, $values->{byday})];
+            $fif->{byday}->{simple} = [split(/,/, $values->{byday})];
         } else {
-            $fif->{byday}->{weekdaynumber} = $values->{byday};
+            $fif->{byday}->{advanced} = $values->{byday};
         }
     }
     #really, javascript will care about it
