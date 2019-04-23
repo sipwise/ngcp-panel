@@ -22,6 +22,30 @@
       "revId": "df4c47dadbbea9571062a5d8b85a794ff9093994",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_df782392",
+        "filename": "t/selenium/controller_billing.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-04-23T09:06:23Z",
+      "side": 1,
+      "message": "Not really. As long as it moves to any of the buttons it should work. This could be handy if the table gets changed somehow.",
+      "parentUuid": "5afe65bd_5f3793e3",
+      "range": {
+        "startLine": 56,
+        "startChar": 78,
+        "endLine": 56,
+        "endChar": 100
+      },
+      "revId": "df4c47dadbbea9571062a5d8b85a794ff9093994",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
