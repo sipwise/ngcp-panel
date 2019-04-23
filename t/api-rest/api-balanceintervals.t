@@ -293,6 +293,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         ]);
         is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
 
+        sleep(1);
         _set_cash_balance($customer,0.49);
 
         _check_interval_history($customer,[
