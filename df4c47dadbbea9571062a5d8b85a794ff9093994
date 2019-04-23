@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_5f3793e3",
+        "filename": "t/selenium/controller_billing.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-23T09:01:25Z",
+      "side": 1,
+      "message": "is it all necessary if you are using search here: \u0027a[contains(text(), \"Fees\")]\u0027 ?\n\nJFMI.",
+      "range": {
+        "startLine": 56,
+        "startChar": 78,
+        "endLine": 56,
+        "endChar": 100
+      },
+      "revId": "df4c47dadbbea9571062a5d8b85a794ff9093994",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
