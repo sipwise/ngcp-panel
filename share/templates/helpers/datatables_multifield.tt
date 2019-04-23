@@ -32,7 +32,7 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'pull-left'r><'pull-right'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
         "bProcessing": true,
         "bServerSide": true,
-        "bPaginate": true,
+        "bPaginate": [%IF no_pagination; 'false'; ELSE; 'true'; END%],
         "sPaginationType": "bootstrap",
         "bLengthChange": false,
         "bSort": [%IF no_ordering; 'false'; ELSE; 'true'; END%],
