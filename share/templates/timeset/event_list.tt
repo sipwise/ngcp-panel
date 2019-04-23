@@ -74,11 +74,11 @@ function dynamicFields(){
     $('.ngcp-recurrent-control').hide();
   }
   //we need to hide again everything that we showed according to rrule on
-  toggleRepeatStopControl();
-  toggleLabeledFields();
+  processRepeatStopControl();
+  processLabeledFields();
 }
 
-function toggleEndControl (id) {
+function processEndControl (id) {
   var id_jquery = id;
   id_jquery = id_jquery.replace(/\./g,'\\.');
   var id_label_jquery = id_jquery + '\\.label';
@@ -103,14 +103,14 @@ function toggleEndControl (id) {
   endSwitchControl.html(endSwitchControlText);
 }
 
-function toggleEndField(){
+function processEndField(){
   var endSwitch = $('#end\\.switch');
   var val = ((endSwitch.val() == '0') ? '1' : '0');
   endSwitch.val(val);
-  toggleEndControl('end.switch');
+  processEndControl('end.switch');
 }
 
-function toggleRepeatStopControl () {
+function processRepeatStopControl () {
   var stop_control_on = $('#repeat_stop\\.switch').val();
   $("[class*='ngcp-repeatstop-']").hide();
   $('.ngcp-repeatstop-'+stop_control_on).show();
@@ -135,16 +135,27 @@ function frequencySuffix(){
   }
 }
 
-function toggleLabeledFields() {
+function getLabeledFieldsSelectors (field){
+  //var field_name_jquery = $(this).data('field');
+  var field_name_jquery = field ? field : '';
+  field_name_jquery = field_name_jquery.replace(/\./g,'\\.');
+  var fieldSingleNameSelector = "[name='" + field_name_jquery + "']";
+  var fieldMultiNameSelector = "[name^='" + field_name_jquery + '\\.' + "']";
+  var fieldHiddenSwitchSelector = '#' + 'label_switch\\.' + field_name_jquery;
+  return {
+      jquery : field_name_jquery,
+      single: fieldSingleNameSelector,
+      multi: fieldMultiNameSelector,
+      hidden: fieldMultiNameSelector
+  };
+}
+
+function processLabeledFields() {
   $(".ngcp-label-field-switch").each(function() {
-    var field_name_jquery = $(this).data('field');
-    field_name_jquery = field_name_jquery.replace(/\./g,'\\.');
-    var hiddenSwitch = $('#' + 'label_switch\\.' + field_name_jquery );
+    var fieldNames = getLabeledFieldsSelectors($(this).data('field'));
     var showControl = false;
-    var fieldSingleNameSelector = "[name='" + field_name_jquery + "']";
-    var fieldMultiNameSelector = "[name^='" + field_name_jquery + '\\.' + "']";
-    //byday, byday.weekdays
-    $(fieldSingleNameSelector).add($(fieldMultiNameSelector)).each(function () {
+    var hiddenSwitch = $( fieldNames.hidden );
+    $(fieldNames.single).add($(fieldNames.multi)).each(function () {
       if( $(this).is(':checkbox') || $(this).is(':radio') ){
         if ( $(this).is(':checked')) {
           showControl = true;
@@ -154,11 +165,11 @@ function toggleLabeledFields() {
       }
     });
     var fieldLayer = $(this).closest( 'label' ).next( 'div.controls' );
-    var fieldInvertControl = $( '#invert_field\\.' + field_name_jquery );
-    var fieldClearControl = $( '#clear_field\\.' + field_name_jquery );
+    var fieldInvertControl = $( '#invert_field\\.' + fieldNames.jquery );
+    var fieldClearControl = $( '#clear_field\\.' + fieldNames.jquery );
     var fieldAuxControls = fieldInvertControl.add(fieldClearControl);     
-    var fieldCheckboxes = $('input:checkbox' + fieldSingleNameSelector).add($('input:checkbox' + fieldMultiNameSelector));
-    var fieldInputs = $('input' + fieldSingleNameSelector).add($('input' + fieldMultiNameSelector));
+    var fieldCheckboxes = $('input:checkbox' + fieldNames.single).add($('input:checkbox' + fieldNames.multi));
+    var fieldInputs = $('input' + fieldNames.single).add($('input' + fieldNames.multi));
     var showFunc = function (button) {
       fieldLayer.show();
       if (fieldCheckboxes.length) {
@@ -194,17 +205,26 @@ function toggleLabeledFields() {
     fieldInvertControl.off('click').click(function (event) {
       fieldInputs.prop('checked', function () { return (!this.checked); } );
     });
-    fieldClearControl.off('click').click(function (event) {
-      fieldInputs.prop('checked', false );
-      fieldInputs.prop('value', '' );
-    });
+    // moved to clearValue triggered after confirmation
+    //fieldClearControl.off('click').click(function (event) {
+    //  fieldInputs.prop('checked', false );
+    //  fieldInputs.prop('value', '' );
+    //});
   });
 }
+
+function clearValue(fieldName) {
+  var fieldNames = getLabeledFieldsSelectors(fieldName);
+  var fieldInputs = $('input' + fieldNames.single).add($('input' + fieldNames.multi));
+  fieldInputs.prop('checked', false );
+  fieldInputs.prop('value', '' );
+}
+
 
 $( document ).ready(function() {
     frequencySuffix();
     dynamicFields();
-    toggleEndControl('end.switch');
+    processEndControl('end.switch');
 });
 </script>
 <style>
