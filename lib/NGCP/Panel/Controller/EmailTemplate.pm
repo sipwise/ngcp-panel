@@ -22,14 +22,6 @@ sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     my $tmpl_rs = $c->model('DB')->resultset('email_templates');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $tmpl_rs = $tmpl_rs->search({
-            reseller_id => $c->user->reseller_id,
-        });
-    }
-
-    $c->stash->{tmpl_rs} = $tmpl_rs;
     $c->stash->{template_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
@@ -37,6 +29,58 @@ sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) {
         { name => 'from_email', search => 1, title => $c->loc('From') },
         { name => 'subject', search => 1, title => $c->loc('Subject') },
     ]);
+
+    #select r.id as reseller_id,r.name as reseller_name, etd.id as email_template_id, etd.name as email_template_name from resellers r 
+    #join email_templates etd on etd.reseller_id is null
+    #left join email_templates et on et.name=etd.name and et.reseller_id=r.id 
+    #where et.id is null order by r.id,etd.id;
+    my $tmpl_missed_rs = $c->model('DB')->resultset('resellers')->search_rs({
+            'et.id' => undef,
+        },{
+            'select' => [
+                { '' => \'concat(me.id,"/",etd.id)', -as => 'id' },
+                { '' => \['me.id'],    -as => 'reseller_id' },
+                { '' => \['me.name'],  -as => 'reseller_name' },
+                { '' => \['etd.id'],   -as => 'email_template_id' },
+                { '' => \['etd.name'], -as => 'email_template_name' },
+            ],
+            'as'     => [qw/id reseller_id reseller_name email_template_id email_template_name/],
+            alias => 'me',
+            order_by => [qw/reseller_id email_template_id/],
+            from  => [
+                { 'me' => 'billing.resellers' },
+                [
+                    { 'etd' => 'billing.email_templates' },
+                    [
+                        { 'etd.reseller_id' => { -value => undef } },
+                    ],
+                ],
+                [
+                    { 'et' => 'billing.email_templates', '-join_type' => 'left' },
+                    [
+                        {
+                            '-and' => [
+                                {
+                                    'et.name'        => { '-ident' => 'etd.name'} ,
+                                    'et.reseller_id' => { '-ident' => 'me.id'} ,
+                                },
+                            ],
+                        },
+                    ],
+                ],
+            ],
+        }
+    );
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $tmpl_rs = $tmpl_rs->search({
+            reseller_id => $c->user->reseller_id,
+        });
+        $tmpl_missed_rs = $tmpl_missed_rs->search({ reseller_id => $c->user->reseller_id });
+    }
+
+    $c->stash->{tmpl_rs} = $tmpl_rs;
+    $c->stash->{tmpl_missed_rs} = $tmpl_missed_rs;
 
     $c->stash->{email_template_external_filter} = $c->session->{email_template_external_filter};
 
@@ -86,6 +130,23 @@ sub tmpl_ajax_default :Chained('tmpl_list') :PathPart('ajax/default') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub tmpl_ajax_missed :Chained('tmpl_list') :PathPart('ajax/missed') :Args(0) {
+    my ($self, $c) = @_;
+    my $dt_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
+            { name => 'id', search => 1, title => $c->loc('#') },
+            { name => 'reseller_name', search => 1, title => $c->loc('Reseller') },
+            { name => 'email_template_name', search => 1, title => $c->loc('Email template') },
+        ]);
+    NGCP::Panel::Utils::Datatables::process($c, $c->stash->{tmpl_missed_rs}, $dt_columns, 
+        #sub {
+        #    my ($result) = @_;
+        #    my %data = (undeletable => ($c->user->roles eq "admin") ? 0 : 1);
+        #    return %data
+        #},
+    );
+    $c->detach( $c->view("JSON") );
+}
+
 sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
@@ -113,6 +174,59 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
     );
     if($posted) {
         $self->create_email_template($c, $form);
+    }
+    $c->stash(
+        form => $form,
+        create_flag => 1,
+    );
+}
+
+sub tmpl_sync :Chained('tmpl_list') :PathPart('sync') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    if($c->user->roles eq "admin") {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmailTemplate::Sync", $c);
+    }
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $params,
+    );
+    if($posted) {
+        if($form->validated) {
+            try {
+                my $schema = $c->model('DB');
+                foreach my $ids ($form->values->{id}) {
+                    (my($reseller_id,$tmpl_id)) = $ids=~/(\d+)\D+(\d+)/;
+                    if($c->user->roles eq "reseller") {
+                        $form->values->{reseller_id} = $c->user->reseller_id;
+                    }
+                    my $template_rs = $schema->resultset('email_templates')->find($tmpl_id);
+                    my $template = { $template_rs->get_inflated_columns };
+                    delete $template->{id};
+                    $template->{reseller_id} = $reseller_id;
+                    $template->{attachment_name} //= '';
+                    $schema->txn_do(sub {
+                        my $tmpl = $c->stash->{tmpl_rs}->create($template);
+                    });
+                }
+                NGCP::Panel::Utils::Message::info(
+                    c    => $c,
+                    desc => $c->loc('Email template successfully synced'),
+                );
+            } catch($e) {
+                NGCP::Panel::Utils::Message::error(
+                    c     => $c,
+                    error => $e,
+                    desc  => $c->loc('Failed to sync email template'),
+                );
+            }
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emailtemplate'));
+        }
     }
     $c->stash(
         form => $form,
