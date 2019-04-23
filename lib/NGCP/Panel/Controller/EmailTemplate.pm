@@ -86,6 +86,48 @@ sub tmpl_ajax_default :Chained('tmpl_list') :PathPart('ajax/default') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+#select r.id,r.name,etr.id,etr.name from resellers r 
+#left join (select etd.name, etd.id, et.reseller_id from email_templates etd left join email_templates et on et.name=etd.name and et.reseller_id is not null where etd.reseller_id is null) etr on r.id=etr.reseller_id
+#where etr.reseller_id is null
+#
+#select r.id,r.name,etd.id,etd.name from resellers r 
+#left join ( select id,name,reseller_id from email_templates where reseller_id is not null) et on r.id=et.reseller_id
+# join ( select id,name from email_templates where reseller_id is null) etd on et.name=etd.name and et.id is null
+#
+#select r.id,r.name,etd.id,etd.name from resellers r 
+#join ( select id,name from email_templates where reseller_id is null) etd
+#left join ( select id,name,reseller_id from email_templates where reseller_id is not null) et on et.name=etd.name and et.reseller_id=r.id 
+#where et.id is null order by r.id,etd.id;
+
+#select r.id as reseller_id,r.name as reseller_name, etd.id as email_template_id, etd.name as email_template_name from resellers r 
+#join email_templates etd on etd.reseller_id is null
+#left join email_templates et on et.name=etd.name and et.reseller_id=r.id 
+#where et.id is null order by r.id,etd.id;
+
+
+sub tmpl_ajax_missed :Chained('tmpl_list') :PathPart('ajax/missed') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->model('DB')->resultset('resellers')->search_rs({
+        'me.reseller_id' => undef,
+        'reseller.id' => undef,
+    },{
+    });
+    my $dt_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
+            { name => 'id', search => 1, title => $c->loc('#') },
+            { name => 'name', search => 1, title => $c->loc('Name') },
+            { name => 'from_email', search => 1, title => $c->loc('From') },
+            { name => 'subject', search => 1, title => $c->loc('Subject') },
+        ]);
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $dt_columns, sub {
+            my ($result) = @_;
+            my %data = (undeletable => ($c->user->roles eq "admin") ? 0 : 1);
+            return %data
+        },
+    );
+    $c->session->{email_template_external_filter} = 'default';
+    $c->detach( $c->view("JSON") );
+}
+
 sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
