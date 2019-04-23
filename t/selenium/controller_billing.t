@@ -156,4 +156,20 @@ $d->find_element('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contain
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
+diag("Terminate our Billing Profile");
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Billing", 'link_text')->click();
+$d->fill_element('#billing_profile_table_filter label input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
+$d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]'));
+$d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]')->click();
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
+$d->find_element('#dataConfirmOK', 'css')->click();
+
+diag("Check if Billing Profile has been removed");
+$d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
+ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Billing Profile has been removed');
+
 done_testing;
