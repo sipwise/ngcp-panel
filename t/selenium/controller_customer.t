@@ -149,6 +149,25 @@ ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', '0123456789');
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0123456789'), 'Entry has been found');
 
+diag("Create a new Location");
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Locations")]')->click();
+$d->find_element("Create Location", 'link_text')->click();
+
+diag('Enter necessary information');
+$d->fill_element('//*[@id="name"]', 'xpath', 'Test Location');
+$d->fill_element('//*[@id="description"]', 'xpath', 'This is a Test Location');
+$d->fill_element('//*[@id="name"]', 'xpath', 'Test Location');
+$d->fill_element('//*[@id="blocks.0.row.ip"]', 'xpath', '127.0.0.1');
+$d->fill_element('//*[@id="blocks.0.row.mask"]', 'xpath', '16');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Location has been created");
+$d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]')->click();
+$d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#locations_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'Test Location');
+ok($d->wait_for_text('//*[@id="locations_table"]/tbody/tr/td[2]', 'Test Location'), "Location has been found");
+
 diag("Terminate our customer");
 $d->find_element('//a[contains(@class,"btn-primary") and text()[contains(.,"Back")]]')->click();
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
