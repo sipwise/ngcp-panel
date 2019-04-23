@@ -475,6 +475,7 @@ sub get_column_order_name{
     }
     return $name;
 }
+
 sub _get_joined_column_name {
     my $cname = shift;
     my $name;
