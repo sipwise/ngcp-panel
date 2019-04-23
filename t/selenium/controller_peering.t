@@ -51,12 +51,19 @@ ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[3]', $group
 $d->move_action(element=> $d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]'));
 $d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]')->click();
 
-diag("Create a Peering Rule");
+diag("Create Outbound Peering Rule");
 $d->find_element('//a[contains(text(),"Create Outbound Peering Rule")]')->click();
 $d->fill_element('#callee_prefix', 'css', '43');
 $d->fill_element('#callee_pattern', 'css', '^sip');
 $d->fill_element('#caller_pattern', 'css', '999');
 $d->fill_element('#description', 'css', 'for testing purposes');
+$d->find_element('#save', 'css')->click();
+
+diag("Create Inbound Peering Rule");
+$d->find_element('//a[contains(text(),"Create Inbound Peering Rule")]')->click();
+$d->fill_element('//*[@id="pattern"]', 'xpath', '^sip');
+$d->fill_element('//*[@id="reject_code"]', 'xpath', '403');
+$d->fill_element('//*[@id="reject_reason"]', 'xpath', 'forbidden');
 $d->find_element('#save', 'css')->click();
 
 diag("Create a Peering Server");
