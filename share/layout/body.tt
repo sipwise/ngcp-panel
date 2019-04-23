@@ -162,11 +162,16 @@ var mainWrapperInit = function () {
                 '</div>'+
               '</div>'
             );
-        } 
+        }
         $('#dataConfirmOK').attr('href', href);
         if( href.search(/^javascript:/i ) > -1 ){
-            $('#dataConfirmOK').attr('onclick', href);
+            if($(this).attr('confirm-click')){
+                $('#dataConfirmOK').attr('onclick', $(this).attr('confirm-click'));
+            } else {
+                $('#dataConfirmOK').attr('onclick', href);
+            }
             $('#dataConfirmOK').attr('data-dismiss', 'modal');
+            
         }
         $('#dataConfirmOK').text($(this).attr('data-confirm'));
         if($('#mod_edit').length) {
