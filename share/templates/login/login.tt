@@ -43,7 +43,8 @@
             //localStorage.clear();//it's a little bit too greedy )
             for (var i = 0; i < localStorage.length; i++){
                 var key = localStorage.key(i);
-                if(!key.test(/^DataTables_/)){
+                var re = /^DataTables_/;
+                if(!re.test(key)){
                     localStorage.removeItem(key);
                 }
             }
