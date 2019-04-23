@@ -16,6 +16,24 @@
       "revId": "9fd5c198d7f17f3bad70141d5d560729972faa14",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_1faa3b71",
+        "filename": "t/api-rest/api-balanceintervals.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-04-23T10:40:24Z",
+      "side": 1,
+      "message": "well, \"proper\" way could be to set the time always explicitly, eg. \n\n_set_time(NGCP::Panel::Utils::DateTime::from_string(\u00272015-06-14 13:00:01\u0027));\n\nbut in this case it would be equivalent, eg.\n\n_set_time(NGCP::Panel::Utils::DateTime::from_string(\u00272015-06-14 13:00:00\u0027));\n...\nsleep(1);",
+      "parentUuid": "5afe65bd_df93834e",
+      "revId": "9fd5c198d7f17f3bad70141d5d560729972faa14",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
