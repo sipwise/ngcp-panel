@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_df93834e",
+        "filename": "t/api-rest/api-balanceintervals.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-04-23T10:23:31Z",
+      "side": 1,
+      "message": "hm... it is not a \"fix\".",
+      "revId": "9fd5c198d7f17f3bad70141d5d560729972faa14",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
