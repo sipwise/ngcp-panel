@@ -140,7 +140,7 @@ ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears')
 diag('Go back to "SIP Peering Groups".');
 $d->get($peerings_uri);
 
-diag('Delete "testinggroup"');
+diag('Delete Testing Group');
 $d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
@@ -150,8 +150,10 @@ $d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[con
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
-diag('skip was here');
+diag('Checking if Testing Group has been deleted');
 ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
+$d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
+ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 'css'), 'Testing Group was deleted');
 
 done_testing;
 # vim: filetype=perl
