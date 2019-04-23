@@ -15,10 +15,12 @@ has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
 has 'table_titles' => ( isa => 'ArrayRef', is => 'rw' );
 has 'custom_renderers' => ( isa => 'HashRef', is => 'rw' );
 has 'no_ordering' => ( isa => 'Bool', is => 'rw' );
+has 'no_pagination' => ( isa => 'Bool', is => 'rw', default => 0 );
+has 'only_visible_values' => ( isa => 'Bool', is => 'rw', default => 0 );
 has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );
 has 'search_tooltip' => (isa => 'Str', is => 'rw', default => 'Filter for column values matching the pattern string, e.g. 12*45. The * (wildcard) is implicitly prepended and appended.' );
 
-#didn't want to incude some complex role related logic here,
+#didn't want to include some complex role related logic here,
 #as these DataTable fields also are used in API
 #To don't slow down API
 #traits  => ['Code']
@@ -40,6 +42,8 @@ sub render_element {
         table_titles => $self->table_titles,
         custom_renderers => $self->custom_renderers,
         no_ordering => $self->no_ordering,
+        no_pagination => $self->no_pagination,
+        only_visible_values => $self->only_visible_values,
         errors => $self->errors,
         language_file => $self->language_file,
         search_tooltip => $self->search_tooltip,

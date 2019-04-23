@@ -2,6 +2,7 @@
 <script type="text/javascript">
 
 var checked_fields[%table_id%] = [];
+var unchecked_fields[%table_id%] = [];
 $(document).ready(function() {
 
     [%IF value%]
@@ -11,28 +12,31 @@ $(document).ready(function() {
         checked_fields[%table_id%].push(val);
     });
     [%END%]
+    function update_hidden_value () {
+        $("#[% hidden_id %]").val( JSON.stringify(checked_fields[%table_id%]) );
+    }
     $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
-
         var my_id = $(this).parents("tr").find("td:first").text();
         var indexOfId = checked_fields[%table_id%].indexOf(my_id)
         if($(this).attr("checked") == "checked") {
             if(indexOfId < 0){
-               checked_fields[%table_id%].push(my_id);
+                checked_fields[%table_id%].push(my_id);
+                unchecked_fields[%table_id%].splice(indexOfId,1);
             }
         } else {
             if( indexOfId >= 0){
                 checked_fields[%table_id%].splice(indexOfId,1);
+                unchecked_fields[%table_id%].push(my_id);
             }
         }
-        $("#[% hidden_id %]").val( JSON.stringify(checked_fields[%table_id%]) );
-
+        update_hidden_value ();
     });
     $('#[% table_id %]')
         .dataTable( {
         "sDom": "<'row-fluid'<'pull-left'r><'pull-right'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
         "bProcessing": true,
         "bServerSide": true,
-        "bPaginate": true,
+        "bPaginate": [%IF no_pagination; 'false'; ELSE; 'true'; END%],
         "sPaginationType": "bootstrap",
         "bLengthChange": false,
         "bSort": [%IF no_ordering; 'false'; ELSE; 'true'; END%],
@@ -78,6 +82,41 @@ $(document).ready(function() {
         "fnServerParams": function ( aoData ) {
             //aoData.push( {"name":"iIdOnTop","value":"[% value %]"} );
         },
+        [%IF only_visible_values %]
+        "fnServerData": function ( sSource, aoData, fnCallback, oSettings ) {
+            oSettings.jqXHR = $.ajax( {
+                "dataType": 'json',
+                "url": sSource,
+                "data": aoData,
+                "success": function(data, textStatus, jqXHR) {
+                    var aadata_length = data.aaData.length;
+                    var serverArray = [];
+                    for (var i = 0; i < aadata_length; i++) {
+                        serverArray.push(data.aaData[i].id);
+                    }
+                    var checked_fields_length = checked_fields[%table_id%].length;
+                    for (var i = 0; i < checked_fields_length; i++) {
+                        var id_checked = checked_fields[%table_id%][i];
+                        var serverIndexOf = serverArray.indexOf(id_checked);
+                        if ( serverIndexOf < 0 ) {
+                            checked_fields[%table_id%].splice(serverIndexOf,1);
+                        }
+                    }
+                    var server_length = serverArray.length;
+                    for (var i = 0; i < server_length; i++) {
+                        var id_server = serverArray[i];
+                        var uncheckedIndexOf = unchecked_fields[%table_id%].indexOf(id_server);
+                        var checkedIndexOf = checked_fields[%table_id%].indexOf(id_server);
+                        if (uncheckedIndexOf < 0 && checkedIndexOf < 0) {
+                            checked_fields[%table_id%].push(id_server);
+                        }
+                    }
+                    update_hidden_value();
+                    fnCallback(data, textStatus, jqXHR);
+               }
+            } );
+        },
+        [%END%]
         "initComplete": function(settings, json) {
             if ("[% c.loc(search_tooltip) %]".length > 0) {
                 $( "#[% table_id %]_filter input" ).tooltip({
