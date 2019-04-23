@@ -9,6 +9,11 @@
     <span>
     <a class="btn btn-primary btn-large" href="[% c.uri_for('/emailtemplate/create') %]"><i class="icon-star"></i> [% c.loc('Create Email Template') %]</a>
     </span>
+    [% IF tmpl_missed_rs.count -%]
+    <span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for('/emailtemplate/sync') %]"><i class="icon-star"></i> [% c.loc('Sync Email Templates') %]</a>
+    </span>
+    [% END -%]
     [% END -%]
 </div>
 [% back_created = 1 -%]
