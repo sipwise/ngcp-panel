@@ -31,11 +31,9 @@ $d->fill_element('[name=handle]', 'css', $billingname);
 $d->find_element('//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]')->click();
 $d->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
 
-diag("Search nonexisting billing profile");
+diag('Search for Test Profile in billing profile');
 $d->fill_element('#billing_profile_table_filter label input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-
-diag('Search for Test Profile in billing profile');
 $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
 ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
 
@@ -51,6 +49,8 @@ $d->find_element('#save', 'css')->click();
 sleep 1;
 
 diag('Open "Fees" for Test Profile');
+$d->fill_element('#billing_profile_table_filter label input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
 ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
 $d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]'));
@@ -102,6 +102,8 @@ ok($d->find_element('//a[contains(@href,"/domain")]'));
 $d->find_element("Billing", 'link_text')->click();
 
 diag('Open "Edit Peak Times" for Test Profile');
+$d->fill_element('#billing_profile_table_filter label input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
 ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
 $d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]'));
