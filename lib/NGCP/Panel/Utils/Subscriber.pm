@@ -450,7 +450,7 @@ sub create_subscriber {
 
 sub check_profile_set_and_profile {
     my ($c, $resource, $subscriber) = @_;
-    
+
     my ($profile_set, $profile, $profile_set_rs);
     my $schema = $c->model('DB');
 
@@ -467,7 +467,7 @@ sub check_profile_set_and_profile {
     }
     if($c->user->roles eq "admin") {
         #we allow to admins (both superadmin and reseller admin roles)
-        #to pick any profile_set, even not linked to pilot. 
+        #to pick any profile_set, even not linked to pilot.
         #it may lead to situation when subscriberadmin will not see profile options, as profile ajax call is based on pilot profile_set setting
         #this was old behavior and I left untouched this administrator privilege
     } elsif($c->user->roles eq "reseller") {
@@ -504,7 +504,7 @@ sub check_profile_set_and_profile {
         }
     } elsif (!exists $resource->{profile_set}{id}) {
         if ($c->user->roles eq "subscriberadmin") { #we are in subscriberadmin web UI
-        #this is for subscriberadmin web ui to edit subscriber. 
+        #this is for subscriberadmin web ui to edit subscriber.
         #Edit subscriber form for subscriberadmin doesn't contain profile_set control
         #API form doesn't suppose profile_set field.
         # => subscriberadmin can't manage profile_set via web ui and API
@@ -525,10 +525,10 @@ sub check_profile_set_and_profile {
                 id => $resource->{profile}{id},
             });
         }
-        if (!$profile 
+        if (!$profile
             && (
                     #we force default profile instead of empty for all roles those can't unset profile_set
-                    (!$resource->{profile}{id}) 
+                    (!$resource->{profile}{id})
                     #to admin roles we forgive incorrect profile_id (no error)
                     #this is due web ui, when not dynamic profile field can't reflect profile_set change
                     #and user need to edit twice to 1) change profile_set + incorrect profile_id) and 2) select not-default profile
@@ -547,7 +547,7 @@ sub check_profile_set_and_profile {
         };
     }
     if (!$profile && (
-        $profile_set 
+        $profile_set
         || ( $c->user->roles eq "subscriberadmin"
             && $resource->{profile}{id} )
         )
@@ -573,8 +573,8 @@ sub check_profile_set_and_profile {
 
     # if the profile changed, clear any preferences which are not in the new profile
     #in create use case we don't have prov_subscriber
-    if($prov_subscriber 
-        && $prov_subscriber->voip_subscriber_profile 
+    if($prov_subscriber
+        && $prov_subscriber->voip_subscriber_profile
         && ( !$profile || $prov_subscriber->voip_subscriber_profile->id != $profile->id )
     ) {
         my %old_profile_attributes = map { $_ => 1 }
@@ -1176,13 +1176,20 @@ sub update_subadmin_sub_aliases {
     my $sadmin         = $params{sadmin};
     my $contract_id    = $params{contract_id};
     my $alias_selected = $params{alias_selected};
+    my $termination    = $params{termination};
 
-    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+    my $num_rs;
+    $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
         'subscriber.contract_id' => $subscriber->contract_id,
         'primary_number_owners_active.id' => undef,
     },{
         prefetch => ['subscriber', 'primary_number_owners_active'],
-    });
+    }) unless $termination;
+    $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+        'subscriber.contract_id' => $subscriber->contract_id,
+    },{
+        prefetch => 'subscriber',
+    }) if $termination;
 
     my $acli_pref_sub;
     $acli_pref_sub = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -1194,6 +1201,8 @@ sub update_subadmin_sub_aliases {
         if($sadmin->provisioning_voip_subscriber && $c->config->{numbermanagement}->{auto_allow_cli});
 
     for my $num ($num_rs->all) {
+        next if ($termination and $num->primary_number_owners->first); # is a primary number
+
         my $cli = $num->cc . ($num->ac // '') . $num->sn;
 
         my $tmpsubscriber;
@@ -1329,6 +1338,7 @@ sub terminate {
                     contract_id => $subscriber->contract_id,
                     alias_selected => [], #none, thus moving them back to our subadmin
                     sadmin => $pilot_rs->first,
+                    termination => 1,
                 );
                 my $subscriber_primary_nr = $subscriber->primary_number;
                 if ($subscriber_primary_nr) {
@@ -2040,7 +2050,7 @@ sub delete_callrecording {
     my($recording, $force_delete) = @params{qw/recording force_delete/};
 
     foreach my $stream($recording->recording_streams->all) {
-        #if we met some error deleting file - we will fail and transaction will be rollbacked 
+        #if we met some error deleting file - we will fail and transaction will be rollbacked
         if (! -e $stream->full_filename) {
             if ( !$force_delete ) {
                 die("Callrecording file ".$stream->full_filename." is absent");
