@@ -1,3 +1,23 @@
+ngcp-panel (6.5.4.5+0~mr6.5.4.5) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [c3f1ab9] TT#47017 Fix Phonebook and Timeset UI rendering
+  * [58b1ffb] TT#55366 Fix strings comparison in datatable multifield
+  * [817dd12] TT#49255 Enable all ssl checkings for the ZTP RPC calls
+  * [5effe22] TT#49255 Change Snom ZTP server hostname
+  * [cc4634e] TT#49255 Fix ssl verify config appliance for Grandstream
+  * [f09cec0] TT#47017 Fix return page after closing edit phonebook form
+  * [6328f3d] TT#55364 Fix /api/numbers PATCH for aliases
+  * [f2a2f87] TT#50907 Make subscriber profiles tests more stable
+
+  [ Rene Krenn ]
+  * [395941b] TT#56463 fix $$c refs
+  * [643b855] TT#56463 fix $c->log vs $c->loc #1
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 24 Apr 2019 12:55:11 +0200
+
 ngcp-panel (6.5.4.4+0~mr6.5.4.4) unstable; urgency=medium
 
   [ Rene Krenn ]
