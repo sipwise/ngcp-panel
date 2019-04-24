@@ -106,42 +106,27 @@ ok($d->find_text('Preference inbound_upn successfully updated'), 'Text "Preferen
 diag("Go back to Servers/Rules");
 $d->get($server_rules_uri);
 
-my $delete_link;
 diag('skip was here');
 diag("Delete mytestserver");
-sleep 1; #make sure, we are on the right page
 $d->fill_element('#peering_servers_table_filter input', 'css', 'thisshouldnotexist');
-$d->find_element('#peering_servers_table tr > td.dataTables_empty', 'css');
+ok($d->find_element_by_css('#peering_servers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#peering_servers_table_filter input', 'css', 'mytestserver');
-$row = $d->find_element('(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
-ok($row);
-$delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
-ok($delete_link);
-$d->move_action(element => $row);
-$delete_link->click();
+ok($d->wait_for_text('//*[@id="peering_servers_table"]/tbody/tr/td[2]', 'mytestserver'), "mytestserver was found");
+$d->move_action(element => $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
+$d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
 
-diag("Delete the previously created Peering Rule");
-diag(" - searching garbage (waiting for AJAX to load)");
+diag("Delete the Outbound Peering Rule");
 $d->fill_element('#PeeringRules_table_filter input', 'css', 'thisshouldnotexist');
-$d->find_element('#PeeringRules_table tr > td.dataTables_empty', 'css');
-diag(" - searching valid item (waiting for AJAX to load)");
+ok($d->find_element_by_css('#PeeringRules_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#PeeringRules_table_filter input', 'css', 'for testing purposes');
-$d->find_element('#PeeringRules_table tr > td.sorting_1', 'css');
-diag(" - searching delete button");
-$row = $d->find_element('//table[@id="PeeringRules_table"]/tbody/tr[1]');
-ok($row);
-diag(" - pressing delete button");
-$delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
-ok($delete_link);
-$d->move_action(element => $row);
-$delete_link->click();
+ok($d->wait_for_text('//*[@id="PeeringRules_table"]/tbody/tr/td[5]', 'for testing purposes'), "Outbound Peering Rule was found");
+$d->move_action(element => $d->find_element('//*[@id="PeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
+$d->find_element('//*[@id="PeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
-
-diag('skip was here');
 ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
 
 diag('Go back to "SIP Peering Groups".');
