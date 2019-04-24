@@ -439,6 +439,7 @@ sub create_subscriber {
         return $billing_subscriber;
     });
 }
+
 sub update_preferences {
     my (%params) = @_;
     my $c = $params{c};
@@ -999,13 +1000,20 @@ sub update_subadmin_sub_aliases {
     my $sadmin         = $params{sadmin};
     my $contract_id    = $params{contract_id};
     my $alias_selected = $params{alias_selected};
+    my $termination    = $params{termination};
 
-    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+    my $num_rs;
+    $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
         'subscriber.contract_id' => $subscriber->contract_id,
         'primary_number_owners_active.id' => undef,
     },{
         prefetch => ['subscriber', 'primary_number_owners_active'],
-    });
+    }) unless $termination;
+    $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+        'subscriber.contract_id' => $subscriber->contract_id,
+    },{
+        prefetch => 'subscriber',
+    }) if $termination;
 
     my $acli_pref_sub;
     $acli_pref_sub = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -1017,6 +1025,8 @@ sub update_subadmin_sub_aliases {
         if($sadmin->provisioning_voip_subscriber && $c->config->{numbermanagement}->{auto_allow_cli});
 
     for my $num ($num_rs->all) {
+        next if ($termination and $num->primary_number_owners->first); # is a primary number
+
         my $cli = $num->cc . ($num->ac // '') . $num->sn;
 
         my $tmpsubscriber;
@@ -1151,6 +1161,7 @@ sub terminate {
                     contract_id => $subscriber->contract_id,
                     alias_selected => [], #none, thus moving them back to our subadmin
                     sadmin => $pilot_rs->first,
+                    termination => 1,
                 );
                 my $subscriber_primary_nr = $subscriber->primary_number;
                 if ($subscriber_primary_nr) {
@@ -1834,7 +1845,7 @@ sub delete_callrecording {
     my($recording) = @params{qw/recording/};
 
     foreach my $stream($recording->recording_streams->all) {
-        #if we met some error deleting file - we will fail and transaction will be rollbacked 
+        #if we met some error deleting file - we will fail and transaction will be rollbacked
         unlink($stream->full_filename);
     }
     $recording->recording_streams->delete;
