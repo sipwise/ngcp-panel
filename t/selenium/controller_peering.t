@@ -129,6 +129,18 @@ ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
 
+diag("Delete the Inbound Peering Rule");
+$d->scroll_to_element($d->find_element('//a[contains(text(),"Create Inbound Peering Rule")]'));
+$d->fill_element('#InboundPeeringRules_table_filter input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#InboundPeeringRules_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('#InboundPeeringRules_table_filter input', 'css', 'forbidden');
+ok($d->wait_for_text('//*[@id="InboundPeeringRules_table"]/tbody/tr/td[6]', 'forbidden'), "Inbound Peering Rule was found");
+$d->move_action(element => $d->find_element('//*[@id="InboundPeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
+$d->find_element('//*[@id="InboundPeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
+ok($d->find_text("Are you sure?"), 'Delete dialog appears');
+$d->find_element('#dataConfirmOK', 'css')->click();
+ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
+
 diag('Go back to "SIP Peering Groups".');
 $d->get($peerings_uri);
 
