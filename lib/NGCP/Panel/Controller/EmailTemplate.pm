@@ -99,11 +99,15 @@ sub tmpl_ajax_default :Chained('tmpl_list') :PathPart('ajax/default') :Args(0) {
 #left join ( select id,name,reseller_id from email_templates where reseller_id is not null) et on et.name=etd.name and et.reseller_id=r.id 
 #where et.id is null order by r.id,etd.id;
 
+#select r.id as reseller_id,r.name as reseller_name, etd.id as email_template_id, etd.name as email_template_name from resellers r 
+#join email_templates etd on etd.reseller_id is null
+#left join email_templates et on et.name=etd.name and et.reseller_id=r.id 
+#where et.id is null order by r.id,etd.id;
 
 
 sub tmpl_ajax_missed :Chained('tmpl_list') :PathPart('ajax/missed') :Args(0) {
     my ($self, $c) = @_;
-    my $rs = $c->model('DB')->resultset('email_templates')->search({
+    my $rs = $c->model('DB')->resultset('resellers')->search_rs({
         'me.reseller_id' => undef,
         'reseller.id' => undef,
     },{

@@ -137,8 +137,7 @@ function frequencySuffix(){
 
 function getLabeledFieldsSelectors (field){
   //var field_name_jquery = $(this).data('field');
-  alert(field);
-  var field_name_jquery = field;
+  var field_name_jquery = field ? field : '';
   field_name_jquery = field_name_jquery.replace(/\./g,'\\.');
   var fieldSingleNameSelector = "[name='" + field_name_jquery + "']";
   var fieldMultiNameSelector = "[name^='" + field_name_jquery + '\\.' + "']";
