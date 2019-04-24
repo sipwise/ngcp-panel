@@ -65,7 +65,7 @@ sub update_item_model {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id', does not exist.");
         return;
     }
-    if($old_sub->primary_number_id == $old_resource->{id}) {
+    if($old_sub->primary_number_id && $old_resource->{id} && $old_sub->primary_number_id == $old_resource->{id}) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot reassign primary number, already at subscriber ".$old_sub->id);
         return;
     }
