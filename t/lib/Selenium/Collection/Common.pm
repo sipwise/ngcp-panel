@@ -60,7 +60,7 @@ sub create_reseller {
     diag('Try to create a reseller');
     $self->driver->find_element('Create Reseller', 'link_text')->click();
     $self->driver->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-    ok($self->driver->find_element_by_css('#contractidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    ok($self->driver->find_element_by_css('#contractidtable tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', $resellerid);
     ok($self->driver->wait_for_text('//*[@id="contractidtable"]/tbody/tr/td[3]', $resellerid), "Default Contact found");
     $self->driver->select_if_unselected('//*[@id="contractidtable"]/tbody/tr/td[5]/input');
@@ -78,13 +78,11 @@ sub create_reseller_contract {
 
     diag('Try to create a reseller contract');
     $self->driver->find_element('Create Reseller Contract', 'link_text')->click();
-    if(!$self->driver->find_element('//*[@id="contactidtable"]/tbody/tr[1]/td[4]')->get_text() eq 'default-system@default.invalid') {
-        $self->driver->fill_element('//*[@id="contactidtable_filter"]/label/input', 'xpath', 'default-system@default.invalid');
-        ok($self->driver->wait_for_text('//*[@id="contactidtable"]/tbody/tr[1]/td[4]', 'default-system@default.invalid'), "Default Contact found");
-        $self->driver->select_if_unselected('//*[@id="contactidtable"]/tbody/tr[1]/td[5]/input');
-    } else {
-        ok($self->driver->select_if_unselected('//*[@id="contactidtable"]/tbody/tr[1]/td[5]/input'), "Default Contact found");
-    };
+    $self->driver->fill_element('//*[@id="contactidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#contactidtable tr > td.dataTables_empty'), 'Garbage text was not found');
+    $self->driver->fill_element('//*[@id="contactidtable_filter"]/label/input', 'xpath', 'default-system@default.invalid');
+    ok($self->driver->wait_for_text('//*[@id="contactidtable"]/tbody/tr[1]/td[4]', 'default-system@default.invalid'), "Default Contact found");
+    $self->driver->select_if_unselected('//*[@id="contactidtable"]/tbody/tr[1]/td[5]/input');
     $self->driver->scroll_to_element($self->driver->find_element('//*[@id="external_id"]'));
 
     $self->driver->fill_element('//*[@id="billing_profileidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
