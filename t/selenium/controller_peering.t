@@ -103,6 +103,30 @@ $d->find_element('//div[contains(@class,"modal-body")]//select[@id="inbound_upn"
 $d->find_element('#save', 'css')->click();
 ok($d->find_text('Preference inbound_upn successfully updated'), 'Text "Preference inbound_upn successfully updated" appears');
 
+diag('Open the tab "Remote Authentication"');
+$d->scroll_to_element($d->find_element("Remote Authentication", 'link_text'));
+$d->find_element("Remote Authentication", 'link_text')->click();
+
+diag('Edit peer_auth_user');
+$d->move_action(element => $d->find_element('//*[@id="preferences_table6"]/tbody/tr[1]/td//div//a[contains(text(), "Edit")]'));
+$d->find_element('//*[@id="preferences_table6"]/tbody/tr[1]/td//div//a[contains(text(), "Edit")]')->click();
+$d->fill_element('//*[@id="peer_auth_user"]', 'xpath', 'peeruser1');
+$d->find_element('#save', 'css')->click();
+
+diag('Edit peer_auth_pass');
+$d->find_element("Remote Authentication", 'link_text')->click();
+$d->move_action(element => $d->find_element('//*[@id="preferences_table6"]/tbody/tr[2]/td//div//a[contains(text(), "Edit")]'));
+$d->find_element('//*[@id="preferences_table6"]/tbody/tr[2]/td//div//a[contains(text(), "Edit")]')->click();
+$d->fill_element('//*[@id="peer_auth_pass"]', 'xpath', 'peerpass1');
+$d->find_element('#save', 'css')->click();
+
+diag('Edit peer_auth_realm');
+$d->find_element("Remote Authentication", 'link_text')->click();
+$d->move_action(element => $d->find_element('//*[@id="preferences_table6"]/tbody/tr[3]/td//div//a[contains(text(), "Edit")]'));
+$d->find_element('//*[@id="preferences_table6"]/tbody/tr[3]/td//div//a[contains(text(), "Edit")]')->click();
+$d->fill_element('//*[@id="peer_auth_realm"]', 'xpath', 'testpeering.com');
+$d->find_element('#save', 'css')->click();
+
 diag("Go back to Servers/Rules");
 $d->get($server_rules_uri);
 
