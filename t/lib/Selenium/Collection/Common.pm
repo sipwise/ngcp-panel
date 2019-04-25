@@ -142,6 +142,42 @@ sub delete_reseller_contract {
     };
 }
 
+sub create_rw_ruleset {
+    my($self, $resellername, $rulesetname) = @_;
+
+    diag('Go to Rewrite Rule Sets page');
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element('Rewrite Rule Sets', 'link_text')->click();
+
+    diag('Trying to create a Rewrite Rule Set');
+    $self->driver->find_element('Create Rewrite Rule Set', 'link_text')->click();
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
+    ok($self->driver->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller was found');
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+    $self->driver->fill_element('//*[@id="name"]', 'xpath', $rulesetname);
+    $self->driver->fill_element('//*[@id="description"]', 'xpath', 'For testing purposes');
+    $self->driver->find_element('//*[@id="save"]')->click();
+}
+
+sub delete_rw_ruleset {
+    my($self, $rulesetname) = @_;
+
+    diag('Go to Rewrite Rule Sets page');
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element('Rewrite Rule Sets', 'link_text')->click();
+
+    diag('Trying to delete the Rewrite Rule Set');
+    $self->driver->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $self->driver->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
+    ok($self->driver->wait_for_text('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]/td[3]', $rulesetname), 'Ruleset was found');
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
+    $self->driver->find_element('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
+    $self->driver->find_element('//*[@id="dataConfirmOK"]')->click();
+}
+
 sub popup_confirm_ok {
     my($self, $message) = @_;
 
