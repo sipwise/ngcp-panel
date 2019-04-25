@@ -1,3 +1,149 @@
+ngcp-panel (7.3.1.0+0~mr7.3.1.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [94f449e] TT#49259 Fix tests for peeringserver sound_set preference
+  * [ef70c3d] TT#47534 Fix event parsing without rrule
+  * [c4b542d] TT#52980 Return num_lines to api device models lineranges
+  * [2b11a89] TT#53320 Fix voicemailgreetings upload error handling
+  * [3d02b96] TT#53760 Consider copy in email templates name checking
+  * [d0a6ad3] TT#53760 Use explicit email template copy mode
+  * [052935e] TT#53760 Fix using of the explicit copy mode flag
+  * [3d524de] TT#54205 TT#54264 TT#54351 TT#54263 TT#54206 Timesets events representation fixes
+  * [71a442b] TT#54350 Consider DTSTART and DTEND in event representation
+  * [5e4b738] TT#47017 Fix Phonebook and Timeset UI rendering
+  * [bf771b5] TT#55503 Fix DTSTART only timeset representation
+  * [f741f62] TT#47017 Fix return page after closing edit phonebook form
+  * [1477062] TT#55364 Fix /api/numbers PATCH for aliases
+  * [0a5e2df] TT#54350 Always show hours related text in rrule description
+  * [99e1d60] TT#49255 Enable all ssl checkings for the ZTP RPC calls
+  * [f20a423] TT#49255 Change Snom ZTP server hostname
+  * [32e646e] TT#50907 Make subscriber profiles tests more stable
+  * [68436b0] TT#55366 Fix strings comparison in datatable multifield
+  * [41c3332] TT#46161 Add French translation file, flag file and menu point
+
+  [ Guillem Jover ]
+  * [63880a6] TT#53701 Add an explicit dependency on libngcp-api-client-perl
+  * [e35c57c] TT#53701 Switch dependency from ngcp-schema to libngcp-schema-perl
+  * [8d4b886] TT#53701 Update dependencies
+  * [ed8fa2f] TT#53701 Rename systemd tmpfile
+  * [0f6754f] TT#53701 Fix perms for files
+  * [6597cab] TT#53701 Install into debian/tmp and select what to pick from there
+  * [0045d05] TT#53701 Stop requiring Moose during builds
+  * [72a5f7e] TT#53701 Remove leftover cruft
+  * [e1e2dbe] TT#53701 Remove provisioning scripts
+  * [6c816df] TT#53701 Line-wrap helper scripts
+  * [363da11] TT#53701 Move config files under etc/
+  * [91e2d61] TT#53701 Split Catalyst::Plugin::Session:Store::Redis into its own package
+  * [442c6c7] TT#56550 Rename ngcp-sercmd to ngcp-kamcmd
+
+  [ Kirill Solomko ]
+  * [c3ed47b] TT#51911 rework Header Manipulations to support datatables
+  * [b25fd7b] TT#52006 header manipulations priority is now editable in the UI
+  * [2a6dffa] TT#47010 add per subscriber header manipulations
+  * [82e3ce8] TT#55104 fix sound files update_model error handling
+  * [6a7f65a] TT#55459 fix header_rule_set preference UI filtering
+  * [3a539b0] TT#55459 subscriber_only UI header rule set changes
+  * [6374009] TT#56602 no apply_rewrite for a terminated prov subscriber
+  * [5e63be9] TT#56653 disable UI system status widget
+  * [7753ba1] TT#57701 Form/Header/Rule add direction "reply"
+
+  [ Sipwise Jenkins Builder ]
+  * [50f355b] TT#4166 I18N dump: snapshot 2019.03.06-06.37.35
+  * [c2292f3] TT#4166 I18N dump: snapshot 2019.03.07-06.22.22
+  * [16b648c] TT#4166 I18N dump: snapshot 2019.03.08-04.32.07
+  * [05d7410] TT#4166 I18N dump: snapshot 2019.03.15-06.14.28
+  * [e20288c] TT#4166 I18N dump: snapshot 2019.03.27-13.25.43
+  * [e08d236] TT#4166 I18N dump: snapshot 2019.04.03-04.54.03
+  * [cfa13da] TT#4166 I18N dump: snapshot 2019.04.10-06.10.39
+  * [51a6a70] TT#4166 I18N dump: snapshot 2019.04.13-03.59.41
+
+  [ Rene Krenn ]
+  * [78a134e] TT#46955 reseller preferences
+  * [c397042] TT#49694 match patterns: reject malformed "\0"-"\9" only
+  * [559cf20] TT#56463 fix $$c refs
+  * [4789f6b] TT#56411 honor use_session => 0 for bcrypt auth WIP
+  * [1cfc524] Revert "TT#56411 honor use_session => 0 for bcrypt auth WIP"
+  * [76b8806] TT#56411 honor use_session => 0 for bcrypt auth
+  * [33f470d] TT#56463 fix $c->log vs $c->loc #1
+  * [61a9c10] TT#56463 fix $c->log vs $c->loc #2
+  * [e6a6799] TT#56463 fix string concat in log msg
+  * [7952117] TT#56463 remove use Catalyst; from Utils/Message.pm
+  * [adabefc] TT#52987 TT#56006 logfile data inventory generator
+  * [9fd5c19] TT#57900 scenario in balanceintervals.t fails on fast hardware
+
+  [ Andreas Granig ]
+  * [e154577] TT#23004 Revert local linking of dev env in vagrant
+  * [1b48156] TT#53326 Remove stray "xx" in device provisioning
+  * [89ac5b9] TT#52989 Fix device-id handling in panel UI
+  * [39e81eb] TT#55873 Only expose marked sound handles to customers
+  * [972eb6e] TT#55953 Prevent hiding buttons on ajax search
+
+  [ Flaviu Mates ]
+  * [83521b3] TT#53334 Fix header rule set id handling
+  * [362ebd1] TT#54754 Fix sound file creation with filename null
+  * [69bff5f] TT#54957 Implement support for uploading multiple sound file types on /api/soundfiles
+  * [378d27d] TT#33114 Implement DELETE method to terminate BillingProfiles and BillingNetworks
+  * [cac9c4d] TT#56060 Implement PATCH method for soundfiles
+
+  [ Nico Schedel ]
+  * [0acda01] TT#56376 Re-enabling domain selenium test
+  * [3a9e1fb] TT#56376 Add check for adding subscriber + cleanups
+  * [376e3e8] TT#56376 selenium: various t/selenium/testrunner improvements
+  * [c70b063] TT#56376 selenium: fix crash on find_text()
+  * [63d32e7] TT#56376 selenium: add wait_for_text() method
+  * [96dc84a] TT#56376 selenium: fix crash in controller_billing.t
+  * [1bf2070] TT#56376 fix wait_for_text() crash
+  * [0063078] TT#56376 remove sleep if browser=htmlunit calls
+  * [0649dcb] TT#56376 selenium: remove phantomjs/chrome sleep call
+  * [0d1e5ea] TT#56376 selenium: add file Common.pm
+  * [d597f40] TT#56376 selenium: login_ok() test cleanups
+  * [6c4fe4e] TT#56376 selenium: Cleaner fraud limit check
+  * [cd3adf3] TT#56376 selenium: add delete_domain() function
+  * [9bc296b] TT#56376 selenium: fix crash on creating subscribers
+  * [46f0185] TT#56376 selenium: add more diagnostic text to test calls
+  * [df38189] TT#56376 selenium: removing sleep calls
+  * [cf0e3b8] TT#56376 selenium: improvements to delete_domain()
+  * [da24a58] TT#56376 selenium: controller_billing.t code cleanups
+  * [abe43af] TT#56376 selenium: initial controller_reseller.t code refractoring
+  * [d10aa91] TT#56376 selenium: add create_reseller() and create_reseller_contract()
+  * [a2798fd] TT#56376 selenium: add delete_reseller() and delete_reseller_contract()
+  * [1f32e9b] TT#56376 selenium: controller_reseller: use our newly created reseller
+  * [fde849d] TT#56376 selenium: add cancel argument to delete_reseller(_contracts)
+  * [ee07bbb] TT#56376 selenium: more reliable actions for invisible buttons
+  * [e3cdea8] TT#56376 selenium: add cancel argument to delete_domain() too
+  * [22f8a81] TT#56376 selenium: controller_customer xpath refinements
+  * [fa58b70] TT#56376 selenium: Common.pm xpath refinements
+  * [609ccb5] TT#56376 selenium: Added test for checking phonebook entries
+  * [8ccd614] TT#56376 selenium: fix crash on deleting date definitions
+  * [681abea] TT#56376 selenium: add Invoice Template check
+  * [79d00a5] TT#56376 selenium: add PBX flag for controller_customer
+  * [bd4a00a] TT#56376 selenium: change move_actions in Common.pm
+  * [070d1e4] TT#56376 selenium: change move_actions in controller_reseller
+  * [d7887dd] TT#56376 selenium: change move_actions in controller_customer
+  * [3e56923] TT#56376 selenium: use name variable in controller_peering
+  * [7c3c27b] TT#56376 selenium: Added test for checking phonebook entries
+  * [62337a5] TT#56376 selenium: add a bit more diag texts
+  * [df4c47d] TT#56376 selenium: use name variable in controller_billing
+  * [4aa76b9] TT#56376 selenium: delete billing profile after test execution
+  * [9bec68d] TT#56376 selenium: add location check
+  * [9a3635f] TT#56376 selenium: check if peering group has been deleted
+  * [f3ba27a] TT#56376 selenium: create inbound peering rule
+  * [94d63d6] TT#56376 selenium: rewrite delete routine in contoller_peering
+  * [d6a901d] TT#56376 selenium: add garbage text search to prevent exception
+  * [628f26b] TT#56376 selenium: use CTRL+A shortcut in fill_element() instead of clear()
+  * [f2746ed] TT#56376 selenium: add code to delete inbound peering rule
+  * [ed50e78] TT#56376 selenium: simplified code around deleting billing fee
+  * [d55e2c3] TT#56376 selenium: add peer_auth checks
+  * [ec6dd1b] TT#56376 selenium: add file controller_rw_ruleset.t
+  * [3acf010] TT#56376 selenium: add create and delete_rw_ruleset()
+
+  [ Alexander Lutay ]
+  * [7282fa6] TT#56376 Remove unnecessary PERL5LIB= from t/selenium/jenkins_docker_run
+  * [f0e1f74] TT#56376 Restore exit code propogation in t/selenium/testrunner
+  * [7dbe4a1] TT#56376 Show selenium/rest-api tests execution time on Jenkins
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 25 Apr 2019 14:29:54 +0200
+
 ngcp-panel (7.3.0.0+0~mr7.3.0.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
