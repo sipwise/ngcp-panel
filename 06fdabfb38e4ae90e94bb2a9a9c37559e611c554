@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1af86dd1_037e6eae",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3131,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-04-26T11:10:49Z",
+      "side": 1,
+      "message": "primary_number_owners",
+      "range": {
+        "startLine": 3131,
+        "startChar": 13,
+        "endLine": 3131,
+        "endChar": 29
+      },
+      "revId": "06fdabfb38e4ae90e94bb2a9a9c37559e611c554",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1af86dd1_437466ce",
         "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
         "patchSetId": 1
