@@ -2811,8 +2811,9 @@ sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL)
 
     my $subscriber = $c->stash->{subscriber};
     my @alias_nums = ();
+    my $num_rs;
     if (NGCP::Panel::Utils::Subscriber::is_move_primary_numbers($c)) {
-        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+        $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
             'subscriber.contract_id' => $subscriber->contract_id,
             'primary_number_owners_active.id' => undef,
         },{
@@ -2836,7 +2837,7 @@ sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL)
         #       LEFT JOIN `billing`.`voip_subscribers` `subscriber` ON `subscriber`.`id` = `me`.`subscriber_id`
         #       WHERE ( ( ( `subscriber`.`id` != `subscriber`.`primary_number_id` OR `subscriber`.`status` = 'terminated' ) AND `subscriber`.`contract_id` = '789' ) ) ORDER BY `me`.`id`;
     } else {
-        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+        $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
             'subscriber.contract_id' => $subscriber->contract_id,
             'primary_number_owners.id' => undef,
         },{
