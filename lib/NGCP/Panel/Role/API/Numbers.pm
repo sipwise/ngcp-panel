@@ -9,6 +9,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use NGCP::Panel::Form;
 use JSON::Types;
+use NGCP::Panel::Utils::Subscriber qw();
 
 sub resource_name{
     return 'numbers';
@@ -59,18 +60,34 @@ sub _item_rs {
         });
     }
 
-    if($c->req->param('type') && $c->req->param('type') eq "primary") {
-        $item_rs = $item_rs->search({
-            'primary_number_owners_active.id' => { '!=' => undef },
-        }, {
-            join => ['subscriber', 'primary_number_owners_active'],
-        });
-    } elsif($c->req->param('type') && $c->req->param('type') eq "alias") {
-        $item_rs = $item_rs->search({
-            'primary_number_owners_active.id' => { '=' => undef },
-        }, {
-            join => ['subscriber', 'primary_number_owners_active'],
-        });
+    if (NGCP::Panel::Utils::Subscriber::is_move_primary_numbers($c)) {
+        if($c->req->param('type') && $c->req->param('type') eq "primary") {
+            $item_rs = $item_rs->search({
+                'primary_number_owners_active.id' => { '!=' => undef },
+            }, {
+                join => ['subscriber', 'primary_number_owners_active'],
+            });
+        } elsif($c->req->param('type') && $c->req->param('type') eq "alias") {
+            $item_rs = $item_rs->search({
+                'primary_number_owners_active.id' => { '=' => undef },
+            }, {
+                join => ['subscriber', 'primary_number_owners_active'],
+            });
+        }
+    } else {
+        if($c->req->param('type') && $c->req->param('type') eq "primary") {
+            $item_rs = $item_rs->search({
+                'primary_number_owners.id' => { '!=' => undef },
+            }, {
+                join => ['subscriber', 'primary_number_owners'],
+            });
+        } elsif($c->req->param('type') && $c->req->param('type') eq "alias") {
+            $item_rs = $item_rs->search({
+                'primary_number_owners.id' => { '=' => undef },
+            }, {
+                join => ['subscriber', 'primary_number_owners'],
+            });
+        }
     }
     return $item_rs;
 }
