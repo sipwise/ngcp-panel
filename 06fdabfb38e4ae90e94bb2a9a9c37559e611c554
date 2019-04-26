@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "1af86dd1_83481e89",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-04-26T11:18:21Z",
+      "side": 1,
+      "message": "primary_number_owners",
+      "range": {
+        "startLine": 80,
+        "startChar": 17,
+        "endLine": 80,
+        "endChar": 33
+      },
+      "revId": "06fdabfb38e4ae90e94bb2a9a9c37559e611c554",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1af86dd1_a36c3a09",
         "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
         "patchSetId": 1
@@ -64,6 +87,29 @@
         "startChar": 40,
         "endLine": 82,
         "endChar": 56
+      },
+      "revId": "06fdabfb38e4ae90e94bb2a9a9c37559e611c554",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1af86dd1_435b4655",
+        "filename": "lib/NGCP/Panel/Role/API/Numbers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-04-26T11:18:21Z",
+      "side": 1,
+      "message": "primary_number_owners",
+      "range": {
+        "startLine": 86,
+        "startChar": 17,
+        "endLine": 86,
+        "endChar": 33
       },
       "revId": "06fdabfb38e4ae90e94bb2a9a9c37559e611c554",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
