@@ -1,3 +1,12 @@
+ngcp-panel (6.5.4.6+0~mr6.5.4.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [3722254] TT#44603 fax number normalization logic selection
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 26 Apr 2019 16:53:37 +0200
+
 ngcp-panel (6.5.4.5+0~mr6.5.4.5) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
