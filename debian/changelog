@@ -1,3 +1,15 @@
+ngcp-panel (7.1.2.5+0~mr7.1.2.5) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [6a238b1] TT#56376 selenium: backport wait_for_text() from master
+  * [61e0d96] TT#56376 selenium: fix crash on deleting date definitions
+  * [0c55ecc] TT#56376 selenium: change move_actions in controller_customer
+  * [dd5d6ad] TT#56376 selenium: fix crash on deleting date defenition
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 26 Apr 2019 11:53:46 +0200
+
 ngcp-panel (7.1.2.4+0~mr7.1.2.4) unstable; urgency=medium
 
   [ Rene Krenn ]
