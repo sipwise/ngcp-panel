@@ -28,6 +28,11 @@ my %LOCK = (
     5, 'ported',
 );
 
+sub is_move_primary_numbers {
+    my ($c) = @_;
+    # todo: load from config
+    return 0;
+}
 
 sub period_as_string {
     my $set = shift;
@@ -1000,7 +1005,6 @@ sub update_subadmin_sub_aliases {
     my $sadmin         = $params{sadmin};
     my $contract_id    = $params{contract_id};
     my $alias_selected = $params{alias_selected};
-    my $termination    = $params{termination};
 
     my $num_rs;
     $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
@@ -1008,12 +1012,12 @@ sub update_subadmin_sub_aliases {
         'primary_number_owners_active.id' => undef,
     },{
         prefetch => ['subscriber', 'primary_number_owners_active'],
-    }) unless $termination;
+    }) if is_move_primary_numbers($c);
     $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
         'subscriber.contract_id' => $subscriber->contract_id,
     },{
         prefetch => 'subscriber',
-    }) if $termination;
+    }) unless is_move_primary_numbers($c);
 
     my $acli_pref_sub;
     $acli_pref_sub = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -1025,7 +1029,7 @@ sub update_subadmin_sub_aliases {
         if($sadmin->provisioning_voip_subscriber && $c->config->{numbermanagement}->{auto_allow_cli});
 
     for my $num ($num_rs->all) {
-        next if ($termination and $num->primary_number_owners->first); # is a primary number
+        next if (not is_move_primary_numbers($c) and $num->primary_number_owners->first); # is a primary number
 
         my $cli = $num->cc . ($num->ac // '') . $num->sn;
 
@@ -1161,7 +1165,6 @@ sub terminate {
                     contract_id => $subscriber->contract_id,
                     alias_selected => [], #none, thus moving them back to our subadmin
                     sadmin => $pilot_rs->first,
-                    termination => 1,
                 );
                 my $subscriber_primary_nr = $subscriber->primary_number;
                 if ($subscriber_primary_nr) {

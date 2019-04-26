@@ -2811,31 +2811,38 @@ sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL)
 
     my $subscriber = $c->stash->{subscriber};
     my @alias_nums = ();
-    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
-        'subscriber.contract_id' => $subscriber->contract_id,
-        'primary_number_owners_active.id' => undef,
-    },{
-        prefetch => ['subscriber', 'primary_number_owners_active'],
-    });
-
-    
-    ##other variant of the correct query is:
-    #my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
-    #    'subscriber.contract_id' => $subscriber->contract_id,
-    #    -or => [
-    #        'me.id' => {'!=', { -ident => 'subscriber.primary_number_id' }},
-    #        'subscriber.status' => 'terminated',
-    #    ],
-    #},{
-    #    join => ['subscriber'],
-    #});
-    ##produces query: 
-    #     SELECT `me`.`id`, `me`.`cc`, `me`.`ac`, `me`.`sn`, `me`.`reseller_id`, `me`.`subscriber_id`, `me`.`status`, `me`.`ported`, `me`.`list_timestamp`, ( concat(cc,' ',ac,' ',sn) ) AS `number`, `subscriber`.`username` 
-    #     FROM `billing`.`voip_numbers` `me` 
-    #       LEFT JOIN `billing`.`voip_subscribers` `subscriber` ON `subscriber`.`id` = `me`.`subscriber_id` 
-    #       WHERE ( ( ( `subscriber`.`id` != `subscriber`.`primary_number_id` OR `subscriber`.`status` = 'terminated' ) AND `subscriber`.`contract_id` = '789' ) ) ORDER BY `me`.`id`;
+    if (NGCP::Panel::Utils::Subscriber::is_move_primary_numbers($c)) {
+        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+            'subscriber.contract_id' => $subscriber->contract_id,
+            'primary_number_owners_active.id' => undef,
+        },{
+            prefetch => ['subscriber', 'primary_number_owners_active'],
+        });
 
 
+        ##other variant of the correct query is:
+        #my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+        #    'subscriber.contract_id' => $subscriber->contract_id,
+        #    -or => [
+        #        'me.id' => {'!=', { -ident => 'subscriber.primary_number_id' }},
+        #        'subscriber.status' => 'terminated',
+        #    ],
+        #},{
+        #    join => ['subscriber'],
+        #});
+        ##produces query:
+        #     SELECT `me`.`id`, `me`.`cc`, `me`.`ac`, `me`.`sn`, `me`.`reseller_id`, `me`.`subscriber_id`, `me`.`status`, `me`.`ported`, `me`.`list_timestamp`, ( concat(cc,' ',ac,' ',sn) ) AS `number`, `subscriber`.`username`
+        #     FROM `billing`.`voip_numbers` `me`
+        #       LEFT JOIN `billing`.`voip_subscribers` `subscriber` ON `subscriber`.`id` = `me`.`subscriber_id`
+        #       WHERE ( ( ( `subscriber`.`id` != `subscriber`.`primary_number_id` OR `subscriber`.`status` = 'terminated' ) AND `subscriber`.`contract_id` = '789' ) ) ORDER BY `me`.`id`;
+    } else {
+        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+            'subscriber.contract_id' => $subscriber->contract_id,
+            'primary_number_owners.id' => undef,
+        },{
+            prefetch => ['subscriber', 'primary_number_owners'],
+        });
+    }
 
     my $alias_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
