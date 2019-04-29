@@ -11,17 +11,21 @@ has 'driver' => (
 );
 
 sub create_domain {
-    my ($self, $name) = @_;
+    my ($self, $name, $reseller) = @_;
     return unless $name;
 
+    $reseller = 'default' unless $reseller;
     diag('Go to domains page');
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Domains", 'link_text')->click();
 
     diag('Try to add a domain');
     $self->driver->find_element('Create Domain', 'link_text')->click();
-    ok($self->driver->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', 'default'), "Default reseller and creation site are avalible");
-    $self->driver->find_element('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input')->click(); #select default reseller
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $reseller);
+    ok($self->driver->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $reseller), "Reseller and creation site are avalible");
+    $self->driver->find_element('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input')->click();
     $self->driver->find_element('//*[@id="domain"]')->send_keys($name);
     $self->driver->find_element('//*[@id="save"]')->click();
 }
