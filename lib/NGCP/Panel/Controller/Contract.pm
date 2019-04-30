@@ -135,9 +135,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     }
     $params = merge($params, $c->session->{created_objects});
     my ($form, $is_peering_reseller);
-    if (defined $contract->product &&
-        grep {$contract->product->handle eq $_}
-            ("SIP_PEERING", "PSTN_PEERING", "VOIP_RESELLER") ) {
+    if ( NGCP::Panel::Utils::Contract::is_peering_reseller_contract( c => $c, contract => $contract ) ) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
         $is_peering_reseller = 1;
     } else {
