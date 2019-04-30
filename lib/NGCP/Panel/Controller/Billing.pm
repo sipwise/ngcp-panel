@@ -75,6 +75,15 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_no_prepaid :Chained('profile_list') :PathPart('ajax_no_prepaid') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{profiles_rs}->search_rs({ prepaid => 0 });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
 sub ajax_filter_reseller :Chained('profile_list') :PathPart('ajax/filter_reseller') :Args(1) {
     my ($self, $c, $reseller_id) = @_;
 
@@ -214,6 +223,7 @@ sub process_create :Private {
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
+    $c->stash->{no_prepaid_billing_profile} = $no_reseller;
     if($c->user->is_superuser && !$no_reseller) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::BillingProfile::Admin", $c);
     } else {
