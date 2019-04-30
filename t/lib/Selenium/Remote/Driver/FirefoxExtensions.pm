@@ -33,25 +33,6 @@ sub BUILD {
     $self->set_timeout("implicit", 10_000);
 }
 
-sub login_ok {
-    my ($self) = @_;
-    diag("Loading login page (logout first)");
-    my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
-    $self->get("$uri/logout"); # make sure we are logged out
-    $self->get("$uri/login");
-
-    diag("Do Admin Login");
-    ok($self->find_text("Admin Sign In"), "Text Admin Sign In found");
-    is($self->get_title, '', 'No Tab Title was set');
-    $self->find_element('#username', 'css')->send_keys('administrator');
-    $self->find_element('#password', 'css')->send_keys('administrator');
-    $self->find_element('#submit', 'css')->click();
-
-    diag("Checking Admin interface");
-    is($self->get_title, 'Dashboard', 'Tab Title is correct');
-    is($self->find_element('//*[@id="masthead"]//h2')->get_text(), "Dashboard", 'We are in the Dashboard. Login Successfull');
-}
-
 sub find_text {
     try {
         my ($self, $text, $scheme) = @_;

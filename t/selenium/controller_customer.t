@@ -27,7 +27,8 @@ if(!$pbx){
 } else {
     print "---PBX check is ENABLED---\n";
 };
-$d->login_ok();
+
+$c->login_ok();
 
 my $domainstring = ("test" . int(rand(10000)) . ".example.org"); #create string for checking later
 $c->create_domain($domainstring);
