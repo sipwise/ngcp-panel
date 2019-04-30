@@ -3,6 +3,8 @@ package NGCP::Panel::Form::Contract::PeeringReseller;
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Contract::Base';
 
+has '+prepaid_billing_profile_forbidden' => ( default => 1 );
+
 has_field 'contact' => (
     type => '+NGCP::Panel::Field::ContactNoReseller',
     label => 'Contact',
@@ -14,7 +16,7 @@ has_field 'contact' => (
 );
 
 has_field 'billing_profiles.profile' => (
-    type => '+NGCP::Panel::Field::BillingProfile',
+    type => '+NGCP::Panel::Field::BillingProfileNoPrepaid',
     validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
