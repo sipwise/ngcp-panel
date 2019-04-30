@@ -24,6 +24,7 @@ $d->login_ok();
 my $resellername = ("test" . int(rand(10000)));
 my $contractid = ("test" . int(rand(10000)));
 my $rulesetname = ("rule" . int(rand(10000)));
+my $domainstring = ("test" . int(rand(10000)) . ".example.org");
 
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
@@ -66,6 +67,30 @@ ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]/
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
 
+diag('Trying to add the ruleset to a domain');
+$c->create_domain($domainstring, $resellername);
+
+diag('Enter Domain Preferences');
+$d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
+ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr/td[3]', $domainstring), 'Entry was found');
+$d->move_action(element => $d->find_element('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Preferences")]'));
+$d->find_element('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Preferences")]')->click();
+
+diag('Add ruleset to a domain');
+$d->find_element('Number Manipulations', 'link_text')->click;
+$d->move_action(element => $d->find_element('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td/div//a[contains(text(), "Edit")]'));
+$d->find_element('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td/div//a[contains(text(), "Edit")]')->click();
+$d->find_element('//*[@id="rewrite_rule_set.1"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if correct ruleset has been selected');
+$d->find_element('Number Manipulations', 'link_text')->click;
+
+ok($d->wait_for_text('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td[4]/select/option[@selected="selected"]', $rulesetname), 'rewrite_rule_set value has been set');
+
+$c->delete_domain($domainstring);
 $c->delete_rw_ruleset($rulesetname);
 
 $c->delete_reseller_contract($contractid);
