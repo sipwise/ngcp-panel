@@ -323,6 +323,24 @@ sub get_contract_calls_rs{
 
 }
 
+sub is_peering_reseller_contract {
+    my %params = @_;
+    my($c, $contract) = @params{qw/c contract/};
+    if ( defined $contract->product && is_peering_reseller_product(c => $c, product => $contract->product) ) {
+        return 1;
+    }
+    return 0;
+}
+
+sub is_peering_reseller_product {
+    my %params = @_;
+    my($c, $product) = @params{qw/c product/};
+    if (grep {$product->handle eq $_}
+            ("SIP_PEERING", "PSTN_PEERING", "VOIP_RESELLER")) {
+        return 1;
+    }
+    return 0;
+}
 1;
 
 __END__
