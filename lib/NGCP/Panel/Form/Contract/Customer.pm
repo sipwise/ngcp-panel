@@ -14,6 +14,14 @@ has_field 'contact' => (
     },
 );
 
+has_field 'billing_profile' => (
+    type => '+NGCP::Panel::Field::BillingProfile',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The billing profile used to charge this contract.']
+    },
+);
+
 has_field 'billing_profile_definition' => (
     type => 'Select',
     label => 'Set billing profiles',
