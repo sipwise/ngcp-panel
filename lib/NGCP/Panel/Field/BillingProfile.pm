@@ -12,6 +12,7 @@ has_field 'id' => (
     ajax_src => '/billing/ajax',
     table_titles => ['#', 'Reseller', 'Profile'],
     table_fields => ['id', 'reseller_name', 'name'],
+    adjust_datatable_vars => \&adjust_datatable_vars,
 );
 
 has_field 'create' => (
@@ -20,6 +21,19 @@ has_field 'create' => (
     value => 'Create Billing Profile',
     element_class => [qw/btn btn-tertiary pull-right/],
 );
+
+sub adjust_datatable_vars {
+    my ($self, $vars) = @_;
+    my $form = $self->form;
+    my $ctx = $form->ctx;
+    return unless $ctx;
+    my $type = $ctx->stash->{type} // '';
+    if (grep {$type eq $_} (qw/reseller sippeering/)) {
+        my $uri = ($ctx->uri_for_action('/billing/ajax')->as_string);
+        $uri .= (($uri =~/\?/)?'&':'?'). 'no_prepaid_billing_profiles=1';
+        $vars->{ajax_src} = $uri;
+    }
+}
 
 no Moose;
 1;
