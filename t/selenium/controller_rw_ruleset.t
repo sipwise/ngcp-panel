@@ -19,7 +19,7 @@ my $c = Selenium::Collection::Common->new(
     driver => $d
 );
 
-$d->login_ok();
+$c->login_ok();
 
 my $resellername = ("test" . int(rand(10000)));
 my $contractid = ("test" . int(rand(10000)));
