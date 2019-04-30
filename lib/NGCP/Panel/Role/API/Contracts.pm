@@ -143,6 +143,17 @@ sub update_contract {
         });
     delete $resource->{type};
 
+    #according to api_description, the whole contracts API dedicated to peering/reseller contracts and so no product checking is needed here, but to avoid possible mess in the future..
+    if ( 
+        NGCP::Panel::Utils::Contract::is_peering_reseller_contract( c => $c, contract => $contract ) 
+        && 
+        NGCP::Panel::Utils::BillingMappings::check_prepaid_profiles_exist(
+            c => $c,
+            mappings_to_create => $mappings_to_create,)
+    ) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Peering/reseller can' be related to prepaid billing profile.");
+        return;
+    }
     $resource->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
 
     if($old_resource->{contact_id} != $resource->{contact_id}) {
