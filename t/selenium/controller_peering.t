@@ -4,6 +4,7 @@ use strict;
 use lib 't/lib';
 use Test::More import => [qw(done_testing is ok diag todo_skip)];
 use Selenium::Remote::Driver::FirefoxExtensions;
+use Selenium::Collection::Common;
 
 my $browsername = $ENV{BROWSER_NAME} || "firefox"; # possible values: firefox, htmlunit, chrome
 
@@ -14,7 +15,11 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
     },
 );
 
-$d->login_ok();
+my $c = Selenium::Collection::Common->new(
+    driver => $d
+);
+
+$c->login_ok();
 
 my $groupname = ("testinggroup" . int(rand(10000))); #create string for checking later
 
