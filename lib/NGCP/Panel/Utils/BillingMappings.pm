@@ -428,6 +428,21 @@ sub prepare_billing_mappings {
     return 1;
 }
 
+sub check_prepaid_profiles_exist {
+    my (%params) = @_;
+    my ($c, $mappings_to_create) = @params{qw/c mappings_to_create/};
+
+    my $schema = $c->model('DB');
+    foreach my $billing_profile_info (@$mappings_to_create) {
+        my $billing_profile = $schema->resultset('billing_profiles')->find($billing_profile_info->{billing_profile_id});
+        if ($billing_profile && $billing_profile->prepaid) {
+        #later we can put here all prepaid billing profiles in a array ref, if we will want to provide more informative error
+            return $billing_profile_info->{billing_profile_id};
+        }
+    }
+    return 0;
+}
+
 sub _check_profile_network {
     my (%params) = @_;
     my ($c,$res,$profile_id_field,$network_id_field,$field,$reseller_id,$err_code,$entities) = @params{qw/c resource profile_id_field network_id_field field reseller_id err_code entities/};
