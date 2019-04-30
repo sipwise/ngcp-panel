@@ -169,7 +169,7 @@ sub POST :Allow {
                 #$c->log->error($err);
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
             });
-
+     
         my $product_class = delete $resource->{type};
         my $product = $schema->resultset('products')->search_rs({ class => $product_class })->first;
         unless($product) {
@@ -177,6 +177,16 @@ sub POST :Allow {
             last;
         }
         $resource->{product_id} = $product->id;
+        if ( 
+            NGCP::Panel::Utils::Contract::is_peering_reseller_product( c => $c, product => $product ) 
+            && 
+            ( my $prepaid_billing_profile_exist = NGCP::Panel::Utils::BillingMappings::check_prepaid_profiles_exist(
+                c => $c,
+                mappings_to_create => $mappings_to_create) )
+        ) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Peering/reseller contract can't be connected to the prepaid billing profile $prepaid_billing_profile_exist.");
+            return;
+        }
 
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;

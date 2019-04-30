@@ -225,6 +225,16 @@ sub validate_handle {
     }
 }
 
+sub update_fields {
+#IMPORTANT! redefined sub update_fields with no super call disable call of the update_field_list and defaults methods
+    my $self = shift;
+    my $c = $self->ctx;
+    return unless $c;
+    if ($c->stash->{no_prepaid_billing_profile} && $self->field('prepaid')) {
+        $self->field('prepaid')->inactive(1);
+    }
+}
+
 sub validate {
     my ($self) = @_;
     my $c = $self->ctx;

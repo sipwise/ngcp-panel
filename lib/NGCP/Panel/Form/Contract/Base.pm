@@ -15,6 +15,9 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
+#we have validation implemented on base level, but for peering reseller form we also need to verify that selected billing profiles aren't prepaid
+has 'prepaid_billing_profile_forbidden' => ( isa => 'Bool', is => 'ro', default => 0 );
+
 has_field 'billing_profile_definition' => (
     type => 'Select',
     label => 'Set billing profiles by',
@@ -267,6 +270,7 @@ sub validate {
     my $old_resource = (exists $c->stash->{contract} ? { $c->stash->{contract}->get_inflated_columns } : undef);
 
     my $mappings_to_create = [];
+
     NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
         c => $c,
         resource => $resource,
@@ -282,7 +286,18 @@ sub validate {
                 $self->field($field)->add_error($err);
             }
         });
+    if ($self->prepaid_billing_profile_forbidden) {
+        if ( my $prepaid_billing_profile_exist = NGCP::Panel::Utils::BillingMappings::check_prepaid_profiles_exist(
+            c => $c,
+            mappings_to_create => $mappings_to_create,
+        ) ) {
+            my @fields = qw/billing_profile billing_profiles profile_package/;
+            foreach my $field (@fields) {
+                $self->field($field)->add_error("Peering/reseller contract can't be connected to the prepaid billing profile $prepaid_billing_profile_exist.");
+            }
 
+        }
+    }
 }
 
 1;
