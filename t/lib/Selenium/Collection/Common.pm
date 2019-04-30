@@ -10,6 +10,25 @@ has 'driver' => (
     is => 'ro'
 );
 
+sub login_ok {
+    my ($self) = @_;
+    diag("Loading login page (logout first)");
+    my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
+    $self->driver->get("$uri/logout"); # make sure we are logged out
+    $self->driver->get("$uri/login");
+
+    diag("Do Admin Login");
+    ok($self->driver->find_text("Admin Sign In"), "Text Admin Sign In found");
+    is($self->driver->get_title, '', 'No Tab Title was set');
+    $self->driver->find_element('#username', 'css')->send_keys('administrator');
+    $self->driver->find_element('#password', 'css')->send_keys('administrator');
+    $self->driver->find_element('#submit', 'css')->click();
+
+    diag("Checking Admin interface");
+    is($self->driver->get_title, 'Dashboard', 'Tab Title is correct');
+    is($self->driver->find_element('//*[@id="masthead"]//h2')->get_text(), "Dashboard", 'We are in the Dashboard. Login Successfull');
+}
+
 sub create_domain {
     my ($self, $name) = @_;
     return unless $name;
