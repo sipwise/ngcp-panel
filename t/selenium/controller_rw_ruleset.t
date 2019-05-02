@@ -67,6 +67,28 @@ ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]/
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
 
+diag('Testing if rules can be reordered');
+diag('Create a new rule for Caller');
+$d->find_element('Create Rewrite Rule', 'link_text')->click;
+$d->fill_element('//*[@id="match_pattern"]', 'xpath', '^(00|\+)([1-9][0-9]+)$');
+$d->fill_element('//*[@id="replace_pattern"]', 'xpath', '\1');
+$d->fill_element('//*[@id="description"]', 'xpath', 'International to E.164');
+$d->find_element('//*[@id="field.1"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Test if new entry moves up if up arrow is clicked');
+$d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
+$d->find_element('//*[@id="collapse_icaller"]/div/table/tbody/tr/td[contains(text(), "\1")]/../td//a//i[@class="icon-arrow-up"]')->click();
+ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]/td[contains(text(), "\1")]'), "Replacement Pattern is correct");
+
+diag('Delete the newly created rule for Caller');
+$d->move_action(element => $d->find_element('//*[@id="collapse_icaller"]/div/table/tbody/tr/td[contains(text(), "\1")]/..//td//div//a[2]'));
+$d->find_element('//*[@id="collapse_icaller"]/div/table/tbody/tr/td[contains(text(), "\1")]/..//td//div//a[2]')->click();
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+
+diag('Check if rule was deleted');
+ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]/td[contains(text(), "\2")]'), "Rule was deleted");
+
 diag('Trying to add the ruleset to a domain');
 $c->create_domain($domainstring, $resellername);
 
