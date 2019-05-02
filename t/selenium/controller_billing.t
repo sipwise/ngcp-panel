@@ -15,7 +15,7 @@ my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
 );
 
 $d->login_ok();
-my $billingname = ("testprofile" . int(rand(10000))); #create string for checking later
+my $billingname = ("billing" . int(rand(100000)) . "test"); #create string for checking later
 
 diag("Go to Billing page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();

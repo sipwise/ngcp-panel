@@ -21,8 +21,8 @@ my $c = Selenium::Collection::Common->new(
 
 $d->login_ok();
 
-my $resellername = ("test" . int(rand(10000)));
-my $contractid = ("test" . int(rand(10000)));
+my $resellername = ("reseller" . int(rand(100000)) . "test");
+my $contractid = ("contract" . int(rand(100000)) . "test");
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
 
