@@ -21,7 +21,7 @@ my $c = Selenium::Collection::Common->new(
 
 $c->login_ok();
 
-my $groupname = ("testinggroup" . int(rand(10000))); #create string for checking later
+my $groupname = ("group" . int(rand(100000)) . "test"); #create string for checking later
 
 diag("Go to Peerings page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();

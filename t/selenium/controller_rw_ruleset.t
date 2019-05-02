@@ -21,10 +21,10 @@ my $c = Selenium::Collection::Common->new(
 
 $c->login_ok();
 
-my $resellername = ("test" . int(rand(10000)));
-my $contractid = ("test" . int(rand(10000)));
-my $rulesetname = ("rule" . int(rand(10000)));
-my $domainstring = ("test" . int(rand(10000)) . ".example.org");
+my $resellername = ("reseller" . int(rand(100000)) . "test");
+my $contractid = ("contract" . int(rand(100000)) . "test");
+my $rulesetname = ("rule" . int(rand(100000)) . "test");
+my $domainstring = ("domain" . int(rand(100000)) . ".example.org");
 
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);

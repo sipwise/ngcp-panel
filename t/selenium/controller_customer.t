@@ -30,7 +30,7 @@ if(!$pbx){
 
 $c->login_ok();
 
-my $domainstring = ("test" . int(rand(10000)) . ".example.org"); #create string for checking later
+my $domainstring = ("domain" . int(rand(100000)) . ".example.org"); #create string for checking later
 $c->create_domain($domainstring);
 
 my @chars = ("A".."Z", "a".."z");
