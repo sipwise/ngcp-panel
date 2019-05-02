@@ -81,14 +81,6 @@ $d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
 $d->find_element('//*[@id="collapse_icaller"]/div/table/tbody/tr/td[contains(text(), "\1")]/../td//a//i[@class="icon-arrow-up"]')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]/td[contains(text(), "\1")]'), "Replacement Pattern is correct");
 
-diag('Delete the newly created rule for Caller');
-$d->move_action(element => $d->find_element('//*[@id="collapse_icaller"]/div/table/tbody/tr/td[contains(text(), "\1")]/..//td//div//a[2]'));
-$d->find_element('//*[@id="collapse_icaller"]/div/table/tbody/tr/td[contains(text(), "\1")]/..//td//div//a[2]')->click();
-$d->find_element('//*[@id="dataConfirmOK"]')->click();
-
-diag('Check if rule was deleted');
-ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]/td[contains(text(), "\2")]'), "Rule was deleted");
-
 diag('Trying to add the ruleset to a domain');
 $c->create_domain($domainstring, $resellername);
 
