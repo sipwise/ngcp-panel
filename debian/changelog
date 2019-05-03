@@ -1,3 +1,13 @@
+ngcp-panel (7.0.2.6+0~mr7.0.2.6) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [a69fcc5] TT#56376 selenium: backport wait_for_text() from master
+  * [381a0db] TT#56376 selenium: change move_actions in controller_customer
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 03 May 2019 11:35:45 +0200
+
 ngcp-panel (7.0.2.5+0~mr7.0.2.5) unstable; urgency=medium
 
   [ Rene Krenn ]
