@@ -81,30 +81,22 @@ ok($d->find_text('Peering server successfully created'), 'Text "Peering server s
 my $server_rules_uri = $d->get_current_url();
 
 diag('Edit Preferences for "mytestserver".');
-sleep 1; #make sure, we are on the right page
 $d->fill_element('#peering_servers_table_filter input', 'css', 'thisshouldnotexist');
 $d->find_element('#peering_servers_table tr > td.dataTables_empty', 'css');
 $d->fill_element('#peering_servers_table_filter input', 'css', 'mytestserver');
-my $edit_link = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserver")]/../td//a[contains(text(),"Preferences")]');
-my $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestserver")]/..');
-ok($row);
-ok($edit_link);
-$d->move_action(element => $row);
-$edit_link->click();
+ok($d->wait_for_text('//*[@id="peering_servers_table"]/tbody/tr[1]/td[2]', 'mytestserver'), 'Peering Server has been found');
+$d->move_action(element => $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Preferences")]'));
+$d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Preferences")]')->click();
 
 diag('Open the tab "Number Manipulations"');
 $d->find_element("Number Manipulations", 'link_text')->click();
 
 diag("Click edit for the preference inbound_upn");
-$row = $d->find_element('//table/tbody/tr/td[normalize-space(text()) = "inbound_upn"]');
-ok($row);
-$edit_link = $d->find_child_element($row, '(./../td//a)[2]');
-ok($edit_link);
-$d->move_action(element => $row);
-$edit_link->click();
+$d->move_action(element => $d->find_element('//table//td[contains(text(), "inbound_upn")]/..//td//a[contains(text(), "Edit")]'));
+$d->find_element('//table//td[contains(text(), "inbound_upn")]/..//td//a[contains(text(), "Edit")]')->click();
 
 diag('Change to "P-Asserted-Identity');
-$d->find_element('//div[contains(@class,"modal-body")]//select[@id="inbound_upn"]/option[@value="pai_user"]')->click();
+$d->find_element('//*[@id="inbound_upn"]/option[@value="pai_user"]')->click();
 $d->find_element('#save', 'css')->click();
 ok($d->find_text('Preference inbound_upn successfully updated'), 'Text "Preference inbound_upn successfully updated" appears');
 
