@@ -21,7 +21,8 @@ my $c = Selenium::Collection::Common->new(
 
 $c->login_ok();
 
-my $groupname = ("group" . int(rand(100000)) . "test"); #create string for checking later
+my $groupname = ("group" . int(rand(100000)) . "test"); #create strings for checking later
+my $servername = ("peering" . int(rand(100000)) . "server");
 
 diag("Go to Peerings page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -73,7 +74,7 @@ $d->find_element('#save', 'css')->click();
 
 diag("Create a Peering Server");
 $d->find_element('//a[contains(text(),"Create Peering Server")]')->click();
-$d->fill_element('#name', 'css', 'mytestserver');
+$d->fill_element('#name', 'css', $servername);
 $d->fill_element('#ip', 'css', '10.0.0.100');
 $d->fill_element('#host', 'css', 'sipwise.com');
 $d->find_element('#save', 'css')->click();
@@ -83,8 +84,8 @@ my $server_rules_uri = $d->get_current_url();
 diag('Edit Preferences for "mytestserver".');
 $d->fill_element('#peering_servers_table_filter input', 'css', 'thisshouldnotexist');
 $d->find_element('#peering_servers_table tr > td.dataTables_empty', 'css');
-$d->fill_element('#peering_servers_table_filter input', 'css', 'mytestserver');
-ok($d->wait_for_text('//*[@id="peering_servers_table"]/tbody/tr[1]/td[2]', 'mytestserver'), 'Peering Server has been found');
+$d->fill_element('#peering_servers_table_filter input', 'css', $servername);
+ok($d->wait_for_text('//*[@id="peering_servers_table"]/tbody/tr[1]/td[2]', $servername), 'Peering Server has been found');
 $d->move_action(element => $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Preferences")]'));
 $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Preferences")]')->click();
 
@@ -141,8 +142,8 @@ diag('skip was here');
 diag("Delete mytestserver");
 $d->fill_element('#peering_servers_table_filter input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#peering_servers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('#peering_servers_table_filter input', 'css', 'mytestserver');
-ok($d->wait_for_text('//*[@id="peering_servers_table"]/tbody/tr/td[2]', 'mytestserver'), "mytestserver was found");
+$d->fill_element('#peering_servers_table_filter input', 'css', $servername);
+ok($d->wait_for_text('//*[@id="peering_servers_table"]/tbody/tr/td[2]', $servername), "mytestserver was found");
 $d->move_action(element => $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
 $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
