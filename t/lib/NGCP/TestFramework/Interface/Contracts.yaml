@@ -1,0 +1,517 @@
+---
+#check options
+-
+    name: check OPTIONS for contracts
+    type: item
+    method: OPTIONS
+    path: /api/contracts/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-contracts
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create a BillingProfile
+-
+    name: create a BillingProfile
+    type: item
+    thread: 1
+    method: POST
+    path: /api/billingprofiles/
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test profile ${t}
+        handle: test_profile_handle${t}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        billling_profile_id: header.location
+
+#create a Customer Contact
+-
+    name: create a Customer Contact
+    type: item
+    method: POST
+    path: /api/customercontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: cust_contact_first
+        lastname: cust_contact_last
+        email: cust_contact@custcontact.invalid
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        customer_contact_path: header.location
+        customer_contact_id: header.location
+
+#check CustomerContact
+-
+    name: check CustomerContact
+    type: item
+    method: GET
+    path: '/${customer_contact_path}'
+    conditions:
+        is:
+            code: 200
+
+#create a System Contact
+-
+    name: create a System Contact
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first
+        lastname: sys_contact_last
+        email: sys_contact@syscontact.invalid
+    conditions:
+        is:
+            code: 201
+    retain:
+        system_contact_path: header.location
+        system_contact_id: header.location
+
+#get System Contact
+-
+    name: get System Contact
+    type: item
+    method: GET
+    path: '/${system_contact_path}'
+    retain:
+        system_contact: body
+
+#create batch
+-
+    name: create batch
+    type: batch
+    method: POST
+    path: '/api/contracts/'
+    number: 6
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        type: reseller
+        billing_profile_id: ${billling_profile_id}
+    retain:
+        contract_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#create invalid Contract with wrong type
+-
+    name: create invalid Contract with wrong type
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        billing_profile_id: ${billling_profile_id}
+        type: invalid
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: Validation failed.*type
+
+#create invalid Contract with wrong billing profile
+-
+    name: create invalid Contract with wrong billing profile
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        billing_profile_id: 999999
+        type: reseller
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: Invalid 'billing_profile_id'
+
+#create invalid Contract with customercontact
+-
+    name: create invalid Contract with customercontact
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        type: reseller
+        billing_profile_id: ${billling_profile_id}
+        contact_id: ${customer_contact_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: The contact_id is not a valid ngcp:systemcontacts item
+
+#create invalid Contract without contact
+-
+    name: create invalid Contract without contact
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        type: reseller
+        billing_profile_id: ${billling_profile_id}
+    conditions:
+        is:
+            code: 422
+
+#create invalid Contract with invalid status
+-
+    name: create invalid Contract with invalid status
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: invalid
+        type: reseller
+        billing_profile_id: ${billling_profile_id}
+        contact_id: ${system_contact_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='status'
+
+#verify pagination
+-
+    skip: 1
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/contracts/?page=1&rows=5'
+
+#check options on contract
+-
+    name: check OPTIONS on contract
+    type: item
+    method: OPTIONS
+    path: '/${contract_path}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+
+#get contract
+-
+    name: GET contract
+    type: item
+    method: GET
+    path: '/${contract_path}'
+    retain:
+        contract: body
+    operations:
+        delete:
+            - ${contract}: effective_start_time
+    conditions:
+        is:
+            code: 200
+        ok:
+            ${contract}.status: defined
+            ${contract}.type: defined
+            ${contract}.all_billing_profiles: defined
+        like:
+            ${contract}.billing_profile_id: '[0-9]+'
+            ${contract}.contact_id: '[0-9]+'
+            ${contract}.id: '[0-9]+'
+        is_deeply:
+            ${contract}.all_billing_profiles:
+                -
+                    profile_id: ${billling_profile_id}
+                    start: null
+                    stop: null
+
+
+#put contract with missing content-type
+-
+    name: PUT contract with missing content-type
+    type: item
+    method: PUT
+    path: '/${contract_path}'
+    header:
+        Prefer: return=minimal
+    conditions:
+        is:
+            code: 415
+
+#put contract with unsupported content type
+-
+    name: PUT contract with unsupported Content-Type
+    type: item
+    method: PUT
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/xxx
+    conditions:
+        is:
+            code: 415
+
+#put contract with missing body
+-
+    name: PUT contract with missing body
+    type: item
+    method: PUT
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    conditions:
+        is:
+            code: 400
+
+#put contract
+-
+    name: PUT contract
+    type: item
+    method: PUT
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        ${contract}
+    retain:
+        new_contract: body
+    operations:
+        delete:
+            - ${new_contract}: effective_start_time
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            ${contract}: ${new_contract}
+        ok:
+            ${new_contract}._links.ngcp:systemcontacts: defined
+            ${new_contract}._links.ngcp:billingprofiles: defined
+
+#modify contract status
+-
+    name: modify contract status
+    type: item
+    method: PATCH
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: pending
+    retain:
+        modified_contract: body
+    conditions:
+        is: 
+            code: 200
+            ${modified_contract}.status: pending
+            ${modified_contract}._links.self.href: ${contract_path}
+            ${modified_contract}._links.collection.href: /api/contracts/
+
+#check patch with status undef
+-
+    name: check patch with status undef
+    type: item
+    method: PATCH
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: null
+    conditions:
+        is: 
+            code: 422
+
+#check patch with invalid status
+-
+    name: check patch with invalid status
+    type: item
+    method: PATCH
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: invalid
+    conditions:
+        is: 
+            code: 422
+
+#check patch with invalid contact_id
+-
+    name: check patch with invalid contact_id
+    type: item
+    method: PATCH
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /contact_id
+            value: 99999
+    conditions:
+        is: 
+            code: 422
+
+#check patch with customer contact_id
+-
+    name: check patch with customer contact_id
+    type: item
+    method: PATCH
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /contact_id
+            value: ${customer_contact_id}
+    conditions:
+        is: 
+            code: 422
+
+#check patch with undef billing_profile_id
+-
+    name: check patch with undef billing_profile_id
+    type: item
+    method: PATCH
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profile_id
+            value: null
+    conditions:
+        is: 
+            code: 422
+
+#check patch with invalid billing_profile_id
+-
+    name: check patch with invalid billing_profile_id
+    type: item
+    method: PATCH
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profile_id
+            value: 99999
+    conditions:
+        is: 
+            code: 422
+
+#multi-bill-prof: create another test billing profile
+-
+    name: 'multi-bill-prof: create another test billing profile'
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: SECOND test profile ${t}
+        handle: second_testprofile${t}
+        reseller_id: 1
+    retain:
+        second_billling_profile_id: header.location
+    conditions:
+        is: 
+            code: 201
+
+#try to delete contract before terminating contracts
+-
+    name: try to delete contract before terminating contracts
+    type: item
+    method: DELETE
+    path: '/api/systemcontacts/${system_contact_id}'
+    conditions:
+        is:
+            code: 423
+
+#terminate contracts
+-
+    name: terminate contracts
+    type: item
+    method: PATCH
+    path: '/${contract_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        - 
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is:
+            code: 200
+
+#try to get already terminated contract
+-
+    name: try to get already terminated contract
+    type: item
+    method: GET
+    path: '/${contract_path}'
+    conditions:
+        is:
+            code: 404
