@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da37b569_0a175fa4",
+        "filename": "t/selenium/controller_customer.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-05-06T07:11:57Z",
+      "side": 1,
+      "message": "ran multiple jenkins tests, so far it didnt crash again.",
+      "revId": "cfb64bba3dc871485f8d6708f785658461abbdcf",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
