@@ -203,6 +203,52 @@ sub delete_rw_ruleset {
     $self->driver->find_element('//*[@id="dataConfirmOK"]')->click();
 }
 
+sub create_customer {
+    my($self, $customerid, $pbx) = @_;
+    return unless $customerid;
+
+    diag("Go to Customers page");
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element("Customers", 'link_text')->click();
+
+    diag("Trying to create a Customer");
+    $self->driver->find_element('//*[@id="masthead"]//h2[contains(text(),"Customers")]');
+    $self->driver->find_element('Create Customer', 'link_text')->click();
+    $self->driver->fill_element('#contactidtable_filter input', 'css', 'thisshouldnotexist');
+    $self->driver->find_element('#contactidtable tr > td.dataTables_empty', 'css');
+    $self->driver->fill_element('#contactidtable_filter input', 'css', 'default-customer');
+    $self->driver->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]/td[contains(text(),"default-customer")]/..//input[@type="checkbox"]');
+    $self->driver->fill_element('#billing_profileidtable_filter input', 'css', 'thisshouldnotexist');
+    $self->driver->find_element('#billing_profileidtable tr > td.dataTables_empty', 'css');
+    $self->driver->fill_element('#billing_profileidtable_filter input', 'css', 'Default Billing Profile');
+    $self->driver->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td[contains(text(),"Default Billing Profile")]/..//input[@type="checkbox"]');
+    $self->driver->scroll_to_id('external_id');
+    $self->driver->fill_element('#external_id', 'css', $customerid);
+    if($pbx) {
+        diag("Creating customer for PBX testing");
+        $self->driver->select_if_unselected('//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
+    }
+    $self->driver->find_element('#save', 'css')->click();
+}
+
+sub delete_customer {
+    my($self, $customerid) = @_;
+    return unless $customerid;
+
+    diag("Go to Customers page");
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element("Customers", 'link_text')->click();
+
+    diag("Trying to delete a Customer");
+    $self->driver->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
+    $self->driver->fill_element('#Customer_table_filter input', 'css', $customerid);
+    ok($self->driver->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
+    $self->driver->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
+    $self->driver->find_element('#dataConfirmOK', 'css')->click();
+}
+
 sub popup_confirm_ok {
     my($self, $message) = @_;
 
