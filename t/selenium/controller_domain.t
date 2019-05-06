@@ -70,6 +70,21 @@ $d->find_element('#save', 'css')->click();
 diag('Check if value has been applied');
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "concurrent_max")]/../td[contains(text(), "789")]'), "Value has been applied");
 
+diag("Click edit for the preference allowed_ips");
+$d->move_action(element=> $d->find_element('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]'));
+$d->find_element('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]')->click();
+
+diag("Enter an IP address");
+$d->fill_element('//*[@id="allowed_ips"]', 'xpath', '127.0.0.0.0');
+$d->find_element('//*[@id="add"]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//div//span[contains(text(), "Invalid IPv4 or IPv6 address")]'), "Invalid IP address detected");
+$d->fill_element('//*[@id="allowed_ips"]', 'xpath', '127.0.0.1');
+$d->find_element('//*[@id="add"]')->click();
+$d->find_element('//*[@id="mod_close"]')->click();
+
+diag("Check if IP address has been added");
+ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "127.0.0.1")]'), "IP address has beeen found");
+
 diag("Press cancel on delete dialog to check if domain is still there");
 $c->delete_domain($domainstring, 1);
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
