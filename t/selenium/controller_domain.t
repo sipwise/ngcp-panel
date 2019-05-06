@@ -67,6 +67,9 @@ diag('Saving integer value into "concurrent_max"');
 $formfield->send_keys('789');
 $d->find_element('#save', 'css')->click();
 
+diag('Check if value has been applied');
+ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "concurrent_max")]/../td[contains(text(), "789")]'), "Value has been applied");
+
 diag("Press cancel on delete dialog to check if domain is still there");
 $c->delete_domain($domainstring, 1);
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
