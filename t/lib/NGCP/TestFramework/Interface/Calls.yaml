@@ -1,0 +1,35 @@
+---
+#get a subscriber for testing
+-
+    name: get a subscriber for testing
+    type: item
+    method: GET
+    path: '/api/subscribers/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    retain:
+        subscriber: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $subscriber = $retained->{subscriber}->{'_embedded'}->{'ngcp:subscribers'}->[0];
+            $retained->{subscriber} = $subscriber;
+            $retained->{subscriber_id} = $subscriber->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${subscriber}.id': defined
+
+#fetch calls for subscriber
+-
+    name: get a subscriber for testing
+    type: item
+    method: GET
+    path: '/api/calls/?page=1&rows=10&subscriber_id=${subscriber_id}'
+    retain:
+        calls: body
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${calls}.total_count': defined

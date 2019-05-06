@@ -1,0 +1,1374 @@
+---
+#check options
+-
+    name: check OPTIONS for customers
+    type: item
+    method: OPTIONS
+    path: /api/customers/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-customers
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create a BillingProfile
+-
+    name: create a BillingProfile
+    type: item
+    thread: 1
+    method: POST
+    path: /api/billingprofiles/
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test profile ${unique_id}
+        handle: test_profile_handle${unique_id}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        billing_profile_id: header.location
+
+#create a Customer Contact
+-
+    name: create a Customer Contact
+    type: item
+    method: POST
+    path: /api/customercontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: cust_contact_first
+        lastname: cust_contact_last
+        email: cust_contact@custcontact.invalid
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        customer_contact_path: header.location
+        customer_contact_id: header.location
+
+#check CustomerContact
+-
+    name: check CustomerContact
+    type: item
+    method: GET
+    path: '/${customer_contact_path}'
+    conditions:
+        is:
+            code: 200
+
+#create a System Contact
+-
+    name: create a System Contact
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first
+        lastname: sys_contact_last
+        email: sys_contact@syscontact.invalid
+    conditions:
+        is:
+            code: 201
+    retain:
+        system_contact_path: header.location
+        system_contact_id: header.location
+
+#get System Contact
+-
+    name: get System Contact
+    type: item
+    method: GET
+    path: '/${system_contact_path}'
+    retain:
+        system_contact: body
+
+#create batch
+-
+    name: create batch
+    type: batch
+    method: POST
+    path: '/api/customers/'
+    iterations: 6
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        billing_profile_id: ${billing_profile_id}
+        max_subscribers: null
+        external_id: null
+    retain:
+        customer_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#create invalid Customer with wrong type
+-
+    name: create invalid Customer with wrong type
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        billing_profile_id: ${billing_profile_id}
+        type: invalid
+        max_subscribers: null
+        external_id: null
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: is not a valid value
+
+#create invalid Customer with wrong billing profile
+-
+    name: create invalid Customer with wrong billing profile
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        billing_profile_id: 999999
+        type: sipaccount
+        max_subscribers: null
+        external_id: null
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: Invalid 'billing_profile_id'
+
+#create invalid Customer with systemcontact
+-
+    name: create invalid Customer with systemcontact
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        type: sipaccount
+        billing_profile_id: ${billing_profile_id}
+        contact_id: ${system_contact_id}
+        max_subscribers: null
+        external_id: null
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: The contact_id is not a valid ngcp:customercontacts item
+
+#create invalid Customer without contact
+-
+    name: create invalid Customer without contact
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        type: sipaccount
+        billing_profile_id: ${billing_profile_id}
+        max_subscribers: null
+        external_id: null
+    conditions:
+        is:
+            code: 422
+
+#create invalid Customer with invalid status
+-
+    name: create invalid Customer with invalid status
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: invalid
+        type: sipaccount
+        billing_profile_id: ${billing_profile_id}
+        contact_id: ${customer_contact_id}
+        max_subscribers: null
+        external_id: null
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='status'
+
+#create invalid Customer with invalid max_subscribers
+-
+    name: create invalid Customer with invalid status
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        type: sipaccount
+        billing_profile_id: ${billing_profile_id}
+        contact_id: ${customer_contact_id}
+        max_subscribers: 'abc'
+        external_id: null
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='max_subscribers'
+
+#verify pagination
+-
+    skip: 1
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/customers/?page=1&rows=5'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on customer
+-
+    name: check OPTIONS on customer
+    type: item
+    method: OPTIONS
+    path: '/${customer_path}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+
+#get customer
+-
+    name: GET customer
+    type: item
+    method: GET
+    path: '/${customer_path}'
+    retain:
+        customer: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            map { delete $_->{effective_start_time}; $_; } @{$retained->{customer}->{all_billing_profiles}};
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${customer}.status': defined
+            '${customer}.type': defined
+            '${customer}.billing_profile_id': defined
+            '${customer}.contact_id': defined
+            '${customer}.id': defined
+            '${customer}.all_billing_profiles': defined
+            '${customer}.product_id': undefined
+        like:
+            '${customer}.billing_profile_id': '[0-9]+'
+            '${customer}.contact_id': '[0-9]+'
+            '${customer}.id': '[0-9]+'
+        is_deeply:
+            '${customer}.all_billing_profiles':
+                -
+                    profile_id: ${billing_profile_id}
+                    start: null
+                    stop: null
+                    network_id: null
+
+#put customer with missing content-type
+-
+    name: PUT customer with missing content-type
+    type: item
+    method: PUT
+    path: '/${customer_path}'
+    header:
+        Prefer: return=minimal
+    conditions:
+        is:
+            code: 415
+
+#put customer with unsupported content type
+-
+    name: PUT customer with unsupported Content-Type
+    type: item
+    method: PUT
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/xxx
+    conditions:
+        is:
+            code: 415
+
+#put customer with missing body
+-
+    name: PUT customer with missing body
+    type: item
+    method: PUT
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    conditions:
+        is:
+            code: 400
+
+#put customer
+-
+    name: PUT customer
+    type: item
+    method: PUT
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${customer}'
+    retain:
+        new_customer: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            map { delete $_->{effective_start_time}; $_; } @{$retained->{new_customer}->{all_billing_profiles}};
+            delete $retained->{customer}->{modify_timestamp};
+            delete $retained->{new_customer}->{modify_timestamp};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${customer}': ${new_customer}
+        ok:
+            '${new_customer}._links.ngcp:customercontacts': defined
+            '${new_customer}._links.ngcp:billingprofiles': defined
+
+#modify customer status
+-
+    name: modify customer status
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: pending
+    retain:
+        modified_customer: body
+    conditions:
+        is: 
+            code: 200
+            '${modified_customer}.status': pending
+            '${modified_customer}._links.self.href': ${customer_path}
+            '${modified_customer}._links.collection.href': /api/customers/
+
+#check patch with status undef
+-
+    name: check patch with status undef
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: null
+    conditions:
+        is: 
+            code: 422
+
+#check patch with invalid status
+-
+    name: check patch with invalid status
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: invalid
+    conditions:
+        is: 
+            code: 422
+
+#check patch with invalid contact_id
+-
+    name: check patch with invalid contact_id
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /contact_id
+            value: 99999
+    conditions:
+        is: 
+            code: 422
+
+#check patch with system contact_id
+-
+    name: check patch with system contact_id
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /contact_id
+            value: ${system_contact_id}
+    conditions:
+        is: 
+            code: 422
+
+#check patch with undef billing_profile_id
+-
+    name: check patch with undef billing_profile_id
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profile_id
+            value: null
+    conditions:
+        is: 
+            code: 422
+
+#check patch with invalid billing_profile_id
+-
+    name: check patch with invalid billing_profile_id
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profile_id
+            value: 99999
+    conditions:
+        is: 
+            code: 422
+
+#check patch with invalid max_subscribers
+-
+    name: check patch with invalid billing_profile_id
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /max_subscribers
+            value: 'abc'
+    conditions:
+        is: 
+            code: 422
+
+#multi-bill-prof: create another test billing profile
+-
+    name: 'multi-bill-prof: create another test billing profile'
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: SECOND test profile ${unique_id}
+        handle: second_testprofile${unique_id}
+        reseller_id: 1
+    retain:
+        second_billing_profile_id: header.location
+    conditions:
+        is: 
+            code: 201
+
+#multi-bill-prof: create test billing network
+-
+    name: 'multi-bill-prof: create test billing network'
+    type: item
+    method: POST
+    path: '/api/billingnetworks/'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test billing network ${unique_id}
+        description: test billing network description ${unique_id}
+        reseller_id: 1
+        blocks:
+            -
+                ip: '10.0.4.7'
+                mask: '26'
+            -
+                ip: '10.0.4.99'
+                mask: '26'
+            -
+                ip: '10.0.5.9'
+                mask: '24'
+            -
+                ip: '10.0.6.9'
+                mask: '24'
+    retain:
+        billing_network_id: header.location
+    conditions:
+        is: 
+            code: 201
+    perl_code: !!perl/code |
+        {
+            my ( $retained ) = @_;
+
+            my $dtf = DateTime::Format::Strptime->new(
+                pattern => '%F %T',
+            ); #DateTime::Format::Strptime->new( pattern => '%Y-%m-%d %H:%M:%S' );
+            my $now = DateTime->now(
+                time_zone => DateTime::TimeZone->new(name => 'local')
+            );
+            my $t1 = $now->clone->add(days => 1);
+            my $t2 = $now->clone->add(days => 2);
+            my $t3 = $now->clone->add(days => 3);
+
+            my $billing_profile_id = $retained->{billing_profile_id};
+
+            $retained->{malformed_profilemappings1} = [ { profile_id => $billing_profile_id,
+                                                          start => $dtf->format_datetime($now),
+                                                          stop => $dtf->format_datetime($now),} ];
+            $retained->{malformed_profilemappings2} = [ { profile_id => $billing_profile_id,
+                                                          start => $dtf->format_datetime($t1),
+                                                          stop => $dtf->format_datetime($t1),} ];
+            $retained->{malformed_profilemappings3} = [ { profile_id => $billing_profile_id,
+                                                          start => undef,
+                                                          stop => $dtf->format_datetime($now),},];
+            $retained->{malformed_profilemappings4} = [ { profile_id => $billing_profile_id,
+                                                          start => $dtf->format_datetime($t1),
+                                                          stop => $dtf->format_datetime($t2),}, ] , [];
+            $retained->{correct_profile_mappings1} = [ { profile_id => $retained->{second_billing_profile_id},
+                                                        start => undef,
+                                                        stop => undef,
+                                                        network_id => undef },
+                                                      { profile_id => $billing_profile_id,
+                                                        start => $dtf->format_datetime($t1),
+                                                        stop => $dtf->format_datetime($t2),
+                                                        network_id => undef },
+                                                       { profile_id => $billing_profile_id,
+                                                         start => $dtf->format_datetime($t2),
+                                                         stop => $dtf->format_datetime($t3),
+                                                         network_id => undef }
+                                                    ];
+            $retained->{correct_profile_mappings2} = [ { profile_id => $billing_profile_id,
+                                                        start => $dtf->format_datetime($t1),
+                                                        stop => $dtf->format_datetime($t2),
+                                                        network_id=> undef },
+                                                      { profile_id => $billing_profile_id,
+                                                        start => $dtf->format_datetime($t2),
+                                                        stop => $dtf->format_datetime($t3),
+                                                        network_id => undef },
+                                                       { profile_id => $retained->{second_billing_profile_id},
+                                                         start => $dtf->format_datetime($t3),
+                                                         stop => undef,
+                                                         network_id => $retained->{billing_network_id} }
+                                                    ];
+        }
+
+#multi-bill-prof POST: check 'start' timestamp is not in future
+-
+    name: 'multi-bill-prof POST: check "start" timestamp is not in future'
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        max_subscriber: null
+        external_id: null
+        billing_profile_definition: profiles
+        billing_profiles: ${malformed_profilemappings1}
+    conditions:
+        is:
+            code: 422
+
+#multi-bill-prof POST: check 'start' timestamp has to be before 'stop' timestamp
+-
+    name: 'multi-bill-prof POST: check "start" timestamp has to be before "stop" timestamp'
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        max_subscriber: null
+        external_id: null
+        billing_profile_definition: profiles
+        billing_profiles: ${malformed_profilemappings2}
+    conditions:
+        is:
+            code: 422
+
+#multi-bill-prof POST: check Interval with 'stop' timestamp but no 'start' timestamp specified
+-
+    name: 'multi-bill-prof POST: check "Interval with "stop" timestamp but no "start" timestamp specified"'
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        max_subscriber: null
+        external_id: null
+        billing_profile_definition: profiles
+        billing_profiles: ${malformed_profilemappings3}
+    conditions:
+        is:
+            code: 422
+
+#multi-bill-prof POST: check An initial interval without 'start' and 'stop' timestamps is required
+-
+    name: 'multi-bill-prof POST: check An initial interval without "start" and "stop" timestamps is required'
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        max_subscriber: null
+        external_id: null
+        billing_profile_definition: profiles
+        billing_profiles: ${malformed_profilemappings4}
+    conditions:
+        is:
+            code: 422
+
+#multi-bill-prof: create test customer
+-
+    name: 'multi-bill-prof: create test customer'
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        max_subscriber: null
+        external_id: null
+        billing_profile_definition: profiles
+        billing_profiles: ${correct_profile_mappings1}
+    retain:
+        customer_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#get customer
+-
+    name: GET customer
+    type: item
+    method: GET
+    path: '/${customer_path}'
+    retain:
+        customer: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            map { delete $_->{effective_start_time}; $_; } @{$retained->{customer}->{all_billing_profiles}};
+            $retained->{malformed_profilemappings4} = [ { profile_id => $retained->{billing_profile_id},
+                                                          start => undef,
+                                                          stop => undef,}, ];
+        }
+    conditions:
+        is:
+            code: 200
+            '${customer}.billing_profile_id': ${second_billing_profile_id}
+        ok:
+            '${customer}.billing_profile_id': defined
+            '${customer}.billing_profiles': defined
+            '${customer}.all_billing_profiles': defined
+        is_deeply:
+            '${customer}.all_billing_profiles': ${correct_profile_mappings1}
+
+#multi-bill-prof PATCH: check 'start' timestamp is not in future
+-
+    name: 'multi-bill-prof PATCH: check "start" timestamp is not in future'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profiles
+            value: ${malformed_profilemappings1}
+    conditions:
+        is:
+            code: 422
+
+#multi-bill-prof PATCH: check 'start' timestamp has to be before 'stop' timestamp
+-
+    name: 'multi-bill-prof PATCH: check "start" timestamp has to be before "stop" timestamp'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profiles
+            value: ${malformed_profilemappings2}
+    conditions:
+        is:
+            code: 422
+
+#multi-bill-prof PATCH: check Interval with 'stop' timestamp but no 'start' timestamp specified
+-
+    name: 'multi-bill-prof PATCH: check Interval with "stop" timestamp but no "start" timestamp specified'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profiles
+            value: ${malformed_profilemappings3}
+    conditions:
+        is:
+            code: 422
+
+#multi-bill-prof PATCH: check Adding intervals without 'start' and 'stop' timestamps is not allowed.
+-
+    name: 'multi-bill-prof PATCH: check Adding intervals without "start" and "stop" timestamps is not allowed.'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profiles
+            value: ${malformed_profilemappings4}
+    conditions:
+        is:
+            code: 422
+
+#multi-bill-prof PATCH: test customer with new billing profile
+-
+    name: 'multi-bill-prof PATCH: test customer with new billing profile'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    retain:
+        patched_customer: body
+    content:
+        -
+            op: replace
+            path: /billing_profile_id
+            value: ${billing_profile_id}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+
+            $retained->{posted_profiles_number} = scalar @{$retained->{correct_profile_mappings1}} + 1;
+            $retained->{actual_profiles_number} = scalar @{$retained->{patched_customer}->{all_billing_profiles}};
+
+            my $now = DateTime->now(
+                time_zone => DateTime::TimeZone->new(name => 'local')
+            );
+            foreach my $m ( @{$retained->{patched_customer}->{billing_profiles}} ) {
+                if (!defined $m->{start}) {
+                    push(@{$retained->{expected_mappings}},$m);
+                    next;
+                }
+                my $s = $m->{start};
+                $s =~ s/^(\d{4}\-\d{2}\-\d{2})\s+(\d.+)$/$1T$2/;
+                my $start = DateTime::Format::ISO8601->parse_datetime($s);
+                $start->set_time_zone( DateTime::TimeZone->new(name => 'local') );
+                push(@{$retained->{expected_mappings}},$m) if ($start <= $now);
+            }
+            push ( @{$retained->{expected_mappings}}, @{$retained->{correct_profile_mappings2}} );
+        }
+    conditions:
+        is:
+            code: 200
+            '${patched_customer}.billing_profile_id': ${billing_profile_id}
+            '${posted_profiles_number}': '${actual_profiles_number}'
+        ok:
+            '${patched_customer}.billing_profile_id': defined
+            '${patched_customer}.billing_profiles': defined
+            '${patched_customer}.all_billing_profiles': defined
+
+#multi-bill-prof: patch test customer
+-
+    name: 'multi-bill-prof: patch test customer'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    retain:
+        patched_customer: body
+    content:
+        -
+            op: replace
+            path: /billing_profiles
+            value: ${correct_profile_mappings2}
+    conditions:
+        is:
+            code: 200
+
+#get customer
+-
+    name: GET customer
+    type: item
+    method: GET
+    path: '/${customer_path}'
+    retain:
+        got_customer: body
+    conditions:
+        is:
+            code: 200
+            '${patched_customer}.billing_profile_id': ${billing_profile_id}
+        ok:
+            '${patched_customer}.billing_profile_id': defined
+            '${patched_customer}.billing_profiles': defined
+        is_deeply:
+            '${got_customer}': '${patched_customer}'
+
+#multi-bill-prof: put test customer
+-
+    name: 'multi-bill-prof: put test customer'
+    type: item
+    method: PUT
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    retain:
+        updated_customer: body
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        max_subscriber: null
+        external_id: null
+        billing_profile_definition: profiles
+        billing_profiles: ${correct_profile_mappings2}
+    conditions:
+        is:
+            code: 200
+
+#get customer
+-
+    name: GET customer
+    type: item
+    method: GET
+    path: '/${customer_path}'
+    retain:
+        got_customer: body
+    conditions:
+        is:
+            code: 200
+            '${updated_customer}.billing_profile_id': ${billing_profile_id}
+        ok:
+            '${updated_customer}.billing_profile_id': defined
+            '${updated_customer}.billing_profiles': defined
+        is_deeply:
+            '${got_customer}': '${updated_customer}'
+
+
+#multi-bill-prof: terminate customer
+-
+    name: 'multi-bill-prof: terminate customer'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            map { delete $_->{effective_start_time}; $_; } @{$retained->{patched_customer}->{billing_profiles}};
+            map { delete $_->{effective_start_time}; $_; } @{$retained->{updated_customer}->{billing_profiles}};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            #perform tests against stripped mapping here, because deleting start_time would have affected previous is_deeply verification
+            '${patched_customer}.billing_profiles': '${expected_mappings}'
+            '${updated_customer}.billing_profiles': '${expected_mappings}'
+
+#terminate billingprofile
+-
+    name: 'terminate billingprofile'
+    type: item
+    method: PATCH
+    path: '/api/billingprofiles/${second_billing_profile_id}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is:
+            code: 200
+
+#terminate billingnetwork
+-
+    name: 'terminate billingnetwork'
+    type: item
+    method: PATCH
+    path: '/api/billingnetworks/${billing_network_id}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is:
+            code: 200
+
+#prof-package: create another test billing profile
+-
+    name: 'prof-package: create another test billing profile'
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: THIRD test profile ${unique_id}
+        handle: third_testprofile${unique_id}
+        reseller_id: 1
+    retain:
+        third_billing_profile_id: header.location
+    conditions:
+        is: 
+            code: 201
+
+#prof-package: create test billingnetwork
+-
+    name: 'prof-package: create test billingnetwork'
+    type: item
+    method: POST
+    path: '/api/billingnetworks/'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: another test billing network ${unique_id}
+        description: another test billing network description ${unique_id}
+        reseller_id: 1
+        blocks:
+            -
+                ip: '10.0.4.7'
+                mask: '26'
+            -
+                ip: '10.0.4.99'
+                mask: '26'
+            -
+                ip: '10.0.5.9'
+                mask: '24'
+            -
+                ip: '10.0.6.9'
+                mask: '24'
+    retain:
+        second_billing_network_id: header.location
+    conditions:
+        is: 
+            code: 201
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{initial_profiles} = [ { profile_id => $retained->{billing_profile_id} },
+                                              { 
+                                                profile_id => $retained->{third_billing_profile_id},
+                                                network_id => $retained->{second_billing_network_id}
+                                              }
+                                            ]
+        }
+
+#prof-package: create test profile package
+-
+    name: 'prof-package: create test profile package'
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test profile package ${unique_id}
+        description: test profile package description ${unique_id}
+        reseller_id: 1
+        initial_profiles: ${initial_profiles}
+    retain:
+        profile_package_id: header.location
+    conditions:
+        is: 
+            code: 201
+
+#prof-package: create second test profile package
+-
+    name: 'prof-package: create second test profile package'
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: second test profile package ${unique_id}
+        description: second test profile package description ${unique_id}
+        reseller_id: 1
+        initial_profiles: ${initial_profiles}
+    retain:
+        second_profile_package_id: header.location
+    conditions:
+        is: 
+            code: 201
+
+#prof-package: create test customer
+-
+    name: 'prof-package: create test customer'
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        billing_profile_definition: package
+        max_subscribers: null
+        external_id: null
+        profile_package_id: ${profile_package_id}
+    retain:
+        customer_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#prof-package: get test customer
+-
+    name: 'prof-package: get test customer'
+    type: item
+    method: GET
+    path: '${customer_path}'
+    header:
+        Content-Type: application/json
+    retain:
+        customer: body
+    conditions:
+        is:
+            code: 200
+            '${customer}.billing_profile_id': ${third_billing_profile_id}
+            '${customer}.profile_package_id': ${profile_package_id}
+        ok:
+            '${customer}.billing_profile_id': defined
+            '${customer}.profile_package_id': defined
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+
+            my $dtf = DateTime::Format::Strptime->new(
+                pattern => '%F %T',
+            );
+            my $now = DateTime->now(
+                time_zone => DateTime::TimeZone->new(name => 'local')
+            );
+            my $t1 = $now->clone->add(days => 1);
+            my $t2 = $now->clone->add(days => 2);
+            my $t3 = $now->clone->add(days => 3);
+
+            $retained->{billing_profiles} = [ { profile_id => $retained->{billing_profile_id},
+                                            start => $dtf->format_datetime($t1),
+                                            stop => $dtf->format_datetime($t2) } ,
+                                          { profile_id => $retained->{third_billing_profile_id},
+                                            network_id => $retained->{second_billing_network_id},
+                                            start => $dtf->format_datetime($t2),
+                                            stop => $dtf->format_datetime($t3) } ];
+        }
+
+#prof-package: patch test customer
+-
+    name: 'prof-package: patch test customer'
+    type: item
+    method: PATCH
+    path: '${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profiles
+            value: ${billing_profiles}
+    retain:
+        customer: body
+    conditions:
+        is:
+            code: 200
+            '${customer}.billing_profile_id': ${third_billing_profile_id}
+            '${customer}.profile_package_id': ${profile_package_id}
+        ok:
+            '${customer}.billing_profile_id': defined
+            '${customer}.profile_package_id': defined
+
+#prof-package: patch test customer
+-
+    name: 'prof-package: patch test customer'
+    type: item
+    method: PATCH
+    path: '${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /billing_profile_id
+            value: ${billing_profile_id}
+    retain:
+        customer: body
+    conditions:
+        is:
+            code: 200
+            '${customer}.billing_profile_id': ${billing_profile_id}
+            '${customer}.profile_package_id': ${profile_package_id}
+        ok:
+            '${customer}.billing_profile_id': defined
+            '${customer}.profile_package_id': defined
+
+#prof-package: patch test customer
+-
+    name: 'prof-package: patch test customer'
+    type: item
+    method: PATCH
+    path: '${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /profile_package_id
+            value: ${profile_package_id}
+    retain:
+        customer: body
+    conditions:
+        is:
+            code: 200
+            '${customer}.billing_profile_id': ${billing_profile_id}
+            '${customer}.profile_package_id': ${profile_package_id}
+        ok:
+            '${customer}.billing_profile_id': defined
+            '${customer}.profile_package_id': defined
+
+#prof-package: patch test customer
+-
+    name: 'prof-package: patch test customer'
+    type: item
+    method: PATCH
+    path: '${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /profile_package_id
+            value: ${second_profile_package_id}
+    retain:
+        customer: body
+    conditions:
+        is:
+            code: 200
+            '${customer}.billing_profile_id': ${third_billing_profile_id}
+            '${customer}.profile_package_id': ${second_profile_package_id}
+        ok:
+            '${customer}.billing_profile_id': defined
+            '${customer}.profile_package_id': defined
+
+#prof-package: terminate customer
+-
+    name: 'prof-package: terminate customer'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is:
+            code: 200
+
+#prof-package: delete profile package
+-
+    name: 'prof-package: delete profile package'
+    type: item
+    method: DELETE
+    path: '/api/profilepackages/${profile_package_id}'
+    conditions:
+        is:
+            code: 204
+
+#prof-package: delete second profile package
+-
+    name: 'prof-package: delete second profile package'
+    type: item
+    method: DELETE
+    path: '/api/profilepackages/${second_profile_package_id}'
+    conditions:
+        is:
+            code: 204
+
+#prof-package: terminate third billing profile
+-
+    name: 'prof-package: terminate third billing profile'
+    type: item
+    method: PATCH
+    path: '/api/billingprofiles/${third_billing_profile_id}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is:
+            code: 200
+
+#prof-package: terminate second billing network
+-
+    name: 'prof-package: terminate second billing network'
+    type: item
+    method: PATCH
+    path: '/api/billingnetworks/${second_billing_network_id}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is:
+            code: 200
+
+#check locked status for deleting used contact
+-
+    name: check locked status for deleting used contact
+    type: item
+    method: DELETE
+    path: '/${customer_contact_path}'
+    conditions:
+        is:
+            code: 423
