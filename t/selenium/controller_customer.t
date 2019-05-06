@@ -28,52 +28,27 @@ if(!$pbx){
     print "---PBX check is ENABLED---\n";
 };
 
+#create strings for checking later
+my $customerid = ("id" . int(rand(100000)) . "ok");
+my $domainstring = ("domain" . int(rand(100000)) . ".example.org"); 
+my $emailstring = ("test" . int(rand(10000)) . "\@example.org");
+my $username = ('demo' . int(rand(1000)) . "name");
+
 $c->login_ok();
-
-my $domainstring = ("domain" . int(rand(100000)) . ".example.org"); #create string for checking later
 $c->create_domain($domainstring);
+$c->create_customer($customerid);
 
-my @chars = ("A".."Z", "a".."z");
-my $rnd_id;
-$rnd_id .= $chars[rand @chars] for 1..8;
-
-diag("Go to Customers page");
-$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element("Customers", 'link_text')->click();
-
-diag("Create a Customer");
-$d->find_element('//*[@id="masthead"]//h2[contains(text(),"Customers")]');
-$d->find_element('Create Customer', 'link_text')->click();
-
-diag("Fill contact data");
-$d->fill_element('#contactidtable_filter input', 'css', 'thisshouldnotexist');
-$d->find_element('#contactidtable tr > td.dataTables_empty', 'css');
-$d->fill_element('#contactidtable_filter input', 'css', 'default-customer');
-$d->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]/td[contains(text(),"default-customer")]/..//input[@type="checkbox"]');
-
-diag("Fill billing data");
-$d->fill_element('#billing_profileidtable_filter input', 'css', 'thisshouldnotexist');
-$d->find_element('#billing_profileidtable tr > td.dataTables_empty', 'css');
-$d->fill_element('#billing_profileidtable_filter input', 'css', 'Default Billing Profile');
-$d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td[contains(text(),"Default Billing Profile")]/..//input[@type="checkbox"]');
-
-diag("Fill product data");
 if($pbx == 1){
-    $d->select_if_unselected('//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
-};
-diag("Fill external_id");
-$d->scroll_to_id('external_id');
-$d->fill_element('#external_id', 'css', $rnd_id);
-
-diag("Save");
-$d->find_element('#save', 'css')->click();
+    $c->create_customer($customerid, 1);
+} else {
+    $c->create_customer($customerid);
+}
 
 diag("Open Details for our just created Customer");
-sleep 2; #Else we might search on the previous page
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
-$d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
-ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $rnd_id), 'Customer found');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
 $d->move_action(element=> $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]'));
 $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]')->click();
 
@@ -108,9 +83,7 @@ $d->select_if_unselected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
 $d->find_element('//*[@id="e164.cc"]')->send_keys('43');
 $d->find_element('//*[@id="e164.ac"]')->send_keys('99');
 $d->find_element('//*[@id="e164.sn"]')->send_keys(int(rand(99999999)));
-my $emailstring = ("test" . int(rand(10000)) . "\@example.org");
 $d->find_element('//*[@id="email"]')->send_keys($emailstring);
-my $username = ('demo' . int(rand(1000)));
 $d->find_element('//*[@id="webusername"]')->send_keys($username);
 $d->find_element('//*[@id="webpassword"]')->send_keys('testing1234'); #workaround for misclicking on ok button
 $d->find_element('//*[@id="gen_password"]')->click();
@@ -169,18 +142,8 @@ ok($d->find_element_by_css('#locations_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'Test Location');
 ok($d->wait_for_text('//*[@id="locations_table"]/tbody/tr/td[2]', 'Test Location'), "Location has been found");
 
-diag("Terminate our customer");
-$d->find_element('//a[contains(@class,"btn-primary") and text()[contains(.,"Back")]]')->click();
-$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
-ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
-$d->fill_element('#Customer_table_filter input', 'css', $rnd_id);
-ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $rnd_id), 'Found customer');
-$d->move_action(element => $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
-$d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
-$d->find_element('#dataConfirmOK', 'css')->click();
-ok($d->find_text("Customer successfully terminated"), 'Text "Customer successfully terminated" appears');
-
+$c->delete_customer($customerid);
 $c->delete_domain($domainstring);
+
 done_testing;
 # vim: filetype=perl
