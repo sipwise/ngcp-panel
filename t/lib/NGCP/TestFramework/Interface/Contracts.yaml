@@ -1,0 +1,204 @@
+---
+1:
+    type: item
+    method: OPTIONS
+    path: /api/contracts/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-contracts
+        ok:
+            options:
+                - GET
+                  HEAD
+                  OPTIONS
+                  POST
+
+#create a BillingProfile
+2:
+    type: item
+    method: POST
+    path: /api/billingprofiles/
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test profile ${time}
+        handle: test_profile_handle${time}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        billling_profile_id: header.location
+
+#create a Customer Contact
+3:
+    type: item
+    method: POST
+    path: /api/customercontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: cust_contact_first
+        lastname: cust_contact_last
+        email: cust_contact@custcontact.invalid
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        customer_contact_path: header.location
+        customer_contact_id: header.location
+
+#check CustomerContact
+4:
+    type: item
+    method: GET
+    path: '/${customer_contact_path}'
+    conditions:
+        is:
+            code: 200
+
+#create a System Contact
+5:
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first
+        lastname: sys_contact_last
+        email: sys_contact@syscontact.invalid
+    conditions:
+        is:
+            code: 201
+    retain:
+        system_contact_path: header.location
+        system_contact_id: header.location
+
+#check System Contact
+6:
+    type: item
+    method: GET
+    path: '/${system_contact_path}'
+    retain:
+        system_contact: body
+
+#create collection
+7:
+    type: collection
+    method: POST
+    path: '/api/contracts/'
+    number: 6
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        type: reseller
+        billing_profile_id: ${billling_profile_id}
+    conditions:
+        is:
+            code: 201
+
+#create invalid Contract with wrong type
+8:
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        billing_profile_id: ${billling_profile_id}
+        type: invalid
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: Validation failed.*type
+
+#create invalid Contract with wrong billing profile
+9:
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        billing_profile_id: 999999
+        type: reseller
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: Invalid 'billing_profile_id'
+
+#create invalid Contract with customercontact
+10:
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        type: reseller
+        billing_profile_id: ${billling_profile_id}
+        contact_id: ${customer_contact_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: The contact_id is not a valid ngcp:systemcontacts item
+
+#create invalid Contract without contact
+11:
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        type: reseller
+        billing_profile_id: ${billling_profile_id}
+    conditions:
+        is:
+            code: 422
+
+#create invalid Contract with invalid status
+12:
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: invalid
+        type: reseller
+        billing_profile_id: ${billling_profile_id}
+        contact_id: ${system_contact_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='status'
+
+#verify pagination
+13:
+    type: pagination
+    method: GET
+    path: '/api/contracts/?page=1&rows=5'
+    retain:
+        collection: body
