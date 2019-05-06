@@ -1,4 +1,4 @@
-use Sipwise::Base;
+#use Sipwise::Base;
 use Net::Domain qw(hostfqdn);
 use JSON qw();
 use Test::More;
@@ -168,7 +168,7 @@ my $custcontact = JSON::from_json($res->decoded_content);
 my %subscriber_map = ();
 my %customer_map = ();
 
-#goto SKIP;
+goto SKIP;
 { #end_ivr:
     my $customer = _create_customer(
         type => "sipaccount",
@@ -408,7 +408,7 @@ my %customer_map = ();
 #
 #}
 
-#SKIP:
+SKIP:
 { #pilot_primary_number, primary_number, pilot_first_non_primary_alias, susbcriber_first_non_primary_alias:
 
     my $customer = _create_customer(

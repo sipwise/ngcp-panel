@@ -6,6 +6,7 @@ use NGCP::Panel::Utils::DateTime qw();
 
 use constant ENABLE_EVENTS => 1;
 use constant CREATE_EVENT_PER_ALIAS => 1;
+use constant UPDATE_PROFILE_EVENT => 0;
 
 sub insert_deferred {
     my %params = @_;
@@ -24,6 +25,7 @@ sub insert_deferred {
             );
         }
     }
+    $c->log->debug(@$events_to_create . " events created");
     return $inserted;
 }
 
@@ -135,13 +137,30 @@ sub _insert_profile_event {
     my $inserted = 0;
     if(($context->{old} // 0) != ($context->{new} // 0)) {
         if(defined $context->{old} && defined $context->{new}) {
-            $context->{type} = "update_profile";
-        } elsif(defined $context->{new}) {
-            $context->{type} = "start_profile";
+            if (UPDATE_PROFILE_EVENT) {
+                $context->{type} = "update_profile";
+                $inserted += insert(%$context);
+            } else {
+                $context->{type} = "end_profile";
+                my $new = $context->{new};
+                undef $context->{new};
+                $inserted += insert(%$context);
+                $context->{type} = "start_profile";
+                $context->{new} = $new;
+                my $old = $context->{old};
+                undef $context->{old};
+                $inserted += insert(%$context);
+                $context->{old} = $old;
+                $context->{type} = "update_profile";
+            }
         } else {
-            $context->{type} = "end_profile";
+            if(defined $context->{new}) {
+                $context->{type} = "start_profile";
+            } else {
+                $context->{type} = "end_profile";
+            }
+            $inserted += insert(%$context);
         }
-        $inserted += insert(%$context);
     }
     return $inserted;
 
