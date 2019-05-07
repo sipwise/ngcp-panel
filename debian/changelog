@@ -1,3 +1,12 @@
+ngcp-panel (7.3.1.1+0~mr7.3.1.1) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [7f62725] TT#56376 selenium: fix for crash in pro versions
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 May 2019 10:56:34 +0200
+
 ngcp-panel (7.3.1.0+0~mr7.3.1.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
