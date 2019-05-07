@@ -18,10 +18,9 @@ my $c = Selenium::Collection::Common->new(
     driver => $d
 );
 
-diag('Logging in');
-$c->login_ok();
+my $domainstring = ("domain" . int(rand(100000)) . ".example.org");
 
-my $domainstring = ("domain" . int(rand(100000)) . ".example.org"); #create string for checking later
+$c->login_ok();
 $c->create_domain($domainstring);
 
 diag("Check if entry exists and if the search works");
