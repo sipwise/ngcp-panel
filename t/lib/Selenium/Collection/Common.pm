@@ -14,6 +14,7 @@ sub login_ok {
     my ($self, $login, $pwd) = @_;
     $login = 'administrator' unless $login;
     $pwd = 'administrator' unless $pwd;
+    
     diag("Loading login page (logout first)");
     my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
     $self->driver->get("$uri/logout"); # make sure we are logged out
