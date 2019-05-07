@@ -6,6 +6,8 @@ use NGCP::Panel::Utils::DateTime qw();
 
 use constant ENABLE_EVENTS => 1;
 use constant CREATE_EVENT_PER_ALIAS => 1;
+#use end+start profile events instead of update event when moving numbers between pilot and extension susbcribers:
+use constant MOVED_UPDATE_PROFILE_EVENT => 0;
 
 sub insert_deferred {
     my %params = @_;
@@ -84,19 +86,19 @@ sub insert_profile_events {
                 if ($pilot_prov_subscriber) {
                     $context->{old} = $pilot_prov_subscriber->profile_id;
                     $context->{new} = $new_profile_id;
-                    $inserted += _insert_profile_event($context);
+                    $inserted += _insert_profile_event($context,MOVED_UPDATE_PROFILE_EVENT);
                 }
             } else {
                 #aliases added
                 $context->{old} = undef;
                 $context->{new} = $new_profile_id;
-                $inserted += _insert_profile_event($context);
+                $inserted += _insert_profile_event($context,1);
             }
         } else {
             #no number change
             $context->{old} = $old_profile_id;
             $context->{new} = $new_profile_id;
-            $inserted += _insert_profile_event($context);
+            $inserted += _insert_profile_event($context,1);
         }
     }
     foreach my $old_alias (@$old_aliases) {
@@ -107,13 +109,13 @@ sub insert_profile_events {
                 if ($pilot_prov_subscriber) {
                     $context->{old} = $old_profile_id;
                     $context->{new} = $pilot_prov_subscriber->profile_id;
-                    $inserted += _insert_profile_event($context);
+                    $inserted += _insert_profile_event($context,MOVED_UPDATE_PROFILE_EVENT);
                 }
             } else {
                 #aliases deleted
                 $context->{old} = $old_profile_id;
                 $context->{new} = undef;
-                $inserted += _insert_profile_event($context);
+                $inserted += _insert_profile_event($context,1);
             }
         } else {
             #no number change
@@ -124,24 +126,41 @@ sub insert_profile_events {
         $context->{old} = $old_profile_id;
         $context->{new} = $new_profile_id;
         $context->{create_event_per_alias} = undef;
-        $inserted += _insert_profile_event($context);
+        $inserted += _insert_profile_event($context,1);
     }
 
 }
 
 sub _insert_profile_event {
 
-    my ($context) = @_;
+    my ($context,$update_profile_event) = @_;
     my $inserted = 0;
     if(($context->{old} // 0) != ($context->{new} // 0)) {
         if(defined $context->{old} && defined $context->{new}) {
-            $context->{type} = "update_profile";
-        } elsif(defined $context->{new}) {
-            $context->{type} = "start_profile";
+            if ($update_profile_event) {
+                $context->{type} = "update_profile";
+                $inserted += insert(%$context);
+            } else {
+                $context->{type} = "end_profile";
+                my $new = $context->{new};
+                undef $context->{new};
+                $inserted += insert(%$context);
+                $context->{type} = "start_profile";
+                $context->{new} = $new;
+                my $old = $context->{old};
+                undef $context->{old};
+                $inserted += insert(%$context);
+                $context->{old} = $old;
+                $context->{type} = "update_profile";
+            }
         } else {
-            $context->{type} = "end_profile";
+            if(defined $context->{new}) {
+                $context->{type} = "start_profile";
+            } else {
+                $context->{type} = "end_profile";
+            }
+            $inserted += insert(%$context);
         }
-        $inserted += insert(%$context);
     }
     return $inserted;
 
@@ -388,19 +407,24 @@ sub _get_pilot_subscriber {
         prov_subscriber
         now_hires
     /};
+    #now_hires
     $schema //= $c->model('DB');
+    #$now_hires //= NGCP::Panel::Utils::DateTime::current_local_hires;
     $customer //= $subscriber->contract;
     $prov_subscriber //= $subscriber->provisioning_voip_subscriber;
     my $pilot_subscriber = undef;
-    if ($prov_subscriber and $prov_subscriber->is_pbx_pilot) {
-        $pilot_subscriber = $subscriber;
-    } else {
-        $pilot_subscriber = $customer->voip_subscribers->search({
-            'provisioning_voip_subscriber.is_pbx_pilot' => 1,
-        },{
-            join => 'provisioning_voip_subscriber',
-        })->first;
-    }
+    #my $bm_actual = _get_actual_billing_mapping(c => $c,schema => $schema, contract => $customer, now => $now_hires);
+    #if ($bm_actual->billing_mappings->first->product->class eq 'pbxaccount') {
+        if ($prov_subscriber and $prov_subscriber->is_pbx_pilot) {
+            $pilot_subscriber = $subscriber;
+        } else {
+            $pilot_subscriber = $customer->voip_subscribers->search({
+                'provisioning_voip_subscriber.is_pbx_pilot' => 1,
+            },{
+                join => 'provisioning_voip_subscriber',
+            })->first;
+        }
+    #}
     return $pilot_subscriber;
 }
 
@@ -669,17 +693,12 @@ sub get_aliases_snapshot {
         my $subscriber = $params{subscriber} // $schema->resultset('voip_subscribers')->find({
             id => $params{subscriber_id},
         });
-        unless ($subscriber) {
-            goto done;
-        }
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
-        if ($prov_subscriber) {
-            foreach my $alias (_get_aliases_sorted_rs($prov_subscriber)->all) {
-                push(@aliases,{ $alias->get_inflated_columns });
-            }
-            $primary_alias = _get_primary_alias($prov_subscriber);
-            $primary_alias = { $primary_alias->get_inflated_columns } if $primary_alias;
+        foreach my $alias (_get_aliases_sorted_rs($prov_subscriber)->all) {
+            push(@aliases,{ $alias->get_inflated_columns });
         }
+        $primary_alias = _get_primary_alias($prov_subscriber);
+        $primary_alias = { $primary_alias->get_inflated_columns } if $primary_alias;
         my $pilot_subscriber = _get_pilot_subscriber(
             c => $c,
             schema => $schema,
@@ -695,7 +714,6 @@ sub get_aliases_snapshot {
             $pilot_primary_alias = { $pilot_primary_alias->get_inflated_columns } if $pilot_primary_alias;
         }
     }
-done:
     return { old_aliases => \@aliases, old_pilot_aliases => \@pilot_aliases,
         old_primary_alias => $primary_alias, old_pilot_primary_alias => $pilot_primary_alias };
 }
@@ -713,7 +731,7 @@ sub get_relation_value {
             return $relation_data->val;
         }
     }
-    return;
+    return undef;
 }
 
 sub get_tag_value {
@@ -729,7 +747,7 @@ sub get_tag_value {
             return $tag_data->val;
         }
     }
-    return;
+    return undef;
 }
 
 1;
