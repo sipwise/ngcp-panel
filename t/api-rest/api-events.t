@@ -1,4 +1,4 @@
-use Sipwise::Base;
+#use Sipwise::Base;
 use Net::Domain qw(hostfqdn);
 use JSON qw();
 use Test::More;
@@ -168,7 +168,7 @@ my $custcontact = JSON::from_json($res->decoded_content);
 my %subscriber_map = ();
 my %customer_map = ();
 
-#goto SKIP;
+goto SKIP;
 { #end_ivr:
     my $customer = _create_customer(
         type => "sipaccount",
@@ -295,7 +295,6 @@ my %customer_map = ();
         cfu => [{ destinationset => $destinationset_2->{name},
                  timeset => $timeset->{name}}],
         cfs => [],
-        cfr => [],
         });
 
     #1. update destination set:
@@ -408,7 +407,7 @@ my %customer_map = ();
 #
 #}
 
-#SKIP:
+SKIP:
 { #pilot_primary_number, primary_number, pilot_first_non_primary_alias, susbcriber_first_non_primary_alias:
 
     my $customer = _create_customer(
@@ -466,7 +465,7 @@ my %customer_map = ();
           pilot_primary_alias_username_after => $cc.$ac.$sn,
     );
     _check_event_history("start_profile when creating a pbx pilot subscriber w alias: ",$pilot_subscriber->{id},"%profile",[
-        { %pilot_event,  ## no critic (ProhibitCommaSeparatedStatements)
+        { %pilot_event,
 
           type => "start_profile",
           old_status => '',
@@ -511,7 +510,7 @@ my %customer_map = ();
 
     );
     _check_event_history("start_profile when creating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
-        { %subscriber_event,  ## no critic (ProhibitCommaSeparatedStatements)
+        { %subscriber_event,
 
           type => "start_profile",
           old_status => '',
@@ -596,7 +595,7 @@ my %customer_map = ();
         profile_id => $subscriberprofile3->{id},
         profile_set_id => $subscriberprofile3set->{id},
     );
-     %pilot_event = (
+    my %pilot_event = (
         subscriber_id => $pilot_subscriber->{id},
           subscriber_profile_id => $subscriberprofile3->{id}, subscriber_profile_name => $subscriberprofile3->{name},
           subscriber_profile_set_id => $subscriberprofile3set->{id}, subscriber_profile_set_name => $subscriberprofile3set->{name},
@@ -670,21 +669,57 @@ my %customer_map = ();
           pilot_primary_alias_username_before => $cc.$ac.$sn,
           pilot_primary_alias_username_after => $cc.$ac.$sn,
 
-    );
+    ),
+    #_check_event_history("end_profile when terminating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
+    #    {},{},{},{},{},
+    #    { %subscriber_event,
+    #
+    #      type => "update_profile",
+    #      old_status => $subscriberprofile2->{id},
+    #      new_status => $subscriberprofile3->{id},
+    #
+    #      non_primary_alias_username => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+    #    },
+    #    { %subscriber_event,
+    #
+    #      type => "update_profile",
+    #      old_status => $subscriberprofile2->{id},
+    #      new_status => $subscriberprofile3->{id},
+    #
+    #      non_primary_alias_username => $new_aliases->[1]->{cc}.$new_aliases->[1]->{ac}.$new_aliases->[1]->{sn},
+    #    },
+    #]);
     _check_event_history("end_profile when terminating a pbx extension subscriber w alias: ",$subscriber->{id},"%profile",[
         {},{},{},{},{},
         { %subscriber_event,
 
-          type => "update_profile",
+          type => "end_profile",
           old_status => $subscriberprofile2->{id},
-          new_status => $subscriberprofile3->{id},
+          new_status => '',
 
           non_primary_alias_username => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
         },
         { %subscriber_event,
 
-          type => "update_profile",
+          type => "start_profile",
+          old_status => '',
+          new_status => $subscriberprofile3->{id},
+
+          non_primary_alias_username => $new_aliases->[0]->{cc}.$new_aliases->[0]->{ac}.$new_aliases->[0]->{sn},
+        },
+
+        { %subscriber_event,
+
+          type => "end_profile",
           old_status => $subscriberprofile2->{id},
+          new_status => '',
+
+          non_primary_alias_username => $new_aliases->[1]->{cc}.$new_aliases->[1]->{ac}.$new_aliases->[1]->{sn},
+        },
+        { %subscriber_event,
+
+          type => "start_profile",
+          old_status => '',
           new_status => $subscriberprofile3->{id},
 
           non_primary_alias_username => $new_aliases->[1]->{cc}.$new_aliases->[1]->{ac}.$new_aliases->[1]->{sn},
@@ -692,7 +727,7 @@ my %customer_map = ();
     ]);
 
     _update_subscriber($pilot_subscriber, status => 'terminated');
-    %pilot_event = (
+    my %pilot_event = (
         subscriber_id => $pilot_subscriber->{id},
           subscriber_profile_id => $subscriberprofile3->{id}, subscriber_profile_name => $subscriberprofile3->{name},
           subscriber_profile_set_id => $subscriberprofile3set->{id}, subscriber_profile_set_name => $subscriberprofile3set->{name},
@@ -812,7 +847,7 @@ sub _create_cftimeset {
     $req->content(JSON::to_json({
         name => "cf_time_set_".$t,
         subscriber_id => $subscriber->{id},
-        times => $times,
+        times => \@times,
     }));
     $res = $ua->request($req);
     is($res->code, 201, "create test cftimeset");
@@ -922,7 +957,7 @@ sub _update_subscriber {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
-        %$subscriber,  ## no critic (ProhibitCommaSeparatedStatements)
+        %$subscriber,
         @further_opts,
     }));
     $res = $ua->request($req);
@@ -1026,7 +1061,7 @@ sub _compare_event {
     my $ok = 1;
 
     foreach my $field (keys %$expected) {
-        $ok = is($got->{$field},$expected->{$field},$label . "check event " . ($got->{$field} // '') . " $field") && $ok;
+        $ok = is($got->{$field},$expected->{$field},$label . "check event " . $got->{$field} . " $field") && $ok;
     }
 
     return $ok;
