@@ -19,10 +19,10 @@ my $c = Selenium::Collection::Common->new(
     driver => $d
 );
 
-$c->login_ok();
-
-my $groupname = ("group" . int(rand(100000)) . "test"); #create strings for checking later
+my $groupname = ("group" . int(rand(100000)) . "test");
 my $servername = ("peering" . int(rand(100000)) . "server");
+
+$c->login_ok();
 
 diag("Go to Peerings page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
