@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba3cc151_8086f6b7",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-07T08:03:29Z",
+      "side": 1,
+      "message": "please remove trailing spaces here.",
+      "revId": "4a17b046773d8e2d3ac7ec83f4c18bdb36b7c40c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
