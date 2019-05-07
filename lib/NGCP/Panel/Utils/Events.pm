@@ -6,6 +6,8 @@ use NGCP::Panel::Utils::DateTime qw();
 
 use constant ENABLE_EVENTS => 1;
 use constant CREATE_EVENT_PER_ALIAS => 1;
+#use end+start profile events instead of update event when moving numbers between pilot and extension susbcribers:
+use constant MOVED_UPDATE_PROFILE_EVENT => 0;
 
 sub insert_deferred {
     my %params = @_;
@@ -84,19 +86,19 @@ sub insert_profile_events {
                 if ($pilot_prov_subscriber) {
                     $context->{old} = $pilot_prov_subscriber->profile_id;
                     $context->{new} = $new_profile_id;
-                    $inserted += _insert_profile_event($context);
+                    $inserted += _insert_profile_event($context,MOVED_UPDATE_PROFILE_EVENT);
                 }
             } else {
                 #aliases added
                 $context->{old} = undef;
                 $context->{new} = $new_profile_id;
-                $inserted += _insert_profile_event($context);
+                $inserted += _insert_profile_event($context,1);
             }
         } else {
             #no number change
             $context->{old} = $old_profile_id;
             $context->{new} = $new_profile_id;
-            $inserted += _insert_profile_event($context);
+            $inserted += _insert_profile_event($context,1);
         }
     }
     foreach my $old_alias (@$old_aliases) {
@@ -107,13 +109,13 @@ sub insert_profile_events {
                 if ($pilot_prov_subscriber) {
                     $context->{old} = $old_profile_id;
                     $context->{new} = $pilot_prov_subscriber->profile_id;
-                    $inserted += _insert_profile_event($context);
+                    $inserted += _insert_profile_event($context,MOVED_UPDATE_PROFILE_EVENT);
                 }
             } else {
                 #aliases deleted
                 $context->{old} = $old_profile_id;
                 $context->{new} = undef;
-                $inserted += _insert_profile_event($context);
+                $inserted += _insert_profile_event($context,1);
             }
         } else {
             #no number change
@@ -124,24 +126,41 @@ sub insert_profile_events {
         $context->{old} = $old_profile_id;
         $context->{new} = $new_profile_id;
         $context->{create_event_per_alias} = undef;
-        $inserted += _insert_profile_event($context);
+        $inserted += _insert_profile_event($context,1);
     }
 
 }
 
 sub _insert_profile_event {
 
-    my ($context) = @_;
+    my ($context,$update_profile_event) = @_;
     my $inserted = 0;
     if(($context->{old} // 0) != ($context->{new} // 0)) {
         if(defined $context->{old} && defined $context->{new}) {
-            $context->{type} = "update_profile";
-        } elsif(defined $context->{new}) {
-            $context->{type} = "start_profile";
+            if ($update_profile_event) {
+                $context->{type} = "update_profile";
+                $inserted += insert(%$context);
+            } else {
+                $context->{type} = "end_profile";
+                my $new = $context->{new};
+                undef $context->{new};
+                $inserted += insert(%$context);
+                $context->{type} = "start_profile";
+                $context->{new} = $new;
+                my $old = $context->{old};
+                undef $context->{old};
+                $inserted += insert(%$context);
+                $context->{old} = $old;
+                $context->{type} = "update_profile";
+            }
         } else {
-            $context->{type} = "end_profile";
+            if(defined $context->{new}) {
+                $context->{type} = "start_profile";
+            } else {
+                $context->{type} = "end_profile";
+            }
+            $inserted += insert(%$context);
         }
-        $inserted += insert(%$context);
     }
     return $inserted;
 
