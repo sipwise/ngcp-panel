@@ -84,15 +84,13 @@ $d->find_element('//*[@id="mod_close"]')->click();
 diag("Check if IP address has been added");
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "127.0.0.1")]'), "IP address has beeen found");
 
-diag("Press cancel on delete dialog to check if domain is still there");
+diag("Open delete dialog and press cancel");
 $c->delete_domain($domainstring, 1);
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
 ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $domainstring), 'Domain is still here');
 
-diag('Deleting Domain');
+diag('Open delete dialog and press delete');
 $c->delete_domain($domainstring, 0);
-
-diag('Check if Domain still exists');
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
 ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Domain was deleted');
 

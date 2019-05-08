@@ -113,7 +113,16 @@ ok($d->find_element_by_css('#locations_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'Test Location');
 ok($d->wait_for_text('//*[@id="locations_table"]/tbody/tr/td[2]', 'Test Location'), "Location has been found");
 
-$c->delete_customer($customerid);
+diag("Open delete dialog and press cancel");
+$c->delete_customer($customerid, 1);
+$d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr/td[2]', $customerid), 'Customer is still here');
+
+diag('Open delete dialog and press delete');
+$c->delete_customer($customerid, 0);
+$d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was deleted');
+
 $c->delete_domain($domainstring);
 
 done_testing;

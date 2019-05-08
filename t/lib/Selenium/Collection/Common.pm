@@ -189,7 +189,7 @@ sub create_rw_ruleset {
 }
 
 sub delete_rw_ruleset {
-    my($self, $rulesetname) = @_;
+    my($self, $rulesetname, $cancel) = @_;
     return unless $rulesetname;
 
     diag('Go to Rewrite Rule Sets page');
@@ -201,9 +201,14 @@ sub delete_rw_ruleset {
     ok($self->driver->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
     ok($self->driver->wait_for_text('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]/td[3]', $rulesetname), 'Ruleset was found');
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="rewrite_rule_set_table"]'));
     $self->driver->move_action(element => $self->driver->find_element('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
     $self->driver->find_element('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
-    $self->driver->find_element('//*[@id="dataConfirmOK"]')->click();
+    if($cancel){
+        popup_confirm_cancel($self, 'We are NOT going to delete this ruleset');
+    } else {
+        popup_confirm_ok($self, 'We are going to delete this ruleset');
+    };
 }
 
 sub create_customer {
@@ -235,7 +240,7 @@ sub create_customer {
 }
 
 sub delete_customer {
-    my($self, $customerid) = @_;
+    my($self, $customerid, $cancel) = @_;
     return unless $customerid;
 
     diag("Go to Customers page");
@@ -247,9 +252,14 @@ sub delete_customer {
     ok($self->driver->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('#Customer_table_filter input', 'css', $customerid);
     ok($self->driver->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
+    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Customer_table"]'));
+    $self->driver->move_action(element=> $self->driver->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
     $self->driver->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
-    $self->driver->find_element('#dataConfirmOK', 'css')->click();
+    if($cancel){
+        popup_confirm_cancel($self, 'We are NOT going to terminate this customer');
+    } else {
+        popup_confirm_ok($self, 'We are going to terminate this customer');
+    };
 }
 
 sub popup_confirm_ok {
