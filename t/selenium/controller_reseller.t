@@ -90,23 +90,23 @@ ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0123456789'),
 diag("Go back to previous page");
 $d->find_element("Back", 'link_text')->click();
 
-diag("Press cancel on delete dialog to check if reseller contract is still there");
+diag("Open delete dialog and press cancel");
 $c->delete_reseller_contract($contractid, 1);
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
 ok($d->wait_for_text('//*[@id="contract_table"]/tbody/tr[1]/td[2]', $contractid), 'Reseller contract is still here');
 
-diag("Now deleting the reseller contract");
-$c->delete_reseller_contract($contractid);
+diag('Open delete dialog and press delete');
+$c->delete_reseller_contract($contractid, 0);
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
 ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Reseller contract was deleted');
 
-diag("Press cancel on delete dialog to check if reseller is still there");
+diag("Open delete dialog and press cancel");
 $c->delete_reseller($resellername, 1);
 $d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller contract is still here');
+ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller is still here');
 
-diag("Now deleting the reseller");
-$c->delete_reseller($resellername);
+diag('Open delete dialog and press delete');
+$c->delete_reseller($resellername, 0);
 $d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Reseller was deleted');
 
