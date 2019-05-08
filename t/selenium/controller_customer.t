@@ -35,7 +35,6 @@ my $username = ('demo' . int(rand(1000)) . "name");
 
 $c->login_ok();
 $c->create_domain($domainstring);
-$c->create_customer($customerid);
 
 if($pbx == 1){
     $c->create_customer($customerid, 1);
