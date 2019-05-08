@@ -1,3 +1,30 @@
+ngcp-panel (5.5.9.1+0~mr5.5.9.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [e5050f8] TT#52456 cftimeset period timezone transformation script
+  * [e6738f5] TT#49694 match patterns: reject malformed "\0"-"\9" only
+  * [58518c9] TT#58004 stop+start_profile instead of update_profile event
+
+  [ Gerhard Jungwirth ]
+  * [79eedf2] TT#40540 fix accept header recognition for */*
+
+  [ Irina Peshinskaya ]
+  * [97b4176] TT#50907 Don't use form caching in WEB UI
+  * [c5ed006] TT#52980 Return num_lines to api device models lineranges
+  * [7b2cd08] TT#53320 Fix voicemailgreetings upload error handling
+
+  [ Kirill Solomko ]
+  * [3755b6b] TT#48855 fix UI billing zones
+  * [9d4e1de] TT#45484 Add "force_delete" option to callrecordings
+  * [f8983f4] TT#56602 no apply_rewrite for a terminated prov subscriber
+
+  [ Andreas Granig ]
+  * [ba637de] TT#55953 Prevent hiding buttons on ajax search
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 08 May 2019 14:02:52 +0200
+
 ngcp-panel (5.5.9.0+0~mr5.5.9.0) unstable; urgency=medium
 
   [ Manuel Montecelo ]
