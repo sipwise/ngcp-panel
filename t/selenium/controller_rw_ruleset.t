@@ -27,7 +27,7 @@ my $domainstring = ("domain" . int(rand(100000)) . ".example.org");
 $c->login_ok();
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
-$c->create_rw_ruleset($resellername, $rulesetname);
+$c->create_rw_ruleset($rulesetname, $resellername);
 
 diag('Search for our new Rewrite Rule Set');
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
