@@ -169,7 +169,8 @@ sub delete_reseller_contract {
 }
 
 sub create_rw_ruleset {
-    my($self, $resellername, $rulesetname) = @_;
+    my($self, $rulesetname, $resellername) = @_;
+    return unless $rulesetname, $resellername;
 
     diag('Go to Rewrite Rule Sets page');
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -189,6 +190,7 @@ sub create_rw_ruleset {
 
 sub delete_rw_ruleset {
     my($self, $rulesetname) = @_;
+    return unless $rulesetname;
 
     diag('Go to Rewrite Rule Sets page');
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
