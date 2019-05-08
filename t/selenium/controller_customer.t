@@ -66,32 +66,6 @@ $d->find_element('#save', 'css')->click(); # Save
 diag("Check if successful");
 $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(text(),"Sipwise")]');
 
-diag("Trying to add a subscriber");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
-$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]'));
-$d->find_element('Create Subscriber', 'link_text')->click();
-
-diag('Enter necessary information');
-$d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#domainidtable tr > td.dataTables_empty'), 'Table is empty');
-$d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', $domainstring);
-ok($d->wait_for_text('//*[@id="domainidtable"]/tbody/tr[1]/td[3]', $domainstring), 'Domain found');
-$d->select_if_unselected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
-$d->find_element('//*[@id="e164.cc"]')->send_keys('43');
-$d->find_element('//*[@id="e164.ac"]')->send_keys('99');
-$d->find_element('//*[@id="e164.sn"]')->send_keys(int(rand(99999999)));
-$d->find_element('//*[@id="email"]')->send_keys($emailstring);
-$d->find_element('//*[@id="webusername"]')->send_keys($username);
-$d->find_element('//*[@id="webpassword"]')->send_keys('testing1234'); #workaround for misclicking on ok button
-$d->find_element('//*[@id="gen_password"]')->click();
-$d->find_element('//*[@id="username"]')->send_keys($username);
-$d->find_element('//*[@id="password"]')->send_keys('testing1234'); #using normal pwd, cant easily seperate both generate buttons
-$d->find_element('//*[@id="save"]')->click();
-
-diag("Trying to find subscriber");
-$d->find_element('//*[@id="subscribers_table_filter"]/label/input')->send_keys($username);
-ok($d->wait_for_text('//*[@id="subscribers_table"]/tbody/tr/td[2]', $username), 'Subscriber was found');
-
 diag("Edit Fraud Limits");
 $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]')->click();
 $d->scroll_to_element($d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]'));
