@@ -1,3 +1,12 @@
+ngcp-panel (5.5.7.11+0~mr5.5.7.11) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [d2d2175] TT#58004 stop+start_profile instead of update_profile event
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 08 May 2019 10:13:21 +0200
+
 ngcp-panel (5.5.7.10+0~mr5.5.7.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
