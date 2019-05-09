@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a41bdd9_42c1d42d",
+        "filename": "lib/NGCP/Panel/Form/BillingProfile/Reseller.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-05-09T09:40:54Z",
+      "side": 1,
+      "message": "Can we just remove the \"prepaid\" field from the Reseller related form, so that it is clear that \"prepaid\" is not going to be used/or affects resellers ? Because I assume that even if you set it to \"inactive\" it will still be checked ?",
+      "range": {
+        "startLine": 228,
+        "startChar": 0,
+        "endLine": 236,
+        "endChar": 1
+      },
+      "revId": "6af6b60cd42f2d4688b202a9772207e3603e5dfb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
