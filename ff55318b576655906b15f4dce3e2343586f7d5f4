@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9a41bdd9_05367603",
+        "filename": "lib/NGCP/Panel/Field/BillingProfile.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T22:08:02Z",
+      "side": 1,
+      "message": "eg. see\n\nNGCP::Panel::Field::ContactNoReseller\n+\nNGCP::Panel::Field::Contact\n\nso eg.\n\nNGCP::Panel::Field::BillingProfilesNoPrepaid\n+\nNGCP::Panel::Field::BillingProfiles\n\nit will also allow to not show a column for prepaid in NGCP::Panel::Field::BillingProfilesNoPrepaid.",
+      "parentUuid": "9a41bdd9_e5491290",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a41bdd9_e5a032a8",
         "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
         "patchSetId": 3
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Yes, really I though about call super in the inheriting class, but, you see, I use $mappings_to_create and I wanted to preserve this call and don\u0027t copy-paste the whole method in the same time.\n\nHere could be other options:\n1) separate this sub validate logic (e.g. to Utils) and call it here and in the inheriting class getting mappings_to_create from this new Utils method.\n\n2) Use some stashed parameter.\n\nBut at the end I found current solution the simplest and easiest to maintain in the future.",
       "parentUuid": "9a41bdd9_e5a032a8",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_252ffaa2",
+        "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T22:08:02Z",
+      "side": 1,
+      "message": "it should be possible to call NGCP::Panel::Utils::BillingMappings::validate. it already gets -\u003ectx so i would go for it.",
+      "parentUuid": "9a41bdd9_054f5693",
       "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -136,6 +172,24 @@
       "side": 1,
       "message": "Sorry, did you mean type here?",
       "parentUuid": "9a41bdd9_6595023f",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_452c7eab",
+        "filename": "lib/NGCP/Panel/Role/API/Contracts.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T22:08:02Z",
+      "side": 1,
+      "message": "t is missing, \"can\u0027t\"",
+      "parentUuid": "9a41bdd9_c5488e8a",
       "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
