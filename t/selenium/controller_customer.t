@@ -67,10 +67,10 @@ diag("Check if successful");
 $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(text(),"Sipwise")]');
 
 diag("Edit Fraud Limits");
-$d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]')->click();
-$d->scroll_to_element($d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]'));
-$d->move_action(element => $d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td//a[text()[contains(.,"Edit")]]'));
-$d->find_element('//*[@id="collapse_fraud"]/div/table/tbody/tr[1]/td//a[text()[contains(.,"Edit")]]')->click();
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]'));
+$d->move_action(element => $d->find_element('//*[@id="collapse_fraud"]//table//tr//td[text()[contains(.,"Monthly Settings")]]/../td//a[text()[contains(.,"Edit")]]'));
+$d->find_element('//*[@id="collapse_fraud"]//table//tr//td[text()[contains(.,"Monthly Settings")]]/../td//a[text()[contains(.,"Edit")]]')->click();
 
 diag("Do Edit Fraud Limits");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
@@ -79,16 +79,16 @@ $d->find_element('#save', 'css')->click();
 $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(text(),"mymail@example.org")]');
 
 diag("Create a new Phonebook entry");
-$d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
-$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]'));
 $d->find_element("Create Phonebook Entry", 'link_text')->click();
 $d->fill_element('//*[@id="name"]', 'xpath', 'Test Name');
 $d->fill_element('//*[@id="number"]', 'xpath', '0123456789');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Phonebook Entry has been created");
-$d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
-$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]'));
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', '0123456789');
