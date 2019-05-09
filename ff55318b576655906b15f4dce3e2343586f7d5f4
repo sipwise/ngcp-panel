@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a41bdd9_e5491290",
+        "filename": "lib/NGCP/Panel/Field/BillingProfile.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-05-09T21:27:33Z",
+      "side": 1,
+      "message": "Usually we use 2 different ajax url, not fields. Did you mean two different controller methods here? If it will be other field - we will need or other form, or switch two fields with inactive(0/1);\n\nAnd we perform switching between ajax urls on the form level (before adjust_datatables_vars was introduced) or field level.\n\nPlease, look at the:\n\ngrep -rin \u0027\\-\u003eajax_src\u0027 /usr/share/perl5/NGCP/Panel/\n\nhttps://paste.mgm.sipwise.com/show/5264/\n\n\nAfter adjust_datatables_vars was added, it became possible to implement switching logic once on the field level.\n\nRegarding two different ajax controller methods, I really was a little greedy here because difference in two methods would be one condition in the query.",
+      "parentUuid": "9a41bdd9_45c55e59",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a41bdd9_e5a032a8",
         "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-05-09T13:23:19Z",
       "side": 1,
       "message": "since we already have dedicated .pm, is it possible to avoid doing the stuff in the base? in particular i mean to do it without a static member (repaid_billing_profile_forbidden)",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_054f5693",
+        "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-05-09T21:27:33Z",
+      "side": 1,
+      "message": "Yes, really I though about call super in the inheriting class, but, you see, I use $mappings_to_create and I wanted to preserve this call and don\u0027t copy-paste the whole method in the same time.\n\nHere could be other options:\n1) separate this sub validate logic (e.g. to Utils) and call it here and in the inheriting class getting mappings_to_create from this new Utils method.\n\n2) Use some stashed parameter.\n\nBut at the end I found current solution the simplest and easiest to maintain in the future.",
+      "parentUuid": "9a41bdd9_e5a032a8",
       "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9a41bdd9_a5430a6c",
+        "filename": "lib/NGCP/Panel/Role/API/Contracts.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-05-09T21:27:33Z",
+      "side": 1,
+      "message": "yes, sure. Thank you.",
+      "parentUuid": "9a41bdd9_c5af2e93",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a41bdd9_6595023f",
         "filename": "lib/NGCP/Panel/Role/API/Contracts.pm",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2019-05-09T13:23:19Z",
       "side": 1,
       "message": "t",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_c5488e8a",
+        "filename": "lib/NGCP/Panel/Role/API/Contracts.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-05-09T21:27:33Z",
+      "side": 1,
+      "message": "Sorry, did you mean type here?",
+      "parentUuid": "9a41bdd9_6595023f",
       "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
