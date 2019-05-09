@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a41bdd9_224930d1",
+        "filename": "t/lib/NGCP/TestFramework.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T10:32:21Z",
+      "side": 1,
+      "message": "maybe better to put it in quotes, or call it \"t\"",
+      "range": {
+        "startLine": 36,
+        "startChar": 21,
+        "endLine": 36,
+        "endChar": 25
+      },
+      "revId": "174eaf57061035e150e3b596721511f497e6a9c5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_224e10c2",
+        "filename": "t/lib/NGCP/TestFramework.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T10:32:21Z",
+      "side": 1,
+      "message": "maybe here would be the place to soon add eg.\n\n$test_executor-\u003erun_external_tests($testing_data-\u003e{$test_no}-\u003e{external_conditions}, $result, $retained ) if ( $testing_data-\u003e{$test_no}-\u003e{external_conditions} );",
+      "revId": "174eaf57061035e150e3b596721511f497e6a9c5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_a20b007d",
+        "filename": "t/lib/NGCP/TestFramework.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T10:32:21Z",
+      "side": 1,
+      "message": "els",
+      "revId": "174eaf57061035e150e3b596721511f497e6a9c5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_427474fc",
+        "filename": "t/lib/NGCP/TestFramework.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T10:32:21Z",
+      "side": 1,
+      "message": "does it make sense to introduce a suffix from the yml, to allow apartments for the retained vars?",
+      "revId": "174eaf57061035e150e3b596721511f497e6a9c5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_a28220c7",
+        "filename": "t/lib/NGCP/TestFramework/TestExecutor.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T10:32:21Z",
+      "side": 1,
+      "message": "for next iteration, we will also need something like\n- deeply\n- approx (for floats/currencies)",
+      "revId": "174eaf57061035e150e3b596721511f497e6a9c5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
