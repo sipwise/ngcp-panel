@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a41bdd9_45c55e59",
+        "filename": "lib/NGCP/Panel/Field/BillingProfile.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T13:23:19Z",
+      "side": 1,
+      "message": "i would rather create two different Fields than tweaking the ajaxurl. it is only 20 lines, not worth for the complicated adjust_datatable_vars(). we did so in other places as well.",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_e5a032a8",
+        "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T13:23:19Z",
+      "side": 1,
+      "message": "since we already have dedicated .pm, is it possible to avoid doing the stuff in the base? in particular i mean to do it without a static member (repaid_billing_profile_forbidden)",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_c5af2e93",
+        "filename": "lib/NGCP/Panel/Role/API/Contracts.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T13:23:19Z",
+      "side": 1,
+      "message": "nice; but think it\u0027s also required for the POST part",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_6595023f",
+        "filename": "lib/NGCP/Panel/Role/API/Contracts.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-09T13:23:19Z",
+      "side": 1,
+      "message": "t",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
