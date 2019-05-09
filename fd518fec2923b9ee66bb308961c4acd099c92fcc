@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a41bdd9_05cc3634",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-09T15:20:38Z",
+      "side": 1,
+      "message": "Oups...\n\nDo you want to create an autotest here which will catch such cases?\n\nIt is some kind popular mistake to miss some git conflicts into code. It happens once per year at least.",
+      "range": {
+        "startLine": 192,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 83
+      },
+      "revId": "fd518fec2923b9ee66bb308961c4acd099c92fcc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
