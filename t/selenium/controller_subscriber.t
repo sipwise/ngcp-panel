@@ -85,8 +85,7 @@ $d->find_element("Preferences", 'link_text')->click();
 
 diag('Trying to add a simple call forward');
 $d->find_element("Call Forwards", 'link_text')->click();
-$d->move_action(element => $d->find_element('//*[@id="preferences_table_cf"]/tbody/tr/td[contains(text(), "Unconditional")]/../td/div/a[contains(text(), "Edit")]'));
-$d->find_element('//*[@id="preferences_table_cf"]/tbody/tr/td[contains(text(), "Unconditional")]/../td/div/a[contains(text(), "Edit")]')->click();
+$d->move_and_click('//*[@id="preferences_table_cf"]/tbody/tr/td[contains(text(), "Unconditional")]/../td/div/a[contains(text(), "Edit")]', 'xpath');
 $d->fill_element('//*[@id="destination.uri.destination"]', 'xpath', '43123456789');
 $d->find_element('//*[@id="cf_actions.advanced"]')->click();
 
