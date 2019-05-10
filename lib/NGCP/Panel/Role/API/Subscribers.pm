@@ -242,7 +242,9 @@ sub _item_rs {
         });
     } elsif($c->user->roles eq "subscriber") {
         $item_rs = $item_rs->search({
-            'id' => $c->user->voip_subscriber->id,
+            #voip_subscriber is a provisioning.voip_subscribers relation
+            #$c->user is provisioning.voip_subscribers, so we use ->voip_subscriber->id and compare to billing.voip-subscribers. 
+            'me.id' => $c->user->voip_subscriber->id,
         });
     } else {
         $self->error($c, HTTP_FORBIDDEN, "Invalid authentication role");
@@ -718,7 +720,7 @@ sub update_item {
         password => $resource->{password},
         webusername => $resource->{webusername},
         webpassword => $resource->{webpassword},
-        admin => $resource->{administrative} // 0,
+        admin => $resource->{administrative} // $subscriber->provisioning_voip_subscriber->admin,
         is_pbx_pilot => $resource->{is_pbx_pilot} // 0,
         is_pbx_group => $resource->{is_pbx_group} // 0,
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
