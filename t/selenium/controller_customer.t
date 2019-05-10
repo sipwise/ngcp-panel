@@ -69,8 +69,7 @@ $d->find_element('//div[contains(@class,"accordion-body")]//table//td[contains(t
 diag("Edit Fraud Limits");
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]'));
-$d->move_action(element => $d->find_element('//*[@id="collapse_fraud"]//table//tr//td[text()[contains(.,"Monthly Settings")]]/../td//a[text()[contains(.,"Edit")]]'));
-$d->find_element('//*[@id="collapse_fraud"]//table//tr//td[text()[contains(.,"Monthly Settings")]]/../td//a[text()[contains(.,"Edit")]]')->click();
+$d->move_and_click('//*[@id="collapse_fraud"]//table//tr//td[text()[contains(.,"Monthly Settings")]]/../td//a[text()[contains(.,"Edit")]]', 'xpath');
 
 diag("Do Edit Fraud Limits");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
