@@ -287,13 +287,13 @@ sub validate {
             }
         });
     if ($self->prepaid_billing_profile_forbidden) {
-        if ( NGCP::Panel::Utils::BillingMappings::check_prepaid_profiles_exist(
+        if ( my $prepaid_billing_profile_exist = NGCP::Panel::Utils::BillingMappings::check_prepaid_profiles_exist(
             c => $c,
             mappings_to_create => $mappings_to_create,
         ) ) {
             my @fields = qw/billing_profile billing_profiles profile_package/;
             foreach my $field (@fields) {
-                $self->field($field)->add_error("Peering/reseller can' be related to prepaid billing profile.");
+                $self->field($field)->add_error("Peering/reseller contract can't be connected to the prepaid billing profile $prepaid_billing_profile_exist.");
             }
 
         }
