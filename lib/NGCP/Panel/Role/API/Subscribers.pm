@@ -242,7 +242,7 @@ sub _item_rs {
         });
     } elsif($c->user->roles eq "subscriber") {
         $item_rs = $item_rs->search({
-            'me.id' => $c->user->voip_subscriber->id,
+            'id' => $c->user->voip_subscriber->id,
         });
     } else {
         $self->error($c, HTTP_FORBIDDEN, "Invalid authentication role");
