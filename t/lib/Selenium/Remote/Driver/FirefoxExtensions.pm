@@ -110,7 +110,7 @@ sub wait_for_text {
 }
 
 sub move_and_click {
-    my ($self, $path, $type, $timeout) = @_;
+    my ($self, $path, $type, $fallback, $timeout) = @_;
     return unless $path && $type;
     $timeout = 5 unless $timeout; # seconds. Default timeout value if none is specified.
     my $started = time();
@@ -118,6 +118,9 @@ sub move_and_click {
     while ($elapsed - $started <= $timeout){
         $elapsed = time();
         try{
+            if($fallback) {
+                $self->move_action(element => $self->find_element($fallback, $type));
+            }
             $self->move_action(element => $self->find_element($path, $type));
             $self->find_element($path, $type)->click();
             return 1;
