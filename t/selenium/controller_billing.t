@@ -147,18 +147,7 @@ do {
 } while ($dates_first_row_text =~ /Processing/i );
 
 diag("Edit Wednesday");
-$row = $d->find_element('//table//td[contains(text(),"Wednesday")]');
-ok($row);
-diag("Move mouse over 'Weekdays' row to make 'Edit' button available");
-$d->move_action(element => ($d->find_element('//h3[contains(text(),"Weekdays")]')));
-$d->move_action(element => $row);
-diag("Find 'Edit' button for element 'Wednesday'");
-sleep 1; # give ajax time to load
-my $btn = $d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
-ok($btn);
-$btn->click();
-ok($d->find_text("Edit Wednesday"), 'Edit Wednesday button exists');
-diag("Pop-up 'Edit Wednesday' was properly opened");
+$d->move_and_click('//*[@id="content"]//table//tr//td[contains(text(), "Wednesday")]/../td//a[text()[contains(.,"Edit")]]', 'xpath');
 
 diag("add/delete a time def to Wednesday");
 $d->fill_element('#start', 'css', "04:20:00");
