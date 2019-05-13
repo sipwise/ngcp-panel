@@ -118,6 +118,7 @@ sub move_and_click {
     while ($elapsed - $started <= $timeout){
         $elapsed = time();
         try{
+            $self->move_action(element => $self->find_element('//*[@id="header"]'));
             $self->move_action(element => $self->find_element($path, $type));
             $self->find_element($path, $type)->click();
             return 1;
