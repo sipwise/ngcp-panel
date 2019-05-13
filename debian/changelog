@@ -1,3 +1,12 @@
+ngcp-panel (7.0.2.8+0~mr7.0.2.8) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [3dda4a2] TT#56376 selenium: backport move_and_click function from master
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 May 2019 11:50:00 +0200
+
 ngcp-panel (7.0.2.7+0~mr7.0.2.7) unstable; urgency=medium
 
   [ Nico Schedel ]
