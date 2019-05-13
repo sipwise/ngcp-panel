@@ -27,43 +27,25 @@ diag("Check if entry exists and if the search works");
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
-ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr/td[3]', $domainstring), 'Entry was found');
+ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $domainstring), 'Entry was found');
 
 diag("Open Preferences of first Domain");
-my ($row, $edit_link);
-$row = $d->find_element('//table[@id="Domain_table"]/tbody/tr[1]');
-$edit_link = $d->find_element('(//table[@id="Domain_table"]/tbody/tr[1]/td//a)[contains(text(),"Preferences")]');
-ok($edit_link, 'Edit Link is here');
-$d->move_action(element => $row);
-$edit_link->click();
+$d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath');
 
 diag('Open the tab "Access Restrictions"');
 like($d->get_path, qr!domain/\d+/preferences!);
 $d->find_element("Access Restrictions", 'link_text')->click();
 
 diag("Click edit for the preference concurrent_max");
-$row = $d->find_element('//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]');
-ok($row, 'concurrent_max found');
-$edit_link = $d->find_child_element($row, '(./../td//a)[2]');
-ok($edit_link, 'Found edit button');
-$d->move_action(element => $row);
-$edit_link->click();
+$d->move_and_click('//table//tr/td[contains(text(), "concurrent_max")]/../td//a[contains(text(), "Edit")]', 'xpath');
 
 diag("Try to change this to a value which is not a number");
-my $formfield = $d->find_element('#concurrent_max', 'css');
-ok($formfield, 'Input field found');
-$formfield->clear();
-$formfield->send_keys('thisisnonumber');
+$d->fill_element('#concurrent_max', 'css', 'thisisnonumber');
 $d->find_element("#save", 'css')->click();
 
 diag('Type 789 and click Save');
 ok($d->find_text('Value must be an integer'), 'Wrong value detected');
-$formfield = $d->find_element('#concurrent_max', 'css');
-ok($formfield, 'Input field found');
-$formfield->clear();
-
-diag('Saving integer value into "concurrent_max"');
-$formfield->send_keys('789');
+$d->fill_element('#concurrent_max', 'css', '789');
 $d->find_element('#save', 'css')->click();
 
 diag('Check if value has been applied');
