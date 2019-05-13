@@ -226,21 +226,25 @@ sub _item_rs {
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
         ->search({ 'me.status' => { '!=' => 'terminated' } });
     if($c->user->roles eq "admin") {
+        $c->log->debug("role: admin");
         $item_rs = $item_rs->search(undef,
         {
             join => { 'contract' => 'contact' }, #for filters
         });
     } elsif($c->user->roles eq "reseller") {
+        $c->log->debug("role: reseller");
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
             join => { 'contract' => 'contact' },
         });
     } elsif($c->user->roles eq "subscriberadmin") {
+        $c->log->debug("role: subscriberadmin");
         $item_rs = $item_rs->search({
             'contract_id' => $c->user->account_id,
         });
     } elsif($c->user->roles eq "subscriber") {
+        $c->log->debug("role: subscriber");
         $item_rs = $item_rs->search({
             'id' => $c->user->voip_subscriber->id,
         });
@@ -298,6 +302,8 @@ sub prepare_resource {
     my $groups = [];
     my $groupmembers = [];
     my $domain;
+    $c->log->debug("resource in prepare_resource: admin:".($resource->{admin} ? $resource->{admin} : "undefined")."; administrative:".($resource->{administrative} ? $resource->{administrative} : "undefined").";");
+    $c->log->debug("item admin in prepare_resource: admin:".($item ? $item->provisioning_voip_subscriber->admin : "undefined")."; ");
     if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $resource->{domain}) {
         $domain = $schema->resultset('domains')
             ->search({ domain => $resource->{domain} });
@@ -332,6 +338,7 @@ sub prepare_resource {
         $resource->{customer_id} = $pilot->account_id;
         $resource->{status} = 'active';
         #deny to create subscriberadmin, the same as in the web ui
+        $c->log->debug("resource before set by subscriber admin: admin:".($resource->{admin} ? $resource->{admin} : "undefined")."; administrative:".($resource->{administrative} ? $resource->{administrative} : "undefined").";");
         $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     }
     $resource->{e164} = delete $resource->{primary_number};
@@ -340,6 +347,7 @@ sub prepare_resource {
     $resource->{is_pbx_pilot} //= 0;
     $resource->{profile_set}{id} = delete $resource->{profile_set_id};
     $resource->{profile}{id} = delete $resource->{profile_id};
+    $c->log->debug("resource after set: admin:".($resource->{admin} ? $resource->{admin} : "undefined")."; administrative:".($resource->{administrative} ? $resource->{administrative} : "undefined").";");
     my $subscriber_id = $item ? $item->id : 0;
 
     if(defined $resource->{e164}) {
@@ -714,6 +722,7 @@ sub update_item {
         status => $resource->{status},
         contact_id => $resource->{contact_id},
     };
+    $c->log->debug("resource before set admin: admin:".($resource->{admin} ? $resource->{admin} : "undefined")."; administrative:".($resource->{administrative} ? $resource->{administrative} : "undefined").";");
     my $provisioning_res = {
         password => $resource->{password},
         webusername => $resource->{webusername},

@@ -136,15 +136,17 @@ sub PATCH :Allow {
 
         my ($form) = $self->get_form($c);
         my $old_resource = $self->resource_from_item($c, $subscriber, $form);
+        $c->log->debug("old_resource: admin:".($old_resource->{admin} ? $old_resource->{admin} : "undefined")."; administrative:".($old_resource->{administrative} ? $old_resource->{administrative} : "undefined").";");
         $old_resource = clone($old_resource);
         my $resource = $self->apply_patch($c, $old_resource, $json);
+        $c->log->debug("resource after apply_patch: admin:".($resource->{admin} ? $resource->{admin} : "undefined")."; administrative:".($resource->{administrative} ? $resource->{administrative} : "undefined").";");
         last unless $resource;
 
         my $update = 1;
         my $r = $self->prepare_resource($c, $schema, $resource, $subscriber);
         last unless $r;
         $resource = $r->{resource};
-
+        $c->log->debug("resource after prepare_resource: admin:".($resource->{admin} ? $resource->{admin} : "undefined")."; administrative:".($resource->{administrative} ? $resource->{administrative} : "undefined").";");
         $subscriber = $self->update_item($c, $schema, $subscriber, $r, $resource, $form);
         last unless $subscriber;
 
