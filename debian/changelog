@@ -1,3 +1,15 @@
+ngcp-panel (6.5.4.8+0~mr6.5.4.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [2adb1bc] TT#56463 fix $c->log vs $c->loc #2
+
+  [ Nico Schedel ]
+  * [6abc126] TT#56376 selenium: backport move_and_click function from master
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 May 2019 11:50:53 +0200
+
 ngcp-panel (6.5.4.7+0~mr6.5.4.7) unstable; urgency=medium
 
   [ Nico Schedel ]
