@@ -34,6 +34,24 @@
       "revId": "7c8e141edd747fa141bad1d1dca9f2266652732a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_4e001bab",
+        "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-13T08:54:51Z",
+      "side": 1,
+      "message": "good point!",
+      "parentUuid": "9a41bdd9_ae0e87e3",
+      "revId": "7c8e141edd747fa141bad1d1dca9f2266652732a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
