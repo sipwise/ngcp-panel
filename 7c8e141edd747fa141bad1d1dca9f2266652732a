@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a41bdd9_8e6f0392",
+        "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-13T08:40:13Z",
+      "side": 1,
+      "message": "wouldn it be easier to get that from ctx? so prepaid_billing_profile_forbidden isnt needed (which brings pain to take care it is not part of -\u003evalues())",
+      "revId": "7c8e141edd747fa141bad1d1dca9f2266652732a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
