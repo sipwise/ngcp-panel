@@ -27,7 +27,10 @@ diag("Check if entry exists and if the search works");
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
-ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $domainstring), 'Entry was found');
+
+diag("Check domain details");
+ok($d->find_element_by_xpath('//*[@id="Domain_table"]/tbody/tr[1]/td[contains(text(), "default")]'), "Reseller is correct");
+ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[contains(text(), "domain")]', $domainstring), "Domain name is correct");
 
 diag("Open Preferences of first Domain");
 $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath');
