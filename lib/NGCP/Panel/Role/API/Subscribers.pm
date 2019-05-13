@@ -246,7 +246,9 @@ sub _item_rs {
     } elsif($c->user->roles eq "subscriber") {
         $c->log->debug("role: subscriber");
         $item_rs = $item_rs->search({
-            'id' => $c->user->voip_subscriber->id,
+            #voip_subscriber is a provisioning.voip_subscribers relation
+            #$c->user is provisioning.voip_subscribers, so we use ->voip_subscriber->id and compare to billing.voip-subscribers. 
+            'me.id' => $c->user->voip_subscriber->id,
         });
     } else {
         $self->error($c, HTTP_FORBIDDEN, "Invalid authentication role");
@@ -339,6 +341,7 @@ sub prepare_resource {
         $resource->{status} = 'active';
         #deny to create subscriberadmin, the same as in the web ui
         $c->log->debug("resource before set by subscriber admin: admin:".($resource->{admin} ? $resource->{admin} : "undefined")."; administrative:".($resource->{administrative} ? $resource->{administrative} : "undefined").";");
+
         $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     }
     $resource->{e164} = delete $resource->{primary_number};
@@ -374,11 +377,28 @@ sub prepare_resource {
     }
 
     my ($form) = $self->get_form($c);
+    my $form_exceptions = {};
+    foreach my $field (qw/administrative/) {
+        if ( exists $resource->{$field} ) {
+            $form_exceptions->{$field} = {};
+            @{$form_exceptions->{$field}}{qw/value exists/} = ($resource->{$field}, 1);
+        }
+    }
     return unless $self->validate_form(
         c => $c,
         resource => $resource,
         form => $form,
     );
+    foreach my $field (keys %$form_exceptions) {
+        if( $form_exceptions->{$field}->{exists} && !exists $resource->{$field} ) {
+        #todo: move to some common class. API.pm?
+        #administrative is a read-only field for the subscriberadmin, and it worth to let it stay read-only from the documentation point of view
+        #but validate_form just remove read-only fields. In the same time later in update_item we use administrative as a source for the admin db field
+        #please consider review update_item administrative/admin management if you decided to remove this code
+        #caveats: someone who set administrative form field to read--only may expect that it will be deleted
+            $resource->{$field} = $form_exceptions->{$field}->{value};
+        }
+    }
 
     # this format is expected by NGCP::Panel::Utils::Subscriber::create_subscriber
     $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
