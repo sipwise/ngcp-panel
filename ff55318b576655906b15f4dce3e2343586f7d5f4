@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "9a41bdd9_8ef623d6",
+        "filename": "lib/NGCP/Panel/Field/BillingProfile.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-05-13T08:53:44Z",
+      "side": 1,
+      "message": "Just a note: we didn\u0027t show prepaid column before.",
+      "parentUuid": "9a41bdd9_05367603",
+      "revId": "ff55318b576655906b15f4dce3e2343586f7d5f4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a41bdd9_e5a032a8",
         "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
         "patchSetId": 3
