@@ -16,6 +16,24 @@
       "revId": "7c8e141edd747fa141bad1d1dca9f2266652732a",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a41bdd9_ae0e87e3",
+        "filename": "lib/NGCP/Panel/Form/Contract/Base.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-05-13T08:50:40Z",
+      "side": 1,
+      "message": "You see, this flag will be always set for the particular form(s). Now we have only one form, that is used only in one place. But if we used it in some places, we would need to set ctx flag in all these places. I found this solution the most effective and safe. \nSorry, while I don\u0027t see what difficulties do you expect with this.",
+      "parentUuid": "9a41bdd9_8e6f0392",
+      "revId": "7c8e141edd747fa141bad1d1dca9f2266652732a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
