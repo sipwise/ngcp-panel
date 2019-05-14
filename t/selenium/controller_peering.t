@@ -35,9 +35,12 @@ $d->find_element('Create Peering Group', 'link_text')->click();
 
 diag("Create a Peering Contract");
 $d->find_element('//input[@type="button" and @value="Create Contract"]')->click();
+$d->fill_element('//*[@id="contactidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contactidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="contactidtable_filter"]/label/input', 'xpath', 'default-system@default.invalid');
+ok($d->wait_for_text('//*[@id="contactidtable"]/tbody/tr[1]/td[4]', 'default-system@default.invalid'), "Default Contact was found");
 $d->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]//input[@type="checkbox"]');
-my $elem = $d->find_element('//table[@id="billing_profileidtable"]');
-$d->scroll_to_element($elem);
+$d->scroll_to_element($d->find_element('//table[@id="billing_profileidtable"]'));
 $d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->find_element('//div[contains(@class,"modal-body")]//div//select[@id="status"]/option[@value="active"]')->click();
 $d->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
