@@ -117,6 +117,49 @@ diag('Check if call-forward has been applied');
 ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $bsetname . ')]'), 'B-Set was selected');
 ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $destinationname . ')]'), 'Destination set was selected');
 
+diag('Trying to add call blockings');
+$d->find_element("Call Blockings", 'link_text')->click();
+$d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
+
+diag('Edit block_in_mode');
+$d->move_and_click('//table//tr/td[contains(text(), "block_in_mode")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+$d->find_element('//*[@id="block_in_mode"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if value was set');
+$d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_mode")]/../td/input[@checked="checked"]'), "Setting is correct");
+
+diag('Edit block_in_list');
+$d->move_and_click('//table//tr/td[contains(text(), "block_in_list")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+$d->fill_element('//*[@id="block_in_list"]', 'xpath', '1337');
+$d->find_element('//*[@id="add"]')->click();
+$d->fill_element('//*[@id="block_in_list"]', 'xpath', '42');
+$d->find_element('//*[@id="add"]')->click();
+$d->find_element('//*[@id="mod_close"]')->click();
+
+diag('Check if value was set');
+$d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/../td[contains(text(), "1337")]'), "Number 1 is correct");
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/../td[text()[contains(., "42")]]'), "Number 2 is correct");
+
+diag('Disable Entry');
+$d->move_and_click('//table//tr/td[contains(text(), "block_in_list")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+$d->find_element('//*[@id="mod_edit"]//div//input[@value="1337"]/../a[2]')->click();
+$d->find_element('//*[@id="mod_close"]')->click();
+
+diag('Check if Entry was disabled');
+$d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/../td/span[@class="ngcp-entry-disabled"]/../span[contains(text(), "1337")]'), "Entry was disabled");
+
+diag('Edit block_in_clir');
+$d->move_and_click('//table//tr/td[contains(text(), "block_in_clir")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+$d->find_element('//*[@id="block_in_clir"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if value was set');
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_clir")]/../td/input[@checked="checked"]'), "Setting is correct");
+
 diag('Go to Subscribers Page');
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("Subscribers", 'link_text')->click();
