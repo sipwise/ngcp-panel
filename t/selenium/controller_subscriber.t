@@ -70,11 +70,13 @@ diag('Go to Subscribers page');
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("Subscribers", 'link_text')->click();
 
-diag('Find Subscriber here');
+diag('Checking Subscriber Details');
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
-ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber was found');
+ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[3]', 'default-customer@default.invalid'), 'Contact Email is correct');
+ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber name is correct');
+ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[5]', $domainstring), 'Domain name is correct');
 
 diag('Go to Subscriber details');
 $d->move_action(element => $d->find_element('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]'));
@@ -95,6 +97,11 @@ $d->find_element('Create New', 'link_text')->click();
 $d->fill_element('//*[@id="name"]', 'xpath', $bsetname);
 $d->fill_element('//*[@id="bnumbers.0.number"]', 'xpath', '1234567890');
 $d->find_element('//*[@id="save"]')->click();
+
+diag('Check B-Number set details');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $bsetname . '")]'), "Name is correct");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $bsetname . '")]/../td[contains(text(), "1234567890")]'), "Number is correct");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $bsetname . '")]/../td[contains(text(), "whitelist")]'), "Mode is correct");
 $d->find_element('//*[@id="mod_close"]')->click();
 
 diag('Add a new Destination set');
@@ -103,6 +110,10 @@ $d->find_element('Create New', 'link_text')->click();
 $d->fill_element('//*[@id="name"]', 'xpath', $destinationname);
 $d->fill_element('//*[@id="destination.0.uri.destination"]', 'xpath', '1234567890');
 $d->find_element('//*[@id="save"]')->click();
+
+diag('Check Destination set details');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $destinationname . '")]'), "Name is correct");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $destinationname . '")]/../td[contains(text(), "1234567890")]'), "Number is correct");
 $d->find_element('//*[@id="mod_close"]')->click();
 
 diag('Use new Sets');
