@@ -137,28 +137,8 @@ ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billing
 $d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]'));
 $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]')->click();
 
-diag("Wait for datatable loading");
-my $dates_first_row_text;
-do {
-    sleep 1;
-    diag("getting row");
-    $dates_first_row_text = $d->find_element('//table[@id="date_definition_table"]/tbody/tr[1]/td[1]')->get_text();
-    diag("Data table content: ".$dates_first_row_text);
-} while ($dates_first_row_text =~ /Processing/i );
-
 diag("Edit Wednesday");
-$row = $d->find_element('//table//td[contains(text(),"Wednesday")]');
-ok($row);
-diag("Move mouse over 'Weekdays' row to make 'Edit' button available");
-$d->move_action(element => ($d->find_element('//h3[contains(text(),"Weekdays")]')));
-$d->move_action(element => $row);
-diag("Find 'Edit' button for element 'Wednesday'");
-sleep 1; # give ajax time to load
-my $btn = $d->find_element('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
-ok($btn);
-$btn->click();
-ok($d->find_text("Edit Wednesday"), 'Edit Wednesday button exists');
-diag("Pop-up 'Edit Wednesday' was properly opened");
+$d->move_and_click('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]', 'xpath', '//h3[contains(text(),"Weekdays")]');
 
 diag("add/delete a time def to Wednesday");
 $d->fill_element('#start', 'css', "04:20:00");
