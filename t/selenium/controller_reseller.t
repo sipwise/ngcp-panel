@@ -21,6 +21,7 @@ my $c = Selenium::Collection::Common->new(
 
 my $resellername = ("reseller" . int(rand(100000)) . "test");
 my $contractid = ("contract" . int(rand(100000)) . "test");
+my $templatename = ("template" . int(rand(100000)) . "mail");
 
 $c->login_ok();
 $c->create_reseller_contract($contractid);
@@ -84,8 +85,42 @@ diag("Checking Phonebook entry details");
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[2]', 'TestName'), 'Name is correct');
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0123456789'), 'Number is correct');
 
-diag("Go back to previous page");
-$d->find_element("Back", 'link_text')->click();
+diag('Go to Email Templates');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Email Templates", 'link_text')->click();
+
+diag('Trying to create new Template');
+$d->find_element("Create Email Template", 'link_text')->click();
+$d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
+ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), "Reseller found");
+$d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+$d->fill_element('//*[@id="name"]', 'xpath', $templatename);
+$d->fill_element('//*[@id="from_email"]', 'xpath', 'default@mail.test');
+$d->fill_element('//*[@id="subject"]', 'xpath', 'Testing Stuff');
+$d->fill_element('//*[@id="body"]', 'xpath', 'Howdy Buddy, this is just a test text =)');
+$d->fill_element('//*[@id="attachment_name"]', 'xpath', 'Random Character');
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Searching new Template');
+$d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', $templatename);
+
+diag('Check Details of Template');
+ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[3]', $templatename), "Name is correct");
+ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[2]', $resellername), "Reseller is correct");
+ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[4]', 'default@mail.test'), "From Email is correct");
+ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[5]', 'Testing Stuff'), "Subject is correct");
+
+diag('Delete Template Email');
+$d->move_and_click('//*[@id="email_template_table"]//tr[1]/td//a[contains(text(), "Delete")]', 'xpath');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+
+diag('Check if Template Email was deleted');
+$d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', $templatename);
+ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'css'), 'Template was deleted');
 
 diag("Open delete dialog and press cancel");
 $c->delete_reseller_contract($contractid, 1);
