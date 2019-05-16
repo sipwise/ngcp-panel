@@ -86,6 +86,19 @@ $d->find_element('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text
 diag('Go to Subscriber preferences');
 $d->find_element("Preferences", 'link_text')->click();
 
+diag('Trying to change subscriber IVR language');
+$d->find_element("Internals", 'link_text')->click();
+$d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "language")]'));
+$d->move_and_click('//table//tr/td[contains(text(), "language")]/..//td//a[contains(text(), "Edit")]', 'xpath');
+
+diag('Change language to German');
+$d->find_element('//*[@id="language"]/option[contains(text(), "German")]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if language has been applied');
+$d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Internals")]'));
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "language")]/../td/select/option[contains(text(), "German") and @selected="selected"]'), '"German" has been selected');
+
 diag('Trying to add a simple call forward');
 $d->find_element("Call Forwards", 'link_text')->click();
 $d->move_and_click('//*[@id="preferences_table_cf"]/tbody/tr/td[contains(text(), "Unconditional")]/../td/div/a[contains(text(), "Edit")]', 'xpath');
