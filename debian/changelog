@@ -1,3 +1,13 @@
+ngcp-panel (6.5.4.9+0~mr6.5.4.9) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [7453ad5] TT#56376 selenium: backport better fraud limit checks
+  * [5a87aab] TT#56376 selenium: move_and_click: add optional fallback parameter
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 16 May 2019 10:16:40 +0200
+
 ngcp-panel (6.5.4.8+0~mr6.5.4.8) unstable; urgency=medium
 
   [ Rene Krenn ]
