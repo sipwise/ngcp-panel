@@ -5082,17 +5082,17 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
 sub get_uas_json :Chained('callflow_base') :PathPart('uas_json') :Args(0) {
     my ($self, $c) = @_;
 
-    my %int_uas = (
-      $c->config->{callflow}->{lb_int}, 'lb',
-      $c->config->{callflow}->{lb_ext}, 'lb',
-      $c->config->{callflow}->{proxy},  'proxy',
-      $c->config->{callflow}->{sbc},    'sbc',
-      $c->config->{callflow}->{app},    'app',
-      $c->config->{callflow}->{pbx},    'pbx',
-    );
+    my $int_uas = {};
+
+    $int_uas->{$c->config->{callflow}->{lb_int}} = 'lb' if ($c->config->{callflow}->{lb_int});
+    $int_uas->{$c->config->{callflow}->{lb_ext}} = 'lb' if ($c->config->{callflow}->{lb_ext});
+    $int_uas->{$c->config->{callflow}->{proxy}} = 'proxy' if ($c->config->{callflow}->{proxy});
+    $int_uas->{$c->config->{callflow}->{sbc}} = 'sbc' if ($c->config->{callflow}->{sbc});
+    $int_uas->{$c->config->{callflow}->{app}} = 'app' if ($c->config->{callflow}->{app});
+    $int_uas->{$c->config->{callflow}->{pbx}} = 'pbx' if ($c->config->{callflow}->{pbx});
 
     $c->response->content_type('application/json');
-    $c->response->body(encode_json(\%int_uas));
+    $c->response->body(encode_json($int_uas));
 }
 
 sub get_json :Chained('callflow_base') :PathPart('json') :Args(0) {
