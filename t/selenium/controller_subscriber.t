@@ -25,6 +25,7 @@ my $emailstring = ("test" . int(rand(10000)) . "\@example.org");
 my $username = ("demo" . int(rand(10000)) . "name");
 my $bsetname = ("test" . int(10000) . "bset");
 my $destinationname = ("test" . int(10000) . "dset");
+my $sourcename = ("test" . int(10000) . "source");
 
 $c->login_ok();
 $c->create_domain($domainstring);
@@ -91,6 +92,24 @@ $d->move_and_click('//*[@id="preferences_table_cf"]/tbody/tr/td[contains(text(),
 $d->fill_element('//*[@id="destination.uri.destination"]', 'xpath', '43123456789');
 $d->find_element('//*[@id="cf_actions.advanced"]')->click();
 
+diag('Add a new Source set');
+$d->find_element('//*[@id="cf_actions.edit_source_sets"]')->click();
+$d->find_element('Create New', 'link_text')->click();
+$d->fill_element('//*[@id="name"]', 'xpath', $sourcename);
+$d->fill_element('//*[@id="source.0.source"]', 'xpath', '43*');
+
+diag('Adding another source');
+$d->find_element('//*[@id="source_add"]')->click();
+ok($d->fill_element('//*[@id="source.1.source"]', 'xpath', '494331337'), "New Source input was created");
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check Source set details');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $sourcename . '")]'), "Name is correct");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $sourcename . '")]/../td[contains(text(), "whitelist")]'), "Mode is correct");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $sourcename . '")]/../td[contains(text(), "43*")]'), "Number 1 is correct");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]//table//tr/td[contains(text(), "' . $sourcename . '")]/../td[text()[contains(., "494331337")]]'), "Number 2 is correct");
+$d->find_element('//*[@id="mod_close"]')->click();
+
 diag('Add a new B-Number set');
 $d->find_element('//*[@id="cf_actions.edit_bnumber_sets"]')->click();
 $d->find_element('Create New', 'link_text')->click();
@@ -118,8 +137,10 @@ $d->find_element('//*[@id="mod_close"]')->click();
 
 diag('Use new Sets');
 $d->find_element('//*[@id="callforward_controls_add"]')->click();
-ok($d->find_element_by_xpath('//select//option[contains(text(), "' . $bsetname . '")]')->click(), "B-Set has been found");
+$d->find_element('//*[@id="active_callforward.0.source_set"]/option[contains(text(), "' . $sourcename . '")]')->click();
+ok($d->find_element_by_xpath('//select//option[contains(text(), "' . $sourcename . '")]')->click(), "Source set has been found");
 ok($d->find_element_by_xpath('//select//option[contains(text(), "' . $destinationname . '")]')->click(), "Destination Set has been found");
+ok($d->find_element_by_xpath('//select//option[contains(text(), "' . $bsetname . '")]')->click(), "B-Set has been found");
 
 diag('Save');
 $d->find_element('//*[@id="cf_actions.save"]')->click();
