@@ -65,9 +65,7 @@ sub delete_domain {
     ok($self->driver->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $name);
     ok($self->driver->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $name), "Domain found");
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Domain_table"]'));
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Delete")]'));
-    $self->driver->find_element('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Delete")]')->click();
+    $self->driver->move_and_click('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Delete")]', 'xpath', '//*[@id="Domain_table"]');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this domain');
     } else {
@@ -135,9 +133,7 @@ sub delete_reseller {
     ok($self->driver->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $name);
     ok($self->driver->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $name), 'Entry found');
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Resellers_table"]'));
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
-    $self->driver->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
+    $self->driver->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="Resellers_table"]');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this reseller');
     } else {
@@ -158,9 +154,7 @@ sub delete_reseller_contract {
     ok($self->driver->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $resellerid);
     ok($self->driver->wait_for_text('//*[@id="contract_table"]/tbody/tr/td[2]', $resellerid), 'Entry found');
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="contract_table"]'));
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
-    $self->driver->find_element('//*[@id="contract_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
+    $self->driver->move_and_click('//*[@id="contract_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="contract_table"]');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this reseller contract');
     } else {
@@ -201,9 +195,7 @@ sub delete_rw_ruleset {
     ok($self->driver->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
     ok($self->driver->wait_for_text('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]/td[3]', $rulesetname), 'Ruleset was found');
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="rewrite_rule_set_table"]'));
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
-    $self->driver->find_element('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
+    $self->driver->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="rewrite_rule_set_table"]');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this ruleset');
     } else {
@@ -252,9 +244,7 @@ sub delete_customer {
     ok($self->driver->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('#Customer_table_filter input', 'css', $customerid);
     ok($self->driver->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
-    $self->driver->move_action(element => $self->driver->find_element('//*[@id="Customer_table"]'));
-    $self->driver->move_action(element=> $self->driver->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]'));
-    $self->driver->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]')->click();
+    $self->driver->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="Customer_table"]');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to terminate this customer');
     } else {
