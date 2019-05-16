@@ -1,3 +1,14 @@
+ngcp-panel (7.3.1.3+0~mr7.3.1.3) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [f768889] TT#56376 selenium: backport better fraud limit checks
+  * [9a94b27] TT#56376 selenium: use unique name for creating a peering server
+  * [c254379] TT#56376 selenium: move_and_click: add optional fallback parameter
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 16 May 2019 10:12:56 +0200
+
 ngcp-panel (7.3.1.2+0~mr7.3.1.2) unstable; urgency=medium
 
   [ Nico Schedel ]
