@@ -69,6 +69,50 @@ $d->find_element('//*[@id="mod_close"]')->click();
 diag("Check if IP address has been added");
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "127.0.0.1")]'), "IP address has beeen found");
 
+diag("Enable transcoding to Opus Mono and Stereo");
+$d->scroll_to_element($d->find_element('Media Codec Transcoding Options', 'link_text'));
+$d->find_element('Media Codec Transcoding Options', 'link_text')->click();
+
+diag("Enable Opus Mono");
+$d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_mono")]'));
+$d->move_and_click('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//a[contains(text(), "Edit")]', 'xpath');
+$d->select_if_unselected('//*[@id="transcode_opus_mono"]');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Opus Mono was enabled");
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//input[@checked="checked"]'), "Opus mono was enabled");
+
+diag("Change Opus Mono Bitrate");
+$d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_mono")]'));
+$d->move_and_click('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath');
+
+diag("Change to 32 kbit/s");
+$d->find_element('//*[@id="opus_mono_bitrate"]/option[contains(text(), "32")]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Bitrate was applied");
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), "Correct bitrate was selected");
+
+diag("Enable Opus Stereo");
+$d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_stereo")]'));
+$d->move_and_click('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//a[contains(text(), "Edit")]', 'xpath');
+$d->select_if_unselected('//*[@id="transcode_opus_stereo"]');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Opus Stereo was enabled");
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//input[@checked="checked"]'), "Opus stereo was enabled");
+
+diag("Change Opus Stereo Bitrate");
+$d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_stereo")]'));
+$d->move_and_click('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath');
+
+diag("Change to 32 kbit/s");
+$d->find_element('//*[@id="opus_stereo_bitrate"]/option[contains(text(), "32")]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Bitrate was applied");
+ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), "Correct bitrate was selected");
+
 diag("Open delete dialog and press cancel");
 $c->delete_domain($domainstring, 1);
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
