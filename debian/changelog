@@ -1,3 +1,12 @@
+ngcp-panel (5.5.9.2+0~mr5.5.9.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9cf1d8b] TT#28472 cert file per Collection.pm instance
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 May 2019 11:10:19 +0200
+
 ngcp-panel (5.5.9.1+0~mr5.5.9.1) unstable; urgency=medium
 
   [ Rene Krenn ]
