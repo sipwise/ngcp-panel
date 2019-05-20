@@ -24,9 +24,10 @@ SERVER="${1}"
 OUTPUT_DIRECTORY="${2:-/code/}"
 OUTPUT_TYPE=${3:-}
 shift; shift; shift # remove first three argv to use ${@} below.
-declare -a DEFAULT_TEST_PLAN=( $(find t/selenium/ -name \*.t) )
+declare -a DEFAULT_TEST_PLAN="t/selenium/runner.t"
 declare -a CUSTOM_TEST_PLAN=( "${@/#/t/selenium/}" )
 declare -a TEST_PLAN=( ${CUSTOM_TEST_PLAN[*]:-${DEFAULT_TEST_PLAN[*]}} )
+export TESTFILES=${TEST_PLAN[*]}
 
 # workaround for new Selenium::Remote::Driver (see Dockerfile)
 export PERL5LIB=/home/selenium/Selenium-Remote-Driver/lib/
@@ -48,7 +49,10 @@ firefox --version
 
 # ensure we don't leave any process behind causing problems with re-execution
 pkill -f 'geckodriver' || true
-DISPLAY=:99 ~/geckodriver &
+DISPLAY=:99 ~/geckodriver -p 4444 &
+DISPLAY=:99 ~/geckodriver -p 5555 &
+DISPLAY=:99 ~/geckodriver -p 6666 &
+DISPLAY=:99 ~/geckodriver -p 7777 &
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
@@ -59,11 +63,12 @@ echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024
 RC=0
 export CATALYST_SERVER="https://${SERVER}:1443"
 if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
-  prove -ofvm --timer --formatter TAP::Formatter::JUnit -l -It/lib "${TEST_PLAN[@]}" | \
+  export JENKINS=1
+  perl t/selenium/runner.t | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
   RC="${PIPESTATUS[0]}"
 else
-  prove -ofv --color -l -It/lib "${TEST_PLAN[@]}" || RC=$?
+  perl t/selenium/runner.t || RC=$?
 fi
 
 echo "Finished test execution, test execution returned with exit code ${RC}."
