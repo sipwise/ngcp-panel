@@ -24,8 +24,16 @@ SERVER="${1}"
 OUTPUT_DIRECTORY="${2:-/code/}"
 OUTPUT_TYPE=${3:-}
 shift; shift; shift # remove first three argv to use ${@} below.
-declare -a DEFAULT_TEST_PLAN=( $(find t/selenium/ -name \*.t) )
-declare -a CUSTOM_TEST_PLAN=( "${@/#/t/selenium/}" )
+echo "--------notice me---------"
+if [ "${1:-}" == '*.t' ] || [ "${1:-}" == '' ]
+then
+  echo "111111111111111111111111"
+  declare -a DEFAULT_TEST_PLAN=( $(find t/selenium/ -name runner.t) )
+else
+  echo "222222222222222222222222"
+  declare -a DEFAULT_TEST_PLAN=( $(find t/selenium/ -name \*.t) )
+  declare -a CUSTOM_TEST_PLAN=( "${@/#/t/selenium/}" )
+fi
 declare -a TEST_PLAN=( ${CUSTOM_TEST_PLAN[*]:-${DEFAULT_TEST_PLAN[*]}} )
 
 # workaround for new Selenium::Remote::Driver (see Dockerfile)
@@ -48,7 +56,11 @@ firefox --version
 
 # ensure we don't leave any process behind causing problems with re-execution
 pkill -f 'geckodriver' || true
-DISPLAY=:99 ~/geckodriver &
+DISPLAY=:99 ~/geckodriver -p 4444 &
+DISPLAY=:99 ~/geckodriver -p 5555 &
+DISPLAY=:99 ~/geckodriver -p 6666 &
+DISPLAY=:99 ~/geckodriver -p 7777 &
+
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
