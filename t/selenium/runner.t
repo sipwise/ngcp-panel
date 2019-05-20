@@ -1,0 +1,92 @@
+use warnings;
+use strict;
+use TAP::Harness;
+#use Selenium::Remote::Driver::FirefoxExtensions;
+#use Selenium::Collection::Common;
+#use Selenium::Collection::Functions;
+
+my $jenkins = $ENV{JENKINS};
+my $testplan = $ENV{TESTFILES};
+my $dir = 't/selenium/';
+my @tests;
+my $string;
+
+=pod
+my $d = Selenium::Collection::Functions::create_driver();
+my $c = Selenium::Collection::Common->new(
+    driver => $d
+);
+
+try {
+    $c->login_ok();
+    $d->quit();
+} catch {
+    print "-------------------------------------\n";
+    print "Test aborted. Login wasnt Successfull\n";
+    print "-------------------------------------\n";
+    exit 0;
+}
+=cut
+
+if($testplan eq "t/selenium/runner.t"){
+    @tests = ($dir . 'controller_admin.t', $dir . 'controller_billing.t', $dir . 'controller_customer.t', $dir . 'controller_domain.t', $dir . 'controller_peering.t', $dir . 'controller_reseller.t', $dir . 'controller_rw_ruleset.t', $dir . 'controller_subscriber.t');
+} else {
+    if (index($testplan, "t/selenium/controller_admin.t") != -1) {
+        $string = $dir . 'controller_admin.t';
+        push @tests, $string;
+    };
+    if (index($testplan, "t/selenium/controller_billing.t") != -1) {
+        $string = $dir . 'controller_billing.t';
+        push @tests, $string;
+    };
+    if (index($testplan, "t/selenium/controller_customer.t") != -1) {
+        $string = $dir . 'controller_customer.t';
+        push @tests, $string;
+    };
+    if (index($testplan, "t/selenium/controller_domain.t") != -1) {
+        $string = $dir . 'controller_domain.t';
+        push @tests, $string;
+    };
+    if (index($testplan, "t/selenium/controller_peering.t") != -1) {
+        $string = $dir . 'controller_peering.t';
+        push @tests, $string;
+    };
+    if (index($testplan, "t/selenium/controller_reseller.t") != -1) {
+        $string = $dir . 'controller_reseller.t';
+        push @tests, $string;
+    };
+    if (index($testplan, "t/selenium/controller_rw_ruleset.t") != -1) {
+        $string = $dir . 'controller_rw_ruleset.t';
+        push @tests, $string;
+    };
+    if (index($testplan, "t/selenium/controller_subscriber.t") != -1) {
+        $string = $dir . 'controller_subscriber.t';
+        push @tests, $string;
+    };
+};
+
+if($jenkins) {
+    my %args = ('lib', 't/lib',
+        'merge', '1',
+        'comments', '1',
+        'failures', '1',
+        'verbosity', '0',
+        'formatter_class', 'TAP::Formatter::JUnit',
+        'jobs', '4',
+        'timer', '1');
+    my $harness = TAP::Harness->new( \%args );
+    $harness->runtests(@tests);
+    print "\n";
+
+} else {
+    my %args = ('lib', 't/lib',
+        'comments', '1',
+        'failures', '1',
+        'formatter_class', 'TAP::Formatter::Console',
+        'verbosity', '0',
+        'color', '1',
+        'jobs', '4');
+    my $harness = TAP::Harness->new( \%args );
+    $harness->runtests(@tests);
+    print "\n";
+};
