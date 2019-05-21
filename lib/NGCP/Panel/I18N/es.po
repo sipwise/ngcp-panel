@@ -7318,6 +7318,10 @@ msgstr ""
 msgid "Show CDRs"
 msgstr "Mostrar CDRs"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Show Call Forward Destination to Caller"
+msgstr ""
+
 #: share/templates/subscriber/webphone.tt
 msgid "Show Offline"
 msgstr "Mostrar desconectados"
@@ -8887,6 +8891,12 @@ msgstr "Días de la semana"
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
 msgid "Weight"
 msgstr "Peso"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When forwarding a call, send the destination number or user back to the "
+"calling party."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
