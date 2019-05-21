@@ -1,3 +1,12 @@
+ngcp-panel (7.2.1.14+0~mr7.2.1.14) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [5a0be5f] TT#50655 Fix for Call Flow page
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 21 May 2019 14:02:54 +0200
+
 ngcp-panel (7.2.1.13+0~mr7.2.1.13) unstable; urgency=medium
 
   [ Nico Schedel ]
