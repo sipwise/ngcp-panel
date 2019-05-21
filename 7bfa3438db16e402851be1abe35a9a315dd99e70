@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a46c9f1_a459c690",
+        "filename": "t/lib/Selenium/Collection/testfunctions.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-21T11:26:56Z",
+      "side": 1,
+      "message": "Hm... did you merge all *.t files into on .pm here? Hm...",
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a46c9f1_e45fce73",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-21T11:26:56Z",
+      "side": 1,
+      "message": "I believe we should have a proper perl Shebang here.\nWhat do you think?",
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a46c9f1_04651a44",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-21T11:26:56Z",
+      "side": 1,
+      "message": "I believe with this approach you not fully utilizing you 4 threads. will it run in a way: 1,2,3,4,3,2,1,1,2,3,4,3,2,1?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 27
+      },
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a46c9f1_447482fc",
+        "filename": "t/selenium/testrunner",
+        "patchSetId": 10
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-21T11:26:56Z",
+      "side": 1,
+      "message": "I believe you can make it shorter and slightly better readable:\n  \ndeclare -a DEFAULT_TEST_PLAN\u003d( $(find t/selenium/ -name \\*.t) )\ndeclare -a CUSTOM_TEST_PLAN\u003d( \"${@/#/t/selenium/}\" )\nif [ -z \"${1:-}\" ] || [ \"${1:-}\" \u003d\u003d \u0027*.t\u0027 ]; then\n  CUSTOM_TEST_PLAN\u003d( $(find t/selenium/ -name runner.t) )\nfi",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 2
+      },
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
