@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a46c9f1_ed30110a",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-22T11:39:32Z",
+      "side": 1,
+      "message": "maybe better to accept the \\\\1, \\\\2, .. replacement patterns explicitly\n\n\n^([[:alnum:]\\Q$unreserved_chars$userinfo_unreserved_chars\\E]+|\\\\\\\\\\d)$",
+      "revId": "7c22d44516d6a9bbf02bc7073a339e01127c3ad4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
