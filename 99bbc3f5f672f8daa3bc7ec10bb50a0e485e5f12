@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a46c9f1_6daf21e4",
+        "filename": "t/selenium/controller_subscriber.t",
+        "patchSetId": 12
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-22T09:02:16Z",
+      "side": 1,
+      "message": "I believe the port should be passed from testrunner, as you will really do not know on which thread the test will be executed.",
+      "range": {
+        "startLine": 17,
+        "startChar": 8,
+        "endLine": 17,
+        "endChar": 22
+      },
+      "revId": "99bbc3f5f672f8daa3bc7ec10bb50a0e485e5f12",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
