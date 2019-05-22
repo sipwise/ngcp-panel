@@ -119,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "7a46c9f1_4d5fc50e",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-22T08:59:35Z",
+      "side": 1,
+      "message": "I have explained this in personal. We are really not use all 4 threads here in full. The longest thread in the first block will continue running while three other threads are sleeping (instead of starting some threads from the second block of tests).",
+      "parentUuid": "7a46c9f1_129a3c15",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 27
+      },
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a46c9f1_447482fc",
         "filename": "t/selenium/testrunner",
         "patchSetId": 10
