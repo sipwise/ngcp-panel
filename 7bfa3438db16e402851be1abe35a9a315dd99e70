@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a46c9f1_92864cb8",
+        "filename": "t/lib/Selenium/Collection/testfunctions.pm",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-05-22T06:54:02Z",
+      "side": 1,
+      "message": "Yeah its kinda messy, need to work out a better solution. Merging all into this file would not only mean that this code needs to be maintained 2 times, but also backporting would be a pain.",
+      "parentUuid": "7a46c9f1_a459c690",
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a46c9f1_e45fce73",
         "filename": "t/selenium/runner.t",
         "patchSetId": 10
@@ -30,6 +48,24 @@
       "writtenOn": "2019-05-21T11:26:56Z",
       "side": 1,
       "message": "I believe we should have a proper perl Shebang here.\nWhat do you think?",
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a46c9f1_b29ee805",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-05-22T06:54:02Z",
+      "side": 1,
+      "message": "Can add this no problem",
+      "parentUuid": "7a46c9f1_e45fce73",
       "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -59,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "7a46c9f1_129a3c15",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-05-22T06:54:02Z",
+      "side": 1,
+      "message": "No. It defines the 4 threads with the first 4 functions, executes them, wait until they are done, defines the 4 threads with the second 4 tests, executes and waits until its done.",
+      "parentUuid": "7a46c9f1_04651a44",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 27
+      },
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a46c9f1_447482fc",
         "filename": "t/selenium/testrunner",
         "patchSetId": 10
@@ -70,6 +130,30 @@
       "writtenOn": "2019-05-21T11:26:56Z",
       "side": 1,
       "message": "I believe you can make it shorter and slightly better readable:\n  \ndeclare -a DEFAULT_TEST_PLAN\u003d( $(find t/selenium/ -name \\*.t) )\ndeclare -a CUSTOM_TEST_PLAN\u003d( \"${@/#/t/selenium/}\" )\nif [ -z \"${1:-}\" ] || [ \"${1:-}\" \u003d\u003d \u0027*.t\u0027 ]; then\n  CUSTOM_TEST_PLAN\u003d( $(find t/selenium/ -name runner.t) )\nfi",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 2
+      },
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a46c9f1_3293b8fc",
+        "filename": "t/selenium/testrunner",
+        "patchSetId": 10
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-05-22T06:54:02Z",
+      "side": 1,
+      "message": "Will apply this!",
+      "parentUuid": "7a46c9f1_447482fc",
       "range": {
         "startLine": 27,
         "startChar": 0,
