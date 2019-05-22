@@ -58,7 +58,7 @@ apply(
                 # "#" is from dtmf-digit => local-phone-number => telephone-subscriber 
                 # "%" is from escaped 
                 # ":" we will not separate username and password
-                my $userinfo_unreserved_chars = '&=+$,;?/#%:';
+                my $userinfo_unreserved_chars = '&=+$,;?/#%:\\';
 
                 my ($user, $domain) = split(/\@/, $value);
                 
