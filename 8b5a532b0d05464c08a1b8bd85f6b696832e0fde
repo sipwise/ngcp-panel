@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a46c9f1_0d30dd55",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 17
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-05-22T10:27:09Z",
+      "side": 1,
+      "message": "JFYI, the idea if those smoke test was to skip all other tests if we cannot even login... it is probably useless in a way we are working with selenium tests now.",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 41
+      },
+      "revId": "8b5a532b0d05464c08a1b8bd85f6b696832e0fde",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
