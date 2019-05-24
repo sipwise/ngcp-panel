@@ -8801,6 +8801,10 @@ msgid "Transcode to Opus stereo"
 msgstr "Transcoder en Opus stereo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to RFC DTMF events"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Transcode to Speex 16 kHz"
 msgstr "Transcoder en Speex 16 kHz"
 
@@ -8815,6 +8819,10 @@ msgstr "Transcoder en Speex 8 kHz"
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
 msgstr "Le transcodage de fichier audio a échoué"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Translate inband PCM DTMF tones to RFC DTMF events."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Trusted Source"
