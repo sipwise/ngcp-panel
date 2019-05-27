@@ -24,7 +24,7 @@
                       [%- END -%]
                     </li>
                     <li>
-                        [% IF c.user && c.session.user_tz_name; '(' _ c.session.user_tz_name _ ')'; END; %]
+                        [% IF c.user && c.session.user_tz_name; '(' _ c.session.user_tz_name _ ' ' _ c.loc('time') _ ')'; END; %]
                     </li>
 [%- IF ( c.user && ( c.user.roles == 'admin' || c.user.is_superuser ) ) && openvpn_info.allowed -%]
 [%- IF !openvpn_info.active %]
