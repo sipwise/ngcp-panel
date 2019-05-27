@@ -308,10 +308,10 @@ sub _get_suppressions {
     my ($source_cli_suppression,$destination_user_in_suppression);
     if (ENABLE_SUPPRESSIONS) {
         my $supressions_rs = $c->model('DB')->resultset('call_list_suppressions');
-        $source_cli_suppression = $supressions_rs->find($item->get_column(SOURCE_CLI_SUPPRESSION_ID_COLNAME))
-            if defined $item->get_column(SOURCE_CLI_SUPPRESSION_ID_COLNAME);
-        $destination_user_in_suppression = $supressions_rs->find($item->get_column(DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME))
-            if defined $item->get_column(DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME);
+        $source_cli_suppression = $supressions_rs->find($item->get_column($c->stash->{source_cli_suppression_id_colname} || SOURCE_CLI_SUPPRESSION_ID_COLNAME))
+            if defined $item->get_column($c->stash->{source_cli_suppression_id_colname} || SOURCE_CLI_SUPPRESSION_ID_COLNAME);
+        $destination_user_in_suppression = $supressions_rs->find($item->get_column($c->stash->{destination_user_in_suppression_id_colname} || DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME))
+            if defined $item->get_column($c->stash->{destination_user_in_suppression_id_colname} || DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME);
     }
     return ($source_cli_suppression,$destination_user_in_suppression);
 
@@ -347,6 +347,8 @@ sub call_list_suppressions_rs {
     return $rs unless ENABLE_SUPPRESSIONS;
     $source_cli_suppression_id_colname //= SOURCE_CLI_SUPPRESSION_ID_COLNAME;
     $destination_user_in_suppression_id_colname //= DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME;
+    $c->stash->{source_cli_suppression_id_colname} = $source_cli_suppression_id_colname;
+    $c->stash->{destination_user_in_suppression_id_colname} = $destination_user_in_suppression_id_colname;
     my %search_cond = ();
     my %search_xtra = ();
     if (_is_show_suppressions($c)) {
