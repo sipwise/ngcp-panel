@@ -967,10 +967,10 @@ function create_ranges_annotations(id,type,ranges){
                 '<select class="subselect" name="line.' + linecmt + '.subscriber_id" id="line.' + linecmt + '.subscriber_id">' +
                 '<option value="0">'+(linekeyCurrent ? '[% c.loc("Subscriber") %]' : '[% c.loc("None") %]' )+'</option>' +
 [% FOR sub IN subscribers.all -%]
-                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% subscriber_displays.${sub.uuid}.defined ? subscriber_displays.${sub.uuid} : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
+                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.get_column('username_combined') %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
 [% END -%]
 [% FOR sub IN pbx_groups.all -%]
-                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% subscriber_displays.${sub.uuid}.defined ? subscriber_displays.${sub.uuid} : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
+                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.get_column('username_combined') %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
 [% END -%]
                 '</select>' +
                 '<select class="modeselect" name="line.' + linecmt + '.type" id="line.' + linecmt + '.type">' +
