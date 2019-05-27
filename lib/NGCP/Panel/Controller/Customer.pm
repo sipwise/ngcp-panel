@@ -381,43 +381,57 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         { name => "provisioning_voip_subscriber.pbx_hunt_policy", search => 1, title => $c->loc("Hunt Policy") },
         { name => "provisioning_voip_subscriber.pbx_hunt_timeout", search => 1, title => $c->loc("Serial Hunt Timeout") },
     ]);
-
-    $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
+    my $subscribers_rs = $c->model('DB')->resultset('voip_subscribers')->search({
         contract_id => $contract_id,
         status => { '!=' => 'terminated' },
-        'provisioning_voip_subscriber.is_pbx_group' => 0,
+        -or => [
+            
+        ],
     }, {
-        join => 'provisioning_voip_subscriber',
-        order_by => [qw/username/],
+        alias => 'me',
+        from  => [
+            { 'me' => 'billing.voip_subscribers' },
+            [
+                { 'provisioning_voip_subscriber' => 'provisioning.voip_subscribers', '-join_type' => 'left' },
+                [
+                    { 'provisioning_voip_subscriber.uuid' => { -ident => 'me.uuid' } },
+                ],
+            ],
+            [
+                { 'attribute' => 'provisioning.voip_preferences', '-join_type' => 'left' },
+                [
+                    {
+                        '-and' => [
+                            {
+                                'attribute.attribute' => { '-value' => 'display_name'} ,
+                            },
+                        ],
+                    },
+                ],
+            ],
+            [
+                { 'voip_usr_preferences' => 'provisioning.voip_usr_preferences', '-join_type' => 'left' },
+                [
+                    {
+                        '-and' => [
+                            {
+                                'voip_usr_preferences.attribute_id'        => { '-ident' => 'attribute.id'} ,
+                                'voip_usr_preferences.subscriber_id' => { -ident => 'provisioning_voip_subscriber.id' }
+                            },
+                        ],
+                    },
+                ],
+            ],
+        ],
+        '+select' => [\'ifnull(voip_usr_preferences.value, me.username)'],
+        '+as' => ['username_combined'],
+        order_by => [\'ifnull(voip_usr_preferences.value, me.username)','pbx_extension'],
     });
 
+
+    $c->stash->{subscribers} = $subscribers_rs->search_rs({'provisioning_voip_subscriber.is_pbx_group' => 0});
     if($c->config->{features}->{cloudpbx}) {
-
-        # we maintain the display names in a separate hash identified by
-        # subscriber uuid, because if we put the display name in the
-        # above query, we'll implicitly filter subscribers without a
-        # display name due to the inner join
-        my $subscriber_display_rs = $c->model('DB')->resultset('voip_subscribers')->search({
-            contract_id => $contract_id,
-            status => { '!=' => 'terminated' },
-            'provisioning_voip_subscriber.is_pbx_group' => 0,
-            'attribute.attribute' => 'display_name',
-        }, {
-            join => { 'provisioning_voip_subscriber' => { 'voip_usr_preferences' => 'attribute' }},
-            '+select' => ['voip_usr_preferences.value'],
-            '+as' => ['display_name'],
-             order_by => [qw/voip_usr_preferences.value pbx_extension/],
-        });
-        foreach my $sub ($subscriber_display_rs->all) {
-            $c->stash->{subscriber_displays}->{$sub->uuid} = $sub->get_column('display_name');
-        }
-
-        $c->stash->{pbx_groups} = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_rs(
-            c => $c,
-            schema => $c->model('DB'),
-            customer_id => $contract_id,
-            is_group => 1,
-        );
+        $c->stash->{pbx_groups} = $subscribers_rs->search_rs({'provisioning_voip_subscriber.is_pbx_group' => 1});
     }
 
     my $field_devs = [ $c->model('DB')->resultset('autoprov_field_devices')->search({
