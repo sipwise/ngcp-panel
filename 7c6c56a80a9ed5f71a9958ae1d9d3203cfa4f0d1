@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a46c9f1_a822f4b7",
+        "filename": "lib/NGCP/Panel/Controller/Customer.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2019-05-27T14:46:32Z",
+      "side": 1,
+      "message": "What do you think, would it be more maintainable with view in schema?",
+      "range": {
+        "startLine": 389,
+        "startChar": 8,
+        "endLine": 389,
+        "endChar": 12
+      },
+      "revId": "7c6c56a80a9ed5f71a9958ae1d9d3203cfa4f0d1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
