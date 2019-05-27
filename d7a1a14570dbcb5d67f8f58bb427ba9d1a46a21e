@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a46c9f1_08820853",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 38
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-05-27T10:33:09Z",
+      "side": 1,
+      "message": "currently disabled, because for some reason perl cannot find the modules anymore. need to investigate that and hopefully enable the login check...",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 4
+      },
+      "revId": "d7a1a14570dbcb5d67f8f58bb427ba9d1a46a21e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
