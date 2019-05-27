@@ -64,7 +64,7 @@ has '_ua' => (
             }
             $c->log->debug("vendor: $vendor; verify_ssl: $verify_ssl; verify_ssl_hostname: $verify_ssl_hostname;");
         }
-        my $ua = LWP::UserAgent->new(keep_alive => 1);
+        my $ua = LWP::UserAgent->new(keep_alive => 0);
         $ua->ssl_opts(
             SSL_verify_mode => $verify_ssl,
             verify_hostname => $verify_ssl_hostname,
