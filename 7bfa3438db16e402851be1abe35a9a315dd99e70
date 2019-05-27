@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "7a46c9f1_c8c980ae",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-05-27T10:59:57Z",
+      "side": 1,
+      "message": "presuming each thread takes different time, you can use the pattern below.\n\nwhile ((scalar keys %processors) \u003e 0) {\n    foreach my $processor (values %processors) {\n        if (defined $processor and $processor-\u003eis_joinable()) {\n            $processor-\u003ejoin();\n            delete $processors{$processor-\u003etid()};\n            mydebug(\u0027processor thread tid \u0027 . $processor-\u003etid() . \u0027 joined\u0027,getlogger(__PACKAGE__));\n        }\n    }\n    sleep($thread_sleep_secs);\n}\n\nsee eg. SqlProcessor.pm in [bulk-processor] package.",
+      "parentUuid": "7a46c9f1_4d5fc50e",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 27
+      },
+      "revId": "7bfa3438db16e402851be1abe35a9a315dd99e70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a46c9f1_447482fc",
         "filename": "t/selenium/testrunner",
         "patchSetId": 10
