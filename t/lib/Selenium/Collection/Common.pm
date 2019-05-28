@@ -164,7 +164,7 @@ sub delete_reseller_contract {
 
 sub create_rw_ruleset {
     my($self, $rulesetname, $resellername) = @_;
-    return unless $rulesetname, $resellername;
+    return unless $rulesetname && $resellername;
 
     diag('Go to Rewrite Rule Sets page');
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
