@@ -1,3 +1,12 @@
+ngcp-panel (7.3.1.6+0~mr7.3.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [01437f8] TT#59324 disable DeviceBootStrap LWP::UserAgent keep_alive
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 May 2019 16:33:24 +0200
+
 ngcp-panel (7.3.1.5+0~mr7.3.1.5) unstable; urgency=medium
 
   [ Kirill Solomko ]
