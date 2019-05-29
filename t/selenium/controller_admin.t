@@ -44,7 +44,10 @@ sub ctr_admin() {
     $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
-    ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Admin found");
+
+    diag('Check Admin details');
+    ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[contains(text(), '. $adminname .')]'), "Name is correct");
+    ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[contains(text(), '. $resellername .')]'), "Reseller is correct");
 
     diag('New admin tries to login now');
     $c->login_ok($adminname, $adminpwd);
