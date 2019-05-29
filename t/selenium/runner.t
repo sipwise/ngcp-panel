@@ -41,6 +41,10 @@ if($testplan eq $dir . 'runner.t') {
         $string = $dir . 'controller_domain.t';
         push @tests, $string;
     };
+    if (index($testplan, $dir . 'controller_ncos.t') != -1) {
+        $string = $dir . 'controller_ncos.t';
+        push @tests, $string;
+    };
     if (index($testplan, $dir . 'controller_peering.t') != -1) {
         $string = $dir . 'controller_peering.t';
         push @tests, $string;
