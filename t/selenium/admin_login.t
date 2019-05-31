@@ -23,18 +23,16 @@ sub admin_login {
     try {
         my $login = 'administrator';
         my $pwd = 'administrator';
-
-        diag("Loading login page (logout first)");
         my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
         $d->get("$uri/logout"); # make sure we are logged out
         $d->get("$uri/login");
         $d->find_element('#username', 'css')->send_keys($login);
         $d->find_element('#password', 'css')->send_keys($pwd);
         $d->find_element('#submit', 'css')->click();
-        return 0;
+        return 1;
     }
     catch {
-        return 1;
+        return 0;
     };
 }
 
