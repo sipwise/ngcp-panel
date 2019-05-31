@@ -17,6 +17,7 @@ sub ctr_ncos {
     my $resellername = ("reseller" . int(rand(100000)) . "test");
     my $contractid = ("contract" . int(rand(100000)) . "test");
     my $ncosname = ("ncos" . int(rand(100000)) . "level");
+    my $domainstring = ("domain" . int(rand(100000)) . ".example.org");
 
     $c->login_ok();
     $c->create_reseller_contract($contractid);
@@ -85,6 +86,40 @@ sub ctr_ncos {
     diag("Check if NCOS settings have been applied");
     ok($d->find_element_by_xpath('//*[@id="local_ac"][@checked="checked"]'), 'Setting "Include local area code" was applied');
 
+    diag("Creating Domain to add NCOS Level");
+    $c->create_domain($domainstring, $resellername);
+    diag("Searching Domain");
+    $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
+    ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[contains(text(), "domain")]', $domainstring), "Domain was found");
+    $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
+
+    diag("Open 'Call Blockings'");
+    $d->find_element("Call Blockings", 'link_text')->click();
+    $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Call Blockings")]'));
+
+    diag("Edit setting 'NCOS'");
+    $d->move_and_click('//table//tr//td[contains(text(), "ncos")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(),"Call Blockings")]');
+    $d->find_element('//*[@id="ncos"]/option[contains(text(), "' . $ncosname . '")]')->click();
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag("Check if NCOS Level was applied");
+    ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "ncos")]/../td/select/option[contains(text(), "' . $ncosname . '")][@selected="selected"]'), 'NCOS Level was applied');
+
+    diag('Go back to NCOS interface');
+    $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $d->find_element("NCOS Levels", 'link_text')->click();
+
+    diag('Search for our new NCOS');
+    $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
+    ok($d->wait_for_text('//*[@id="ncos_level_table"]/tbody/tr[1]/td[3]', $ncosname), 'NCOS was found');
+
+    diag('Go to NCOS settings');
+    $d->move_and_click('//*[@id="ncos_level_table"]/tbody/tr[1]/td/div/a[contains(text(), "Patterns")]', 'xpath', '//*[@id="ncos_level_table_filter"]/label/input');
+
     diag("Delete NCOS Number pattern");
     $d->move_and_click('//*[@id="number_pattern_table"]//tr//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="number_pattern_table_filter"]/label/input');
     $d->find_element('//*[@id="dataConfirmOK"]')->click();
@@ -110,6 +145,7 @@ sub ctr_ncos {
     $d->move_and_click('//*[@id="ncos_level_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="ncos_level_table_filter"]/label/input');
     $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
+    $c->delete_domain($domainstring);
     $c->delete_reseller_contract($contractid);
     $c->delete_reseller($resellername);
 
