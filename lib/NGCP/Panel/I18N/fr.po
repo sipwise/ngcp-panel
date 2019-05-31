@@ -2658,6 +2658,10 @@ msgid "Email Templates"
 msgstr "Modèles d'e-mail"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Email template"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template does not exist"
 msgstr ""
 
@@ -2668,6 +2672,10 @@ msgstr "Modèle d'e-mail créé avec succès"
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully deleted"
 msgstr "Modèle d'e-mail supprimé avec succès"
+
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Email template successfully synced"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully updated"
@@ -3577,6 +3585,10 @@ msgstr "Echec lors de la sauvegarde des méta-données de la facture."
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to store invoice template"
 msgstr "Echec lors du stockage du modèle de facture"
+
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Failed to sync email template"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Failed to terminate LNP number"
@@ -8288,6 +8300,10 @@ msgstr ""
 msgid "Sync Device"
 msgstr "Synchronisation de l'appareil"
 
+#: share/templates/emailtemplate/list.tt
+msgid "Sync Email Templates"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Synchronisation interval of NTP server."
 msgstr "Intervalle de synchronisation du serveur NTP."
@@ -9506,6 +9522,10 @@ msgstr "seconde"
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "seconds"
 msgstr "secondes"
+
+#: share/layout/body.tt
+msgid "time"
+msgstr ""
 
 #: share/templates/error_page.tt
 msgid "time of incident:"

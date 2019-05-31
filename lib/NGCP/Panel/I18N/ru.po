@@ -2550,6 +2550,10 @@ msgid "Email Templates"
 msgstr "Шаблоны электронной почты"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Email template"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template does not exist"
 msgstr ""
 
@@ -2560,6 +2564,10 @@ msgstr "Шаблон электронной почты успешно созда
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully deleted"
 msgstr "Шаблон электронной почты успешно удален"
+
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Email template successfully synced"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully updated"
@@ -3445,6 +3453,10 @@ msgstr "Не удалось сохранить метаданные счёт-ф�
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to store invoice template"
 msgstr "Не удалось сохранить шаблон счёт-фактуры."
+
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm
+msgid "Failed to sync email template"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Failed to terminate LNP number"
@@ -8016,6 +8028,10 @@ msgstr ""
 msgid "Sync Device"
 msgstr "Синхронизация устройств"
 
+#: share/templates/emailtemplate/list.tt
+msgid "Sync Email Templates"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Synchronisation interval of NTP server."
 msgstr ""
@@ -9196,6 +9212,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "seconds"
+msgstr ""
+
+#: share/layout/body.tt
+msgid "time"
 msgstr ""
 
 #: share/templates/error_page.tt
