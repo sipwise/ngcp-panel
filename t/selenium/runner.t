@@ -14,7 +14,7 @@ my $dir = 't/selenium/';
 my @tests;
 my $string;
 
-if(admin_login()) {
+if(!admin_login()) {
     print "-------------------------------------\n";
     print "Test was aborted. Login failed\n";
     print $ENV{CATALYST_SERVER} . "\n";
