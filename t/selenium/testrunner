@@ -24,9 +24,11 @@ SERVER="${1}"
 OUTPUT_DIRECTORY="${2:-/code/}"
 OUTPUT_TYPE=${3:-}
 shift; shift; shift # remove first three argv to use ${@} below.
-declare -a DEFAULT_TEST_PLAN="t/selenium/runner.t"
-declare -a CUSTOM_TEST_PLAN=( "${@/#/t/selenium/}" )
-declare -a TEST_PLAN=( ${CUSTOM_TEST_PLAN[*]:-${DEFAULT_TEST_PLAN[*]}} )
+if [ -z "${1:-}" ] || [ "${1:-}" == '*.t' ]; then
+  declare -a TEST_PLAN="t/selenium/runner.t"
+else
+  declare -a TEST_PLAN=( "${@/#/t/selenium/}" )
+fi
 export TESTFILES=${TEST_PLAN[*]}
 
 # workaround for new Selenium::Remote::Driver (see Dockerfile)
