@@ -15,6 +15,11 @@ my @tests;
 my $string;
 
 if(admin_login()) {
+    print "-----------------------------------------\n";
+    print "Login was succesfull. Launching Test Plan\n";
+    print $ENV{CATALYST_SERVER} . "\n";
+    print "-----------------------------------------\n";
+} else {
     print "-------------------------------------\n";
     print "Test was aborted. Login failed\n";
     print $ENV{CATALYST_SERVER} . "\n";
@@ -41,10 +46,12 @@ if($testplan eq $dir . 'runner.t') {
         $string = $dir . 'controller_domain.t';
         push @tests, $string;
     };
+=pod
     if (index($testplan, $dir . 'controller_ncos.t') != -1) {
         $string = $dir . 'controller_ncos.t';
         push @tests, $string;
     };
+=cut
     if (index($testplan, $dir . 'controller_peering.t') != -1) {
         $string = $dir . 'controller_peering.t';
         push @tests, $string;
