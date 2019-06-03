@@ -1,3 +1,58 @@
+ngcp-panel (7.2.2.1+0~mr7.2.2.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9bde054] TT#49694 match patterns: reject malformed "\0"-"\9" only
+  * [6782421] TT#56463 fix $$c refs
+  * [eeb1e2b] TT#56463 fix $c->log vs $c->loc #1
+  * [d99c231] TT#56463 fix $c->log vs $c->loc #2
+  * [f544e18] TT#57900 scenario in balanceintervals.t fails on fast hardware
+  * [0f8afd6] TT#58004 stop+start_profile instead of update_profile event
+
+  [ Kirill Solomko ]
+  * [b381df4] TT#55104 fix sound files update_model error handling
+  * [d050c97] TT#55459 subscriber_only UI header rule set changes
+  * [7f6941c] TT#56653 disable UI system status widget
+  * [45799ee] TT#56602 no apply_rewrite for a terminated prov subscriber
+  * [56053c8] TT#57701 Form/Header/Rule add direction "reply"
+  * [8d583ee] TT#59164 Field::URI allow "\\" char in sip-username
+  * [1269a2b] TT#59324 disable DeviceBootStrap LWP::UserAgent keep_alive
+
+  [ Irina Peshinskaya ]
+  * [59be3bb] TT#54205 TT#54264 TT#54351 TT#54263 TT#54206 Timesets events representation fixes
+  * [1d8e1a3] TT#54350 Consider DTSTART and DTEND in event representation
+  * [e7d5a55] TT#55503 Fix DTSTART only timeset representation
+  * [ffa0f07] TT#47017 Fix Phonebook and Timeset UI rendering
+  * [6730d69] TT#47017 Fix return page after closing edit phonebook form
+  * [2dca036] TT#55364 Fix /api/numbers PATCH for aliases
+  * [8c1a7d9] TT#54350 Always show hours related text in rrule description
+  * [abf6b95] TT#49255 Enable all ssl checkings for the ZTP RPC calls
+  * [c7b6647] TT#49255 Change Snom ZTP server hostname
+  * [e4cf73a] TT#50907 Make subscriber profiles tests more stable
+  * [2c1a4c1] TT#55366 Fix strings comparison in datatable multifield
+
+  [ Andreas Granig ]
+  * [24a6544] TT#53326 Remove stray "xx" in device provisioning
+  * [2ce51b5] TT#52989 Fix device-id handling in panel UI
+  * [5dd9c25] TT#55953 Prevent hiding buttons on ajax search
+
+  [ Nico Schedel ]
+  * [5a8262e] TT#56376 selenium: fix crash on entering fraud limits
+  * [c4f31d1] TT#56376 selenium: backport wait_for_text() from master
+  * [a36dca1] TT#56376 selenium: fix crash on deleting date definitions
+  * [eadcbda] TT#56376 selenium: change move_actions in controller_customer
+  * [0b3760a] TT#56376 selenium: fix crash on deleting date defenition
+  * [c55469c] TT#56376 selenium: yet another fix for crashing fraud limits.
+  * [7b42e9d] TT#56376 selenium: backport move_and_click function from master
+  * [93f1858] TT#56376 selenium: backport better fraud limit checks
+  * [9b55837] TT#56376 selenium: move_and_click: add optional fallback parameter
+
+  [ Flaviu Mates ]
+  * [5e7e3a6] TT#50655 Fix for Call Flow page
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Jun 2019 15:05:56 +0200
+
 ngcp-panel (7.2.2.0+0~mr7.2.2.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
