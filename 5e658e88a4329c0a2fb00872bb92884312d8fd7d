@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a43c5e1_fd868764",
+        "filename": "t/selenium/admin_login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-06-03T12:48:48Z",
+      "side": 1,
+      "message": "can you please explain the reason behind.\nNormally methon returns non-zero code in the failed case.",
+      "revId": "5e658e88a4329c0a2fb00872bb92884312d8fd7d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
