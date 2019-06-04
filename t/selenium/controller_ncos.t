@@ -71,7 +71,7 @@ sub ctr_ncos {
     $d->find_element("Create LNP Entry", 'link_text')->click();
 
     diag("Enter LNP details");
-    $d->select_if_unselected('//*[@id="lnp_provideridtable"]/tbody/tr[1]/td[4]/input');
+    $d->select_if_unselected('#lnp_provideridtable > tbody > tr:nth-child(1) > td:nth-child(4) > input[type=checkbox]', 'css');
     $d->fill_element('//*[@id="description"]', 'xpath', 'Rule for LNP Carrier 1');
     $d->find_element('//*[@id="save"]')->click();
 
