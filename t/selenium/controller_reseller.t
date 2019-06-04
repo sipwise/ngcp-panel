@@ -110,7 +110,7 @@ sub ctr_reseller {
     ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[5]', 'Testing Stuff'), "Subject is correct");
 
     diag('Delete Template Email');
-    $d->move_and_click('//*[@id="email_template_table"]//tr[1]/td//a[contains(text(), "Delete")]', 'xpath');
+    $d->move_and_click('//*[@id="email_template_table"]//tr[1]/td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="email_template_table_filter"]/label/input');
     $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
     diag('Check if Template Email was deleted');
