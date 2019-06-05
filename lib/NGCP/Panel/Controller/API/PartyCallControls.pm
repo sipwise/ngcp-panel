@@ -51,7 +51,7 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -104,7 +104,7 @@ sub POST :Allow {
             unless($sms) {
                 $c->log->error("failed to find sms with id $callid and token $token");
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                    "Failed to find sms with callid $callid and given token");
+                    "Failed to find sms with callid " . $c->qs($callid) . " and given token");
                 last;
             }
             if($status eq "ACCEPT") {

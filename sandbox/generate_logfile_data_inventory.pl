@@ -601,7 +601,7 @@ sub _deserialize_messagesargs {
     use Data::Dumper;
     my $args = eval $_line;
     if ($@) {
-        warn($@);
+        warn($_line ."\n" .$@);
         return undef;
     } else {
         return $args;
@@ -704,8 +704,10 @@ sub _dispatch_logfile {
         push(@{$result{'panel-debug.log'}},$log_line);
     } elsif (index($log_line->{log_line},'CALLED=API') >= 0) {
         push(@{$result{'api.log'}},$log_line);
+        #print $log_line->{log_line} . "\n";
     } else {
         push(@{$result{'panel.log'}},$log_line);
+        print $log_line->{log_line} . "\n";
     }
 
 }
