@@ -122,11 +122,11 @@ sub subresnum_from_number {
         \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
     );
     unless($num_rs->first) {
-        return 0 unless &{$err_code}("invalid number '$number'",'number',"Number does not exist");
+        return 0 unless &{$err_code}("invalid number '" . $c->qs($number) . "'",'number',"Number does not exist");
     }
     my $sub = $num_rs->first->subscriber;
     unless($sub) {
-        return 0 unless &{$err_code}("invalid number '$number', not assigned to any subscriber",'number',"Number is not active");
+        return 0 unless &{$err_code}("invalid number '" . $c->qs($number) . "', not assigned to any subscriber",'number',"Number is not active");
     }
 
     my $res = $num_rs->first->reseller;
@@ -135,7 +135,7 @@ sub subresnum_from_number {
         # so take the long way here
         $res = $sub->contract->contact->reseller;
         unless($res) {
-            return 0 unless &{$err_code}("invalid number '$number', not assigned to any reseller",'number',"Number is not active");
+            return 0 unless &{$err_code}("invalid number '" . $c->qs($number) . "', not assigned to any reseller",'number',"Number is not active");
         }
     }
 
