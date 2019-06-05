@@ -294,7 +294,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             'me.id' => $c->user->account_id,
         });
         unless($contract_rs->count) {
-            $c->log->error("unauthorized access of subscriber uuid '".$c->user->uuid."' to contract id '$contract_id'");
+            $c->log->error("unauthorized access of subscriber uuid '".$c->qs($c->user->uuid)."' to contract id '$contract_id'");
             $c->detach('/denied_page');
         }
     }

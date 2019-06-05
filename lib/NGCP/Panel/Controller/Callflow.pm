@@ -133,7 +133,7 @@ sub get_callmap :Chained('callflow_base') :PathPart('callmap') :Args(0) {
 
     my $calls = [ $calls_rs->all ];
     unless(@{ $calls }) {
-         $c->log->error("No packets for call-id $cid found");
+         $c->log->error("No packets for call-id " . $c->qs($cid) . " found");
          $c->stash(messages => [{type => 'error', text => $c->loc('No packets for this Call-ID found.')}])
     } else {
         my $map = NGCP::Panel::Utils::Callflow::generate_callmap($c, $calls);

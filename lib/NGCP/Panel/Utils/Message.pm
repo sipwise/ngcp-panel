@@ -43,17 +43,20 @@ sub get_log_params {
 
     # remote user
     my $r_user = '';
+    my $is_subscriber = 0;
     if ($c->user_exists) {
         if ($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') {
             $r_user = $c->user->login;
         } elsif ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') {
-            $r_user = $c->user->webusername . '@' . $c->user->domain->domain;
+            $r_user = $c->qs($c->user->webusername . '@' . $c->user->domain->domain);
+            $is_subscriber = 1;
         }
     }
 
     # remote ip
     my $r_ip = $c->request->address;
     $r_ip =~ s/^::ffff://; # ipv4 in ipv6 form -> ipv4
+    $r_user = $c->qs($r_ip) if $is_subscriber;
 
     # parameters
     my $data_str;
@@ -88,8 +91,9 @@ sub get_log_params {
     if (length($data_str) > 100000) {
         # trim long messages
         $data_str = "{ data => 'Msg size is too big' }";
+    } else { 
+        $data_str = $c->qs($data_str);
     }
-
 
     return {
                 tx_id  => $log_tx_id,
@@ -178,7 +182,7 @@ sub error {
 
     my $logstr = 'IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"';
     my $rc = $c->log->error(
-        sprintf $logstr, @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
+        sprintf $logstr, @{$log_params}{qw(r_ip called tx_id r_user data)}, $c->qs($msg), $c->qs($log_msg));
     if ($type eq 'panel') {
         if (!defined $params{flash} || $params{flash} ) {
             $c->flash(messages => [{ type => $usr_type,

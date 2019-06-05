@@ -45,7 +45,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
     }
 
     unless ($from && $to && $text && $token) {
-        $c->log->error("Missing one param of: from ($from), to ($to), text ($text), auth_token ($token).");
+        $c->log->error("Missing one param of: from (" . $c->qs($from) . "), to (" . $c->qs($to) . "), text ($text), auth_token ($token).");
         $c->detach('/denied_page');
     }
 
@@ -69,7 +69,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                     })->first;
 
             unless ($prov_dbalias) {
-                $c->log->warn("No corresponding subscriber for incoming number ($to) found.");
+                $c->log->warn("No corresponding subscriber for incoming number (" . $c->qs($to) . ") found.");
                 $c->log->debug("from: $from, to: $to, text: $text");
                 die "no_subscriber_found";
             }
@@ -129,7 +129,7 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                     type => 'cfs'
                 });
                 unless($cf_maps->count) {
-                    $c->log->info("No cfs for inbound sms from $from to $to found.");
+                    $c->log->info("No cfs for inbound sms from " . $c->qs($from) . " to " . $c->qs($to) . " found.");
                     last;
                 }
 
@@ -140,18 +140,18 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                     if($map->source_set) {
                         $source_pass = 0;
                         foreach my $source($map->source_set->voip_cf_sources->all) {
-                            $c->log->info(">>>> checking $from against ".$source->source);
+                            $c->log->debug(">>>> checking $from against ".$source->source);
                             if(fnmatch($source->source, $from)) {
-                                $c->log->info(">>>> matched $from against ".$source->source.", pass");
+                                $c->log->debug(">>>> matched $from against ".$source->source.", pass");
                                 $source_pass = 1;
                                 last;
                             }
                         }
                     }
                     if($source_pass) {
-                        $c->log->info(">>>> source check for $from passed, continue with time check");
+                        $c->log->debug(">>>> source check for $from passed, continue with time check");
                     } else {
-                        $c->log->info(">>>> source check for $from failed, trying next map entry");
+                        $c->log->debug(">>>> source check for $from failed, trying next map entry");
                         next;
                     }
 
@@ -167,38 +167,38 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                                 $time->hour // '',
                                 $time->minute // ''
                             );
-                            $c->log->info(">>>> checking $now against ".$timestring);
+                            $c->log->debug(">>>> checking $now against ".$timestring);
                             if(inPeriod($now, $timestring)) {
-                                $c->log->info(">>>> matched $now against ".$timestring.", pass");
+                                $c->log->debug(">>>> matched $now against ".$timestring.", pass");
                                 $time_pass = 1;
                                 last;
                             }
                         }
                     }
                     if($time_pass) {
-                        $c->log->info(">>>> time check for $now passed, use destination set");
+                        $c->log->debug(">>>> time check for $now passed, use destination set");
                         $dset = $map->destination_set;
                         last;
                     } else {
-                        $c->log->info(">>>> time check for $now failed, trying next map entry");
+                        $c->log->debug(">>>> time check for $now failed, trying next map entry");
                         next;
                     }
                 }
 
                 unless($dset) {
-                    $c->log->info(">>>> checks failed, bailing out without forwarding");
+                    $c->log->debug(">>>> checks failed, bailing out without forwarding");
                     last;
                 }
 
-                $c->log->info(">>>> proceed sms forwarding");
+                $c->log->debug(">>>> proceed sms forwarding");
 
                 unless($dset->voip_cf_destinations->first) {
-                    $c->log->info(">>>> detected cf mapping has no destinations in destination set");
+                    $c->log->debug(">>>> detected cf mapping has no destinations in destination set");
                     last;
                 }
                 my $dst = $dset->voip_cf_destinations->first->destination;
                 $dst =~ s/^sip:(.+)\@.+$/$1/;
-                $c->log->info(">>>> forward sms to $dst");
+                $c->log->debug(">>>> forward sms to $dst");
 
                 my $pcc_status = $pcc_enabled ? "pending" : "none";
                 my $fwd_item = NGCP::Panel::Utils::SMS::add_journal_record(
