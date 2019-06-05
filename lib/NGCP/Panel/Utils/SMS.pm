@@ -219,14 +219,11 @@ sub init_prepaid_billing {
 
     my $use_list = { 'NGCP::Rating::Inew::SmsSession' => undef };
     unless(can_load(modules => $use_list, nocache => 0, autoload => 0)) {
-        $c->log->error(sprintf
-            "Failed to load NGCP::Rating::Inew::SmsSession for sms=%s from=%s to=%s",
-                $session_id, $caller, $callee
-        );
+        $c->log->error(sprintf("Failed to load NGCP::Rating::Inew::SmsSession for sms=%s from=%s to=%s",$session_id, $c->qs($caller), $c->qs($callee));
         $session->{status} = 'failed';
         $session->{reason} =
             sprintf 'failed to init sms session sid=%s from=%s to=%s',
-                $session_id, $caller,$callee;
+                $session_id, $c->qs($caller), $c->qs($callee);
         return;
     }
     my $amqr = NGCP::Rating::Inew::SmsSession::init(
@@ -234,14 +231,11 @@ sub init_prepaid_billing {
         $c->config->{libinewrate}->{openwire_uri},
     );
     unless($amqr) {
-        $c->log->error(sprintf
-            "Failed to create sms amqr handle for sms sid=%s from=%s to=%s",
-                $session_id, $caller, $callee
-        );
+        $c->log->error(sprintf("Failed to create sms amqr handle for sms sid=%s from=%s to=%s",$session_id, $c->qs($caller), $c->qs($callee));
         $session->{status} = 'failed';
         $session->{reason} =
             sprintf 'failed to create sms session sid=%s from=%s to=%s',
-                $session_id, $caller, $callee;
+                $session_id, $c->qs($caller), $c->qs($callee);
         return;
     }
     $session->{amqr_h} = $amqr;
@@ -261,19 +255,19 @@ sub init_prepaid_billing {
         });
 
         if (not defined $sess or $sess == -1) {
-            $c->log->error("Failed to create sms rating session from $caller to $callee with session id $this_session_id");
+            $c->log->error("Failed to create sms rating session from " . $c->qs($caller) . ' to ' . $c->qs($callee) . " with session id $this_session_id");
             $session->{status} = 'failed';
             $session->{reason} = 'failed to create sms session';
             last;
         } elsif ($sess == 0) {
-            $c->log->error("Remote denied sms rating session from $caller to $callee with session id $this_session_id (subscriber=inactive)");
+            $c->log->error("Remote denied sms rating session from " . $c->qs($caller) . ' to ' . $c->qs($callee) . " with session id $this_session_id (subscriber=inactive)");
             $session->{status} = 'failed';
             $session->{reason} = 'remote denied sms session (subscriber=inactive)';
             last;
         }
 
         unless($has_credit) {
-            $c->log->info("No credit for sms from $caller to $callee with session id $this_session_id");
+            $c->log->info("No credit for sms from " . $c->qs($caller) . ' to ' . $c->qs($callee) . " with session id $this_session_id");
             $session->{status} = 'failed';
             $session->{reason} = 'insufficient credit';
             NGCP::Rating::Inew::SmsSession::session_destroy($sess);
@@ -283,7 +277,7 @@ sub init_prepaid_billing {
         push @{$session->{parts}}, $sess;
 
         unless(NGCP::Rating::Inew::SmsSession::session_sms_reserve($sess)) {
-            $c->log->error("Failed to reserve sms session from $caller to $callee with session id $this_session_id");
+            $c->log->error("Failed to reserve sms session from " . $c->qs($caller) . ' to ' . $c->qs($callee) . " with session id $this_session_id");
             $session->{status} = 'failed';
             $session->{reason} = 'failed to reserve sms session';
             last;

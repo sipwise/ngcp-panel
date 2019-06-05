@@ -191,7 +191,7 @@ sub update_item_model {
         );
 
     } catch($e) {
-        $c->log->error("failed to update number: $e");
+        $c->log->error("failed to update number: " . $c->qs($e));
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update number.");
         return;
     }

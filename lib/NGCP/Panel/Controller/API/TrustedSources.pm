@@ -90,7 +90,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
@@ -105,7 +105,7 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -140,7 +140,7 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('voip_trusted_sources')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create trusted source: $e"); # TODO: user, message, trace, ...
+            $c->log->error("failed to create trusted source: " . $c->qs($e)); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create trusted source.");
             last;
         }
@@ -150,7 +150,7 @@ sub POST :Allow {
             my ($c) = @_;
             my $_item = $self->item_by_id($c, $item->id);
             return $self->hal_from_item($c, $_item, $form); });
-        
+
         $guard->commit;
 
         try {

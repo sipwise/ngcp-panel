@@ -527,7 +527,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
     unless($posted) {
         unless($uuid_string && UUID::parse($uuid_string, $uuid_bin) != -1) {
-            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->qs($c->req->address)."'");
             $c->detach('/denied_page')
         }
 
@@ -538,7 +538,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
         my $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
         unless($subscriber) {
-            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->qs($c->req->address)."'");
             $c->detach('/denied_page');
         }
     }
@@ -570,7 +570,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
                 $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
                 unless($subscriber && $subscriber->provisioning_voip_subscriber) {
-                    $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+                    $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->qs($c->req->address)."'");
                     $c->detach('/denied_page');
                 }
                 $subscriber->provisioning_voip_subscriber->update({
@@ -3108,7 +3108,7 @@ sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL)
         prefetch => ['subscriber', 'primary_number_owners_active'],
     });
 
-    
+
     ##other variant of the correct query is:
     #my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
     #    'subscriber.contract_id' => $subscriber->contract_id,
@@ -3119,10 +3119,10 @@ sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL)
     #},{
     #    join => ['subscriber'],
     #});
-    ##produces query: 
-    #     SELECT `me`.`id`, `me`.`cc`, `me`.`ac`, `me`.`sn`, `me`.`reseller_id`, `me`.`subscriber_id`, `me`.`status`, `me`.`ported`, `me`.`list_timestamp`, ( concat(cc,' ',ac,' ',sn) ) AS `number`, `subscriber`.`username` 
-    #     FROM `billing`.`voip_numbers` `me` 
-    #       LEFT JOIN `billing`.`voip_subscribers` `subscriber` ON `subscriber`.`id` = `me`.`subscriber_id` 
+    ##produces query:
+    #     SELECT `me`.`id`, `me`.`cc`, `me`.`ac`, `me`.`sn`, `me`.`reseller_id`, `me`.`subscriber_id`, `me`.`status`, `me`.`ported`, `me`.`list_timestamp`, ( concat(cc,' ',ac,' ',sn) ) AS `number`, `subscriber`.`username`
+    #     FROM `billing`.`voip_numbers` `me`
+    #       LEFT JOIN `billing`.`voip_subscribers` `subscriber` ON `subscriber`.`id` = `me`.`subscriber_id`
     #       WHERE ( ( ( `subscriber`.`id` != `subscriber`.`primary_number_id` OR `subscriber`.`status` = 'terminated' ) AND `subscriber`.`contract_id` = '789' ) ) ORDER BY `me`.`id`;
 
 
@@ -4175,10 +4175,10 @@ sub delete_recording :Chained('recording') :PathPart('delete') :Args(0) {
             my $recording = $c->stash->{recording};
             my $data = { $recording->get_inflated_columns };
             $c->model('DB')->schema->txn_do( sub {
-                NGCP::Panel::Utils::Subscriber::delete_callrecording( 
-                    c => $c, 
-                    recording => $recording, 
-                    force_delete => $form->values->{force_delete} 
+                NGCP::Panel::Utils::Subscriber::delete_callrecording(
+                    c => $c,
+                    recording => $recording,
+                    force_delete => $form->values->{force_delete}
                 );
             });
             NGCP::Panel::Utils::Message::info(
