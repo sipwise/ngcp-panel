@@ -65,6 +65,10 @@ if($testplan eq $dir . 'runner.t') {
         $string = $dir . 'controller_subscriber.t';
         push @tests, $string;
     };
+    if (index($testplan, $dir . 'controller_timeset.t') != -1) {
+        $string = $dir . 'controller_timeset.t';
+        push @tests, $string;
+    };
 };
 
 if($jenkins) {
