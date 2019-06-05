@@ -51,7 +51,7 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
@@ -102,13 +102,13 @@ sub POST :Allow {
                 last;
             }
             unless($sms) {
-                $c->log->error("failed to find sms with id $callid and token $token");
+                $c->log->error("failed to find sms with id " . $c->qs($callid) . " and token $token");
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                    "Failed to find sms with callid $callid and given token");
+                    "Failed to find sms with callid " . $c->qs($callid) . " and given token");
                 last;
             }
             if($status eq "ACCEPT") {
-                $c->log->info("status for pcc sms of $callid is $status, forward sms");
+                $c->log->info("status for pcc sms of " . $c->qs($callid) . " is $status, forward sms");
                 my $smsc_peer = '';
                 my $smsc_peer_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
                     c => $c, attribute => 'smsc_peer',
@@ -135,7 +135,7 @@ sub POST :Allow {
                     last;
                 }
             } else {
-                $c->log->info("status for pcc sms of $callid is $status, don't forward sms");
+                $c->log->info("status for pcc sms of " . $c->qs($callid) . " is $status, don't forward sms");
                 try {
                     $sms->update({ pcc_status => "complete" });
                 } catch($e) {

@@ -1023,7 +1023,7 @@ sub get_annotated_info :Private {
         iTotalRecords        => 1,
         iTotalDisplayRecords => 1,
         iTotalRecordCountClipped        => \0,
-        iTotalDisplayRecordCountClipped => \0, 
+        iTotalDisplayRecordCountClipped => \0,
         sEcho                => int($c->request->params->{sEcho} // 1),
     );
 
@@ -1128,7 +1128,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         ($c->user_exists && ($c->user->roles eq "admin" || $c->user->roles eq "reseller")) ||
         defined $c->request->env->{SSL_CLIENT_M_DN}
     ) {
-        $c->log->info("unauthenticated config access to id '$id' via ip " . $c->req->address);
+        $c->log->info("unauthenticated config access to id '$id' via ip " . $c->qs($c->req->address));
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("403 - unauthenticated config access");
@@ -1188,7 +1188,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $dn = lc($dn);
         $dn =~ s/[:\-]//g;
         if (index($dn, $id) == -1) {
-            $c->log->info("unauthorized config access to id '$id' from dn '$dn' via ip '$ip'");
+            $c->log->info("unauthorized config access to id '$id' from dn '" . $c->qs($dn) . "' via ip '" . $c->qs($ip) . "'");
             $c->response->content_type('text/plain');
             if($c->config->{features}->{debug}) {
                 $c->response->body("403 - unauthorized config access");
@@ -1204,7 +1204,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         identifier => $id
     });
     unless($dev) {
-        $c->log->warn("Unknown autoprov config '$id' for '$ip'");
+        $c->log->warn("Unknown autoprov config '$id' for '" . $c->qs($ip) . "'");
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("404 - device id '" . $id . "' not found");
@@ -1214,7 +1214,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->status(404);
         return;
     }
-    $c->log->info("Serving autoprov config for '$id' to '$ip'");
+    $c->log->info("Serving autoprov config for '$id' to '" . $c->qs($ip) . "'");
 
 =pod
     if(defined $yealink_key && defined $dev->encryption_key) {
@@ -1513,7 +1513,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
         identifier => $id
     });
     unless($dev) {
-        $c->log->warn("Unknown autoprov bootstrap config '$id' for '$ip'");
+        $c->log->warn("Unknown autoprov bootstrap config '$id' for '" . $c->qs($ip) . "'");
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("404 - device id '" . $id . "' not found");
@@ -1523,7 +1523,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
         $c->response->status(404);
         return;
     }
-    $c->log->info("Serving autoprov bootstrap config for '$id' to '$ip'");
+    $c->log->info("Serving autoprov bootstrap config for '$id' to '" . $c->qs($ip) . "'");
 
     my $model = $dev->profile->config->device;
 
@@ -1739,7 +1739,7 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
 
     $server_port = $c->config->{sip}->{tls_port} // 5060;
     $server_proto = $c->config->{sip}->{tls_port} ? 'TLS' : 'UDP';
-    $c->log->info("jitsiprov gathered required information, sipacc=$sipacc, xmppacc=$xmppacc");
+    $c->log->info("jitsiprov gathered required information, sipacc=" . $c->qs($sipacc) . ", xmppacc=" . $c->qs($xmppacc));
 
     my $config = <<"EOF";
 net.java.sip.communicator.plugin.provisioning.METHOD=Manual
