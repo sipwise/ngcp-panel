@@ -408,8 +408,8 @@ sub POST :Allow {
             );
         } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
             $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
-            $c->log->error("failed to create subscriber, number $1 already exists"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '$1' already exists.");
+            $c->log->error("failed to create subscriber, number " . $c->qs($1) . " already exists"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $c->qs($1) . "' already exists.");
             last;
         } catch($e) {
             if (ref $error_info->{extended} eq 'HASH' && $error_info->{extended}->{response_code}) {

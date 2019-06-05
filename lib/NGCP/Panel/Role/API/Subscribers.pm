@@ -243,7 +243,7 @@ sub _item_rs {
     } elsif($c->user->roles eq "subscriber") {
         $item_rs = $item_rs->search({
             #voip_subscriber is a provisioning.voip_subscribers relation
-            #$c->user is provisioning.voip_subscribers, so we use ->voip_subscriber->id and compare to billing.voip-subscribers. 
+            #$c->user is provisioning.voip_subscribers, so we use ->voip_subscriber->id and compare to billing.voip-subscribers.
             'me.id' => $c->user->voip_subscriber->id,
         });
     } else {
@@ -706,8 +706,8 @@ sub update_item {
         );
     } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
         $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
-        $c->log->error("failed to update subscriber, number $1 already exists"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '$1' already exists.");
+        $c->log->error("failed to update subscriber, number " . $c->qs($1) . " already exists"); # TODO: user, message, trace, ...
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $c->qs($1) . "' already exists.");
         return;
     }
 
@@ -801,7 +801,7 @@ sub subscriberadmin_write_access {
     if ($c->user->roles eq "subscriberadmin"
         && (
                 ( $c->config->{privileges}->{subscriberadmin}->{subscribers}
-                    && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/ 
+                    && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/
                 )
             ||  ( $c->config->{features}->{cloudpbx} #user can disable pbx feature after some time of using it
                     && $c->user->contract->product->class eq 'pbxaccount'
