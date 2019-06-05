@@ -72,7 +72,7 @@ sub login_index :Path Form {
             $c->response->redirect($target);
             return;
         } else {
-            $c->log->warn("invalid http login from '".$c->req->address."'");
+            $c->log->warn("invalid http login from '".$c->qs($c->req->address)."'");
             $c->log->debug("*** Login::index auth failed");
             $form->add_form_error($c->loc('Invalid username/password'));
         }
@@ -82,7 +82,7 @@ sub login_index :Path Form {
 
     if ($form->has_errors) {
         my $request_ip = $c->request->address;
-        $c->log->error("NGCP Panel Login failed realm=$realm ip=$request_ip");
+        $c->log->error("NGCP Panel Login failed realm=$realm ip=" . $c->qs($request_ip));
     }
 
     $c->stash(form => $form);
