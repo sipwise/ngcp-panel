@@ -31,7 +31,9 @@ sub hal_from_item {
             config => $c->config,
             include_id => $include_id,
             err_code => sub {
-                $c->log->warn(shift); return;
+                my $rtc_error = shift;
+                $c->log->warn($rtc_error);
+                return;
             });
     } else {
     }
@@ -120,7 +122,9 @@ sub update_item {
         config => $c->config,
         reseller_item => $reseller,
         err_code => sub {
-            $c->log->warn(shift); return;
+            my $rtc_error = shift;
+            $c->log->warn($rtc_error);
+            return;
         });
 
     try {

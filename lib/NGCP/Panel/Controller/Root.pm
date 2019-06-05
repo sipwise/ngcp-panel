@@ -127,7 +127,7 @@ sub auto :Private {
         if($ssl_sn) {
             $c->log->debug("++++++ Root::auto API request with client auth sn '$ssl_sn'");
             unless($ssl_dn eq "/CN=Sipwise NGCP API client certificate") {
-                $c->log->error("++++++ Root::auto API request with invalid client DN '$ssl_dn'");
+                $c->log->error("++++++ Root::auto API request with invalid client DN '" . $c->qs($ssl_dn) . "'");
                 $c->res->status(403);
                 $c->res->body(JSON::to_json({
                     message => "Invalid client certificate DN '$ssl_dn'",
@@ -141,7 +141,7 @@ sub auto :Private {
                     is_active => 1, # TODO: abused as password until NoPassword handler is available
                 }, 'api_admin_cert');
             unless($c->user_exists)  {
-                $c->log->warn("invalid api login from '".$c->req->address."'");
+                $c->log->warn("invalid api login from '".$c->qs($c->req->address)."'");
                 $c->detach(qw(API::Root invalid_user), [$ssl_sn]) unless $c->user_exists;
             } else {
                 $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_cert");
@@ -152,7 +152,7 @@ sub auto :Private {
             } elsif($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
                 $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
                 $c->user->logout;
-                $c->log->error("++++ body data: " . $c->req->body_data);
+                $c->log->error("++++ body data: " . $c->qs($c->req->body_data));
                 $c->response->status(403);
                 $c->res->body(JSON::to_json({
                     message => "Invalid HTTP method for read-only user",
@@ -170,7 +170,7 @@ sub auto :Private {
 
             unless ($c->user_exists) {
                 $c->log->debug("+++++ invalid api admin system login");
-                $c->log->warn("invalid api system login from '".$c->req->address."'");
+                $c->log->warn("invalid api system login from '".$c->qs($c->req->address)."'");
             }
 
             $self->api_apply_fake_time($c);
@@ -183,7 +183,7 @@ sub auto :Private {
 
             unless ($c->user_exists) {
                 $c->log->debug("+++++ invalid api subscriber JWT login");
-                # $c->log->warn("invalid api system login from '".$c->req->address."'");
+                # $c->log->warn("invalid api system login from '".$c->qs($c->req->address)."'");
             }
 
             $self->api_apply_fake_time($c);
@@ -204,7 +204,7 @@ sub auto :Private {
                 if ($c->user->domain->domain ne $d) {
                     $c->user->logout;
                     $c->log->debug("+++++ invalid api subscriber http login by '$username' (domain check failed)");
-                    $c->log->warn("invalid api http login from '".$c->req->address."' by '$username'");
+                    $c->log->warn("invalid api http login from '".$c->qs($c->req->address)."' by '" . $c->qs($username) ."'");
                     my $r = $c->get_auth_realm($realm);
                     $r->credential->authorization_required_response($c, $r);
                     return;
@@ -213,7 +213,7 @@ sub auto :Private {
             } else {
                 $c->user->logout if($c->user);
                 $c->log->debug("+++++ invalid api subscriber http login");
-                $c->log->warn("invalid api http login from '".$c->req->address."' by '$username'");
+                $c->log->warn("invalid api http login from '".$c->qs($c->req->address)."' by '" . $c->qs($username) ."'");
                 my $r = $c->get_auth_realm($realm);
                 $r->credential->authorization_required_response($c, $r);
                 return;
@@ -359,7 +359,7 @@ sub end :Private {
         my $incident = DateTime->from_epoch(epoch => Time::HiRes::time);
         my $incident_id = sprintf '%X', $incident->strftime('%s%N');
         my $incident_timestamp = DateTime::Format::RFC3339->new->format_datetime($incident);
-        $c->log->error("fatal error, id=$incident_id, timestamp=$incident_timestamp, error=".join(q(), @{ $c->error }));
+        $c->log->error("fatal error, id=$incident_id, timestamp=$incident_timestamp, error=".join(q(), map { $c->qs($_); } @{ $c->error }));
         $c->clear_errors;
         $c->stash(
             exception_incident => $incident_id,
