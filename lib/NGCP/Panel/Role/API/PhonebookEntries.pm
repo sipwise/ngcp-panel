@@ -63,7 +63,7 @@ sub validate_request {
     my $method = uc($c->request->method);
     if ($method ne 'OPTIONS' && $method ne 'HEAD') {
         my($owner,$type,$parameter,$value) = $self->check_owner_params($c);
-        return unless $owner;    
+        return unless $owner;
     }
     return 1;
 }
@@ -158,7 +158,7 @@ sub check_owner_params {
 
     unless ($owner) {
         $c->log->error("Unknown $parameter value '$value'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $parameter value '$value'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $parameter value '$value'"); #$value is an id, so not sensitive.
         return;
     }
     $c->stash->{check_owner_params} = [$owner,$type,$parameter,$value];
