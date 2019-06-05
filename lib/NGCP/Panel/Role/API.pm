@@ -6,7 +6,7 @@ use parent qw/NGCP::Panel::Role::Journal/;
 
 use NGCP::Panel::Utils::Generic qw(:all);
 use boolean qw(true);
-use Safe::Isa qw($_isa);
+use Safe::Isa qw($_isa $_can);
 use Storable qw();
 use JSON qw();
 use JSON::Pointer;
@@ -248,10 +248,10 @@ sub validate_form {
     if($run) {
         # check keys/vals
         $form->process(
-            params => $resource, 
-            posted => 1, 
-            %{$form_params}, 
-            item => $item, 
+            params => $resource,
+            posted => 1,
+            %{$form_params},
+            item => $item,
             no_update => 1
         );
         unless($form->validated) {
@@ -260,7 +260,7 @@ sub validate_form {
                 $in //= '';
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'',
                     ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
-                    $in,
+                    (($_->$_can('todo') && $_->todo()) ? $c->qs($in) : $in),
                     join('', @{ $_->errors })
             } $form->error_fields;
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Validation failed. $e");
@@ -740,7 +740,7 @@ sub paginate_order_collection_rs {
                 });
             }
         }
-        if ($explicit_order_col_spec || 
+        if ($explicit_order_col_spec ||
             ( $item_rs->result_source->can('has_column') && $item_rs->result_source->has_column($order_by) )) {
             my $col = $explicit_order_col_spec || $item_rs->current_source_alias . '.' . $order_by;
             if (lc($direction) eq 'desc') {
@@ -814,7 +814,7 @@ sub collection_nav_links {
     #now situation is so that forarray collections, total_count is always known
     #it may change in case when e.g. kamailio rpc start to return requested info using paging too and we will start to use it
     #so - in array collections we don't define now collection_infinite_pager_stop, but get total_count from array size.
-    if ( (! defined $total_count 
+    if ( (! defined $total_count
             && ! $c->stash->{collection_infinite_pager_stop} )
         || ( defined $total_count && ($total_count / $rows) > $page ) ) {
 
@@ -898,7 +898,7 @@ sub compare_patch_value {
     my ($self, $c, $op, $value_current, $value_requested) = @_;
     $value_requested //= $op->{value};
     my $value_to_compare;
-    if (   ref $value_current eq 'HASH' 
+    if (   ref $value_current eq 'HASH'
         && ref $value_requested eq 'HASH'
     ) {
         my @keys = keys %$value_requested;
@@ -1666,7 +1666,7 @@ sub mime_type_from_allowed_default {
     my ($self, $c, $config_allowed_types, $system_default) = @_;
     my $mime_type_from_config;
     if ($config_allowed_types) {
-        if (!ref $config_allowed_types 
+        if (!ref $config_allowed_types
             && $config_allowed_types ne $system_default ) {
             $mime_type_from_config = $config_allowed_types;
         } elsif (ref $config_allowed_types eq 'ARRAY'
