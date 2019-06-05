@@ -151,7 +151,7 @@ sub update_item {
             if (defined $d->{announcement_id}) {
                 if('customhours' ne $d->{destination}){
                     $c->log->error("Invalid parameter 'announcement_id' for the destination '".$d->{destination}."' in '$type'");
-                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'announcement_id' for the destination '".$d->{destination}."' in '$type'");
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'announcement_id' for the destination '".$c->qs($d->{destination})."' in '$type'");
                     return;
                 }elsif(! is_int($d->{announcement_id})){
                     $c->log->error("Invalid announcement_id in '$type'");
