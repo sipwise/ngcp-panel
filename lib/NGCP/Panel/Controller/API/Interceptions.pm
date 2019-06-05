@@ -191,7 +191,7 @@ sub POST :Allow {
             });
             die "Failed to populate capture agents\n" unless($res);
         } catch($e) {
-            $c->log->error("failed to create interception: $e"); # TODO: user, message, trace, ...
+            $c->log->error("failed to create interception: " . $c->qs($e)); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create interception");
             last;
         }

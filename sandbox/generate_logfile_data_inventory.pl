@@ -35,6 +35,7 @@ my $messages_count;
 my $invocations_count;
 my %distinct_variables;
 my $extracted_message = undef;
+my $is_sensitive = 0;
 my $message_role = undef;
 
 scancatalystlog();
@@ -75,7 +76,7 @@ sub scancatalystlog_dir_names {
                 }
                 $message =~ s/\)(\s+(if|unless)[^;]+)?;(\s*#.+)?$//;
                 _dispatch_logfile(_list_variables({
-                    gdpr_status => "#todo",
+                    gdpr_status => ($message =~ /->qs\(/ ? 2 : 0),
                     level => $method,
                     log_line => $message,
                     source_file => $source_file_name,
@@ -114,9 +115,10 @@ sub scanmessageslog_dir_names {
                 $line =~ s/^NGCP::Panel::Utils::Message::(info|error)\(/{/m;
                 $line =~ s/\)(\s+(if|unless)[^;]+)?;/}/m;
                 my $source_file_name = _get_source_file_name($inputfilename,$inputfiledir,$inputfilesuffix);
-                foreach my $message (_extract_messages($line,$method)) {
+                my %messages = _extract_messages($line,$method);
+                foreach my $message (keys %messages) {
                     _dispatch_logfile(_list_variables({
-                        gdpr_status => "#todo",
+                        gdpr_status => ($messages{$message} ? 2 : 0),
                         level => $method,
                         log_line => $message,
                         source_file => $source_file_name,
@@ -213,11 +215,11 @@ sub _extract_messages {
         if ($args and _run_message($method,$args,%vector)) {
             if ($extracted_message
                 and index($extracted_message,'=HASH(0x') < 0) { # filter out nonsense vector stringifications
-                $dupe_results{$extracted_message} = 1;
+                $dupe_results{$extracted_message} = $dupe_results{$extracted_message} || $is_sensitive;
             }
         }
     }
-    return keys %dupe_results;
+    return %dupe_results;
 }
 
 sub _run_message {
@@ -228,6 +230,7 @@ sub _run_message {
         role
     /};
     $extracted_message = undef;
+    $is_sensitive = 0;
     $args->{flash} = 0;
     $args->{stash} = 0;
     $args->{c} = _create_mock('_c',
@@ -265,6 +268,12 @@ sub _run_message {
         user_exists => sub {
             my $self = shift;
             return 1;
+        },
+        qs => sub {
+            my $self = shift;
+            my $str = shift;
+            $is_sensitive = 1;
+            return "<<" . $str . ">>" if $str;
         },
         request => sub {
             my $self = shift;
@@ -477,6 +486,12 @@ sub _deserialize_messagesargs {
             }
             return $str;
         },
+        qs => sub {
+            my $self = shift;
+            my $str = shift;
+            $is_sensitive = 1;
+            return "<<" . $str . ">>" if $str;
+        },
         user => sub {
             my $self = shift;
             return _create_mock('user',
@@ -601,7 +616,7 @@ sub _deserialize_messagesargs {
     use Data::Dumper;
     my $args = eval $_line;
     if ($@) {
-        warn($@);
+        warn($_line ."\n" .$@);
         return undef;
     } else {
         return $args;
@@ -704,8 +719,10 @@ sub _dispatch_logfile {
         push(@{$result{'panel-debug.log'}},$log_line);
     } elsif (index($log_line->{log_line},'CALLED=API') >= 0) {
         push(@{$result{'api.log'}},$log_line);
+        #print $log_line->{log_line} . "\n";
     } else {
         push(@{$result{'panel.log'}},$log_line);
+        print $log_line->{log_line} . "\n";
     }
 
 }

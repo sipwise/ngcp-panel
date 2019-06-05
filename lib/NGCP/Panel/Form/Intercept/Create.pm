@@ -81,7 +81,7 @@ sub valprint {
     my($self, $field) = @_;
     my $c = $field->form->ctx;
 
-    $c->log->info("validating " . $field->name . "=" . $field->value);
+    $c->log->debug("validating " . $field->name . "=" . $field->value);
 }
 
 1;

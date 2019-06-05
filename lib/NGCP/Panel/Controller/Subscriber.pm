@@ -373,7 +373,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
     if($c->user->roles eq 'subscriberadmin' && $c->user->uuid eq $subscriber->uuid) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
-            error => 'unauthorized termination of own subscriber for uuid '.$c->user->uuid,
+            error => 'unauthorized termination of own subscriber for uuid '.$c->qs($c->user->uuid),
             desc  => $c->loc('Terminating own subscriber is prohibited.'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
@@ -403,7 +403,7 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
     if($c->user->roles eq 'subscriberadmin' && $c->user->voip_subscriber->contract_id != $subscriber->contract_id) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
-            error => 'unauthorized password reset for subscriber uuid '.$c->user->uuid,
+            error => 'unauthorized password reset for subscriber uuid '.$c->qs($c->user->uuid),
             desc  => $c->loc('Invalid password reset attempt.'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
@@ -527,7 +527,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
     unless($posted) {
         unless($uuid_string && UUID::parse($uuid_string, $uuid_bin) != -1) {
-            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->qs($c->req->address)."'");
             $c->detach('/denied_page')
         }
 
@@ -538,7 +538,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
         my $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
         unless($subscriber) {
-            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->qs($c->req->address)."'");
             $c->detach('/denied_page');
         }
     }
@@ -570,7 +570,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
                 $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
                 unless($subscriber && $subscriber->provisioning_voip_subscriber) {
-                    $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+                    $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->qs($c->req->address)."'");
                     $c->detach('/denied_page');
                 }
                 $subscriber->provisioning_voip_subscriber->update({
@@ -3108,7 +3108,7 @@ sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL)
         prefetch => ['subscriber', 'primary_number_owners_active'],
     });
 
-    
+
     ##other variant of the correct query is:
     #my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
     #    'subscriber.contract_id' => $subscriber->contract_id,
@@ -3119,10 +3119,10 @@ sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL)
     #},{
     #    join => ['subscriber'],
     #});
-    ##produces query: 
-    #     SELECT `me`.`id`, `me`.`cc`, `me`.`ac`, `me`.`sn`, `me`.`reseller_id`, `me`.`subscriber_id`, `me`.`status`, `me`.`ported`, `me`.`list_timestamp`, ( concat(cc,' ',ac,' ',sn) ) AS `number`, `subscriber`.`username` 
-    #     FROM `billing`.`voip_numbers` `me` 
-    #       LEFT JOIN `billing`.`voip_subscribers` `subscriber` ON `subscriber`.`id` = `me`.`subscriber_id` 
+    ##produces query:
+    #     SELECT `me`.`id`, `me`.`cc`, `me`.`ac`, `me`.`sn`, `me`.`reseller_id`, `me`.`subscriber_id`, `me`.`status`, `me`.`ported`, `me`.`list_timestamp`, ( concat(cc,' ',ac,' ',sn) ) AS `number`, `subscriber`.`username`
+    #     FROM `billing`.`voip_numbers` `me`
+    #       LEFT JOIN `billing`.`voip_subscribers` `subscriber` ON `subscriber`.`id` = `me`.`subscriber_id`
     #       WHERE ( ( ( `subscriber`.`id` != `subscriber`.`primary_number_id` OR `subscriber`.`status` = 'terminated' ) AND `subscriber`.`contract_id` = '789' ) ) ORDER BY `me`.`id`;
 
 
@@ -3212,7 +3212,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     unless($vm_user) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
-            log   => "no voicemail user found for subscriber uuid ".$c->stash->{subscriber}->uuid,
+            log   => "no voicemail user found for subscriber uuid ".$c->qs($c->stash->{subscriber}->uuid),
             desc  => $c->loc('Failed to find voicemail user.'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
@@ -3395,7 +3395,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
             # default
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
-                log   => "trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
+                log   => "trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->qs($c->stash->{subscriber}->uuid),
                 desc  => $c->loc('Invalid voicemail setting'),
             );
             NGCP::Panel::Utils::Navigation::back_or($c,
@@ -3535,7 +3535,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
             # default
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
-                log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
+                log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->qs($c->stash->{subscriber}->uuid),
                 desc  => $c->loc('Invalid fax setting.'),
             );
             NGCP::Panel::Utils::Navigation::back_or($c,
@@ -3692,7 +3692,7 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
                 # default
                 NGCP::Panel::Utils::Message::error(
                     c     => $c,
-                    log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
+                    log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->qs($c->stash->{subscriber}->uuid),
                     desc  => $c->loc('Invalid mailtofax setting.'),
                 );
                 NGCP::Panel::Utils::Navigation::back_or($c,
@@ -4031,7 +4031,7 @@ sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
     unless($rs->first) {
         NGCP::Panel::Utils::Message::error(
             c    => $c,
-            log  => "no such voicemail file with id '$vm_id' for uuid ".$c->stash->{subscriber}->uuid,
+            log  => "no such voicemail file with id '$vm_id' for uuid ".$c->qs($c->stash->{subscriber}->uuid),
             desc => $c->loc('No such voicemail file.'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
@@ -4105,7 +4105,7 @@ sub recording :Chained('master') :PathPart('recording') :CaptureArgs(1) {
     unless($rs->first) {
         NGCP::Panel::Utils::Message::error(
             c    => $c,
-            log  => "no such recording with id '$rec_id' for uuid ".$c->stash->{subscriber}->uuid,
+            log  => "no such recording with id '$rec_id' for uuid ".$c->qs($c->stash->{subscriber}->uuid),
             desc => $c->loc('No such recording'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
@@ -4175,10 +4175,10 @@ sub delete_recording :Chained('recording') :PathPart('delete') :Args(0) {
             my $recording = $c->stash->{recording};
             my $data = { $recording->get_inflated_columns };
             $c->model('DB')->schema->txn_do( sub {
-                NGCP::Panel::Utils::Subscriber::delete_callrecording( 
-                    c => $c, 
-                    recording => $recording, 
-                    force_delete => $form->values->{force_delete} 
+                NGCP::Panel::Utils::Subscriber::delete_callrecording(
+                    c => $c,
+                    recording => $recording,
+                    force_delete => $form->values->{force_delete}
                 );
             });
             NGCP::Panel::Utils::Message::info(
@@ -4218,7 +4218,7 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     unless($c->stash->{registered}) {
         NGCP::Panel::Utils::Message::error(
             c    => $c,
-            log  => "failed to find location id '$reg_id' for subscriber uuid " . $s->uuid,
+            log  => "failed to find location id '$reg_id' for subscriber uuid " . $c->qs($s->uuid),
             desc => $c->loc('Failed to find registered device.'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
@@ -4365,7 +4365,7 @@ sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(
     unless($c->stash->{trusted}) {
         NGCP::Panel::Utils::Message::error(
             c    => $c,
-            log  => "trusted source id '$trusted_id' not found for subscriber uuid ".$c->stash->{subscriber}->uuid,
+            log  => "trusted source id '$trusted_id' not found for subscriber uuid ".$c->qs($c->stash->{subscriber}->uuid),
             desc => $c->loc('Trusted source entry not found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
@@ -4522,7 +4522,7 @@ sub upn_rewrite_base :Chained('base') :PathPart('preferences/upnrewrite') :Captu
     unless($c->stash->{upn_rws}) {
         NGCP::Panel::Utils::Message::error(
             c    => $c,
-            log  => "rewrite set id '$rws_id' not found for subscriber uuid ".$c->stash->{subscriber}->uuid,
+            log  => "rewrite set id '$rws_id' not found for subscriber uuid ".$c->qs($c->stash->{subscriber}->uuid),
             desc => $c->loc('Rewrite Set entry not found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
@@ -4721,7 +4721,7 @@ sub speeddial :Chained('base') :PathPart('preferences/speeddial') :CaptureArgs(1
     unless($sd) {
         NGCP::Panel::Utils::Message::error(
             c    => $c,
-            log  => "no such speed dial slot with id '$sd_id' for uuid ".$c->stash->{subscriber}->uuid,
+            log  => "no such speed dial slot with id '$sd_id' for uuid ".$c->qs($c->stash->{subscriber}->uuid),
             desc => $c->loc('No such speed dial id.'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
@@ -4962,7 +4962,7 @@ sub ccmappings :Chained('base') :PathPart('preferences/ccmappings') :CaptureArgs
     unless($ccmapping) {
         NGCP::Panel::Utils::Message::error(
             c    => $c,
-            log  => "no such ccmapping with id '$aa_id' for uuid ".$c->stash->{subscriber}->uuid,
+            log  => "no such ccmapping with id '$aa_id' for uuid ".$c->qs($c->stash->{subscriber}->uuid),
             desc => $c->loc('No such auto ccmapping id.'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,

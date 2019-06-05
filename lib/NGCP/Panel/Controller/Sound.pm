@@ -86,7 +86,7 @@ sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1)
     if($c->user->roles eq "subscriberadmin" && $c->user->account_id != $contract_id) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
-            error => "access violation, subscriberadmin ".$c->user->uuid." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
+            error => "access violation, subscriberadmin ".$c->qs($c->user->uuid)." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
             desc  => $c->loc('Invalid contract id found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
