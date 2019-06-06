@@ -21,7 +21,7 @@ sub create_domain {
     diag('Try to add a domain');
     $self->driver->find_element('Create Domain', 'link_text')->click();
     ok($self->driver->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', 'default'), "Default reseller and creation site are avalible");
-    $self->driver->find_element('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input')->click(); #select default reseller
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input'); #select default reseller
     $self->driver->find_element('//*[@id="domain"]')->send_keys($name);
     $self->driver->find_element('//*[@id="save"]')->click();
 }
