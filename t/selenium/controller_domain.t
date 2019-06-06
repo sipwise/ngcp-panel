@@ -51,8 +51,7 @@ sub ctr_domain {
     ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "concurrent_max")]/../td[contains(text(), "789")]'), "Value has been applied");
 
     diag("Click edit for the preference allowed_ips");
-    $d->move_action(element=> $d->find_element('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]'));
-    $d->find_element('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]')->click();
+    $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
 
     diag("Enter an IP address");
     $d->fill_element('//*[@id="allowed_ips"]', 'xpath', '127.0.0.0.0');

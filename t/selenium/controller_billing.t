@@ -42,8 +42,7 @@ sub ctr_billing {
     ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', 'default'), 'Correct reseller was found');
 
     diag("Open edit dialog for Test Profile");
-    $d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]'));
-    $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]')->click();
+    $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
     diag("Edit Test Profile");
     my $elem = $d->find_element('#name', 'css');
@@ -57,8 +56,7 @@ sub ctr_billing {
     ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
     ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
-    $d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]'));
-    $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]')->click();
+    $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
     diag("Create a billing fee");
     $d->find_element('Create Fee Entry', 'link_text')->click();
@@ -84,8 +82,7 @@ sub ctr_billing {
     ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', 'testingdetail'), 'Billing zone is correct');
 
     diag("Delete billing fee");
-    $d->move_action(element => $d->find_element('//*[@id="billing_fee_table"]/tbody/tr[1]/td//div//a[contains(text(), "Delete")]'));
-    $d->find_element('//*[@id="billing_fee_table"]/tbody/tr[1]/td//div//a[contains(text(), "Delete")]')->click();
+    $d->move_and_click('//*[@id="billing_fee_table"]/tbody/tr[1]/td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_fee_table_filter"]//input');
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
     ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
@@ -107,10 +104,7 @@ sub ctr_billing {
     $d->fill_element('//*[@id="billing_zone_table_filter"]//input', 'xpath', 'thisshouldnotexist');
     ok($d->find_element_by_css('#billing_zone_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $d->fill_element('//*[@id="billing_zone_table_filter"]//input', 'xpath', 'testingdetail');
-    my $row = $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..');
-    ok($row);
-    $d->move_action(element => $row);
-    $d->find_element('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//a[contains(text(),"Delete")]')->click();
+    $d->move_and_click('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//a[contains(text(),"Delete")]', 'xpath', '//*[@id="billing_zone_table_filter"]//input');
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
 
@@ -129,8 +123,7 @@ sub ctr_billing {
     ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
     ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
-    $d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]'));
-    $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]')->click();
+    $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
     diag("Edit Wednesday");
     $d->move_and_click('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]', 'xpath', '//h3[contains(text(),"Weekdays")]');
@@ -161,8 +154,7 @@ sub ctr_billing {
     ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[3]', '2008-02-28 13:37:00'), 'End Date definition is correct');
 
     diag("Delete my created date definition");
-    $d->move_action(element => ($d->find_element('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]')));
-    $d->find_element('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]')->click();
+    $d->move_and_click('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]', 'xpath', '//div[contains(@class, "dataTables_filter")]//input');
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
 
@@ -173,8 +165,7 @@ sub ctr_billing {
     ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
     ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
-    $d->move_action(element => $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]'));
-    $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]')->click();
+    $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
 
