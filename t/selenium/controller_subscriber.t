@@ -33,8 +33,7 @@ sub ctr_subscriber {
     ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
     $d->fill_element('#Customer_table_filter input', 'css', $customerid);
     ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
-    $d->move_action(element=> $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]'));
-    $d->find_element('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]')->click();
+    $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 
     diag("Trying to add a Subscriber");
     $d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
@@ -127,8 +126,7 @@ sub ctr_subscriber {
     ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[5]', $domainstring), 'Domain name is correct');
 
     diag('Go to Subscriber details');
-    $d->move_action(element => $d->find_element('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]'));
-    $d->find_element('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]')->click();
+    $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
 
     diag('Edit master data');
     $d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
@@ -288,8 +286,7 @@ sub ctr_subscriber {
     ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
     $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
     ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber was found');
-    $d->move_action(element => $d->find_element('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Terminate")]'));
-    $d->find_element('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Terminate")]')->click();
+    $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Terminate")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
     $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
     diag('Check if Subscriber has been deleted');

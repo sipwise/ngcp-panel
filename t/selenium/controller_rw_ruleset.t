@@ -31,8 +31,7 @@ sub ctr_rw_ruleset {
     ok($d->wait_for_text('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]/td[3]', $rulesetname), 'Ruleset was found');
 
     diag('Create a new Rule for Caller');
-    $d->move_action(element => $d->find_element('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Rules")]'));
-    $d->find_element('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Rules")]')->click();
+    $d->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Rules")]', 'xpath', '//*[@id="rewrite_rule_set_table_filter"]/label/input');
     $d->find_element('Create Rewrite Rule', 'link_text')->click;
     $d->fill_element('//*[@id="match_pattern"]', 'xpath', '^(00|\+)([1-9][0-9]+)$');
     $d->fill_element('//*[@id="replace_pattern"]', 'xpath', '\2');
@@ -82,13 +81,11 @@ sub ctr_rw_ruleset {
     ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
     ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr/td[3]', $domainstring), 'Entry was found');
-    $d->move_action(element => $d->find_element('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Preferences")]'));
-    $d->find_element('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Preferences")]')->click();
+    $d->move_and_click('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Preferences")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
 
     diag('Add ruleset to a domain');
-    $d->find_element('Number Manipulations', 'link_text')->click;
-    $d->move_action(element => $d->find_element('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td/div//a[contains(text(), "Edit")]'));
-    $d->find_element('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td/div//a[contains(text(), "Edit")]')->click();
+    $d->find_element('Number Manipulations', 'link_text')->click();
+    $d->move_and_click('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Number Manipulations")]');
     $d->find_element('//*[@id="rewrite_rule_set.1"]')->click();
     $d->find_element('//*[@id="save"]')->click();
 

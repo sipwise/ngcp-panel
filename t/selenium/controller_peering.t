@@ -105,15 +105,13 @@ sub ctr_peering {
     $d->find_element('#peering_servers_table tr > td.dataTables_empty', 'css');
     $d->fill_element('#peering_servers_table_filter input', 'css', $servername);
     ok($d->wait_for_text('//*[@id="peering_servers_table"]/tbody/tr[1]/td[2]', $servername), 'Peering Server has been found');
-    $d->move_action(element => $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Preferences")]'));
-    $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Preferences")]')->click();
+    $d->move_and_click('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Preferences")]', 'xpath', '//*[@id="peering_servers_table_filter"]//input');
 
     diag('Open the tab "Number Manipulations"');
     $d->find_element("Number Manipulations", 'link_text')->click();
 
     diag("Click edit for the preference inbound_upn");
-    $d->move_action(element => $d->find_element('//table//td[contains(text(), "inbound_upn")]/..//td//a[contains(text(), "Edit")]'));
-    $d->find_element('//table//td[contains(text(), "inbound_upn")]/..//td//a[contains(text(), "Edit")]')->click();
+    $d->move_and_click('//table//td[contains(text(), "inbound_upn")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Number Manipulation")]');
 
     diag('Change to "P-Asserted-Identity');
     $d->find_element('//*[@id="inbound_upn"]/option[@value="pai_user"]')->click();
@@ -128,8 +126,7 @@ sub ctr_peering {
     $d->find_element("Remote Authentication", 'link_text')->click();
 
     diag('Edit peer_auth_user');
-    $d->move_action(element => $d->find_element('//table/tbody/tr/td[contains(text(), "peer_auth_user")]/../td/div//a[contains(text(), "Edit")]'));
-    $d->find_element('//table/tbody/tr/td[contains(text(), "peer_auth_user")]/../td/div//a[contains(text(), "Edit")]')->click();
+    $d->move_and_click('//table/tbody/tr/td[contains(text(), "peer_auth_user")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Remote Authentication")]');
     $d->fill_element('//*[@id="peer_auth_user"]', 'xpath', 'peeruser1');
     $d->find_element('#save', 'css')->click();
 
@@ -139,8 +136,7 @@ sub ctr_peering {
     ok($d->wait_for_text('//table/tbody/tr/td[contains(text(), "peer_auth_user")]/../td[4]', 'peeruser1'), 'peer_auth_user value has been set');
 
     diag('Edit peer_auth_pass');
-    $d->move_action(element => $d->find_element('//table/tbody/tr/td[contains(text(), "peer_auth_pass")]/../td/div//a[contains(text(), "Edit")]'));
-    $d->find_element('//table/tbody/tr/td[contains(text(), "peer_auth_pass")]/../td/div//a[contains(text(), "Edit")]')->click();
+    $d->move_and_click('//table/tbody/tr/td[contains(text(), "peer_auth_pass")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Remote Authentication")]');
     $d->fill_element('//*[@id="peer_auth_pass"]', 'xpath', 'peerpass1');
     $d->find_element('#save', 'css')->click();
 
@@ -150,8 +146,7 @@ sub ctr_peering {
     ok($d->wait_for_text('//table/tbody/tr/td[contains(text(), "peer_auth_pass")]/../td[4]', 'peerpass1'), 'peer_auth_pass value has been set');
 
     diag('Edit peer_auth_realm');
-    $d->move_action(element => $d->find_element('//table/tbody/tr/td[contains(text(), "peer_auth_realm")]/../td/div//a[contains(text(), "Edit")]'));
-    $d->find_element('//table/tbody/tr/td[contains(text(), "peer_auth_realm")]/../td/div//a[contains(text(), "Edit")]')->click();
+    $d->move_and_click('//table/tbody/tr/td[contains(text(), "peer_auth_realm")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Remote Authentication")]');
     $d->fill_element('//*[@id="peer_auth_realm"]', 'xpath', 'testpeering.com');
     $d->find_element('#save', 'css')->click();
 
@@ -169,8 +164,7 @@ sub ctr_peering {
     ok($d->find_element_by_css('#peering_servers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $d->fill_element('#peering_servers_table_filter input', 'css', $servername);
     ok($d->wait_for_text('//*[@id="peering_servers_table"]/tbody/tr/td[2]', $servername), "mytestserver was found");
-    $d->move_action(element => $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
-    $d->find_element('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
+    $d->move_and_click('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="peering_servers_table_filter"]//input');
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
     ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
@@ -180,8 +174,7 @@ sub ctr_peering {
     ok($d->find_element_by_css('#PeeringRules_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $d->fill_element('#PeeringRules_table_filter input', 'css', 'for testing purposes');
     ok($d->wait_for_text('//*[@id="PeeringRules_table"]/tbody/tr/td[5]', 'for testing purposes'), "Outbound Peering Rule was found");
-    $d->move_action(element => $d->find_element('//*[@id="PeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
-    $d->find_element('//*[@id="PeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
+    $d->move_and_click('//*[@id="PeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="PeeringRules_table_filter"]//input');
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
     ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
@@ -192,8 +185,7 @@ sub ctr_peering {
     ok($d->find_element_by_css('#InboundPeeringRules_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $d->fill_element('#InboundPeeringRules_table_filter input', 'css', 'forbidden');
     ok($d->wait_for_text('//*[@id="InboundPeeringRules_table"]/tbody/tr/td[6]', 'forbidden'), "Inbound Peering Rule was found");
-    $d->move_action(element => $d->find_element('//*[@id="InboundPeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
-    $d->find_element('//*[@id="InboundPeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
+    $d->move_and_click('//*[@id="InboundPeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="InboundPeeringRules_table_filter"]//input');
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
     ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
@@ -206,8 +198,7 @@ sub ctr_peering {
     ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
     ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[3]', $groupname), 'Testing Group was found');
-    $d->move_action(element=> $d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]'));
-    $d->find_element('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]')->click();
+    $d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]//input');
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
     ok($d->find_text("successfully deleted"), 'Text "successfully deleted" appears');
