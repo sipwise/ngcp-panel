@@ -60,7 +60,6 @@ sub ctr_customer {
     $d->find_element('#countryidtable tr > td.dataTables_empty', 'css');
     $d->fill_element('#countryidtable_filter input', 'css', 'Ukraine'); # Choosing Country
     $d->select_if_unselected('//table[@id="countryidtable"]/tbody/tr[1]/td[contains(text(),"Ukraine")]/..//input[@type="checkbox"]');
-    ok($d, 'Successfuly added a Country');
     $d->find_element('#save', 'css')->click(); # Save
 
     diag("Check contact details");

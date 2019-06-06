@@ -32,7 +32,6 @@ sub ctr_domain {
     $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath');
 
     diag('Open the tab "Access Restrictions"');
-    like($d->get_path, qr!domain/\d+/preferences!);
     $d->find_element("Access Restrictions", 'link_text')->click();
 
     diag("Click edit for the preference concurrent_max");
