@@ -46,11 +46,8 @@ sub ctr_billing {
     $d->find_element('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]')->click();
 
     diag("Edit Test Profile");
-    my $elem = $d->find_element('#name', 'css');
-    ok($elem);
     $d->fill_element('#interval_charge', 'css', '3.2');
     $d->find_element('#save', 'css')->click();
-    sleep 1;
 
     diag('Open "Fees" for Test Profile');
     $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
