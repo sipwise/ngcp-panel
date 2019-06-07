@@ -252,6 +252,47 @@ sub delete_customer {
     };
 }
 
+sub create_contact {
+    my($self, $contactmail, $reseller) = @_;
+
+    diag("Go to Contacts page");
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element("Contacts", 'link_text')->click();
+
+    diag("Trying to Create a new Contact");
+    $self->driver->find_element("Create Contact", 'link_text')->click();
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $reseller);
+    ok($self->driver->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $reseller), 'Reseller was found');
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+    $self->driver->fill_element('//*[@id="firstname"]', 'xpath', 'Test');
+    $self->driver->fill_element('//*[@id="lastname"]', 'xpath', 'User');
+    $self->driver->fill_element('//*[@id="email"]', 'xpath', $contactmail);
+    $self->driver->fill_element('//*[@id="company"]', 'xpath', 'SIPWISE');
+    $self->driver->find_element('//*[@id="save"]')->click();
+}
+
+sub delete_contact {
+    my($self, $contactmail, $cancel) = @_;
+
+    diag("Go to Contacts page");
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element("Contacts", 'link_text')->click();
+
+    diag("Trying to Delete the Contact");
+    $self->driver->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#contact_table tr > td.dataTables_empty'), "Garbage text was not found");
+    $self->driver->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $contactmail);
+    ok($self->driver->wait_for_text('//*[@id="contact_table"]/tbody/tr[1]/td[6]', $contactmail), 'Found contact');
+    $self->driver->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');
+    if($cancel){
+        popup_confirm_cancel($self, 'We are NOT going to terminate this customer');
+    } else {
+        popup_confirm_ok($self, 'We are going to terminate this customer');
+    };
+}
+
 sub popup_confirm_ok {
     my($self, $message) = @_;
 
