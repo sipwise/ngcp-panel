@@ -23,10 +23,18 @@ sub ctr_subscriber {
     my $sourcename = ("test" . int(10000) . "source");
     my $setname = ("test" . int(rand(10000)) . "set");
     my $profilename = ("test" . int(rand(10000)) . "profile");
+    my $contactmail = ("contact" . int(rand(100000)) . '@test.org');
+    my $resellername = ("reseller" . int(rand(100000)) . "test");
+    my $contractid = ("contract" . int(rand(100000)) . "test");
+    my $billingname = ("billing" . int(rand(100000)) . "test");
 
     $c->login_ok();
     $c->create_domain($domainstring);
-    $c->create_customer($customerid);
+    $c->create_reseller_contract($contractid);
+    $c->create_reseller($resellername, $contractid);
+    $c->create_contact($contactmail, $resellername);
+    $c->create_billing_profile($billingname, $resellername);
+    $c->create_customer($customerid, $contactmail, $billingname);
 
     diag("Open Details for our just created Customer");
     $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
@@ -73,8 +81,8 @@ sub ctr_subscriber {
     diag('Enter profile set information');
     $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-    $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'default');
-    ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', 'default'), "Reseller found");
+    $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
+    ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), "Reseller found");
     $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
     $d->fill_element('//*[@id="name"]', 'xpath', $setname);
     $d->fill_element('//*[@id="description"]', 'xpath', 'This is a description. It describes things');
@@ -88,7 +96,7 @@ sub ctr_subscriber {
     diag('Check details');
     ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Name is correct');
     ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[4]', 'This is a description. It describes things'), 'Description is correct');
-    ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr//td[contains(text(), "default")]'), 'Reseller is correct');
+    ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr//td[contains(text(), "' . $resellername .'")]'), 'Reseller is correct');
 
     diag('Enter "Profiles" menu');
     $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Profiles")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
@@ -121,7 +129,7 @@ sub ctr_subscriber {
     $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
     $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
-    ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[3]', 'default-customer@default.invalid'), 'Contact Email is correct');
+    ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[3]', $contactmail), 'Contact Email is correct');
     ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber name is correct');
     ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[5]', $domainstring), 'Domain name is correct');
 
@@ -309,7 +317,12 @@ sub ctr_subscriber {
     ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 
     $c->delete_customer($customerid);
+    $c->delete_reseller_contract($contractid);
+    $c->delete_reseller($resellername);
+    $c->delete_contact($contactmail);
+    $c->delete_billing_profile($billingname);
     $c->delete_domain($domainstring);
+
 }
 
 if(! caller) {

@@ -16,6 +16,10 @@ sub ctr_customer {
 
     my $pbx = $ENV{PBX};
     my $customerid = ("id" . int(rand(100000)) . "ok");
+    my $resellername = ("reseller" . int(rand(100000)) . "test");
+    my $contractid = ("contract" . int(rand(100000)) . "test");
+    my $contactmail = ("contact" . int(rand(100000)) . '@test.org');
+    my $billingname = ("billing" . int(rand(100000)) . "test");
 
     if(!$pbx){
         print "---PBX check is DISABLED---\n";
@@ -25,11 +29,15 @@ sub ctr_customer {
     };
 
     $c->login_ok();
+    $c->create_reseller_contract($contractid);
+    $c->create_reseller($resellername, $contractid);
+    $c->create_contact($contactmail, $resellername);
+    $c->create_billing_profile($billingname, $resellername);
 
     if($pbx == 1){
-        $c->create_customer($customerid, 1);
+        $c->create_customer($customerid, $contactmail, $billingname, 1);
     } else {
-        $c->create_customer($customerid);
+        $c->create_customer($customerid, $contactmail, $billingname);
     }
 
     diag("Search for Customer");
@@ -40,9 +48,9 @@ sub ctr_customer {
 
     diag("Check customer details");
     ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
-    ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "default")]'), 'Reseller is correct');
-    ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "default-customer")]', 'default-customer@default.invalid'), 'Contact Email is correct');
-    ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "Default Billing Profile")]'), 'Billing Profile is correct');
+    ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+    ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[4]', $contactmail), 'Contact Email is correct');
+    ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
 
     diag("Open Details for our just created Customer");
     $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
@@ -63,7 +71,7 @@ sub ctr_customer {
     $d->find_element('#save', 'css')->click(); # Save
 
     diag("Check contact details");
-    ok($d->wait_for_text('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Email")]/../td[2]', 'default-customer@default.invalid'), "Email is correct");
+    ok($d->wait_for_text('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Email")]/../td[2]', $contactmail), "Email is correct");
     ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Name")]/../td[contains(text(), "Alice")]'), "Name is correct");
     ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Company")]/../td[contains(text(), "Sipwise")]'), "Company is correct");
     ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Address")]/../td[text()[contains(.,"03141")]]'), "Postal code is correct");
@@ -133,6 +141,12 @@ sub ctr_customer {
     $c->delete_customer($customerid, 0);
     $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
     ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was deleted');
+
+    $c->delete_reseller_contract($contractid);
+    $c->delete_reseller($resellername);
+    $c->delete_contact($contactmail);
+    $c->delete_billing_profile($billingname);
+
 }
 
 if(! caller) {
