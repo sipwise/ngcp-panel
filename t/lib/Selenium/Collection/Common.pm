@@ -254,6 +254,7 @@ sub delete_customer {
 
 sub create_contact {
     my($self, $contactmail, $reseller) = @_;
+    return unless $contactmail && $reseller;
 
     diag("Go to Contacts page");
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -275,6 +276,7 @@ sub create_contact {
 
 sub delete_contact {
     my($self, $contactmail, $cancel) = @_;
+    return unless $contactmail;
 
     diag("Go to Contacts page");
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -287,9 +289,9 @@ sub delete_contact {
     ok($self->driver->wait_for_text('//*[@id="contact_table"]/tbody/tr[1]/td[6]', $contactmail), 'Found contact');
     $self->driver->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');
     if($cancel){
-        popup_confirm_cancel($self, 'We are NOT going to terminate this customer');
+        popup_confirm_cancel($self, 'We are NOT going to terminate this contact');
     } else {
-        popup_confirm_ok($self, 'We are going to terminate this customer');
+        popup_confirm_ok($self, 'We are going to terminate this contact');
     };
 }
 
