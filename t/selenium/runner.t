@@ -23,7 +23,7 @@ if(!admin_login()) {
 }
 
 if($testplan eq $dir . 'runner.t') {
-    @tests = ($dir . 'controller_admin.t', $dir . 'controller_billing.t', $dir . 'controller_customer.t', $dir . 'controller_domain.t', $dir . 'controller_subscriber.t', $dir . 'controller_ncos.t', $dir . 'controller_peering.t', $dir . 'controller_reseller.t', $dir . 'controller_rw_ruleset.t');
+    @tests = ($dir . 'controller_admin.t', $dir . 'controller_billing.t', $dir . 'controller_customer.t', $dir . 'controller_domain.t', $dir . 'controller_subscriber.t', $dir . 'controller_ncos.t', $dir . 'controller_peering.t', $dir . 'controller_reseller.t', $dir . 'controller_rw_ruleset.t', $dir . 'controller_emergency.t');
 } else {
     if (index($testplan, $dir . 'controller_admin.t') != -1) {
         $string = $dir . 'controller_admin.t';
