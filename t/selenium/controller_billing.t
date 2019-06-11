@@ -15,22 +15,13 @@ sub ctr_billing {
     );
 
     my $billingname = ("billing" . int(rand(100000)) . "test");
+    my $resellername = ("reseller" . int(rand(100000)) . "test");
+    my $contractid = ("contract" . int(rand(100000)) . "test");
 
     $c->login_ok();
-
-    diag("Go to Billing page");
-    $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-    $d->find_element('//a[contains(@href,"/domain")]');
-    $d->find_element("Billing", 'link_text')->click();
-
-    diag("Create a billing profile");
-    $d->find_element('//*[@id="masthead"]//h2[contains(text(),"Billing Profiles")]')->click();
-    $d->find_element('Create Billing Profile', 'link_text')->click();
-    $d->find_element('//div[contains(@class,modal-body)]//table[@id="reselleridtable"]/tbody/tr[1]/td//input[@type="checkbox"]')->click();
-    $d->fill_element('#name', 'css', $billingname);
-    $d->fill_element('[name=handle]', 'css', $billingname);
-    $d->find_element('//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]')->click();
-    $d->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
+    $c->create_reseller_contract($contractid);
+    $c->create_reseller($resellername, $contractid);
+    $c->create_billing_profile($billingname, $resellername);
 
     diag('Search for Test Profile in billing profile');
     $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
@@ -39,7 +30,7 @@ sub ctr_billing {
     ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
 
     diag('Check if other values are correct');
-    ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', 'default'), 'Correct reseller was found');
+    ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', $resellername), 'Correct reseller was found');
 
     diag("Open edit dialog for Test Profile");
     $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
@@ -155,16 +146,7 @@ sub ctr_billing {
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
 
-    diag("Terminate our Billing Profile");
-    $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-    $d->find_element("Billing", 'link_text')->click();
-    $d->fill_element('#billing_profile_table_filter label input', 'css', 'thisshouldnotexist');
-    ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-    $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
-    ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
-    $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
-    ok($d->find_text("Are you sure?"), 'Delete dialog appears');
-    $d->find_element('#dataConfirmOK', 'css')->click();
+    $c->delete_billing_profile($billingname);
 
     diag("Check if Billing Profile has been removed");
     $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);

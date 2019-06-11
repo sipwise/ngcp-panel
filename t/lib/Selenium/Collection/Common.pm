@@ -293,6 +293,47 @@ sub delete_contact {
     };
 }
 
+sub create_billing_profile {
+    my($self, $billingname, $resellername) = @_;
+    return unless $billingname && $resellername;
+
+    diag("Go to Billing page");
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element('//a[contains(@href,"/domain")]');
+    $self->driver->find_element("Billing", 'link_text')->click();
+
+    diag("Create a billing profile");
+    $self->driver->find_element('Create Billing Profile', 'link_text')->click();
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
+    ok($self->driver->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller was found');
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+    $self->driver->fill_element('#name', 'css', $billingname);
+    $self->driver->fill_element('[name=handle]', 'css', $billingname);
+    $self->driver->find_element('//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]')->click();
+    $self->driver->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
+}
+
+sub delete_billing_profile {
+    my($self, $billingname, $cancel) = @_;
+    return unless $billingname;
+
+    diag("Terminate our Billing Profile");
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element("Billing", 'link_text')->click();
+    $self->driver->fill_element('#billing_profile_table_filter label input', 'css', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $self->driver->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
+    ok($self->driver->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
+    $self->driver->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
+    if($cancel){
+        popup_confirm_cancel($self, 'We are NOT going to terminate this billing profile');
+    } else {
+        popup_confirm_ok($self, 'We are going to terminate this billing profile');
+    };
+}
+
 sub popup_confirm_ok {
     my($self, $message) = @_;
 
