@@ -204,8 +204,8 @@ sub delete_rw_ruleset {
 }
 
 sub create_customer {
-    my($self, $customerid, $pbx) = @_;
-    return unless $customerid;
+    my($self, $customerid, $contactmail, $billingname, $pbx) = @_;
+    return unless $customerid && $contactmail && $billingname;
 
     diag("Go to Customers page");
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -216,12 +216,12 @@ sub create_customer {
     $self->driver->find_element('Create Customer', 'link_text')->click();
     $self->driver->fill_element('#contactidtable_filter input', 'css', 'thisshouldnotexist');
     $self->driver->find_element('#contactidtable tr > td.dataTables_empty', 'css');
-    $self->driver->fill_element('#contactidtable_filter input', 'css', 'default-customer');
-    $self->driver->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]/td[contains(text(),"default-customer")]/..//input[@type="checkbox"]');
+    $self->driver->fill_element('#contactidtable_filter input', 'css', $contactmail);
+    $self->driver->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]/td//input[@type="checkbox"]');
     $self->driver->fill_element('#billing_profileidtable_filter input', 'css', 'thisshouldnotexist');
     $self->driver->find_element('#billing_profileidtable tr > td.dataTables_empty', 'css');
-    $self->driver->fill_element('#billing_profileidtable_filter input', 'css', 'Default Billing Profile');
-    $self->driver->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td[contains(text(),"Default Billing Profile")]/..//input[@type="checkbox"]');
+    $self->driver->fill_element('#billing_profileidtable_filter input', 'css', $billingname);
+    $self->driver->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td//input[@type="checkbox"]');
     $self->driver->scroll_to_id('external_id');
     $self->driver->fill_element('#external_id', 'css', $customerid);
     if($pbx) {
