@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a50d1a3_8ba05992",
+        "filename": "t/lib/NGCP/TestFramework.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-06-12T09:17:14Z",
+      "side": 1,
+      "message": "latest discussions concluded in executing whole yml\u0027s in parallel, not individual requests of a particular yml. this thread-queue already provides such consumer-producer structure. current situation in this change:\n\n- producer: list of requests of a single file\n- consumer: sub worker\n\nimho needs to be changed to something like\n\n- producer: list of files of a directory, or list of .ymls\u0027s given by argument\n- consumer: sub ymlworker (to run a whole file)\n\nthe option for thread labels is no longer desired. it would have gone like this:\n\n# startup:\nmy %workers \u003d ();\n# no reader thread required -\n# %requests_per_threadlabel can be prepared at once beforehand.\nforeach my $thread_label (keys %requests_per_threadlabel) {\n  my $worker \u003d threads-\u003ecreate(\\\u0026ymlworker,$requests_per_threadlabel{$threadlabel});\n  $workers{$worker-\u003etid()} \u003d $worker;\n}\n\n#shutdown:\nwhile ((scalar keys %workers) \u003e 0) {\n    foreach my $worker (values %workers) {\n        if (defined $worker and $worker-\u003eis_joinable()) {\n            $worker-\u003ejoin();\n            delete $workers{$worker-\u003etid()};\n            sleep($thread_sleep_secs);\n        }\n    }\n}",
+      "revId": "cf7393476d1c4123ca9734f34421bea0cef4fc8a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a50d1a3_0b30c955",
+        "filename": "t/lib/NGCP/TestFramework.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-06-12T09:17:14Z",
+      "side": 1,
+      "message": "is the data structure support already in place somewhere, guess it would be visible at this place?\n\nhere is an example to specify a perl sub inside the yml:\n\nsome_sub: !!perl/code |\n  {\n  my ($arg) \u003d @_;\n  return xyz;\n  }\n\nand then in perl code:\n\nmy $some_sub_code \u003d sub {\n    die(\"some_sub not defined\");\n};\nif (exists $data-\u003e{some_sub}) {\n    if (\u0027CODE\u0027 eq ref $data-\u003e{some_sub}) {\n        $some_sub_code \u003d $data-\u003e{some_sub};\n    } else {\n        die(\"perl code reference required for some_sub\\n\");\n    }\n}\n\n...\n\n$x \u003d \u0026$some_sub_code($y);",
+      "revId": "cf7393476d1c4123ca9734f34421bea0cef4fc8a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
