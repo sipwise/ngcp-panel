@@ -44,7 +44,6 @@ sub ctr_customer {
     $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
     ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
     $d->fill_element('#Customer_table_filter input', 'css', $customerid);
-    ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
 
     diag("Check customer details");
     ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
