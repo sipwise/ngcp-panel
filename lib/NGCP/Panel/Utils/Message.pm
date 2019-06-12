@@ -56,7 +56,7 @@ sub get_log_params {
     # remote ip
     my $r_ip = $c->request->address;
     $r_ip =~ s/^::ffff://; # ipv4 in ipv6 form -> ipv4
-    $r_user = $c->qs($r_ip) if $is_subscriber;
+    $r_ip = $c->qs($r_ip) if $is_subscriber;
 
     # parameters
     my $data_str;
@@ -91,7 +91,7 @@ sub get_log_params {
     if (length($data_str) > 100000) {
         # trim long messages
         $data_str = "{ data => 'Msg size is too big' }";
-    } else { 
+    } else {
         $data_str = $c->qs($data_str);
     }
 
