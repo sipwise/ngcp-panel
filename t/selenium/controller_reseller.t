@@ -44,21 +44,6 @@ sub ctr_reseller {
     diag("Click Details on our newly created reseller");
     $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
 
-    diag("Create a new Invoice Template");
-    $d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Invoice Templates")]')->click();
-    $d->scroll_to_element($d->find_element("Create Invoice Template", 'link_text'));
-    $d->find_element("Create Invoice Template", 'link_text')->click();
-    $d->fill_element('//*[@id="name"]', 'xpath', 'testtemplate');
-    $d->find_element('//*[@id="save"]')->click();
-
-    diag("Check if Invoice Template has been created");
-    $d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Invoice Templates")]')->click();
-    $d->scroll_to_element($d->find_element("Create Invoice Template", 'link_text'));
-    $d->fill_element('//*[@id="InvoiceTemplate_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-    ok($d->find_element_by_css('#InvoiceTemplate_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-    $d->fill_element('//*[@id="InvoiceTemplate_table_filter"]/label/input', 'xpath', 'testtemplate');
-    ok($d->wait_for_text('//*[@id="InvoiceTemplate_table"]/tbody/tr/td[2]', 'testtemplate'), 'Entry has been found');
-
     diag("Create a new Phonebook entry");
     $d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
     $d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
