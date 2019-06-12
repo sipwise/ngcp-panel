@@ -346,9 +346,10 @@ sub validate_fields {
 }
 
 sub error {
-    my ($self, $c, $code, $message) = @_;
+    my ($self, $c, $code, $message, $insensitive_message) = @_;
 
-    $c->log->error("error $code - $message"); # TODO: user, trace etc
+    my $msg = $insensitive_message // $message;
+    $c->log->error("error $code - $msg"); # TODO: user, trace etc
 
     $c->response->content_type('application/json');
     $c->response->status($code);

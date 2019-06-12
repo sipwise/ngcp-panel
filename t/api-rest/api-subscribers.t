@@ -234,7 +234,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $pilot_local = $pilot;
         } else {
             $pilot_local = $pilot;
-            
+
             $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => $alias_numbers } ], $pilot_local->{location} );
         }
         diag("50802: create member_to_terminate");
@@ -286,14 +286,14 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             is($member_to_get_number->{content}->{id},$alias->{content}->{subscriber_id},"50802: check ownership: prev owner id: ".$member_to_get_number->{content}->{id}."; alias subscriber_id:".$alias->{content}->{subscriber_id});
             $test_machine->check_patch2get([ { op => 'replace', path => '/subscriber_id', value => $member_to_terminate->{content}->{id} } ] , $alias->{location});
         }
-        
+
         my $terminated_primary_number = $member_to_terminate->{content}->{primary_number};
         diag("50802: primary_number of member_to_terminate");
         diag(Dumper($terminated_primary_number));
-        
+
         diag("50802: terminate member_to_terminate");
         $test_machine->request_delete($member_to_terminate->{location});
- 
+
         $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$pilot_local->{content}->{id}, 1)->{collection};
         #print Dumper $aliases;
         ok(((scalar @$aliases) == 4),"50802: aliases of ".$pilot_local->{content}->{id}." arent empty:".(scalar @$aliases ).". We returned aliases to pilot.");
@@ -514,7 +514,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             ($res,$content,$req) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched 34021' } ], $subscriber->{location} );
             $test_machine->http_code_msg(200, "Check display_name patch for subscriberadmin", $res, $content);
             my $pilot_34021 = $test_machine->get_item_hal('subscribers','/api/subscribers/?customer_id='.$subscriber->{content}->{customer_id}.'&'.'is_pbx_pilot=1');
-            my($res, $mod_34021_pilot) = $test_machine->request_patch([ 
+            my($res, $mod_34021_pilot) = $test_machine->request_patch([
                 #to don't intersect with manual testing on the web
                 { op => 'replace', path => '/profile_set_id', value => $fake_data->get_id('subscriberprofilesets') },
                 { op => 'replace', path => '/profile_id', value => undef },#we will take default profile for profile_set
@@ -545,7 +545,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $test_machine->http_code_msg(422, "Check incorrect profile_id patch for administrator", $res, $content);
             ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_set_id', value => $wrong_profile_sets->[0]->{content}->{id} } ], $subscriber->{location} );
             $test_machine->http_code_msg(422, "Check profile_set_id patch for administrator", $res, $content);
-            
+
             ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_id', value => $wrong_profiles->[0]->{content}->{id} } ], $subscriber->{location} );
             $test_machine->http_code_msg(422, "Check profile_id patch for administrator", $res, $content);
 
@@ -596,7 +596,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
                 'name' => 'other_reseller_subscriberprofile',
             },
         });
-        my($subscribers_other_reseller, $subscriberadmins_other_reseller) 
+        my($subscribers_other_reseller, $subscriberadmins_other_reseller)
             = create_subs_and_subadmin($fake_data_other_reseller, $test_machine_other_reseller);
 
         diag("#------------------------ create subscriber of other customer\n");
@@ -632,7 +632,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
                 'name' => 'other_customer_subscriberprofile',
             },
         });
-        my($subscribers_other_customer, $subscriberadmins_other_customer) 
+        my($subscribers_other_customer, $subscriberadmins_other_customer)
             = create_subs_and_subadmin($fake_data_other_customer, $test_machine_other_customer);
 
         diag("#------------------------ create usual subscriber of default test customer and reseller\n");
@@ -647,9 +647,9 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $fake_data_processed = $fake_data->process('subscribers');
         $test_machine->DATA_ITEM($fake_data_processed);
         #print Dumper $test_machine->DATA_ITEM;
-        my($subscribers, $subscriberadmins) 
+        my($subscribers, $subscriberadmins)
             = create_subs_and_subadmin($fake_data, $test_machine);
-        
+
         $test_machine->set_subscriber_credentials($subscriberadmins->[0]->{content});
         $test_machine->runas('subscriber');
         diag("\n\n\nSUBSCRIBERADMIN ".$subscriberadmins->[0]->{content}->{id}.":");
@@ -673,12 +673,12 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         }, $subscribers_other_reseller->[0]->{content})->[0];
 
         #print Dumper [
-        #    $sub_create_attempt->{content}, 
-        #    $subscribers_other_reseller->[0]->{content}->{customer_id}, 
+        #    $sub_create_attempt->{content},
+        #    $subscribers_other_reseller->[0]->{content}->{customer_id},
         #    $subscriberadmins->[0]->{content}->{customer_id}];
         #print Dumper [$sub_create_attempt->{content}, $sub_create_attempt->{content_post}];
 
-        ok(($sub_create_attempt->{content}->{customer_id} != $subscribers_other_reseller->[0]->{content}->{customer_id}) 
+        ok(($sub_create_attempt->{content}->{customer_id} != $subscribers_other_reseller->[0]->{content}->{customer_id})
             && ($sub_create_attempt->{content}->{customer_id} == $subscriberadmins->[0]->{content}->{customer_id})
             && ($sub_create_attempt->{content_post}->{customer_id} == $subscribers_other_reseller->[0]->{content}->{customer_id}),
             "check that subscriberadminadmin customer_id ".$subscriberadmins->[0]->{content}->{customer_id}
@@ -690,19 +690,19 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             .$sub_create_attempt->{content_post}->{administrative}
             ."=>".$sub_create_attempt->{content}->{administrative}.";");
 
-        #here we have unexpected error: 
+        #here we have unexpected error:
         #Sep  9 22:37:02 sp1 ngcp-panel: DEBUG: username:43350_8_; resource.domain_id:101;item.domain_id:535;
         #Sep  9 22:37:02 sp1 ngcp-panel: ERROR: error 422 - Subscriber with this username does not exist in the domain.
         diag("#-------------------------- 1. Check customer_id management ----------");
         my ($content_get,$content_put, $content_patch);
-        $test_machine->request_patch( [ { 
-                op     => 'replace', 
-                path   => '/customer_id', 
-                value  => $subscribers_other_customer->[0]->{content}->{customer_id} 
+        $test_machine->request_patch( [ {
+                op     => 'replace',
+                path   => '/customer_id',
+                value  => $subscribers_other_customer->[0]->{content}->{customer_id}
             } ], $subscribers->[0]->{location});
         (undef,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
-        ok($content_get->{customer_id} == $fake_data->get_id('customers') 
-            && $content_get->{customer_id} != $subscribers_other_customer->[0]->{content}->{customer_id}, 
+        ok($content_get->{customer_id} == $fake_data->get_id('customers')
+            && $content_get->{customer_id} != $subscribers_other_customer->[0]->{content}->{customer_id},
             "check that subscribersadmin can't apply foreign customer_id to own subscribers: "
             .$subscribers_other_customer->[0]->{content}->{customer_id}."=>".$content_get->{customer_id});
 
@@ -710,8 +710,8 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
         $test_machine->request_put( $content_get, $subscribers->[0]->{location});
         (undef,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
-        ok($content_get->{customer_id} == $fake_data->get_id('customers') 
-            && $content_get->{customer_id} != $subscribers_other_customer->[0]->{content}->{customer_id}, 
+        ok($content_get->{customer_id} == $fake_data->get_id('customers')
+            && $content_get->{customer_id} != $subscribers_other_customer->[0]->{content}->{customer_id},
             "check that subscribersadmin can't apply foreign customer_id to own subscribers: "
             .$subscribers_other_customer->[0]->{content}->{customer_id}."=>".$content_get->{customer_id});
 
@@ -747,7 +747,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         delete $content_get->{alias_numbers}->[0]->{number_id};
         delete $subscribers_other_customer->[0]->{content}->{primary_number}->{number_id};
         # 0 if different, 1 if equal
-        #k(!Data::Compare::Compare($content_get->{alias_numbers}->[0], $subscribers_other_customer->[0]->{content}->{primary_number}), 
+        #k(!Data::Compare::Compare($content_get->{alias_numbers}->[0], $subscribers_other_customer->[0]->{content}->{primary_number}),
         #   "check that subscribersadmin can't manage others customers numbers. Other subscriber primary_number:\n"
         #   .Dumper($subscribers_other_customer->[0]->{content}->{primary_number})."\n=>\n".Dumper($content_get->{alias_numbers}->[0])
         #   );
@@ -760,7 +760,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->http_code_msg(422, "check that subscribersadmin can't manage others customers profile_id", $res, $content_put);
         ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
         $content_get->{profile_id} //= '';
-        ok($content_get->{profile_id} != $subscribers_other_customer->[0]->{content}->{profile_id}, 
+        ok($content_get->{profile_id} != $subscribers_other_customer->[0]->{content}->{profile_id},
             "check that subscribersadmin can't apply others customers profile_id. "
             .$subscribers_other_customer->[0]->{content}->{profile_id}." => ".$content_get->{profile_id});
 
@@ -798,7 +798,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->http_code_msg(422, "check that subscribersadmin can't assign other profileset profile_id", $res, $content_put);
         ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
         $content_get->{profile_id} //= '';
-        ok($content_get->{profile_id} != $subscriberprofile_other_profile_set->{content}->{id}, 
+        ok($content_get->{profile_id} != $subscriberprofile_other_profile_set->{content}->{id},
             "check that subscribersadmin can't apply other profileset profile_id. "
             .$subscriberprofile_other_profile_set->{content}->{id}." => ".$content_get->{profile_id});
 
@@ -833,7 +833,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $test_machine->http_code_msg(200, "check that subscribersadmin can assign other profile from correct profile_set", $res, $content_put);
         ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
         $content_get->{profile_id} //= '';
-        ok($content_get->{profile_id} eq $subscriberprofile_other->{content}->{id}, 
+        ok($content_get->{profile_id} eq $subscriberprofile_other->{content}->{id},
             "check that subscribersadmin can't apply other profileset profile_id. "
             .$subscriberprofile_other->{content}->{id}." => ".$content_get->{profile_id});
 
@@ -842,7 +842,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         ($res,$content_patch) = $test_machine->request_patch(  [ { op => 'replace', path => '/display_name', value => 'patched_43350' } ], $subscribers->[0]->{location});
         $test_machine->http_code_msg(200, "check that subscribersadmin can manage available fields", $res, $content_patch);
         ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
-        ok($content_get->{display_name} eq 'patched_43350', 
+        ok($content_get->{display_name} eq 'patched_43350',
             "check that subscribersadmin can manage display_name");
 
         diag("#-------------------------- 5. ACCESS other's customer subscribers ----------");
@@ -1068,7 +1068,7 @@ sub create_subs_and_subadmin {
     my $pilot_l = $test_machine_l->get_item_hal('subscribers','/api/subscribers/?customer_id='.$fake_data_l_processed->{customer_id}.'&'.'is_pbx_pilot=1');
     if((exists $pilot_l->{total_count} && $pilot_l->{total_count}) || (exists $pilot_l->{content}->{total_count} && $pilot_l->{content}->{total_count} > 0)){
         #remove existing pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
-        my($res, $mod_pilot) = $test_machine_l->request_patch([ 
+        my($res, $mod_pilot) = $test_machine_l->request_patch([
                 { op => 'replace', path => '/alias_numbers', value => [] },
                 #to don't intersect with manual testing on the web
                 { op => 'replace', path => '/profile_set_id', value => $fake_data_l->get_id('subscriberprofilesets') },
