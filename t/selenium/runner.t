@@ -45,6 +45,10 @@ if($testplan eq $dir . 'runner.t') {
         $string = $dir . 'controller_emergency.t';
         push @tests, $string;
     };
+    if (index($testplan, $dir . 'controller_invoice.t') != -1) {
+        $string = $dir . 'controller_invoice.t';
+        push @tests, $string;
+    };
     if (index($testplan, $dir . 'controller_ncos.t') != -1) {
         $string = $dir . 'controller_ncos.t';
         push @tests, $string;
