@@ -62,17 +62,7 @@ sub get_log_params {
                       ? $c->request->query_params
                       : $c->request->parameters;
     if ($data_ref) {
-        my $log_passwords = $c->config->{security}{log_passwords} || 0;
-        my %parsed_data_ref = map { $_ => defined $data_ref->{$_}
-                                    ? length($data_ref->{$_}) > 500
-                                        ? '*too big*'
-                                        : (!$log_passwords && $_ =~ /password/i
-                                                && $data_ref->{$_})
-                                            ? '*' x 5
-                                            : $data_ref->{$_}
-                                    : 'undef'
-                                  } keys %$data_ref;
-        $data_str = Data::Dumper->new([ \%parsed_data_ref ])
+        $data_str = Data::Dumper->new([ obfuscate_password_fields($c,$data_ref) ])
                                 ->Terse(1)
                                 ->Maxdepth(1)
                                 ->Dump;
@@ -126,10 +116,10 @@ sub error {
     if (defined $log)
     {
         if (ref($log)) {
-            $log_msg = Data::Dumper->new([ $log ])
+            $log_msg = $c->qs(Data::Dumper->new([ obfuscate_password_fields($c,$log) ])
                                    ->Terse(1)
                                    ->Maxdepth(1)
-                                   ->Dump;
+                                   ->Dump);
         } else {
             $log_msg = $log
         }
@@ -166,7 +156,7 @@ sub error {
         $msg      = "$desc ($error)";
         $usr_text = "$desc ($dup)";
     }
-    elsif (my ($excerpt) = $error =~ /(Column \S+ cannot be null)/) 
+    elsif (my ($excerpt) = $error =~ /(Column \S+ cannot be null)/)
     {
         $msg      = "$desc ($error)";
         $usr_text = "$desc ($excerpt)";
@@ -214,10 +204,10 @@ sub info {
 
     if (defined $log) {
         if (ref($log)) {
-            $log_msg = Data::Dumper->new([ $log ])
+            $log_msg = $c->qs(Data::Dumper->new([ obfuscate_password_fields($c,$log) ])
                                    ->Terse(1)
                                    ->Maxdepth(1)
-                                   ->Dump;
+                                   ->Dump);
         } else {
             $log_msg = $log
         }
@@ -233,6 +223,22 @@ sub info {
         $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
     }
     return $rc;
+}
+
+sub obfuscate_password_fields {
+    my ($c,$data_ref) = @_;
+    return $data_ref unless 'HASH' eq ref $data_ref;
+    my $log_passwords = $c->config->{security}{log_passwords} || 0;
+    my %parsed_data_ref = map {$_ => defined $data_ref->{$_}
+        ? length($data_ref->{$_}) > 500
+            ? '*too big*'
+            : (!$log_passwords && $_ =~ /password/i
+                    && $data_ref->{$_})
+                ? '*' x 5
+                : $data_ref->{$_}
+        : 'undef'
+      } keys %$data_ref;
+    return \%parsed_data_ref;
 }
 
 1;
