@@ -127,7 +127,7 @@ sub auto :Private {
         if($ssl_sn) {
             $c->log->debug("++++++ Root::auto API request with client auth sn '$ssl_sn'");
             unless($ssl_dn eq "/CN=Sipwise NGCP API client certificate") {
-                $c->log->error("++++++ Root::auto API request with invalid client DN '" . $c->qs($ssl_dn) . "'");
+                $c->log->error("++++++ Root::auto API request with invalid client DN '" . $ssl_dn . "'");
                 $c->res->status(403);
                 $c->res->body(JSON::to_json({
                     message => "Invalid client certificate DN '$ssl_dn'",
