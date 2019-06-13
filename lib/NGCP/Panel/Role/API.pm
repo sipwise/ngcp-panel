@@ -1024,7 +1024,7 @@ sub log_request {
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_request',
-        log  => $c->stash->{'body'},
+        log  => $c->qs($c->stash->{'body'}),
     );
 }
 
@@ -1055,7 +1055,7 @@ sub log_response {
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
-        log  => $response_body,
+        log  => $c->qs($response_body),
         data => $params_data,
     );
 }
