@@ -57,6 +57,18 @@ sub select_if_unselected {
     return 1;
 }
 
+sub unselect_if_selected {
+    my ($self, $query, $scheme) = @_;
+    $scheme //= "xpath";
+    my $elem = $self->find_element($query, $scheme);
+    return 0 unless $elem;
+    return 0 unless $elem->is_displayed;
+    if ($elem->is_selected() ) {
+        $elem->click;
+    }
+    return 1;
+}
+
 sub fill_element {
     my ($self, $query, $scheme, $filltext) = @_;
     my $elem = $self->find_element($query, $scheme);
