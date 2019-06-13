@@ -26,6 +26,8 @@ OUTPUT_TYPE=${3:-}
 shift; shift; shift # remove first three argv to use ${@} below.
 if [ -z "${1:-}" ] || [ "${1:-}" == '*.t' ]; then
   declare -a TEST_PLAN="t/selenium/runner.t"
+elif [ "${1:-}" == 'experimental' ] || [ "${1:-}" == 'exp' ]; then
+  declare -a TEST_PLAN="exp"
 else
   declare -a TEST_PLAN=( "${@/#/t/selenium/}" )
 fi
