@@ -23,13 +23,25 @@ sub ctr_billing {
     $c->create_reseller($resellername, $contractid);
     $c->create_billing_profile($billingname, $resellername);
 
+    diag('Trying to create a empty billing profile');
+    $d->find_element('Create Billing Profile', 'link_text')->click();
+
+    diag("Click 'Save'");
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag('Check if Errors show up');
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Handle field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is required")]'));
+    $d->find_element('//*[@id="mod_close"]')->click();
+
     diag('Search for Test Profile in billing profile');
     $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
     ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
-    ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
 
-    diag('Check if other values are correct');
+    diag('Check if values are correct');
+    ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
     ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', $resellername), 'Correct reseller was found');
 
     diag("Open edit dialog for Test Profile");
@@ -48,11 +60,28 @@ sub ctr_billing {
 
     diag("Create a billing fee");
     $d->find_element('Create Fee Entry', 'link_text')->click();
-    $d->find_element('//div[contains(@class,"modal")]//input[@value="Create Zone"]')->click();
+
+    diag("Press 'Save'");
+    $d->find_element('#save', 'css')->click();
+
+    diag('Check if Errors show up');
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Zone field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Destination field is required")]'));
+
     diag("Create a billing zone (redirect from previous form)");
+    $d->find_element('//div[contains(@class,"modal")]//input[@value="Create Zone"]')->click();
+
+    diag("Press 'Save'");
+    $d->find_element('#save', 'css')->click();
+
+    diag('Check if Errors show up');
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Zone field is required")]'));
+
+    diag('Fill Zone info');
     $d->fill_element('#zone', 'css', 'testingzone');
     $d->fill_element('#detail', 'css', 'testingdetail');
     $d->find_element('#save', 'css')->click();
+
     diag("Back to orignial form (create billing fees)");
     $d->select_if_unselected('//div[contains(@class,"modal")]//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//input[@type="checkbox"]');
     $d->fill_element('#source', 'css', '.*');
@@ -129,6 +158,25 @@ sub ctr_billing {
 
     diag("Create a Date Definition");
     $d->find_element('Create Special Off-Peak Date', 'link_text')->click();
+
+    diag("Click 'Save'");
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag('Check if Errors show up');
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Start Date/Time field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "End Date/Time field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Invalid date format, must be YYYY-MM-DD hh:mm:ss")]'));
+
+    diag('Fill in invalid values');
+    $d->fill_element('#start', 'css', "this should");
+    $d->fill_element('#end', 'css', "not work");
+    $d->find_element('#save', 'css')->click();
+    
+    diag('Check if Errors show up');
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Could not parse DateTime input. Should be one of (Y-m-d H:M:S, Y-m-d H:M, Y-m-d).")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Invalid date format, must be YYYY-MM-DD hh:mm:ss")]'));
+
+    diag('Fill in valid values');
     $d->fill_element('#start', 'css', "2008-02-28 04:20:00");
     $d->fill_element('#end', 'css', "2008-02-28 13:37:00");
     $d->find_element('#save', 'css')->click();
