@@ -29,14 +29,14 @@ sub ctr_domain {
     ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[contains(text(), "domain")]', $domainstring), "Domain name is correct");
 
     diag("Open Preferences of first Domain");
-    $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath');
+    $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
 
     diag('Open the tab "Access Restrictions"');
     $d->find_element("Access Restrictions", 'link_text')->click();
 
     diag("Click edit for the preference concurrent_max");
-    $d->move_and_click('//table//tr/td[contains(text(), "concurrent_max")]/../td//a[contains(text(), "Edit")]', 'xpath');
-
+    $d->move_and_click('//table//tr/td[contains(text(), "concurrent_max")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "reject_emergency")]');
+	
     diag("Try to change this to a value which is not a number");
     $d->fill_element('#concurrent_max', 'css', 'thisisnonumber');
     $d->find_element("#save", 'css')->click();
@@ -69,7 +69,7 @@ sub ctr_domain {
 
     diag("Enable Opus Mono");
     $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_mono")]'));
-    $d->move_and_click('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//a[contains(text(), "Edit")]', 'xpath');
+    $d->move_and_click('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "transcode_opus_stereo")]');
     $d->select_if_unselected('//*[@id="transcode_opus_mono"]');
     $d->find_element('//*[@id="save"]')->click();
 
@@ -78,7 +78,7 @@ sub ctr_domain {
 
     diag("Change Opus Mono Bitrate");
     $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_mono")]'));
-    $d->move_and_click('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath');
+    $d->move_and_click('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "opus_stereo_bitrate")]');
 
     diag("Change to 32 kbit/s");
     $d->find_element('//*[@id="opus_mono_bitrate"]/option[contains(text(), "32")]')->click();
@@ -89,7 +89,7 @@ sub ctr_domain {
 
     diag("Enable Opus Stereo");
     $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_stereo")]'));
-    $d->move_and_click('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//a[contains(text(), "Edit")]', 'xpath');
+    $d->move_and_click('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "transcode_opus_mono")]');
     $d->select_if_unselected('//*[@id="transcode_opus_stereo"]');
     $d->find_element('//*[@id="save"]')->click();
 
@@ -98,7 +98,7 @@ sub ctr_domain {
 
     diag("Change Opus Stereo Bitrate");
     $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_stereo")]'));
-    $d->move_and_click('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath');
+    $d->move_and_click('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "opus_mono_bitrate")]');
 
     diag("Change to 32 kbit/s");
     $d->find_element('//*[@id="opus_stereo_bitrate"]/option[contains(text(), "32")]')->click();
