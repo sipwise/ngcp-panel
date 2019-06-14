@@ -855,31 +855,33 @@ sub process_patch_description {
                 $values_to_remove = [$op->{value}];
             }
             my $value_current = JSON::Pointer->get($entity, $op->{path});
-            foreach my $value_to_remove (@$values_to_remove) {
-                #we are not able to request full array removal with exact value
-                if (ref $value_current eq 'ARRAY') {
-                    for (my $i=0; $i < @$value_current; $i++) {
-                        # 0 if different, 1 if equal
+            if (ref $value_current eq 'ARRAY') {
+                my %marked_indexes = ();
+                for (my $i = $#$value_current; $i >= 0; $i--) {
+                    foreach my $value_to_remove (@$values_to_remove) {
                         if ($self->compare_patch_value($c, $op, $value_current->[$i], $value_to_remove)) {
                             if ( defined $remove_index ) {
                                 if ($found_count == $remove_index) {
-                                #if we want to use patch info to try to make clear changes, we shouldn't use replace
-                                #from the other pov, if we requested 10000 removals, we will have 10000 new op entries
-                                    unshift @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
+                                    #if we want to use patch info to try to make clear changes, we shouldn't use replace
+                                    #from the other pov, if we requested 10000 removals, we will have 10000 new op entries
+                                    push @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
                                     $removal_done = 1;
                                     last;
                                 } else {
                                     $found_count++;
                                 }
-                            } else {
-                                unshift @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
+                            } elsif (!$marked_indexes{$i}) {
+                                push @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
+                                $marked_indexes{$i} = 1;
                             }
                         }
                     }
                     if ($removal_done) {
                         last;
                     }
-                } else { #current value is not an array
+                }
+            } else { #current value is not an array
+                foreach my $value_to_remove (@$values_to_remove) {
                     if ($self->compare_patch_value($c, $op, $value_current, $value_to_remove)) {
                         push @$patch_diff, {"op" => "remove", "path" => $op->{path} };
                     }
