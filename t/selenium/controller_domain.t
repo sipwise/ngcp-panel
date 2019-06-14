@@ -17,6 +17,22 @@ sub ctr_domain {
     my $domainstring = ("domain" . int(rand(100000)) . ".example.org");
 
     $c->login_ok();
+
+    diag('Go to domains page');
+    $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $d->find_element("Domains", 'link_text')->click();
+
+    diag('Try to add a empty domain');
+    $d->find_element('Create Domain', 'link_text')->click();
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag('Check error messages');
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "SIP Domain field is required")]'));
+
+    diag("Continuing creating a legit domain");
+    $d->find_element('//*[@id="mod_close"]')->click();
+
     $c->create_domain($domainstring);
 
     diag("Check if entry exists and if the search works");
@@ -56,12 +72,32 @@ sub ctr_domain {
     $d->fill_element('//*[@id="allowed_ips"]', 'xpath', '127.0.0.0.0');
     $d->find_element('//*[@id="add"]')->click();
     ok($d->find_element_by_xpath('//*[@id="mod_edit"]//div//span[contains(text(), "Invalid IPv4 or IPv6 address")]'), "Invalid IP address detected");
+    $d->fill_element('//*[@id="allowed_ips"]', 'xpath', 'thisisnonumber');
+    $d->find_element('//*[@id="add"]')->click();
+    ok($d->find_element_by_xpath('//*[@id="mod_edit"]//div//span[contains(text(), "Invalid IPv4 or IPv6 address")]'), "Invalid IP address detected");
     $d->fill_element('//*[@id="allowed_ips"]', 'xpath', '127.0.0.1');
     $d->find_element('//*[@id="add"]')->click();
     $d->find_element('//*[@id="mod_close"]')->click();
 
     diag("Check if IP address has been added");
     ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "127.0.0.1")]'), "IP address has beeen found");
+
+    diag("Add another IP address");
+    $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
+    $d->fill_element('//*[@id="allowed_ips"]', 'xpath', '10.0.0.138');
+    $d->find_element('//*[@id="add"]')->click();
+    $d->find_element('//*[@id="mod_close"]')->click();
+
+    diag("Check if IP address has been added");
+    ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "10.0.0.138")]'), "IP address has beeen found");
+
+    diag("Delete the first IP address");
+    $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
+    $d->find_element('//*[@id="mod_edit"]/div[2]/div[2]/a')->click();
+    $d->find_element('//*[@id="mod_close"]')->click();
+
+    diag("Check if IP addresses have been changed");
+    ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "10.0.0.138")]'), "IP address has beeen found");
 
     diag("Enable transcoding to Opus Mono and Stereo");
     $d->scroll_to_element($d->find_element('Media Codec Transcoding Options', 'link_text'));
