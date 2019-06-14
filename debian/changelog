@@ -1,3 +1,13 @@
+ngcp-panel (7.3.1.7+0~mr7.3.1.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [46a9115] TT#60502 fix PATCH removal by value when multiple elements are removed
+  * [c19172d] TT#60502 refactor PATCH by value ARRAY
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sat, 15 Jun 2019 00:12:33 +0200
+
 ngcp-panel (7.3.1.6+0~mr7.3.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
