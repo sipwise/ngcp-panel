@@ -108,13 +108,11 @@ sub create_reseller_contract {
     ok($self->driver->wait_for_text('//*[@id="contactidtable"]/tbody/tr[1]/td[4]', 'default-system@default.invalid'), "Default Contact found");
     $self->driver->select_if_unselected('//*[@id="contactidtable"]/tbody/tr[1]/td[5]/input');
     $self->driver->scroll_to_element($self->driver->find_element('//*[@id="external_id"]'));
-
     $self->driver->fill_element('//*[@id="billing_profileidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($self->driver->find_element_by_css('#billing_profileidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="billing_profileidtable_filter"]/label/input', 'xpath', 'Default Billing Profile');
     ok($self->driver->wait_for_text('//*[@id="billing_profileidtable"]/tbody/tr/td[3]', 'Default Billing Profile'), "Default Billing Profile found");
     $self->driver->select_if_unselected('//*[@id="billing_profileidtable"]/tbody/tr[1]/td[4]/input');
-
     $self->driver->fill_element('//*[@id="external_id"]', 'xpath', $resellerid);
     $self->driver->find_element('//*[@id="save"]')->click();
 }
@@ -212,7 +210,6 @@ sub create_customer {
     $self->driver->find_element("Customers", 'link_text')->click();
 
     diag("Trying to create a Customer");
-    $self->driver->find_element('//*[@id="masthead"]//h2[contains(text(),"Customers")]');
     $self->driver->find_element('Create Customer', 'link_text')->click();
     $self->driver->fill_element('#contactidtable_filter input', 'css', 'thisshouldnotexist');
     $self->driver->find_element('#contactidtable tr > td.dataTables_empty', 'css');
@@ -301,7 +298,6 @@ sub create_billing_profile {
 
     diag("Go to Billing page");
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-    $self->driver->find_element('//a[contains(@href,"/domain")]');
     $self->driver->find_element("Billing", 'link_text')->click();
 
     diag("Create a billing profile");
