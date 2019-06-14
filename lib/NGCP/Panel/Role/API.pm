@@ -865,14 +865,14 @@ sub process_patch_description {
                                 if ($found_count == $remove_index) {
                                 #if we want to use patch info to try to make clear changes, we shouldn't use replace
                                 #from the other pov, if we requested 10000 removals, we will have 10000 new op entries
-                                    push @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
+                                    unshift @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
                                     $removal_done = 1;
                                     last;
                                 } else {
                                     $found_count++;
                                 }
                             } else {
-                                push @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
+                                unshift @$patch_diff, {"op" => "remove", "path" => $op->{path}.'/'.$i };
                             }
                         }
                     }
