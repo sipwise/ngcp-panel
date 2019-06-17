@@ -98,8 +98,8 @@ sub generate_client_cert {
 
     my $updated;
     my ($serial, $pem, $p12);
+    $serial = time;
     while (!$updated) {
-        $serial = time;
         try {
             $pem = $c->model('CA')->make_client($c, $serial);
             $p12 = $c->model('CA')->make_pkcs12($c, $serial, $pem, 'sipwise');
