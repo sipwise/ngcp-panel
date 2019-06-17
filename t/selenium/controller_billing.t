@@ -194,6 +194,16 @@ sub ctr_billing {
     ok($d->find_text("Are you sure?"), 'Delete dialog appears');
     $d->find_element('#dataConfirmOK', 'css')->click();
 
+    diag("Open delete dialog and press cancel");
+    $c->delete_billing_profile($billingname, 1);
+
+    diag("Check if Billing Profile is still here");
+    $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
+    $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
+    ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
+
+    diag("Open delete dialog and press ok");
     $c->delete_billing_profile($billingname);
 
     diag("Check if Billing Profile has been removed");
