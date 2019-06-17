@@ -16,7 +16,8 @@ my ($invalid_ssl_client_cert, $valid_ssl_client_cert) = _download_certs($uri);
 my ($ua, $res);
 $ua = LWP::UserAgent->new;
 
-SKIP: {
+SKIP1:
+{
     # invalid cert
     $ua->ssl_opts(
         SSL_cert_file => $invalid_ssl_client_cert,
@@ -28,7 +29,8 @@ SKIP: {
     is($res->code, 403, "check invalid client certificate")
         || note ($res->message);
 }
-SKIP: {
+SKIP2:
+{
     $ua->ssl_opts(
         SSL_cert_file => $valid_ssl_client_cert,
         SSL_key_file => $valid_ssl_client_cert,
