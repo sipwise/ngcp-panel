@@ -1,3 +1,122 @@
+ngcp-panel (7.4.1.0+0~mr7.4.1.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [de66766] TT#56376 selenium: add test: Add rule to a ruleset
+  * [18ddda1] TT#56376 selenium: change xpaths to fix crash in pro version
+  * [4098466] TT#56376 selenium: yet another fix for crash in pro versions
+  * [76a3007] TT#56376 selenium: add test: create rule for callee
+  * [dbad798] TT#56376 selenium: allow create_domain() to use a custom reseller
+  * [1fdae89] TT#56376 selenium: add test: add ruleset to domain.
+  * [c06d056] TT#56376 selenium: add test: reorder rewrite rules
+  * [e7a0927] TT#56376 selenium: move login_ok() to Collection.pm
+  * [c3ff0cb] TT#56376 selenium: remove deletion of rule
+  * [7180304] TT#56376 selenium: generate more unique names for domains, customers, etc.
+  * [09be313] TT#56376 selenium: clean up code: edit preference inbound_upn
+  * [cfb64bb] TT#56376 selenium: yet another fix for crashing fraud limits.
+  * [52bf6e4] TT#56376 selenium: add file: controller_admin.t
+  * [7c571ed] TT#56376 selenium: check if concurrent_max value has been applied
+  * [cd76c99] TT#56376 selenium: add test: allowed_ips
+  * [4c38129] TT#56376 selenium: use unique name for creating a peering server
+  * [f3c8ed8] TT#56376 selenium: add create_customer() and delete_customer()
+  * [ff6c084] TT#56376 selenium: improved formatting
+  * [89e184e] TT#56376 selenium: remove duplicate create_customer
+  * [63414a1] TT#56376 selenium: create/delete rw_ruleset cleanups
+  * [7f77dc6] TT#56376 selenium: add file controller_subscriber.t + refactoring
+  * [bec65d6] TT#56376 selenium: further controller_customer xpath changes
+  * [5e4b924] TT#56376 selenium: add more tests to controller_billing
+  * [2a0f51a] TT#56376 selenium: add tests: cancel deletion and see if data is still here
+  * [ce3877d] TT#56376 selenium: add move_and_click function
+  * [ac2b953] TT#56376 selenium: add more tests to controller_customer
+  * [e825b5d] TT#56376 selenium: controller_domain cleanups
+  * [3e8cd2f] TT#56376 selenium: crash fix for controller_peering.t
+  * [8ee59ed] TT#56376 selenium: check domain details before entering domain config
+  * [2f5b377] TT#56376 selenium: move_and_click: add optional fallback parameter
+  * [dfb88d0] TT#56376 selenium: add more tests to controller_peering
+  * [8ed76e3] TT#56376 selenium: add more tests to controller_reseller
+  * [c9dc925] TT#56376 selenium: add more tests to controller_subscriber
+  * [d80ae27] TT#56376 selenium: replace code for clicking edit Wednesday button
+  * [e9fbdc2] TT#56376 selenium: add test: check block lists
+  * [b3fb2ab] TT#56376 selenium: add test: add source set
+  * [e2b4ad8] TT#56376 selenium: use move_and_click in Common.pm
+  * [104b9c8] TT#56376 selenium: add test: check email template
+  * [ddcb49d] TT#56376 selenium: add test: change subscriber language
+  * [d00c56a] TT#56376 selenium: add test: enable subscriber call recording
+  * [b8a194a] TT#56376 selenium: add test: media transcoding
+  * [df2f8cf] TT#56376 selenium: change timeout values
+  * [e8c88e7] TT#56376 selenium: fix a typo
+  * [f9ced2f] TT#56376 selenium: Multithread tests
+  * [25d2982] TT#56376 selenium: add test: check admin details
+  * [33a0477] TT#56376 selenium: add file controller_ncos.t
+  * [11cbf10] TT#56376 selenium: dont execute every .t file in directory by default
+  * [395a9ab] TT#56376 selenium: fix crash when creating domain
+  * [0463e2a] TT#56376 selenium: add test: add ncos level to domain
+  * [ed54429] TT#56376 selenium: add file controller_emergency.t
+  * [f85efa0] TT#56376 selenium: minor improvment to text output
+  * [2758bf8] TT#56376 selenium: fix crash: enter LNP details
+  * [4766b58] TT#56376 selenium: fix test: Check if Template Email was deleted
+  * [19f8032] TT#56376 selenium: add tests: subscriber profile sets
+  * [bcc3381] TT#56376 selenium: add file controller_timeset.t
+  * [01b6dd5] TT#56376 selenium: runner.t tesplan changes
+  * [d6ac16d] TT#56376 selenium: replace move_action with move_and_click()
+  * [5835e29] TT#56376 selenium: cleaned up old code
+  * [c5acf9e] TT#56376 selenium: disable LNP tests
+  * [45b3426] TT#56376 selenium: add function create_contact() and delete_contact()
+  * [22ab442] TT#56376 selenium: add function create/delete_billing_profile()
+  * [41e53f6] TT#56376 selenium: changes for create_customer()
+  * [a658a43] TT#56376 selenium: some enhancements to create/delete_contact()
+  * [7bca436] TT#56376 selenium: promote controller_emergency.t to default test plan
+  * [56f55cb] TT#56376 selenium: add file controller_invoice.t
+  * [8d392ff] TT#56376 selenium: delete duplicate check
+  * [731a56c] TT#56376 selenium: add "experimental" launch option
+  * [2955011] TT#56376 selenium: add fallback objects to move_and_click in ctr_domain
+  * [95c9387] TT#56376 selenium: add unselect_if_selected()
+  * [3d70c9a] TT#56376 selenium: more tests for controller_billing.t
+  * [30810ac] TT#56376 selenium: more tests for controller_customer.t
+  * [01d0973] TT#56376 selenium: more tests for controller_admin.t
+  * [a5537e8] TT#56376 selenium: a few cleanups in Common.pm:
+  * [d62a999] TT#56376 selenium: more tests for controller_domain.t
+  * [64c1d97] TT#56376 selenium: more tests for controller_emergency.t
+  * [f9bd117] TT#56376 selenium: add cancel deletion tests to controller_admin/billing.t
+  * [ad4444f] TT#56376 selenium: more tests for controller_invoice.t
+  * [11b4ffc] TT#56376 selenium: add missing scroll_to_element
+
+  [ Sipwise Jenkins Builder ]
+  * [04aa1fb] TT#4166 I18N dump: snapshot 2019.05.03-02.03.41
+  * [5cf886a] TT#4166 I18N dump: snapshot 2019.05.22-01.31.41
+  * [1df256e] TT#4166 I18N dump: snapshot 2019.05.25-01.20.41
+  * [102e2b7] TT#4166 I18N dump: snapshot 2019.06.01-01.21.55
+
+  [ Rene Krenn ]
+  * [7d1e004] TT#58004 stop+start_profile instead of update_profile event
+  * [cae5270] TT#56340 panel logline obfuscation
+  * [64a6637] TT#56340 fix ip logged instead of username
+  * [157206a] TT#59803 opfuscate password fields in any logmessage part
+  * [dda5ffe] TT#56340 fix subscribers.t not matching obfuscation chars
+  * [b0465b9] TT#59803 obfuscate logged request+response body to protect passwords
+  * [e237a47] TT#60116 don't gdpr-quote cert DN in logs
+  * [f20d419] TT#60116 accept leading / in cert DN
+
+  [ Irina Peshinskaya ]
+  * [4a4761b] TT#49255 Fix ssl verify config appliance for Grandstream
+  * [ba54711] TT#49255 Consider response code to parse ZTP servers responses
+  * [5dc3065] TT#51061 Disable prepaid billing plan for peering/reseller contracts
+  * [33dc1a0] TT#57653 Sync missed email templates on demand
+  * [53118b0] TT#51552 Order pbx extensions by display_name or username
+  * [c41860f] TT#50008 More descriptive timezone name
+
+  [ Flaviu Mates ]
+  * [d59e4c9] TT#58570 Fix subscriberadmin PATCH
+  * [9afc01a] TT#50655 Fix for Call Flow page
+  * [c63a5df] TT#58590 - Fix call lists suppresion in /api/conversations
+
+  [ Kirill Solomko ]
+  * [7c22d44] TT#59164 Field::URI allow "\\" char in sip-username
+  * [883d994] TT#59324 disable DeviceBootStrap LWP::UserAgent keep_alive
+  * [ffdb2d0] TT#60502 fix PATCH removal by value when multiple elements are removed
+  * [9094ec4] TT#60502 refactor PATCH by value ARRAY
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Jun 2019 14:37:41 +0200
+
 ngcp-panel (7.4.0.0+0~mr7.4.0.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
