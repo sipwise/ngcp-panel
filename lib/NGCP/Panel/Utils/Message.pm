@@ -264,6 +264,15 @@ sub obfuscate_password_fields {
     return \%parsed_data_ref;
 }
 
+sub obfuscate_body_password_fields {
+    my ($c,$body) = @_;
+    return $body unless '' eq ref $body;
+    return $body unless $body;
+    return $body unless ($c->config->{security}{log_passwords} || 0);
+    $body =~ m/["']?[a-u0-9_]*password[a-u0-9_]*["']?\s*:\s*["'](.*)["']\s*,?\s*/gmi;
+    return substr($body, $-[1], $+[1] - $-[1], '*' x 5);
+}
+
 1;
 
 __END__
