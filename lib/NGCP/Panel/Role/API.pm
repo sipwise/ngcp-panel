@@ -910,7 +910,7 @@ sub log_request {
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_request',
-        log  => $c->qs($c->stash->{'body'}),
+        log  => $c->qs(NGCP::Panel::Utils::Message::obfuscate_body_password_fields($c,$c->stash->{'body'})),
     );
 }
 
@@ -1410,7 +1410,7 @@ sub complete_transaction{
 sub filter_log_response {
     my ($self, $c, $response_body, $params_data) = @_;
 
-    return ($response_body, $params_data);
+    return (NGCP::Panel::Utils::Message::obfuscate_body_password_fields($c,$response_body), $params_data);
 }
 #------ accessors ---
 
