@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_3a9081ec",
+        "filename": "lib/NGCP/Panel/Utils/Message.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-19T11:08:17Z",
+      "side": 1,
+      "message": "just \"unless ref $body\". no need to compare it to an empty string, also \"unless + eq\" is always harder to read.",
+      "range": {
+        "startLine": 269,
+        "startChar": 17,
+        "endLine": 269,
+        "endChar": 30
+      },
+      "revId": "d5cb3a235abe8e18302a335fcbda81fb544dc3a7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa1b9901_fac0c9e2",
+        "filename": "lib/NGCP/Panel/Utils/Message.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-19T11:08:17Z",
+      "side": 1,
+      "message": "should be moved up, as if the variable is empty then then no need to check if it\u0027s a ref or not.",
+      "range": {
+        "startLine": 270,
+        "startChar": 4,
+        "endLine": 270,
+        "endChar": 30
+      },
+      "revId": "d5cb3a235abe8e18302a335fcbda81fb544dc3a7",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
