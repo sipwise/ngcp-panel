@@ -30,7 +30,7 @@ sub BUILD {
     # $self->set_window_position(0, 50) if ($browsername ne "htmlunit");
     # $self->set_window_size($window_h,$window_w) if ($browsername ne "htmlunit");
     # diag("Window size: $window_h x $window_w");
-    $self->set_timeout("implicit", 5_000);
+    $self->set_timeout("implicit", 10_000);
 }
 
 sub find_text {
@@ -109,7 +109,7 @@ sub browser_name_in {
 sub wait_for_text {
     my ($self, $xpath, $expected, $timeout) = @_;
     return unless $xpath && $expected;
-    $timeout = 10 unless $timeout; # seconds. Default timeout value if none is specified.
+    $timeout = 5 unless $timeout; # seconds. Default timeout value if none is specified.
     my $started = time();
     my $elapsed = time();
     while ($elapsed - $started <= $timeout){
@@ -124,7 +124,7 @@ sub wait_for_text {
 sub move_and_click {
     my ($self, $path, $type, $fallback, $timeout) = @_;
     return unless $path && $type;
-    $timeout = 10 unless $timeout; # seconds. Default timeout value if none is specified.
+    $timeout = 5 unless $timeout; # seconds. Default timeout value if none is specified.
     my $started = time();
     my $elapsed = time();
     while ($elapsed - $started <= $timeout){
