@@ -910,7 +910,7 @@ sub log_request {
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_request',
-        log  => $c->qs(NGCP::Panel::Utils::Message::obfuscate_body_password_fields($c,$c->stash->{'body'})),
+        log  => NGCP::Panel::Utils::Message::obfuscate_body_password_fields($c,$c->stash->{'body'}),
     );
 }
 
@@ -941,7 +941,7 @@ sub log_response {
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
-        log  => $c->qs($response_body),
+        log  => $response_body,
         data => $params_data,
     );
 }
