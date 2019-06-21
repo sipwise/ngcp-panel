@@ -43,10 +43,17 @@ sub ctr_subscriber {
     ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
     $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 
-    diag("Trying to add a Subscriber");
+    diag("Trying to add a empty Subscriber");
     $d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
     $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]'));
     $d->find_element('Create Subscriber', 'link_text')->click();
+    $d->unselect_if_selected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag("Check Error Messages");
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Domain field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "SIP Username field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "SIP Password field is required")]'));
 
     diag('Enter necessary information');
     $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -75,8 +82,15 @@ sub ctr_subscriber {
     $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $d->find_element("Subscriber Profiles", 'link_text')->click();
 
-    diag('Trying to create a new Subscriber profile set');
+    diag('Trying to create a empty Subscriber profile set');
     $d->find_element("Create Subscriber Profile Set", 'link_text')->click();
+    $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag("Check Error Messages");
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Description field is required")]'));
 
     diag('Enter profile set information');
     $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -98,11 +112,33 @@ sub ctr_subscriber {
     ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[4]', 'This is a description. It describes things'), 'Description is correct');
     ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr//td[contains(text(), "' . $resellername .'")]'), 'Reseller is correct');
 
+    diag('Edit Subscriber Profile set');
+    $setname = ("test" . int(rand(10000)) . "set");
+    $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Edit")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
+    $d->fill_element('//*[@id="name"]', 'xpath', $setname);
+    $d->fill_element('//*[@id="description"]', 'xpath', 'Very Good description here');
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag('Trying to find Subscriber profile set');
+    $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
+    $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
+
+    diag('Check details');
+    ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Name is correct');
+    ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[4]', 'Very Good description here'), 'Description is correct');
+    ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr//td[contains(text(), "' . $resellername .'")]'), 'Reseller is correct');
+
     diag('Enter "Profiles" menu');
     $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Profiles")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
 
-    diag('Trying to create a Subscriber Profile');
+    diag('Trying to create a empty Subscriber Profile');
     $d->find_element("Create Subscriber Profile", 'link_text')->click();
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag("Check Error Messages");
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is required")]'));
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Description field is required")]'));
 
     diag('Enter profile information');
     $d->fill_element('//*[@id="name"]', 'xpath', $profilename);
@@ -119,6 +155,23 @@ sub ctr_subscriber {
     diag('Check profile details');
     ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[3]', $profilename), 'Name is correct');
     ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[4]', 'This is a description. It describes things'), 'Description is correct');
+    ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[2]', $setname), 'Profile Set is correct');
+
+    diag('Edit Subscriber Profile');
+    $profilename = ("test" . int(rand(10000)) . "profile");
+    $d->move_and_click('//*[@id="subscriber_profile_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="subscriber_profile_table_filter"]//input');
+    $d->fill_element('//*[@id="name"]', 'xpath', $profilename);
+    $d->fill_element('//*[@id="description"]', 'xpath', 'Very very useful description');
+    $d->find_element('//*[@id="save"]')->click();
+
+    diag('Search for Profile');
+    $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#subscriber_profile_table tr > td.dataTables_empty'), 'Table is empty');
+    $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', $profilename);
+
+    diag('Check profile details');
+    ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[3]', $profilename), 'Name is correct');
+    ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[4]', 'Very very useful description'), 'Description is correct');
     ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[2]', $setname), 'Profile Set is correct');
 
     diag('Go to Subscribers page');
@@ -290,11 +343,21 @@ sub ctr_subscriber {
     $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $d->find_element("Subscribers", 'link_text')->click();
 
-    diag('Trying to delete Subscriber');
+    diag('Trying to NOT delete Subscriber');
     $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
     $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
     ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber was found');
+    $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Terminate")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
+    $d->find_element('//*[@id="dataConfirmCancel"]')->click();
+
+    diag('Check if Subscriber is still here');
+    $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
+    $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
+    ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber is still here');
+
+    diag('Trying to delete Subscriber');
     $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Terminate")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
     $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
@@ -306,14 +369,25 @@ sub ctr_subscriber {
     $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $d->find_element("Subscriber Profiles", 'link_text')->click();
 
-    diag('Trying to Delete Subscriber Profile');
+    diag('Trying to NOT Delete Subscriber Profile Set');
     $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
     $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
+    ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Profile Set was found');
+    $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
+    $d->find_element('//*[@id="dataConfirmCancel"]')->click();
+
+    diag('Check if Subscriber Profile Sethas been deleted');
+    $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
+    $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
+    ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Profile Set is still here');
+
+    diag('Trying to Delete Subscriber Profile Set');
     $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
     $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
-    diag('Check if Subscriber Profile has been deleted');
+    diag('Check if Subscriber Profile Set has been deleted');
     $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
     ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 
