@@ -48,6 +48,7 @@ sub ctr_admin() {
     $d->fill_element('//*[@id="login"]', 'xpath', $adminname);
     $d->fill_element('//*[@id="password"]', 'xpath', $adminpwd);
     $d->find_element('//*[@id="save"]')->click();
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully created")]'), "Label 'Administrator successfully created' was shown");
 
     diag('Search for our new admin');
     $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -66,6 +67,7 @@ sub ctr_admin() {
     $d->scroll_to_element($d->find_element('//form//div/label[contains(text(), "Read only")]'));
     $d->select_if_unselected('//*[@id="read_only"]');
     $d->find_element('//*[@id="save"]')->click();
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully updated")]'), "Label 'Administrator successfully updated' was shown");
 
     diag('Check Admin details');
     $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -134,6 +136,7 @@ sub ctr_admin() {
     $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
     diag('Check if admin is deleted');
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully deleted")]'), "Label 'Administrator successfully deleted' was shown");
     $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
     ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Admin was deleted');
 
