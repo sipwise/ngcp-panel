@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_63f8907d",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-06-25T08:05:31Z",
+      "side": 1,
+      "message": "Reseller contract?",
+      "range": {
+        "startLine": 121,
+        "startChar": 122,
+        "endLine": 121,
+        "endChar": 130
+      },
+      "revId": "6857205a46b7e74f6079749a83b15fff7613e003",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa1b9901_c302bc6f",
+        "filename": "t/lib/Selenium/Collection/Common.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-06-25T08:05:31Z",
+      "side": 1,
+      "message": "Reseller contract?",
+      "range": {
+        "startLine": 165,
+        "startChar": 91,
+        "endLine": 165,
+        "endChar": 99
+      },
+      "revId": "6857205a46b7e74f6079749a83b15fff7613e003",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
