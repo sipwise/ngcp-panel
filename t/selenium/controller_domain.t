@@ -57,18 +57,26 @@ sub ctr_domain {
     $d->fill_element('#concurrent_max', 'css', 'thisisnonumber');
     $d->find_element("#save", 'css')->click();
 
+    diag("Check error message");
+    ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Value must be an integer")]'));
+
     diag('Type 789 and click Save');
     ok($d->find_text('Value must be an integer'), 'Wrong value detected');
     $d->fill_element('#concurrent_max', 'css', '789');
     $d->find_element('#save', 'css')->click();
 
     diag('Check if value has been applied');
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference concurrent_max successfully updated")]'), "Label 'Preference concurrent_max successfully updated' was shown");
     ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "concurrent_max")]/../td[contains(text(), "789")]'), "Value has been applied");
 
     diag("Click edit for the preference allowed_ips");
     $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
 
     diag("Enter an IP address");
+=pod
+    $d->find_element('//*[@id="add"]')->click();
+    ok($d->find_element_by_xpath('//*[@id="mod_edit"]//div//span[contains(text(), "Invalid IPv4 or IPv6 address")]'), "Invalid IP address detected");
+=cut
     $d->fill_element('//*[@id="allowed_ips"]', 'xpath', '127.0.0.0.0');
     $d->find_element('//*[@id="add"]')->click();
     ok($d->find_element_by_xpath('//*[@id="mod_edit"]//div//span[contains(text(), "Invalid IPv4 or IPv6 address")]'), "Invalid IP address detected");
@@ -110,6 +118,7 @@ sub ctr_domain {
     $d->find_element('//*[@id="save"]')->click();
 
     diag("Check if Opus Mono was enabled");
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference transcode_opus_mono successfully updated")]'), "Label 'Preference transcode_opus_mono successfully updated' was shown");
     ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//input[@checked="checked"]'), "Opus mono was enabled");
 
     diag("Change Opus Mono Bitrate");
@@ -121,6 +130,7 @@ sub ctr_domain {
     $d->find_element('//*[@id="save"]')->click();
 
     diag("Check if Bitrate was applied");
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference opus_mono_bitrate successfully updated")]'), "Label 'Preference opus_mono_bitrate successfully updated' was shown");
     ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), "Correct bitrate was selected");
 
     diag("Enable Opus Stereo");
@@ -130,6 +140,7 @@ sub ctr_domain {
     $d->find_element('//*[@id="save"]')->click();
 
     diag("Check if Opus Stereo was enabled");
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference transcode_opus_stereo successfully updated")]'), "Label 'Preference transcode_opus_stereo successfully updated' was shown");
     ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//input[@checked="checked"]'), "Opus stereo was enabled");
 
     diag("Change Opus Stereo Bitrate");
@@ -141,6 +152,7 @@ sub ctr_domain {
     $d->find_element('//*[@id="save"]')->click();
 
     diag("Check if Bitrate was applied");
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference opus_stereo_bitrate successfully updated")]'), "Label 'Preference opus_stereo_bitrate successfully updated' was shown");
     ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), "Correct bitrate was selected");
 
     diag("Open delete dialog and press cancel");
@@ -151,6 +163,7 @@ sub ctr_domain {
     diag('Open delete dialog and press delete');
     $c->delete_domain($domainstring, 0);
     $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
+    ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Domain successfully deleted!")]'), "Label 'Domain successfully deleted!' was shown");
     ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Domain was deleted');
 }
 
