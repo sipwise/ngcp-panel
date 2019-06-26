@@ -53,6 +53,7 @@ sub ctr_emergency {
         $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', $containername);
 
         diag("Check Emergency Container details");
+        ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Emergency mapping container successfully created")]'), "Label 'Emergency mapping container successfully created' was shown");
         ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
         ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
 
@@ -68,6 +69,7 @@ sub ctr_emergency {
         $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', $containername);
 
         diag("Check Emergency Container details");
+        ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Emergency mapping container successfully updated")]'), "Label 'Emergency mapping container successfully updated' was shown");
         ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
         ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
 
@@ -96,6 +98,7 @@ sub ctr_emergency {
         $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
 
         diag("Check Emergency Mapping details");
+        ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Emergency mapping successfully created")]'), "Label 'Emergency mapping successfully created' was shown");
         ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
         ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
         ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), "133")]'), 'Emergency Number is correct');
@@ -113,6 +116,7 @@ sub ctr_emergency {
         $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
 
         diag("Check Emergency Mapping details");
+        ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Emergency mapping successfully updated")]'), "Label 'Emergency mapping successfully updated' was shown");
         ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
         ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
         ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), "144")]'), 'Emergency Number is correct');
@@ -139,6 +143,7 @@ sub ctr_emergency {
         $d->find_element('//*[@id="save"]')->click();
 
         diag("Check if 'emergency_mapping_container' was applied");
+        ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference emergency_mapping_container successfully updated")]'), "Label 'Preference emergency_mapping_container successfully updated' was shown");
         ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "emergency_mapping_container")]/../td/select/option[contains(text(), "' . $containername . '")][@selected="selected"]'), 'NCOS Level was applied');
 
         diag("Open 'Internals'");
@@ -152,6 +157,7 @@ sub ctr_emergency {
         $d->find_element('//*[@id="save"]')->click();
 
         diag("Check if Setting was enabled");
+        ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference emergency_mode_enabled successfully updated")]'), "Label 'Preference emergency_mode_enabled successfully updated' was shown");
         ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "emergency_mode_enabled")]/../td//input[@checked="checked"]'), "Setting was enabled");
 
         diag("Go to Emergency Mappings page");
@@ -181,6 +187,7 @@ sub ctr_emergency {
         $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
         diag("Check if Emergency Mapping was deleted");
+        ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Emergency mapping successfully deleted")]'), "Label 'Emergency mapping successfully deleted' was shown");
         $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
         ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Emergency Mapping was deleted');
 
@@ -207,6 +214,7 @@ sub ctr_emergency {
         $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
         diag("Check if Emergency Container was deleted");
+        ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Emergency mapping container successfully deleted")]'), "Label 'Emergency mapping container successfully deleted' was shown");
         $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', $containername);
         ok($d->find_element_by_css('#emergency_containers_table tr > td.dataTables_empty', 'css'), 'Emergency Mapping was deleted');
 
