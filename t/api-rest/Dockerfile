@@ -1,11 +1,11 @@
-# DOCKER_NAME=ngcp-panel-tests-rest-api-stretch
-FROM docker.mgm.sipwise.com/sipwise-stretch:latest
+# DOCKER_NAME=ngcp-panel-tests-rest-api-buster
+FROM docker.mgm.sipwise.com/sipwise-buster:latest
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2018-08-14
+ENV REFRESHED_AT 2019-06-27
 
 # files that get-code generates
 COPY t/api-rest/sources.list.d/builddeps.list /etc/apt/sources.list.d/
@@ -56,15 +56,15 @@ WORKDIR /home/testuser
 #
 # you need to put the proper NGCP sources at t/sources.list.d/builddeps.list
 # for instance, trunk:
-# echo "deb https://deb.sipwise.com/autobuild/ release-trunk-stretch main" > t/sources.list.d/builddeps.list
+# echo "deb https://deb.sipwise.com/autobuild/ release-trunk-buster main" > t/sources.list.d/builddeps.list
 #
 # NOTE: run the following command from root folder of git repository:
-# % docker build --tag="ngcp-panel-tests-rest-api-stretch" -f t/api-rest/Dockerfile .
-# % docker run --rm -i -t -v $(pwd):/code:rw ngcp-panel-tests-rest-api-stretch:latest bash
+# % docker build --tag="ngcp-panel-tests-rest-api-buster" -f t/api-rest/Dockerfile .
+# % docker run --rm -i -t -v $(pwd):/code:rw ngcp-panel-tests-rest-api-buster:latest bash
 #
 # Use the existing docker image (run from ngcp-panel base directory):
-# % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-stretch
-# % docker run --rm -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-stretch:latest bash
+# % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-buster
+# % docker run --rm -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-rest-api-buster:latest bash
 #
 # Inside docker:
 #   su - testuser
