@@ -1,11 +1,11 @@
-# DOCKER_NAME=ngcp-panel-tests-selenium-stretch
-FROM docker.mgm.sipwise.com/sipwise-stretch:latest
+# DOCKER_NAME=ngcp-panel-tests-selenium-buster
+FROM docker.mgm.sipwise.com/sipwise-buster:latest
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2017-09-12
+ENV REFRESHED_AT 2019-06-27
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -44,7 +44,7 @@ RUN wget https://deb.sipwise.com/files/geckodriver-v0.18.0-linux64.tar.gz
 RUN tar xvf geckodriver-v0.18.0-linux64.tar.gz
 RUN ln -s /home/selenium/geckodriver /usr/bin/geckodriver
 
-# firefox-esr 52.2.0esr-1~deb9u1 from Debian/stretch fails with geckodriver e.g. in click events
+# firefox-esr 52.2.0esr-1~deb9u1 from Debian/buster fails with geckodriver e.g. in click events
 RUN wget https://deb.sipwise.com/files/firefox-54.0.tar.bz2
 RUN tar xvf firefox-54.0.tar.bz2
 RUN ln -s /home/selenium/firefox/firefox /usr/bin/firefox
@@ -68,12 +68,12 @@ COPY t/selenium/jenkins_docker_run /home/selenium/
 # ----------------------
 # When you want to build the base image from scratch (jump to the next section if you don't want to build yourself!):
 # NOTE: run the following command from root folder of git repository:
-# % docker build --tag="ngcp-panel-tests-selenium-stretch" -f t/selenium/Dockerfile .
-# % docker run --rm -p 5999:5999 -i -t -v $(pwd):/code:rw ngcp-panel-tests-selenium-stretch:latest bash
+# % docker build --tag="ngcp-panel-tests-selenium-buster" -f t/selenium/Dockerfile .
+# % docker run --rm -p 5999:5999 -i -t -v $(pwd):/code:rw ngcp-panel-tests-selenium-buster:latest bash
 #
 # Use the existing docker image:
-# % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-selenium-stretch
-# % docker run --rm -p 5999:5999 -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-selenium-stretch:latest bash
+# % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-selenium-buster
+# % docker run --rm -p 5999:5999 -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-selenium-buster:latest bash
 #
 # Inside docker:
 #   su - selenium
