@@ -226,18 +226,28 @@ diag("This test run was successfull");
 $run_ok = 1;
 
 END {
-    if (!$run_ok) {
+    if(!$run_ok) {
         is("tests", "failed", "This test wasnt successful, check complete test logs for more info");
         diag("-----------------------SCRIPT HAS CRASHED-----------------------");
-        if($d->find_text("Sorry!")) {
+        if($d->find_text("Sorry!") || $d->find_text("Oops!")) {
+            my $incident;
+            my $time;
             my $crashvar = $d->find_element_by_css('.error-container > h2:nth-child(2)')->get_text();
-            my $incident = $d->find_element_by_css('.error-details > div:nth-child(2)')->get_text();
-            my $time = $d->find_element_by_css('.error-details > div:nth-child(3)')->get_text();
+            eval {
+                $incident = $d->find_element('.error-details > div:nth-child(2)', 'css')->get_text();
+                $time = $d->find_element('.error-details > div:nth-child(3)', 'css')->get_text();
+            };
             my $realtime = localtime();
             diag("Server: $ENV{CATALYST_SERVER}");
             diag("Server error: $crashvar");
             diag($incident);
             diag($time);
+            diag("Perl localtime(): $realtime");
+        } elsif($d->find_text("nginx")) {
+            my $crashvar = $d->find_element_by_css('body > center:nth-child(1) > h1:nth-child(1)')->get_text();
+            my $realtime = localtime();
+            diag("Server: $ENV{CATALYST_SERVER}");
+            diag("nginx error: $crashvar");
             diag("Perl localtime(): $realtime");
         } else {
             diag("Could not detect Server issues. Maybe script problems?");
@@ -247,6 +257,6 @@ END {
             diag("Perl localtime(): $realtime");
         }
         diag("----------------------------------------------------------------");
-    }
+    };
     done_testing;
 }
