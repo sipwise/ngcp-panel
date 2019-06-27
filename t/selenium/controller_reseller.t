@@ -215,6 +215,8 @@ $c->delete_reseller($resellername, 0);
 $d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Reseller was deleted');
 
+$c->delete_reseller_contract($contractid);
+
 diag("This test run was successfull");
 $run_ok = 1;
 
