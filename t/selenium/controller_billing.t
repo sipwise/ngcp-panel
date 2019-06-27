@@ -219,6 +219,9 @@ diag("Check if Billing Profile has been removed");
 $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Billing Profile has been removed');
 
+$c->delete_reseller_contract($contractid);
+$c->delete_reseller($resellername);
+
 diag("This test run was successfull");
 $run_ok = 1;
 

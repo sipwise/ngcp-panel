@@ -150,6 +150,9 @@ diag("Check if Time set was deleted");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Time set was deleted');
 
+$c->delete_reseller_contract($contractid);
+$c->delete_reseller($resellername);
+
 diag("This test run was successfull");
 $run_ok = 1;
 
