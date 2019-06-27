@@ -54,6 +54,7 @@ ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'),
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
 
 diag("Check NCOS details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS level successfully created")]'), "Label 'NCOS level successfully created' was shown");
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]/tbody/tr[1]/td[contains(text(), ' . $ncosname . ')]'), 'NCOS name is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]/tbody/tr[1]/td[contains(text(), "blacklist")]'), "NCOS mode is correct");
@@ -73,6 +74,7 @@ ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'),
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
 
 diag("Check NCOS details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS level successfully updated")]'), "Label 'NCOS level successfully updated' was shown");
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]/tbody/tr[1]/td[contains(text(), ' . $ncosname . ')]'), 'NCOS name is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]/tbody/tr[1]/td[contains(text(), "whitelist")]'), "NCOS mode is correct");
@@ -96,6 +98,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'Austrian Premium Numbers');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check pattern details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS pattern successfully created")]'), "Label 'NCOS pattern successfully created' was shown");
 ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]/tbody/tr/td[contains(text(), "^439")]'), "Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]/tbody/tr/td[contains(text(), "Austrian Premium Numbers")]'), "Description is correct");
 
@@ -106,6 +109,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'German Premium Numbers');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check pattern details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS pattern successfully updated")]'), "Label 'NCOS pattern successfully updated' was shown");
 ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]/tbody/tr/td[contains(text(), "^491")]'), "Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]/tbody/tr/td[contains(text(), "German Premium Numbers")]'), "Description is correct");
 =pod
@@ -126,6 +130,7 @@ $d->select_if_unselected('//*[@id="local_ac"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if NCOS settings have been applied");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS level setting successfully updated")]'), "Label 'NCOS level setting successfully updated' was shown");
 ok($d->find_element_by_xpath('//*[@id="local_ac"][@checked="checked"]'), 'Setting "Include local area code" was applied');
 
 diag("Creating Domain to add NCOS Level");
@@ -148,6 +153,7 @@ $d->find_element('//*[@id="ncos"]/option[contains(text(), "' . $ncosname . '")]'
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if NCOS Level was applied");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference ncos successfully updated")]'), "Label 'Preference ncos successfully updated' was shown");
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "ncos")]/../td/select/option[contains(text(), "' . $ncosname . '")][@selected="selected"]'), 'NCOS Level was applied');
 
 diag('Go back to NCOS interface');
@@ -168,6 +174,7 @@ $d->move_and_click('//*[@id="number_pattern_table"]//tr//td//a[contains(text(), 
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if NCOS Number pattern was deleted");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS pattern successfully deleted")]'), "Label 'NCOS pattern successfully deleted' was shown");
 ok($d->find_element_by_css('#number_pattern_table tr > td.dataTables_empty', 'css'), 'NCOS Number pattern was deleted');
 =pod
 diag("Delete LNP carrier");
@@ -200,6 +207,7 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Entry was deleted");
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS level successfully deleted")]'), "Label 'NCOS level successfully deleted' was shown");
 ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'NCOS was deleted');
 
 $c->delete_domain($domainstring);
