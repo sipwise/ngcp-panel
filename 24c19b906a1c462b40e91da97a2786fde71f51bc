@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_893ce530",
+        "filename": "t/selenium/controller_emergency.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-06-27T11:50:19Z",
+      "side": 1,
+      "message": "Maybe all this code should be in some separate module/file instead of copy-pasting it through the files?\n\nAsk Perl-devels Kirill/Andreas/Rene for the assist with Perl here if necessary.",
+      "range": {
+        "startLine": 227,
+        "startChar": 0,
+        "endLine": 264,
+        "endChar": 6
+      },
+      "revId": "24c19b906a1c462b40e91da97a2786fde71f51bc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
