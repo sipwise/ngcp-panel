@@ -1,3 +1,51 @@
+ngcp-panel (6.5.6.0+0~mr6.5.6.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a39484f] TT#45484 Add "force_delete" option to callrecordings
+  * [ac3e741] TT#56653 disable UI system status widget
+  * [80c85ac] TT#56602 no apply_rewrite for a terminated prov subscriber
+  * [5ce7384] TT#44603 fax number normalization logic selection
+  * [a23c4d7] Revert "TT#59803 obfuscate logged request+response body to protect passwords"
+
+  [ Andreas Granig ]
+  * [fc903a6] TT#55953 Prevent hiding buttons on ajax search
+
+  [ Nico Schedel ]
+  * [9b54093] TT#56376 selenium: fix crash on entering fraud limits
+  * [f1fcd0d] TT#56376 selenium: backport wait_for_text() from master
+  * [6c43b08] TT#56376 selenium: change move_actions in controller_customer
+  * [e14ac51] TT#56376 selenium: backport move_and_click function from master
+  * [e5e3fd9] TT#56376 selenium: backport better fraud limit checks
+  * [005fbaa] TT#56376 selenium: move_and_click: add optional fallback parameter
+
+  [ Rene Krenn ]
+  * [13c51d5] TT#57900 scenario in balanceintervals.t fails on fast hardware
+  * [5f28e95] TT#56463 fix $$c refs
+  * [5e77b6e] TT#56463 fix $c->log vs $c->loc #1
+  * [59855ad] TT#56463 fix $c->log vs $c->loc #2
+  * [318ecb6] TT#58004 stop+start_profile instead of update_profile event
+  * [1af380e] TT#59803 opfuscate password fields in any logmessage part
+  * [3531c0d] TT#59803 obfuscate logged request+response body to protect passwords
+  * [cef0798] TT#59803 obfuscate .*password.* fields in request+response body (json)
+  * [5f97613] TT#60850 fix api cert unique serial generator
+
+  [ Irina Peshinskaya ]
+  * [782af2b] TT#47017 Fix Phonebook and Timeset UI rendering
+  * [b8b61f8] TT#55366 Fix strings comparison in datatable multifield
+  * [f682aea] TT#49255 Enable all ssl checkings for the ZTP RPC calls
+  * [095592d] TT#49255 Change Snom ZTP server hostname
+  * [8752305] TT#49255 Fix ssl verify config appliance for Grandstream
+  * [08d9e05] TT#47017 Fix return page after closing edit phonebook form
+  * [620a6d7] TT#55364 Fix /api/numbers PATCH for aliases
+  * [b914796] TT#50907 Make subscriber profiles tests more stable
+
+  [ Flaviu Mates ]
+  * [da69d66] TT#50655 Fix for Call Flow page
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 27 Jun 2019 15:51:35 +0200
+
 ngcp-panel (6.5.5.0+0~mr6.5.5.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
