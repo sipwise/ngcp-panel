@@ -310,43 +310,6 @@ diag("This test run was successfull");
 $run_ok = 1;
 
 END {
-    if(!$run_ok) {
-        is("tests", "failed", "This test wasnt successful, check complete test logs for more info");
-        diag("-----------------------SCRIPT HAS CRASHED-----------------------");
-        my $url = $d->get_current_url();
-        my $title = $d->get_title();
-        my $realtime = localtime();
-        if($d->find_text("Sorry!") || $d->find_text("Oops!")) {
-            my $crashvar = $d->find_element_by_css('.error-container > h2:nth-child(2)')->get_text();
-            my $incident = "incident number: not avalible";
-            my $time = "time of incident: not avalible";
-            eval {
-                $incident = $d->find_element('.error-details > div:nth-child(2)', 'css')->get_text();
-                $time = $d->find_element('.error-details > div:nth-child(3)', 'css')->get_text();
-            };
-            diag("Server: $ENV{CATALYST_SERVER}");
-            diag("Url: $url");
-            diag("Tab Title: $title");
-            diag("Server error: $crashvar");
-            diag($incident);
-            diag($time);
-            diag("Perl localtime(): $realtime");
-        } elsif($d->find_text("nginx")) {
-            my $crashvar = $d->find_element_by_css('body > center:nth-child(1) > h1:nth-child(1)')->get_text();
-            diag("Server: $ENV{CATALYST_SERVER}");
-            diag("Url: $url");
-            diag("Tab Title: $title");
-            diag("nginx error: $crashvar");
-            diag("Perl localtime(): $realtime");
-        } else {
-            diag("Could not detect Server issues. Maybe script problems?");
-            diag("If you still want to check server logs, here's some info");
-            diag("Server: $ENV{CATALYST_SERVER}");
-            diag("Url: $url");
-            diag("Tab Title: $title");
-            diag("Perl localtime(): $realtime");
-        }
-        diag("----------------------------------------------------------------");
-    };
+    $c->crash_handler();
     done_testing;
 }
