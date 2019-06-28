@@ -198,6 +198,16 @@ END {
             diag("Tab Title: $title");
             diag("nginx error: $crashvar");
             diag("Perl localtime(): $realtime");
+        } elsif($d->find_element('//*[@id="content"]//div[@class="alert alert-error"]')) {
+            my $label = "Label: could not get text";
+            eval {
+                $label = $d->find_element('//*[@id="content"]//div[@class="alert alert-error"]')->get_text();
+            };
+            diag("Server: $ENV{CATALYST_SERVER}");
+            diag("Url: $url");
+            diag("Tab Title: $title");
+            diag("Error Label: $label");
+            diag("Perl localtime(): $realtime");
         } else {
             diag("Could not detect Server issues. Maybe script problems?");
             diag("If you still want to check server logs, here's some info");
