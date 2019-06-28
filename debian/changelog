@@ -1,3 +1,12 @@
+ngcp-panel (7.3.1.8+0~mr7.3.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [f3350bb] TT#58950 RedisLocationResult improvements
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 28 Jun 2019 16:20:26 +0200
+
 ngcp-panel (7.3.1.7+0~mr7.3.1.7) unstable; urgency=medium
 
   [ Kirill Solomko ]
