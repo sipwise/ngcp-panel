@@ -62,6 +62,7 @@ ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
 
 diag("Check Reseller Details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Reseller successfully updated")]'), "Label 'Reseller successfully updated' was shown");
 ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller Name is correct');
 ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr//td[contains(text(), "locked")]'), 'Status is correct');
 
@@ -93,6 +94,7 @@ ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'testname');
 
 diag("Checking Phonebook entry details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Phonebook entry successfully created")]'), "Label 'Phonebook entry successfully created' was shown");
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[2]', 'testname'), 'Name is correct');
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0123456789'), 'Number is correct');
 
@@ -111,6 +113,7 @@ ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'newtestname');
 
 diag("Checking Phonebook entry details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Phonebook entry successfully updated")]'), "Label 'Phonebook entry successfully updated' was shown");
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[2]', 'newtestname'), 'Name is correct');
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0987654321'), 'Number is correct');
 
@@ -147,6 +150,7 @@ ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'cs
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', $templatename);
 
 diag('Check Details of Template');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Email template successfully created")]'), "Label 'Email template successfully created' was shown");
 ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[3]', $templatename), "Name is correct");
 ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[2]', $resellername), "Reseller is correct");
 ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[4]', 'default@mail.test'), "From Email is correct");
@@ -168,6 +172,7 @@ ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'cs
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', $templatename);
 
 diag('Check Details of Template');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Email template successfully updated")]'), "Label 'Email template successfully updated' was shown");
 ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[3]', $templatename), "Name is correct");
 ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[2]', $resellername), "Reseller is correct");
 ok($d->wait_for_text('//*[@id="email_template_table"]/tbody/tr/td[4]', 'standard@mail.test'), "From Email is correct");
@@ -189,6 +194,7 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Template Email was deleted');
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', $templatename);
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Email template successfully deleted")]'), "Label 'Email template successfully deleted' was shown");
 ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'css'), 'Template was deleted');
 
 diag("Open delete dialog and press cancel");
@@ -201,6 +207,7 @@ ok($d->wait_for_text('//*[@id="contract_table"]/tbody/tr[1]/td[2]', $contractid)
 diag('Open delete dialog and press delete');
 $c->delete_reseller_contract($contractid, 0);
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Contract successfully terminated")]'), "Label 'Contract successfully terminated' was shown");
 ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Reseller contract was deleted');
 
 diag("Open delete dialog and press cancel");
@@ -213,6 +220,7 @@ ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellerna
 diag('Open delete dialog and press delete');
 $c->delete_reseller($resellername, 0);
 $d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Successfully terminated reseller")]'), "Label 'Successfully terminated reseller' was shown");
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Reseller was deleted');
 
 diag("This test run was successfull");
