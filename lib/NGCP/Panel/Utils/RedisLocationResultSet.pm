@@ -1,37 +1,54 @@
 package NGCP::Panel::Utils::RedisLocationResultSet;
 
-use Moose;
+use Moo;
 
 use TryCatch;
+use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::RedisLocationResultSource;
 
 use Data::Dumper;
+use Time::HiRes qw(time);
 
 has _c => (
     is => 'ro',
-    isa => 'NGCP::Panel',
+    isa => sub { die "$_[0] must be NGCP::Panel" unless $_[0] && ref $_[0] eq 'NGCP::Panel' },
 );
 
 has _redis => (
     is => 'ro',
-    isa => 'Redis',
+    isa => sub { die "$_[0] must be Redis" unless $_[0] && ref $_[0] eq 'Redis' },
 );
 
 has _rows => (
     is => 'rw',
-    isa => 'ArrayRef',
+    isa => sub { die "$_[0] must be ARRAY" unless $_[0] && ref $_[0] eq 'ARRAY' },
     default => sub {[]}
 );
 
 has _query_done => (
     is => 'rw',
-    isa => 'Int',
+    isa => sub { die "$_[0] must be int" unless defined $_[0] && is_int($_[0]) },
     default => 0,
+);
+
+has result_source => (
+    is => 'ro',
+    default => sub { NGCP::Panel::Utils::RedisLocationResultSource->new },
+);
+
+has result_class => (
+    is => 'ro',
+    default => 'dummy',
+);
+
+has current_source_alias => (
+    is => 'ro',
+    default => 'me',
 );
 
 has _domain_resellers => (
     is => 'rw',
-    isa => 'HashRef',
+    isa => sub { die "$_[0] must be HASHREF" unless $_[0] && ref $_[0] eq 'HASH' },
     lazy => 1,
     default => sub {
         my $self = shift;
@@ -164,7 +181,6 @@ sub _filter {
     foreach my $row (@{ $self->_rows }) {
         my $match = 0;
         my $filter_applied = 0;
-        my %attr = map { $_->name => 1 } $row->meta->get_all_attributes;
         foreach my $colname (keys %{ $filter }) {
             my $condition = $filter->{$colname};
             my $searchname = $colname;
@@ -173,7 +189,7 @@ sub _filter {
             next if ($colname =~ /\./); # we don't support joined table columns
             $filter_applied = 1;
             if (ref $condition eq "") {
-                if (!exists $attr{$colname} || lc($row->$colname) ne lc($condition)) {
+                if (lc($row->$colname) ne lc($condition)) {
                     $match = 0;
                     last;
                 } else {
@@ -183,7 +199,7 @@ sub _filter {
                 my $fil = $condition->{like};
                 $fil =~ s/^\%//;
                 $fil =~ s/\%$//;
-                if (!exists $attr{$colname} || $row->$colname !~ /$fil/i) {
+                if ($row->$colname !~ /$fil/i) {
                     $match = 0;
                     last;
                 } else {
@@ -219,19 +235,6 @@ sub _scan {
     } while ($cursor);
 
     return 1;
-}
-
-sub result_class {
-    "dummy";
-}
-
-sub result_source {
-    NGCP::Panel::Utils::RedisLocationResultSource->new;
-}
-
-sub current_source_alias {
-    my ($self) = @_;
-    return 'me';
 }
 
 1;
