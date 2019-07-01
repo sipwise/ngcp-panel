@@ -76,6 +76,7 @@ diag('Trying to find Subscriber');
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscribers_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', $username);
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Subscriber successfully created")]'), "Label 'Subscriber successfully created' was shown");
 ok($d->wait_for_text('//*[@id="subscribers_table"]/tbody/tr/td[2]', $username), 'Subscriber was found');
 
 diag('Go to Subscriber Profiles page');
@@ -108,6 +109,7 @@ ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_em
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
 
 diag('Check details');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Subscriber profile set successfully created")]'), "Label 'Subscriber profile set successfully created' was shown");
 ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Name is correct');
 ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[4]', 'This is a description. It describes things'), 'Description is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr//td[contains(text(), "' . $resellername .'")]'), 'Reseller is correct');
@@ -125,6 +127,7 @@ ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_em
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
 
 diag('Check details');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Subscriber profile set successfully updated")]'), "Label 'Subscriber profile set successfully updated' was shown");
 ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Name is correct');
 ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[4]', 'Very Good description here'), 'Description is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr//td[contains(text(), "' . $resellername .'")]'), 'Reseller is correct');
@@ -153,6 +156,7 @@ ok($d->find_element_by_css('#subscriber_profile_table tr > td.dataTables_empty')
 $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', $profilename);
 
 diag('Check profile details');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Subscriber profile successfully created")]'), "Label 'Subscriber profile successfully created' was shown");
 ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[3]', $profilename), 'Name is correct');
 ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[4]', 'This is a description. It describes things'), 'Description is correct');
 ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[2]', $setname), 'Profile Set is correct');
@@ -170,6 +174,7 @@ ok($d->find_element_by_css('#subscriber_profile_table tr > td.dataTables_empty')
 $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', $profilename);
 
 diag('Check profile details');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Subscriber profile successfully updated")]'), "Label 'Subscriber profile successfully updated' was shown");
 ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[3]', $profilename), 'Name is correct');
 ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[4]', 'Very very useful description'), 'Description is correct');
 ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[2]', $setname), 'Profile Set is correct');
@@ -201,6 +206,7 @@ $d->select_if_unselected('//*[@id="profile_setidtable"]/tbody/tr/td[5]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if change was applied');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Successfully updated subscriber")]'), "Label 'Successfully updated subscriber' was shown");
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile Set")]/../td[contains(text(), "'. $setname .'")]'));
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile")]/../td[contains(text(), "'. $profilename .'")]'));
 
@@ -217,6 +223,7 @@ $d->find_element('//*[@id="language"]/option[contains(text(), "German")]')->clic
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if language has been applied');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference language successfully updated")]'), "Label 'Preference language successfully updated' was shown");
 $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Internals")]'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "language")]/../td/select/option[contains(text(), "German") and @selected="selected"]'), '"German" has been selected');
 
@@ -230,6 +237,7 @@ $d->select_if_unselected('//*[@id="record_call"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if call recording was enabled');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference record_call successfully updated")]'), "Label 'Preference record_call successfully updated' was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "record_call")]/../td//input[@checked="checked"]'), "Call recording was enabled");
 
 diag('Trying to add a simple call forward');
@@ -293,6 +301,7 @@ diag('Save');
 $d->find_element('//*[@id="cf_actions.save"]')->click();
 
 diag('Check if call-forward has been applied');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Successfully saved Call Forward")]'), "Label 'Successfully saved Call Forward' was shown");
 ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $bsetname . ')]'), 'B-Set was selected');
 ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $destinationname . ')]'), 'Destination set was selected');
 
@@ -307,6 +316,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if value was set');
 $d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference block_in_mode successfully updated")]'), "Label 'Preference block_in_mode successfully updated' was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_mode")]/../td/input[@checked="checked"]'), "Setting is correct");
 
 diag('Edit block_in_list');
@@ -337,6 +347,7 @@ $d->find_element('//*[@id="block_in_clir"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if value was set');
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference block_in_clir successfully updated")]'), "Label 'Preference block_in_clir successfully updated' was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_clir")]/../td/input[@checked="checked"]'), "Setting is correct");
 
 diag('Go to Subscribers Page');
@@ -363,6 +374,7 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Subscriber has been deleted');
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Successfully terminated subscriber")]'), "Label 'Successfully terminated subscriber' was shown");
 ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
 
 diag('Go to Subscriber Profiles page');
@@ -389,6 +401,7 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Subscriber Profile Set has been deleted');
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Subscriber profile set successfully deleted")]'), "Label 'Subscriber profile set successfully deleted' was shown");
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 
 $c->delete_customer($customerid);
