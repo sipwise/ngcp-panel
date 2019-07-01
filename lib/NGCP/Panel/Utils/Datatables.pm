@@ -100,6 +100,7 @@ sub process {
     # sorting
     my $sortColumn = $c->request->params->{iSortCol_0};
     my $sortDirection = $c->request->params->{sSortDir_0} || 'asc';
+    my $sortName;
     if(defined $sortColumn && defined $sortDirection && ! $use_rs_cb) {
         if('desc' eq lc $sortDirection) {
             $sortDirection = 'desc';
@@ -115,7 +116,7 @@ sub process {
             push @displayedFields, $name;
         }
         # ... and pick the name defined by the dt index
-        my $sortName = $displayedFields[$sortColumn];
+        $sortName = $displayedFields[$sortColumn];
 
         $rs = $rs->search(undef, {
             order_by => {
@@ -143,6 +144,9 @@ sub process {
                 my ($stmt, @bind_vals) = @{${$totalRecords_rs->as_query}};
                 ($is_set_operations,$stmt) = _limit_set_queries($stmt,sub {
                     my $part_stmt = shift;
+                    if ($sortName) {
+                        $part_stmt .= ' order by ' . $sortName . ' ' . $sortDirection;
+                    }
                     return $part_stmt . ' limit ' . $params->{count_limit};
                 });
                 @bind_vals = map { $_->[1]; } @bind_vals;
