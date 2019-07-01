@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_e4a903e1",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-07-01T22:29:16Z",
+      "side": 1,
+      "message": "missing space",
+      "revId": "5917b0ffb1ac46e236bc7bbb38b7a916c3b33576",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
