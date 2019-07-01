@@ -3867,7 +3867,7 @@ sub _process_calls_rows {
                 $data{total_customer_cost} = (defined $result->{total_customer_cost} ? sprintf("%.2f", $result->{total_customer_cost} / 100.0) : "");
                 return %data;
             },
-          'count_limit' => 1000,
+          'count_limit' => 25, #1000,
         }
     );
 }
