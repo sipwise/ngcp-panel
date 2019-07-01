@@ -134,6 +134,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'International to E.164');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been edited');
+$d->find_element('Inbound Rewrite Rules for Callee', 'link_text')->click();
 ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Rewrite rule successfully updated")]'), "Label 'Rewrite rule successfully updated' was shown");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
@@ -152,6 +153,49 @@ diag('Test if new entry moves up if up arrow is clicked');
 $d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
 $d->find_element('//*[@id="collapse_icaller"]/div/table/tbody/tr/td[contains(text(), "\1")]/../td//a//i[@class="icon-arrow-up"]')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]/td[contains(text(), "\1")]'), "Replacement Pattern is correct");
+
+diag('Delete Rule');
+$d->move_and_click('//*[@id="collapse_icaller"]//table//tr[1]//td//a[text()[contains(., "Delete")]]', 'xpath', '//*[@id="masthead"]/div/div/div/h2');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Rewrite rule successfully deleted")]'), "Label 'Rewrite rule successfully deleted' was shown");
+
+diag('Go Back to the Rewrite Rule set Page');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element('Rewrite Rule Sets', 'link_text')->click();
+
+diag('Trying to clone a ruleset');
+my $rulesetclonename = ("rule" . int(rand(100000)) . "test");
+$d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
+ok($d->wait_for_text('//*[@id="rewrite_rule_set_table"]//tr[1]/td[3]', $rulesetname), 'Ruleset was found');
+$d->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Clone")]', 'xpath', '//*[@id="rewrite_rule_set_table_filter"]/label/input');
+$d->fill_element('//*[@id="name"]', 'xpath', $rulesetclonename);
+$d->fill_element('//*[@id="description"]', 'xpath', 'Im a clone, beep boop');
+$d->find_element('//*[@id="clone"]')->click();
+
+diag('Search for the cloned Rewrite Rule Set');
+$d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetclonename);
+
+diag('Check Rewrite Rule Set Details');
+ok($d->wait_for_text('//*[@id="rewrite_rule_set_table"]//tr[1]/td[2]', $resellername), 'Reseller Name is correct');
+ok($d->wait_for_text('//*[@id="rewrite_rule_set_table"]//tr[1]/td[3]', $rulesetclonename), 'Ruleset Name is correct');
+ok($d->find_element_by_xpath('//*[@id="rewrite_rule_set_table"]//tr[1]//td[contains(text(), "Im a clone, beep boop")]'), 'Description is correct');
+$d->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Rules")]', 'xpath', '//*[@id="rewrite_rule_set_table_filter"]/label/input');
+
+diag('Check if Caller got properly cloned');
+$d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
+ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
+ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
+
+diag('Check if Callee got properly cloned');
+$d->find_element('Inbound Rewrite Rules for Callee', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
+ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
+ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
 
 diag('Trying to add the ruleset to a domain');
 $c->create_domain($domainstring, $resellername);
