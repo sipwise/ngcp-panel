@@ -44,6 +44,7 @@ ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
 
 diag("Check Reseller Details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Reseller successfully created.")]'), "Label 'Reseller successfully created.' was shown");
 ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller Name is correct');
 ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr//td[contains(text(), "active")]'), 'Status is correct');
 
