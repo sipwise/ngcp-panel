@@ -50,6 +50,7 @@ ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'G
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
 
 diag("Check details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Timeset entry successfully created")]'), "Label 'Timeset entry successfully created' was shown");
 ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[3]', $timesetname), "Name is correct");
 ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
 
@@ -65,6 +66,7 @@ ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'G
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
 
 diag("Check details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Timeset entry successfully updated")]'), "Label 'Timeset entry successfully updated' was shown");
 ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[3]', $timesetname), "Name is correct");
 ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
 
@@ -102,6 +104,7 @@ ok($d->find_element_by_css('#event_table tr > td.dataTables_empty', 'css'), 'Gar
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Hello, im a special Event =)');
 
 diag("Check Details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Event entry successfully created")]'), "Label 'Event entry successfully created' was shown");
 ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[2]', 'Hello, im a special Event =)'), "Description is correct");
 #ok($d->find_element_by_xpath('//*[@id="event_table"]/tbody/tr[1]/td[contains(text(), "2019-01-01 12:00:00"]'), "Start Date/Time is correct");
 #ok($d->find_element_by_xpath('//*[@id="event_table"]/tbody/tr[1]/td[contains(text(), "2019-06-05 12:20:00"]'), "End Date/Time is correct");
@@ -121,6 +124,7 @@ ok($d->find_element_by_css('#event_table tr > td.dataTables_empty', 'css'), 'Gar
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Very important event');
 
 diag("Check Details");
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Event entry successfully created")]'), "Label 'Event entry successfully created' was shown");
 ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[2]', 'Very important event'), "Description is correct");
 #ok($d->find_element_by_xpath('//*[@id="event_table"]/tbody/tr[1]/td[contains(text(), "2020-06-01 12:00:00"]'), "Start Date/Time is correct");
 #ok($d->find_element_by_xpath('//*[@id="event_table"]/tbody/tr[1]/td[contains(text(), "2020-07-01 13:00:00"]'), "End Date/Time is correct");
@@ -148,6 +152,7 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Time set was deleted");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Timeset entry successfully deleted")]'), "Label 'Timeset entry successfully deleted' was shown");
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Time set was deleted');
 
 $c->delete_reseller_contract($contractid);
