@@ -47,6 +47,7 @@ $(document).ready(function() {
             "sUrl": "/js/i18n/[% language_file %]"
         },
         "sAjaxSource": "[% ajax_src %]",
+        "bStateSave": false,
 
         "aoColumns": [
                         [% FOREACH f IN table_fields -%]
