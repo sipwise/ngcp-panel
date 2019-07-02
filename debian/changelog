@@ -1,3 +1,18 @@
+ngcp-panel (7.4.1.1+0~mr7.4.1.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [7955a80] TT#60850 fix api cert unique serial generator
+
+  [ Nico Schedel ]
+  * [1f2d19e] TT#56376 Revert "TT#56376 selenium: change timeout values"
+
+  [ Kirill Solomko ]
+  * [1754adb] TT#58950 RedisLocationResult improvements
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Jul 2019 13:09:08 +0200
+
 ngcp-panel (7.4.1.0+0~mr7.4.1.0) unstable; urgency=medium
 
   [ Nico Schedel ]
