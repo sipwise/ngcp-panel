@@ -4,8 +4,8 @@ Priority: optional
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends:
  debhelper (>= 10),
- libmodule-build-perl | perl (<< 5.21.0~),
- libngcp-schema-perl | ngcp-schema,
+ libmodule-build-perl,
+ libngcp-schema-perl,
  libtrycatch-perl,
  libwww-perl,
 Standards-Version: 3.9.8
@@ -81,7 +81,7 @@ Depends:
  libfcgi-procmanager-perl,
  libfile-fnmatch-perl,
  libfile-slurp-perl,
- libfile-spec-perl (>= 3.4000~) | perl-base (>= 5.20.0-60~),
+ libfile-spec-perl (>= 3.4000~),
  libfile-type-perl,
  libgd-perl,
  libgeography-countries-perl,
@@ -109,7 +109,7 @@ Depends:
  libnet-http-perl,
  libnet-telnet-perl,
  libnetaddr-ip-perl,
- libngcp-schema-perl | ngcp-schema,
+ libngcp-schema-perl,
  libpath-tiny-perl,
  libplack-middleware-deflater-perl,
  librole-rest-client-perl,
@@ -156,7 +156,7 @@ Depends:
  curl,
  libio-prompter-perl,
  libmoose-perl,
- libngcp-api-client-perl | ngcp-api-tools,
+ libngcp-api-client-perl,
  libredis-perl,
  libtrycatch-perl,
  liburi-perl,
