@@ -1050,8 +1050,8 @@ sub update_subscriber_numbers {
                 next unless($sub->provisioning_voip_subscriber); # terminated etc
                 next if $sub->id == $billing_subs->id; # myself
                 next unless $sub->primary_number;
-                next unless $sub->primary_number->cc == $old_cc;
-                next unless $sub->primary_number->ac == $old_ac;
+                next unless $sub->primary_number->cc eq $old_cc;
+                next unless ($sub->primary_number->ac // '') eq ($old_ac // '');
                 next unless $sub->primary_number->sn =~ /^$old_sn/;
                 $usr_preferences_base_cli_rs->search_rs({subscriber_id=>$sub->provisioning_voip_subscriber->id})->update_all({value => $new_base_cli});
                 $schema->resultset('voip_dbaliases')->search_rs({
