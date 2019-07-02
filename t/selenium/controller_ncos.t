@@ -304,7 +304,7 @@ $run_ok = 1;
 
 END {
     if(!$run_ok) {
-        $c->crash_handler();
+        $c->crash_handler("/results/crash_ncos.png");
     }
     done_testing;
 }

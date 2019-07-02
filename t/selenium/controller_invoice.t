@@ -183,7 +183,7 @@ $run_ok = 1;
 
 END {
     if(!$run_ok) {
-        $c->crash_handler();
+        $c->crash_handler("/results/crash_invoice.png");
     }
     done_testing;
 }
