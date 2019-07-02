@@ -1,3 +1,12 @@
+ngcp-panel (6.5.4.12+0~mr6.5.4.12) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [34312f8] TT#61559 TT#61752 apply orderby to datatable setop queries
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Jul 2019 18:42:05 +0200
+
 ngcp-panel (6.5.4.11+0~mr6.5.4.11) unstable; urgency=medium
 
   [ Kirill Solomko ]
