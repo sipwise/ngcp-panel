@@ -362,6 +362,7 @@ sub popup_confirm_cancel {
 
 sub crash_handler {
     my($self) = @_;
+    $self->driver->capture_screenshot("/results/crash.png");
     is("tests", "failed", "This test wasnt successful, check complete test logs for more info");
     diag("-----------------------SCRIPT HAS CRASHED-----------------------");
     my $url = $self->driver->get_current_url();
