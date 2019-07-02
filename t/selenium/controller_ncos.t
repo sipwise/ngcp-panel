@@ -18,11 +18,56 @@ my $resellername = ("reseller" . int(rand(100000)) . "test");
 my $contractid = ("contract" . int(rand(100000)) . "test");
 my $ncosname = ("ncos" . int(rand(100000)) . "level");
 my $domainstring = ("domain" . int(rand(100000)) . ".example.org");
+my $lnpcarrier = ("lnp" . int(rand(100000)) . "carrier");
+my $prefix = ("prefix" . int(rand(100000)) . "stuff");
 my $run_ok = 0;
 
 $c->login_ok();
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
+
+diag("Go to Number Porting Page");
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Number Porting", 'link_text')->click();
+
+diag("Trying to create a empty LNP Carrier");
+$d->find_element("Create LNP Carrier", 'link_text')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check Error Messages");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is required")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Prefix field is required")]'));
+
+diag("Fill in values");
+$d->fill_element('//*[@id="name"]', 'xpath', $lnpcarrier);
+$d->fill_element('//*[@id="prefix"]', 'xpath', $prefix);
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Search for LNP carrier");
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
+
+diag("Check details");
+ok($d->wait_for_text('//*[@id="lnp_carriers_table"]/tbody/tr[1]/td[2]', $lnpcarrier), "Name is correct");
+ok($d->wait_for_text('//*[@id="lnp_carriers_table"]/tbody/tr[1]/td[3]', $prefix), "Prefix is correct");
+
+diag("Edit LNP Carrier");
+$d->move_and_click('//*[@id="lnp_carriers_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="lnp_carriers_table_filter"]/label/input');
+$lnpcarrier = ("lnp" . int(rand(100000)) . "carrier");
+$prefix = ("prefix" . int(rand(100000)) . "stuff");
+$d->fill_element('//*[@id="name"]', 'xpath', $lnpcarrier);
+$d->fill_element('//*[@id="prefix"]', 'xpath', $prefix);
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Search for LNP carrier");
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
+
+diag("Check details");
+ok($d->wait_for_text('//*[@id="lnp_carriers_table"]/tbody/tr[1]/td[2]', $lnpcarrier), "Name is correct");
+ok($d->wait_for_text('//*[@id="lnp_carriers_table"]/tbody/tr[1]/td[3]', $prefix), "Prefix is correct");
 
 diag('Go to NCOS interface');
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -112,18 +157,32 @@ diag("Check pattern details");
 ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS pattern successfully updated")]'), "Label 'NCOS pattern successfully updated' was shown");
 ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]/tbody/tr/td[contains(text(), "^491")]'), "Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]/tbody/tr/td[contains(text(), "German Premium Numbers")]'), "Description is correct");
-=pod
+
 diag("Create LNP entry");
 $d->find_element("Create LNP Entry", 'link_text')->click();
 
 diag("Enter LNP details");
+$d->fill_element('//*[@id="lnp_provideridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#lnp_provideridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="lnp_provideridtable_filter"]/label/input', 'xpath', $lnpcarrier);
+ok($d->wait_for_text('//*[@id="lnp_provideridtable"]/tbody/tr[1]/td[2]', $lnpcarrier), "Name is correct");
 $d->select_if_unselected('//*[@id="lnp_provideridtable"]/tbody/tr[1]/td[4]/input[@type="checkbox"]');
 $d->fill_element('//*[@id="description"]', 'xpath', 'Rule for LNP Carrier 1');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check LNP details");
+ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]/tbody/tr/td[contains(text(), "' . $lnpcarrier . '")]'), "LNP Carrier is correct");
 ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]/tbody/tr/td[contains(text(), "Rule for LNP Carrier 1")]'), "Description is correct");
-=cut
+
+diag("Edit LNP entry");
+$d->move_and_click('//*[@id="lnp_carriers_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="lnp_carriers_table_filter"]/label/input');
+$d->fill_element('//*[@id="description"]', 'xpath', 'Rule for LNP Carrier 2');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check LNP details");
+ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]/tbody/tr/td[contains(text(), "' . $lnpcarrier . '")]'), "LNP Carrier is correct");
+ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]/tbody/tr/td[contains(text(), "Rule for LNP Carrier 2")]'), "Description is correct");
+
 diag("Edit NCOS settings");
 $d->find_element('//*[@id="number_patterns_extra"]/div[2]/a')->click();
 $d->select_if_unselected('//*[@id="local_ac"]');
@@ -176,14 +235,14 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 diag("Check if NCOS Number pattern was deleted");
 ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS pattern successfully deleted")]'), "Label 'NCOS pattern successfully deleted' was shown");
 ok($d->find_element_by_css('#number_pattern_table tr > td.dataTables_empty', 'css'), 'NCOS Number pattern was deleted');
-=pod
-diag("Delete LNP carrier");
+
+diag("Delete LNP Entry");
 $d->move_and_click('//*[@id="lnp_carriers_table"]//tr//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="lnp_carriers_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
-diag("Check if LNP carrier was deleted");
-ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'NCOS Number pattern was deleted');
-=cut
+diag("Check if LNP Entry was deleted");
+ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'LNP Entry was deleted');
+
 diag("Go back to NCOS page");
 $d->find_element("Back", 'link_text')->click();
 
@@ -209,6 +268,32 @@ diag("Check if Entry was deleted");
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
 ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "NCOS level successfully deleted")]'), "Label 'NCOS level successfully deleted' was shown");
 ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'NCOS was deleted');
+
+diag("Go to Number Porting Page");
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Number Porting", 'link_text')->click();
+
+diag("Trying to NOT delete LNP carrier");
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
+ok($d->wait_for_text('//*[@id="lnp_carriers_table"]/tbody/tr[1]/td[2]', $lnpcarrier), "Name is correct");
+$d->move_and_click('//*[@id="lnp_carriers_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="lnp_carriers_table_filter"]/label/input');
+$d->find_element('//*[@id="dataConfirmCancel"]')->click();
+
+diag("Check if Entry is still here");
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
+ok($d->wait_for_text('//*[@id="lnp_carriers_table"]/tbody/tr[1]/td[2]', $lnpcarrier), "Entry is still here");
+
+diag("Trying to delete LNP carrier");
+$d->move_and_click('//*[@id="lnp_carriers_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="lnp_carriers_table_filter"]/label/input');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+
+diag("Check if Entry is still here");
+$d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
+ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Entry was deleted');
 
 $c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
