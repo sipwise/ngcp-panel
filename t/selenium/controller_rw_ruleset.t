@@ -218,6 +218,9 @@ $d->find_element('Number Manipulations', 'link_text')->click;
 ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Preference rewrite_rule_set successfully updated")]'), "Label 'Preference rewrite_rule_set successfully updated' was shown");
 ok($d->wait_for_text('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td[4]/select/option[@selected="selected"]', $rulesetname), 'rewrite_rule_set value has been set');
 
+diag('Delete Domain');
+$c->delete_domain($domainstring);
+
 diag("Open delete dialog and press cancel");
 $c->delete_rw_ruleset($rulesetname, 1);
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -231,7 +234,6 @@ $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath'
 ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Rewrite rule set successfully deleted")]'), "Label 'Rewrite rule set successfully deleted' was shown");
 ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Ruleset was deleted');
 
-$c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 
