@@ -23,10 +23,10 @@ function toText(data, type, full) {
     }
     freq = r.options.freq;
   }
-  if (full.start){ 
+  if (full.start){
     dtstart = full.start;
   }
-  if (full.end){ 
+  if (full.end){
     dtend = full.end;
   }
   var rrule_date_text = '';
@@ -34,12 +34,12 @@ function toText(data, type, full) {
     var rrule_dtend_text = '';
     if (dtend) {
         var dtend_obj = new Date(dtend);
-        var dtend_date = fomatDate(dtend_obj.getFullYear(), dtend_obj.getMonth(), dtend_obj.getDate(), '-');
+        var dtend_date = fomatDate(dtend_obj.getFullYear(), dtend_obj.getMonth() + 1, dtend_obj.getDate(), '-');
         var dtend_time = fomatDate(dtend_obj.getHours(), dtend_obj.getMinutes(), dtend_obj.getSeconds(),':');
         rrule_dtend_text = ' [%c.loc("to")%] ' + (needDate(freq) ?  dtend_date + ' ': '') + dtend_time;
     }
     var dtstart_obj = new Date(dtstart);
-    var dtstart_date = fomatDate(dtstart_obj.getFullYear(), dtstart_obj.getMonth(), dtstart_obj.getDate(), '-');
+    var dtstart_date = fomatDate(dtstart_obj.getFullYear(), dtstart_obj.getMonth() + 1, dtstart_obj.getDate(), '-');
     var dtstart_time = fomatDate(dtstart_obj.getHours(), dtstart_obj.getMinutes(), dtstart_obj.getSeconds(),':');
 
     var rrule_dtstart_text = ( rrule_dtend_text == '' ? ' [%c.loc("at")%] ' : ' [%c.loc("from")%] ') + (needDate(freq) ? dtstart_date + ' ' : '') + dtstart_time;
@@ -156,7 +156,7 @@ function toggleLabeledFields() {
     var fieldLayer = $(this).closest( 'label' ).next( 'div.controls' );
     var fieldInvertControl = $( '#invert_field\\.' + field_name_jquery );
     var fieldClearControl = $( '#clear_field\\.' + field_name_jquery );
-    var fieldAuxControls = fieldInvertControl.add(fieldClearControl);     
+    var fieldAuxControls = fieldInvertControl.add(fieldClearControl);
     var fieldCheckboxes = $('input:checkbox' + fieldSingleNameSelector).add($('input:checkbox' + fieldMultiNameSelector));
     var fieldInputs = $('input' + fieldSingleNameSelector).add($('input' + fieldMultiNameSelector));
     var showFunc = function (button) {
@@ -248,10 +248,10 @@ $( document ).ready(function() {
     helper.edit_flag = edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action( "/timeset/event_ajax", [c.req.captures.0] );
-    helper.custom_renderers => { 
+    helper.custom_renderers => {
       ical => 'function ( data, type, full ) { return toText(data, type, full); }'
     };
-    
+
     UNLESS c.user.read_only;
         helper.dt_buttons = [
             { name = c.loc('Edit'), uri = "/timeset/'+full.time_set_id+'/event/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
