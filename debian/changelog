@@ -1,3 +1,12 @@
+ngcp-panel (6.5.4.13+0~mr6.5.4.13) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [2cde769] TT#62059 disable bootstrapdatatable html5 statesaving
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 03 Jul 2019 14:22:14 +0200
+
 ngcp-panel (6.5.4.12+0~mr6.5.4.12) unstable; urgency=medium
 
   [ Rene Krenn ]
