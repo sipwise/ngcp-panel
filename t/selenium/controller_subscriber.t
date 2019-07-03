@@ -200,6 +200,8 @@ $d->find_element("Edit", 'link_text')->click();
 
 diag('Add Subscriber to profile');
 $d->scroll_to_element($d->find_element('//*[@id="profile_setidtable_filter"]/label/input'));
+$d->fill_element('//*[@id="profile_setidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#profile_setidtable tr > td.dataTables_empty'), 'Garbage Text was not found');
 $d->fill_element('//*[@id="profile_setidtable_filter"]/label/input', 'xpath', $setname);
 ok($d->wait_for_text('//*[@id="profile_setidtable"]/tbody/tr/td[3]', $setname), 'Subscriber Profile was found');
 $d->select_if_unselected('//*[@id="profile_setidtable"]/tbody/tr/td[5]');
