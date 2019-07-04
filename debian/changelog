@@ -1,3 +1,15 @@
+ngcp-panel (7.4.1.4+0~mr7.4.1.4) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [cf0fef2] TT#56376 selenium: fix for crashes in controller_customer
+  * [344cf6a] TT#56376 selenium: delete domain before deleting rw ruleset
+  * [594d0ed] TT#56376 selenium: fix for 'stale element reference' in ctr_subscriber
+  * [fa5fd70] TT#56376 selenium: another crash fix for controller_subscriber
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Jul 2019 11:47:26 +0200
+
 ngcp-panel (7.4.1.3+0~mr7.4.1.3) unstable; urgency=medium
 
   [ Rene Krenn ]
