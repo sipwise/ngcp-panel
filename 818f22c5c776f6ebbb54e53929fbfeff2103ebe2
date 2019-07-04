@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_ebe78baa",
+        "filename": "t/lib/NGCP/TestFramework.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-07-04T11:38:33Z",
+      "side": 1,
+      "message": "if the regular ones (JSON::PP / JSON::XS),\nlibcpanel-json-xs-perl needs to be added to the debian crontrol file",
+      "revId": "818f22c5c776f6ebbb54e53929fbfeff2103ebe2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
