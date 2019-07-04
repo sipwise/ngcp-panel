@@ -78,6 +78,11 @@ sub ctr_customer {
     $d->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
     $d->find_element('#save', 'css')->click();
 
+    diag("Search for Customer");
+    $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+    $d->fill_element('#Customer_table_filter input', 'css', $customerid);
+
     diag("Check if status has changed for customer");
     ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "locked")]'), 'Status has changed');
 
