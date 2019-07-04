@@ -184,7 +184,7 @@ sub ctr_subscriber {
     diag('Trying to add a simple call forward');
     $d->scroll_to_element($d->find_element("Call Forwards", 'link_text'));
     $d->find_element("Call Forwards", 'link_text')->click();
-    $d->move_and_click('//*[@id="preferences_table_cf"]/tbody/tr/td[contains(text(), "Unconditional")]/../td/div/a[contains(text(), "Edit")]', 'xpath');
+    $d->move_and_click('//*[@id="preferences_table_cf"]/tbody/tr/td[contains(text(), "Unconditional")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Forwards")]');
     $d->fill_element('//*[@id="destination.uri.destination"]', 'xpath', '43123456789');
     $d->find_element('//*[@id="cf_actions.advanced"]')->click();
 
