@@ -20,6 +20,8 @@ my $contractid = ("contract" . int(rand(100000)) . "test");
 my $contactmail = ("contact" . int(rand(100000)) . '@test.org');
 my $billingname = ("billing" . int(rand(100000)) . "test");
 my $run_ok = 0;
+my $custnum;
+my $compstring;
 
 if(!$pbx){
     print "---PBX check is DISABLED---\n";
@@ -69,6 +71,9 @@ ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[4]', $contactmail), 'Contact Email is correct');
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
+$custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
+$compstring = "Customer #" . $custnum . " successfully created - Details";
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Label 'Customer successfully created' was shown");
 
 diag("Edit Customer");
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
@@ -84,8 +89,9 @@ ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), '
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 
 diag("Check if status has changed for customer");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "successfully updated")]'), "Label 'Customer successfully updated' was shown");
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "locked")]'), 'Status has changed');
+$compstring = "Customer #" . $custnum . " successfully updated";
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Label 'Customer successfully updated' was shown");
 
 diag("Open Details for our just created Customer");
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
@@ -106,7 +112,7 @@ $d->select_if_unselected('//table[@id="countryidtable"]/tbody/tr[1]/td[contains(
 $d->find_element('#save', 'css')->click(); # Save
 
 diag("Check contact details");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Contact successfully changed")]'), "Label 'Contact successfully changed' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Contact successfully changed',  "Label 'Contact successfully changed' was shown");
 ok($d->wait_for_text('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Email")]/../td[2]', $contactmail), "Email is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Name")]/../td[contains(text(), "Alice")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Company")]/../td[contains(text(), "Sipwise")]'), "Company is correct");
@@ -123,7 +129,7 @@ $d->fill_element('#fraud_interval_notify', 'css', 'mymail@example.org');
 $d->find_element('#save', 'css')->click();
 
 diag("Check Fraud Limit details");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Fraud settings successfully changed!")]'), "Label 'Fraud settings successfully changed!' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Fraud settings successfully changed!',  "Label 'Fraud settings successfully changed!' was shown");
 ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[contains(text(), "100")]'), "Limit is correct");
 ok($d->wait_for_text('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[4]', 'mymail@example.org'), "Mail is correct");
 
@@ -152,7 +158,7 @@ ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'Tester');
 
 diag("Check Phonebook entry details");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Phonebook entry successfully created")]'), "Label 'Phonebook entry successfully created' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully created',  "Label 'Phonebook entry successfully created' was shown");
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "Tester")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "0123456789")]'), "Number is correct");
 
@@ -170,7 +176,7 @@ $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[cont
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'TesterTester');
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Phonebook entry successfully updated")]'), "Label 'Phonebook entry successfully updated' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully updated',  "Label 'Phonebook entry successfully updated' was shown");
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "TesterTester")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "987654321")]'), "Number is correct");
 
@@ -202,7 +208,7 @@ ok($d->find_element_by_css('#locations_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'Test Location');
 
 diag("Check location details");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Location successfully created")]'), "Label 'Location successfully created' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully created',  "Label 'Location successfully created' was shown");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "Test Location")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "This is a Test Location")]'), "Description is correct");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "127.0.0.1/16")]'), "Network block is correct");
@@ -223,7 +229,7 @@ ok($d->find_element_by_css('#locations_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'TestTest Location');
 
 diag("Check location details");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Location successfully updated")]'), "Label 'Location successfully updated' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully updated',  "Label 'Location successfully updated' was shown");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "TestTest Location")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "This is a very Test Location")]'), "Description is correct");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "10.0.0.138/16")]'), "Network block is correct");
@@ -236,7 +242,7 @@ ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr/td[2]', $customerid), '
 diag('Open delete dialog and press delete');
 $c->delete_customer($customerid, 0);
 $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Customer successfully terminated")]'), "Label 'Customer successfully terminated' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Customer successfully terminated',  "Label 'Customer successfully terminated' was shown");
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was deleted');
 
 $c->delete_reseller_contract($contractid);
