@@ -48,7 +48,6 @@ $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', '
 $d->fill_element('//*[@id="login"]', 'xpath', $adminname);
 $d->fill_element('//*[@id="password"]', 'xpath', $adminpwd);
 $d->find_element('//*[@id="save"]')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully created")]'), "Label 'Administrator successfully created' was shown");
 
 diag('Search for our new admin');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -56,6 +55,7 @@ ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 
 diag('Check Admin details');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully created',  "Label 'Administrator successfully created' was shown");
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Name is correct");
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[6][contains(text(), "0")]'), "Read-Only value is correct");
@@ -67,12 +67,12 @@ diag('Enable Attribute "Read only"');
 $d->scroll_to_element($d->find_element('//form//div/label[contains(text(), "Read only")]'));
 $d->select_if_unselected('//*[@id="read_only"]');
 $d->find_element('//*[@id="save"]')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully updated")]'), "Label 'Administrator successfully updated' was shown");
 
 diag('Check Admin details');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully updated',  "Label 'Administrator successfully updated' was shown");
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Name is correct");
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[6]', '1'), "Read-Only value is correct");
@@ -136,8 +136,8 @@ $d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(te
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if admin is deleted');
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully deleted")]'), "Label 'Administrator successfully deleted' was shown");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully deleted',  "Label 'Administrator successfully deleted' was shown");
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Admin was deleted');
 
 $c->delete_reseller_contract($contractid);
