@@ -25,7 +25,7 @@ if(!admin_login()) {
 if($testplan eq $dir . 'runner.t') {
     @tests = ($dir . 'controller_subscriber.t', $dir . 'controller_admin.t', $dir . 'controller_billing.t', $dir . 'controller_customer.t', $dir . 'controller_domain.t', $dir . 'controller_emergency.t', $dir . 'controller_invoice.t', $dir . 'controller_ncos.t', $dir . 'controller_peering.t', $dir . 'controller_reseller.t', $dir . 'controller_rw_ruleset.t');
 } elsif($testplan eq 'exp') {
-    @tests = ($dir . 'controller_subscriber.t', $dir . 'controller_admin.t', $dir . 'controller_billing.t', $dir . 'controller_customer.t', $dir . 'controller_domain.t', $dir . 'controller_emergency.t', $dir . 'controller_invoice.t', $dir . 'controller_ncos.t', $dir . 'controller_peering.t', $dir . 'controller_reseller.t', $dir . 'controller_rw_ruleset.t', $dir . 'controller_timeset.t');
+    @tests = ($dir . 'controller_subscriber.t', $dir . 'controller_admin.t', $dir . 'controller_billing.t', $dir . 'controller_customer.t', $dir . 'controller_domain.t', $dir . 'controller_emergency.t', $dir . 'controller_header.t', $dir . 'controller_invoice.t', $dir . 'controller_ncos.t', $dir . 'controller_peering.t', $dir . 'controller_reseller.t', $dir . 'controller_rw_ruleset.t', $dir . 'controller_timeset.t');
 } else {
     if (index($testplan, $dir . 'controller_admin.t') != -1) {
         $string = $dir . 'controller_admin.t';
@@ -45,6 +45,10 @@ if($testplan eq $dir . 'runner.t') {
     };
     if (index($testplan, $dir . 'controller_emergency.t') != -1) {
         $string = $dir . 'controller_emergency.t';
+        push @tests, $string;
+    };
+    if (index($testplan, $dir . 'controller_header.t') != -1) {
+        $string = $dir . 'controller_header.t';
         push @tests, $string;
     };
     if (index($testplan, $dir . 'controller_invoice.t') != -1) {
