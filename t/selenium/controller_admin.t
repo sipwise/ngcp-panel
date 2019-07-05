@@ -48,9 +48,9 @@ $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', '
 $d->fill_element('//*[@id="login"]', 'xpath', $adminname);
 $d->fill_element('//*[@id="password"]', 'xpath', $adminpwd);
 $d->find_element('//*[@id="save"]')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully created")]'), "Label 'Administrator successfully created' was shown");
 
 diag('Search for our new admin');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully created',  "Correct Alert was shown");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
@@ -67,9 +67,9 @@ diag('Enable Attribute "Read only"');
 $d->scroll_to_element($d->find_element('//form//div/label[contains(text(), "Read only")]'));
 $d->select_if_unselected('//*[@id="read_only"]');
 $d->find_element('//*[@id="save"]')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully updated")]'), "Label 'Administrator successfully updated' was shown");
 
 diag('Check Admin details');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully updated',  "Correct Alert was shown");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
@@ -136,7 +136,7 @@ $d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(te
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if admin is deleted');
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Administrator successfully deleted")]'), "Label 'Administrator successfully deleted' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully deleted',  "Correct Alert was shown");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Admin was deleted');
 
