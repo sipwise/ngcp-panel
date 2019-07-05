@@ -96,6 +96,7 @@ ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty',
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
 
 diag("Check Emergency Mapping details");
+$d->scroll_to_element($d->find_element('//*[@id="emergency_mappings_table_filter"]//input'));
 ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Emergency mapping successfully created")]'), "Label 'Emergency mapping successfully created' was shown");
 ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
 ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
@@ -163,6 +164,7 @@ $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click()
 $d->find_element("Emergency Mappings", 'link_text')->click();
 
 diag("Trying to NOT delete Emergency Mapping");
+$d->scroll_to_element($d->find_element('//*[@id="emergency_mappings_table_filter"]//input'));
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
