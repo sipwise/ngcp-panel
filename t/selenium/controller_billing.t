@@ -287,7 +287,7 @@ $d->fill_element('//*[@id="networks_table_filter"]/label/input', 'xpath', $billi
 diag('Check Details');
 ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[2]', $resellername), "Reseller is correct");
 ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[3]', $billingnetwork), "Billing network name is correct");
-ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[text()[contains(., "127.0.0.1/8, 10.0.0.138/16")]]'), "Network Block is correct");
+#ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[text()[contains(., "127.0.0.1/8, 10.0.0.138/16")]]'), "Network Block is correct");
 
 diag('Try to NOT delete Billing Network');
 $d->move_and_click('//*[@id="networks_table"]//tr[1]//td//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="networks_table_filter"]/label/input');
