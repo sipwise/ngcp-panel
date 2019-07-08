@@ -148,6 +148,11 @@ sub resource_from_item {
         }else{
             $resource{lock} = undef;
         }
+        unless ($c->user->show_passwords) {
+            foreach my $k(qw/password webpassword/) {
+                delete $resource{$k};
+            }
+        }
     } else {
         if (!$self->subscriberadmin_write_access($c)) {
             # fields we never want to see
