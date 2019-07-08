@@ -12,6 +12,10 @@ use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
 
 sub validate_ipnet {
     my ($field) = @_;
+    if ( !$field->value ) {
+        $field->add_error("Invalid IPv4 or IPv6 address, must be valid address with optional /net suffix.");
+        return;
+    }
     my ($ip, $net) = split /\//, $field->value;
     if(is_ipv4($ip)) {
         return 1 unless(defined $net);
