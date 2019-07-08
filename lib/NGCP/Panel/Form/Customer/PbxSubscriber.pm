@@ -250,6 +250,10 @@ sub update_fields {
         $self->field('webpassword')->inactive(1);
         $self->field('webpassword')->required(0);
     }
+    if(!$c->user->show_passwords) {
+        $self->field('webpassword')->inactive(1);
+        $self->field('webpassword')->required(0);
+    }
 }
 
 sub validate_password {

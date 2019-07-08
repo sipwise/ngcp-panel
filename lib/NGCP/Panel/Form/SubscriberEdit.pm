@@ -188,6 +188,11 @@ sub update_fields {
             $c->uri_for_action('/subscriberprofile/profile_ajax', [$set_id])->as_string
         );
     }
+
+    if(!$c->user->show_passwords) {
+        $self->field('webpassword')->inactive(1);
+        $self->field('webpassword')->required(0);
+    }
 }
 
 sub validate_password {
