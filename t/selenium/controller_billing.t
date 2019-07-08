@@ -51,7 +51,7 @@ $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[con
 diag("Edit Test Profile");
 $d->fill_element('#interval_charge', 'css', '3.2');
 $d->find_element('#save', 'css')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Billing profile successfully updated")]'), "Label 'Billing profile successfully updated' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing profile successfully updated',  "Correct Alert was shown");
 
 diag('Open "Fees" for Test Profile');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
@@ -83,7 +83,7 @@ diag('Fill Zone info');
 $d->fill_element('#zone', 'css', 'testingzone');
 $d->fill_element('#detail', 'css', 'testingdetail');
 $d->find_element('#save', 'css')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Billing Zone successfully created")]'), "Label 'Billing Zone successfully created' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing Zone successfully created',  "Correct Alert was shown");
 
 diag("Back to orignial form (create billing fees)");
 $d->select_if_unselected('//div[contains(@class,"modal")]//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//input[@type="checkbox"]');
@@ -91,7 +91,7 @@ $d->fill_element('#source', 'css', '.*');
 $d->fill_element('#destination', 'css', '.+');
 $d->find_element('//*[@id="direction"]/option[@value="in"]')->click();
 $d->find_element('#save', 'css')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Billing Fee successfully created!")]'), "Label 'Billing Fee successfully created!' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing Fee successfully created!',  "Correct Alert was shown");
 
 diag("Check if billing fee values are correct");
 $d->fill_element('//*[@id="billing_fee_table_filter"]//input', 'xpath', 'thisshouldnotexist');
@@ -108,8 +108,7 @@ ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if billing fee was deleted");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Billing fee successfully deleted!")]'), "Label 'Billing fee successfully deleted!' was shown");
-$d->find_element('//*[@id="billing_fee_table_filter"]//input')->clear();
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing fee successfully deleted!',  "Correct Alert was shown");
 $d->fill_element('//*[@id="billing_fee_table_filter"]//input', 'xpath', '.+');
 ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Billing fee was deleted');
 
@@ -130,8 +129,7 @@ ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if Billing zone was deleted");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Billing zone successfully deleted")]'), "Label 'Billing zone successfully deleted' was shown");
-$d->find_element('//*[@id="billing_zone_table_filter"]//input')->clear();
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing zone successfully deleted',  "Correct Alert was shown");
 $d->fill_element('//*[@id="billing_zone_table_filter"]//input', 'xpath', 'testingdetail');
 ok($d->find_element_by_css('#billing_zone_table tr > td.dataTables_empty'), 'Billing zone was deleted');
 
@@ -185,7 +183,7 @@ diag('Fill in valid values');
 $d->fill_element('#start', 'css', "2008-02-28 04:20:00");
 $d->fill_element('#end', 'css', "2008-02-28 13:37:00");
 $d->find_element('#save', 'css')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Special offpeak entry successfully created")]'), "Label 'Special offpeak entry successfully created' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully created',  "Correct Alert was shown");
 
 diag("Check if created date definition is correct");
 $d->scroll_to_element($d->find_element('//div[contains(@class, "dataTables_filter")]//input'));
@@ -201,7 +199,7 @@ ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if created date definition was deleted");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Special offpeak entry successfully deleted")]'), "Label 'Special offpeak entry successfully deleted' was shown");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully deleted',  "Correct Alert was shown");
 ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty'), 'Table is empty');
 
 diag("Open delete dialog and press cancel");
@@ -217,6 +215,7 @@ diag("Open delete dialog and press ok");
 $c->delete_billing_profile($billingname);
 
 diag("Check if Billing Profile has been removed");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing profile successfully terminated',  "Correct Alert was shown");
 $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Billing Profile has been removed');
 
@@ -263,6 +262,7 @@ ok($d->find_element_by_css('#networks_table tr > td.dataTables_empty', 'css'), '
 $d->fill_element('//*[@id="networks_table_filter"]/label/input', 'xpath', $billingnetwork);
 
 diag('Check Details');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing Network successfully created',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[2]', $resellername), "Reseller is correct");
 ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[3]', $billingnetwork), "Billing network name is correct");
 ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "127.0.0.1/8")]'), "Network Block is correct");
@@ -285,6 +285,7 @@ ok($d->find_element_by_css('#networks_table tr > td.dataTables_empty', 'css'), '
 $d->fill_element('//*[@id="networks_table_filter"]/label/input', 'xpath', $billingnetwork);
 
 diag('Check Details');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing network successfully updated',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[2]', $resellername), "Reseller is correct");
 ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[3]', $billingnetwork), "Billing network name is correct");
 #ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[text()[contains(., "127.0.0.1/8, 10.0.0.138/16")]]'), "Network Block is correct");
@@ -304,6 +305,7 @@ $d->move_and_click('//*[@id="networks_table"]//tr[1]//td//a[contains(text(), "Te
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Billing Network has been deleted');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing network successfully terminated',  "Correct Alert was shown");
 $d->fill_element('//*[@id="networks_table_filter"]/label/input', 'xpath', $billingnetwork);
 ok($d->find_element_by_css('#networks_table tr > td.dataTables_empty', 'css'), 'Billing network was deleted');
 
