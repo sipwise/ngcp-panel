@@ -1861,7 +1861,7 @@ sub vmnotify{
         'select'      => [{'count' => '*', -as => 'messages_number'}]
     })->get_column('messages_number');
 
-    my @cmd = ('vmnotify',@$data{qw/context cli messages_amount/});
+    my @cmd = ('ngcp-vmnotify', @$data{qw/context cli messages_amount/});
     my $output = capturex([0..3],@cmd);
     $c->log->debug("cmd=".join(" ", @cmd)."; output=$output;");
     return;
