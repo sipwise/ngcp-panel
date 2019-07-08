@@ -216,9 +216,10 @@ diag('Go to Subscriber preferences');
 $d->find_element("Preferences", 'link_text')->click();
 
 diag('Trying to change subscriber IVR language');
+$d->scroll_to_element($d->find_element("Internals", 'link_text'));
 $d->find_element("Internals", 'link_text')->click();
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "language")]'));
-$d->move_and_click('//table//tr/td[contains(text(), "language")]/..//td//a[contains(text(), "Edit")]', 'xpath');
+$d->move_and_click('//table//tr/td[contains(text(), "language")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "conference_pin")]/..//td//a[contains(text(), "Edit")]');
 
 diag('Change language to German');
 $d->find_element('//*[@id="language"]/option[contains(text(), "German")]')->click();
@@ -230,9 +231,10 @@ $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[con
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "language")]/../td/select/option[contains(text(), "German") and @selected="selected"]'), '"German" has been selected');
 
 diag('Trying to enable call recording');
+$d->scroll_to_element($d->find_element("NAT and Media Flow Control", 'link_text'));
 $d->find_element("NAT and Media Flow Control", 'link_text')->click();
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "record_call")]'));
-$d->move_and_click('//table//tr/td[contains(text(), "record_call")]/..//td//a[contains(text(), "Edit")]', 'xpath');
+$d->move_and_click('//table//tr/td[contains(text(), "record_call")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "nat_sipping")]/..//td//a[contains(text(), "Edit")]');
 
 diag('Enable call recording');
 $d->select_if_unselected('//*[@id="record_call"]');
