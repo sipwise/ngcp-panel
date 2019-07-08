@@ -242,11 +242,11 @@ sub update_fields {
         );
     }
 
-    if($c->config->{security}->{password_sip_autogenerate}) {
+    if($c->config->{security}->{password_sip_autogenerate} || !$c->user->show_passwords) {
         $self->field('password')->inactive(1);
         $self->field('password')->required(0);
     }
-    if($c->config->{security}->{password_web_autogenerate}) {
+    if($c->config->{security}->{password_web_autogenerate} || !$c->user->show_passwords) {
         $self->field('webpassword')->inactive(1);
         $self->field('webpassword')->required(0);
     }
