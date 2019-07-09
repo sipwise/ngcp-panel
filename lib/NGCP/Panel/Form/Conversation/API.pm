@@ -17,7 +17,7 @@ has_field 'call_id' => (
 
 has_field 'call_type' => (
     type => 'Text',
-    label => 'One of the "call","cfu","cft","cfb","cfna","cfs","cfr".',
+    label => 'One of the "call","cfu","cft","cfb","cfna","cfs","cfr","cfo".',
     required => 1,
 );
 

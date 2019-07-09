@@ -181,7 +181,7 @@ sub POST :Allow {
                     expose_to_customer => 1,
                 },
                 {
-                    attribute => { -in => [qw/cfu cft cfna cfb cfs cfr/] },
+                    attribute => { -in => [qw/cfu cft cfna cfb cfs cfr cfo/] },
                 },
                 ],
             });
