@@ -120,7 +120,8 @@ $( document ).ready(function() {
                                    { type = "cft", desc = c.loc("Call Forward Timeout") },
                                    { type = "cfna", desc = c.loc("Call Forward Unavailable") },
                                    { type = "cfs", desc = c.loc("Call Forward SMS") },
-                                   { type = "cfr", desc = c.loc("Call Forward Rerouting") } ] -%]
+                                   { type = "cfr", desc = c.loc("Call Forward on Response") },
+                                   { type = "cfo", desc = c.loc("Call Forward on Overflow") } ] -%]
                         [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
                           [% NEXT IF special_prefs.check && !special_prefs.callforward.${cf.type} -%]
                         [% END -%]

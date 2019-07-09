@@ -80,7 +80,20 @@ has_field 'cfr' => (
     required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Call Forward Rerouting, Number of Objects, each containing the keys ' .
+        title => ['Call Forward on Response, Number of Objects, each containing the keys ' .
+                  '"destinationset", "timeset" and "sourceset". The values must be the name of ' .
+                  'a corresponding set which belongs to the same subscriber.'],
+    },
+);
+
+has_field 'cfo' => (
+    type => 'Repeatable',
+    do_wrapper => 1,
+    do_label => 0,
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Call Forward on Overflow, Number of Objects, each containing the keys ' .
                   '"destinationset", "timeset" and "sourceset". The values must be the name of ' .
                   'a corresponding set which belongs to the same subscriber.'],
     },
@@ -352,6 +365,50 @@ has_field 'cfr.bnumberset' => (
 );
 
 has_field 'cfr.bnumberset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfo.destinationset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfo.destinationset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfo.timeset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfo.timeset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfo.sourceset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfo.sourceset_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfo.bnumberset' => (
+    type => 'Text',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'cfo.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
 );

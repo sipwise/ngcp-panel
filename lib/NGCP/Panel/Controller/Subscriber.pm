@@ -616,7 +616,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cfs = {};
 
-    foreach my $type(qw/cfu cfna cft cfb cfs cfr/) {
+    foreach my $type(qw/cfu cfna cft cfb cfs cfr cfo/) {
         my $maps = $prov_subscriber->voip_cf_mappings
             ->search({ type => $type });
         $cfs->{$type} = [];
@@ -721,7 +721,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
         $c->stash->{pref_groups} = \@newprefgroups;
 
         my $special_prefs = { check => 1 };
-        foreach my $pref(qw/cfu cft cfna cfb cfs cfr
+        foreach my $pref(qw/cfu cft cfna cfb cfs cfr cfo
                             speed_dial reminder auto_attendant
                             voice_mail fax_server/) {
             my $preference = $c->model('DB')->resultset('voip_preferences')->find({
@@ -867,7 +867,11 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
             last SWITCH;
         };
         /^cfr$/ && do {
-            $cf_desc = $c->loc('Call Forward Rerouting');
+            $cf_desc = $c->loc('Call Forward on Response');
+            last SWITCH;
+        };
+        /^cfo$/ && do {
+            $cf_desc = $c->loc('Call Forward on Overflow');
             last SWITCH;
         };
         # default
@@ -1102,7 +1106,11 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
             last SWITCH;
         };
         /^cfr$/ && do {
-            $cf_desc = $c->loc('Call Forward Rerouting');
+            $cf_desc = $c->loc('Call Forward on Response');
+            last SWITCH;
+        };
+        /^cfo$/ && do {
+            $cf_desc = $c->loc('Call Forward on Overflow');
             last SWITCH;
         };
         # default

@@ -96,7 +96,7 @@ SKIP:{
     #check cf structure
     delete $cf1single->{_links};
     is(ref $cf1single, "HASH", "cf should be hash");
-    my @valid_types = (qw/cfu cfb cft cfna cfs cfr/);
+    my @valid_types = (qw/cfu cfb cft cfna cfs cfr cfo/);
     my %valid_types;
     @valid_types{@valid_types} = ( 1 ) x @valid_types;
     foreach my $type(@valid_types){

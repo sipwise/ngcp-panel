@@ -16,7 +16,7 @@ sub allowed_methods{
 
 sub api_description {
     return 'Specifies basic callforwards of a subscriber, where a number of destinations, times and sources ' .
-           ' can be specified for each type (cfu, cfb, cft, cfna, cfs, cfr). For more complex configurations with ' .
+           ' can be specified for each type (cfu, cfb, cft, cfna, cfs, cfr, cfo). For more complex configurations with ' .
            ' multiple combinations of Timesets, Destinationsets and SourceSets see <a href="#cfmappings">CFMappings</a>.';
 };
 
@@ -40,6 +40,7 @@ sub documentation_sample {
         cfu => {},
         cfs => {},
         cfr => {},
+        cfo => {},
     };
 }
 
