@@ -50,9 +50,9 @@ sub hal_from_item {
     my $allowed_prefs = NGCP::Panel::Utils::Preferences::get_subscriber_allowed_prefs(
             c => $c,
             prov_subscriber => $prov_subs,
-            pref_list => [qw/cfu cfb cft cfna cfs cfr/],
+            pref_list => [qw/cfu cfb cft cfna cfs cfr cfo/],
         );
-    @resource{qw/cfu cfb cft cfna cfs cfr/} = ({}) x 5;
+    @resource{qw/cfu cfb cft cfna cfs cfr cfo/} = ({}) x 5;
     for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
         next unless ($allowed_prefs->{$item_cf->type});
         $resource{$item_cf->type} = $self->_contents_from_cfm($c, $item_cf, $item);
@@ -73,7 +73,7 @@ sub hal_from_item {
         run => 0,
     );
 
-    for my $cf_type (qw/cfu cft cfb cfna cfs cfr/) {
+    for my $cf_type (qw/cfu cft cfb cfna cfs cfr cfo/) {
         unless ($allowed_prefs->{$cf_type}) {
             delete $resource{$cf_type};
         }
@@ -129,7 +129,7 @@ sub update_item {
     my $allowed_prefs = NGCP::Panel::Utils::Preferences::get_subscriber_allowed_prefs(
             c => $c,
             prov_subscriber => $prov_subs,
-            pref_list => [qw/cfu cfb cft cfna cfs cfr/],
+            pref_list => [qw/cfu cfb cft cfna cfs cfr cfo/],
         );
 
     return unless $self->validate_form(
@@ -139,7 +139,7 @@ sub update_item {
         run => 1,
     );
 
-    for my $type (qw/cfu cfb cft cfna cfs cfr/) {
+    for my $type (qw/cfu cfb cft cfna cfs cfr cfo/) {
         next unless "ARRAY" eq ref $resource->{$type}{destinations};
         next unless ($allowed_prefs->{$type});
         for my $d (@{ $resource->{$type}{destinations} }) {
@@ -172,7 +172,7 @@ sub update_item {
         }
     }
 
-    for my $type (qw/cfu cfb cft cfna cfs cfr/) {
+    for my $type (qw/cfu cfb cft cfna cfs cfr cfo/) {
         next unless ($allowed_prefs->{$type});
         my $mapping = $c->model('DB')->resultset('voip_cf_mappings')->search_rs({
             subscriber_id => $prov_subscriber_id,

@@ -296,6 +296,7 @@ goto SKIP;
                  timeset => $timeset->{name}}],
         cfs => [],
         cfr => [],
+        cfo => [],
         });
 
     #1. update destination set:

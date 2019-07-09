@@ -292,7 +292,7 @@ sub get_dummy_data {
                 start_time => time,
                 source_customer_cost => int( (rand()-1/2) * rand(1000000)),
                 duration => int(rand(7200)) + 10,
-                call_type => (qw/cfu cfb cft cfna cfs cfr/)[int(rand 4)],
+                call_type => (qw/cfu cfb cft cfna cfs cfr cfo/)[int(rand 4)],
                 zone => "Zone $_",
                 zone_detail => "Detail $_",
             }}(1 .. 50)
