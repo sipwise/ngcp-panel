@@ -90,7 +90,21 @@ has_field 'cfr' => (
     required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Call Forward Rerouting, Contains the keys "destinations", "times" and "sources". "destinations" is an Array of Objects ' .
+        title => ['Call Forward on Response, Contains the keys "destinations", "times" and "sources". "destinations" is an Array of Objects ' .
+                  'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always. ' .
+                  '"sources" is an Array of Objects having one field "source". "sources" can be empty.'],
+    },
+);
+
+has_field 'cfo' => (
+    type => '+NGCP::Panel::Field::CFSimpleAPICompound',
+    do_wrapper => 1,
+    do_label => 0,
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Call Forward on Overflow, Contains the keys "destinations", "times" and "sources". "destinations" is an Array of Objects ' .
                   'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
                   '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always. ' .
                   '"sources" is an Array of Objects having one field "source". "sources" can be empty.'],
@@ -106,7 +120,7 @@ has_field 'cft.ringtimeout' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(cfu cfb cft cfna cfs cfr)],
+    render_list => [qw(cfu cfb cft cfna cfs cfr cfo)],
 );
 
 1;
