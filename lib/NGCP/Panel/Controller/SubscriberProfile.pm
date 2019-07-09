@@ -513,7 +513,7 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
                 if(keys %old_attributes) {
                     my $cfs = $c->model('DB')->resultset('voip_preferences')->search({
                         id => { -in => [ keys %old_attributes ] },
-                        attribute => { -in => [qw/cfu cfb cft cfna cfs cfr/] },
+                        attribute => { -in => [qw/cfu cfb cft cfna cfs cfr cfo/] },
                     });
                     my @subs = $c->model('DB')->resultset('provisioning_voip_subscribers')
                         ->search({
