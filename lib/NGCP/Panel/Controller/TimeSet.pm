@@ -94,6 +94,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         %{$c->request->params},
         calendarfile => $posted ? $upload : undef,
     };
+    $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
@@ -231,7 +232,7 @@ sub timeset_resource :Private {
 
     my $resource = $form->values;
     return NGCP::Panel::Utils::TimeSet::timeset_resource(
-        c => $c, 
+        c => $c,
         resource => $resource
     );
 }
