@@ -19,12 +19,29 @@ use NGCP::Panel::Utils::Subscriber qw();
 sub _item_rs {
     my ($self, $c, $now) = @_;
 
+    my $contract_id;
+    if (my $external_id = $c->req->params->{external_id}) {
+        my $rs = $c->model('DB')->resultset('contracts')->search({
+            'me.external_id' => $external_id,
+            'me.status' => { '!=' => 'terminated' },
+        }, undef);
+        my $contract = $rs->next;
+        if ($contract) {
+            unless ($rs->next) {
+                $contract_id = $contract->id;
+            }
+        } else {
+            $contract_id = -1;
+        }
+    }
     # returns a contracts rs filtered based on role
     my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(
         c => $c,
         include_terminated => 1,
         now => $now,
+        contract_id => $contract_id,
     );
+
     return $item_rs;
 }
 
