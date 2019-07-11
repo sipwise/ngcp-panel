@@ -34,6 +34,24 @@
       "revId": "16c19754a49f916b2e04443c9fc4312db2be9cf5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa1b9901_cf13ac5b",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-07-11T10:22:31Z",
+      "side": 1,
+      "message": "both \"admin\" and \"reseller\" user roles correspond to records in the billing.admins table. the difference comes from\n\n   $self-\u003e_user-\u003eis_superuser ? return \"admin\"\n                              : return \"reseller\";",
+      "parentUuid": "fa1b9901_6f04e014",
+      "revId": "16c19754a49f916b2e04443c9fc4312db2be9cf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
